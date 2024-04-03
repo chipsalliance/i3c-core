@@ -1,4 +1,5 @@
 cocotb==1.8.1
+cocotb-AHB @ git+https://github.com/antmicro/cocotb-ahb@a7e013b4960b50ca575a53e49a0347ccc2d851dc
 cocotb-bus==0.2.1
 cocotb-coverage==1.2.0
 cocotb-test==0.2.5

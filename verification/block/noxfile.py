@@ -163,6 +163,21 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i3c_ahb_if"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_single_read_write_cmds",
+    ],
+)
+@nox.parametrize("coverage", "")
+def i3c_ahb_if_verify(session, blockName, testName, coverage):
+    rootPath = os.path.join(blockPath, "../../")
+    session.run("make", "-C", rootPath, "generate")  # AHB interface requires CSRs generated
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["i2c_controller_fsm"])
 @nox.parametrize(
     "testName",
