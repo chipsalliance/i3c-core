@@ -5,6 +5,6 @@ import cocotb
 
 
 @cocotb.test()
-async def run_test():
+async def run_test(dut):
     """Run test for mixed signal simulation - automatic trimming of a voltage regulator."""
     pass
