@@ -102,7 +102,7 @@ def isSimFailure(
     return rc
 
 
-def verify_block(session, blockName, testName, coverage=""):
+def verify_block(session, blockName, testName, coverage=None):
     session.install("-r", pipRequirementsPath)
     testPath = os.path.join(blockPath, blockName)
     testNameXML = os.path.join(testName + ".xml")
@@ -110,14 +110,21 @@ def verify_block(session, blockName, testName, coverage=""):
     testNameLog = os.path.join(testName + ".log")
     testNameLogPath = os.path.join(testPath, testNameLog)
     with open(testNameLogPath, "w") as testLog:
-        session.run(
+
+        args = [
             "make",
             "-C",
             testPath,
             "all",
-            "COVERAGE_TYPE=" + coverage,
             "MODULE=" + testName,
             "COCOTB_RESULTS_FILE=" + testNameXML,
+        ]
+
+        if coverage:
+            args.append("COVERAGE_TYPE=" + coverage)
+
+        session.run(
+            *args,
             external=True,
             stdout=testLog,
             stderr=testLog,
