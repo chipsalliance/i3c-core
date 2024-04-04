@@ -163,7 +163,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
 @nox.parametrize(
     "testName",
     [
-        "test_all",
+        "test_mem_rw",
     ],
 )
 
