@@ -172,6 +172,18 @@ def i2c_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
+@nox.parametrize("blockName", ["i3c_phy"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_reset",
+    ],
+)
+@nox.parametrize("coverage", "")
+def i3c_phy_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
 @nox.session()
 def isort(session: nox.Session) -> None:
     """Options are defined in pyproject.toml file"""
