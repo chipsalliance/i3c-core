@@ -148,7 +148,7 @@ def verify_block(session, blockName, testName, coverage=""):
     ],
 )
 @nox.parametrize("coverage", "")
-def pic_verify(session, blockName, testName, coverage):
+def i3c_ctrl_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
