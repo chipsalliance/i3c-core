@@ -29,7 +29,12 @@ clean:
 	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
 	$(RM) -f *.log *.rpt
 
-.PHONY: lint lint-tests test tests
+generate: deps generate-example ## Generates registers verilog from SystemRDL definition
+
+generate-example: deps
+	python -m peakrdl regblock src/rdl/example.rdl -o src/rdl/generate/ --cpuif passthrough
+
+.PHONY: lint lint-tests test tests generate
 
 .DEFAULT_GOAL := help
 HELP_COLUMN_SPAN = 11
@@ -40,3 +45,7 @@ help: ## Show this help message
 	@echo
 	@echo List of available optional parameters:
 	@echo -e "\033[36mTEST\033[0m        Name of the test run by 'make test' (default: None)"
+
+
+deps:
+	pip install -r requirements.txt
