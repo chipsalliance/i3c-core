@@ -1,4 +1,3 @@
-# Copyright (C) 2024 Antmicro
 # SPDX-License-Identifier: Apache-2.0
 
 null  :=
@@ -14,7 +13,7 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i2c_fsm
 
 VERILOG_SOURCES  = \
-    $(SRCDIR)/i2c_pkg.sv \
-    $(SRCDIR)/i2c_fsm.sv
+    $(SRCDIR)/i2c/i2c_pkg.sv \
+    $(SRCDIR)/i2c/i2c_fsm.sv
 
 include $(CURDIR)/../common.mk

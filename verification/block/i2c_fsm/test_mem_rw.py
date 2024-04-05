@@ -1,4 +1,3 @@
-# Copyright (c) 2024 Antmicro
 # SPDX-License-Identifier: Apache-2.0
 
 import cocotb

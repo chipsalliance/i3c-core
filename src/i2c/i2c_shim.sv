@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 module i2c_shim (
 
     input  logic    clk_i,
