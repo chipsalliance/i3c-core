@@ -1,0 +1,103 @@
+default regwidth = 32;
+
+addrmap Example {
+    regfile {
+        reg {
+            name = "Control";
+            field {
+                name = "TX_send";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } tx_send [0:0];
+            field {
+                name = "TX_size";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } tx_size [8:15];
+            field {
+                name = "RX_send";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } rx_send [16:16];
+            field {
+                name = "RX_size";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } rx_size [24:31];
+         } ctrl;
+        reg {
+            name = "Interrupt enable";
+            field {
+                name = "Enable TX interrupt";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } tx_mask [0:0];
+            field {
+                name = "Enable RX interrupt";
+                sw = rw;
+                hw = r;
+                reset = 0;
+            } rx_mask [8:8];
+        } intr_mask;
+        reg {
+            name = "Interrupt status";
+            field {
+                name = "TX done";
+                intr;
+                hw = w;
+                sw = rw;
+                onwrite = woclr;
+            } tx_done [0:0];
+            field {
+                name = "RX done";
+                intr;
+                hw = w;
+                sw = rw;
+                onwrite = woclr;
+            } rx_done [8:8];
+        } intr;
+        intr.tx_done->enable = intr_mask.tx_mask;
+        intr.rx_done->enable = intr_mask.rx_mask;
+        reg {
+            name = "Status";
+            field {
+                name = "Processing TX";
+                sw = r;
+                hw = w;
+                reset = 0;
+            } tx_in_progress [0:0];
+            field {
+                name = "Remaining TX";
+                sw = r;
+                hw = w;
+                reset = 0;
+            } tx_remaining [8:15];
+            field {
+                name = "Processing RX";
+                sw = r;
+                hw = w;
+                reset = 0;
+            } rx_in_progress [16:16];
+            field {
+                name = "Remaining RX";
+                sw = r;
+                hw = w;
+                reset = 0;
+            } rx_remaining [24:31];
+        } status;
+        reg {
+            name = "Version";
+            field {
+                hw = na;
+                sw = r;
+                name = "Core version";
+                reset = 0xDEADBEEF;
+            } version [32];
+        } ver;
+    } core;
+};
