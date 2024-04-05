@@ -20,7 +20,7 @@ VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 
 
 # Coverage reporting
-COVERAGE_TYPE ?= ""
+COVERAGE_TYPE ?=
 ifeq ("$(COVERAGE_TYPE)", "all")
     VERILATOR_COVERAGE = --coverage
 else ifeq ("$(COVERAGE_TYPE)", "branch")
