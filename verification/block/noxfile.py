@@ -172,11 +172,14 @@ def i2c_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
+@nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["i3c_phy"])
 @nox.parametrize(
     "testName",
     [
         "test_reset",
+        "test_random_transfer",
+        "test_bus_arbitration",
     ],
 )
 @nox.parametrize("coverage", "")

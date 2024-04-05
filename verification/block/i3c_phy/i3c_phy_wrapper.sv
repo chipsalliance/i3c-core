@@ -25,6 +25,7 @@ module i3c_phy_wrapper (
     logic sda_o;
     logic sda_en_o;
 
+    // Create inout from I3C PHY signals
     assign scl_io = (scl_en_o) ? scl_o : 1'bz;
     assign sda_io = (sda_en_o) ? sda_o : 1'bz;
 
