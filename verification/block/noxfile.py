@@ -158,6 +158,7 @@ def verify_block(session, blockName, testName, coverage=None):
 def i3c_ctrl_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
+
 @nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["i2c_fsm"])
 @nox.parametrize(
@@ -166,10 +167,10 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
         "test_mem_rw",
     ],
 )
-
 @nox.parametrize("coverage", "")
 def i2c_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
+
 
 @nox.session()
 def isort(session: nox.Session) -> None:
