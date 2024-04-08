@@ -8,7 +8,7 @@ CLOCK_PERIOD_NS = 10
 
 
 def get_current_time_ns():
-    return cocotb.simulator.get_sim_time()[1] / 100
+    return cocotb.utils.get_sim_time("ns")
 
 
 async def init_phy(dut):
