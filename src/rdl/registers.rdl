@@ -5,7 +5,7 @@
 
 default regwidth = 32;
 
-addrmap I3CController #(
+addrmap I3CCSR #(
     bit PIO_offset = 0x100,
     bit DAT_offset = 0x400,
     bit DCT_offset = 0x800
