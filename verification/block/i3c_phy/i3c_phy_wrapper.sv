@@ -17,17 +17,23 @@ module i3c_phy_wrapper (
     output logic ctrl_sda_o,
     output logic bus_err_o
 );
-    logic scl_i;
-    logic scl_o;
-    logic scl_en_o;
+  logic scl_i;
+  logic scl_o;
+  logic scl_en_o;
 
-    logic sda_i;
-    logic sda_o;
-    logic sda_en_o;
+  logic sda_i;
+  logic sda_o;
+  logic sda_en_o;
 
-    // Create inout from I3C PHY signals
-    assign scl_io = (scl_en_o) ? scl_o : 1'bz;
-    assign sda_io = (sda_en_o) ? sda_o : 1'bz;
+  i3c_phy phy (.*);
 
-    i3c_phy phy (.*);
+  i3c_io phy_io (
+      .scl_io(scl_io),
+      .scl_i(scl_o),
+      .scl_en_i(scl_en_o),
+
+      .sda_io(sda_io),
+      .sda_i(sda_o),
+      .sda_en_i(sda_en_o),
+  );
 endmodule
