@@ -18,9 +18,7 @@ async def run_test(dut):
     TEST_LEN = 100
 
     clk = dut.clk
-    rst_n = dut.rst_n
-
-    await init_phy(clk, rst_n)
+    await init_phy(dut)
 
     for _ in range(TEST_LEN):
         rand_sda = random.randint(0, 1)
