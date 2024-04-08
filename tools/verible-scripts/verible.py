@@ -2,7 +2,7 @@
 
 import argparse
 import os
-
+import sys
 
 def main():
     """
@@ -64,11 +64,17 @@ def main():
         verible_tool = "verible-verilog-format "
         verible_tool_opts = " --inplace"
 
+    rc=0
     for file in paths:
         tool_cmd = verible_tool + verible_tool_opts + " " + file
         print(f"[RUN CMD] {tool_cmd}")
-        os.system(tool_cmd)
+        cmd_rc=os.system(tool_cmd)
+        rc+=cmd_rc
+    if rc > 0:
+        rc = 1
+    return rc
 
 
 if __name__ == "__main__":
-    main()
+    rc = main()
+    sys.exit(rc)

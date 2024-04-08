@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "[LINT] See exec_lint.log"
 python tools/verible-scripts/verible.py --tool=lint &> exec_lint.log
 
@@ -10,3 +12,4 @@ echo "[LINT STATS] See lint.rpt"
 python tools/verible-scripts/stats_lint.py &> lint.rpt
 
 cat lint.rpt
+
