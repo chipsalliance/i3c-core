@@ -30,14 +30,18 @@ clean:
 	$(RM) -f *.log *.rpt
 
 generate: deps ## Generate I3C SystemVerilog registers from SystemRDL definition
+	python -m peakrdl regblock src/rdl/registers.rdl -o src/rdl/generate/ --cpuif passthrough
+	python -m peakrdl html src/rdl/registers.rdl -o src/rdl/html/
 
 generate-example: deps ## Generate example SystemVerilog registers from SystemRDL definition
 	python -m peakrdl regblock src/rdl/example.rdl -o src/rdl/generate/ --cpuif passthrough
+	python -m peakrdl html src/rdl/example.rdl -o src/rdl/html/
 
 deps: ## Install python dependencies
 	pip install -r requirements.txt
 
 .PHONY: lint lint-tests test tests generate deps
+
 
 .DEFAULT_GOAL := help
 HELP_COLUMN_SPAN = 11
