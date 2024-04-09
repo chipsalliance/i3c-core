@@ -130,7 +130,7 @@ def verify_block(session, blockName, testName, coverage=None):
             stderr=testLog,
         )
     # Prevent coverage.dat and test log from being overwritten
-    if coverage != "":
+    if coverage:
         coveragePath = testPath
         coverageName = "coverage.dat"
         coverageNamePath = os.path.join(coveragePath, coverageName)
@@ -154,7 +154,7 @@ def verify_block(session, blockName, testName, coverage=None):
         "test_reset",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i3c_ctrl_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
@@ -167,7 +167,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
         "test_mem_rw",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i2c_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
@@ -182,7 +182,7 @@ def i2c_fsm_verify(session, blockName, testName, coverage):
         "test_bus_arbitration",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i3c_phy_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
