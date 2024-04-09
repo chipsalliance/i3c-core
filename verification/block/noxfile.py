@@ -191,22 +191,22 @@ def i3c_phy_verify(session, blockName, testName, coverage):
     session.run("make", "-C", testPath, "verilator-test")
 
 
-@nox.session()
-def isort(session: nox.Session) -> None:
-    """Options are defined in pyproject.toml file"""
+@nox.session(reuse_venv=True)
+def lint(session: nox.Session) -> None:
+    """Options are defined in pyproject.toml and .flake8 files"""
     session.install("isort")
-    session.run("isort", ".")
-
-
-@nox.session()
-def flake8(session: nox.Session) -> None:
-    """Options are defined in .flake8 file."""
     session.install("flake8")
+    session.install("black")
+    session.run("isort", ".")
+    session.run("black", ".")
     session.run("flake8", ".")
 
 
 @nox.session()
-def black(session: nox.Session) -> None:
-    """Options are defined in pyproject.toml file"""
+def test_lint(session: nox.Session) -> None:
+    session.install("isort")
+    session.install("flake8")
     session.install("black")
-    session.run("black", ".")
+    session.run("isort", "--check", ".")
+    session.run("black", "--check", ".")
+    session.run("flake8", ".")
