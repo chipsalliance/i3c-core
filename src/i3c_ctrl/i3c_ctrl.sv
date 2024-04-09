@@ -1,5 +1,9 @@
-// Copyright (c) 2024 Antmicro <www.antmicro.com>
 // SPDX-License-Identifier: Apache-2.0
+
+// TODO: Consider arbitration difference from i2c:
+// Section 5.1.4
+// 48b provisioned id and bcr, dcr are used.
+// This is to enable dynamic addressing.
 
 module i3c_ctrl
   import i3c_ctrl_pkg::*;
@@ -30,5 +34,8 @@ module i3c_ctrl
   end
 
   assign scl_o = '1;
+
+
+  //
 
 endmodule

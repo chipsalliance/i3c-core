@@ -1,8 +1,15 @@
 from collections import Counter
+import os
+import sys
 
 error_codes = []
 run_cmds = []
 syntax_errors = []
+
+
+if not os.path.isfile("exec_lint.log"):
+    print("File does not exist")
+    sys.exit(1)
 
 f = open("exec_lint.log", "r")
 lines = f.readlines()
