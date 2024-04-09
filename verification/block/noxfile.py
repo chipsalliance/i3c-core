@@ -130,7 +130,7 @@ def verify_block(session, blockName, testName, coverage=None):
             stderr=testLog,
         )
     # Prevent coverage.dat and test log from being overwritten
-    if coverage != "":
+    if coverage:
         coveragePath = testPath
         coverageName = "coverage.dat"
         coverageNamePath = os.path.join(coveragePath, coverageName)
@@ -154,7 +154,7 @@ def verify_block(session, blockName, testName, coverage=None):
         "test_reset",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i3c_ctrl_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
@@ -167,27 +167,46 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
         "test_mem_rw",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i2c_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
-@nox.session()
-def isort(session: nox.Session) -> None:
-    """Options are defined in pyproject.toml file"""
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i3c_phy"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_reset",
+        "test_random_transfer",
+        "test_bus_arbitration",
+    ],
+)
+@nox.parametrize("coverage", None)
+def i3c_phy_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+    testPath = os.path.join(blockPath, blockName)
+    session.run("make", "-C", testPath, "iverilog-test")
+    session.run("make", "-C", testPath, "verilator-test")
+
+
+@nox.session(reuse_venv=True)
+def lint(session: nox.Session) -> None:
+    """Options are defined in pyproject.toml and .flake8 files"""
     session.install("isort")
-    session.run("isort", ".")
-
-
-@nox.session()
-def flake8(session: nox.Session) -> None:
-    """Options are defined in .flake8 file."""
     session.install("flake8")
+    session.install("black")
+    session.run("isort", ".")
+    session.run("black", ".")
     session.run("flake8", ".")
 
 
 @nox.session()
-def black(session: nox.Session) -> None:
-    """Options are defined in pyproject.toml file"""
+def test_lint(session: nox.Session) -> None:
+    session.install("isort")
+    session.install("flake8")
     session.install("black")
-    session.run("black", ".")
+    session.run("isort", "--check", ".")
+    session.run("black", "--check", ".")
+    session.run("flake8", ".")

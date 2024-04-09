@@ -13,11 +13,16 @@ ifeq ($(MAKECMDGOALS), test)
     endif
 endif
 
-lint: ## Run lint on RTL source code
+lint: lint-rtl lint-tests ## Run RTL and tests lint
+
+lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
+	cd $(VERIFICATION_DIR) && nox -R -s test_lint
+
+lint-rtl: ## Run lint on RTL source code
 	$(SHELL) tools/verible-scripts/run.sh
 
 lint-tests: ## Run lint on tests source code
-	cd $(VERIFICATION_DIR) && nox -R -s isort flake8 black
+	cd $(VERIFICATION_DIR) && nox -R -s lint
 
 test: ## Run single module test (use `TEST=<test_name>` flag)
 	cd $(VERIFICATION_DIR) && nox -R -s $(TEST)_verify
@@ -25,7 +30,7 @@ test: ## Run single module test (use `TEST=<test_name>` flag)
 tests: ## Run all RTL tests
 	cd $(VERIFICATION_DIR) && nox -R -k "verify"
 
-clean:
+clean: ## Clean all generated sources
 	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
 	$(RM) -f *.log *.rpt
 
@@ -40,7 +45,7 @@ generate-example: deps ## Generate example SystemVerilog registers from SystemRD
 deps: ## Install python dependencies
 	pip install -r requirements.txt
 
-.PHONY: lint lint-tests test tests generate deps
+.PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps
 
 
 .DEFAULT_GOAL := help

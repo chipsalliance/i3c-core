@@ -22,3 +22,4 @@ verilator-cocotb-build
 *.json
 *.log
 *.rpt
+**sim*
