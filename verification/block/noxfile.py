@@ -186,6 +186,10 @@ def i2c_fsm_verify(session, blockName, testName, coverage):
 def i3c_phy_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
+    testPath = os.path.join(blockPath, blockName)
+    session.run("make", "-C", testPath, "iverilog-test")
+    session.run("make", "-C", testPath, "verilator-test")
+
 
 @nox.session()
 def isort(session: nox.Session) -> None:
