@@ -16,7 +16,6 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/i2c/i2c_pkg.sv \
     $(SRCDIR)/i2c/i2c_fsm.sv \
     $(SRCDIR)/phy/i3c_io.sv \
-    $(SRCDIR)/phy/i3c_phy_pkg.sv \
     $(SRCDIR)/phy/i3c_phy.sv \
     $(SRCDIR)/prim/dff_2sync.sv \
     $(SRCDIR)/i2c_phy_integration.sv

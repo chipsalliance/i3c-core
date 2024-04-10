@@ -6,6 +6,7 @@ import random
 
 import cocotb
 from cocotb.triggers import RisingEdge
+
 from common import check_delayed, init_phy
 
 random.seed()
@@ -17,7 +18,7 @@ async def run_test(dut):
     cocotb.log.setLevel(logging.DEBUG)
     TEST_LEN = 100
 
-    clk = dut.clk
+    clk = dut.clk_i
     await init_phy(dut)
 
     for _ in range(TEST_LEN):

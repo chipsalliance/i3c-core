@@ -12,8 +12,8 @@ def get_current_time_ns():
 
 
 async def init_phy(dut):
-    clock = dut.clk
-    reset_n = dut.rst_n
+    clock = dut.clk_i
+    reset_n = dut.rst_ni
     cocotb.start_soon(Clock(clock, CLOCK_PERIOD_NS, "ns").start())
 
     # Mock pull up on I3C bus lines

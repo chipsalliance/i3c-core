@@ -2,7 +2,6 @@
 
 module i2c_phy_integration
   import i2c_pkg::*;
-  import i3c_phy_pkg::*;
 #(
     parameter int FifoDepth = 64,
     parameter int AcqFifoDepth = 64,

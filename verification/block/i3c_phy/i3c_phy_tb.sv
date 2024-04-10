@@ -4,11 +4,10 @@
 `timescale 1ns / 1ps
 
 module i3c_phy_tb
-  import i3c_phy_pkg::*;
 ();
   // RTL instantiation --------------------------------------------------------
-  logic clk;
-  logic rst_n;
+  logic clk_i;
+  logic rst_ni;
 
   // I3C bus IO
   logic scl_io;
@@ -20,9 +19,6 @@ module i3c_phy_tb
 
   logic ctrl_scl_o;
   logic ctrl_sda_o;
-  i3c_phy_err_t phy_err_o;
-
-  logic arbitration_en_i;
 
   // I3C PHY IO
   logic scl_i;
@@ -53,18 +49,17 @@ module i3c_phy_tb
   initial begin
     $dumpfile("dump_rtl.vcd");
     $dumpvars(0, i3c_phy_tb);
-    #50 rst_n = 1;
+    #50 rst_ni = 1;
     #1000;
     $finish;
   end
 
   // Set initial signal values
   initial begin
-    clk = 0;
-    rst_n = 0;
+    clk_i = 0;
+    rst_ni = 0;
     ctrl_scl_i = 1;
     ctrl_sda_i = 1;
-    arbitration_en_i = 0;
     scl_i = 0;
     sda_i = 0;
     #200 if (scl_io !== 1'bz) $error($sformatf("Expected scl_io=1'bz, got scl_io=1'b%b", scl_io));
@@ -78,6 +73,6 @@ module i3c_phy_tb
   end
 
   // Generate clock
-  always #10 clk = ~clk;
+  always #10 clk_i = ~clk_i;
 
 endmodule

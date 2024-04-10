@@ -2,9 +2,7 @@
 
 `timescale 1ns / 1ps
 
-module i3c_phy
-  import i3c_phy_pkg::*;
-(
+module i3c_phy (
     input logic clk_i,
     input logic rst_ni,
 
@@ -22,10 +20,7 @@ module i3c_phy
     input logic ctrl_sda_i,
 
     output logic ctrl_scl_o,
-    output logic ctrl_sda_o,
-
-    input logic arbitration_en_i,
-    output i3c_phy_err_t phy_err_o
+    output logic ctrl_sda_o
 );
 
   // Synchronized bus lines
@@ -35,7 +30,6 @@ module i3c_phy
   // Synchronized controller lines
   logic scl_en_int;
   logic sda_en_int;
-  logic arbitration_en_sync;
 
   // Bus errors
   logic bus_sda_err;
@@ -45,9 +39,6 @@ module i3c_phy
 
   assign scl_en_o = scl_en_sync;
   assign sda_en_o = sda_en_sync;
-
-  assign phy_err_o.interference_scl_err_o = arbitration_en_sync & bus_scl_err;
-  assign phy_err_o.interference_sda_err_o = arbitration_en_sync & bus_sda_err;
 
   // Assert bus lines LOW and control them via enable signals to reproduce
   // Open Drain as a tri-state in FPGA
@@ -91,24 +82,5 @@ module i3c_phy
       .d_i  (sda_en_int),
       .q_o  (sda_en_sync)
   );
-
-  // Synchronize arbitration enable
-  dff_2sync arbitration_en_synchronizer (
-      .clk_i  (clk_i),
-      .rst_ni(rst_ni),
-      .d_i  (arbitration_en_i),
-      .q_o  (arbitration_en_sync)
-  );
-
-  // Report bus error if bus has different value than driven
-  always @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) begin
-      bus_scl_err <= 1'b0;
-      bus_sda_err <= 1'b0;
-    end else begin
-      bus_scl_err <= ctrl_scl_i & ~scl_sync;
-      bus_sda_err <= ctrl_sda_i & ~sda_sync;
-    end
-  end
 
 endmodule

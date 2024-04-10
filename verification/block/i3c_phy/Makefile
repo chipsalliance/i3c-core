@@ -19,7 +19,6 @@ PRIM_SV = $(wildcard $(SRCDIR)/prim/*.sv)
 
 VERILOG_SOURCES  = \
     $(PRIM_SV) \
-    $(SRCDIR)/phy/i3c_phy_pkg.sv \
     $(SRCDIR)/phy/i3c_phy.sv
 
 IVERILOG_SOURCES = \
