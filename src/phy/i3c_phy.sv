@@ -5,8 +5,8 @@
 module i3c_phy
   import i3c_phy_pkg::*;
 (
-    input logic clk,
-    input logic rst_n,
+    input logic clk_i,
+    input logic rst_ni,
 
     // I3C bus IO
     input  logic scl_i,
@@ -62,47 +62,47 @@ module i3c_phy
 
   // Synchronize SCL to system clock
   dff_2sync scl_synchronizer (
-      .clk  (clk),
-      .rst_n(rst_n),
+      .clk_i  (clk_i),
+      .rst_ni(rst_ni),
       .d_i  (scl_i),
       .q_o  (scl_sync)
   );
 
   // Synchronize SDA to system clock
   dff_2sync sda_synchronizer (
-      .clk  (clk),
-      .rst_n(rst_n),
+      .clk_i  (clk_i),
+      .rst_ni(rst_ni),
       .d_i  (sda_i),
       .q_o  (sda_sync)
   );
 
   // Synchronize SCL enable
   dff_2sync scl_en_int_synchronizer (
-      .clk  (clk),
-      .rst_n(rst_n),
+      .clk_i  (clk_i),
+      .rst_ni(rst_ni),
       .d_i  (scl_en_int),
       .q_o  (scl_en_sync)
   );
 
   // Synchronize SDA enable
   dff_2sync sda_en_int_synchronizer (
-      .clk  (clk),
-      .rst_n(rst_n),
+      .clk_i  (clk_i),
+      .rst_ni(rst_ni),
       .d_i  (sda_en_int),
       .q_o  (sda_en_sync)
   );
 
   // Synchronize arbitration enable
   dff_2sync arbitration_en_synchronizer (
-      .clk  (clk),
-      .rst_n(rst_n),
+      .clk_i  (clk_i),
+      .rst_ni(rst_ni),
       .d_i  (arbitration_en_i),
       .q_o  (arbitration_en_sync)
   );
 
   // Report bus error if bus has different value than driven
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       bus_scl_err <= 1'b0;
       bus_sda_err <= 1'b0;
     end else begin
