@@ -192,13 +192,13 @@ def i3c_phy_verify(session, blockName, testName, coverage):
 @nox.parametrize(
     "simulator",
     [
-        "iverilog",
+        "icarus",
         "verilator",
     ],
 )
 def i3c_phy_tb_verify(session, blockName, simulator):
     testPath = os.path.join(blockPath, blockName)
-    session.run("make", "-C", testPath, f"{simulator}-test")
+    session.run("make", "-C", testPath, f"SIM={simulator}", f"{simulator}-test")
 
 
 @nox.session(tags=["tests"])

@@ -52,35 +52,43 @@ module i3c_phy (
   assign ctrl_sda_o = sda_en_sync ? 1'b0 : sda_sync;
 
   // Synchronize SCL to system clock
-  dff_2sync scl_synchronizer (
-      .clk_i  (clk_i),
+  caliptra_prim_flop_2sync #(
+      .Width(1)
+  ) scl_synchronizer (
+      .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i  (scl_i),
-      .q_o  (scl_sync)
+      .d_i(scl_i),
+      .q_o(scl_sync)
   );
 
   // Synchronize SDA to system clock
-  dff_2sync sda_synchronizer (
-      .clk_i  (clk_i),
+  caliptra_prim_flop_2sync #(
+      .Width(1)
+  ) sda_synchronizer (
+      .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i  (sda_i),
-      .q_o  (sda_sync)
+      .d_i(sda_i),
+      .q_o(sda_sync)
   );
 
   // Synchronize SCL enable
-  dff_2sync scl_en_int_synchronizer (
-      .clk_i  (clk_i),
+  caliptra_prim_flop_2sync #(
+      .Width(1)
+  ) scl_en_int_synchronizer (
+      .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i  (scl_en_int),
-      .q_o  (scl_en_sync)
+      .d_i(scl_en_int),
+      .q_o(scl_en_sync)
   );
 
   // Synchronize SDA enable
-  dff_2sync sda_en_int_synchronizer (
-      .clk_i  (clk_i),
+  caliptra_prim_flop_2sync #(
+      .Width(1)
+  ) sda_en_int_synchronizer (
+      .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i  (sda_en_int),
-      .q_o  (sda_en_sync)
+      .d_i(sda_en_int),
+      .q_o(sda_en_sync)
   );
 
 endmodule

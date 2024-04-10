@@ -14,7 +14,16 @@ CONFIG :=
 export PYTHONPATH := $(CURDIR)/common
 
 # Common sources
-COMMON_SOURCES  =
+COMMON_SOURCES  = \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert.sv \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \
+    $(CALIPTRA_ROOT)/src/caliptra_prim_generic/rtl/caliptra_prim_generic_flop.sv \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop.sv \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop_2sync.sv
+
+COMMON_INCLUDES = \
+    -I$(CALIPTRA_ROOT)/src/libs/rtl \
+    -I$(CALIPTRA_ROOT)/src/caliptra_prim/rtl
 
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 
@@ -38,20 +47,26 @@ ifeq ($(SIM), verilator)
     COMPILE_ARGS += --timing
     COMPILE_ARGS += -Wall -Wno-fatal
 
-    EXTRA_ARGS   += --trace --trace-structs
-    EXTRA_ARGS   += $(VERILATOR_COVERAGE)
+    EXTRA_ARGS += --trace --trace-structs
+    EXTRA_ARGS += $(VERILATOR_COVERAGE)
+    EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 10ps
 
-EXTRA_ARGS += -I$(CFGDIR) -Wno-DECLFILENAME
+ifneq ($(CFGDIR),)
+EXTRA_ARGS += -I$(CFGDIR)
+endif
+
+EXTRA_ARGS += $(COMMON_INCLUDES)
 
 # Build directory
 ifneq ($(COVERAGE_TYPE),)
     SIM_BUILD := sim-build-$(COVERAGE_TYPE)
 endif
 
-include $(shell cocotb-config --makefiles)/Makefile.sim
-
-
+# Do not import cocotb configuration if it's a RTL testbench
+ifeq (,$(filter icarus-test verilator-test,$(MAKECMDGOALS)))
+    include $(shell cocotb-config --makefiles)/Makefile.sim
+endif
