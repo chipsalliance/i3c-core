@@ -191,6 +191,19 @@ def i3c_phy_verify(session, blockName, testName, coverage):
     session.run("make", "-C", testPath, "verilator-test")
 
 
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i2c_phy_integration"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_mem_rw",
+    ],
+)
+@nox.parametrize("coverage", None)
+def i2c_phy_integration_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
 @nox.session(reuse_venv=True)
 def lint(session: nox.Session) -> None:
     """Options are defined in pyproject.toml and .flake8 files"""
