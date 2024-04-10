@@ -186,9 +186,19 @@ def i2c_fsm_verify(session, blockName, testName, coverage):
 def i3c_phy_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
+
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i3c_phy"])
+@nox.parametrize(
+    "simulator",
+    [
+        "iverilog",
+        "verilator",
+    ],
+)
+def i3c_phy_tb_verify(session, blockName, simulator):
     testPath = os.path.join(blockPath, blockName)
-    session.run("make", "-C", testPath, "iverilog-test")
-    session.run("make", "-C", testPath, "verilator-test")
+    session.run("make", "-C", testPath, f"{simulator}-test")
 
 
 @nox.session(tags=["tests"])
