@@ -19,7 +19,7 @@ def main():
         "--restore_git", action="store_true", help="Restore only {.v|.sv|...} files"
     )
     parser.add_argument("--linter", default="verible-verilog-lint", help="Tool")
-    parser.add_argument("--root_dir", default="./", help="Root of search")
+    parser.add_argument("--root_dir", default="./src", help="Root of search")
     args = parser.parse_args()
 
     """
