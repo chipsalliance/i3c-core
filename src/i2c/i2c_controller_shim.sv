@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module i2c_shim (
+module i2c_controller_shim (
 
     input logic clk_i,
     input logic rst_ni,
@@ -14,7 +14,7 @@ module i2c_shim (
 );
 
   // I2C FSM`
-  xi2c i2c_fsm (
+  xi2c i2c_controller_fsm (
 
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -39,7 +39,8 @@ module i2c_shim (
       .fmt_flag_read_continue_i(),
       .fmt_flag_nak_ok_i       (),
 
-      .unhandled_unexp_nak_i(),  // TODO: ?
+      .unhandled_unexp_nak_i  (),  // TODO: ?
+      .unhandled_nak_timeout_i(),
 
       // RX data (can't backpressure)
       .rx_fifo_wvalid_o(),
@@ -82,13 +83,14 @@ module i2c_shim (
       .target_mask1_i   (),  // Irrelevant for host mode,
 
       // Host mode related events
-      .event_nak_o             (),
-      .event_scl_interference_o(),
-      .event_sda_interference_o(),
-      .event_stretch_timeout_o (),
-      .event_sda_unstable_o    (),
-      .event_cmd_complete_o    (),
-      .event_tx_stretch_o      ()
+      .event_nak_o                  (),
+      .event_unhandled_nak_timeout_o(),
+      .event_scl_interference_o     (),
+      .event_sda_interference_o     (),
+      .event_stretch_timeout_o      (),
+      .event_sda_unstable_o         (),
+      .event_cmd_complete_o         (),
+      .event_tx_stretch_o           ()
   );
 
 
