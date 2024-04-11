@@ -20,6 +20,7 @@ def main():
     )
     parser.add_argument("--linter", default="verible-verilog-lint", help="Tool")
     parser.add_argument("--root_dir", default="./src", help="Root of search")
+    parser.add_argument("--waiver_file", default="./violations.waiver", help="Path to the waiver file")
     args = parser.parse_args()
 
     """
@@ -57,7 +58,7 @@ def main():
     """
     if args.tool == "lint":
         verible_tool = "verible-verilog-lint "
-        verible_tool_opts = " --waiver_files=" + args.root_dir + "/violations.waiver "
+        verible_tool_opts = " --waiver_files=" + args.waiver_file
         verible_tool_opts += " --rules=line-length=length:100 "
         verible_tool_opts += " --autofix=inplace "
     if args.tool == "format":

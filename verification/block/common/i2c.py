@@ -86,10 +86,9 @@ async def i2c_mem_read(dut, i2c_addr, mem_addr, length=1):
     return res
 
 
-def init_i2c_ports(dut):
+def init_i2c_controller_ports(dut):
     # Drive constant DUT inputs
     dut.host_enable_i.value = 1
-    dut.target_enable_i.value = 0
 
     dut.thigh_i.value = 10
     dut.tlow_i.value = 10
@@ -108,17 +107,7 @@ def init_i2c_ports(dut):
     dut.timeout_enable_i.value = 0
 
     # Non-host signals
-    dut.host_timeout_i.value = 0
     dut.host_nack_handler_timeout_en_i.value = 0
-    dut.nack_timeout_en_i.value = 0
-
-    dut.target_address0_i.value = 0
-    dut.target_address1_i.value = 0
-    dut.target_mask0_i.value = 0
-    dut.target_mask1_i.value = 0
-
-    dut.tx_fifo_rvalid_i.value = 0
-    dut.tx_fifo_rdata_i.value = 0
 
     # Command/TX fifo
     dut.fmt_fifo_depth_i.value = 1
