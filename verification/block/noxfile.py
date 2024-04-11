@@ -160,7 +160,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
-@nox.parametrize("blockName", ["i2c_fsm"])
+@nox.parametrize("blockName", ["i2c_controller_fsm"])
 @nox.parametrize(
     "testName",
     [
@@ -168,7 +168,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
     ],
 )
 @nox.parametrize("coverage", None)
-def i2c_fsm_verify(session, blockName, testName, coverage):
+def i2c_controller_fsm_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
