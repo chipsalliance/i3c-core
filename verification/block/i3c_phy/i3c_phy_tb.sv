@@ -5,6 +5,12 @@
 
 module i3c_phy_tb
 ();
+`ifdef SIM
+  string simfile = {"dump_", `STRINGIFY(`SIM), ".vcd"};
+`else
+  string simfile = {"dump_rtl.vcd"};
+`endif
+
   // RTL instantiation --------------------------------------------------------
   logic clk_i;
   logic rst_ni;
@@ -47,7 +53,7 @@ module i3c_phy_tb
 
   // Initialize waveform dump
   initial begin
-    $dumpfile("dump_rtl.vcd");
+    $dumpfile(simfile);
     $dumpvars(0, i3c_phy_tb);
     #50 rst_ni = 1;
     #1000;

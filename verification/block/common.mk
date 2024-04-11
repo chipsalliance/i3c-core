@@ -59,7 +59,7 @@ ifneq ($(CFGDIR),)
 EXTRA_ARGS += -I$(CFGDIR)
 endif
 
-EXTRA_ARGS += $(COMMON_INCLUDES)
+EXTRA_ARGS += $(COMMON_INCLUDES) -DSIM=$(SIM)
 
 # Build directory
 ifneq ($(COVERAGE_TYPE),)
