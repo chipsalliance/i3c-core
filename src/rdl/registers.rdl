@@ -2,8 +2,8 @@
 
 `include "base_registers.rdl"
 `include "pio_registers.rdl"
-
-default regwidth = 32;
+`include "DAT_structure.rdl"
+`include "DCT_structure.rdl"
 
 addrmap I3CCSR #(
     bit PIO_offset = 0x100,
@@ -48,10 +48,12 @@ addrmap I3CCSR #(
         mementries = 128;
         memwidth = 64;
         sw = rw;
+        DAT_structure DAT_MEMORY [128];
     } external DAT @ DAT_offset;
     mem {
         mementries = 128;
         memwidth = 128;
         sw = rw;
+        DCT_structure DCT_MEMORY [128];
     } external DCT @ DCT_offset;
 };
