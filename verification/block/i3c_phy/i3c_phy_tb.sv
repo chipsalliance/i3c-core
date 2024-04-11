@@ -55,27 +55,49 @@ module i3c_phy_tb
   initial begin
     $dumpfile(simfile);
     $dumpvars(0, i3c_phy_tb);
-    #50 rst_ni = 1;
-    #1000;
-    $finish;
+    clk_i = 0;
+    rst_ni = 0;
+    scl_i = 1;
+    sda_i = 1;
+    ctrl_scl_i = 0;
+    ctrl_sda_i = 0;
   end
 
   // Set initial signal values
+  integer i;
   initial begin
-    clk_i = 0;
-    rst_ni = 0;
-    ctrl_scl_i = 1;
-    ctrl_sda_i = 1;
-    scl_i = 0;
-    sda_i = 0;
-    #200 if (scl_io !== 1'bz) $error($sformatf("Expected scl_io=1'bz, got scl_io=1'b%b", scl_io));
-    if (sda_io !== 1'bz) $error($sformatf("Expected sda_io=1'bz, got sda_io=1'b%b", sda_io));
+    for (i = 0; i < 3; i = i + 1) begin
+      #50 rst_ni = 1;
+      // Controller requesting 1, bus pulled to 0 (High-Z) externally
+      #50 ctrl_scl_i = 1;
+      ctrl_sda_i = 1;
+      scl_i = 0;
+      sda_i = 0;
+      #100 if (scl_io !== 1'bz) $error($sformatf("Expected scl_io=1'bz, got scl_io=1'b%b", scl_io));
+      if (sda_io !== 1'bz) $error($sformatf("Expected sda_io=1'bz, got sda_io=1'b%b", sda_io));
 
-    ctrl_scl_i = 0;
-    ctrl_sda_i = 0;
+      // Controller requesting 0, expected driven 0 on bus
+      ctrl_scl_i = 0;
+      ctrl_sda_i = 0;
+      #100 if (scl_io !== 1'b0) $error($sformatf("Expected scl_io=1'b0, got scl_io=1'b%b", scl_io));
+      if (sda_io !== 1'b0) $error($sformatf("Expected sda_io=1'b0, got sda_io=1'b%b", sda_io));
 
-    #200 if (scl_io !== 1'b0) $error($sformatf("Expected scl_io=1'b0, got scl_io=1'b%b", scl_io));
-    if (sda_io !== 1'b0) $error($sformatf("Expected sda_io=1'b0, got sda_io=1'b%b", sda_io));
+      // Controller requesting SDA=1, bus SDA pulled to 0 (High-Z) externally
+      ctrl_sda_i = 1;
+      sda_i = 0;
+      #100 if (scl_io !== 1'b0) $error($sformatf("Expected scl_io=1'b0, got scl_io=1'b%b", scl_io));
+      if (sda_io !== 1'bz) $error($sformatf("Expected sda_io=1'bz, got sda_io=1'b%b", sda_io));
+
+      // Bus SDA pulled to 1, expect 1 (High-Z)
+      sda_i = 1;
+      #100 if (scl_io !== 1'b0) $error($sformatf("Expected scl_io=1'b0, got scl_io=1'b%b", scl_io));
+      if (sda_io !== 1'bz) $error($sformatf("Expected sda_io=1'bz, got sda_io=1'b%b", sda_io));
+      #50 rst_ni = 0;
+      #100 ctrl_scl_i = 0;
+      ctrl_sda_i = 0;
+      #100;
+    end
+    $finish;
   end
 
   // Generate clock
