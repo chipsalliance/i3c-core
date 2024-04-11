@@ -13,27 +13,23 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_phy
 
-IVERILOG_SIMFILE = $(CURDIR)/i3c_phy/i3cPHYsim_iverilog
-VERILATOR_SIMFILE = $(CURDIR)/i3c_phy/i3cPHYsim_verilator
-PRIM_SV = $(wildcard $(SRCDIR)/prim/*.sv)
+SIMFILE = $(CURDIR)/i3c_phy/i3cPHYsim_$(SIM)
 
 VERILOG_SOURCES  = \
-    $(PRIM_SV) \
-    $(SRCDIR)/phy/i3c_phy_pkg.sv \
     $(SRCDIR)/phy/i3c_phy.sv
 
-IVERILOG_SOURCES = \
+RTL_TB_SOURCES = \
     $(SRCDIR)/phy/i3c_io.sv \
 	$(CURDIR)/i3c_phy/i3c_phy_tb.sv
 
 include $(CURDIR)/../common.mk
 
-iverilog-test:
-	iverilog -g2012 -o $(IVERILOG_SIMFILE) $(VERILOG_SOURCES) $(IVERILOG_SOURCES)
-	$(IVERILOG_SIMFILE)
+icarus-test:
+	iverilog -g2012 -o $(SIMFILE) $(EXTRA_ARGS) $(VERILOG_SOURCES) $(RTL_TB_SOURCES)
+	$(SIMFILE)
 
 verilator-test:
-	verilator -cc --timing --binary --trace -o $(VERILATOR_SIMFILE) $(VERILOG_SOURCES) $(IVERILOG_SOURCES)
-	$(VERILATOR_SIMFILE)
+	verilator -cc --timing --binary -o $(SIMFILE) $(EXTRA_ARGS) $(VERILOG_SOURCES) $(RTL_TB_SOURCES)
+	$(SIMFILE)
 
 .PHONY: iverilog-test verilator-test

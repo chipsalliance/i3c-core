@@ -5,6 +5,10 @@ SHELL = /bin/bash
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRC_DIR := $(ROOT_DIR)/src
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
+THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
+CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
+
+export CALIPTRA_ROOT
 
 # Ensure `make test` is called with `TEST` flag set
 ifeq ($(MAKECMDGOALS), test)
@@ -32,6 +36,7 @@ tests: ## Run all RTL tests
 
 clean: ## Clean all generated sources
 	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
+	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 
 generate: deps ## Generate I3C SystemVerilog registers from SystemRDL definition

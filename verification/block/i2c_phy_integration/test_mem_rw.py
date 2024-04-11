@@ -14,8 +14,13 @@ async def run_test(dut):
     """
 
     # I2C target
-    I2cMemory(sda=dut.sda_o, sda_o=dut.sda_i, scl=dut.scl_o, scl_o=dut.scl_i)
+    I2cMemory(sda=dut.ctrl_sda_o, sda_o=dut.ctrl_sda_i, scl=dut.ctrl_scl_o, scl_o=dut.ctrl_scl_i)
 
+    # Mock PHY I3C bus pull-up
+    dut.i3c_sda_i.value = 1
+    dut.i3c_scl_i.value = 1
+
+    # Drive constant DUT inputs
     init_i2c_ports(dut)
 
     # Start clock
