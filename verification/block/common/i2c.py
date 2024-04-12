@@ -118,7 +118,7 @@ def init_i2c_controller_ports(dut):
 
 async def reset(dut):
     dut.rst_ni.value = 0
-    await ClockCycles(dut.clk_i, 2)
+    await ClockCycles(dut.clk_i, 100)
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)
