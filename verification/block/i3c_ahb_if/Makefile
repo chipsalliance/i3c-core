@@ -16,6 +16,7 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/i3c_ahb_if_pkg.sv \
     $(SRCDIR)/i3c_ahb_if.sv \
     $(SRCDIR)/../rdl/generate/I3CCSR_pkg.sv \
-    $(SRCDIR)/../rdl/generate/I3CCSR.sv
+    $(SRCDIR)/../rdl/generate/I3CCSR.sv \
+    $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv
 
 include $(CURDIR)/../common.mk
