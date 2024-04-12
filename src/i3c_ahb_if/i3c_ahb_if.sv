@@ -88,6 +88,8 @@ module i3c_ahb_if
     end
   end
 
+  import I3CCSR_pkg::I3CCSR__in_t;
+  import I3CCSR_pkg::I3CCSR__out_t;
 
   logic i3c_req_dv, i3c_req_hld;
   logic i3c_req_err, i3c_req_write;
