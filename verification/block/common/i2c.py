@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
-from cocotb.triggers import RisingEdge
+from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
+
+I3C_PHY_DELAY = 2
 
 
 async def i2c_cmd(dut, data, sta_before=False, sto_after=False, read=False, cont=False, ack=True):
@@ -112,3 +114,11 @@ def init_i2c_controller_ports(dut):
     # Command/TX fifo
     dut.fmt_fifo_depth_i.value = 1
     dut.fmt_fifo_rvalid_i.value = 0
+
+
+async def reset(dut):
+    dut.rst_ni.value = 0
+    await ClockCycles(dut.clk_i, 2)
+    await FallingEdge(dut.clk_i)
+    dut.rst_ni.value = 1
+    await ClockCycles(dut.clk_i, 2)
