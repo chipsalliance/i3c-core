@@ -22,7 +22,7 @@ module i3c_ahb_if
     // Data for the write operation
     input  logic [ AHB_DATA_WIDTH-1:0] hwdata,
     // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [ AHB_DATA_WIDTH-1:0] hwstrb,
+    input  logic [ AHB_DATA_WIDTH/8-1:0] hwstrb,
     // Indicates write operation when asserted
     input  logic                       hwrite,
     // Read data
