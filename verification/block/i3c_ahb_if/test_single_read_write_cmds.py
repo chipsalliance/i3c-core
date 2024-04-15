@@ -133,7 +133,15 @@ class AHBFIFOTestInterface:
         self.AHBManager.read(addr, 4)
         # TODO: Make await dependent on clock cycles; throw error with timeouts
         await self.AHBManager.transfer_done()
-        return self.AHBManager.get_rsp(addr, 4)
+        read = self.AHBManager.get_rsp(addr, 4)
+        print(f"read0: {read}")
+        self.AHBManager.write(addr, 4, [0xd, 0xe, 0xa, 0xd], [0xf, 0xf, 0xf, 0xf])
+        await self.AHBManager.transfer_done()  # what a silly way
+        self.AHBManager.read(addr, 4)
+        await self.AHBManager.transfer_done()
+        read = self.AHBManager.get_rsp(addr, 4)
+        print(f"read1: {read}")
+        return read
 
     # Send a write request & await transfer to finish
     async def write_csr(self, addr: int, data: int, strb: Array[bool] = [1, 1, 1, 1]) -> None:
@@ -159,9 +167,11 @@ async def run_read_hci_version_csr(dut: SimHandleBase):
     await tb.register_test_interfaces()
 
     addr = 0x0
-    expected = 0x120
+    expected = [0x1, 0x2, 0x0]
 
     read_value = await tb.read_csr(addr)
+    for cmd in tb.AHBManager.commands:
+        print(cmd, '\n')
     compare_values(None, expected, read_value, addr)
 
 
