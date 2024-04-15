@@ -132,8 +132,14 @@ module i3c_ahb_if
 
   I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
+  logic i3c_csr_rd_err, i3c_csr_wr_err;
+  logic i3c_csr_rd_hld, i3c_csr_wr_hld;
+  logic i3c_ignored_pin;
+  always_comb begin : I3CSR2AHB
+    i3c_req_err = i3c_csr_rd_err | i3c_csr_wr_err;
+    i3c_req_hld = i3c_req_write ? i3c_csr_wr_hld : i3c_csr_rd_hld;
+  end
 
-  // TODO: Connect missing
   I3CCSR i3c_csr (
       .clk(hclk_i),
       .rst(hreset_n_i),
@@ -143,13 +149,13 @@ module i3c_ahb_if
       .s_cpuif_addr(i3c_req_addr[31:0]),
       .s_cpuif_wr_data(i3c_req_wdata),
       .s_cpuif_wr_biten('1),  // Write strobes not handled by AHB-Lite interface
-      .s_cpuif_req_stall_wr(),
-      .s_cpuif_req_stall_rd(),
-      .s_cpuif_rd_ack(),
-      .s_cpuif_rd_err(i3c_req_err),
-      .s_cpuif_rd_data(),
-      .s_cpuif_wr_ack(),
-      .s_cpuif_wr_err(),
+      .s_cpuif_req_stall_wr(i3c_csr_wr_hld),
+      .s_cpuif_req_stall_rd(i3c_csr_rd_hld),
+      .s_cpuif_rd_ack(i3c_ignored_pin),  // Ignored by AHB component
+      .s_cpuif_rd_err(i3c_csr_rd_err),
+      .s_cpuif_rd_data(i3c_req_rdata),
+      .s_cpuif_wr_ack(i3c_ignored_pin),  // Ignored by AHB component
+      .s_cpuif_wr_err(i3c_csr_wr_err),
 
       .hwif_in (hwif_in),
       .hwif_out(hwif_out)
