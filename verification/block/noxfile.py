@@ -170,7 +170,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
         "test_single_read_write_cmds",
     ],
 )
-@nox.parametrize("coverage", "")
+@nox.parametrize("coverage", None)
 def i3c_ahb_if_verify(session, blockName, testName, coverage):
     rootPath = os.path.join(blockPath, "../../")
     session.run("make", "-C", rootPath, "generate")  # AHB interface requires CSRs generated
