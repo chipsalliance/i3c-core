@@ -1,18 +1,20 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from asyncio import TimeoutError, wait_for
 from ctypes import Array
+from random import randint, randrange
 from typing import List, Tuple
-from asyncio import wait_for, TimeoutError
 
 import cocotb  # type: ignore
+from cocotb.clock import Clock  # type: ignore
 from cocotb.handle import SimHandle, SimHandleBase  # type: ignore
 from cocotb.triggers import ClockCycles, RisingEdge, Timer  # type: ignore
-from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper  # type: ignore
-from cocotb.clock import Clock  # type: ignore
+from cocotb_AHB.AHB_common.InterconnectInterface import (  # type: ignore
+    InterconnectWrapper,
+)
 from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate  # type: ignore
 from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager  # type: ignore
 from cocotb_AHB.interconnect.SimInterconnect import SimInterconnect  # type: ignore
-from random import randrange, randint
 
 
 class WriteCmd:
