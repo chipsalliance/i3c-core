@@ -13,10 +13,10 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_ahb_if
 
 VERILOG_SOURCES  = \
-    $(SRCDIR)/i3c_ahb_if_pkg.sv \
-    $(SRCDIR)/i3c_ahb_if.sv \
+    $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
     $(SRCDIR)/../rdl/generate/I3CCSR_pkg.sv \
     $(SRCDIR)/../rdl/generate/I3CCSR.sv \
-    $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv
+    $(SRCDIR)/i3c_ahb_if_pkg.sv \
+    $(SRCDIR)/i3c_ahb_if.sv
 
 include $(CURDIR)/../common.mk
