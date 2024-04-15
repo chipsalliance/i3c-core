@@ -34,38 +34,7 @@ module i3c_ahb_if
     // Indicates the subordinate is selected for the transfer
     input  logic                        hsel,
     // Indicates all subordiantes have finished transfers
-    input  logic                        hready,
-
-    // CSR-access-interface
-    // REQUEST
-    // When asserted, a read or write transfer is initiated
-    // Indicates addr, req_is_wr and wr_data valid
-    output wire        s_cpuif_req,
-    // Byte address of the transfer
-    output wire [11:0] s_cpuif_addr,
-    // If 1, incomming transfer is write, otherwise read
-    output wire        s_cpuif_req_is_wr,
-    // Write data for the transfer
-    output wire [31:0] s_cpuif_wr_data,
-    // Active-high bit-level-write-enable strobes
-    // Only asserted positions will change the register value
-    output wire [31:0] s_cpuif_wr_biten,
-    // If asserted and the next operation is read, the transfer will not be accepted until deasserted
-    input  wire        s_cpuif_req_stall_wr,
-    // If asserted and the next operation is write, the transfer will not be accepted until deasserted
-    input  wire        s_cpuif_req_stall_rd,
-    // READ RESPONSE
-    // If asserted, indicates completed transfer and rd_err & rd_data valid
-    input  wire        s_cpuif_rd_ack,
-    // If asserted, an error occured during the read transfer
-    input  wire        s_cpuif_rd_err,
-    // Read data
-    input  wire [31:0] s_cpuif_rd_data,
-    // WRITE RESPONSE
-    // If asserted, indicates completed transfer and wr_err valid
-    input  wire        s_cpuif_wr_ack,
-    // If asserted, an error occured during the write transfer
-    input  wire        s_cpuif_wr_err
+    input  logic                        hready
 );
 
   // Check configuration
