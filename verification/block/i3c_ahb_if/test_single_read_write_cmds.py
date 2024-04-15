@@ -144,12 +144,15 @@ async def write_csr(manager, addr: int, data: int, strb: Array[bool]) -> None:
     try:
         await wait_for(manager.transfer_done(), timeout=5)
     except Exception:
-        raise TimeoutError(f"write_csr {hex(data)} @ {hex(addr)} unsuccessfull: Operation timeout exceeded.")
+        raise TimeoutError(
+            f"write_csr {hex(data)} @ {hex(addr)} unsuccessfull: Operation timeout exceeded."
+        )
 
 
 def compare_values(before: List[int], expected: List[int], after: List[int], addr: int):
-    assert all([expected[i] == after[i] for i in range(len(expected))]
-               ), f"Word at {addr:#x} differs. Expected: {printable(expected)} Got: {printable(after)}"
+    assert all(
+        [expected[i] == after[i] for i in range(len(expected))]
+    ), f"Word at {addr:#x} differs. Expected: {printable(expected)} Got: {printable(after)}"
 
 
 @cocotb.test()
@@ -179,7 +182,7 @@ async def run_test(dut: SimHandleBase):
 
     await cocotb.start(AHBManager.start())
     await cocotb.start(wrapper.start())
-    await cocotb.start(setup_dut(dut, (10, 'ns')))
+    await cocotb.start(setup_dut(dut, (10, "ns")))
     # Reference each CSR in the address space in a random order
     # and a random value for write.
     # test_sequence = gen_rand_seq()
