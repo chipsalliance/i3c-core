@@ -70,15 +70,15 @@ module i3c_ahb_if
 
   // Check configuration
   initial begin
-    if (!(AHB_ADDR_WIDTH >= 10 && AHB_ADDR_WIDTH <= 64)) begin
+    if (!(AHB_ADDR_WIDTH >= 10 && AHB_ADDR_WIDTH <= 64)) begin : ahb_addr_w_oob
       $error("ERROR: Violated requirement: 10 <= AHB_ADDR_WIDTH <= 64 (instance %m)");
       $finish;
     end
-    if (!(AHB_DATA_WIDTH inside {32, 64, 128, 256})) begin
+    if (!(AHB_DATA_WIDTH inside {32, 64, 128, 256})) begin : ahb_data_w_oob
       $error("ERROR: AHB_DATA_WIDTH is required to be one of {32, 64, 128, 256} (instance %m)");
       $finish;
     end
-    if (!(AHB_BURST_WIDTH >= 0 && AHB_BURST_WIDTH <= 3)) begin
+    if (!(AHB_BURST_WIDTH >= 0 && AHB_BURST_WIDTH <= 3)) begin : ahb_burst_w_oob
       $error("ERROR: Violated requirement: 0 <= AHB_BURST_WIDTH <= 3 (instance %m)");
       $finish;
     end
@@ -131,7 +131,7 @@ module i3c_ahb_if
   logic i3c_csr_rd_err, i3c_csr_wr_err;
   logic i3c_csr_rd_hld, i3c_csr_wr_hld;
   logic i3c_ignored_pin;
-  always_comb begin : I3CSR2AHB
+  always_comb begin : ahb_2_i3c_comp
     i3c_req_err = i3c_csr_rd_err | i3c_csr_wr_err;
     i3c_req_hld = i3c_req_write ? i3c_csr_wr_hld : i3c_csr_rd_hld;
   end
