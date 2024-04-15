@@ -3,10 +3,6 @@
 module i3c_ahb_if
   import i3c_ahb_if_pkg::*;
 #(
-    // Data width of the CSR-access interface
-    parameter int unsigned CLIENT_DATA_WIDTH = 32,
-    // Address width of the CSR-access interface
-    parameter int unsigned CLIENT_ADDR_WIDTH = AHB_ADDR_WIDTH
 ) (
     // TODO: AHB module from cocotb assumes the signals not end with _i, _o
     // Either create a wrapper in the test interface of stick to `classic` names
