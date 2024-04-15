@@ -7,34 +7,34 @@ module i3c_ahb_if
     // TODO: AHB module from cocotb assumes the signals not end with _i, _o
     // Either create a wrapper in the test interface of stick to `classic` names
     // AHB-Lite interface
-    input  logic                       hclk_i,
-    input  logic                       hreset_n_i,
+    input  logic                        hclk_i,
+    input  logic                        hreset_n_i,
     // Byte address of the transfer
-    input  logic [ AHB_ADDR_WIDTH-1:0] haddr,
+    input  logic [  AHB_ADDR_WIDTH-1:0] haddr,
     // Indicates the number of bursts in a transfer
-    input  logic [AHB_BURST_WIDTH-1:0] hburst,
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst,
     // Protection control; provides information on the access type
-    input  logic [                3:0] hprot,
+    input  logic [                 3:0] hprot,
     // Indicates the size of the transfer
-    input  logic [                2:0] hsize,
+    input  logic [                 2:0] hsize,
     // Indicates the transfer type
-    input  logic [                1:0] htrans,
+    input  logic [                 1:0] htrans,
     // Data for the write operation
-    input  logic [ AHB_DATA_WIDTH-1:0] hwdata,
+    input  logic [  AHB_DATA_WIDTH-1:0] hwdata,
     // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [ AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
     // Indicates write operation when asserted
-    input  logic                       hwrite,
+    input  logic                        hwrite,
     // Read data
-    output logic [ AHB_DATA_WIDTH-1:0] hrdata,
+    output logic [  AHB_DATA_WIDTH-1:0] hrdata,
     // Assrted indicates a finished transfer; Can be driven low to extend a transfer
-    output logic                       hreadyout,
+    output logic                        hreadyout,
     // Transfer response, high when error occured
-    output logic                       hresp,
+    output logic                        hresp,
     // Indicates the subordinate is selected for the transfer
-    input  logic                       hsel,
+    input  logic                        hsel,
     // Indicates all subordiantes have finished transfers
-    input  logic                       hready,
+    input  logic                        hready,
 
     // CSR-access-interface
     // REQUEST
