@@ -92,6 +92,8 @@ def init_i2c_controller_ports(dut):
     # Drive constant DUT inputs
     dut.host_enable_i.value = 1
 
+    # TODO: Calculate timing values compatible with specification:
+    #       https://opentitan.org/book/hw/ip/i2c/doc/programmers_guide.html
     dut.thigh_i.value = 10
     dut.tlow_i.value = 10
     dut.t_r_i.value = 1
