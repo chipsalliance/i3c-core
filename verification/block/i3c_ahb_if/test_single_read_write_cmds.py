@@ -161,6 +161,11 @@ def compare_values(before: List[int], expected: List[int], after: List[int], add
     ), f"Word at {addr:#x} differs. Expected: {printable(expected)} Got: {printable(after)}"
 
 
+def int_to_ahb_data(value: int, byte_width=4) -> List[int]:
+    assert (log2(value) <= byte_width * 8)
+    return [(value >> (b * 8)) & 0xff for b in range(byte_width)]
+
+
 @cocotb.test()
 async def run_read_hci_version_csr(dut: SimHandleBase):
     """Run test to read HCI version register."""
