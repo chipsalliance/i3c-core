@@ -1,0 +1,4 @@
+[c-header]
+std = "gnu17"
+type_style = "hier"
+

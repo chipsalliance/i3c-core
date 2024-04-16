@@ -4,6 +4,7 @@
 SHELL = /bin/bash
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRC_DIR := $(ROOT_DIR)/src
+SW_DIR := $(ROOT_DIR)/sw
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
@@ -39,13 +40,24 @@ clean: ## Clean all generated sources
 	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 
+#
+# SystemRDL
+#
+PEAKRDL_CFG := $(SRC_DIR)/rdl/peakrdl.toml
+RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
+RDL_GEN_DIR := $(SRC_DIR)/csr/
+export PEAKRDL_CFG
 generate: deps ## Generate I3C SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock src/rdl/registers.rdl -o src/rdl/generate/ --cpuif passthrough
-	python -m peakrdl html src/rdl/registers.rdl -o src/rdl/html/
+	python -m peakrdl regblock $(RDL_REGS) -o $(RDL_GEN_DIR) --cpuif passthrough
+	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h
+
+generate-docs: deps ## Generate documentation from SystemRDL definition
+	python -m peakrdl html $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
+	python -m peakrdl markdown $(RDL_REGS) -o $(RDL_GEN_DIR)/md/documentation.md
 
 generate-example: deps ## Generate example SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock src/rdl/example.rdl -o src/rdl/generate/ --cpuif passthrough
-	python -m peakrdl html src/rdl/example.rdl -o src/rdl/html/
+	python -m peakrdl regblock src/rdl/example.rdl -o $(RDL_GEN_DIR) --cpuif passthrough
+	python -m peakrdl html src/rdl/example.rdl -o $(RDL_GEN_DIR)/html/
 
 deps: ## Install python dependencies
 	pip install -r requirements.txt
