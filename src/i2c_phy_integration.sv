@@ -11,15 +11,16 @@ module i2c_phy_integration
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    input        ctrl_scl_i,  // serial clock input from i2c fsm
-    output logic ctrl_scl_o,  // serial clock output to i2c fsm
-    input        ctrl_sda_i,  // serial data input from i2c fsm
-    output logic ctrl_sda_o,  // serial data output to i2c fsm
+    inout        i3c_scl_io,  // serial clock inout to/from i3c bus
+    inout        i3c_sda_io,  // serial data inout to/from i3c bus
 
     input        i3c_scl_i,  // serial clock input from i3c bus
     output logic i3c_scl_o,  // serial clock output to i3c bus
+    output logic i3c_scl_en_o,  // serial clock output to i3c bus
+
     input        i3c_sda_i,  // serial data input from i3c bus
     output logic i3c_sda_o,  // serial data output to i3c bus
+    output logic i3c_sda_en_o,  // serial data output to i3c bus
 
     input host_enable_i,  // enable host functionality
 
@@ -65,46 +66,95 @@ module i2c_phy_integration
 );
 
   // IOs between PHY and I3C bus
-  logic scl_io;
   logic scl_o;
   logic scl_en_o;
 
-  logic sda_io;
   logic sda_o;
   logic sda_en_o;
 
-  // Internal signals to communicate FSM with PHY
-  logic ctrl_scl_int;
-  logic ctrl_sda_int;
+  logic ctrl2phy_scl;
+  logic phy2ctrl_scl;
+  logic ctrl2phy_sda;
+  logic phy2ctrl_sda;
 
   i2c_controller_fsm i2c_controller_fsm (
-      .scl_i(ctrl_scl_i),
-      .scl_o(ctrl_scl_int),
-      .sda_i(ctrl_sda_i),
-      .sda_o(ctrl_sda_int),
-      .*
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+
+      .scl_i(phy2ctrl_scl),
+      .scl_o(ctrl2phy_scl),
+      .sda_i(phy2ctrl_sda),
+      .sda_o(ctrl2phy_sda),
+
+      .host_enable_i(host_enable_i),
+
+      .fmt_fifo_rvalid_i(fmt_fifo_rvalid_i),
+      .fmt_fifo_depth_i(fmt_fifo_depth_i),
+      .fmt_fifo_rready_o(fmt_fifo_rready_o),
+      .fmt_byte_i(fmt_byte_i),
+      .fmt_flag_start_before_i(fmt_flag_start_before_i),
+      .fmt_flag_stop_after_i(fmt_flag_stop_after_i),
+      .fmt_flag_read_bytes_i(fmt_flag_read_bytes_i),
+      .fmt_flag_read_continue_i(fmt_flag_read_continue_i),
+      .fmt_flag_nak_ok_i(fmt_flag_nak_ok_i),
+      .unhandled_unexp_nak_i(unhandled_unexp_nak_i),
+      .unhandled_nak_timeout_i(unhandled_nak_timeout_i),
+
+      .rx_fifo_wvalid_o(rx_fifo_wvalid_o),
+      .rx_fifo_wdata_o(rx_fifo_wdata_o),
+
+      .host_idle_o(host_idle_o),
+
+      .thigh_i(thigh_i),
+      .tlow_i(tlow_i),
+      .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
+      .thd_sta_i(thd_sta_i),
+      .tsu_sta_i(tsu_sta_i),
+      .tsu_sto_i(tsu_sto_i),
+      .tsu_dat_i(tsu_dat_i),
+      .thd_dat_i(thd_dat_i),
+      .t_buf_i(t_buf_i),
+      .stretch_timeout_i(stretch_timeout_i),
+      .timeout_enable_i(timeout_enable_i),
+      .host_nack_handler_timeout_i(host_nack_handler_timeout_i),
+      .host_nack_handler_timeout_en_i(host_nack_handler_timeout_en_i),
+
+      .event_nak_o(event_nak_o),
+      .event_unhandled_nak_timeout_o(event_unhandled_nak_timeout_o),
+      .event_scl_interference_o(event_scl_interference_o),
+      .event_sda_interference_o(event_sda_interference_o),
+      .event_stretch_timeout_o(event_stretch_timeout_o),
+      .event_sda_unstable_o(event_sda_unstable_o),
+      .event_cmd_complete_o(event_cmd_complete_o)
   );
 
   i3c_phy phy (
-      .ctrl_scl_i(ctrl_scl_int),
-      .ctrl_sda_i(ctrl_sda_int),
-      .ctrl_scl_o(ctrl_scl_o),
-      .ctrl_sda_o(ctrl_sda_o),
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),
+      .scl_en_o(i3c_scl_en_o),
+
       .sda_i(i3c_sda_i),
       .sda_o(i3c_sda_o),
-      .*
+      .sda_en_o(i3c_sda_en_o),
+
+      .ctrl_scl_i(ctrl2phy_scl),
+      .ctrl_scl_o(phy2ctrl_scl),
+      .ctrl_sda_i(ctrl2phy_sda),
+      .ctrl_sda_o(phy2ctrl_sda)
   );
 
   i3c_io phy_io (
-      .scl_io(scl_io),
+      .scl_io(i3c_scl_io),
       .scl_i(i3c_scl_o),
-      .scl_en_i(scl_en_o),
+      .scl_en_i(i3c_scl_en_o),
 
-      .sda_io(sda_io),
+      .sda_io(i3c_sda_io),
       .sda_i(i3c_sda_o),
-      .sda_en_i(sda_en_o)
+      .sda_en_i(i3c_sda_en_o)
   );
 
 endmodule
