@@ -60,9 +60,9 @@ def gen_rand_seq(start: int = 0, end: int = 0x4000, size: int = 4):
     """
     seq = [
         WriteCmd(
-            randrange(0, 0x4000, 4),
-            [randint(0, 255) for _ in range(4)],
-            [bool(randint(0, 1)) for _ in range(4)],
+            randrange(0, 0x4000, size),
+            [randint(0, 255) for _ in range(size)],
+            [bool(randint(0, 1)) for _ in range(size)],
         )
         for _ in range(0x1000)
     ]
