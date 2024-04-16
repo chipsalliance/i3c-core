@@ -62,6 +62,9 @@ generate-example: deps ## Generate example SystemVerilog registers from SystemRD
 deps: ## Install python dependencies
 	pip install -r requirements.txt
 
+timings:
+	python tools/timing/timing.py
+
 .PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps
 
 
