@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-from ctypes import Array
+from math import log2
 from random import randint, randrange
 from typing import List, Tuple
 
@@ -86,7 +86,6 @@ def printable(data: List[int]):
     """
     Converts a list of ints into singular int value.
     """
-    assert len(data) == 4
     return int("".join(map(str, data)))
 
 
@@ -115,7 +114,6 @@ class AHBFIFOTestInterface:
 
     async def register_test_interfaces(self):
         # Clocks & resets
-        # self.AHBSubordinate.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
         self.AHBManager.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
         self.interconnect.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
         self.wrapper.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
@@ -130,23 +128,18 @@ class AHBFIFOTestInterface:
         await cocotb.start(self.wrapper.start())
         await cocotb.start(setup_dut(self.dut, (10, "ns")))
 
-    # Send a read request & await the response
-    async def read_csr(self, addr: int) -> int:
-        self.AHBManager.read(addr, 4)
+    async def read_csr(self, addr: int) -> List[int]:
+        """Send a read request & await the response."""
+        self.AHBManager.read(addr, self.data_byte_width)
         # TODO: Make await dependent on clock cycles; throw error with timeouts
         await self.AHBManager.transfer_done()
-        read = self.AHBManager.get_rsp(addr, 4)
-        print(f"read0: {read}")
-        self.AHBManager.write(addr, 4, [0xd, 0xe, 0xa, 0xd], [0xf, 0xf, 0xf, 0xf])
-        await self.AHBManager.transfer_done()  # what a silly way
-        self.AHBManager.read(addr, 4)
-        await self.AHBManager.transfer_done()
-        read = self.AHBManager.get_rsp(addr, 4)
-        print(f"read1: {read}")
+        read = self.AHBManager.get_rsp(addr, self.data_byte_width)
         return read
 
-    # Send a write request & await transfer to finish
-    async def write_csr(self, addr: int, data: int, strb: Array[bool] = [1, 1, 1, 1]) -> None:
+    async def write_csr(self, addr: int, data: List[int], size: int) -> None:
+        """Send a write request & await transfer to finish."""
+        # Write strobe is not supported by DUT's AHB-Lite; enable all bytes
+        strb = [1 for _ in range(size)]
         self.AHBManager.write(addr, len(strb), data, strb)
         # TODO: Make await dependent on clock cycles
         await self.AHBManager.transfer_done()
@@ -174,30 +167,58 @@ async def run_read_hci_version_csr(dut: SimHandleBase):
     await tb.register_test_interfaces()
 
     addr = 0x0
-    expected = [0x1, 0x2, 0x0]
+    expected = int_to_ahb_data(0x120, 4)
 
     read_value = await tb.read_csr(addr)
-    for cmd in tb.AHBManager.commands:
-        print(cmd, '\n')
     compare_values(None, expected, read_value, addr)
 
 
 @cocotb.test()
-async def run_test(dut: SimHandleBase):
-    """Run test for mixed random read / write CSR commands."""
+async def run_read_pio_section_offset(dut: SimHandleBase):
+    """Run test to read PIO section offset register."""
 
     tb = AHBFIFOTestInterface(dut)
     await tb.register_test_interfaces()
 
-    # Reference each CSR in the address space in a random order
-    # and a random value for write.
-    test_sequence = gen_rand_seq()
+    addr = 0x3c
+    expected = int_to_ahb_data(0x100, 4)
 
-    for cmd in test_sequence:
-        addr, val, strb = cmd.to_tuple()
-        value_before_write = await tb.read_csr(addr)
-        await tb.write_csr(addr, val, strb)
-        value_after_write = await tb.read_csr(addr)
-        compare_values(value_before_write, val, value_after_write, addr)
+    read_value = await tb.read_csr(addr)
+    compare_values(None, expected, read_value, addr)
 
-    # TODO: Compare the whole address space (in case adjacent bytes have been overwritten)
+
+@cocotb.test()
+async def run_write_to_controller_device_addr(dut: SimHandleBase):
+    """Run test to write to IBI data control."""
+
+    tb = AHBFIFOTestInterface(dut)
+    await tb.register_test_interfaces()
+
+    addr = 0x8
+    wdata = int_to_ahb_data(0xffffffff, 4)  # TODO: Investigate writes
+
+    _ = await tb.write_csr(addr, wdata, 4)
+    # Read the CSR to validate the data
+    resp = await tb.read_csr(addr)
+    compare_values(None, wdata, resp, addr)
+
+
+# @cocotb.test()
+# async def run_test(dut: SimHandleBase):
+#     """Run test for mixed random read / write CSR commands."""
+
+#     tb = AHBFIFOTestInterface(dut)
+#     await tb.register_test_interfaces()
+
+#     # Reference each CSR in the address space in a random order
+#     # and a random value for write.
+#     test_sequence = gen_rand_seq(size=tb.data_byte_width)
+
+#     for cmd in test_sequence:
+#         addr, val, strb = cmd.to_tuple()
+#         value_before_write = await tb.read_csr(addr)
+#         await tb.write_csr(addr, val)
+#         value_after_write = await tb.read_csr(addr)
+#         compare_values(value_before_write, val, value_after_write, addr)
+
+#     # TODO: Compare the whole address space (in case adjacent bytes have been overwritten)
