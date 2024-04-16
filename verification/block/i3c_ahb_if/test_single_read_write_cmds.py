@@ -96,14 +96,16 @@ class AHBFIFOTestInterface:
     common functionalities, such as read / write to CSR.
     """
 
-    def __init__(self, dut: SimHandleBase):
+    def __init__(self, dut: SimHandleBase, data_width=64):
         self.dut = dut
+        self.data_width = data_width
+        self.data_byte_width = data_width // 8
 
         # FIFO AHB Frontend
-        self.AHBSubordinate = DUTSubordinate(dut, bus_width=32)
+        self.AHBSubordinate = DUTSubordinate(dut, bus_width=data_width)
 
         # Simulated AHB in control of dispatching commands
-        self.AHBManager = SimSimpleManager(bus_width=32)
+        self.AHBManager = SimSimpleManager(bus_width=data_width)
 
         # Cocotb-ahb-specific construct for simulation purposes
         self.interconnect = SimInterconnect()
