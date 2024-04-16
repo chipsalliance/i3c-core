@@ -99,15 +99,17 @@ module i3c_ahb_if
   I3CCSR__out_t hwif_out;
   logic i3c_csr_rd_err, i3c_csr_wr_err;
   logic i3c_csr_rd_hld, i3c_csr_wr_hld;
+  logic i3c_csr_rst;
   logic i3c_ignored_pin;
   always_comb begin : ahb_2_i3c_comp
     i3c_req_err = i3c_csr_rd_err | i3c_csr_wr_err;
     i3c_req_hld = i3c_req_write ? i3c_csr_wr_hld : i3c_csr_rd_hld;
+    i3c_csr_rst = ~hreset_n_i;
   end
 
   I3CCSR i3c_csr (
       .clk(hclk_i),
-      .rst(hreset_n_i),
+      .rst(i3c_csr_rst),
 
       .s_cpuif_req(i3c_req_dv),
       .s_cpuif_req_is_wr(i3c_req_write),
