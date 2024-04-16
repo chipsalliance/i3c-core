@@ -13,8 +13,8 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i2c_phy_integration_wrapper
 
 VERILOG_SOURCES  = \
-    $(SRCDIR)/i2c/i2c_pkg.sv \
-    $(SRCDIR)/i2c/i2c_controller_fsm.sv \
+    $(SRCDIR)/ctrl/i2c_pkg.sv \
+    $(SRCDIR)/ctrl/i2c_controller_fsm.sv \
     $(SRCDIR)/phy/i3c_io.sv \
     $(SRCDIR)/phy/i3c_phy.sv \
     $(SRCDIR)/i2c_phy_integration.sv \

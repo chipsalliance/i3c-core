@@ -13,7 +13,7 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i2c_controller_fsm
 
 VERILOG_SOURCES  = \
-    $(SRCDIR)/i2c/i2c_pkg.sv \
-    $(SRCDIR)/i2c/i2c_controller_fsm.sv
+    $(SRCDIR)/ctrl/i2c_pkg.sv \
+    $(SRCDIR)/ctrl/i2c_controller_fsm.sv
 
 include $(CURDIR)/../common.mk
