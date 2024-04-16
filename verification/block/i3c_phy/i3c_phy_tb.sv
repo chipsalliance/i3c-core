@@ -3,8 +3,7 @@
 
 `timescale 1ns / 1ps
 
-module i3c_phy_tb
-();
+module i3c_phy_tb ();
 `ifdef SIM
   string simfile = {"dump_", `STRINGIFY(`SIM), ".vcd"};
 `else

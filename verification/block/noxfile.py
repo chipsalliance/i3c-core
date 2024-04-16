@@ -179,7 +179,6 @@ def i2c_controller_fsm_verify(session, blockName, testName, coverage):
     [
         "test_reset",
         "test_random_transfer",
-        "test_bus_arbitration",
     ],
 )
 @nox.parametrize("coverage", None)

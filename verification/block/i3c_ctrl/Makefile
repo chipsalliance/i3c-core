@@ -6,7 +6,7 @@ space := $(null) #
 comma := ,
 
 CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-SRCDIR := $(abspath $(CURDIR)../../../../src/i3c_ctrl)
+SRCDIR := $(abspath $(CURDIR)../../../../src/ctrl)
 
 TEST_FILES   = $(sort $(wildcard test_*.py))
 

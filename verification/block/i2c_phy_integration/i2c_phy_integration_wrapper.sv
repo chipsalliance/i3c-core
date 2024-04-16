@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module i2c_phy_integration
+module i2c_phy_integration_wrapper
   import i2c_pkg::*;
 #(
     parameter int FifoDepth = 64,
@@ -10,9 +10,6 @@ module i2c_phy_integration
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
-
-    inout        i3c_scl_io,  // serial clock inout to/from i3c bus
-    inout        i3c_sda_io,  // serial data inout to/from i3c bus
 
     input        i3c_scl_i,  // serial clock input from i3c bus
     output logic i3c_scl_o,  // serial clock output to i3c bus
@@ -63,28 +60,28 @@ module i2c_phy_integration
     output logic event_stretch_timeout_o,        // target stretches clock past max time
     output logic event_sda_unstable_o,           // SDA is not constant during SCL pulse
     output logic event_cmd_complete_o            // Command is complete
+
 );
+  logic i3c_scl_int_o;
+  logic i3c_sda_int_o;
 
-  // IOs between PHY and I3C bus
-  logic scl_o;
-  logic scl_en_o;
+  assign i3c_scl_o = i3c_scl_en_o ? i3c_scl_int_o : i3c_scl_i;
+  assign i3c_sda_o = i3c_sda_en_o ? i3c_sda_int_o : i3c_sda_i;
 
-  logic sda_o;
-  logic sda_en_o;
-
-  logic ctrl2phy_scl;
-  logic phy2ctrl_scl;
-  logic ctrl2phy_sda;
-  logic phy2ctrl_sda;
-
-  i2c_controller_fsm i2c_controller_fsm (
-      .clk_i(clk_i),
+  i2c_phy_integration i2c_phy_integration (
+      .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .scl_i(phy2ctrl_scl),
-      .scl_o(ctrl2phy_scl),
-      .sda_i(phy2ctrl_sda),
-      .sda_o(ctrl2phy_sda),
+      .i3c_scl_io(), // Unsupported by Cocotb
+      .i3c_sda_io(), // Unsupported by Cocotb
+
+      .i3c_scl_i(i3c_scl_i),
+      .i3c_scl_o(i3c_scl_int_o),
+      .i3c_scl_en_o(i3c_scl_en_o),
+
+      .i3c_sda_i(i3c_sda_i),
+      .i3c_sda_o(i3c_sda_int_o),
+      .i3c_sda_en_o(i3c_sda_en_o),
 
       .host_enable_i(host_enable_i),
 
@@ -101,7 +98,7 @@ module i2c_phy_integration
       .unhandled_nak_timeout_i(unhandled_nak_timeout_i),
 
       .rx_fifo_wvalid_o(rx_fifo_wvalid_o),
-      .rx_fifo_wdata_o(rx_fifo_wdata_o),
+      .rx_fifo_wdata_o (rx_fifo_wdata_o),
 
       .host_idle_o(host_idle_o),
 
@@ -127,34 +124,6 @@ module i2c_phy_integration
       .event_stretch_timeout_o(event_stretch_timeout_o),
       .event_sda_unstable_o(event_sda_unstable_o),
       .event_cmd_complete_o(event_cmd_complete_o)
-  );
-
-  i3c_phy phy (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-
-      .scl_i(i3c_scl_i),
-      .scl_o(i3c_scl_o),
-      .scl_en_o(i3c_scl_en_o),
-
-      .sda_i(i3c_sda_i),
-      .sda_o(i3c_sda_o),
-      .sda_en_o(i3c_sda_en_o),
-
-      .ctrl_scl_i(ctrl2phy_scl),
-      .ctrl_scl_o(phy2ctrl_scl),
-      .ctrl_sda_i(ctrl2phy_sda),
-      .ctrl_sda_o(phy2ctrl_sda)
-  );
-
-  i3c_io phy_io (
-      .scl_io(i3c_scl_io),
-      .scl_i(i3c_scl_o),
-      .scl_en_i(i3c_scl_en_o),
-
-      .sda_io(i3c_sda_io),
-      .sda_i(i3c_sda_o),
-      .sda_en_i(i3c_sda_en_o)
   );
 
 endmodule
