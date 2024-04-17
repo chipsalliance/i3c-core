@@ -49,6 +49,7 @@ reg DAT_structure {
         desc = "I3C dynamic address";
         sw = rw;
         hw = rw;
+        we = true;
     } dynamic_adr [23:16];
     field {
         name = "TS";

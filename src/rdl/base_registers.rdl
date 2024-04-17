@@ -44,6 +44,7 @@ regfile BaseRegs #(
             desc = "Host Controller Bus Enable";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } bus_enable[31:31];
         field {
@@ -54,6 +55,7 @@ regfile BaseRegs #(
                 Write 1 to resume Controller operations.";
             sw = rw;
             hw = rw;
+            we = true;
             onwrite = woclr;
             reset = 1'b0;
         } resume[30:30];
@@ -135,6 +137,7 @@ regfile BaseRegs #(
                 1 - dynamic address is valid";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } dynamic_addr_valid [31:31];
         field {
@@ -142,6 +145,7 @@ regfile BaseRegs #(
             desc = "Device Dynamic Address";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } dynamic_addr [22:16];
     } CONTROLLER_DEVICE_ADDR @ 0x8;
@@ -272,6 +276,7 @@ regfile BaseRegs #(
             desc = "Clear IBI queue from software. Valid only in PIO mode.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } ibi_queue [5:5];
         field {
@@ -279,6 +284,7 @@ regfile BaseRegs #(
             desc = "Clear RX FIFO from software. Valid only in PIO mode.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } rx_fifo [4:4];
         field {
@@ -293,6 +299,7 @@ regfile BaseRegs #(
             desc = "Clear response queue from software. Valid only in PIO mode.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } resp_queue [2:2];
         field {
@@ -300,6 +307,7 @@ regfile BaseRegs #(
             desc = "Clear command queue from software. Valid only in PIO mode.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } cmd_queue[1:1];
         field {
@@ -307,6 +315,7 @@ regfile BaseRegs #(
             desc = "Reset controller from software.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } soft_rst [0:0];
     } RESET_CONTROL @ 0x10;
@@ -531,6 +540,7 @@ regfile BaseRegs #(
             desc = "Index to DCT used during ENTDAA.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 5'h0;
         } table_idx [23:19];
         field {
@@ -634,6 +644,7 @@ regfile BaseRegs #(
             desc = "Enable/disable IBI monitoring logic.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } data_abort_monitor [31:31];
         field {

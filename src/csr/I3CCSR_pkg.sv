@@ -8,10 +8,12 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__HC_CONTROL__resume__in_t;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__HC_CONTROL__bus_enable__in_t;
 
     typedef struct {
@@ -21,10 +23,12 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [6:0] next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__CONTROLLER_DEVICE_ADDR__dynamic_addr__in_t;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__CONTROLLER_DEVICE_ADDR__dynamic_addr_valid__in_t;
 
     typedef struct {
@@ -34,14 +38,17 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__soft_rst__in_t;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__cmd_queue__in_t;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__resp_queue__in_t;
 
     typedef struct {
@@ -50,10 +57,12 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__rx_fifo__in_t;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__ibi_queue__in_t;
 
     typedef struct {
@@ -103,6 +112,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [4:0] next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__DCT_SECTION_OFFSET__table_idx__in_t;
 
     typedef struct {
@@ -111,6 +121,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__IBI_DATA_ABORT_CTRL__data_abort_monitor__in_t;
 
     typedef struct {
@@ -201,6 +212,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } PIORegs__PIO_CONTROL__rs_req__in_t;
 
     typedef struct {

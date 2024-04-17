@@ -988,7 +988,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3CBase.HC_CONTROL.resume.value & ~(decoded_wr_data[30:30] & decoded_wr_biten[30:30]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.HC_CONTROL.resume.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.HC_CONTROL.resume.next;
             load_next_c = '1;
         end
@@ -1012,7 +1012,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.HC_CONTROL.bus_enable.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.HC_CONTROL.bus_enable.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.HC_CONTROL.bus_enable.next;
             load_next_c = '1;
         end
@@ -1036,7 +1036,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.next;
             load_next_c = '1;
         end
@@ -1060,7 +1060,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.next;
             load_next_c = '1;
         end
@@ -1084,7 +1084,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.soft_rst.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.soft_rst.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.soft_rst.next;
             load_next_c = '1;
         end
@@ -1108,7 +1108,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.cmd_queue.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.cmd_queue.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.cmd_queue.next;
             load_next_c = '1;
         end
@@ -1132,7 +1132,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.resp_queue.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.resp_queue.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.resp_queue.next;
             load_next_c = '1;
         end
@@ -1180,7 +1180,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.rx_fifo.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.rx_fifo.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.rx_fifo.next;
             load_next_c = '1;
         end
@@ -1204,7 +1204,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.ibi_queue.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.ibi_queue.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.ibi_queue.next;
             load_next_c = '1;
         end
@@ -1664,7 +1664,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value & ~decoded_wr_biten[23:19]) | (decoded_wr_data[23:19] & decoded_wr_biten[23:19]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.DCT_SECTION_OFFSET.table_idx.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.DCT_SECTION_OFFSET.table_idx.next;
             load_next_c = '1;
         end
@@ -1814,7 +1814,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.next;
             load_next_c = '1;
         end
@@ -2666,7 +2666,7 @@ module I3CCSR (
         if(decoded_reg_strb.PIOControl.PIO_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.PIOControl.PIO_CONTROL.rs_req.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.PIOControl.PIO_CONTROL.rs_req.we) begin // HW Write - we
             next_c = hwif_in.PIOControl.PIO_CONTROL.rs_req.next;
             load_next_c = '1;
         end
