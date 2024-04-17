@@ -121,7 +121,9 @@ class AHBFIFOTestInterface:
         self.interconnect.register_subordinate(self.AHBSubordinate)
         self.interconnect.register_manager(self.AHBManager)
         # Handled address space
-        self.interconnect.register_manager_subordinate_addr(self.AHBManager, self.AHBSubordinate, 0x0, 0x4000)
+        self.interconnect.register_manager_subordinate_addr(
+            self.AHBManager, self.AHBSubordinate, 0x0, 0x4000
+        )
         self.wrapper.register_interconnect(self.interconnect)
 
         await cocotb.start(self.AHBManager.start())
@@ -155,8 +157,8 @@ def compare_values(before: List[int], expected: List[int], after: List[int], add
 
 
 def int_to_ahb_data(value: int, byte_width=4) -> List[int]:
-    assert (log2(value) <= byte_width * 8)
-    return [(value >> (b * 8)) & 0xff for b in range(byte_width)]
+    assert log2(value) <= byte_width * 8
+    return [(value >> (b * 8)) & 0xFF for b in range(byte_width)]
 
 
 @cocotb.test()
@@ -180,7 +182,7 @@ async def run_read_pio_section_offset(dut: SimHandleBase):
     tb = AHBFIFOTestInterface(dut)
     await tb.register_test_interfaces()
 
-    addr = 0x3c
+    addr = 0x3C
     expected = int_to_ahb_data(0x100, 4)
 
     read_value = await tb.read_csr(addr)
