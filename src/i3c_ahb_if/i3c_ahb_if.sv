@@ -100,7 +100,7 @@ module i3c_ahb_if
   logic i3c_csr_rd_err, i3c_csr_wr_err;
   logic i3c_csr_rd_hld, i3c_csr_wr_hld;
   logic i3c_csr_rst;
-  logic i3c_ignored_pin;
+  logic i3c_ign_rd_ack, i3c_ign_wr_ack;
   always_comb begin : ahb_2_i3c_comp
     i3c_req_err = i3c_csr_rd_err | i3c_csr_wr_err;
     i3c_req_hld = i3c_req_write ? i3c_csr_wr_hld : i3c_csr_rd_hld;
@@ -118,10 +118,10 @@ module i3c_ahb_if
       .s_cpuif_wr_biten('1),  // Write strobes not handled by AHB-Lite interface
       .s_cpuif_req_stall_wr(i3c_csr_wr_hld),
       .s_cpuif_req_stall_rd(i3c_csr_rd_hld),
-      .s_cpuif_rd_ack(i3c_ignored_pin),  // Ignored by AHB component
+      .s_cpuif_rd_ack(i3c_ign_rd_ack),  // Ignored by AHB component
       .s_cpuif_rd_err(i3c_csr_rd_err),
       .s_cpuif_rd_data(i3c_req_rdata),
-      .s_cpuif_wr_ack(i3c_ignored_pin),  // Ignored by AHB component
+      .s_cpuif_wr_ack(i3c_ign_wr_ack),  // Ignored by AHB component
       .s_cpuif_wr_err(i3c_csr_wr_err),
 
       .hwif_in (hwif_in),
