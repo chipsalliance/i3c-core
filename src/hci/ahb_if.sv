@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module i3c_ahb_if
-  import i3c_ahb_if_pkg::*;
-#(
+module ahb_if #(
+    // Data width of AHB FIFO interface
+    parameter int unsigned AHB_DATA_WIDTH  = 64,
+    // Address width of AHB FIFO interface.
+    parameter int unsigned AHB_ADDR_WIDTH  = 32,
+    // Burst width of AHB FIFO interface
+    parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
     // TODO: AHB module from cocotb assumes the signals not end with _i, _o
     // Either create a wrapper in the test interface of stick to `classic` names

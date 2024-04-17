@@ -5,18 +5,17 @@ space := $(null) #
 comma := ,
 
 CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-SRCDIR := $(abspath $(CURDIR)../../../../src/i3c_ahb_if)
+SRCDIR := $(abspath $(CURDIR)../../../../src/hci)
 
 TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
-TOPLEVEL     = i3c_ahb_if
+TOPLEVEL     = ahb_if
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
-    $(SRCDIR)/../rdl/generate/I3CCSR_pkg.sv \
-    $(SRCDIR)/../rdl/generate/I3CCSR.sv \
-    $(SRCDIR)/i3c_ahb_if_pkg.sv \
-    $(SRCDIR)/i3c_ahb_if.sv
+    $(SRCDIR)/../csr/I3CCSR_pkg.sv \
+    $(SRCDIR)/../csr/I3CCSR.sv \
+    $(SRCDIR)/ahb_if.sv
 
 include $(CURDIR)/../common.mk
