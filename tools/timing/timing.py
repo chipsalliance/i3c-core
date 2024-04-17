@@ -34,15 +34,13 @@ def get_firmware_settings(spec, sys_clk=100e6):
     # All rf in spec were the same, so simplifying
     if spec.mode == IXCModes.LEGACY_1M:
         T_R = T_F = norm_ceil(20e-9, sys_period)
-        logging.debug(f"Arbitrarily set T_R and T_F to 20ns")
-        logging.debug(f"Specification does not constrain it.")
-        logging.debug(f"C.f. Table 85 Legacy Mody 1MHz/Fm+, entry: t_r_cl")
+        logging.debug("Arbitrarily set T_R and T_F to 20ns")
+        logging.debug("Specification does not constrain it.")
+        logging.debug("C.f. Table 85 Legacy Mody 1MHz/Fm+, entry: t_r_cl")
     else:
         T_R = T_F = norm_ceil(spec.spec["t_r_cl_min"], sys_period)
 
-    logging.debug(
-        f"Rise/fall times are not fw controlled. They depend on electrical design."
-    )
+    logging.debug("Rise/fall times are not fw controlled. They depend on electrical design.")
     logging.debug(f"T_R = {EN(T_R)}")
     logging.debug(f"T_F = {EN(T_F)}")
     settings["T_R"] = T_R
@@ -56,9 +54,7 @@ def get_firmware_settings(spec, sys_clk=100e6):
 
     # Assuming THIGH=TLOW
     # 2*THIGH >= PERIOD - T_F - T_R
-    T_HIGH = math.ceil(
-        max((MIN_PERIOD - T_F - T_R) / 2, spec.spec["t_high_min"] / sys_period)
-    )
+    T_HIGH = math.ceil(max((MIN_PERIOD - T_F - T_R) / 2, spec.spec["t_high_min"] / sys_period))
     T_LOW = T_HIGH
     logging.debug(f"T_HIGH = {T_HIGH}")
     logging.debug(f"T_LOW = {T_LOW}")
@@ -133,9 +129,9 @@ def get_i3c_sdr_timings(spec, sys_clk=100e6):
         "t_cr": 12e-9,
     }
     bus_period = f2T(spec["f_scl_max"])
-    duty_cycle = 0.5
-    t_dig_h = duty_cycle * bus_period
-    t_dig_l = (1 - duty_cycle) * bus_period
+    # duty_cycle = 0.5
+    # t_dig_h = duty_cycle * bus_period
+    # t_dig_l = (1 - duty_cycle) * bus_period
 
     sdr_timings = {
         "tCLK_PULSE": 0,  # t_cr + t_high
@@ -184,7 +180,7 @@ def main():
     logging.info(f"sys_freq         = {EN(sys_freq)}")
     logging.info(f"sys_period       = {EN(sys_period)}")
     for mode in [IXCModes.LEGACY_400k, IXCModes.LEGACY_1M]:
-        logging.info(f"*** FW Settings ***")
+        logging.info("*** FW Settings ***")
         logging.info(f"mode             = {mode}")
         log_generic_timings(mode, sys_freq)
         spec = IXCSpecification(mode)
@@ -192,17 +188,17 @@ def main():
 
     bus_freq = 12.5e6
     bus_period = f2T(bus_freq)
-    logging.info(f"\033[92mI3C :: SDR PUSH-PULL TIMINGS\033[0m")
-    logging.info(f"\033[92mI3C :: RISE FALL\033[0m")
+    logging.info("\033[92mI3C :: SDR PUSH-PULL TIMINGS\033[0m")
+    logging.info("\033[92mI3C :: RISE FALL\033[0m")
     get_i3c_rise_fall_timings(bus_period)
 
-    logging.info(f"\033[92mI3C :: START\033[0m")
+    logging.info("\033[92mI3C :: START\033[0m")
     get_i3c_start_timings()
 
-    logging.info(f"\033[92mI3C :: SDR \033[0m")
+    logging.info("\033[92mI3C :: SDR \033[0m")
     get_i3c_sdr_timings(spec=None, sys_clk=sys_freq)
 
-    logging.info(f"\033[92mI3C :: STOP TIMINGS\033[0m")
+    logging.info("\033[92mI3C :: STOP TIMINGS\033[0m")
     get_i3c_stop_timings(spec=None, sys_clk=sys_freq)
 
 

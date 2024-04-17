@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
 from enum import Enum
-from engineering_notation import EngNumber as EN
 
 
 class IXCModes(Enum):
@@ -56,8 +55,9 @@ SPECIFICATIONS = {
         "t_su_sto_min": 260e-9,
         "t_buf_min": 0.5e-6,
         "t_spike_min": 0,
-    }
+    },
 }
+
 
 class IXCSpecification:
     def __init__(self, mode):

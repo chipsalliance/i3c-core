@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+
 def main():
     """
     Parse arguments
@@ -20,7 +21,9 @@ def main():
     )
     parser.add_argument("--linter", default="verible-verilog-lint", help="Tool")
     parser.add_argument("--root_dir", default="./src", help="Root of search")
-    parser.add_argument("--waiver_file", default="./violations.waiver", help="Path to the waiver file")
+    parser.add_argument(
+        "--waiver_file", default="./violations.waiver", help="Path to the waiver file"
+    )
     args = parser.parse_args()
 
     """
@@ -65,12 +68,12 @@ def main():
         verible_tool = "verible-verilog-format "
         verible_tool_opts = " --inplace"
 
-    rc=0
+    rc = 0
     for file in paths:
         tool_cmd = verible_tool + verible_tool_opts + " " + file
         print(f"[RUN CMD] {tool_cmd}")
-        cmd_rc=os.system(tool_cmd)
-        rc+=cmd_rc
+        cmd_rc = os.system(tool_cmd)
+        rc += cmd_rc
     if rc > 0:
         rc = 1
     return rc

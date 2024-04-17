@@ -40,7 +40,10 @@ def setupLogger(verbose=False, filename="parseResultsXML.log"):
 
 
 def isSimFailure(
-    resultsFile="results.xml", testsuites_name="results", verbose=False, suppress_rc=False
+    resultsFile="results.xml",
+    testsuites_name="results",
+    verbose=False,
+    suppress_rc=False,
 ):
     """
     Extract failure code from cocotb results.xml file
@@ -219,9 +222,11 @@ def lint(session: nox.Session) -> None:
     session.install("isort")
     session.install("flake8")
     session.install("black")
-    session.run("isort", ".")
-    session.run("black", ".")
-    session.run("flake8", ".")
+    session.run("isort", ".", "../../tools")
+    # Specify config for black explicitly since it gets "lost" when calling black with multiple
+    # paths
+    session.run("black", "--config=pyproject.toml", ".", "../../tools")
+    session.run("flake8", ".", "../../tools")
 
 
 @nox.session()
@@ -229,6 +234,8 @@ def test_lint(session: nox.Session) -> None:
     session.install("isort")
     session.install("flake8")
     session.install("black")
-    session.run("isort", "--check", ".")
-    session.run("black", "--check", ".")
-    session.run("flake8", ".")
+    session.run("isort", "--check", ".", "../../tools")
+    # Specify config for black explicitly since it gets "lost" when calling black with multiple
+    # paths
+    session.run("black", "--config=pyproject.toml", "--check", ".", "../../tools")
+    session.run("flake8", ".", "../../tools")
