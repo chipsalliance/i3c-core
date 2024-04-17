@@ -9,6 +9,18 @@ VERIFICATION_DIR := $(ROOT_DIR)/verification/block
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
 
+ifeq (, $(shell which qrun))
+else
+QUESTA_ROOT = $(abspath $(dir $(shell which qrun))../)
+endif
+
+ifeq (, $(shell which vcs))
+else
+VCS = $(shell which vcs)
+endif
+
+UVM_VSEQ_TEST ?= i2c_host_stress_all_vseq
+
 export CALIPTRA_ROOT
 
 # Ensure `make test` is called with `TEST` flag set
@@ -65,6 +77,57 @@ timings: deps ## Generate values for I2C/I3C timings
 
 deps: ## Install python dependencies
 	pip install -r requirements.txt
+
+ifdef QUESTA_ROOT
+uvm-test-questa: ## Run I2C UVM_VSEQ_TEST sequence in Questa
+	mkdir -p questa_run
+	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
+	+define+VW_QSTA \
+	+incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
+	-sv -timescale 1ns/1ps \
+	-outdir questa_run/qrun.out \
+	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
+	-mfcu -f verification/uvm_i2c/dv_i2c_sim.scr \
+	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
+	-top i2c_bind \
+	-top sec_cm_prim_onehot_check_bind \
+	-top tb \
+	-voptargs="+acc=nr"
+	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
+	+cdc_instrumentation_enabled=1 \
+	+UVM_NO_RELNOTES +UVM_VERBOSITY=UVM_LOW \
+	-outdir questa_run/qrun.out \
+	-sv_seed 55439844359 \
+	-suppress vsim-8323 \
+	-permit_unmatched_virtual_intf \
+	-64 \
+	+UVM_TESTNAME=i2c_base_test \
+	+UVM_TEST_SEQ=$(UVM_VSEQ_TEST) \
+	-do verification/uvm_i2c/questa_sim.tcl
+endif
+
+ifdef VCS
+uvm-test-vcs: ## Run I2C UVM_VSEQ_TEST sequence in VCS
+	mkdir -p vcs_run
+	vcs -sverilog -full64 -licqueue -ntb_opts uvm-1.2 -timescale=1ns/1ps \
+	-Mdir=vcs_run/simv.csrc -o vcs_run/i2c_uvm_test \
+	-f verification/uvm_i2c/dv_i2c_sim.scr \
+	-lca -top i2c_bind -top sec_cm_prim_onehot_check_bind -top tb \
+	+warn=SV-NFIVC +warn=noUII-L +warn=noLCA_FEATURES_ENABLED +warn=noBNA \
+	-assert svaext \
+	-xlrm uniq_prior_final \
+	-CFLAGS --std=c99 -CFLAGS -fno-extended-identifiers -CFLAGS --std=c++11 \
+	-LDFLAGS -Wl,--no-as-needed -debug_region=cell+lib -debug_access+f \
+	+define+VCS \
+	-error=IPDW -error=UPF_ISPND -error=IGPA -error=PCSRMIO -error=AOUP \
+	-error=ELW_UNBOUND -error=IUWI -error=INAV -error=SV-ISC -error=OSVF-NPVIUFPI \
+	-error=DPIMI -error=IPDASP -error=CM-HIER-FNF -error=CWUC -error=MATN \
+	-error=STASKW_NDTAZ1 -error=TMPO -error=SV-OHCM -error=ENUMASSIGN -error=TEIF \
+	-deraceclockdata -assert novpi+dbgopt
+	./vcs_run/i2c_uvm_test -l vcs.log -licqueue -ucli \
+	-assert nopostproc -do verification/uvm_i2c/vcs_sim.tcl \
+	+UVM_TESTNAME=i2c_base_test +UVM_TEST_SEQ=$(UVM_VSEQ_TEST)
+endif
 
 .PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps timings
 

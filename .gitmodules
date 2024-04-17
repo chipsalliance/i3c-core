@@ -1,3 +1,3 @@
 [submodule "third_party/caliptra-rtl"]
 	path = third_party/caliptra-rtl
-	url = https://github.com/chipsalliance/caliptra-rtl.git
+	url = ../caliptra-rtl
