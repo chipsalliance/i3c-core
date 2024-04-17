@@ -59,13 +59,14 @@ generate-example: deps ## Generate example SystemVerilog registers from SystemRD
 	python -m peakrdl regblock src/rdl/example.rdl -o $(RDL_GEN_DIR) --cpuif passthrough
 	python -m peakrdl html src/rdl/example.rdl -o $(RDL_GEN_DIR)/html/
 
+
+timings: deps ## Generate values for I2C/I3C timings
+	python tools/timing/timing.py
+
 deps: ## Install python dependencies
 	pip install -r requirements.txt
 
-timings:
-	python tools/timing/timing.py
-
-.PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps
+.PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps timings
 
 
 .DEFAULT_GOAL := help
