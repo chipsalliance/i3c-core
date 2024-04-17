@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import math
+
 from engineering_notation import EngNumber as EN
-from specification import *
-from utils import *
+from specification import MODE_FREQ_DICT, IXCModes, IXCSpecification
+from utils import cycles2seconds, f2halfT, f2T, norm_ceil, setup_logger
 
 
 def get_firmware_settings(spec, sys_clk=100e6):
@@ -66,8 +68,10 @@ def get_firmware_settings(spec, sys_clk=100e6):
     settings["T_LOW"] = T_LOW
     logging.info(f"Settings={settings}")
 
+    return settings
 
-def generic_timings(mode, sys_freq):
+
+def log_generic_timings(mode, sys_freq):
     freq = MODE_FREQ_DICT[mode]
     t_high = f2halfT(freq)
     t_low = f2halfT(freq)
@@ -93,7 +97,7 @@ def firmware_to_timings():
 
 # Fig 144 I3C Start Timing
 # Timing t_ds_od on figure 144 is not defined in text!
-def i3c_start_timings():
+def get_i3c_start_timings():
     start_timings = {
         "tSDA_LOW": 0,
         "tSCL_LOW": 0,  # t_fda_od+t_cas
@@ -121,8 +125,9 @@ def i3c_start_timings():
     logging.info(start_timings)
     return start_timings
 
+
 # TODO: Finish i3c timings
-def i3c_sdr_timings(spec, sys_clk=100e6):
+def get_i3c_sdr_timings(spec, sys_clk=100e6):
     spec = {
         "f_scl_max": 12.5e6,
         "t_cr": 12e-9,
@@ -143,16 +148,19 @@ def i3c_sdr_timings(spec, sys_clk=100e6):
 
     sdr_timings["tCLK_PULSE"] = tCLK_PULSE
     sdr_timings["tSAMPLE_SDA"] = tSAMPLE_SDA
+
     logging.info(f"Settings={sdr_timings}")
+    return sdr_timings
 
 
-def i3c_rise_fall_timings(bus_period):
+def get_i3c_rise_fall_timings(bus_period):
     tcr = 150e6 * bus_period * 1e-9
     logging.info(f"Worst case rise/fall time = {EN(tcr)}")
+    return tcr
 
 
 # Fig 145 I3C Start Timing
-def i3c_stop_timings(spec, sys_clk=100e6):
+def get_i3c_stop_timings(spec, sys_clk=100e6):
     sys_period = f2T(sys_clk)
     spec = {
         "f_scl_max": 12.5e6,
@@ -161,12 +169,14 @@ def i3c_stop_timings(spec, sys_clk=100e6):
     }
     T_PULL_SDA_HIGH = norm_ceil((spec["t_cr_max"] + spec["t_cbp_min"]), sys_period)
     t = cycles2seconds(T_PULL_SDA_HIGH, sys_period)
+
     logging.info(f"T_PULL_SDA_HIGH={T_PULL_SDA_HIGH}")
     logging.info(f"t={t}")
+    return t
 
 
 def main():
-    setupLogger()
+    setup_logger()
     # Expected system frequency
     # TODO: Allow setting clock frequency with a script parameter
     sys_freq = 333.333e6
@@ -176,7 +186,7 @@ def main():
     for mode in [IXCModes.LEGACY_400k, IXCModes.LEGACY_1M]:
         logging.info(f"*** FW Settings ***")
         logging.info(f"mode             = {mode}")
-        generic_timings(mode, sys_freq)
+        log_generic_timings(mode, sys_freq)
         spec = IXCSpecification(mode)
         get_firmware_settings(spec=spec, sys_clk=sys_freq)
 
@@ -184,16 +194,16 @@ def main():
     bus_period = f2T(bus_freq)
     logging.info(f"\033[92mI3C :: SDR PUSH-PULL TIMINGS\033[0m")
     logging.info(f"\033[92mI3C :: RISE FALL\033[0m")
-    i3c_rise_fall_timings(bus_period)
+    get_i3c_rise_fall_timings(bus_period)
 
     logging.info(f"\033[92mI3C :: START\033[0m")
-    i3c_start_timings()
+    get_i3c_start_timings()
 
     logging.info(f"\033[92mI3C :: SDR \033[0m")
-    i3c_sdr_timings(spec=None, sys_clk=sys_freq)
+    get_i3c_sdr_timings(spec=None, sys_clk=sys_freq)
 
     logging.info(f"\033[92mI3C :: STOP TIMINGS\033[0m")
-    i3c_stop_timings(spec=None, sys_clk=sys_freq)
+    get_i3c_stop_timings(spec=None, sys_clk=sys_freq)
 
 
 if __name__ == "__main__":

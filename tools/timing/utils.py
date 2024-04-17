@@ -4,7 +4,7 @@ import logging
 import math
 
 
-def setupLogger(level=logging.INFO, filename="log.log"):
+def setup_logger(level=logging.INFO, filename="log.log"):
     logging.basicConfig(
         level=level, handlers=[logging.FileHandler(filename), logging.StreamHandler()]
     )
