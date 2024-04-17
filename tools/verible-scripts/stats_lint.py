@@ -1,6 +1,6 @@
-from collections import Counter
 import os
 import sys
+from collections import Counter
 
 error_codes = []
 run_cmds = []
