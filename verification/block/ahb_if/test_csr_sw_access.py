@@ -189,13 +189,15 @@ async def run_read_pio_section_offset(dut: SimHandleBase):
 
 @cocotb.test()
 async def run_write_to_controller_device_addr(dut: SimHandleBase):
-    """Run test to write to IBI data control."""
+    """Run test to write to Controller Device Address."""
 
     tb = AHBFIFOTestInterface(dut)
     await tb.register_test_interfaces()
 
     addr = 0x8
-    wdata = int_to_ahb_data(0xffffffff, 4)  # TODO: Investigate writes
+    new_dynamic_address = 0x42 << 16  # [22:16]
+    new_dynamic_address_valid = 1 << 31  # [31:31]
+    wdata = int_to_ahb_data(new_dynamic_address | new_dynamic_address_valid, 4)
 
     _ = await tb.write_csr(addr, wdata, 4)
     # Read the CSR to validate the data

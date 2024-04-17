@@ -167,7 +167,7 @@ def i3c_ctrl_verify(session, blockName, testName, coverage):
 @nox.parametrize(
     "testName",
     [
-        "test_single_read_write_cmds",
+        "test_csr_sw_access",
     ],
 )
 @nox.parametrize("coverage", None)
