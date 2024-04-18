@@ -98,9 +98,10 @@ module ahb_if #(
       .rdata(i3c_req_rdata)
   );
 
-
+  // TODO: Connect to the I3C hw CSR access logic
   I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
+
   logic i3c_csr_rd_err, i3c_csr_wr_err;
   logic i3c_csr_rd_hld, i3c_csr_wr_hld;
   logic i3c_csr_rst;
