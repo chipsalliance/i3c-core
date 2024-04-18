@@ -28,7 +28,9 @@ async def setup_dut(dut: SimHandle, clk_period: Tuple[int, str]) -> None:
 
 
 def int_to_ahb_data(value: int, byte_width=4) -> List[int]:
-    assert log2(value) <= byte_width * 8
+    assert (
+        log2(value) <= byte_width * 8
+    ), f"Requested int: {value:#x} exceeds {byte_width:#x} bytes."
     return [(value >> (b * 8)) & 0xFF for b in range(byte_width)]
 
 
