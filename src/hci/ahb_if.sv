@@ -4,6 +4,7 @@ module ahb_if
   import I3CCSR_pkg::I3CCSR__in_t;
   import I3CCSR_pkg::I3CCSR__out_t;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
+  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
     // Data width of AHB FIFO interface
     parameter int unsigned AHB_DATA_WIDTH  = 64,
@@ -118,7 +119,7 @@ module ahb_if
 
       .s_cpuif_req(i3c_req_dv),
       .s_cpuif_req_is_wr(i3c_req_write),
-      .s_cpuif_addr(i3c_req_addr[I3CCSR_DATA_WIDTH-1:0]),
+      .s_cpuif_addr(i3c_req_addr[I3CCSR_MIN_ADDR_WIDTH-1:0]),
       .s_cpuif_wr_data(i3c_req_wdata),
       .s_cpuif_wr_biten('1),  // Write strobes not handled by AHB-Lite interface
       .s_cpuif_req_stall_wr(i3c_csr_wr_hld),
