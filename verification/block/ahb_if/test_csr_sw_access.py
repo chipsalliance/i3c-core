@@ -18,13 +18,13 @@ async def setup_dut(dut: SimHandle, clk_period: Tuple[int, str]) -> None:
     """
     Setup clock & reset the unit
     """
-    await cocotb.start(Clock(dut.hclk_i, *clk_period).start())
-    dut.hreset_n_i.value = 0
-    await ClockCycles(dut.hclk_i, 10)
-    await RisingEdge(dut.hclk_i)
+    await cocotb.start(Clock(dut.hclk, *clk_period).start())
+    dut.hreset_n.value = 0
+    await ClockCycles(dut.hclk, 10)
+    await RisingEdge(dut.hclk)
     await Timer(1, units="ns")
-    dut.hreset_n_i.value = 1
-    await ClockCycles(dut.hclk_i, 1)
+    dut.hreset_n.value = 1
+    await ClockCycles(dut.hclk, 1)
 
 
 def int_to_ahb_data(value: int, byte_width=4) -> List[int]:
@@ -63,9 +63,9 @@ class AHBFIFOTestInterface:
 
     async def register_test_interfaces(self):
         # Clocks & resets
-        self.AHBManager.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
-        self.interconnect.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
-        self.wrapper.register_clock(self.dut.hclk_i).register_reset(self.dut.hreset_n_i, True)
+        self.AHBManager.register_clock(self.dut.hclk).register_reset(self.dut.hreset_n, True)
+        self.interconnect.register_clock(self.dut.hclk).register_reset(self.dut.hreset_n, True)
+        self.wrapper.register_clock(self.dut.hclk).register_reset(self.dut.hreset_n, True)
         # Interconnect setup
         self.interconnect.register_subordinate(self.AHBSubordinate)
         self.interconnect.register_manager(self.AHBManager)

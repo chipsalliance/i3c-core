@@ -13,37 +13,35 @@ module ahb_if
     // Burst width of AHB-Lite interface
     parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
-    // TODO: AHB module from cocotb assumes the signals not end with _i, _o
-    // Either create a wrapper in the test interface of stick to `classic` names
     // AHB-Lite interface
     input  logic                        hclk_i,
     input  logic                        hreset_n_i,
     // Byte address of the transfer
-    input  logic [  AHB_ADDR_WIDTH-1:0] haddr,
+    input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst,
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,
     // Protection control; provides information on the access type
-    input  logic [                 3:0] hprot,
+    input  logic [                 3:0] hprot_i,
     // Indicates the size of the transfer
-    input  logic [                 2:0] hsize,
+    input  logic [                 2:0] hsize_i,
     // Indicates the transfer type
-    input  logic [                 1:0] htrans,
+    input  logic [                 1:0] htrans_i,
     // Data for the write operation
-    input  logic [  AHB_DATA_WIDTH-1:0] hwdata,
+    input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
     // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,
     // Indicates write operation when asserted
-    input  logic                        hwrite,
+    input  logic                        hwrite_i,
     // Read data
-    output logic [  AHB_DATA_WIDTH-1:0] hrdata,
+    output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
     // Assrted indicates a finished transfer; Can be driven low to extend a transfer
-    output logic                        hreadyout,
+    output logic                        hreadyout_o,
     // Transfer response, high when error occured
-    output logic                        hresp,
+    output logic                        hresp_o,
     // Indicates the subordinate is selected for the transfer
-    input  logic                        hsel,
+    input  logic                        hsel_i,
     // Indicates all subordiantes have finished transfers
-    input  logic                        hready
+    input  logic                        hready_i
 );
 
   // Check configuration
@@ -77,16 +75,16 @@ module ahb_if
       // AHB-Lite interface
       .hclk(hclk_i),
       .hreset_n(hreset_n_i),
-      .haddr_i(haddr),
-      .hsize_i(hsize),
-      .htrans_i(htrans),
-      .hwdata_i(hwdata),
-      .hwrite_i(hwrite),
-      .hsel_i(hsel),
-      .hready_i(hready),
-      .hrdata_o(hrdata),
-      .hresp_o(hresp),
-      .hreadyout_o(hreadyout),
+      .haddr_i(haddr_i),
+      .hsize_i(hsize_i),
+      .htrans_i(htrans_i),
+      .hwdata_i(hwdata_i),
+      .hwrite_i(hwrite_i),
+      .hsel_i(hsel_i),
+      .hready_i(hready_i),
+      .hrdata_o(hrdata_o),
+      .hresp_o(hresp_o),
+      .hreadyout_o(hreadyout_o),
 
       // Component interface
       .dv(i3c_req_dv),
