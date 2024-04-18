@@ -150,4 +150,20 @@ async def run_write_to_controller_device_addr(dut: SimHandleBase):
     compare_values(wdata, resp, addr)
 
 
+@cocotb.test()
+async def run_write_should_not_affect_ro_csr(dut: SimHandleBase):
+    """Run test to write to RO HC Capabilities."""
+
+    tb = AHBFIFOTestInterface(dut)
+    await tb.register_test_interfaces()
+
+    addr = 0xC
+
+    hc_cap = await tb.read_csr(addr)
+    neg_hc_cap = list(map(lambda x: 0xff - x, hc_cap))
+    _ = await tb.write_csr(addr, neg_hc_cap)
+    resp = await tb.read_csr(addr)
+    compare_values(hc_cap, resp, addr)
+
+
 # TODO: Generated tests based on the CSR C Header (loaded with i.e. cppyy)
