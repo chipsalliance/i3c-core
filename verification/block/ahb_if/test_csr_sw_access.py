@@ -144,7 +144,7 @@ async def run_write_to_controller_device_addr(dut: SimHandleBase):
     new_dynamic_address_valid = 1 << 31  # [31:31]
     wdata = int_to_ahb_data(new_dynamic_address | new_dynamic_address_valid, 4)
 
-    _ = await tb.write_csr(addr, wdata, 4)
+    await tb.write_csr(addr, wdata, 4)
     # Read the CSR to validate the data
     resp = await tb.read_csr(addr)
     compare_values(wdata, resp, addr)
@@ -161,7 +161,7 @@ async def run_write_should_not_affect_ro_csr(dut: SimHandleBase):
 
     hc_cap = await tb.read_csr(addr)
     neg_hc_cap = list(map(lambda x: 0xFF - x, hc_cap))
-    _ = await tb.write_csr(addr, neg_hc_cap)
+    await tb.write_csr(addr, neg_hc_cap)
     resp = await tb.read_csr(addr)
     compare_values(hc_cap, resp, addr)
 
