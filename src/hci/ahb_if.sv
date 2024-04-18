@@ -6,11 +6,11 @@ module ahb_if
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
-    // Data width of AHB FIFO interface
+    // Data width of AHB-Lite interface
     parameter int unsigned AHB_DATA_WIDTH  = 64,
-    // Address width of AHB FIFO interface.
+    // Address width of AHB-Lite interface.
     parameter int unsigned AHB_ADDR_WIDTH  = 32,
-    // Burst width of AHB FIFO interface
+    // Burst width of AHB-Lite interface
     parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
     // TODO: AHB module from cocotb assumes the signals not end with _i, _o
