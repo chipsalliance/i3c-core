@@ -160,7 +160,7 @@ async def run_write_should_not_affect_ro_csr(dut: SimHandleBase):
     addr = 0xC
 
     hc_cap = await tb.read_csr(addr)
-    neg_hc_cap = list(map(lambda x: 0xff - x, hc_cap))
+    neg_hc_cap = list(map(lambda x: 0xFF - x, hc_cap))
     _ = await tb.write_csr(addr, neg_hc_cap)
     resp = await tb.read_csr(addr)
     compare_values(hc_cap, resp, addr)
