@@ -4,16 +4,14 @@ from functools import reduce
 from math import log2
 from typing import List, Tuple
 
-import cocotb  # type: ignore
-from cocotb.clock import Clock  # type: ignore
-from cocotb.handle import SimHandle, SimHandleBase  # type: ignore
-from cocotb.triggers import ClockCycles, RisingEdge, Timer  # type: ignore
-from cocotb_AHB.AHB_common.InterconnectInterface import (  # type: ignore
-    InterconnectWrapper,
-)
-from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate  # type: ignore
-from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager  # type: ignore
-from cocotb_AHB.interconnect.SimInterconnect import SimInterconnect  # type: ignore
+import cocotb
+from cocotb.clock import Clock
+from cocotb.handle import SimHandle, SimHandleBase
+from cocotb.triggers import ClockCycles, RisingEdge, Timer
+from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper
+from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate
+from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager
+from cocotb_AHB.interconnect.SimInterconnect import SimInterconnect
 
 
 async def setup_dut(dut: SimHandle, clk_period: Tuple[int, str]) -> None:
