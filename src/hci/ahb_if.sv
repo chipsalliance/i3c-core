@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module ahb_if #(
+module ahb_if
+  import I3CCSR_pkg::I3CCSR__in_t;
+  import I3CCSR_pkg::I3CCSR__out_t;
+  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
+#(
     // Data width of AHB FIFO interface
     parameter int unsigned AHB_DATA_WIDTH  = 64,
     // Address width of AHB FIFO interface.
@@ -56,10 +60,6 @@ module ahb_if #(
       $finish;
     end
   end
-
-  import I3CCSR_pkg::I3CCSR__in_t;
-  import I3CCSR_pkg::I3CCSR__out_t;
-  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
 
   logic i3c_req_dv, i3c_req_hld;
   logic i3c_req_err, i3c_req_write;
