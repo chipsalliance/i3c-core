@@ -11,13 +11,13 @@ module i3c_phy_integration_wrapper
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    input        i3c_scl_i,  // serial clock input from i3c bus
-    output logic i3c_scl_o,  // serial clock output to i3c bus
-    output logic i3c_scl_en_o,  // serial clock output to i3c bus
+    input        i3c_scl_i,    // serial clock input from i3c bus
+    output logic i3c_scl_o,    // serial clock output to i3c bus
+    output logic i3c_scl_en_o, // serial clock output to i3c bus
 
-    input        i3c_sda_i,  // serial data input from i3c bus
-    output logic i3c_sda_o,  // serial data output to i3c bus
-    output logic i3c_sda_en_o,  // serial data output to i3c bus
+    input        i3c_sda_i,    // serial data input from i3c bus
+    output logic i3c_sda_o,    // serial data output to i3c bus
+    output logic i3c_sda_en_o, // serial data output to i3c bus
 
     input host_enable_i,  // enable host functionality
 
@@ -53,14 +53,30 @@ module i3c_phy_integration_wrapper
     input [30:0] host_nack_handler_timeout_i, // Timeout threshold for unhandled Host-Mode 'nak' irq.
     input host_nack_handler_timeout_en_i,
 
-    output logic event_nak_o,                    // target didn't Ack when expected
+    output logic event_nak_o,  // target didn't Ack when expected
     output logic event_unhandled_nak_timeout_o,  // SW didn't handle the NACK in time
-    output logic event_scl_interference_o,       // other device forcing SCL low
-    output logic event_sda_interference_o,       // other device forcing SDA low
-    output logic event_stretch_timeout_o,        // target stretches clock past max time
-    output logic event_sda_unstable_o,           // SDA is not constant during SCL pulse
-    output logic event_cmd_complete_o            // Command is complete
+    output logic event_scl_interference_o,  // other device forcing SCL low
+    output logic event_sda_interference_o,  // other device forcing SDA low
+    output logic event_stretch_timeout_o,  // target stretches clock past max time
+    output logic event_sda_unstable_o,  // SDA is not constant during SCL pulse
+    output logic event_cmd_complete_o,  // Command is complete
 
+    // AHB-Lite interface
+    input logic hclk,
+    input logic hreset_n,
+    input logic [AHB_ADDR_WIDTH-1:0] haddr,
+    input logic [AHB_BURST_WIDTH-1:0] hburst,
+    input logic [3:0] hprot,
+    input logic [2:0] hsize,
+    input logic [1:0] htrans,
+    input logic [AHB_DATA_WIDTH-1:0] hwdata,
+    input logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input logic hwrite,
+    output logic [AHB_DATA_WIDTH-1:0] hrdata,
+    output logic hreadyout,
+    output logic hresp,
+    input logic hsel,
+    input logic hready
 );
   logic i3c_scl_int_o;
   logic i3c_sda_int_o;
@@ -72,8 +88,8 @@ module i3c_phy_integration_wrapper
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .i3c_scl_io(), // Unsupported by Cocotb
-      .i3c_sda_io(), // Unsupported by Cocotb
+      .i3c_scl_io(),  // Unsupported by Cocotb
+      .i3c_sda_io(),  // Unsupported by Cocotb
 
       .i3c_scl_i(i3c_scl_i),
       .i3c_scl_o(i3c_scl_int_o),
@@ -123,7 +139,21 @@ module i3c_phy_integration_wrapper
       .event_sda_interference_o(event_sda_interference_o),
       .event_stretch_timeout_o(event_stretch_timeout_o),
       .event_sda_unstable_o(event_sda_unstable_o),
-      .event_cmd_complete_o(event_cmd_complete_o)
+      .event_cmd_complete_o(event_cmd_complete_o),
+
+      .haddr_i(haddr),
+      .hburst_i(hburst),
+      .hprot_i(hprot),
+      .hsize_i(hsize),
+      .htrans_i(htrans),
+      .hwdata_i(hwdata),
+      .hwstrb_i(hwstrb),
+      .hwrite_i(hwrite),
+      .hrdata_o(hrdata),
+      .hreadyout_o(hreadyout),
+      .hresp_o(hresp),
+      .hsel_i(hsel),
+      .hready_i(hready)
   );
 
 endmodule

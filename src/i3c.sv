@@ -98,6 +98,11 @@ module i3c
     output logic event_sda_unstable_o,           // SDA is not constant during SCL pulse
     output logic event_cmd_complete_o            // Command is complete
 );
+
+
+  // TODO: Integrate s_cpuif with i2c_fsm
+  // (originally done by FIFOs in i2c
+  // see https://opentitan.org/book/hw/ip/i2c/doc/theory_of_operation.html)
   // AHB <> I3C CSR integration
   ahb_if #(
       .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
@@ -120,7 +125,6 @@ module i3c
       .hsel_i(hsel_i),
       .hready_i(hready_i)
   );
-  // TODO: Investigate where to connect hwif & expose it from the ahb_if
   // IOs between PHY and I3C bus
   logic scl_o;
   logic scl_en_o;
