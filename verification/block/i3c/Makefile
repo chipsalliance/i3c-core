@@ -10,7 +10,7 @@ SRCDIR := $(abspath $(CURDIR)../../../../src)
 TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
-TOPLEVEL     = i3c
+TOPLEVEL     = i3c_phy_integration_wrapper
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
@@ -23,6 +23,7 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/phy/i3c_phy.sv \
     $(SRCDIR)/phy/i3c_io.sv \
     $(SRCDIR)/i3c_pkg.sv \
-    $(SRCDIR)/i3c.sv
+    $(SRCDIR)/i3c.sv \
+    $(CURDIR)/i3c/i3c_phy_integration_wrapper.sv
 
 include $(CURDIR)/../common.mk
