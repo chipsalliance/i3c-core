@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module ahb_if
-  import I3CCSR_pkg::I3CCSR__in_t;
-  import I3CCSR_pkg::I3CCSR__out_t;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
@@ -41,7 +39,21 @@ module ahb_if
     // Indicates the subordinate is selected for the transfer
     input  logic                        hsel_i,
     // Indicates all subordiantes have finished transfers
-    input  logic                        hready_i
+    input  logic                        hready_i,
+
+    // I3C SW CSR access interface
+    output logic                             s_cpuif_req,
+    output logic                             s_cpuif_req_is_wr,
+    output logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr,
+    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data,
+    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten,
+    input  logic                             s_cpuif_req_stall_wr,
+    input  logic                             s_cpuif_req_stall_rd,
+    input  logic                             s_cpuif_rd_ack,
+    input  logic                             s_cpuif_rd_err,
+    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data,
+    input  logic                             s_cpuif_wr_ack,
+    input  logic                             s_cpuif_wr_err
 );
 
   // Check configuration
@@ -97,39 +109,17 @@ module ahb_if
       .rdata(i3c_req_rdata)
   );
 
-  // TODO: Connect to the I3C hw CSR access logic
-  I3CCSR__in_t  hwif_in;
-  I3CCSR__out_t hwif_out;
-
-  logic i3c_csr_rd_err, i3c_csr_wr_err;
-  logic i3c_csr_rd_hld, i3c_csr_wr_hld;
-  logic i3c_csr_rst;
   logic i3c_ign_rd_ack, i3c_ign_wr_ack;
   always_comb begin : ahb_2_i3c_comp
-    i3c_req_err = i3c_csr_rd_err | i3c_csr_wr_err;
-    i3c_req_hld = i3c_req_write ? i3c_csr_wr_hld : i3c_csr_rd_hld;
-    i3c_csr_rst = ~hreset_n_i;
+    s_cpuif_req = i3c_req_dv;
+    s_cpuif_req_is_wr = i3c_req_write;
+    s_cpuif_addr = i3c_req_addr[I3CCSR_MIN_ADDR_WIDTH-1:0];
+    s_cpuif_wr_data = i3c_req_wdata;
+    s_cpuif_wr_biten = '1;  // AHB-Lite implementation doesn't support write strobes
+    i3c_req_hld = i3c_req_write ? s_cpuif_req_stall_wr : s_cpuif_req_stall_rd;
+    i3c_req_err = s_cpuif_rd_err | s_cpuif_wr_err;
+    i3c_req_rdata = s_cpuif_rd_data;
+    i3c_ign_rd_ack = s_cpuif_rd_ack;  // Read ack is not utilized
+    i3c_ign_wr_ack = s_cpuif_wr_ack;  // Write ack is not utilized
   end
-
-  I3CCSR i3c_csr (
-      .clk(hclk_i),
-      .rst(i3c_csr_rst),
-
-      .s_cpuif_req(i3c_req_dv),
-      .s_cpuif_req_is_wr(i3c_req_write),
-      .s_cpuif_addr(i3c_req_addr[I3CCSR_MIN_ADDR_WIDTH-1:0]),
-      .s_cpuif_wr_data(i3c_req_wdata),
-      .s_cpuif_wr_biten('1),  // Write strobes not handled by AHB-Lite interface
-      .s_cpuif_req_stall_wr(i3c_csr_wr_hld),
-      .s_cpuif_req_stall_rd(i3c_csr_rd_hld),
-      .s_cpuif_rd_ack(i3c_ign_rd_ack),  // Ignored by AHB component
-      .s_cpuif_rd_err(i3c_csr_rd_err),
-      .s_cpuif_rd_data(i3c_req_rdata),
-      .s_cpuif_wr_ack(i3c_ign_wr_ack),  // Ignored by AHB component
-      .s_cpuif_wr_err(i3c_csr_wr_err),
-
-      .hwif_in (hwif_in),
-      .hwif_out(hwif_out)
-  );
-
 endmodule
