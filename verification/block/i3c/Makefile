@@ -17,6 +17,8 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/csr/I3CCSR_pkg.sv \
     $(SRCDIR)/csr/I3CCSR.sv \
     $(SRCDIR)/hci/ahb_if.sv \
+    $(SRCDIR)/hci/hci.sv \
+    $(SRCDIR)/hci/cmd_queue.sv \
     $(CURDIR)/ahb_if/ahb_if_wrapper.sv \
     $(SRCDIR)/ctrl/i2c_pkg.sv \
     $(SRCDIR)/ctrl/i2c_controller_fsm.sv \

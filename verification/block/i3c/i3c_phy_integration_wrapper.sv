@@ -2,7 +2,12 @@
 
 module i3c_phy_integration_wrapper
   import i2c_pkg::*;
+  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
+  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
+    parameter int unsigned AHB_DATA_WIDTH = 64,
+    parameter int unsigned AHB_ADDR_WIDTH = 32,
+    parameter int unsigned AHB_BURST_WIDTH = 3,
     parameter int FifoDepth = 64,
     parameter int AcqFifoDepth = 64,
     localparam int FifoDepthWidth = $clog2(FifoDepth + 1),
@@ -21,6 +26,7 @@ module i3c_phy_integration_wrapper
 
     input host_enable_i,  // enable host functionality
 
+    // TODO: Command Queue Interface
     input fmt_fifo_rvalid_i,  // indicates there is valid data in fmt_fifo
     input [FifoDepthWidth-1:0] fmt_fifo_depth_i,  // fmt_fifo_depth
     output logic fmt_fifo_rready_o,  // populates fmt_fifo
@@ -35,6 +41,7 @@ module i3c_phy_integration_wrapper
 
     output logic                     rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
     output logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o,   // byte in rx_fifo read from target
+    // End: Command Queue Interface
 
     output logic host_idle_o,  // indicates the host is idle
 
