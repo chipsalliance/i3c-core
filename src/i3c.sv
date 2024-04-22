@@ -3,6 +3,8 @@
 module i3c
   import i3c_pkg::*;
   import i2c_pkg::*;
+  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
+  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
     parameter int unsigned AHB_DATA_WIDTH = 64,
     parameter int unsigned AHB_ADDR_WIDTH = 32,
@@ -58,6 +60,7 @@ module i3c
 
     input host_enable_i,  // enable host functionality
 
+    // TODO: Command Queue Interface
     input fmt_fifo_rvalid_i,  // indicates there is valid data in fmt_fifo
     input [FifoDepthWidth-1:0] fmt_fifo_depth_i,  // fmt_fifo_depth
     output logic fmt_fifo_rready_o,  // populates fmt_fifo
@@ -72,6 +75,8 @@ module i3c
 
     output logic                     rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
     output logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o,   // byte in rx_fifo read from target
+    // End: Command Queue Interface
+
 
     output logic host_idle_o,  // indicates the host is idle
 
@@ -99,18 +104,21 @@ module i3c
     output logic event_cmd_complete_o            // Command is complete
 );
 
+  // IOs between PHY and I3C bus
+  logic scl_o;
+  logic scl_en_o;
 
-  // TODO: Integrate s_cpuif with i2c_fsm
-  // (originally done by FIFOs in i2c
-  // see https://opentitan.org/book/hw/ip/i2c/doc/theory_of_operation.html)
-  // AHB <> I3C CSR integration
-  ahb_if #(
-      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
-      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
-  ) i3c_ahb_if (
-      .hclk_i(clk_i),
-      .hreset_n_i(rst_ni),
+  logic sda_o;
+  logic sda_en_o;
+
+  logic ctrl2phy_scl;
+  logic phy2ctrl_scl;
+  logic ctrl2phy_sda;
+  logic phy2ctrl_sda;
+
+  hci hci (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
       .haddr_i(haddr_i),
       .hburst_i(hburst_i),
       .hprot_i(hprot_i),
@@ -124,18 +132,8 @@ module i3c
       .hresp_o(hresp_o),
       .hsel_i(hsel_i),
       .hready_i(hready_i)
+      // TODO: Complete with HCI command queue interface
   );
-  // IOs between PHY and I3C bus
-  logic scl_o;
-  logic scl_en_o;
-
-  logic sda_o;
-  logic sda_en_o;
-
-  logic ctrl2phy_scl;
-  logic phy2ctrl_scl;
-  logic ctrl2phy_sda;
-  logic phy2ctrl_sda;
 
   i2c_controller_fsm i2c_controller_fsm (
       .clk_i (clk_i),
@@ -148,6 +146,7 @@ module i3c
 
       .host_enable_i(host_enable_i),
 
+      // TODO: Connect to HCI command queue
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid_i),
       .fmt_fifo_depth_i(fmt_fifo_depth_i),
       .fmt_fifo_rready_o(fmt_fifo_rready_o),
@@ -162,6 +161,7 @@ module i3c
 
       .rx_fifo_wvalid_o(rx_fifo_wvalid_o),
       .rx_fifo_wdata_o (rx_fifo_wdata_o),
+      // End: Connect to HCI command queue
 
       .host_idle_o(host_idle_o),
 
