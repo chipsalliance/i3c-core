@@ -176,6 +176,20 @@ def ahb_if_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i3c"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_ahb_if",
+        "test_i2c",
+    ],
+)
+@nox.parametrize("coverage", None)
+def i3c_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["i2c_controller_fsm"])
 @nox.parametrize(
     "testName",
