@@ -21,10 +21,13 @@
 
 #define HCI_VERSION (0x120)
 #define TEST_ADDR (0x5f)
-#define TEST_WORD (0xdeadbeef)
+#define TEST_WORD1 (0xdeadbeef)
+#define TEST_WORD2 (0xabcd9876)
 #define TX_QUEUE_SIZE (0x7)
 #define RX_QUEUE_SIZE (0x7)
 #define PIO_CONTROL_ENABLED (0x7)
+#define RETRY_CNT (0x2)
+#define AUTOCMD_HDR (0xc3)
 
 volatile char *stdout = (char *)STDOUT;
 volatile uint32_t intr_count = 0;
@@ -60,6 +63,16 @@ volatile caliptra_intr_received_s cptra_intr_rcv = {
     .sha512_acc_notif = 0,
 };
 
+int check_and_report_value(uint32_t value, uint32_t expected) {
+  if (value == expected) {
+    printf("CORRECT\n");
+    return 0;
+  } else {
+    printf("ERROR (0x%x vs 0x%x)\n", value, expected);
+    return 1;
+  }
+}
+
 
 void main() {
   int error;
@@ -78,12 +91,8 @@ void main() {
 
   // Read RO register
   data = read_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION);
-  if (data != HCI_VERSION) {
-    printf("Incorrect I3C HCI Version value (expected: 0x%x, got: 0x%x)\n", HCI_VERSION, data);
-    error++;
-  } else {
-    printf("I3C version correct: 0x%x\n", data);
-  }
+  printf("Check I3C HCI Version: ");
+  error += check_and_report_value(data, HCI_VERSION);
 
   // Enable I3C Host Controller
   write_i3c_reg_field(I3C_REG_I3CBASE_HC_CONTROL,
@@ -102,22 +111,15 @@ void main() {
   data = read_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
     I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_LOW,
     I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_MASK);
-  if (data != TEST_ADDR) {
-    printf("Incorrect I3C Host Controller dynamic address value (expected: 0x%x, got: 0x%x)\n", TEST_ADDR, data);
-    error++;
-  } else {
-    printf("I3C Host Controller dynamic address correct\n");
-  }
+  printf("Check I3C Host Controller dynamic address: ");
+  error += check_and_report_value(data, TEST_ADDR);
 
   data = read_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
     I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_LOW,
     I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_MASK);
-  if (data != 1) {
-    printf("I3C Host Controller dynamic address is not valid\n");
-    error++;
-  } else {
-    printf("I3C Host Controller dynamic address is valid\n");
-  }
+  printf("Check I3C Host Controller dynamic address valid: ");
+  error += check_and_report_value(data, 1);
+
 
   printf("\n----------------------------------------\n");
   // Run test for I3C PIO registers -------------------------------------------
@@ -128,38 +130,77 @@ void main() {
   data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
     I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_QUEUE_SIZE_LOW,
     I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_QUEUE_SIZE_MASK);
-  if (data != TX_QUEUE_SIZE) {
-    printf("Incorrect I3C TX Queue Size value (expected: 0x%x, got: 0x%x)\n", TX_QUEUE_SIZE, data);
-    error++;
-  } else {
-    printf("I3C TX Queue Size value correct\n");
-  }
+  printf("Check I3C TX Queue Size: ");
+  error += check_and_report_value(data, TX_QUEUE_SIZE);
 
   data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
     I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_QUEUE_SIZE_LOW,
     I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_QUEUE_SIZE_MASK);
-  if (data != RX_QUEUE_SIZE) {
-    printf("Incorrect I3C RX Queue Size value (expected: 0x%x, got: 0x%x)\n", RX_QUEUE_SIZE, data);
-    error++;
-  } else {
-    printf("I3C RX Queue Size value correct\n");
-  }
+  printf("Check I3C RX Queue Size: ");
+  error += check_and_report_value(data, RX_QUEUE_SIZE);
 
   write_i3c_reg(I3C_REG_PIOCONTROL_PIO_CONTROL, 0xffffffff);
   data = read_i3c_reg(I3C_REG_PIOCONTROL_PIO_CONTROL);
   // PIO_CONTROL has only 3 LSBs writable
-  if (data != PIO_CONTROL_ENABLED) {
-    printf("Incorrect I3C PIO CONTROL value (expected: 0x%x, got: 0x%x)\n", PIO_CONTROL_ENABLED, data);
-    error++;
-  } else {
-    printf("I3C PIO CONTROL value correct\n");
-  }
+  printf("Check I3C PIO CONTROL Size: ");
+  error += check_and_report_value(data, PIO_CONTROL_ENABLED);
 
-  // Run test for I3C DAT Memory ----------------------------------------------
-  // TODO: Add R/W to DAT Meory when it's implemented
 
+  printf("\n----------------------------------------\n");
+  // Run test for I3C DAT table ----------------------------------------------
+  printf("Test access to I3C DAT table\n");
+  printf("---\n");
+  uint32_t dat_buf[DAT_REG_WSIZE] = {TEST_WORD1, TEST_WORD2};
+  write_dat_reg(5, dat_buf, DAT_REG_WSIZE);
+
+  // Clear the buffer before reading the DAT entry
+  dat_buf[0] = 0x0;
+  dat_buf[1] = 0x0;
+  read_dat_reg(5, dat_buf, DAT_REG_WSIZE);
+  printf("Check I3C DAT value (entry=5, word=0): ");
+  error += check_and_report_value(dat_buf[0], TEST_WORD1);
+  printf("Check I3C DAT value (entry=5, word=1): ");
+  error += check_and_report_value(dat_buf[1], TEST_WORD2);
+
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDR_LOW,
+    I3C_REG_DAT_MEMORY_STATIC_ADDR_MASK, TEST_ADDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDR_LOW,
+    I3C_REG_DAT_MEMORY_STATIC_ADDR_MASK);
+  printf("Check I3C DAT static address value (entry=0): ");
+  error += check_and_report_value(data, TEST_ADDR);
+
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADR_LOW,
+    I3C_REG_DAT_MEMORY_DYNAMIC_ADR_MASK, TEST_ADDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADR_LOW,
+    I3C_REG_DAT_MEMORY_DYNAMIC_ADR_MASK);
+  printf("Check I3C DAT dynamic address value (entry=0): ");
+  error += check_and_report_value(data, TEST_ADDR);
+
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_RETRY_CNT_LOW,
+    I3C_REG_DAT_MEMORY_RETRY_CNT_MASK, RETRY_CNT);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_RETRY_CNT_LOW,
+    I3C_REG_DAT_MEMORY_RETRY_CNT_MASK);
+  printf("Check I3C DAT NACK retry count value (entry=0): ");
+  error += check_and_report_value(data, RETRY_CNT);
+
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_LOW,
+    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_MASK, AUTOCMD_HDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_LOW,
+    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_MASK);
+  printf("Check I3C DAT Auto-Command HDR Command Code value (entry=0): ");
+  error += check_and_report_value(data, AUTOCMD_HDR);
+
+  printf("\n----------------------------------------\n");
   // Run test for I3C DCT Memory ----------------------------------------------
-  // TODO: Add R/W to DCT Meory when it's implemented
+  printf("Test access to I3C DCT table\n");
+  printf("---\n");
+
+  uint32_t dct_buf[4];
+  read_dct_reg(15, dct_buf, DCT_REG_WSIZE);
+  for (int i = 0; i < DCT_REG_WSIZE; i++) {
+    printf("Check I3C DCT value (entry=15, word=%d): ", i);
+    error += check_and_report_value(dct_buf[i], 0);
+  }
 
   printf("\n----------------------------------------\n");
   // End the sim in failure
