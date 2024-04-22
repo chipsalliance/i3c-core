@@ -7,6 +7,8 @@ SRC_DIR := $(ROOT_DIR)/src
 SW_DIR := $(ROOT_DIR)/sw
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
+BUILD_DIR = $(ROOT_DIR)/build
+SW_BUILD_DIR = $(BUILD_DIR)/sw
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
 
 ifeq (, $(shell which qrun))
@@ -30,6 +32,9 @@ ifeq ($(MAKECMDGOALS), test)
     endif
 endif
 
+#
+# Source code lint and format
+#
 lint: lint-rtl lint-tests ## Run RTL and tests lint
 
 lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
@@ -41,16 +46,23 @@ lint-rtl: ## Run lint on RTL source code
 lint-tests: ## Run lint on tests source code
 	cd $(VERIFICATION_DIR) && nox -R -s lint
 
+#
+# RTL tests
+#
 test: ## Run single module test (use `TEST=<test_name>` flag)
 	cd $(VERIFICATION_DIR) && nox -R -s $(TEST)_verify
 
 tests: ## Run all RTL tests
 	cd $(VERIFICATION_DIR) && nox -R -k "verify"
 
-clean: ## Clean all generated sources
-	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
-	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
-	$(RM) -f *.log *.rpt
+#
+# Software tests
+#
+$(SW_BUILD_DIR):
+	mkdir -p $(SW_BUILD_DIR)
+
+sw-caliptra-test: | $(SW_BUILD_DIR) ## Run Caliptra I3C software test
+	debug=$(DEBUG) TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile verilator
 
 #
 # SystemRDL
@@ -71,7 +83,9 @@ generate-example: deps ## Generate example SystemVerilog registers from SystemRD
 	python -m peakrdl regblock src/rdl/example.rdl -o $(RDL_GEN_DIR) --cpuif passthrough
 	python -m peakrdl html src/rdl/example.rdl -o $(RDL_GEN_DIR)/html/
 
-
+#
+# Utilities
+#
 timings: deps ## Generate values for I2C/I3C timings
 	python tools/timing/timing.py
 
@@ -129,7 +143,13 @@ uvm-test-vcs: ## Run I2C UVM_VSEQ_TEST sequence in VCS
 	+UVM_TESTNAME=i2c_base_test +UVM_TEST_SEQ=$(UVM_VSEQ_TEST)
 endif
 
-.PHONY: lint lint-check lint-rtl lint-tests test tests generate generate-example deps timings
+clean: ## Clean all generated sources
+	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
+	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
+	$(RM) -f *.log *.rpt
+	$(RM) -rf $(BUILD_DIR)
+
+.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps timings clean
 
 
 .DEFAULT_GOAL := help
