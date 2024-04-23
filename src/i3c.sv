@@ -115,6 +115,7 @@ module i3c
 
   logic host_idle_o;  // indicates the host is idle
 
+  // TODO: Connect to timings calculated in #57632
   logic [15:0] thigh_i;  // high period of the SCL in clock units
   logic [15:0] tlow_i;  // low period of the SCL in clock units
   logic [15:0] t_r_i;  // rise time of both SDA and SCL in clock units
