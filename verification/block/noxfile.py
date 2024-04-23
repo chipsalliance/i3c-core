@@ -181,7 +181,6 @@ def ahb_if_verify(session, blockName, testName, coverage):
     "testName",
     [
         "test_ahb_if",
-        "test_i2c",
     ],
 )
 @nox.parametrize("coverage", None)

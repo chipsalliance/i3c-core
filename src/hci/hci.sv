@@ -28,8 +28,7 @@ module hci
     output logic                        hresp_o,
     input  logic                        hsel_i,
     input  logic                        hready_i
-    // TODO: Add command queue interface to be connected
-    // from the top i3c module to the controller
+    // TODO: Add: Missing: I/Os to interface with i2c_controller_fsm
 );
 
   // TODO: Instantiate command queues

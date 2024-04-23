@@ -56,52 +56,9 @@ module i3c
 
     input        i3c_sda_i,    // serial data input from i3c bus
     output logic i3c_sda_o,    // serial data output to i3c bus
-    output logic i3c_sda_en_o, // serial data output to i3c bus
+    output logic i3c_sda_en_o  // serial data output to i3c bus
 
-    input host_enable_i,  // enable host functionality
-
-    // TODO: Command Queue Interface
-    input fmt_fifo_rvalid_i,  // indicates there is valid data in fmt_fifo
-    input [FifoDepthWidth-1:0] fmt_fifo_depth_i,  // fmt_fifo_depth
-    output logic fmt_fifo_rready_o,  // populates fmt_fifo
-    input [7:0] fmt_byte_i,  // byte in fmt_fifo to be sent to target
-    input fmt_flag_start_before_i,  // issue start before sending byte
-    input fmt_flag_stop_after_i,  // issue stop after sending byte
-    input fmt_flag_read_bytes_i,  // indicates byte is an number of reads
-    input fmt_flag_read_continue_i,  // host to send Ack to final byte read
-    input fmt_flag_nak_ok_i,  // no Ack is expected
-    input unhandled_unexp_nak_i,
-    input unhandled_nak_timeout_i,  // NACK handler timeout event not cleared
-
-    output logic                     rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
-    output logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o,   // byte in rx_fifo read from target
-    // End: Command Queue Interface
-
-
-    output logic host_idle_o,  // indicates the host is idle
-
-    input [15:0] thigh_i,  // high period of the SCL in clock units
-    input [15:0] tlow_i,  // low period of the SCL in clock units
-    input [15:0] t_r_i,  // rise time of both SDA and SCL in clock units
-    input [15:0] t_f_i,  // fall time of both SDA and SCL in clock units
-    input [15:0] thd_sta_i,  // hold time for (repeated) START in clock units
-    input [15:0] tsu_sta_i,  // setup time for repeated START in clock units
-    input [15:0] tsu_sto_i,  // setup time for STOP in clock units
-    input [15:0] tsu_dat_i,  // data setup time in clock units
-    input [15:0] thd_dat_i,  // data hold time in clock units
-    input [15:0] t_buf_i,  // bus free time between STOP and START in clock units
-    input [30:0] stretch_timeout_i,  // max time target connected to this host may stretch the clock
-    input timeout_enable_i,  // assert if target stretches clock past max
-    input [30:0] host_nack_handler_timeout_i, // Timeout threshold for unhandled Host-Mode 'nak' irq.
-    input host_nack_handler_timeout_en_i,
-
-    output logic event_nak_o,                    // target didn't Ack when expected
-    output logic event_unhandled_nak_timeout_o,  // SW didn't handle the NACK in time
-    output logic event_scl_interference_o,       // other device forcing SCL low
-    output logic event_sda_interference_o,       // other device forcing SDA low
-    output logic event_stretch_timeout_o,        // target stretches clock past max time
-    output logic event_sda_unstable_o,           // SDA is not constant during SCL pulse
-    output logic event_cmd_complete_o            // Command is complete
+    // TODO: Check if anything missing; Interrupts?
 );
 
   // IOs between PHY and I3C bus
@@ -132,8 +89,50 @@ module i3c
       .hresp_o(hresp_o),
       .hsel_i(hsel_i),
       .hready_i(hready_i)
-      // TODO: Complete with HCI command queue interface
+      // TODO: Provide I/Os to interface with i2c_controller_fsm
   );
+
+  // TODO: Connect properly to i2c_controller_fsm
+  logic fmt_fifo_rvalid_i;  // indicates there is valid data in fmt_fifo
+  logic [FifoDepthWidth-1:0] fmt_fifo_depth_i;  // fmt_fifo_depth
+  logic fmt_fifo_rready_o;  // populates fmt_fifo
+  logic [7:0] fmt_byte_i;  // byte in fmt_fifo to be sent to target
+  logic fmt_flag_start_before_i;  // issue start before sending byte
+  logic fmt_flag_stop_after_i;  // issue stop after sending byte
+  logic fmt_flag_read_bytes_i;  // indicates byte is an number of reads
+  logic fmt_flag_read_continue_i;  // host to send Ack to final byte read
+  logic fmt_flag_nak_ok_i;  // no Ack is expected
+  logic unhandled_unexp_nak_i;
+  logic unhandled_nak_timeout_i;  // NACK handler timeout event not cleared
+
+  logic rx_fifo_wvalid_o;  // high if there is valid data in rx_fifo
+  logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o;  // byte in rx_fifo read from target
+
+  logic host_idle_o;  // indicates the host is idle
+
+  logic [15:0] thigh_i;  // high period of the SCL in clock units
+  logic [15:0] tlow_i;  // low period of the SCL in clock units
+  logic [15:0] t_r_i;  // rise time of both SDA and SCL in clock units
+  logic [15:0] t_f_i;  // fall time of both SDA and SCL in clock units
+  logic [15:0] thd_sta_i;  // hold time for (repeated) START in clock units
+  logic [15:0] tsu_sta_i;  // setup time for repeated START in clock units
+  logic [15:0] tsu_sto_i;  // setup time for STOP in clock units
+  logic [15:0] tsu_dat_i;  // data setup time in clock units
+  logic [15:0] thd_dat_i;  // data hold time in clock units
+  logic [15:0] t_buf_i;  // bus free time between STOP and START in clock units
+  logic [30:0] stretch_timeout_i;  // max time target connected to this host may stretch the clock
+  logic timeout_enable_i;  // assert if target stretches clock past max
+  logic [30:0] host_nack_handler_timeout_i;  // Timeout threshold for unhandled Host-Mode 'nak' irq.
+  logic host_nack_handler_timeout_en_i;
+
+  logic event_nak_o;  // target didn't Ack when expected
+  logic event_unhandled_nak_timeout_o;  // SW didn't handle the NACK in time
+  logic event_scl_interference_o;  // other device forcing SCL low
+  logic event_sda_interference_o;  // other device forcing SDA low
+  logic event_stretch_timeout_o;  // target stretches clock past max time
+  logic event_sda_unstable_o;  // SDA is not constant during SCL pulse
+  logic event_cmd_complete_o;  // Command is complete
+  logic host_enable_i;  // enable host functionality
 
   i2c_controller_fsm i2c_controller_fsm (
       .clk_i (clk_i),
@@ -146,7 +145,6 @@ module i3c
 
       .host_enable_i(host_enable_i),
 
-      // TODO: Connect to HCI command queue
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid_i),
       .fmt_fifo_depth_i(fmt_fifo_depth_i),
       .fmt_fifo_rready_o(fmt_fifo_rready_o),
@@ -161,7 +159,6 @@ module i3c
 
       .rx_fifo_wvalid_o(rx_fifo_wvalid_o),
       .rx_fifo_wdata_o (rx_fifo_wdata_o),
-      // End: Connect to HCI command queue
 
       .host_idle_o(host_idle_o),
 
@@ -188,6 +185,7 @@ module i3c
       .event_sda_unstable_o(event_sda_unstable_o),
       .event_cmd_complete_o(event_cmd_complete_o)
   );
+  // End: Connect properly to i2c_controller_fsm
 
   // I3C PHY
   i3c_phy phy (
