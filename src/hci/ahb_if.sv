@@ -17,9 +17,9 @@ module ahb_if
     // Byte address of the transfer
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
     // Protection control; provides information on the access type
-    input  logic [                 3:0] hprot_i,
+    input  logic [                 3:0] hprot_i,      // Unhandled
     // Indicates the size of the transfer
     input  logic [                 2:0] hsize_i,
     // Indicates the transfer type
@@ -27,7 +27,7 @@ module ahb_if
     // Data for the write operation
     input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
     // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,     // Unhandled
     // Indicates write operation when asserted
     input  logic                        hwrite_i,
     // Read data

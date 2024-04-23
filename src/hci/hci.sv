@@ -16,12 +16,12 @@ module hci
 
     // AHB-Lite interface
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,
-    input  logic [                 3:0] hprot_i,
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
+    input  logic [                 3:0] hprot_i,      // Unhandled
     input  logic [                 2:0] hsize_i,
     input  logic [                 1:0] htrans_i,
     input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,     // Unhandled
     input  logic                        hwrite_i,
     output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
     output logic                        hreadyout_o,
@@ -32,7 +32,7 @@ module hci
     // from the top i3c module to the controller
 );
 
-  // TODO: Instantiate command queues 
+  // TODO: Instantiate command queues
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
   logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
