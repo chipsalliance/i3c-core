@@ -8,6 +8,7 @@ module i3c
 #(
     parameter int unsigned AHB_DATA_WIDTH = 64,
     parameter int unsigned AHB_ADDR_WIDTH = 32,
+    parameter int unsigned AHB_BURST_WIDTH = 3,
     parameter int FifoDepth = 64,
     parameter int AcqFifoDepth = 64,
     localparam int FifoDepthWidth = $clog2(FifoDepth + 1),
@@ -18,25 +19,31 @@ module i3c
 
     // AHB-Lite interface
     // Byte address of the transfer
-    input  logic [AHB_ADDR_WIDTH-1:0] haddr_i,
+    input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
+    // Indicates the number of bursts in a transfer
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,
+    // Protection control; provides information on the access type
+    input  logic [                 3:0] hprot_i,
     // Indicates the size of the transfer
-    input  logic [               2:0] hsize_i,
+    input  logic [                 2:0] hsize_i,
     // Indicates the transfer type
-    input  logic [               1:0] htrans_i,
+    input  logic [                 1:0] htrans_i,
     // Data for the write operation
-    input  logic [AHB_DATA_WIDTH-1:0] hwdata_i,
+    input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
+    // Write strobes; Deasserted when write data lanes do not contain valid data
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,
     // Indicates write operation when asserted
-    input  logic                      hwrite_i,
+    input  logic                        hwrite_i,
     // Read data
-    output logic [AHB_DATA_WIDTH-1:0] hrdata_o,
+    output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
     // Assrted indicates a finished transfer; Can be driven low to extend a transfer
-    output logic                      hreadyout_o,
+    output logic                        hreadyout_o,
     // Transfer response, high when error occured
-    output logic                      hresp_o,
+    output logic                        hresp_o,
     // Indicates the subordinate is selected for the transfer
-    input  logic                      hsel_i,
+    input  logic                        hsel_i,
     // Indicates all subordiantes have finished transfers
-    input  logic                      hready_i,
+    input  logic                        hready_i,
 
     // I3C controller IO
     inout i3c_scl_io,  // serial clock inout to/from i3c bus
@@ -113,9 +120,12 @@ module i3c
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .haddr_i(haddr_i),
+      .hburst_i(hburst_i),
+      .hprot_i(hprot_i),
       .hsize_i(hsize_i),
       .htrans_i(htrans_i),
       .hwdata_i(hwdata_i),
+      .hwstrb_i(hwstrb_i),
       .hwrite_i(hwrite_i),
       .hrdata_o(hrdata_o),
       .hreadyout_o(hreadyout_o),

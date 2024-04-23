@@ -7,28 +7,32 @@ module hci
   import I3CCSR_pkg::I3CCSR__in_t;
   import I3CCSR_pkg::I3CCSR__out_t;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32
+    parameter int unsigned AHB_DATA_WIDTH  = 64,
+    parameter int unsigned AHB_ADDR_WIDTH  = 32,
+    parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
 
     // AHB-Lite interface
-    input  logic [AHB_ADDR_WIDTH-1:0] haddr_i,
-    input  logic [               2:0] hsize_i,
-    input  logic [               1:0] htrans_i,
-    input  logic [AHB_DATA_WIDTH-1:0] hwdata_i,
-    input  logic                      hwrite_i,
-    output logic [AHB_DATA_WIDTH-1:0] hrdata_o,
-    output logic                      hreadyout_o,
-    output logic                      hresp_o,
-    input  logic                      hsel_i,
-    input  logic                      hready_i
+    input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
+    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,
+    input  logic [                 3:0] hprot_i,
+    input  logic [                 2:0] hsize_i,
+    input  logic [                 1:0] htrans_i,
+    input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
+    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,
+    input  logic                        hwrite_i,
+    output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
+    output logic                        hreadyout_o,
+    output logic                        hresp_o,
+    input  logic                        hsel_i,
+    input  logic                        hready_i
     // TODO: Add command queue interface to be connected
     // from the top i3c module to the controller
 );
 
-  // TODO: Instantiate command queues
+  // TODO: Instantiate command queues 
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
   logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
@@ -45,14 +49,18 @@ module hci
   // AHB <> I3C CSR IF integration
   ahb_if #(
       .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH)
+      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
+      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
   ) i3c_ahb_if (
       .hclk_i(clk_i),
       .hreset_n_i(rst_ni),
       .haddr_i(haddr_i),
+      .hburst_i(hburst_i),
+      .hprot_i(hprot_i),
       .hsize_i(hsize_i),
       .htrans_i(htrans_i),
       .hwdata_i(hwdata_i),
+      .hwstrb_i(hwstrb_i),
       .hwrite_i(hwrite_i),
       .hrdata_o(hrdata_o),
       .hreadyout_o(hreadyout_o),
