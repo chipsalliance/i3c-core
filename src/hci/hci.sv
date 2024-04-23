@@ -27,11 +27,12 @@ module hci
     output logic                        hreadyout_o,
     output logic                        hresp_o,
     input  logic                        hsel_i,
-    input  logic                        hready_i
-    // TODO: Add: Missing: I/Os to interface with i2c_controller_fsm
+    input  logic                        hready_i,
+
+    input  I3CCSR__in_t  hwif_in,
+    output I3CCSR__out_t hwif_out
 );
 
-  // TODO: Instantiate command queues
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
   logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
@@ -79,10 +80,6 @@ module hci
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err)
   );
-
-  // TODO: Connect hwif
-  I3CCSR__in_t  hwif_in;
-  I3CCSR__out_t hwif_out;
 
   I3CCSR i3c_csr (
       .clk(clk_i),

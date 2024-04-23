@@ -3,8 +3,7 @@
 module i3c
   import i3c_pkg::*;
   import i2c_pkg::*;
-  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
-  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
+  import I3CCSR_pkg::*;
 #(
     parameter int unsigned AHB_DATA_WIDTH = 64,
     parameter int unsigned AHB_ADDR_WIDTH = 32,
@@ -60,6 +59,9 @@ module i3c
 
     // TODO: Check if anything missing; Interrupts?
 );
+  // CSR HW interface
+  I3CCSR__in_t hwif_in;
+  I3CCSR__out_t hwif_out;
 
   // IOs between PHY and I3C bus
   logic scl_o;
@@ -88,11 +90,14 @@ module i3c
       .hreadyout_o(hreadyout_o),
       .hresp_o(hresp_o),
       .hsel_i(hsel_i),
-      .hready_i(hready_i)
-      // TODO: Provide I/Os to interface with i2c_controller_fsm
+      .hready_i(hready_i),
+
+      .hwif_in (hwif_in),
+      .hwif_out(hwif_out)
   );
 
   // TODO: Connect properly to i2c_controller_fsm
+  // TODO: #57765 to be integrated here
   logic fmt_fifo_rvalid_i;  // indicates there is valid data in fmt_fifo
   logic [FifoDepthWidth-1:0] fmt_fifo_depth_i;  // fmt_fifo_depth
   logic fmt_fifo_rready_o;  // populates fmt_fifo
