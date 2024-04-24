@@ -5,8 +5,8 @@ module i3c_phy_integration_wrapper
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32,
+    parameter int unsigned AHB_DATA_WIDTH  = 64,
+    parameter int unsigned AHB_ADDR_WIDTH  = 32,
     parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
     input clk_i,  // clock
@@ -43,7 +43,11 @@ module i3c_phy_integration_wrapper
   assign i3c_scl_o = i3c_scl_en_o ? i3c_scl_int_o : i3c_scl_i;
   assign i3c_sda_o = i3c_sda_en_o ? i3c_sda_int_o : i3c_sda_i;
 
-  i3c i3c (
+  i3c_top #(
+      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
+      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
+  ) i3c_top (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
