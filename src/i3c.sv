@@ -16,6 +16,7 @@ module i3c
     input clk_i,  // clock
     input rst_ni, // active low reset
 
+`ifdef I3C_USE_AHB
     // AHB-Lite interface
     // Byte address of the transfer
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
@@ -43,6 +44,9 @@ module i3c
     input  logic                        hsel_i,
     // Indicates all subordiantes have finished transfers
     input  logic                        hready_i,
+    // TODO: AXI4 I/O
+    // `else
+`endif
 
     // I3C controller IO
     inout i3c_scl_io,  // serial clock inout to/from i3c bus
@@ -89,7 +93,7 @@ module i3c
   logic s_cpuif_wr_ack;
   logic s_cpuif_wr_err;
 
-  // `ifdef I3C_USE_AHB
+`ifdef I3C_USE_AHB
   ahb_if #(
       .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
       .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
@@ -123,7 +127,9 @@ module i3c
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err)
   );
-  // `endif
+  // TODO: AXI4 I/O
+  // `else
+`endif
 
   hci hci (
       .clk_i(clk_i),
