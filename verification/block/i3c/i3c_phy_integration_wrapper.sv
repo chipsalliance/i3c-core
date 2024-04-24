@@ -9,8 +9,8 @@ module i3c_phy_integration_wrapper
     parameter int unsigned AHB_ADDR_WIDTH  = 32,
     parameter int unsigned AHB_BURST_WIDTH = 3
 ) (
-    input clk_i,  // clock
-    input rst_ni, // active low reset
+    input hclk,  // clock
+    input hreset_n,  // active low reset
 
     input        i3c_scl_i,    // serial clock input from i3c bus
     output logic i3c_scl_o,    // serial clock output to i3c bus
@@ -21,8 +21,6 @@ module i3c_phy_integration_wrapper
     output logic i3c_sda_en_o, // serial data output to i3c bus
 
     // AHB-Lite interface
-    input logic hclk,
-    input logic hreset_n,
     input logic [AHB_ADDR_WIDTH-1:0] haddr,
     input logic [AHB_BURST_WIDTH-1:0] hburst,
     input logic [3:0] hprot,
@@ -48,8 +46,8 @@ module i3c_phy_integration_wrapper
       .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
       .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
   ) i3c (
-      .clk_i (clk_i),
-      .rst_ni(rst_ni),
+      .clk_i (hclk),
+      .rst_ni(hreset_n),
 
       .i3c_scl_i(i3c_scl_i),
       .i3c_scl_o(i3c_scl_int_o),

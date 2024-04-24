@@ -180,7 +180,7 @@ def ahb_if_verify(session, blockName, testName, coverage):
 @nox.parametrize(
     "testName",
     [
-        "test_ahb_if",
+        "test_csr_sw_access",
     ],
 )
 @nox.parametrize("coverage", None)

@@ -8,6 +8,8 @@ CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRCDIR := $(abspath $(CURDIR)../../../../src)
 
 TEST_FILES   = $(sort $(wildcard test_*.py))
+# Borrow test from the ahb_if
+TEST_FILES  += test_csr_sw_access.py
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_phy_integration_wrapper
@@ -28,3 +30,4 @@ VERILOG_SOURCES  = \
 EXTRA_ARGS += +define+I3C_USE_AHB
 
 include $(CURDIR)/../common.mk
+export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/ahb_if
