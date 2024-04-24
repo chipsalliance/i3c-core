@@ -262,15 +262,5 @@ module i3c
       .ctrl_sda_i(ctrl2phy_sda),
       .ctrl_sda_o(phy2ctrl_sda)
   );
-
-  i3c_io phy_io (
-      .scl_io(i3c_scl_io),
-      .scl_i(i3c_scl_o),
-      .scl_en_i(i3c_scl_en_o),
-
-      .sda_io(i3c_sda_io),
-      .sda_i(i3c_sda_o),
-      .sda_en_i(i3c_sda_en_o)
-  );
 endmodule
 
