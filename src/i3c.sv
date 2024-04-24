@@ -75,9 +75,28 @@ module i3c
   logic ctrl2phy_sda;
   logic phy2ctrl_sda;
 
-  hci hci (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
+  // AHB <> I3C SW CSR IF
+  logic s_cpuif_req;
+  logic s_cpuif_req_is_wr;
+  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
+  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
+  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
+  logic s_cpuif_req_stall_wr;
+  logic s_cpuif_req_stall_rd;
+  logic s_cpuif_rd_ack;
+  logic s_cpuif_rd_err;
+  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
+  logic s_cpuif_wr_ack;
+  logic s_cpuif_wr_err;
+
+  // `ifdef I3C_USE_AHB
+  ahb_if #(
+      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
+      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
+  ) i3c_ahb_if (
+      .hclk_i(clk_i),
+      .hreset_n_i(rst_ni),
       .haddr_i(haddr_i),
       .hburst_i(hburst_i),
       .hprot_i(hprot_i),
@@ -91,6 +110,36 @@ module i3c
       .hresp_o(hresp_o),
       .hsel_i(hsel_i),
       .hready_i(hready_i),
+      .s_cpuif_req(s_cpuif_req),
+      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
+      .s_cpuif_addr(s_cpuif_addr),
+      .s_cpuif_wr_data(s_cpuif_wr_data),
+      .s_cpuif_wr_biten(s_cpuif_wr_biten),
+      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
+      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
+      .s_cpuif_rd_ack(s_cpuif_rd_ack),
+      .s_cpuif_rd_err(s_cpuif_rd_err),
+      .s_cpuif_rd_data(s_cpuif_rd_data),
+      .s_cpuif_wr_ack(s_cpuif_wr_ack),
+      .s_cpuif_wr_err(s_cpuif_wr_err)
+  );
+  // `endif
+
+  hci hci (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .s_cpuif_req(s_cpuif_req),
+      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
+      .s_cpuif_addr(s_cpuif_addr),
+      .s_cpuif_wr_data(s_cpuif_wr_data),
+      .s_cpuif_wr_biten(s_cpuif_wr_biten),
+      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
+      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
+      .s_cpuif_rd_ack(s_cpuif_rd_ack),
+      .s_cpuif_rd_err(s_cpuif_rd_err),
+      .s_cpuif_rd_data(s_cpuif_rd_data),
+      .s_cpuif_wr_ack(s_cpuif_wr_ack),
+      .s_cpuif_wr_err(s_cpuif_wr_err),
 
       .hwif_in (hwif_in),
       .hwif_out(hwif_out)
