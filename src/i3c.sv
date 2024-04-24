@@ -16,33 +16,19 @@ module i3c
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    // AHB-Lite interface
-    // Byte address of the transfer
-    input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
-    // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
-    // Protection control; provides information on the access type
-    input  logic [                 3:0] hprot_i,      // Unhandled
-    // Indicates the size of the transfer
-    input  logic [                 2:0] hsize_i,
-    // Indicates the transfer type
-    input  logic [                 1:0] htrans_i,
-    // Data for the write operation
-    input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
-    // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,     // Unhandled
-    // Indicates write operation when asserted
-    input  logic                        hwrite_i,
-    // Read data
-    output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
-    // Assrted indicates a finished transfer; Can be driven low to extend a transfer
-    output logic                        hreadyout_o,
-    // Transfer response, high when error occured
-    output logic                        hresp_o,
-    // Indicates the subordinate is selected for the transfer
-    input  logic                        hsel_i,
-    // Indicates all subordiantes have finished transfers
-    input  logic                        hready_i,
+    // I3C SW CSR access interface
+    input  logic                             s_cpuif_req,
+    input  logic                             s_cpuif_req_is_wr,
+    input  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr,
+    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data,
+    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten,
+    output logic                             s_cpuif_req_stall_wr,
+    output logic                             s_cpuif_req_stall_rd,
+    output logic                             s_cpuif_rd_ack,
+    output logic                             s_cpuif_rd_err,
+    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data,
+    output logic                             s_cpuif_wr_ack,
+    output logic                             s_cpuif_wr_err,
 
     // I3C controller IO
     inout i3c_scl_io,  // serial clock inout to/from i3c bus
@@ -74,56 +60,6 @@ module i3c
   logic phy2ctrl_scl;
   logic ctrl2phy_sda;
   logic phy2ctrl_sda;
-
-  // AHB <> I3C SW CSR IF
-  logic s_cpuif_req;
-  logic s_cpuif_req_is_wr;
-  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
-  logic s_cpuif_req_stall_wr;
-  logic s_cpuif_req_stall_rd;
-  logic s_cpuif_rd_ack;
-  logic s_cpuif_rd_err;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
-  logic s_cpuif_wr_ack;
-  logic s_cpuif_wr_err;
-
-  // `ifdef I3C_USE_AHB
-  ahb_if #(
-      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
-      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
-  ) i3c_ahb_if (
-      .hclk_i(clk_i),
-      .hreset_n_i(rst_ni),
-      .haddr_i(haddr_i),
-      .hburst_i(hburst_i),
-      .hprot_i(hprot_i),
-      .hsize_i(hsize_i),
-      .htrans_i(htrans_i),
-      .hwdata_i(hwdata_i),
-      .hwstrb_i(hwstrb_i),
-      .hwrite_i(hwrite_i),
-      .hrdata_o(hrdata_o),
-      .hreadyout_o(hreadyout_o),
-      .hresp_o(hresp_o),
-      .hsel_i(hsel_i),
-      .hready_i(hready_i),
-      .s_cpuif_req(s_cpuif_req),
-      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
-      .s_cpuif_addr(s_cpuif_addr),
-      .s_cpuif_wr_data(s_cpuif_wr_data),
-      .s_cpuif_wr_biten(s_cpuif_wr_biten),
-      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
-      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
-      .s_cpuif_rd_ack(s_cpuif_rd_ack),
-      .s_cpuif_rd_err(s_cpuif_rd_err),
-      .s_cpuif_rd_data(s_cpuif_rd_data),
-      .s_cpuif_wr_ack(s_cpuif_wr_ack),
-      .s_cpuif_wr_err(s_cpuif_wr_err)
-  );
-  // `endif
 
   hci hci (
       .clk_i(clk_i),
