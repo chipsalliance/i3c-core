@@ -26,9 +26,6 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/phy/i3c_io.sv \
     $(SRCDIR)/i3c_pkg.sv \
     $(SRCDIR)/i3c.sv \
-    $(SRCDIR)/i3c_top.sv \
     $(CURDIR)/i3c/i3c_phy_integration_wrapper.sv
-
-EXTRA_ARGS += +define+I3C_USE_AHB
 
 include $(CURDIR)/../common.mk
