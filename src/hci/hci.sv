@@ -24,9 +24,12 @@ module hci
     output logic                             s_cpuif_wr_ack,
     output logic                             s_cpuif_wr_err,
 
+    // TODO: Expose missing queue interfaces
     input  I3CCSR__in_t  hwif_in,
     output I3CCSR__out_t hwif_out
 );
+
+  // TODO: Add missing queues
 
   I3CCSR i3c_csr (
       .clk(clk_i),

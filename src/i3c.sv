@@ -79,7 +79,7 @@ module i3c
   logic ctrl2phy_sda;
   logic phy2ctrl_sda;
 
-  // AHB <> I3C SW CSR IF
+  // I3C SW CSR IF
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
   logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
