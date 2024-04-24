@@ -48,10 +48,6 @@ module i3c
     // `else
 `endif
 
-    // I3C controller IO
-    inout i3c_scl_io,  // serial clock inout to/from i3c bus
-    inout i3c_sda_io,  // serial data inout to/from i3c bus
-
     // I3C bus IO
     input        i3c_scl_i,    // serial clock input from i3c bus
     output logic i3c_scl_o,    // serial clock output to i3c bus

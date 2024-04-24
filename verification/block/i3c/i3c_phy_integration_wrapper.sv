@@ -51,9 +51,6 @@ module i3c_phy_integration_wrapper
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .i3c_scl_io(),  // Unsupported by Cocotb
-      .i3c_sda_io(),  // Unsupported by Cocotb
-
       .i3c_scl_i(i3c_scl_i),
       .i3c_scl_o(i3c_scl_int_o),
       .i3c_scl_en_o(i3c_scl_en_o),
