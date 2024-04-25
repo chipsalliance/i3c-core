@@ -14,7 +14,7 @@ module i2c_controller_shim (
 );
 
   // I2C FSM`
-  xi2c i2c_controller_fsm (
+  i2c_controller_fsm xi2c (
 
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -26,7 +26,6 @@ module i2c_controller_shim (
 
       // Host mode only
       .host_enable_i  (1'b1),
-      .target_enable_i(1'b0),
 
       // TODO: Looks like a command port
       .fmt_fifo_rvalid_i       (),
@@ -46,17 +45,7 @@ module i2c_controller_shim (
       .rx_fifo_wvalid_o(),
       .rx_fifo_wdata_o (),
 
-      // TX data port
-      .tx_fifo_rvalid_i(),
-      .tx_fifo_rready_o(),
-      .tx_fifo_rdata_i (),
-
-      // Response fifo
-      .acq_fifo_wvalid_o(),
-      .acq_fifo_wdata_o (),
-      .acq_fifo_depth_i (),
-      .acq_fifo_wready_o(),
-      .acq_fifo_rdata_i (),  // Not needed, used by an ASSERT()
+      .host_idle_o(),
 
       // TODO: Drive these with data from a preset(s)
       .thigh_i  (),
@@ -73,14 +62,8 @@ module i2c_controller_shim (
       .stretch_timeout_i(),
       .timeout_enable_i (),
 
-      .host_timeout_i                (1'b0),  // Irrelevant for host mode
+      .host_nack_handler_timeout_i(),
       .host_nack_handler_timeout_en_i(1'b0),  // Irrelevant for host mode
-      .nack_timeout_en_i             (1'b0),  // Irrelevant for host mode
-
-      .target_address0_i(),  // Irrelevant for host mode,
-      .target_mask0_i   (),  // Irrelevant for host mode,
-      .target_address1_i(),  // Irrelevant for host mode,
-      .target_mask1_i   (),  // Irrelevant for host mode,
 
       // Host mode related events
       .event_nak_o                  (),
@@ -89,8 +72,7 @@ module i2c_controller_shim (
       .event_sda_interference_o     (),
       .event_stretch_timeout_o      (),
       .event_sda_unstable_o         (),
-      .event_cmd_complete_o         (),
-      .event_tx_stretch_o           ()
+      .event_cmd_complete_o         ()
   );
 
 

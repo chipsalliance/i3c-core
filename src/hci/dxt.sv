@@ -20,9 +20,13 @@ module dxt
     input  logic [               127:0] dct_wdata_hw_i,
     output logic [               127:0] dct_rdata_hw_o,
 
-    // CSR interface
-    input  I3CCSR__out_t hwif_out_i,
-    output I3CCSR__in_t  hwif_in_o,
+    // DAT CSR interface
+    input  I3CCSR__DAT__external__out_t csr_dat_hwif_i,
+    output I3CCSR__DAT__external__in_t  csr_dat_hwif_o,
+
+    // DCT CSR interface
+    input  I3CCSR__DCT__external__out_t csr_dct_hwif_i,
+    output I3CCSR__DCT__external__in_t  csr_dct_hwif_o,
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
@@ -47,12 +51,12 @@ module dxt
   logic dat_wr_ack;
 
   // Two 32-bit words per 64-bit word so retrieve index by shifting 3 bits
-  assign dat_index_sw = hwif_out_i.DAT.addr[$clog2(DatDepth)+2:3];
+  assign dat_index_sw = csr_dat_hwif_i.addr[$clog2(DatDepth)+2:3];
   // Second bit indicates which 32-bit word is requested by software
-  assign dat_word_index_sw = hwif_out_i.DAT.addr[2];
+  assign dat_word_index_sw = csr_dat_hwif_i.addr[2];
 
-  assign dat_read_valid = hwif_out_i.DAT.req | dat_read_valid_hw_i;
-  assign dat_write_valid = hwif_out_i.DAT.req_is_wr;
+  assign dat_read_valid = csr_dat_hwif_i.req | dat_read_valid_hw_i;
+  assign dat_write_valid = csr_dat_hwif_i.req_is_wr;
 
   // Connect signals to DAT memory
   assign dat_rdata_hw_o = dat_mem_src_i.rdata;
@@ -74,12 +78,12 @@ module dxt
         1'b0: begin
           // Word mask = 2'b01
           dat_wmask = {{32{1'b0}}, {32{1'b1}}};
-          dat_wdata = {{32{1'b0}}, hwif_out_i.DAT.wr_data};
+          dat_wdata = {{32{1'b0}}, csr_dat_hwif_i.wr_data};
         end
         1'b1: begin
           // Word mask = 2'b10
           dat_wmask = {{32{1'b1}}, {32{1'b0}}};
-          dat_wdata = {hwif_out_i.DAT.wr_data, {32{1'b0}}};
+          dat_wdata = {csr_dat_hwif_i.wr_data, {32{1'b0}}};
         end
         default: begin
           dat_wmask = '0;
@@ -91,12 +95,12 @@ module dxt
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      hwif_in_o.DAT.rd_data <= '0;
+      csr_dat_hwif_o.rd_data <= '0;
     end else begin
       case (dat_word_index_sw)
-        1'd0: hwif_in_o.DAT.rd_data <= dat_mem_src_i.rdata[31:0];
-        1'd1: hwif_in_o.DAT.rd_data <= dat_mem_src_i.rdata[63:32];
-        default: hwif_in_o.DAT.rd_data <= '0;
+        1'd0: csr_dat_hwif_o.rd_data <= dat_mem_src_i.rdata[31:0];
+        1'd1: csr_dat_hwif_o.rd_data <= dat_mem_src_i.rdata[63:32];
+        default: csr_dat_hwif_o.rd_data <= '0;
       endcase
     end
   end
@@ -105,14 +109,14 @@ module dxt
     if (~rst_ni) begin
       dat_rd_ack <= 1'b0;
       dat_wr_ack <= 1'b0;
-      hwif_in_o.DAT.rd_ack <= 1'b0;
-      hwif_in_o.DAT.wr_ack <= 1'b0;
+      csr_dat_hwif_o.rd_ack <= 1'b0;
+      csr_dat_hwif_o.wr_ack <= 1'b0;
     end else begin
-      dat_rd_ack <= hwif_out_i.DAT.req & ~hwif_out_i.DAT.req_is_wr & ~dat_read_valid_hw_i;
-      hwif_in_o.DAT.rd_ack <= dat_rd_ack;
+      dat_rd_ack <= csr_dat_hwif_i.req & ~csr_dat_hwif_i.req_is_wr & ~dat_read_valid_hw_i;
+      csr_dat_hwif_o.rd_ack <= dat_rd_ack;
 
-      dat_wr_ack <= hwif_out_i.DAT.req & hwif_out_i.DAT.req_is_wr;
-      hwif_in_o.DAT.wr_ack <= dat_wr_ack;
+      dat_wr_ack <= csr_dat_hwif_i.req & csr_dat_hwif_i.req_is_wr;
+      csr_dat_hwif_o.wr_ack <= dat_wr_ack;
     end
   end
 
@@ -130,11 +134,11 @@ module dxt
   logic dct_wr_ack;
 
   // Four 32-bit words per 128-bit word so retrieve index by shifting 4 bits
-  assign dct_index_sw = hwif_out_i.DCT.addr[$clog2(DctDepth)+3:4];
+  assign dct_index_sw = csr_dct_hwif_i.addr[$clog2(DctDepth)+3:4];
   // Second and third bits indicate which 32-bit word is requested by software
-  assign dct_word_index_sw = hwif_out_i.DCT.addr[3:2];
+  assign dct_word_index_sw = csr_dct_hwif_i.addr[3:2];
 
-  assign dct_read_valid = hwif_out_i.DCT.req | dct_read_valid_hw_i;
+  assign dct_read_valid = csr_dct_hwif_i.req | dct_read_valid_hw_i;
   assign dct_write_valid = dct_write_valid_hw_i;
   assign dct_wdata = dct_wdata_hw_i;
 
@@ -158,14 +162,14 @@ module dxt
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      hwif_in_o.DCT.rd_data <= '0;
+      csr_dct_hwif_o.rd_data <= '0;
     end else begin
       case (dct_word_index_sw)
-        2'd0: hwif_in_o.DCT.rd_data <= dct_mem_src_i.rdata[31:0];
-        2'd1: hwif_in_o.DCT.rd_data <= dct_mem_src_i.rdata[63:32];
-        2'd2: hwif_in_o.DCT.rd_data <= dct_mem_src_i.rdata[95:64];
-        2'd3: hwif_in_o.DCT.rd_data <= dct_mem_src_i.rdata[127:96];
-        default: hwif_in_o.DCT.rd_data <= '0;
+        2'd0: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[31:0];
+        2'd1: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[63:32];
+        2'd2: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[95:64];
+        2'd3: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[127:96];
+        default: csr_dct_hwif_o.rd_data <= '0;
       endcase
     end
   end
@@ -174,14 +178,14 @@ module dxt
     if (~rst_ni) begin
       dct_rd_ack <= 1'b0;
       dct_wr_ack <= 1'b0;
-      hwif_in_o.DCT.rd_ack <= 1'b0;
-      hwif_in_o.DCT.wr_ack <= 1'b0;
+      csr_dct_hwif_o.rd_ack <= 1'b0;
+      csr_dct_hwif_o.wr_ack <= 1'b0;
     end else begin
-      dct_rd_ack <= hwif_out_i.DCT.req & ~hwif_out_i.DCT.req_is_wr & ~dct_read_valid_hw_i;
-      hwif_in_o.DCT.rd_ack <= dct_rd_ack;
+      dct_rd_ack <= csr_dct_hwif_i.req & ~csr_dct_hwif_i.req_is_wr & ~dct_read_valid_hw_i;
+      csr_dct_hwif_o.rd_ack <= dct_rd_ack;
       // ACK write requests to remove CPU stall, even though they're illegal to DCT
-      dct_wr_ack <= hwif_out_i.DCT.req & hwif_out_i.DCT.req_is_wr;
-      hwif_in_o.DCT.wr_ack <= dct_wr_ack;
+      dct_wr_ack <= csr_dct_hwif_i.req & csr_dct_hwif_i.req_is_wr;
+      csr_dct_hwif_o.wr_ack <= dct_wr_ack;
     end
   end
 

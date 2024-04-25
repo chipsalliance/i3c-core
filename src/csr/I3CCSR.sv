@@ -424,7 +424,7 @@ module I3CCSR (
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } tx_bux;
+                } tx_buf;
                 struct {
                     logic [2:0] next;
                     logic load_next;
@@ -756,7 +756,7 @@ module I3CCSR (
             struct {
                 struct {
                     logic [2:0] value;
-                } tx_bux;
+                } tx_buf;
                 struct {
                     logic [2:0] value;
                 } rx_buf;
@@ -1156,7 +1156,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3CBase.RESET_CONTROL.tx_fifo.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3CBase.RESET_CONTROL.tx_fifo.we) begin // HW Write - we
             next_c = hwif_in.I3CBase.RESET_CONTROL.tx_fifo.next;
             load_next_c = '1;
         end
@@ -1971,27 +1971,27 @@ module I3CCSR (
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.ibi_status.value = field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value;
-    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux
+    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value;
+        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
+            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.next = next_c;
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.load_next = load_next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.next = next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.next;
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value <= 3'h1;
+        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.load_next) begin
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.next;
         end
     end
-    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value;
+    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value;
     // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf
     always_comb begin
         automatic logic [2:0] next_c;
@@ -2865,7 +2865,7 @@ module I3CCSR (
     assign readback_array[23][15:8] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value : '0;
     assign readback_array[23][23:16] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value : '0;
     assign readback_array[23][31:24] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value : '0;
-    assign readback_array[24][2:0] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_bux.value : '0;
+    assign readback_array[24][2:0] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value : '0;
     assign readback_array[24][7:3] = '0;
     assign readback_array[24][10:8] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value : '0;
     assign readback_array[24][15:11] = '0;

@@ -53,6 +53,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic next;
+        logic we;
     } BaseRegs_PIO_offset_100_DAT_table_size_7f_DAT_offset_400_DCT_table_size_7f_DCT_offset_800_MIPI_commands_35__RESET_CONTROL__tx_fifo__in_t;
 
     typedef struct {
@@ -557,7 +558,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [2:0] value;
-    } PIORegs__DATA_BUFFER_THLD_CTRL__tx_bux__out_t;
+    } PIORegs__DATA_BUFFER_THLD_CTRL__tx_buf__out_t;
 
     typedef struct {
         logic [2:0] value;
@@ -572,7 +573,7 @@ package I3CCSR_pkg;
     } PIORegs__DATA_BUFFER_THLD_CTRL__rx_start_log__out_t;
 
     typedef struct {
-        PIORegs__DATA_BUFFER_THLD_CTRL__tx_bux__out_t tx_bux;
+        PIORegs__DATA_BUFFER_THLD_CTRL__tx_buf__out_t tx_buf;
         PIORegs__DATA_BUFFER_THLD_CTRL__rx_buf__out_t rx_buf;
         PIORegs__DATA_BUFFER_THLD_CTRL__tx_start_log__out_t tx_start_log;
         PIORegs__DATA_BUFFER_THLD_CTRL__rx_start_log__out_t rx_start_log;

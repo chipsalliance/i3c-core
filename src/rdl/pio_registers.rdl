@@ -100,7 +100,7 @@ regfile PIORegs {
             sw = rw;
             hw = r;
             reset = 3'b1;
-        } tx_bux [2:0];
+        } tx_buf [2:0];
     } DATA_BUFFER_THLD_CTRL @ 0x14;
     reg {
         name = "Queue sizes";

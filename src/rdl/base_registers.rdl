@@ -292,6 +292,7 @@ regfile BaseRegs #(
             desc = "Clear TX FIFO from software. Valid only in PIO mode.";
             sw = rw;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } tx_fifo [3:3];
         field {

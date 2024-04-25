@@ -32,13 +32,13 @@ module ahb_if
     input  logic                        hwrite_i,
     // Read data
     output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
-    // Assrted indicates a finished transfer; Can be driven low to extend a transfer
+    // Asserted indicates a finished transfer; Can be driven low to extend a transfer
     output logic                        hreadyout_o,
-    // Transfer response, high when error occured
+    // Transfer response, high when error occurred
     output logic                        hresp_o,
     // Indicates the subordinate is selected for the transfer
     input  logic                        hsel_i,
-    // Indicates all subordiantes have finished transfers
+    // Indicates all subordinates have finished transfers
     input  logic                        hready_i,
 
     // I3C SW CSR access interface
@@ -57,7 +57,7 @@ module ahb_if
 );
 
   // Check configuration
-  initial begin
+  initial begin : ahb_param_check
     if (!(AHB_ADDR_WIDTH >= 10 && AHB_ADDR_WIDTH <= 64)) begin : ahb_addr_w_oob
       $error("ERROR: Violated requirement: 10 <= AHB_ADDR_WIDTH <= 64 (instance %m)");
       $finish;
