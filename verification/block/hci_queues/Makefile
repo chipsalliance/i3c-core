@@ -8,13 +8,12 @@ CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRCDIR := $(abspath $(CURDIR)../../../../src)
 
 TEST_FILES   = $(sort $(wildcard test_*.py))
-# Borrow test from the ahb_if
-TEST_FILES  += test_csr_sw_access.py
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
-TOPLEVEL     = i3c_phy_integration_wrapper
+TOPLEVEL     = hci_queues_wrapper
 
 VERILOG_SOURCES  = \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(SRCDIR)/i3c_pkg.sv \
@@ -22,17 +21,14 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/csr/I3CCSR.sv \
     $(SRCDIR)/hci/ahb_if.sv \
     $(SRCDIR)/hci/dxt.sv \
+    $(SRCDIR)/hci/hci_pkg.sv \
+    $(SRCDIR)/hci/hci_ctrl_queues.sv \
     $(SRCDIR)/hci/hci.sv \
-    $(SRCDIR)/ctrl/i2c_pkg.sv \
-    $(SRCDIR)/ctrl/i2c_controller_fsm.sv \
-    $(SRCDIR)/phy/i3c_phy.sv \
-    $(SRCDIR)/i3c.sv \
     $(SRCDIR)/libs/mem/prim_ram_1p_pkg.sv \
     $(SRCDIR)/libs/mem/prim_generic_ram_1p.sv \
     $(SRCDIR)/libs/mem/prim_ram_1p.sv \
     $(SRCDIR)/libs/mem/prim_ram_1p_adv.sv \
-    $(SRCDIR)/i3c_wrapper.sv \
-    $(CURDIR)/i3c/i3c_phy_integration_wrapper.sv
+    $(CURDIR)/hci_queues/hci_queues_wrapper.sv
 
 EXTRA_ARGS += +define+I3C_USE_AHB
 

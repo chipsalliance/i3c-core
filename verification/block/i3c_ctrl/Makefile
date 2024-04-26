@@ -14,6 +14,10 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_ctrl
 
 VERILOG_SOURCES  = \
+    $(SRCDIR)/../hci/hci_pkg.sv \
+    $(SRCDIR)/i2c_pkg.sv \
+    $(SRCDIR)/i2c_controller_fsm.sv \
+    $(SRCDIR)/i2c_controller_shim.sv \
     $(SRCDIR)/i3c_ctrl_pkg.sv \
     $(SRCDIR)/i3c_ctrl.sv
 

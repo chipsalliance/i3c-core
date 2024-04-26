@@ -176,15 +176,18 @@ def ahb_if_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
-@nox.parametrize("blockName", ["i3c"])
+@nox.parametrize("blockName", ["hci_queues"])
 @nox.parametrize(
     "testName",
     [
-        "test_csr_sw_access",
+        "test_clear",
+        "test_empty",
+        "test_read_write_ports",
+        "test_threshold",
     ],
 )
 @nox.parametrize("coverage", None)
-def i3c_verify(session, blockName, testName, coverage):
+def hci_queues_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
