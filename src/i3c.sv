@@ -11,7 +11,9 @@ module i3c
     parameter int FifoDepth = 64,
     parameter int AcqFifoDepth = 64,
     localparam int FifoDepthWidth = $clog2(FifoDepth + 1),
-    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
+    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1),
+    parameter DAT_SIZE = 128,
+    parameter DCT_SIZE = 128
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -59,9 +61,6 @@ module i3c
 
     // TODO: Check if anything missing; Interrupts?
 );
-  // CSR HW interface
-  I3CCSR__in_t hwif_in;
-  I3CCSR__out_t hwif_out;
 
   // IOs between PHY and I3C bus
   logic scl_o;
@@ -127,6 +126,18 @@ module i3c
   // `else
 `endif
 
+    // DAT <-> Controller interface
+    logic                        dat_read_valid_hw_i;
+    logic [$clog2(DAT_SIZE)-1:0] dat_index_hw_i;
+    logic [                63:0] dat_rdata_hw_o;
+
+    // DCT <-> Controller interface
+    logic                        dct_write_valid_hw_i;
+    logic                        dct_read_valid_hw_i;
+    logic [$clog2(DCT_SIZE)-1:0] dct_index_hw_i;
+    logic [               127:0] dct_wdata_hw_i;
+    logic [               127:0] dct_rdata_hw_o;
+
   hci hci (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -143,8 +154,15 @@ module i3c
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err),
 
-      .hwif_in (hwif_in),
-      .hwif_out(hwif_out)
+      .dat_read_valid_hw_i(dat_read_valid_hw_i),
+      .dat_index_hw_i(dat_index_hw_i),
+      .dat_rdata_hw_o(dat_rdata_hw_o),
+
+      .dct_write_valid_hw_i(dct_write_valid_hw_i),
+      .dct_read_valid_hw_i(dct_read_valid_hw_i),
+      .dct_index_hw_i(dct_index_hw_i),
+      .dct_wdata_hw_i(dct_wdata_hw_i),
+      .dct_rdata_hw_o(dct_rdata_hw_o)
   );
 
   // TODO: Connect properly to i2c_controller_fsm
