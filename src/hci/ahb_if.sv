@@ -72,7 +72,8 @@ module ahb_if
     end
   end
 
-  logic i3c_req_dv, i3c_req_hld;
+  logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
+  logic cpuif_req_stall;
   logic i3c_req_err, i3c_req_write;
   logic [I3CCSR_DATA_WIDTH-1:0] i3c_req_wdata;
   logic [AHB_ADDR_WIDTH-1:0] i3c_req_addr;
@@ -110,16 +111,27 @@ module ahb_if
   );
 
   logic i3c_ign_rd_ack, i3c_ign_wr_ack;
+
   always_comb begin : ahb_2_i3c_comp
-    s_cpuif_req = i3c_req_dv;
+    cpuif_req_stall = i3c_req_write ? s_cpuif_req_stall_wr : s_cpuif_req_stall_rd;
+    i3c_req_hld = (cpuif_req_stall | i3c_req_hld_ext) & ~s_cpuif_wr_ack & ~s_cpuif_rd_ack;
+
+    s_cpuif_req = i3c_req_dv | i3c_req_hld;
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[I3CCSR_MIN_ADDR_WIDTH-1:0];
     s_cpuif_wr_data = i3c_req_wdata;
     s_cpuif_wr_biten = '1;  // AHB-Lite implementation doesn't support write strobes
-    i3c_req_hld = i3c_req_write ? s_cpuif_req_stall_wr : s_cpuif_req_stall_rd;
     i3c_req_err = s_cpuif_rd_err | s_cpuif_wr_err;
     i3c_req_rdata = s_cpuif_rd_data;
     i3c_ign_rd_ack = s_cpuif_rd_ack;  // Read ack is not utilized
     i3c_ign_wr_ack = s_cpuif_wr_ack;  // Write ack is not utilized
+  end
+
+  always_ff @(posedge hclk_i) begin
+    if (hready_i & hsel_i & htrans_i inside {2'b10, 2'b11}) begin
+      i3c_req_hld_ext <= 1'b1;
+    end else begin
+      i3c_req_hld_ext <= 1'b0;
+    end
   end
 endmodule
