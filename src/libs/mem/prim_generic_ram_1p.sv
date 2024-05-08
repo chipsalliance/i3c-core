@@ -4,8 +4,6 @@
 //
 // Synchronous single-port SRAM model
 
-`include "prim_assert.sv"
-
 module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
   parameter  int Width           = 32, // bit
   parameter  int Depth           = 128,
@@ -33,10 +31,10 @@ module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
 // of dual port rams they can even trigger elab errors due to multiple processes writing to the
 // same memory variable concurrently. To this end, we exclude the entire logic in this module in
 // these runs with the following macro.
-`ifndef SYNTHESIS_MEMORY_BLACK_BOXING
+// `ifndef SYNTHESIS_MEMORY_BLACK_BOXING
 
   // Width must be fully divisible by DataBitsPerMask
-  `ASSERT_INIT(DataBitsPerMaskCheck_A, (Width % DataBitsPerMask) == 0)
+  `CALIPTRA_ASSERT_INIT(DataBitsPerMaskCheck_A, (Width % DataBitsPerMask) == 0)
 
   logic unused_cfg;
   assign unused_cfg = ^cfg_i;
@@ -52,7 +50,7 @@ module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
     assign wmask[k] = &wmask_i[k*DataBitsPerMask +: DataBitsPerMask];
 
     // Ensure that all mask bits within a group have the same value for a write
-    `ASSERT(MaskCheck_A, req_i && write_i |->
+    `CALIPTRA_ASSERT(MaskCheck_A, req_i && write_i |->
         wmask_i[k*DataBitsPerMask +: DataBitsPerMask] inside {{DataBitsPerMask{1'b1}}, '0},
         clk_i, '0)
   end
@@ -74,6 +72,6 @@ module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
     end
   end
 
-  `include "prim_util_memload.svh"
-`endif
+//   `include "prim_util_memload.svh"
+// `endif
 endmodule

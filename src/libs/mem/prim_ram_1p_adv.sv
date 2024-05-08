@@ -13,8 +13,6 @@
 // Note that the write mask needs to be per Byte if parity is enabled. If ECC is enabled, the write
 // mask cannot be used and has to be tied to {Width{1'b1}}.
 
-`include "prim_assert.sv"
-
 module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
   parameter  int Depth                = 512,
   parameter  int Width                = 32,
@@ -32,7 +30,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
   // since this results in a more compact and faster implementation.
   parameter bit HammingECC            = 0,
 
-  localparam int Aw                   = prim_util_pkg::vbits(Depth)
+  localparam int Aw                   = caliptra_prim_util_pkg::vbits(Depth)
 ) (
   input clk_i,
   input rst_ni,
@@ -51,7 +49,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
 );
 
 
-  `ASSERT_INIT(CannotHaveEccAndParity_A, !(EnableParity && EnableECC))
+  `CALIPTRA_ASSERT_INIT(CannotHaveEccAndParity_A, !(EnableParity && EnableECC))
 
   // Calculate ECC width
   localparam int ParWidth  = (EnableParity) ? Width/8 :
@@ -126,68 +124,69 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
     assign unused_wmask = ^wmask_i;
 
     // check supported widths
-    `ASSERT_INIT(SecDecWidth_A, Width inside {16, 32})
+    `CALIPTRA_ASSERT_INIT(SecDecWidth_A, Width inside {16, 32})
 
     // the wmask is constantly set to 1 in this case
-    `ASSERT(OnlyWordWritePossibleWithEccPortA_A, req_i |->
+    `CALIPTRA_ASSERT(OnlyWordWritePossibleWithEccPortA_A, req_i |->
           wmask_i == {Width{1'b1}})
 
     assign wmask_d = {TotalWidth{1'b1}};
 
-    if (Width == 16) begin : gen_secded_22_16
-      if (HammingECC) begin : gen_hamming
-        prim_secded_inv_hamming_22_16_enc u_enc (
-          .data_i(wdata_i),
-          .data_o(wdata_d)
-        );
-        prim_secded_inv_hamming_22_16_dec u_dec (
-          .data_i     (rdata_sram),
-          .data_o     (rdata_d[0+:Width]),
-          .syndrome_o ( ),
-          .err_o      (rerror_d)
-        );
-      end else begin : gen_hsiao
-        prim_secded_inv_22_16_enc u_enc (
-          .data_i(wdata_i),
-          .data_o(wdata_d)
-        );
-        prim_secded_inv_22_16_dec u_dec (
-          .data_i     (rdata_sram),
-          .data_o     (rdata_d[0+:Width]),
-          .syndrome_o ( ),
-          .err_o      (rerror_d)
-        );
-      end
-    end else if (Width == 32) begin : gen_secded_39_32
-      if (HammingECC) begin : gen_hamming
-        prim_secded_inv_hamming_39_32_enc u_enc (
-          .data_i(wdata_i),
-          .data_o(wdata_d)
-        );
-        prim_secded_inv_hamming_39_32_dec u_dec (
-          .data_i     (rdata_sram),
-          .data_o     (rdata_d[0+:Width]),
-          .syndrome_o ( ),
-          .err_o      (rerror_d)
-        );
-      end else begin : gen_hsiao
-        prim_secded_inv_39_32_enc u_enc (
-          .data_i(wdata_i),
-          .data_o(wdata_d)
-        );
-        prim_secded_inv_39_32_dec u_dec (
-          .data_i     (rdata_sram),
-          .data_o     (rdata_d[0+:Width]),
-          .syndrome_o ( ),
-          .err_o      (rerror_d)
-        );
-      end
-    end
+    // Uncomment and import secded modules from OT if needed
+    // if (Width == 16) begin : gen_secded_22_16
+    //   if (HammingECC) begin : gen_hamming
+    //     prim_secded_inv_hamming_22_16_enc u_enc (
+    //       .data_i(wdata_i),
+    //       .data_o(wdata_d)
+    //     );
+    //     prim_secded_inv_hamming_22_16_dec u_dec (
+    //       .data_i     (rdata_sram),
+    //       .data_o     (rdata_d[0+:Width]),
+    //       .syndrome_o ( ),
+    //       .err_o      (rerror_d)
+    //     );
+    //   end else begin : gen_hsiao
+    //     prim_secded_inv_22_16_enc u_enc (
+    //       .data_i(wdata_i),
+    //       .data_o(wdata_d)
+    //     );
+    //     prim_secded_inv_22_16_dec u_dec (
+    //       .data_i     (rdata_sram),
+    //       .data_o     (rdata_d[0+:Width]),
+    //       .syndrome_o ( ),
+    //       .err_o      (rerror_d)
+    //     );
+    //   end
+    // end else if (Width == 32) begin : gen_secded_39_32
+    //   if (HammingECC) begin : gen_hamming
+    //     prim_secded_inv_hamming_39_32_enc u_enc (
+    //       .data_i(wdata_i),
+    //       .data_o(wdata_d)
+    //     );
+    //     prim_secded_inv_hamming_39_32_dec u_dec (
+    //       .data_i     (rdata_sram),
+    //       .data_o     (rdata_d[0+:Width]),
+    //       .syndrome_o ( ),
+    //       .err_o      (rerror_d)
+    //     );
+    //   end else begin : gen_hsiao
+    //     prim_secded_inv_39_32_enc u_enc (
+    //       .data_i(wdata_i),
+    //       .data_o(wdata_d)
+    //     );
+    //     prim_secded_inv_39_32_dec u_dec (
+    //       .data_i     (rdata_sram),
+    //       .data_o     (rdata_d[0+:Width]),
+    //       .syndrome_o ( ),
+    //       .err_o      (rerror_d)
+    //     );
+    //   end
+    // end
 
   end else if (EnableParity) begin : gen_byte_parity
 
-    `ASSERT_INIT(WidthNeedsToBeByteAligned_A, Width % 8 == 0)
-    `ASSERT_INIT(ParityNeedsByteWriteMask_A, DataBitsPerMask == 8)
+    `CALIPTRA_ASSERT_INIT(WidthNeedsToBeByteAligned_A, Width % 8 == 0)
+    `CALIPTRA_ASSERT_INIT(ParityNeedsByteWriteMask_A, DataBitsPerMask == 8)
 
     always_comb begin : p_parity
       rerror_d = '0;
