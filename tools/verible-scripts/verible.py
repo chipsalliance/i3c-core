@@ -4,6 +4,17 @@ import argparse
 import os
 import sys
 
+EXCLUDE_FILES = [
+    "I3CCSR_pkg.sv",
+    "I3CCSR.sv",
+    "prim_ram_1p_adv.sv",
+    "prim_ram_1p_pkg.sv",
+    "prim_ram_1p.sv",
+    "prim_generic_ram_1p.sv",
+]
+
+EXCLUDE_DIRS = ["html", "md", ".nox", "obj_dir", "__pycache__"]
+
 
 def main():
     """
@@ -31,10 +42,15 @@ def main():
     """
     paths = []
     file_extensions = [".v", ".vh", ".sv", ".svi", ".svh"]
-    for root, dirs, files in os.walk(args.root_dir):
-        for file in files:
-            for extension in file_extensions:
-                if file.endswith(extension):
+    for root, _, files in os.walk(args.root_dir):
+        for s in root.split("/"):
+            if s in EXCLUDE_DIRS:
+                break
+        else:
+            for file in files:
+                if file in EXCLUDE_FILES:
+                    continue
+                if file.endswith(tuple(file_extensions)):
                     paths.append(os.path.join(root, file))
 
     if args.only_discover:

@@ -2,7 +2,7 @@
 
 set -e
 
-ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." &>/dev/null && pwd)
 
 echo "[LINT] See exec_lint.log"
 python tools/verible-scripts/verible.py --tool=lint --root_dir="${ROOT_DIR}"/src &> exec_lint.log
