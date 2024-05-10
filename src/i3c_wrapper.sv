@@ -92,10 +92,10 @@ module i3c_wrapper
       .i3c_sda_o,
       .i3c_sda_en_o,
 
-      .dat_mem_src_i(dat_mem_src),
+      .dat_mem_src_i (dat_mem_src),
       .dat_mem_sink_o(dat_mem_sink),
 
-      .dct_mem_src_i(dct_mem_src),
+      .dct_mem_src_i (dct_mem_src),
       .dct_mem_sink_o(dct_mem_sink)
   );
 

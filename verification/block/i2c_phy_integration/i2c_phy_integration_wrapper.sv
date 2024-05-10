@@ -11,13 +11,13 @@ module i2c_phy_integration_wrapper
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    input        i3c_scl_i,  // serial clock input from i3c bus
-    output logic i3c_scl_o,  // serial clock output to i3c bus
-    output logic i3c_scl_en_o,  // serial clock output to i3c bus
+    input        i3c_scl_i,    // serial clock input from i3c bus
+    output logic i3c_scl_o,    // serial clock output to i3c bus
+    output logic i3c_scl_en_o, // serial clock output to i3c bus
 
-    input        i3c_sda_i,  // serial data input from i3c bus
-    output logic i3c_sda_o,  // serial data output to i3c bus
-    output logic i3c_sda_en_o,  // serial data output to i3c bus
+    input        i3c_sda_i,    // serial data input from i3c bus
+    output logic i3c_sda_o,    // serial data output to i3c bus
+    output logic i3c_sda_en_o, // serial data output to i3c bus
 
     input host_enable_i,  // enable host functionality
 
@@ -72,8 +72,8 @@ module i2c_phy_integration_wrapper
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .i3c_scl_io(), // Unsupported by Cocotb
-      .i3c_sda_io(), // Unsupported by Cocotb
+      .i3c_scl_io(),  // Unsupported by Cocotb
+      .i3c_sda_io(),  // Unsupported by Cocotb
 
       .i3c_scl_i(i3c_scl_i),
       .i3c_scl_o(i3c_scl_int_o),

@@ -11,16 +11,16 @@ module i2c_phy_integration
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    inout        i3c_scl_io,  // serial clock inout to/from i3c bus
-    inout        i3c_sda_io,  // serial data inout to/from i3c bus
+    inout i3c_scl_io,  // serial clock inout to/from i3c bus
+    inout i3c_sda_io,  // serial data inout to/from i3c bus
 
-    input        i3c_scl_i,  // serial clock input from i3c bus
-    output logic i3c_scl_o,  // serial clock output to i3c bus
-    output logic i3c_scl_en_o,  // serial clock output to i3c bus
+    input        i3c_scl_i,    // serial clock input from i3c bus
+    output logic i3c_scl_o,    // serial clock output to i3c bus
+    output logic i3c_scl_en_o, // serial clock output to i3c bus
 
-    input        i3c_sda_i,  // serial data input from i3c bus
-    output logic i3c_sda_o,  // serial data output to i3c bus
-    output logic i3c_sda_en_o,  // serial data output to i3c bus
+    input        i3c_sda_i,    // serial data input from i3c bus
+    output logic i3c_sda_o,    // serial data output to i3c bus
+    output logic i3c_sda_en_o, // serial data output to i3c bus
 
     input host_enable_i,  // enable host functionality
 
@@ -78,7 +78,7 @@ module i2c_phy_integration
   logic phy2ctrl_sda;
 
   i2c_controller_fsm i2c_controller_fsm (
-      .clk_i(clk_i),
+      .clk_i (clk_i),
       .rst_ni(rst_ni),
 
       .scl_i(phy2ctrl_scl),
@@ -101,7 +101,7 @@ module i2c_phy_integration
       .unhandled_nak_timeout_i(unhandled_nak_timeout_i),
 
       .rx_fifo_wvalid_o(rx_fifo_wvalid_o),
-      .rx_fifo_wdata_o(rx_fifo_wdata_o),
+      .rx_fifo_wdata_o (rx_fifo_wdata_o),
 
       .host_idle_o(host_idle_o),
 
@@ -130,7 +130,7 @@ module i2c_phy_integration
   );
 
   i3c_phy phy (
-      .clk_i(clk_i),
+      .clk_i (clk_i),
       .rst_ni(rst_ni),
 
       .scl_i(i3c_scl_i),

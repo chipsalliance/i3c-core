@@ -26,16 +26,16 @@ module hci
     output logic                             s_cpuif_wr_err,
 
     // DAT <-> Controller interface
-    input  logic                         dat_read_valid_hw_i,
+    input  logic                        dat_read_valid_hw_i,
     input  logic [$clog2(DatDepth)-1:0] dat_index_hw_i,
-    output logic [                 63:0] dat_rdata_hw_o,
+    output logic [                63:0] dat_rdata_hw_o,
 
     // DCT <-> Controller interface
-    input  logic                         dct_write_valid_hw_i,
-    input  logic                         dct_read_valid_hw_i,
+    input  logic                        dct_write_valid_hw_i,
+    input  logic                        dct_read_valid_hw_i,
     input  logic [$clog2(DctDepth)-1:0] dct_index_hw_i,
-    input  logic [                127:0] dct_wdata_hw_i,
-    output logic [                127:0] dct_rdata_hw_o,
+    input  logic [               127:0] dct_wdata_hw_i,
+    output logic [               127:0] dct_rdata_hw_o,
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
