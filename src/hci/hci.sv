@@ -6,10 +6,7 @@ module hci
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
   import I3CCSR_pkg::I3CCSR__in_t;
   import I3CCSR_pkg::I3CCSR__out_t;
-#(
-    parameter DAT_SIZE = 128,
-    parameter DCT_SIZE = 128
-)
+  import i3c_pkg::*;
 (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -29,21 +26,29 @@ module hci
     output logic                             s_cpuif_wr_err,
 
     // DAT <-> Controller interface
-    input  logic                        dat_read_valid_hw_i,
-    input  logic [$clog2(DAT_SIZE)-1:0] dat_index_hw_i,
-    output logic [                63:0] dat_rdata_hw_o,
+    input  logic                         dat_read_valid_hw_i,
+    input  logic [$clog2(DatDepth)-1:0] dat_index_hw_i,
+    output logic [                 63:0] dat_rdata_hw_o,
 
     // DCT <-> Controller interface
-    input  logic                        dct_write_valid_hw_i,
-    input  logic                        dct_read_valid_hw_i,
-    input  logic [$clog2(DCT_SIZE)-1:0] dct_index_hw_i,
-    input  logic [               127:0] dct_wdata_hw_i,
-    output logic [               127:0] dct_rdata_hw_o
+    input  logic                         dct_write_valid_hw_i,
+    input  logic                         dct_read_valid_hw_i,
+    input  logic [$clog2(DctDepth)-1:0] dct_index_hw_i,
+    input  logic [                127:0] dct_wdata_hw_i,
+    output logic [                127:0] dct_rdata_hw_o,
+
+    // DAT memory export interface
+    input  dat_mem_src_t  dat_mem_src_i,
+    output dat_mem_sink_t dat_mem_sink_o,
+
+    // DCT memory export interface
+    input  dct_mem_src_t  dct_mem_src_i,
+    output dct_mem_sink_t dct_mem_sink_o
 
     // TODO: Expose missing queue interfaces
 );
   // CSR HW interface
-  I3CCSR__in_t hwif_in;
+  I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
 
   // TODO: Add missing queues
@@ -69,22 +74,28 @@ module hci
       .hwif_out(hwif_out)
   );
 
-  dxt #(
-    .DAT_SIZE(DAT_SIZE),
-    .DCT_SIZE(DCT_SIZE)
-  ) dxt (
-    .clk_i,  // clock
-    .rst_ni, // active low reset
-    .dat_read_valid_hw_i,
-    .dat_index_hw_i,
-    .dat_rdata_hw_o,
-    .dct_write_valid_hw_i,
-    .dct_read_valid_hw_i,
-    .dct_index_hw_i,
-    .dct_wdata_hw_i,
-    .dct_rdata_hw_o,
-    .hwif_out_i(hwif_out),
-    .hwif_in_o(hwif_in)
+  dxt dxt (
+      .clk_i,  // clock
+      .rst_ni,  // active low reset
+
+      .dat_read_valid_hw_i,
+      .dat_index_hw_i,
+      .dat_rdata_hw_o,
+
+      .dct_write_valid_hw_i,
+      .dct_read_valid_hw_i,
+      .dct_index_hw_i,
+      .dct_wdata_hw_i,
+      .dct_rdata_hw_o,
+
+      .hwif_out_i(hwif_out),
+      .hwif_in_o (hwif_in),
+
+      .dat_mem_src_i,
+      .dat_mem_sink_o,
+
+      .dct_mem_src_i,
+      .dct_mem_sink_o
   );
 
 endmodule

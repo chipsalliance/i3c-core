@@ -8,12 +8,12 @@ module i3c
     parameter int unsigned AHB_DATA_WIDTH = 64,
     parameter int unsigned AHB_ADDR_WIDTH = 32,
     parameter int unsigned AHB_BURST_WIDTH = 3,
-    parameter int FifoDepth = 64,
-    parameter int AcqFifoDepth = 64,
-    localparam int FifoDepthWidth = $clog2(FifoDepth + 1),
-    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1),
-    parameter DAT_SIZE = 128,
-    parameter DCT_SIZE = 128
+    parameter int unsigned DAT_DEPTH = 128,
+    parameter int unsigned DCT_DEPTH = 128,
+    parameter int unsigned FifoDepth = 64,
+    parameter int unsigned AcqFifoDepth = 64,
+    localparam int unsigned FifoDepthWidth = $clog2(FifoDepth + 1),
+    localparam int unsigned AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -57,7 +57,15 @@ module i3c
 
     input        i3c_sda_i,    // serial data input from i3c bus
     output logic i3c_sda_o,    // serial data output to i3c bus
-    output logic i3c_sda_en_o  // serial data output to i3c bus
+    output logic i3c_sda_en_o, // serial data output to i3c bus
+
+    // DAT memory export interface
+    input  dat_mem_src_t  dat_mem_src_i,
+    output dat_mem_sink_t dat_mem_sink_o,
+
+    // DCT memory export interface
+    input  dct_mem_src_t  dct_mem_src_i,
+    output dct_mem_sink_t dct_mem_sink_o
 
     // TODO: Check if anything missing; Interrupts?
 );
@@ -126,17 +134,17 @@ module i3c
   // `else
 `endif
 
-    // DAT <-> Controller interface
-    logic                        dat_read_valid_hw_i;
-    logic [$clog2(DAT_SIZE)-1:0] dat_index_hw_i;
-    logic [                63:0] dat_rdata_hw_o;
+  // DAT <-> Controller interface
+  logic                         dat_read_valid_hw_i;
+  logic [$clog2(DAT_DEPTH)-1:0] dat_index_hw_i;
+  logic [                 63:0] dat_rdata_hw_o;
 
-    // DCT <-> Controller interface
-    logic                        dct_write_valid_hw_i;
-    logic                        dct_read_valid_hw_i;
-    logic [$clog2(DCT_SIZE)-1:0] dct_index_hw_i;
-    logic [               127:0] dct_wdata_hw_i;
-    logic [               127:0] dct_rdata_hw_o;
+  // DCT <-> Controller interface
+  logic                         dct_write_valid_hw_i;
+  logic                         dct_read_valid_hw_i;
+  logic [$clog2(DCT_DEPTH)-1:0] dct_index_hw_i;
+  logic [                127:0] dct_wdata_hw_i;
+  logic [                127:0] dct_rdata_hw_o;
 
   hci hci (
       .clk_i(clk_i),
@@ -154,15 +162,21 @@ module i3c
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err),
 
-      .dat_read_valid_hw_i(dat_read_valid_hw_i),
-      .dat_index_hw_i(dat_index_hw_i),
-      .dat_rdata_hw_o(dat_rdata_hw_o),
+      .dat_read_valid_hw_i,
+      .dat_index_hw_i,
+      .dat_rdata_hw_o,
 
-      .dct_write_valid_hw_i(dct_write_valid_hw_i),
-      .dct_read_valid_hw_i(dct_read_valid_hw_i),
-      .dct_index_hw_i(dct_index_hw_i),
-      .dct_wdata_hw_i(dct_wdata_hw_i),
-      .dct_rdata_hw_o(dct_rdata_hw_o)
+      .dct_write_valid_hw_i,
+      .dct_read_valid_hw_i,
+      .dct_index_hw_i,
+      .dct_wdata_hw_i,
+      .dct_rdata_hw_o,
+
+      .dat_mem_src_i,
+      .dat_mem_sink_o,
+
+      .dct_mem_src_i,
+      .dct_mem_sink_o
   );
 
   // TODO: Connect properly to i2c_controller_fsm

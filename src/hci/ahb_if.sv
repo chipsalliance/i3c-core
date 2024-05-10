@@ -127,11 +127,11 @@ module ahb_if
     i3c_ign_wr_ack = s_cpuif_wr_ack;  // Write ack is not utilized
   end
 
-  always_ff @(posedge hclk_i) begin
-    if (hready_i & hsel_i & htrans_i inside {2'b10, 2'b11}) begin
-      i3c_req_hld_ext <= 1'b1;
+  always_ff @(posedge hclk_i or negedge hreset_n_i) begin
+    if (~hreset_n_i) begin
+      i3c_req_hld_ext <= '0;
     end else begin
-      i3c_req_hld_ext <= 1'b0;
+      i3c_req_hld_ext <= hready_i & hsel_i & htrans_i inside {2'b10, 2'b11};
     end
   end
 endmodule

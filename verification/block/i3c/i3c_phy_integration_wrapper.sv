@@ -41,7 +41,7 @@ module i3c_phy_integration_wrapper
   assign i3c_scl_o = i3c_scl_en_o ? i3c_scl_int_o : i3c_scl_i;
   assign i3c_sda_o = i3c_sda_en_o ? i3c_sda_int_o : i3c_sda_i;
 
-  i3c #(
+  i3c_wrapper #(
       .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
       .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
       .AHB_BURST_WIDTH(AHB_BURST_WIDTH)

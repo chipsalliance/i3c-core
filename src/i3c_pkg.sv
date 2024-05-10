@@ -2,6 +2,11 @@
 
 package i3c_pkg;
 
+  localparam int unsigned DatDepth = 128;
+  localparam int unsigned DctDepth = 128;
+  localparam int unsigned DatAw = $clog2(DatDepth);
+  localparam int unsigned DctAw = $clog2(DctDepth);
+
   // I3C Packet
   typedef struct packed {
     logic [6:0] address;
@@ -27,5 +32,36 @@ package i3c_pkg;
   // Direct: code: 0x80 to 0xFE
   // is_direct(ccc.cmd_code[7] == 1'b1)
   // Command code 0xFF is reserved
+
+  // Memory port to DAT table
+  typedef struct packed {
+    logic              req;
+    logic              write;
+    logic [DatAw-1:0] addr;
+    logic [63:0]       wdata;
+    logic [63:0]       wmask;
+  } dat_mem_sink_t;
+
+  typedef struct packed {
+    logic [63:0] rdata;
+    logic        rvalid;
+    logic [1:0]  rerror;
+  } dat_mem_src_t;
+
+
+  // Memory port to DCT table
+  typedef struct packed {
+    logic              req;
+    logic              write;
+    logic [DctAw-1:0] addr;
+    logic [127:0]      wdata;
+    logic [127:0]      wmask;
+  } dct_mem_sink_t;
+
+  typedef struct packed {
+    logic [127:0] rdata;
+    logic         rvalid;
+    logic [1:0]   rerror;
+  } dct_mem_src_t;
 
 endpackage
