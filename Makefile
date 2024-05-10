@@ -147,6 +147,50 @@ uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
 	+UVM_TESTNAME=i2c_base_test \
 	+UVM_TEST_SEQ=$(UVM_VSEQ_TEST) \
 	-do verification/uvm_i2c/questa_sim.tcl
+
+
+i3c-monitor-tests:
+	mkdir -p questa_run
+	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
+	+define+VW_QSTA \
+	+incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
+	-sv -timescale 1ns/1ps \
+	-outdir questa_run/qrun.out \
+	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
+	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
+	-mfcu -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+	-top i3c_monitor_test_from_csv \
+	-GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
+	-log questa_run/build.log \
+	-voptargs="+acc=nr"
+	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
+	+cdc_instrumentation_enabled=1 \
+	-outdir questa_run/qrun.out \
+	-suppress vsim-8323 \
+	-64 \
+	-log questa_run/run.log \
+	-do verification/uvm_i3c/questa_sim.tcl
+	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
+	+define+VW_QSTA \
+	+incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
+	-sv -timescale 1ns/1ps \
+	-outdir questa_run/qrun.out \
+	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
+	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
+	-mfcu -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+	-top i3c_monitor_test_from_csv \
+	-GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv" \
+	-log questa_run/build.log \
+	-voptargs="+acc=nr"
+	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
+	+cdc_instrumentation_enabled=1 \
+	-outdir questa_run/qrun.out \
+	-suppress vsim-8323 \
+	-64 \
+	-log questa_run/run.log \
+	-do verification/uvm_i3c/questa_sim.tcl
+
+
 endif
 
 ifdef VCS

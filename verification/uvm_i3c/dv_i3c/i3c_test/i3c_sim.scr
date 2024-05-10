@@ -1,0 +1,5 @@
++incdir+verification/uvm_i2c/dv_inc/
+
+verification/uvm_i3c/dv_i3c/i3c_agent_pkg.sv
+verification/uvm_i3c/dv_i3c/i3c_if.sv
+verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv
