@@ -1,3 +1,4 @@
-waive --rule=line-length --location="src/i2c/i2c_controller_fsm.sv"
-waive --rule=line-length --location="src/i2c/i2c_target_fsm.sv"
+waive --rule=line-length --location="src/ctrl/i2c_controller_fsm.sv"
+waive --rule=line-length --location="src/ctrl/i2c_target_fsm.sv"
 waive --rule=line-length --location="src/i2c_phy_integration.sv"
+waive --rule=line-length --location="verification/block/i2c_phy_integration/i2c_phy_integration_wrapper.sv"
