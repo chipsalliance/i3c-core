@@ -6,7 +6,7 @@ from random import randint
 
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
-from test_csr_sw_access import AHBFIFOTestInterface, ahb_data_to_int, int_to_ahb_data
+from ahb_if import AHBFIFOTestInterface, int_to_ahb_data
 
 # HCI queue port addresses
 CMD_PORT = 0x100

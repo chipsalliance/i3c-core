@@ -11,7 +11,7 @@ from hci_queues_defs import (
     QUEUE_THLD_CTRL,
     HCIQueuesTestInterface,
 )
-from test_csr_sw_access import ahb_data_to_int, int_to_ahb_data
+from ahb_if import ahb_data_to_int, int_to_ahb_data
 
 
 async def should_setup_threshold(dut: SimHandleBase, q: str):

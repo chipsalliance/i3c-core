@@ -11,7 +11,7 @@ from hci_queues_defs import (
     ResponseDescriptor,
     immediate_transfer_descriptor,
 )
-from test_csr_sw_access import ahb_data_to_int, int_to_ahb_data
+from ahb_if import ahb_data_to_int, int_to_ahb_data
 
 
 @cocotb.test()
