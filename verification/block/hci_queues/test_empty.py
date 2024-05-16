@@ -2,7 +2,7 @@
 
 import cocotb
 from cocotb.handle import SimHandleBase
-from hci_queues_defs import HCIQueuesTestInterface
+from interface import HCIQueuesTestInterface
 
 
 async def should_be_empty_after_rst(dut: SimHandleBase, queue: str):

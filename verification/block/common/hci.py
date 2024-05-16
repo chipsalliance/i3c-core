@@ -6,7 +6,8 @@ from random import randint
 
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
-from ahb_if import AHBFIFOTestInterface, int_to_ahb_data
+
+from ahb_if import AHBFIFOTestInterface, ahb_data_to_int, int_to_ahb_data
 
 # HCI queue port addresses
 CMD_PORT = 0x100
@@ -125,26 +126,22 @@ class ResponseDescriptor:
         return (self.err_status & 0xF) << 28 | (self.tid & 0xF) << 24 | (self.data_length & 0xFFFF)
 
 
-class HCIQueuesTestInterface:
+class HCIBaseTestInterface:
     def __init__(self, dut: SimHandleBase) -> None:
         self.dut = dut
         self.queue_names = ["cmd", "tx", "rx", "resp"]
         self.status_indicators = ["thld", "full", "empty", "apch_thld"]
 
-    async def setup(self):
+    async def _setup(self):
         self.ahb_if = AHBFIFOTestInterface(self.dut)
         await self.ahb_if.register_test_interfaces()
         # Borrow CSR access methods
         self.read_csr = self.ahb_if.read_csr
         self.write_csr = self.ahb_if.write_csr
 
-        await self.reset()
+        await self._reset()
 
-        # Set queue's ready to 0 (hold accepting the data)
-        self.dut.cmd_fifo_rready_i.value = 0
-        self.dut.tx_fifo_rready_i.value = 0
-
-    async def reset(self):
+    async def _reset(self):
         self.dut.hreset_n.value = 0
         await ClockCycles(self.dut.hclk, 10)
         await RisingEdge(self.dut.hclk)
@@ -169,24 +166,6 @@ class HCIQueuesTestInterface:
     async def get_response_desc(self) -> int:
         return ahb_data_to_int(await self.read_csr(RESP_PORT, 4))
 
-    async def put_response_desc(self, resp: int = None):
-        if not resp:
-            resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
-        self.dut.resp_fifo_wdata_i.value = resp
-        self.dut.resp_fifo_wvalid_i.value = 1
-        while True:
-            await RisingEdge(self.dut.hclk)
-            if self.dut.resp_fifo_wready_o.value:
-                break
-        self.dut.resp_fifo_wvalid_i.value = 0
-
-    async def get_command_desc(self) -> int:
-        self.dut.cmd_fifo_rready_i.value = 1
-        while not self.dut.cmd_fifo_rvalid_o.value:
-            await RisingEdge(self.dut.hclk)
-        self.dut.cmd_fifo_rready_i.value = 0
-        return self.dut.cmd_fifo_rdata_o.value.integer
-
     async def put_command_desc(self, desc: int = None) -> None:
         # If descriptor is not passed, utilize the default
         if not desc:
@@ -199,13 +178,6 @@ class HCIQueuesTestInterface:
         await self.write_csr(CMD_PORT, cmd0, 4)
         await self.write_csr(CMD_PORT, cmd1, 4)
 
-    async def get_tx_data(self) -> int:
-        self.dut.tx_fifo_rready_i.value = 1
-        while not self.dut.tx_fifo_rvalid_o.value:
-            await RisingEdge(self.dut.hclk)
-        self.dut.tx_fifo_rready_i.value = 0
-        return self.dut.tx_fifo_rdata_o.value.integer
-
     async def put_tx_data(self, tx_data: int = None):
         if not tx_data:
             tx_data = randint(0, 2**32 - 1)
@@ -213,14 +185,3 @@ class HCIQueuesTestInterface:
 
     async def get_rx_data(self) -> int:
         return ahb_data_to_int(await self.read_csr(RX_PORT, 4))
-
-    async def put_rx_data(self, rx_data: int = None):
-        if not rx_data:
-            rx_data = randint(0, 2**32 - 1)
-        self.dut.rx_fifo_wdata_i.value = rx_data
-        self.dut.rx_fifo_wvalid_i.value = 1
-        while True:
-            await RisingEdge(self.dut.hclk)
-            if self.dut.rx_fifo_wready_o.value:
-                break
-        self.dut.rx_fifo_wvalid_i.value = 0

@@ -2,12 +2,8 @@
 
 import cocotb
 from cocotb.handle import SimHandleBase
-from hci_queues_defs import (
-    ErrorStatus,
-    HCIQueuesTestInterface,
-    ResponseDescriptor,
-    immediate_transfer_descriptor,
-)
+from hci import ErrorStatus, ResponseDescriptor, immediate_transfer_descriptor
+from interface import HCIQueuesTestInterface
 
 
 @cocotb.test()

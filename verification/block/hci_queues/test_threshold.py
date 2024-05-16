@@ -6,11 +6,9 @@ from random import randint
 import cocotb
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge
-from hci_queues_defs import (
-    DATA_BUFFER_THLD_CTRL,
-    QUEUE_THLD_CTRL,
-    HCIQueuesTestInterface,
-)
+from hci import DATA_BUFFER_THLD_CTRL, QUEUE_THLD_CTRL
+from interface import HCIQueuesTestInterface
+
 from ahb_if import ahb_data_to_int, int_to_ahb_data
 
 

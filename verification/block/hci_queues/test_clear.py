@@ -4,13 +4,14 @@ from random import randint
 
 import cocotb
 from cocotb.handle import SimHandleBase
-from hci_queues_defs import (
+from hci import (
     RESET_CONTROL,
     ErrorStatus,
-    HCIQueuesTestInterface,
     ResponseDescriptor,
     immediate_transfer_descriptor,
 )
+from interface import HCIQueuesTestInterface
+
 from ahb_if import ahb_data_to_int, int_to_ahb_data
 
 

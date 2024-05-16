@@ -8,7 +8,6 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandle, SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
-
 from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper
 from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate
 from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager
