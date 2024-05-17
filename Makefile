@@ -86,6 +86,9 @@ generate-example: deps ## Generate example SystemVerilog registers from SystemRD
 #
 # Utilities
 #
+parse-config: deps ## Generate tool-specific arguments from a common configuration
+	python tools/i3c_config/i3c_core_config.py default i3c_core_configs.yaml svh_file
+
 timings: deps ## Generate values for I2C/I3C timings
 	python tools/timing/timing.py
 
@@ -149,7 +152,7 @@ clean: ## Clean all generated sources
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
 
-.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps timings clean
+.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps parse-config timings clean
 
 
 .DEFAULT_GOAL := help

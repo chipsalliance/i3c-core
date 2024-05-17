@@ -1,3 +1,5 @@
 peakrdl
 peakrdl-markdown
 engineering_notation
+jsonschema
+pyyaml

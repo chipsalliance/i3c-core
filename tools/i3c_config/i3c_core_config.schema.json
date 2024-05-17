@@ -1,0 +1,70 @@
+{
+    "title": "I3C Core Configuration",
+    "description": "Specifies the configuration for the I3C core",
+    "type": "object",
+    "required": [
+        "CmdFifoDepth",
+        "RespFifoDepth",
+        "RxFifoDepth",
+        "TxFifoDepth",
+        "IbiFifoDepth",
+        "IbiFifoExtSize",
+        "FrontendBusInterface",
+        "FrontendBusAddrWidth",
+        "FrontendBusDataWidth"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "CmdFifoDepth": {
+            "description": "Size of the HCI Command Queue in entries.\nEach command descriptor is a size of 2 DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255
+        },
+        "RespFifoDepth": {
+            "description": "Size of the HCI Response Queue in entries.\nEach response descriptor is a size of a DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255
+        },
+        "RxFifoDepth": {
+            "description": "Size of the HCI RX Queue (buffer) in DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 256
+        },
+        "TxFifoDepth": {
+            "description": "Size of the HCI TX Queue (buffer) in DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 256
+        },
+        "IbiFifoDepth": {
+            "description": "Size of the HCI IBI Status Queue.\nIf `IbiFifoExtSize` is specified size is defined as `IbiFifoDepth` * 8 DWORDs.\nOtherwise `IbiFifoDepth`.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 256
+        },
+        "IbiFifoExtSize": {
+            "description": "Extend the size of IBI Queue.\nIf set will assign the `IbiFifoDepth` * 8 size to the IBI Queue.",
+            "type": "boolean"
+        },
+        "FrontendBusInterface": {
+            "description": "Bus protocol to be utilized for the I3C Core <-> System integration.",
+            "type": "string",
+            "pattern": "^(AHB|AXI)$"
+        },
+        "FrontendBusAddrWidth": {
+            "description": "I3C Core <-> System bus address width in bits.",
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 128
+        },
+        "FrontendBusDataWidth": {
+            "description": "I3C Core <-> System bus data width.\nIf specified data width is greater than 32 bits, only the least significant 32-bits will be considered.",
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 128
+        }
+    }
+}
