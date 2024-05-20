@@ -20,6 +20,8 @@ verilator-cocotb-build
 *.dat
 *.xml
 *.json
+# Except for the schema
+!*.schema.json
 *.log
 *.rpt
 **sim*
