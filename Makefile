@@ -6,6 +6,7 @@ ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRC_DIR := $(ROOT_DIR)/src
 SW_DIR := $(ROOT_DIR)/sw
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
+TOOL_VERIFICATION_DIR := $(ROOT_DIR)/verification/tools
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
 BUILD_DIR = $(ROOT_DIR)/build
 SW_BUILD_DIR = $(BUILD_DIR)/sw
@@ -54,6 +55,12 @@ test: ## Run single module test (use `TEST=<test_name>` flag)
 
 tests: ## Run all RTL tests
 	cd $(VERIFICATION_DIR) && nox -R -k "verify"
+
+#
+# Tool tests
+#
+tool-tests: ## Run all tool tests
+	cd $(TOOL_VERIFICATION_DIR) && nox -k "verify"
 
 #
 # Software tests

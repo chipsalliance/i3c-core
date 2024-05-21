@@ -1,0 +1,115 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# ============================================
+# * WARNING: DO NOT USE: TEST CONFIGURATIONS *
+# ============================================
+
+ahb:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+axi:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+invalid_missing_cmd_fifo_depth:
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+invalid_too_many_args:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  AdditionalArg: "arg"
+
+invalid_wrong_type:
+  CmdFifoDepth: "This should be int"
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+invalid_out_of_range:
+  CmdFifoDepth: 64
+  RxFifoDepth: 6666666666
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+invalid_unsupported_bus:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "TileLink"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+invalid_empty_arg:
+  CmdFifoDepth:
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+edge_min_val:
+  CmdFifoDepth: 64
+  RxFifoDepth: 2
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+
+edge_one_less_than_max_val:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 127
