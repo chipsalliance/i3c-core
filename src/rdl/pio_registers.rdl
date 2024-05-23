@@ -1,7 +1,14 @@
 // I3C controller register map based on MIPI HCI 1.2
 
 
-regfile PIORegs {
+regfile PIORegs #(
+    bit cmd_fifo_size,
+    bit resp_fifo_size,
+    bit ibi_fifo_size,
+    bit tx_fifo_size,
+    bit rx_fifo_size,
+    bit ext_ibi_size
+){
     default regwidth = 32;
     external reg {
         name = "Command issue port";
@@ -109,32 +116,28 @@ regfile PIORegs {
             desc = "TX queue size is equal to 2^(N+1), where N is this field value";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 8'h7;
+            reset = tx_fifo_size;
         } tx_queue_size [31:24];
         field {
             name = "RX_DATA_BUFFER_SIZE";
             desc = "RX queue size is equal to 2^(N+1), where N is this field value";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 8'h7;
+            reset = rx_fifo_size;
         } rx_queue_size [23:16];
         field {
             name = "IBI_STATUS_SIZE";
             desc = "IBI Queue size is equal to N";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 8'hFF;
+            reset = ibi_fifo_size;
         } ibi_queue_size [15:8];
         field {
             name = "CR_QUEUE_SIZE";
             desc = "Command/Response queue size is equal to N";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 8'hFF;
+            reset = cmd_fifo_size;
         } cr_queue_size [7:0];
     } QUEUE_SIZE @ 0x18;
     reg {
@@ -144,8 +147,7 @@ regfile PIORegs {
             desc = "1 indicates that IBI queue size is equal to 8*IBI_STATUS_SIZE";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 1'b0;
+            reset = ext_ibi_size;
         } ext_ibi_queue_size [28:28];
         field {
             name = "ALT_RESP_QUEUE_EN";
@@ -153,16 +155,14 @@ regfile PIORegs {
                 ALT_RESP_QUEUE_SIZE contains response queue size";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 1'b0;
+            reset = cmd_fifo_size != resp_fifo_size;
         } alt_resp_queue_en [24:24];
         field {
             name = "ALT_RESP_QUEUE_SIZE";
             desc = "Response queue size";
             sw = r;
             hw = na;
-            // TODO: Update to correct value after implementation is done
-            reset = 8'b0;
+            reset = resp_fifo_size;
         } alt_resp_queue_size [7:0];
     } ALT_QUEUE_SIZE @ 0x1C;
     reg {
