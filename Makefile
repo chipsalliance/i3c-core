@@ -32,6 +32,20 @@ ifeq ($(MAKECMDGOALS), test)
     $(error Run this target with the `TEST` flag set, i.e. 'TEST=i3c_ctrl make test')
     endif
 endif
+#
+# I3C configuration
+#
+CFG_FILE ?= i3c_core_configs.yaml
+CFG_NAME ?= default
+CFG_GEN = $(ROOT_DIR)/tools/i3c_config/i3c_core_config.py
+
+config: defs generate
+
+defs: deps used-config-info ## Generate top I3C definitions svh file
+	python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
+
+used-config-info: ## Output the config name & filename while generating configuration
+	@echo Using \'$(CFG_NAME)\' I3C configuration from \'$(CFG_FILE)\'.
 
 #
 # Source code lint and format
@@ -68,7 +82,7 @@ tool-tests: ## Run all tool tests
 $(SW_BUILD_DIR):
 	mkdir -p $(SW_BUILD_DIR)
 
-sw-caliptra-test: | $(SW_BUILD_DIR) ## Run Caliptra I3C software test
+sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra I3C software test
 	debug=$(DEBUG) TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile verilator
 
 #
@@ -77,25 +91,24 @@ sw-caliptra-test: | $(SW_BUILD_DIR) ## Run Caliptra I3C software test
 PEAKRDL_CFG := $(SRC_DIR)/rdl/peakrdl.toml
 RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/
+RDL_ARGS := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
+
 export PEAKRDL_CFG
-generate: deps ## Generate I3C SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock $(RDL_REGS) -o $(RDL_GEN_DIR) --cpuif passthrough
+generate: deps used-config-info ## Generate I3C SystemVerilog registers from SystemRDL definition
+	python -m peakrdl regblock $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR) --cpuif passthrough --type-style hier
 	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h
 
 generate-docs: deps ## Generate documentation from SystemRDL definition
 	python -m peakrdl html $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
 	python -m peakrdl markdown $(RDL_REGS) -o $(RDL_GEN_DIR)/md/documentation.md
 
-generate-example: deps ## Generate example SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock src/rdl/example.rdl -o $(RDL_GEN_DIR) --cpuif passthrough
+generate-example: deps used-config-info ## Generate example SystemVerilog registers from SystemRDL definition
+	python -m peakrdl regblock src/rdl/example.rdl $(RDL_ARGS) -o $(RDL_GEN_DIR) --cpuif passthrough --type-style hier
 	python -m peakrdl html src/rdl/example.rdl -o $(RDL_GEN_DIR)/html/
 
 #
 # Utilities
 #
-parse-config: deps ## Generate tool-specific arguments from a common configuration
-	python tools/i3c_config/i3c_core_config.py default i3c_core_configs.yaml svh_file
-
 timings: deps ## Generate values for I2C/I3C timings
 	python tools/timing/timing.py
 
@@ -103,7 +116,7 @@ deps: ## Install python dependencies
 	pip install -r requirements.txt
 
 ifdef QUESTA_ROOT
-uvm-test-questa: ## Run I2C UVM_VSEQ_TEST sequence in Questa
+uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
 	mkdir -p questa_run
 	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
 	+define+VW_QSTA \
@@ -131,7 +144,7 @@ uvm-test-questa: ## Run I2C UVM_VSEQ_TEST sequence in Questa
 endif
 
 ifdef VCS
-uvm-test-vcs: ## Run I2C UVM_VSEQ_TEST sequence in VCS
+uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
 	mkdir -p vcs_run
 	vcs -sverilog -full64 -licqueue -ntb_opts uvm-1.2 -timescale=1ns/1ps \
 	-Mdir=vcs_run/simv.csrc -o vcs_run/i2c_uvm_test \
@@ -159,7 +172,7 @@ clean: ## Clean all generated sources
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
 
-.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps parse-config timings clean
+.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps defs timings clean used-config-info config
 
 
 .DEFAULT_GOAL := help
