@@ -5,11 +5,9 @@ module ahb_if
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
     // Data width of AHB-Lite interface
-    parameter int unsigned AHB_DATA_WIDTH  = 64,
+    parameter int unsigned AHB_DATA_WIDTH = 64,
     // Address width of AHB-Lite interface.
-    parameter int unsigned AHB_ADDR_WIDTH  = 32,
-    // Burst width of AHB-Lite interface
-    parameter int unsigned AHB_BURST_WIDTH = 3
+    parameter int unsigned AHB_ADDR_WIDTH = 32
 ) (
     // AHB-Lite interface
     input  logic                        hclk_i,
@@ -17,7 +15,7 @@ module ahb_if
     // Byte address of the transfer
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
+    input  logic [                 2:0] hburst_i,     // Unhandled
     // Protection control; provides information on the access type
     input  logic [                 3:0] hprot_i,      // Unhandled
     // Indicates the size of the transfer
@@ -64,10 +62,6 @@ module ahb_if
     end
     if (!(AHB_DATA_WIDTH inside {32, 64, 128, 256})) begin : ahb_data_w_oob
       $error("ERROR: AHB_DATA_WIDTH is required to be one of {32, 64, 128, 256} (instance %m)");
-      $finish;
-    end
-    if (!(AHB_BURST_WIDTH >= 0 && AHB_BURST_WIDTH <= 3)) begin : ahb_burst_w_oob
-      $error("ERROR: Violated requirement: 0 <= AHB_BURST_WIDTH <= 3 (instance %m)");
       $finish;
     end
   end
