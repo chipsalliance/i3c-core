@@ -12,6 +12,10 @@ BUILD_DIR = $(ROOT_DIR)/build
 SW_BUILD_DIR = $(BUILD_DIR)/sw
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
 
+VERILATOR_MAKE_FLAGS = OPT_FAST="-Os"
+GENERIC_UVM_DIR ?= $(ROOT_DIR)/uvm-1.2/src
+VERILATOR_UVM_DIR ?= $(ROOT_DIR)/verilator-uvm-1.2/src
+
 ifeq (, $(shell which qrun))
 else
 QUESTA_ROOT = $(abspath $(dir $(shell which qrun))../)
@@ -216,14 +220,62 @@ uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
 	+UVM_TESTNAME=i2c_base_test +UVM_TEST_SEQ=$(UVM_VSEQ_TEST)
 endif
 
+download-uvm-1.2:
+	wget -O uvm-1.2.tar.gz https://www.accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz
+	tar -xf uvm-1.2.tar.gz
+	touch download-uvm-1.2
+
+uvm-verilator-build: download-uvm-1.2
+	verilator --cc \
+	          --main \
+	          --timing \
+	          --timescale 1ns/1ps \
+	          --top-module i3c_monitor_test_from_csv \
+	          -GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
+	          +incdir+$(VERILATOR_UVM_DIR) \
+	          --trace \
+	          $(GENERIC_UVM_DIR)/uvm.sv \
+	          -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr
+	$(MAKE) -j -e -C obj_dir/ -f Vi3c_monitor_test_from_csv.mk $(VERILATOR_MAKE_FLAGS) VM_PARALLEL_BUILDS=1
+	touch uvm-verilator-build
+
+uvm-verilator: uvm-verilator-build ## Run I3C uvm agent test with verilator using generic UVM implementation
+	./obj_dir/Vi3c_monitor_test_from_csv
+
+download-verilator-uvm-1.2:
+	wget -O verilator-uvm-1.2.zip https://github.com/antmicro/uvm-verilator/archive/refs/heads/current-patches.zip
+	unzip verilator-uvm-1.2.zip
+	mv uvm-verilator-current-patches verilator-uvm-1.2
+	touch download-verilator-uvm-1.2
+
+verilator-uvm-verilator-build: download-verilator-uvm-1.2
+	verilator --cc \
+	          --main \
+	          --timing \
+	          --timescale 1ns/1ps \
+	          --top-module i3c_monitor_test_from_csv \
+	          -GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
+	          +incdir+$(VERILATOR_UVM_DIR) \
+	          --trace \
+	          $(VERILATOR_UVM_DIR)/uvm.sv \
+	          -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr
+	$(MAKE) -j -e -C obj_dir/ -f Vi3c_monitor_test_from_csv.mk $(VERILATOR_MAKE_FLAGS) VM_PARALLEL_BUILDS=1
+	touch verilator-uvm-verilator-build
+
+verilator-uvm-verilator: verilator-uvm-verilator-build ## Run I3C uvm agent test with verilator using verilator specific UVM implementation
+	./obj_dir/Vi3c_monitor_test_from_csv
+
 clean: ## Clean all generated sources
 	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
 	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
 
-.PHONY: lint lint-check lint-rtl lint-tests test tests sw-caliptra-test generate generate-example deps defs timings clean used-config-info config
-
+.PHONY: lint lint-check lint-rtl lint-tests \
+		test tests sw-caliptra-test \
+		generate generate-example deps defs timings clean \
+		used-config-info config \
+		uvm-verilator verilator-uvm-verilator
 
 .DEFAULT_GOAL := help
 HELP_COLUMN_SPAN = 11

@@ -28,3 +28,5 @@ verilator-cocotb-build
 src/csr/html
 src/csr/md
 build
+questa_run
+uvm-1.2*
