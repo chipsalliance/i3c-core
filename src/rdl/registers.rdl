@@ -14,7 +14,9 @@ addrmap I3CCSR #(
     bit ibi_fifo_size = 0xff, // 255 responses by default
     bit tx_fifo_size = 0x5, // 64 DWORDs by default
     bit rx_fifo_size = 0x5, // 64 DWORDs by default
-    bit ext_ibi_size = 1'b0 // Extend the size of IBI queue (8*ibi_fifo_size if set)
+    bit ext_ibi_size = 1'b0, // Extend the size of IBI queue (8*ibi_fifo_size if set)
+    bit dat_depth = 0x7f, // Max allowed by default
+    bit dct_depth = 0x7f // Max allowed by default
 ){
     BaseRegs #(
         .PIO_offset(PIO_offset),
@@ -43,10 +45,10 @@ addrmap I3CCSR #(
         .MIPI_commands(15'h0035),
         // TODO ends here
         .DAT_entry_size(4'h0),
-        .DAT_table_size(7'h7f),
+        .DAT_table_size(dat_depth),
         .DAT_offset(DAT_offset),
         .DCT_entry_size(4'h0),
-        .DCT_table_size(7'h7f),
+        .DCT_table_size(dct_depth),
         .DCT_offset(DCT_offset)
     ) I3CBase @ 0x0;
     PIORegs #(

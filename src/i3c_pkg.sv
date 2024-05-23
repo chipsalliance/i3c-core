@@ -4,10 +4,8 @@ package i3c_pkg;
   `include "i3c_defines.svh"
 
   localparam int unsigned RespErrIdWidth = 4;
-  localparam int unsigned DatDepth = 128;
-  localparam int unsigned DctDepth = 128;
-  localparam int unsigned DatAw = $clog2(DatDepth);
-  localparam int unsigned DctAw = $clog2(DctDepth);
+  localparam int unsigned DatAw = $clog2(`DAT_DEPTH);
+  localparam int unsigned DctAw = $clog2(`DCT_DEPTH);
 
   // I3C Packet
   typedef struct packed {

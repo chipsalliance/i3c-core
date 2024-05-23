@@ -49,6 +49,18 @@
             "description": "Extend the size of IBI Queue.\nIf set will assign the `IbiFifoDepth` * 8 size to the IBI Queue.",
             "type": "boolean"
         },
+        "DatDepth": {
+            "description": "Maximum number of DAT entries.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+        },
+        "DctDepth": {
+            "description": "Maximum number of DCT entries.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+        },
         "FrontendBusInterface": {
             "description": "Bus protocol to be utilized for the I3C Core <-> System integration.",
             "type": "string",

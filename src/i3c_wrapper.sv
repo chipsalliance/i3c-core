@@ -100,7 +100,7 @@ module i3c_wrapper
   );
 
   prim_ram_1p_adv #(
-      .Depth(DatDepth),
+      .Depth(`DAT_DEPTH),
       .Width(64),
       .DataBitsPerMask(32)
   ) dat_memory (
@@ -118,7 +118,7 @@ module i3c_wrapper
   );
 
   prim_ram_1p_adv #(
-      .Depth(DctDepth),
+      .Depth(`DCT_DEPTH),
       .Width(128),
       .DataBitsPerMask(32)
   ) dct_memory (

@@ -2823,11 +2823,11 @@ module I3CCSR (
     assign readback_array[8][14:14] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value : '0;
     assign readback_array[8][31:15] = '0;
     assign readback_array[9][11:0] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h400 : '0;
-    assign readback_array[9][18:12] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h7f : '0;
+    assign readback_array[9][18:12] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
     assign readback_array[9][27:19] = '0;
     assign readback_array[9][31:28] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;
     assign readback_array[10][11:0] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h800 : '0;
-    assign readback_array[10][18:12] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h7f : '0;
+    assign readback_array[10][18:12] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
     assign readback_array[10][23:19] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value : '0;
     assign readback_array[10][27:24] = '0;
     assign readback_array[10][31:28] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;

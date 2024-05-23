@@ -23,6 +23,8 @@ class I3CGenericConfig:
     FrontendBusInterface: str
     FrontendBusAddrWidth: int
     FrontendBusDataWidth: int
+    DatDepth: int = 128
+    DctDepth: int = 128
 
     def items(self):
         return asdict(self).items()
@@ -45,6 +47,9 @@ class RegGenConfig:
         # Size in entries, or 8*N if `cfg.IbiFifoExtSize`
         self._params["ibi_fifo_size"] = cfg.IbiFifoDepth
         self._params["ext_ibi_size"] = int(cfg.IbiFifoExtSize)
+
+        self._params["dat_depth"] = cfg.DatDepth - 1
+        self._params["dct_depth"] = cfg.DctDepth - 1
 
     def items(self):
         return self._params.items()

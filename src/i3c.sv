@@ -6,8 +6,6 @@ module i3c
   import I3CCSR_pkg::*;
   import hci_pkg::*;
 #(
-    parameter int unsigned DAT_DEPTH = 128,
-    parameter int unsigned DCT_DEPTH = 128
 `ifdef I3C_USE_AHB
     parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
     parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
@@ -156,13 +154,13 @@ module i3c
 
   // DAT <-> Controller interface
   logic                             dat_read_valid_hw_i;
-  logic [    $clog2(DAT_DEPTH)-1:0] dat_index_hw_i;
+  logic [   $clog2(`DAT_DEPTH)-1:0] dat_index_hw_i;
   logic [                     63:0] dat_rdata_hw_o;
 
   // DCT <-> Controller interface
   logic                             dct_write_valid_hw_i;
   logic                             dct_read_valid_hw_i;
-  logic [    $clog2(DCT_DEPTH)-1:0] dct_index_hw_i;
+  logic [   $clog2(`DCT_DEPTH)-1:0] dct_index_hw_i;
   logic [                    127:0] dct_wdata_hw_i;
   logic [                    127:0] dct_rdata_hw_o;
 
