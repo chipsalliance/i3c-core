@@ -84,12 +84,12 @@ module hci
   I3CCSR__out_t hwif_out;
 
   // DAT CSR interface
-  I3CCSR__DAT__external__out_t dat_o;
-  I3CCSR__DAT__external__in_t dat_i;
+  I3CCSR__DAT__out_t dat_o;
+  I3CCSR__DAT__in_t dat_i;
 
   // DCT CSR interface
-  I3CCSR__DCT__external__out_t dct_o;
-  I3CCSR__DCT__external__in_t dct_i;
+  I3CCSR__DCT__out_t dct_o;
+  I3CCSR__DCT__in_t dct_i;
 
   // Reset control
   logic cmd_reset_ctrl_we;

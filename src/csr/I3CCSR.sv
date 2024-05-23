@@ -2873,11 +2873,11 @@ module I3CCSR (
     assign readback_array[24][23:19] = '0;
     assign readback_array[24][26:24] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value : '0;
     assign readback_array[24][31:27] = '0;
-    assign readback_array[25][7:0] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'hff : '0;
-    assign readback_array[25][15:8] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'hff : '0;
-    assign readback_array[25][23:16] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[25][31:24] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[26][7:0] = (decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[25][7:0] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h40 : '0;
+    assign readback_array[25][15:8] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h40 : '0;
+    assign readback_array[25][23:16] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[25][31:24] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[26][7:0] = (decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h40 : '0;
     assign readback_array[26][23:8] = '0;
     assign readback_array[26][24:24] = (decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[26][27:25] = '0;

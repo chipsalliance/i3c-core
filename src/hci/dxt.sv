@@ -21,12 +21,12 @@ module dxt
     output logic [               127:0] dct_rdata_hw_o,
 
     // DAT CSR interface
-    input  I3CCSR__DAT__external__out_t csr_dat_hwif_i,
-    output I3CCSR__DAT__external__in_t  csr_dat_hwif_o,
+    input  I3CCSR__DAT__out_t csr_dat_hwif_i,
+    output I3CCSR__DAT__in_t  csr_dat_hwif_o,
 
     // DCT CSR interface
-    input  I3CCSR__DCT__external__out_t csr_dct_hwif_i,
-    output I3CCSR__DCT__external__in_t  csr_dct_hwif_o,
+    input  I3CCSR__DCT__out_t csr_dct_hwif_i,
+    output I3CCSR__DCT__in_t  csr_dct_hwif_o,
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
