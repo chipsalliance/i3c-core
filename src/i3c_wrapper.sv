@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
+`include "i3c_defines.svh"
 
 module i3c_wrapper
   import i3c_pkg::*;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32,
-    parameter int unsigned AHB_BURST_WIDTH = 3,
-    parameter int unsigned FifoDepth = 64,
-    parameter int unsigned AcqFifoDepth = 64,
-    localparam int unsigned FifoDepthWidth = $clog2(FifoDepth + 1),
-    localparam int unsigned AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
+`ifdef I3C_USE_AHB
+    parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
+    parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
+`endif  // TODO: AXI4 I/O
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -19,7 +17,7 @@ module i3c_wrapper
     // Byte address of the transfer
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
+    input  logic [                 2:0] hburst_i,     // Unhandled
     // Protection control; provides information on the access type
     input  logic [                 3:0] hprot_i,      // Unhandled
     // Indicates the size of the transfer
@@ -34,13 +32,13 @@ module i3c_wrapper
     input  logic                        hwrite_i,
     // Read data
     output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
-    // Assrted indicates a finished transfer; Can be driven low to extend a transfer
+    // Asserted indicates a finished transfer; Can be driven low to extend a transfer
     output logic                        hreadyout_o,
-    // Transfer response, high when error occured
+    // Transfer response, high when error occurred
     output logic                        hresp_o,
     // Indicates the subordinate is selected for the transfer
     input  logic                        hsel_i,
-    // Indicates all subordiantes have finished transfers
+    // Indicates all subordinates have finished transfers
     input  logic                        hready_i,
     // TODO: AXI4 I/O
     // `else
@@ -58,6 +56,24 @@ module i3c_wrapper
     // TODO: Check if anything missing; Interrupts?
 );
 
+  // Check widths match the I3C configuration
+  initial begin : clptra_vs_i3c_config_param_check
+`ifdef I3C_USE_AHB
+    if (AHB_ADDR_WIDTH != `AHB_ADDR_WIDTH) begin : clptra_ahb_addr_w_check
+      $warning("AHB address width %0h doesn't match the I3C config: %0h (instance %m).",
+               AHB_ADDR_WIDTH, `AHB_ADDR_WIDTH);
+      $info("Overriding AHB address width to %0h.", AHB_ADDR_WIDTH);
+      $finish;
+    end
+    if (AHB_DATA_WIDTH != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
+      $warning("AHB data width %0h doesn't match the I3C config: %0h (instance %m).",
+               AHB_DATA_WIDTH, `AHB_DATA_WIDTH);
+      $info("Overriding AHB data width to %0h.", AHB_DATA_WIDTH);
+      $finish;
+    end
+`endif  // TODO: AXI4 I/O
+  end
+
   // DAT memory export interface
   dat_mem_src_t  dat_mem_src;
   dat_mem_sink_t dat_mem_sink;
@@ -66,7 +82,12 @@ module i3c_wrapper
   dct_mem_src_t  dct_mem_src;
   dct_mem_sink_t dct_mem_sink;
 
-  i3c i3c (
+  i3c #(
+`ifdef I3C_USE_AHB
+      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
+`endif
+  ) i3c (
       .clk_i,
       .rst_ni,
 
