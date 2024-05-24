@@ -18,13 +18,14 @@
 #include "printf.h"
 #include "riscv_hw_if.h"
 #include "i3c_csr_accessors.h"
+#include "I3CCSR.h"
 
 #define HCI_VERSION (0x120)
 #define TEST_ADDR (0x5f)
 #define TEST_WORD1 (0xdeadbeef)
 #define TEST_WORD2 (0xabcd9876)
-#define TX_QUEUE_SIZE (0x7)
-#define RX_QUEUE_SIZE (0x7)
+#define TX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__TX_QUEUE_SIZE_reset)
+#define RX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__RX_QUEUE_SIZE_reset)
 #define PIO_CONTROL_ENABLED (0x7)
 #define RETRY_CNT (0x2)
 #define AUTOCMD_HDR (0xc3)
