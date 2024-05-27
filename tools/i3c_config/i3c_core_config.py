@@ -37,7 +37,7 @@ def parse_and_validate_config(name: str, filename: str) -> I3CGenericConfig:
                 f"{filename!r}: Invalid I3C core configuration: {err.message}"
             ) from None
 
-        return I3CGenericConfig(**yml[name])
+        return I3CGenericConfig(yml[name], schema["properties"])
 
 
 class BaseOpts:

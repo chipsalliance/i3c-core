@@ -53,12 +53,14 @@
             "description": "Maximum number of DAT entries.",
             "type": "integer",
             "minimum": 1,
+            "default": 32,
             "maximum": 32
         },
         "DctDepth": {
             "description": "Maximum number of DCT entries.",
             "type": "integer",
             "minimum": 1,
+            "default": 32,
             "maximum": 32
         },
         "FrontendBusInterface": {
@@ -77,6 +79,13 @@
             "type": "integer",
             "minimum": 32,
             "maximum": 128
+        },
+        "ShowcaseOptionalNode": {
+            "description": "This node is not required and will be ignored if not specified in the configuration\nIf specified will be validated as normal.",
+            "type": "integer",
+            "skipIfNotPresent": true,
+            "minimum": 0,
+            "maximum": 42
         }
     }
 }

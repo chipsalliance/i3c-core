@@ -11,6 +11,7 @@ ahb:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  DctDepth: 12
   FrontendBusInterface: "AHB"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
@@ -22,6 +23,8 @@ axi:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  DatDepth: 16
+  DctDepth: 8
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
@@ -32,6 +35,8 @@ invalid_missing_cmd_fifo_depth:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64

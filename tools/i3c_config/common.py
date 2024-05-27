@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
 import re
-from dataclasses import asdict, dataclass
 from math import log2
 
 
@@ -8,26 +7,36 @@ class ConfigException(Exception):
     pass
 
 
-# Source-of-truth general I3C configuration
+# General I3C configuration
 # Contains parameters defined in the YAML configuration file
 # and is utilized to separate subset of configurations for
 # used tooling
-@dataclass
+# The the properties defined in the i3c_core_config.schema.json
 class I3CGenericConfig:
-    CmdFifoDepth: int
-    RxFifoDepth: int
-    TxFifoDepth: int
-    RespFifoDepth: int
-    IbiFifoDepth: int
-    IbiFifoExtSize: bool
-    FrontendBusInterface: str
-    FrontendBusAddrWidth: int
-    FrontendBusDataWidth: int
-    DatDepth: int = 128
-    DctDepth: int = 128
+    def __init__(self, dict_cfg: dict, schema: dict):
+        skip_flag = "skipIfNotPresent"
+        self.__dict__ = dict_cfg
+
+        # Go over schema-defined fields
+        for n in schema:
+            # If the value for the parameter was passed in the YAML configuration
+            if n in dict_cfg:
+                value = dict_cfg[n]
+            # Otherwise, if schema specifies such, take the default value
+            elif "default" in schema[n]:
+                value = schema[n]["default"]
+            # If a node is explicitly set to optional, skip it
+            elif skip_flag in schema[n] and schema[n][skip_flag]:
+                continue
+            # Otherwise, raise exception when there's nowhere to take the parameter value from
+            else:
+                raise ConfigException(
+                    f"Parameter {n} was neither specified nor has a 'default' value defined."
+                )
+            setattr(self, n, value)
 
     def items(self):
-        return asdict(self).items()
+        return self.__dict__.items()
 
 
 # Configuration parameters necessary to generate registers from SystemRDL
@@ -61,7 +70,7 @@ class I3CCoreConfig:
 
     def __init__(self, cfg: I3CGenericConfig) -> None:
         # Parse to SVH format
-        for name, value in asdict(cfg).items():
+        for name, value in cfg.items():
             # Skip frontend parametrization; performed later
             if "Frontend" in name:
                 continue
