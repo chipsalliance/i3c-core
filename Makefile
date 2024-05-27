@@ -13,8 +13,8 @@ SW_BUILD_DIR = $(BUILD_DIR)/sw
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
 
 VERILATOR_MAKE_FLAGS = OPT_FAST="-Os"
-GENERIC_UVM_DIR ?= $(ROOT_DIR)/uvm-1.2/src
-VERILATOR_UVM_DIR ?= $(ROOT_DIR)/verilator-uvm-1.2/src
+GENERIC_UVM_DIR ?= $(ROOT_DIR)/uvm-1.2
+VERILATOR_UVM_DIR ?= $(ROOT_DIR)/verilator-uvm-1.2
 
 ifeq (, $(shell which qrun))
 else
@@ -126,7 +126,7 @@ deps: ## Install python dependencies
 	pip install -r requirements.txt
 
 ifdef QUESTA_ROOT
-uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
+define questa_run =
 	mkdir -p questa_run
 	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
 	+define+VW_QSTA \
@@ -134,76 +134,52 @@ uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
 	-sv -timescale 1ns/1ps \
 	-outdir questa_run/qrun.out \
 	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
-	-mfcu -f verification/uvm_i2c/dv_i2c_sim.scr \
+	-mfcu -f $(1) \
 	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
-	-top i2c_bind \
-	-top sec_cm_prim_onehot_check_bind \
-	-top tb \
-	-voptargs="+acc=nr"
+	$(foreach top,$(2), -top $(top)) \
+	-voptargs="+acc=nr" $(3)
 	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
 	+cdc_instrumentation_enabled=1 \
 	+UVM_NO_RELNOTES +UVM_VERBOSITY=UVM_LOW \
 	-outdir questa_run/qrun.out \
-	-sv_seed 55439844359 \
 	-suppress vsim-8323 \
-	-permit_unmatched_virtual_intf \
 	-64 \
-	+UVM_TESTNAME=i2c_base_test \
-	+UVM_TEST_SEQ=$(UVM_VSEQ_TEST) \
-	-do verification/uvm_i2c/questa_sim.tcl
+	+UVM_TESTNAME=$(5) \
+	+UVM_TEST_SEQ=$(6) \
+	-log questa_run/run.log \
+	-do $(4)
+	$(7)
+endef
 
+uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
+	$(call questa_run, \
+		verification/uvm_i2c/dv_i2c_sim.scr,\
+		i2c_bind sec_cm_prim_onehot_check_bind tb,\
+		,\
+		verification/uvm_i2c/questa_sim.tcl\
+		,i2c_base_test\
+		,$(UVM_VSEQ_TEST))
 
 i3c-monitor-tests:
-	mkdir -p questa_run
-	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
-	+define+VW_QSTA \
-	+incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
-	-sv -timescale 1ns/1ps \
-	-outdir questa_run/qrun.out \
-	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
-	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
-	-mfcu -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-	-top i3c_monitor_test_from_csv \
-	-GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
-	-log questa_run/build.log \
-	-voptargs="+acc=nr"
-	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
-	+cdc_instrumentation_enabled=1 \
-	-outdir questa_run/qrun.out \
-	-suppress vsim-8323 \
-	-64 \
-	-log questa_run/run.log \
-	-do verification/uvm_i3c/questa_sim.tcl
-	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
-	+define+VW_QSTA \
-	+incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
-	-sv -timescale 1ns/1ps \
-	-outdir questa_run/qrun.out \
-	-uvm -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2 \
-	-uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2 \
-	-mfcu -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-	-top i3c_monitor_test_from_csv \
-	-GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv" \
-	-log questa_run/build.log \
-	-voptargs="+acc=nr"
-	$(QUESTA_ROOT)/linux_x86_64/qrun -simulate  \
-	+cdc_instrumentation_enabled=1 \
-	-outdir questa_run/qrun.out \
-	-suppress vsim-8323 \
-	-64 \
-	-log questa_run/run.log \
-	-do verification/uvm_i3c/questa_sim.tcl
-
-
+	$(call questa_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i3c/questa_sim.tcl,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv")
+	$(call questa_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i3c/questa_sim.tcl,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv")
 endif
 
 ifdef VCS
-uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
+define vcs_run =
 	mkdir -p vcs_run
 	vcs -sverilog -full64 -licqueue -ntb_opts uvm-1.2 -timescale=1ns/1ps \
-	-Mdir=vcs_run/simv.csrc -o vcs_run/i2c_uvm_test \
-	-f verification/uvm_i2c/dv_i2c_sim.scr \
-	-lca -top i2c_bind -top sec_cm_prim_onehot_check_bind -top tb \
+	-Mdir=vcs_run/simv.csrc -o vcs_run/vcs_test \
+	-f $(1) \
+	-lca $(foreach top,$(2), -top $(top)) \
 	+warn=SV-NFIVC +warn=noUII-L +warn=noLCA_FEATURES_ENABLED +warn=noBNA \
 	-assert svaext \
 	-xlrm uniq_prior_final \
@@ -214,15 +190,38 @@ uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
 	-error=ELW_UNBOUND -error=IUWI -error=INAV -error=SV-ISC -error=OSVF-NPVIUFPI \
 	-error=DPIMI -error=IPDASP -error=CM-HIER-FNF -error=CWUC -error=MATN \
 	-error=STASKW_NDTAZ1 -error=TMPO -error=SV-OHCM -error=ENUMASSIGN -error=TEIF \
-	-deraceclockdata -assert novpi+dbgopt
-	./vcs_run/i2c_uvm_test -l vcs.log -licqueue -ucli \
-	-assert nopostproc -do verification/uvm_i2c/vcs_sim.tcl \
-	+UVM_TESTNAME=i2c_base_test +UVM_TEST_SEQ=$(UVM_VSEQ_TEST)
+	-deraceclockdata -assert novpi+dbgopt $(3)
+	./vcs_run/vcs_test -l vcs.log -licqueue -ucli \
+	-assert nopostproc -do $(4) \
+	+UVM_TESTNAME=$(5) +UVM_TEST_SEQ=$(6) $(7)
+endef
+
+uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
+	$(call vcs_run, \
+		verification/uvm_i2c/dv_i2c_sim.scr,\
+		i2c_bind sec_cm_prim_onehot_check_bind tb,\
+		,\
+		verification/uvm_i2c/vcs_sim.tcl\
+		,i2c_base_test\
+		,$(UVM_VSEQ_TEST))
+
+i3c-monitor-tests:
+	$(call vcs_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i2c/vcs_sim.tcl,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv")
+	$(call vcs_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i2c/vcs_sim.tcl,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv")
 endif
 
 download-uvm-1.2:
 	wget -O uvm-1.2.tar.gz https://www.accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz
 	tar -xf uvm-1.2.tar.gz
+	rm -fr uvm-1.2.tar.gz
 	touch download-uvm-1.2
 
 uvm-verilator-build: download-uvm-1.2
@@ -232,9 +231,9 @@ uvm-verilator-build: download-uvm-1.2
 	          --timescale 1ns/1ps \
 	          --top-module i3c_monitor_test_from_csv \
 	          -GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
-	          +incdir+$(VERILATOR_UVM_DIR) \
+	          +incdir+$(GENERIC_UVM_DIR)/src \
 	          --trace \
-	          $(GENERIC_UVM_DIR)/uvm.sv \
+	          $(GENERIC_UVM_DIR)/src/uvm.sv \
 	          -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr
 	$(MAKE) -j -e -C obj_dir/ -f Vi3c_monitor_test_from_csv.mk $(VERILATOR_MAKE_FLAGS) VM_PARALLEL_BUILDS=1
 	touch uvm-verilator-build
@@ -245,7 +244,8 @@ uvm-verilator: uvm-verilator-build ## Run I3C uvm agent test with verilator usin
 download-verilator-uvm-1.2:
 	wget -O verilator-uvm-1.2.zip https://github.com/antmicro/uvm-verilator/archive/refs/heads/current-patches.zip
 	unzip verilator-uvm-1.2.zip
-	mv uvm-verilator-current-patches verilator-uvm-1.2
+	rm -fr verilator-uvm-1.2.zip
+	mv uvm-verilator-current-patches $(VERILATOR_UVM_DIR)
 	touch download-verilator-uvm-1.2
 
 verilator-uvm-verilator-build: download-verilator-uvm-1.2
@@ -255,9 +255,9 @@ verilator-uvm-verilator-build: download-verilator-uvm-1.2
 	          --timescale 1ns/1ps \
 	          --top-module i3c_monitor_test_from_csv \
 	          -GCSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv" \
-	          +incdir+$(VERILATOR_UVM_DIR) \
+	          +incdir+$(VERILATOR_UVM_DIR)/src \
 	          --trace \
-	          $(VERILATOR_UVM_DIR)/uvm.sv \
+	          $(VERILATOR_UVM_DIR)/src/uvm.sv \
 	          -f verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr
 	$(MAKE) -j -e -C obj_dir/ -f Vi3c_monitor_test_from_csv.mk $(VERILATOR_MAKE_FLAGS) VM_PARALLEL_BUILDS=1
 	touch verilator-uvm-verilator-build
@@ -270,6 +270,9 @@ clean: ## Clean all generated sources
 	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
+	$(RM) -rf vcs_run questa_run
+	$(RM) -rf download-uvm-1.2 uvm-verilator-build download-verilator-uvm-1.2 verilator-uvm-verilator-build
+	$(RM) -rf $(GENERIC_UVM_DIR) $(VERILATOR_UVM_DIR)
 
 .PHONY: lint lint-check lint-rtl lint-tests \
 		test tests sw-caliptra-test \

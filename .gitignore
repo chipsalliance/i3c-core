@@ -25,6 +25,7 @@ verilator-cocotb-build
 *.log
 *.rpt
 **sim*
+!verification/uvm_i2c/dv_i2c_sim.scr
 src/csr/html
 src/csr/md
 build
