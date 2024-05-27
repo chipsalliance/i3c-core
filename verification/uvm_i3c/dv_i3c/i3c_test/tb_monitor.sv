@@ -1,4 +1,4 @@
-module i3c_monitor_test_from_csv #(CSV_FILE_PATH);
+module i3c_monitor_test_from_csv;
   import i3c_agent_pkg::*;
   import uvm_pkg::*;
 
@@ -40,8 +40,10 @@ module i3c_monitor_test_from_csv #(CSV_FILE_PATH);
 
  // Load stimuli from file
   int fd;
+  string file_path;
   initial begin
-    if ((fd=$fopen(CSV_FILE_PATH, "r")) != 0) begin
+    $value$plusargs ("CSV_FILE_PATH=%s", file_path);
+    if ((fd=$fopen(file_path, "r")) != 0) begin
       $fgets(str,fd); // get first line
       while($fgets(str,fd) != 0) begin
         $sscanf(str, "%f%c%d%c%d", _timestamp, unused, scl_delay, unused, sda_delay);

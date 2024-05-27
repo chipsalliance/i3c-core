@@ -16,7 +16,7 @@ class i3c_monitor extends uvm_monitor;
   uvm_analysis_port #(i3c_item) analysis_port;
 
   local i3c_item   next_item;
-  local bit        start = 0, stop = 0, rstart = 0;
+  local bit        start = 0, bus_stop = 0, rstart = 0;
   local bit [8:0]  mon_data;
   local bit [31:0] num_dut_tran = 0;
   bit              mon_rstart = 0;
@@ -69,7 +69,7 @@ class i3c_monitor extends uvm_monitor;
       full_item = new;
     end
     wait(cfg.en_monitor);
-    if (stop || (!stop && !start && !rstart)) begin
+    if (bus_stop || (!bus_stop && !start && !rstart)) begin
       cfg.vif.wait_for_host_start();
       `uvm_info(get_full_name(), "\nmonitor, detect HOST START", UVM_HIGH)
     end else begin
@@ -119,7 +119,7 @@ class i3c_monitor extends uvm_monitor;
         full_item = temp_val;
       end
     end
-    stop = full_item.stop;
+    bus_stop = full_item.stop;
     start = full_item.start;
     rstart = full_item.rstart;
     full_item.stop = 1'b1;
