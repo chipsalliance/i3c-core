@@ -200,205 +200,205 @@ module I3CCSR (
                 struct {
                     logic next;
                     logic load_next;
-                } iba_include;
+                } IBA_INCLUDE;
                 struct {
                     logic next;
                     logic load_next;
-                } i2c_devs;
+                } I2C_DEV_PRESENT;
                 struct {
                     logic next;
                     logic load_next;
-                } hot_join;
+                } HOT_JOIN_CTRL;
                 struct {
                     logic next;
                     logic load_next;
-                } halt_on_cmd_seq_timeout;
+                } HALT_ON_CMD_SEQ_TIMEOUT;
                 struct {
                     logic next;
                     logic load_next;
-                } abort;
+                } ABORT;
                 struct {
                     logic next;
                     logic load_next;
-                } resume;
+                } RESUME;
                 struct {
                     logic next;
                     logic load_next;
-                } bus_enable;
+                } BUS_ENABLE;
             } HC_CONTROL;
             struct {
                 struct {
                     logic [6:0] next;
                     logic load_next;
-                } dynamic_addr;
+                } DYNAMIC_ADDR;
                 struct {
                     logic next;
                     logic load_next;
-                } dynamic_addr_valid;
+                } DYNAMIC_ADDR_VALID;
             } CONTROLLER_DEVICE_ADDR;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } soft_rst;
+                } SOFT_RST;
                 struct {
                     logic next;
                     logic load_next;
-                } cmd_queue;
+                } CMD_QUEUE_RST;
                 struct {
                     logic next;
                     logic load_next;
-                } resp_queue;
+                } RESP_QUEUE_RST;
                 struct {
                     logic next;
                     logic load_next;
-                } tx_fifo;
+                } TX_FIFO_RST;
                 struct {
                     logic next;
                     logic load_next;
-                } rx_fifo;
+                } RX_FIFO_RST;
                 struct {
                     logic next;
                     logic load_next;
-                } ibi_queue;
+                } IBI_QUEUE_RST;
             } RESET_CONTROL;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } hc_internal_err;
+                } HC_INTERNAL_ERR_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_seq_cancel_stat;
+                } HC_SEQ_CANCEL_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_warn_cmd_seq_stall;
+                } HC_WARN_CMD_SEQ_STALL_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_err_cmd_seq_timeout;
+                } HC_ERR_CMD_SEQ_TIMEOUT_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } sched_cmd_missed_tick;
+                } SCHED_CMD_MISSED_TICK_STAT;
             } INTR_STATUS;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } hc_internal_err_en;
+                } HC_INTERNAL_ERR_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_seq_cancel_stat_en;
+                } HC_SEQ_CANCEL_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_warn_cmd_seq_stall_en;
+                } HC_WARN_CMD_SEQ_STALL_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_err_cmd_seq_timeout_en;
+                } HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } sched_cmd_missed_tick_en;
+                } SCHED_CMD_MISSED_TICK_STAT_EN;
             } INTR_STATUS_ENABLE;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } hc_internal_err_intr_en;
+                } HC_INTERNAL_ERR_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_seq_cancel_stat_intr_en;
+                } HC_SEQ_CANCEL_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_warn_cmd_seq_stall_intr_en;
+                } HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } hc_err_cmd_seq_timeout_intr_en;
+                } HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } sched_cmd_missed_tick_intr_en;
+                } SCHED_CMD_MISSED_TICK_SIGNAL_EN;
             } INTR_SIGNAL_ENABLE;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } force_hc_internal_err;
+                } HC_INTERNAL_ERR_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_hc_seq_cancel_stat;
+                } HC_SEQ_CANCEL_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_hc_warn_cmd_seq_stall;
+                } HC_WARN_CMD_SEQ_STALL_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_hc_err_cmd_seq_timeout;
+                } HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_sched_cmd_missed_tick;
+                } SCHED_CMD_MISSED_TICK_FORCE;
             } INTR_FORCE;
             struct {
                 struct {
                     logic [4:0] next;
                     logic load_next;
-                } table_idx;
+                } TABLE_INDEX;
             } DCT_SECTION_OFFSET;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } hj_rejected;
+                } NOTIFY_HJ_REJECTED;
                 struct {
                     logic next;
                     logic load_next;
-                } crr_rejected;
+                } NOTIFY_CRR_REJECTED;
                 struct {
                     logic next;
                     logic load_next;
-                } ibi_rejected;
+                } NOTIFY_IBI_REJECTED;
             } IBI_NOTIFY_CTRL;
             struct {
                 struct {
                     logic [7:0] next;
                     logic load_next;
-                } match_id;
+                } MATCH_IBI_ID;
                 struct {
                     logic [1:0] next;
                     logic load_next;
-                } max_data_length;
+                } AFTER_N_CHUNKS;
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } ibi_match_statsus;
+                } MATCH_STATUS_TYPE;
                 struct {
                     logic next;
                     logic load_next;
-                } data_abort_monitor;
+                } IBI_DATA_ABORT_MON;
             } IBI_DATA_ABORT_CTRL;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } base_lo;
+                } BASE_LO;
             } DEV_CTX_BASE_LO;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } base_hi;
+                } BASE_HI;
             } DEV_CTX_BASE_HI;
         } I3CBase;
         struct {
@@ -406,171 +406,171 @@ module I3CCSR (
                 struct {
                     logic [7:0] next;
                     logic load_next;
-                } cmd_empty;
+                } CMD_EMPTY_BUF_THLD;
                 struct {
                     logic [7:0] next;
                     logic load_next;
-                } resp_buf;
+                } RESP_BUF_THLD;
                 struct {
                     logic [7:0] next;
                     logic load_next;
-                } ibi_data_size;
+                } IBI_DATA_SEGMENT_SIZE;
                 struct {
                     logic [7:0] next;
                     logic load_next;
-                } ibi_status;
+                } IBI_STATUS_THLD;
             } QUEUE_THLD_CTRL;
             struct {
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } tx_buf;
+                } TX_BUF_THLD;
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } rx_buf;
+                } RX_BUF_THLD;
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } tx_start_log;
+                } TX_START_THLD;
                 struct {
                     logic [2:0] next;
                     logic load_next;
-                } rx_start_log;
+                } RX_START_THLD;
             } DATA_BUFFER_THLD_CTRL;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } tx_threshold;
+                } TX_THLD_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } rx_threshold;
+                } RX_THLD_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } ibi_status;
+                } IBI_STATUS_THLD_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } cmd_queue_ready;
+                } CMD_QUEUE_READY_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } resp_ready;
+                } RESP_READY_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_abort;
+                } TRANSFER_ABORT_STAT;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_err;
+                } TRANSFER_ERR_STAT;
             } PIO_INTR_STATUS;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } tx_threshold_en;
+                } TX_THLD_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } rx_threshold_en;
+                } RX_THLD_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } ibi_status_en;
+                } IBI_STATUS_THLD_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } cmd_queue_ready_en;
+                } CMD_QUEUE_READY_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } resp_ready_en;
+                } RESP_READY_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_abort_en;
+                } TRANSFER_ABORT_STAT_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_err_en;
+                } TRANSFER_ERR_STAT_EN;
             } PIO_INTR_STATUS_ENABLE;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } tx_threshold_intr_en;
+                } TX_THLD_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } rx_threshold_intr_en;
+                } RX_THLD_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } ibi_status_intr_en;
+                } IBI_STATUS_THLD_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } cmd_queue_ready_intr_en;
+                } CMD_QUEUE_READY_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } resp_ready_intr_en;
+                } RESP_READY_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_abort_intr_en;
+                } TRANSFER_ABORT_SIGNAL_EN;
                 struct {
                     logic next;
                     logic load_next;
-                } transfer_err_intr_en;
+                } TRANSFER_ERR_SIGNAL_EN;
             } PIO_INTR_SIGNAL_ENABLE;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } force_tx_threshold;
+                } TX_THLD_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_rx_threshold;
+                } RX_THLD_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_ibi_status;
+                } IBI_THLD_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_cmd_queue_ready;
+                } CMD_QUEUE_READY_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_resp_ready;
+                } RESP_READY_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_transfer_abort;
+                } TRANSFER_ABORT_FORCE;
                 struct {
                     logic next;
                     logic load_next;
-                } force_transfer_err;
+                } TRANSFER_ERR_FORCE;
             } PIO_INTR_FORCE;
             struct {
                 struct {
                     logic next;
                     logic load_next;
-                } enable_req;
+                } ENABLE;
                 struct {
                     logic next;
                     logic load_next;
-                } rs_req;
+                } RS;
                 struct {
                     logic next;
                     logic load_next;
-                } abort_req;
+                } ABORT;
             } PIO_CONTROL;
         } PIOControl;
     } field_combo_t;
@@ -581,1296 +581,1296 @@ module I3CCSR (
             struct {
                 struct {
                     logic value;
-                } iba_include;
+                } IBA_INCLUDE;
                 struct {
                     logic value;
-                } i2c_devs;
+                } I2C_DEV_PRESENT;
                 struct {
                     logic value;
-                } hot_join;
+                } HOT_JOIN_CTRL;
                 struct {
                     logic value;
-                } halt_on_cmd_seq_timeout;
+                } HALT_ON_CMD_SEQ_TIMEOUT;
                 struct {
                     logic value;
-                } abort;
+                } ABORT;
                 struct {
                     logic value;
-                } resume;
+                } RESUME;
                 struct {
                     logic value;
-                } bus_enable;
+                } BUS_ENABLE;
             } HC_CONTROL;
             struct {
                 struct {
                     logic [6:0] value;
-                } dynamic_addr;
+                } DYNAMIC_ADDR;
                 struct {
                     logic value;
-                } dynamic_addr_valid;
+                } DYNAMIC_ADDR_VALID;
             } CONTROLLER_DEVICE_ADDR;
             struct {
                 struct {
                     logic value;
-                } soft_rst;
+                } SOFT_RST;
                 struct {
                     logic value;
-                } cmd_queue;
+                } CMD_QUEUE_RST;
                 struct {
                     logic value;
-                } resp_queue;
+                } RESP_QUEUE_RST;
                 struct {
                     logic value;
-                } tx_fifo;
+                } TX_FIFO_RST;
                 struct {
                     logic value;
-                } rx_fifo;
+                } RX_FIFO_RST;
                 struct {
                     logic value;
-                } ibi_queue;
+                } IBI_QUEUE_RST;
             } RESET_CONTROL;
             struct {
                 struct {
                     logic value;
-                } hc_internal_err;
+                } HC_INTERNAL_ERR_STAT;
                 struct {
                     logic value;
-                } hc_seq_cancel_stat;
+                } HC_SEQ_CANCEL_STAT;
                 struct {
                     logic value;
-                } hc_warn_cmd_seq_stall;
+                } HC_WARN_CMD_SEQ_STALL_STAT;
                 struct {
                     logic value;
-                } hc_err_cmd_seq_timeout;
+                } HC_ERR_CMD_SEQ_TIMEOUT_STAT;
                 struct {
                     logic value;
-                } sched_cmd_missed_tick;
+                } SCHED_CMD_MISSED_TICK_STAT;
             } INTR_STATUS;
             struct {
                 struct {
                     logic value;
-                } hc_internal_err_en;
+                } HC_INTERNAL_ERR_STAT_EN;
                 struct {
                     logic value;
-                } hc_seq_cancel_stat_en;
+                } HC_SEQ_CANCEL_STAT_EN;
                 struct {
                     logic value;
-                } hc_warn_cmd_seq_stall_en;
+                } HC_WARN_CMD_SEQ_STALL_STAT_EN;
                 struct {
                     logic value;
-                } hc_err_cmd_seq_timeout_en;
+                } HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
                 struct {
                     logic value;
-                } sched_cmd_missed_tick_en;
+                } SCHED_CMD_MISSED_TICK_STAT_EN;
             } INTR_STATUS_ENABLE;
             struct {
                 struct {
                     logic value;
-                } hc_internal_err_intr_en;
+                } HC_INTERNAL_ERR_SIGNAL_EN;
                 struct {
                     logic value;
-                } hc_seq_cancel_stat_intr_en;
+                } HC_SEQ_CANCEL_SIGNAL_EN;
                 struct {
                     logic value;
-                } hc_warn_cmd_seq_stall_intr_en;
+                } HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
                 struct {
                     logic value;
-                } hc_err_cmd_seq_timeout_intr_en;
+                } HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
                 struct {
                     logic value;
-                } sched_cmd_missed_tick_intr_en;
+                } SCHED_CMD_MISSED_TICK_SIGNAL_EN;
             } INTR_SIGNAL_ENABLE;
             struct {
                 struct {
                     logic value;
-                } force_hc_internal_err;
+                } HC_INTERNAL_ERR_FORCE;
                 struct {
                     logic value;
-                } force_hc_seq_cancel_stat;
+                } HC_SEQ_CANCEL_FORCE;
                 struct {
                     logic value;
-                } force_hc_warn_cmd_seq_stall;
+                } HC_WARN_CMD_SEQ_STALL_FORCE;
                 struct {
                     logic value;
-                } force_hc_err_cmd_seq_timeout;
+                } HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
                 struct {
                     logic value;
-                } force_sched_cmd_missed_tick;
+                } SCHED_CMD_MISSED_TICK_FORCE;
             } INTR_FORCE;
             struct {
                 struct {
                     logic [4:0] value;
-                } table_idx;
+                } TABLE_INDEX;
             } DCT_SECTION_OFFSET;
             struct {
                 struct {
                     logic value;
-                } hj_rejected;
+                } NOTIFY_HJ_REJECTED;
                 struct {
                     logic value;
-                } crr_rejected;
+                } NOTIFY_CRR_REJECTED;
                 struct {
                     logic value;
-                } ibi_rejected;
+                } NOTIFY_IBI_REJECTED;
             } IBI_NOTIFY_CTRL;
             struct {
                 struct {
                     logic [7:0] value;
-                } match_id;
+                } MATCH_IBI_ID;
                 struct {
                     logic [1:0] value;
-                } max_data_length;
+                } AFTER_N_CHUNKS;
                 struct {
                     logic [2:0] value;
-                } ibi_match_statsus;
+                } MATCH_STATUS_TYPE;
                 struct {
                     logic value;
-                } data_abort_monitor;
+                } IBI_DATA_ABORT_MON;
             } IBI_DATA_ABORT_CTRL;
             struct {
                 struct {
                     logic value;
-                } base_lo;
+                } BASE_LO;
             } DEV_CTX_BASE_LO;
             struct {
                 struct {
                     logic value;
-                } base_hi;
+                } BASE_HI;
             } DEV_CTX_BASE_HI;
         } I3CBase;
         struct {
             struct {
                 struct {
                     logic [7:0] value;
-                } cmd_empty;
+                } CMD_EMPTY_BUF_THLD;
                 struct {
                     logic [7:0] value;
-                } resp_buf;
+                } RESP_BUF_THLD;
                 struct {
                     logic [7:0] value;
-                } ibi_data_size;
+                } IBI_DATA_SEGMENT_SIZE;
                 struct {
                     logic [7:0] value;
-                } ibi_status;
+                } IBI_STATUS_THLD;
             } QUEUE_THLD_CTRL;
             struct {
                 struct {
                     logic [2:0] value;
-                } tx_buf;
+                } TX_BUF_THLD;
                 struct {
                     logic [2:0] value;
-                } rx_buf;
+                } RX_BUF_THLD;
                 struct {
                     logic [2:0] value;
-                } tx_start_log;
+                } TX_START_THLD;
                 struct {
                     logic [2:0] value;
-                } rx_start_log;
+                } RX_START_THLD;
             } DATA_BUFFER_THLD_CTRL;
             struct {
                 struct {
                     logic value;
-                } tx_threshold;
+                } TX_THLD_STAT;
                 struct {
                     logic value;
-                } rx_threshold;
+                } RX_THLD_STAT;
                 struct {
                     logic value;
-                } ibi_status;
+                } IBI_STATUS_THLD_STAT;
                 struct {
                     logic value;
-                } cmd_queue_ready;
+                } CMD_QUEUE_READY_STAT;
                 struct {
                     logic value;
-                } resp_ready;
+                } RESP_READY_STAT;
                 struct {
                     logic value;
-                } transfer_abort;
+                } TRANSFER_ABORT_STAT;
                 struct {
                     logic value;
-                } transfer_err;
+                } TRANSFER_ERR_STAT;
             } PIO_INTR_STATUS;
             struct {
                 struct {
                     logic value;
-                } tx_threshold_en;
+                } TX_THLD_STAT_EN;
                 struct {
                     logic value;
-                } rx_threshold_en;
+                } RX_THLD_STAT_EN;
                 struct {
                     logic value;
-                } ibi_status_en;
+                } IBI_STATUS_THLD_STAT_EN;
                 struct {
                     logic value;
-                } cmd_queue_ready_en;
+                } CMD_QUEUE_READY_STAT_EN;
                 struct {
                     logic value;
-                } resp_ready_en;
+                } RESP_READY_STAT_EN;
                 struct {
                     logic value;
-                } transfer_abort_en;
+                } TRANSFER_ABORT_STAT_EN;
                 struct {
                     logic value;
-                } transfer_err_en;
+                } TRANSFER_ERR_STAT_EN;
             } PIO_INTR_STATUS_ENABLE;
             struct {
                 struct {
                     logic value;
-                } tx_threshold_intr_en;
+                } TX_THLD_SIGNAL_EN;
                 struct {
                     logic value;
-                } rx_threshold_intr_en;
+                } RX_THLD_SIGNAL_EN;
                 struct {
                     logic value;
-                } ibi_status_intr_en;
+                } IBI_STATUS_THLD_SIGNAL_EN;
                 struct {
                     logic value;
-                } cmd_queue_ready_intr_en;
+                } CMD_QUEUE_READY_SIGNAL_EN;
                 struct {
                     logic value;
-                } resp_ready_intr_en;
+                } RESP_READY_SIGNAL_EN;
                 struct {
                     logic value;
-                } transfer_abort_intr_en;
+                } TRANSFER_ABORT_SIGNAL_EN;
                 struct {
                     logic value;
-                } transfer_err_intr_en;
+                } TRANSFER_ERR_SIGNAL_EN;
             } PIO_INTR_SIGNAL_ENABLE;
             struct {
                 struct {
                     logic value;
-                } force_tx_threshold;
+                } TX_THLD_FORCE;
                 struct {
                     logic value;
-                } force_rx_threshold;
+                } RX_THLD_FORCE;
                 struct {
                     logic value;
-                } force_ibi_status;
+                } IBI_THLD_FORCE;
                 struct {
                     logic value;
-                } force_cmd_queue_ready;
+                } CMD_QUEUE_READY_FORCE;
                 struct {
                     logic value;
-                } force_resp_ready;
+                } RESP_READY_FORCE;
                 struct {
                     logic value;
-                } force_transfer_abort;
+                } TRANSFER_ABORT_FORCE;
                 struct {
                     logic value;
-                } force_transfer_err;
+                } TRANSFER_ERR_FORCE;
             } PIO_INTR_FORCE;
             struct {
                 struct {
                     logic value;
-                } enable_req;
+                } ENABLE;
                 struct {
                     logic value;
-                } rs_req;
+                } RS;
                 struct {
                     logic value;
-                } abort_req;
+                } ABORT;
             } PIO_CONTROL;
         } PIOControl;
     } field_storage_t;
     field_storage_t field_storage;
 
-    // Field: I3CCSR.I3CBase.HC_CONTROL.iba_include
+    // Field: I3CCSR.I3CBase.HC_CONTROL.IBA_INCLUDE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.iba_include.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.iba_include.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.iba_include.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.iba_include.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.iba_include.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.iba_include.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.iba_include.value <= field_combo.I3CBase.HC_CONTROL.iba_include.next;
+            field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.iba_include.value = field_storage.I3CBase.HC_CONTROL.iba_include.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.i2c_devs
+    assign hwif_out.I3CBase.HC_CONTROL.IBA_INCLUDE.value = field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.I2C_DEV_PRESENT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.i2c_devs.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.i2c_devs.value & ~decoded_wr_biten[7:7]) | (decoded_wr_data[7:7] & decoded_wr_biten[7:7]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value & ~decoded_wr_biten[7:7]) | (decoded_wr_data[7:7] & decoded_wr_biten[7:7]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.i2c_devs.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.i2c_devs.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.i2c_devs.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.i2c_devs.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.i2c_devs.value <= field_combo.I3CBase.HC_CONTROL.i2c_devs.next;
+            field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.i2c_devs.value = field_storage.I3CBase.HC_CONTROL.i2c_devs.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.hot_join
+    assign hwif_out.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value = field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.HOT_JOIN_CTRL
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.hot_join.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.hot_join.value & ~decoded_wr_biten[8:8]) | (decoded_wr_data[8:8] & decoded_wr_biten[8:8]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value & ~decoded_wr_biten[8:8]) | (decoded_wr_data[8:8] & decoded_wr_biten[8:8]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.hot_join.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.hot_join.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.hot_join.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.hot_join.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.hot_join.value <= field_combo.I3CBase.HC_CONTROL.hot_join.next;
+            field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.hot_join.value = field_storage.I3CBase.HC_CONTROL.hot_join.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout
+    assign hwif_out.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value = field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value <= field_combo.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.next;
+            field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value = field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.abort
+    assign hwif_out.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value = field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.ABORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.abort.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.ABORT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.abort.value & ~decoded_wr_biten[29:29]) | (decoded_wr_data[29:29] & decoded_wr_biten[29:29]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.ABORT.value & ~decoded_wr_biten[29:29]) | (decoded_wr_data[29:29] & decoded_wr_biten[29:29]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.abort.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.abort.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.ABORT.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.ABORT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.abort.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.abort.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.abort.value <= field_combo.I3CBase.HC_CONTROL.abort.next;
+            field_storage.I3CBase.HC_CONTROL.ABORT.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.ABORT.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.ABORT.value <= field_combo.I3CBase.HC_CONTROL.ABORT.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.abort.value = field_storage.I3CBase.HC_CONTROL.abort.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.resume
+    assign hwif_out.I3CBase.HC_CONTROL.ABORT.value = field_storage.I3CBase.HC_CONTROL.ABORT.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.RESUME
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.resume.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.RESUME.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.HC_CONTROL.resume.value & ~(decoded_wr_data[30:30] & decoded_wr_biten[30:30]);
+            next_c = field_storage.I3CBase.HC_CONTROL.RESUME.value & ~(decoded_wr_data[30:30] & decoded_wr_biten[30:30]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.HC_CONTROL.resume.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.HC_CONTROL.resume.next;
+        end else if(hwif_in.I3CBase.HC_CONTROL.RESUME.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.HC_CONTROL.RESUME.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.resume.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.resume.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.RESUME.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.RESUME.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.resume.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.resume.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.resume.value <= field_combo.I3CBase.HC_CONTROL.resume.next;
+            field_storage.I3CBase.HC_CONTROL.RESUME.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.RESUME.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.RESUME.value <= field_combo.I3CBase.HC_CONTROL.RESUME.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.resume.value = field_storage.I3CBase.HC_CONTROL.resume.value;
-    // Field: I3CCSR.I3CBase.HC_CONTROL.bus_enable
+    assign hwif_out.I3CBase.HC_CONTROL.RESUME.value = field_storage.I3CBase.HC_CONTROL.RESUME.value;
+    // Field: I3CCSR.I3CBase.HC_CONTROL.BUS_ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.HC_CONTROL.bus_enable.value;
+        next_c = field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.HC_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.HC_CONTROL.bus_enable.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+            next_c = (field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.HC_CONTROL.bus_enable.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.HC_CONTROL.bus_enable.next;
+        end else if(hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.HC_CONTROL.bus_enable.next = next_c;
-        field_combo.I3CBase.HC_CONTROL.bus_enable.load_next = load_next_c;
+        field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next = next_c;
+        field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.HC_CONTROL.bus_enable.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.bus_enable.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.bus_enable.value <= field_combo.I3CBase.HC_CONTROL.bus_enable.next;
+            field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= 1'h0;
+        end else if(field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next) begin
+            field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next;
         end
     end
-    assign hwif_out.I3CBase.HC_CONTROL.bus_enable.value = field_storage.I3CBase.HC_CONTROL.bus_enable.value;
-    // Field: I3CCSR.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr
+    assign hwif_out.I3CBase.HC_CONTROL.BUS_ENABLE.value = field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value;
+    // Field: I3CCSR.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
     always_comb begin
         automatic logic [6:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value;
+        next_c = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
+            next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.next;
+        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.next = next_c;
-        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.load_next = load_next_c;
+        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = next_c;
+        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value <= 7'h0;
-        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.load_next) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.next;
+            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= 7'h0;
+        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
+            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next;
         end
     end
-    assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value;
-    // Field: I3CCSR.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid
+    assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value;
+    // Field: I3CCSR.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value;
+        next_c = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+            next_c = (field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.next;
+        end else if(hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.next = next_c;
-        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.load_next = load_next_c;
+        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = next_c;
+        field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value <= 1'h0;
-        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.load_next) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.next;
+            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= 1'h0;
+        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
+            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
         end
     end
-    assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.soft_rst
+    assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.SOFT_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.soft_rst.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.soft_rst.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.soft_rst.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.soft_rst.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.soft_rst.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.soft_rst.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.soft_rst.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.soft_rst.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.soft_rst.value <= field_combo.I3CBase.RESET_CONTROL.soft_rst.next;
+            field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.soft_rst.value = field_storage.I3CBase.RESET_CONTROL.soft_rst.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.cmd_queue
+    assign hwif_out.I3CBase.RESET_CONTROL.SOFT_RST.value = field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.CMD_QUEUE_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.cmd_queue.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.cmd_queue.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.cmd_queue.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.cmd_queue.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.cmd_queue.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.cmd_queue.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.cmd_queue.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.cmd_queue.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.cmd_queue.value <= field_combo.I3CBase.RESET_CONTROL.cmd_queue.next;
+            field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.cmd_queue.value = field_storage.I3CBase.RESET_CONTROL.cmd_queue.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.resp_queue
+    assign hwif_out.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.RESP_QUEUE_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.resp_queue.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.resp_queue.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.resp_queue.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.resp_queue.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.resp_queue.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.resp_queue.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.resp_queue.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.resp_queue.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.resp_queue.value <= field_combo.I3CBase.RESET_CONTROL.resp_queue.next;
+            field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.resp_queue.value = field_storage.I3CBase.RESET_CONTROL.resp_queue.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.tx_fifo
+    assign hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.TX_FIFO_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.tx_fifo.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.tx_fifo.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.tx_fifo.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.tx_fifo.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.tx_fifo.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.tx_fifo.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.tx_fifo.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.tx_fifo.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.tx_fifo.value <= field_combo.I3CBase.RESET_CONTROL.tx_fifo.next;
+            field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.tx_fifo.value = field_storage.I3CBase.RESET_CONTROL.tx_fifo.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.rx_fifo
+    assign hwif_out.I3CBase.RESET_CONTROL.TX_FIFO_RST.value = field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.RX_FIFO_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.rx_fifo.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.rx_fifo.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.rx_fifo.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.rx_fifo.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.rx_fifo.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.rx_fifo.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.rx_fifo.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.rx_fifo.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.rx_fifo.value <= field_combo.I3CBase.RESET_CONTROL.rx_fifo.next;
+            field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.rx_fifo.value = field_storage.I3CBase.RESET_CONTROL.rx_fifo.value;
-    // Field: I3CCSR.I3CBase.RESET_CONTROL.ibi_queue
+    assign hwif_out.I3CBase.RESET_CONTROL.RX_FIFO_RST.value = field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
+    // Field: I3CCSR.I3CBase.RESET_CONTROL.IBI_QUEUE_RST
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.RESET_CONTROL.ibi_queue.value;
+        next_c = field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.RESET_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.RESET_CONTROL.ibi_queue.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            next_c = (field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.RESET_CONTROL.ibi_queue.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.RESET_CONTROL.ibi_queue.next;
+        end else if(hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.RESET_CONTROL.ibi_queue.next = next_c;
-        field_combo.I3CBase.RESET_CONTROL.ibi_queue.load_next = load_next_c;
+        field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next = next_c;
+        field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.RESET_CONTROL.ibi_queue.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.ibi_queue.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.ibi_queue.value <= field_combo.I3CBase.RESET_CONTROL.ibi_queue.next;
+            field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= 1'h0;
+        end else if(field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
+            field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next;
         end
     end
-    assign hwif_out.I3CBase.RESET_CONTROL.ibi_queue.value = field_storage.I3CBase.RESET_CONTROL.ibi_queue.value;
-    // Field: I3CCSR.I3CBase.INTR_STATUS.hc_internal_err
+    assign hwif_out.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
+    // Field: I3CCSR.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS.hc_internal_err.value;
+        next_c = field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_internal_err.value & ~(decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value & ~(decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.INTR_STATUS.hc_internal_err.next != '0) begin // stickybit
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_internal_err.value | hwif_in.I3CBase.INTR_STATUS.hc_internal_err.next;
+        end else if(hwif_in.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next != '0) begin // stickybit
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value | hwif_in.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS.hc_internal_err.next = next_c;
-        field_combo.I3CBase.INTR_STATUS.hc_internal_err.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS.hc_internal_err.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.hc_internal_err.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.hc_internal_err.value <= field_combo.I3CBase.INTR_STATUS.hc_internal_err.next;
+            field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next) begin
+            field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next;
         end
     end
-    // Field: I3CCSR.I3CBase.INTR_STATUS.hc_seq_cancel_stat
+    // Field: I3CCSR.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value;
+        next_c = field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value & ~(decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value & ~(decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.INTR_STATUS.hc_seq_cancel_stat.next != '0) begin // stickybit
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value | hwif_in.I3CBase.INTR_STATUS.hc_seq_cancel_stat.next;
+        end else if(hwif_in.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next != '0) begin // stickybit
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value | hwif_in.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS.hc_seq_cancel_stat.next = next_c;
-        field_combo.I3CBase.INTR_STATUS.hc_seq_cancel_stat.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.hc_seq_cancel_stat.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value <= field_combo.I3CBase.INTR_STATUS.hc_seq_cancel_stat.next;
+            field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next) begin
+            field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next;
         end
     end
-    // Field: I3CCSR.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall
+    // Field: I3CCSR.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value;
+        next_c = field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value & ~(decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value & ~(decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.next != '0) begin // stickybit
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value | hwif_in.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.next;
+        end else if(hwif_in.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next != '0) begin // stickybit
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value | hwif_in.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.next = next_c;
-        field_combo.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value <= field_combo.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.next;
+            field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next) begin
+            field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next;
         end
     end
-    // Field: I3CCSR.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout
+    // Field: I3CCSR.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value;
+        next_c = field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value & ~(decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value & ~(decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.next != '0) begin // stickybit
-            next_c = field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value | hwif_in.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.next;
+        end else if(hwif_in.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next != '0) begin // stickybit
+            next_c = field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value | hwif_in.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.next = next_c;
-        field_combo.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = next_c;
+        field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value <= field_combo.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.next;
+            field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next) begin
+            field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next;
         end
     end
-    // Field: I3CCSR.I3CBase.INTR_STATUS.sched_cmd_missed_tick
+    // Field: I3CCSR.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value;
+        next_c = field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value & ~(decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+            next_c = field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value & ~(decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.INTR_STATUS.sched_cmd_missed_tick.next != '0) begin // stickybit
-            next_c = field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value | hwif_in.I3CBase.INTR_STATUS.sched_cmd_missed_tick.next;
+        end else if(hwif_in.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next != '0) begin // stickybit
+            next_c = field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value | hwif_in.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS.sched_cmd_missed_tick.next = next_c;
-        field_combo.I3CBase.INTR_STATUS.sched_cmd_missed_tick.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = next_c;
+        field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.sched_cmd_missed_tick.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value <= field_combo.I3CBase.INTR_STATUS.sched_cmd_missed_tick.next;
+            field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next) begin
+            field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next;
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS.intr =
-        |(field_storage.I3CBase.INTR_STATUS.hc_internal_err.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value)
-        || |(field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value)
-        || |(field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value)
-        || |(field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value)
-        || |(field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value);
-    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en
+        |(field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value)
+        || |(field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value)
+        || |(field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value)
+        || |(field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value)
+        || |(field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value & field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value);
+    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value;
+        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.next = next_c;
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next = next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.next;
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next) begin
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value;
-    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en
+    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value;
+        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.next = next_c;
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next = next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.next;
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next) begin
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value;
-    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en
+    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value;
+        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.next = next_c;
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next = next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.next;
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next) begin
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value;
-    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en
+    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value;
+        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.next = next_c;
-        field_combo.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next = next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.next;
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next) begin
+            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value = field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value;
-    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en
+    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value;
+        next_c = field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+            next_c = (field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.next = next_c;
-        field_combo.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next = next_c;
+        field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.next;
+            field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next) begin
+            field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value = field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value;
-    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en
+    assign hwif_out.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value;
+        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.next = next_c;
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next = next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.next;
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next) begin
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value;
-    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en
+    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value;
+        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.next = next_c;
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next = next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.next;
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next) begin
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value;
-    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en
+    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value;
+        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.next = next_c;
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next = next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.next;
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next) begin
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value;
-    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en
+    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value;
+        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.next = next_c;
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next = next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.next;
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next) begin
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value;
-    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en
+    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value;
+        next_c = field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+            next_c = (field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.next = next_c;
-        field_combo.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.load_next = load_next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next = next_c;
+        field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.next;
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next) begin
+            field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value;
-    // Field: I3CCSR.I3CBase.INTR_FORCE.force_hc_internal_err
+    assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value;
+    // Field: I3CCSR.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_FORCE.force_hc_internal_err.value;
+        next_c = field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_FORCE.force_hc_internal_err.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+            next_c = (field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_FORCE.force_hc_internal_err.next = next_c;
-        field_combo.I3CBase.INTR_FORCE.force_hc_internal_err.load_next = load_next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next = next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_internal_err.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.force_hc_internal_err.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_internal_err.value <= field_combo.I3CBase.INTR_FORCE.force_hc_internal_err.next;
+            field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next) begin
+            field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_FORCE.force_hc_internal_err.value = field_storage.I3CBase.INTR_FORCE.force_hc_internal_err.value;
-    // Field: I3CCSR.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat
+    assign hwif_out.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value;
+    // Field: I3CCSR.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value;
+        next_c = field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+            next_c = (field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.next = next_c;
-        field_combo.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.load_next = load_next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next = next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value <= field_combo.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.next;
+            field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next) begin
+            field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value = field_storage.I3CBase.INTR_FORCE.force_hc_seq_cancel_stat.value;
-    // Field: I3CCSR.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall
+    assign hwif_out.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value;
+    // Field: I3CCSR.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value;
+        next_c = field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            next_c = (field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.next = next_c;
-        field_combo.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.load_next = load_next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next = next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value <= field_combo.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.next;
+            field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next) begin
+            field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value = field_storage.I3CBase.INTR_FORCE.force_hc_warn_cmd_seq_stall.value;
-    // Field: I3CCSR.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout
+    assign hwif_out.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value;
+    // Field: I3CCSR.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value;
+        next_c = field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+            next_c = (field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.next = next_c;
-        field_combo.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.load_next = load_next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next = next_c;
+        field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value <= field_combo.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.next;
+            field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next) begin
+            field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value = field_storage.I3CBase.INTR_FORCE.force_hc_err_cmd_seq_timeout.value;
-    // Field: I3CCSR.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick
+    assign hwif_out.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value;
+    // Field: I3CCSR.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value;
+        next_c = field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+            next_c = (field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.next = next_c;
-        field_combo.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.load_next = load_next_c;
+        field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next = next_c;
+        field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value <= field_combo.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.next;
+            field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= 1'h0;
+        end else if(field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next) begin
+            field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next;
         end
     end
-    assign hwif_out.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value = field_storage.I3CBase.INTR_FORCE.force_sched_cmd_missed_tick.value;
-    // Field: I3CCSR.I3CBase.DCT_SECTION_OFFSET.table_idx
+    assign hwif_out.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value = field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value;
+    // Field: I3CCSR.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX
     always_comb begin
         automatic logic [4:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value;
+        next_c = field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value & ~decoded_wr_biten[23:19]) | (decoded_wr_data[23:19] & decoded_wr_biten[23:19]);
+            next_c = (field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value & ~decoded_wr_biten[23:19]) | (decoded_wr_data[23:19] & decoded_wr_biten[23:19]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.DCT_SECTION_OFFSET.table_idx.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.DCT_SECTION_OFFSET.table_idx.next;
+        end else if(hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.DCT_SECTION_OFFSET.table_idx.next = next_c;
-        field_combo.I3CBase.DCT_SECTION_OFFSET.table_idx.load_next = load_next_c;
+        field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next = next_c;
+        field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value <= 5'h0;
-        end else if(field_combo.I3CBase.DCT_SECTION_OFFSET.table_idx.load_next) begin
-            field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value <= field_combo.I3CBase.DCT_SECTION_OFFSET.table_idx.next;
+            field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= 5'h0;
+        end else if(field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next) begin
+            field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next;
         end
     end
-    assign hwif_out.I3CBase.DCT_SECTION_OFFSET.table_idx.value = field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value;
-    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.hj_rejected
+    assign hwif_out.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value = field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value;
+    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value;
+        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.next = next_c;
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.load_next = load_next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next = next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.next;
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= 1'h0;
+        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next) begin
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value;
-    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.crr_rejected
+    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value;
+    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value;
+        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.next = next_c;
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.load_next = load_next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next = next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.next;
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= 1'h0;
+        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next) begin
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value;
-    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected
+    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value;
+    // Field: I3CCSR.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value;
+        next_c = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            next_c = (field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.next = next_c;
-        field_combo.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.load_next = load_next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next = next_c;
+        field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.next;
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= 1'h0;
+        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next) begin
+            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value;
-    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.match_id
+    assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value;
+    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value;
+        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.match_id.next = next_c;
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.match_id.load_next = load_next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next = next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value <= 8'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.match_id.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.match_id.next;
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= 8'h0;
+        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next) begin
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value;
-    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length
+    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value;
+    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS
     always_comb begin
         automatic logic [1:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value;
+        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value & ~decoded_wr_biten[17:16]) | (decoded_wr_data[17:16] & decoded_wr_biten[17:16]);
+            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value & ~decoded_wr_biten[17:16]) | (decoded_wr_data[17:16] & decoded_wr_biten[17:16]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.next = next_c;
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.load_next = load_next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next = next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value <= 2'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.next;
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= 2'h0;
+        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next) begin
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value;
-    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus
+    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value;
+    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value;
+        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value & ~decoded_wr_biten[20:18]) | (decoded_wr_data[20:18] & decoded_wr_biten[20:18]);
+            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value & ~decoded_wr_biten[20:18]) | (decoded_wr_data[20:18] & decoded_wr_biten[20:18]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.next = next_c;
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.load_next = load_next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next = next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value <= 3'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.next;
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= 3'h0;
+        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next) begin
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value;
-    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor
+    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value;
+    // Field: I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value;
+        next_c = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+            next_c = (field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else if(hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.we) begin // HW Write - we
-            next_c = hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.next;
+        end else if(hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we) begin // HW Write - we
+            next_c = hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next;
             load_next_c = '1;
         end
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.next = next_c;
-        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.load_next = load_next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = next_c;
+        field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.next;
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= 1'h0;
+        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next) begin
+            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next;
         end
     end
-    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value;
-    // Field: I3CCSR.I3CBase.DEV_CTX_BASE_LO.base_lo
+    assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value;
+    // Field: I3CCSR.I3CBase.DEV_CTX_BASE_LO.BASE_LO
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value;
+        next_c = field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.DEV_CTX_BASE_LO && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.DEV_CTX_BASE_LO.base_lo.next = next_c;
-        field_combo.I3CBase.DEV_CTX_BASE_LO.base_lo.load_next = load_next_c;
+        field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next = next_c;
+        field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value <= 1'h0;
-        end else if(field_combo.I3CBase.DEV_CTX_BASE_LO.base_lo.load_next) begin
-            field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value <= field_combo.I3CBase.DEV_CTX_BASE_LO.base_lo.next;
+            field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= 1'h0;
+        end else if(field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next) begin
+            field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next;
         end
     end
-    assign hwif_out.I3CBase.DEV_CTX_BASE_LO.base_lo.value = field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value;
-    // Field: I3CCSR.I3CBase.DEV_CTX_BASE_HI.base_hi
+    assign hwif_out.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value = field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value;
+    // Field: I3CCSR.I3CBase.DEV_CTX_BASE_HI.BASE_HI
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value;
+        next_c = field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3CBase.DEV_CTX_BASE_HI && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.I3CBase.DEV_CTX_BASE_HI.base_hi.next = next_c;
-        field_combo.I3CBase.DEV_CTX_BASE_HI.base_hi.load_next = load_next_c;
+        field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next = next_c;
+        field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value <= 1'h0;
-        end else if(field_combo.I3CBase.DEV_CTX_BASE_HI.base_hi.load_next) begin
-            field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value <= field_combo.I3CBase.DEV_CTX_BASE_HI.base_hi.next;
+            field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= 1'h0;
+        end else if(field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next) begin
+            field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next;
         end
     end
-    assign hwif_out.I3CBase.DEV_CTX_BASE_HI.base_hi.value = field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value;
+    assign hwif_out.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value = field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value;
 
     assign hwif_out.PIOControl.COMMAND_PORT.req = decoded_req_is_wr ? decoded_reg_strb.PIOControl.COMMAND_PORT : '0;
     assign hwif_out.PIOControl.COMMAND_PORT.req_is_wr = decoded_req_is_wr;
@@ -1887,820 +1887,820 @@ module I3CCSR (
 
     assign hwif_out.PIOControl.IBI_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.PIOControl.IBI_PORT : '0;
     assign hwif_out.PIOControl.IBI_PORT.req_is_wr = decoded_req_is_wr;
-    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.cmd_empty
+    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value;
+        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.QUEUE_THLD_CTRL.cmd_empty.next = next_c;
-        field_combo.PIOControl.QUEUE_THLD_CTRL.cmd_empty.load_next = load_next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.cmd_empty.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.cmd_empty.next;
+            field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= 8'h1;
+        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next) begin
+            field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value = field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value;
-    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.resp_buf
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value;
+        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.QUEUE_THLD_CTRL.resp_buf.next = next_c;
-        field_combo.PIOControl.QUEUE_THLD_CTRL.resp_buf.load_next = load_next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.resp_buf.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.resp_buf.next;
+            field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= 8'h1;
+        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next) begin
+            field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.resp_buf.value = field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value;
-    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.ibi_data_size
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
+    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value;
+        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.next = next_c;
-        field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.load_next = load_next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next = next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.next;
+            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= 8'h1;
+        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next) begin
+            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next;
         end
     end
-    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value = field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value;
-    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.ibi_status
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value;
+    // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value;
+        next_c = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
+            next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_status.next = next_c;
-        field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_status.load_next = load_next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next = next_c;
+        field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_status.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.ibi_status.next;
+            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= 8'h1;
+        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next) begin
+            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.ibi_status.value = field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value;
-    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
+    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value;
+        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
+            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.next = next_c;
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.load_next = load_next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next = next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.next;
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= 3'h1;
+        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next) begin
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value;
-    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf
+    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
+    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value;
+        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
+            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.next = next_c;
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.load_next = load_next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next = next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.next;
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= 3'h1;
+        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next) begin
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value;
-    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log
+    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
+    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value;
+        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value & ~decoded_wr_biten[18:16]) | (decoded_wr_data[18:16] & decoded_wr_biten[18:16]);
+            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value & ~decoded_wr_biten[18:16]) | (decoded_wr_data[18:16] & decoded_wr_biten[18:16]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.next = next_c;
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.load_next = load_next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next = next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.next;
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= 3'h1;
+        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value;
-    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log
+    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+    // Field: I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value;
+        next_c = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value & ~decoded_wr_biten[26:24]) | (decoded_wr_data[26:24] & decoded_wr_biten[26:24]);
+            next_c = (field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value & ~decoded_wr_biten[26:24]) | (decoded_wr_data[26:24] & decoded_wr_biten[26:24]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.next = next_c;
-        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.load_next = load_next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next = next_c;
+        field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.next;
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= 3'h1;
+        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
+            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
         end
     end
-    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.tx_threshold
+    assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.tx_threshold.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value;
         load_next_c = '0;
-        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.tx_threshold.next;
+        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.tx_threshold.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.tx_threshold.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.tx_threshold.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.tx_threshold.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.tx_threshold.value <= field_combo.PIOControl.PIO_INTR_STATUS.tx_threshold.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.rx_threshold
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.rx_threshold.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value;
         load_next_c = '0;
-        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.rx_threshold.next;
+        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.rx_threshold.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.rx_threshold.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.rx_threshold.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.rx_threshold.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.rx_threshold.value <= field_combo.PIOControl.PIO_INTR_STATUS.rx_threshold.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.ibi_status
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.ibi_status.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value;
         load_next_c = '0;
-        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.ibi_status.next;
+        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.ibi_status.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.ibi_status.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.ibi_status.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.ibi_status.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.ibi_status.value <= field_combo.PIOControl.PIO_INTR_STATUS.ibi_status.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.cmd_queue_ready
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value;
         load_next_c = '0;
-        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.next;
+        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.value <= field_combo.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.resp_ready
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.resp_ready.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value;
         load_next_c = '0;
-        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.resp_ready.next;
+        if(field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.resp_ready.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.resp_ready.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.resp_ready.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.resp_ready.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.resp_ready.value <= field_combo.PIOControl.PIO_INTR_STATUS.resp_ready.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.transfer_abort
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value & ~(decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value & ~(decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
-        end else if(hwif_in.PIOControl.PIO_INTR_STATUS.transfer_abort.next != '0) begin // stickybit
-            next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value | hwif_in.PIOControl.PIO_INTR_STATUS.transfer_abort.next;
+        end else if(hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next != '0) begin // stickybit
+            next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value | hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.transfer_abort.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.transfer_abort.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.transfer_abort.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value <= field_combo.PIOControl.PIO_INTR_STATUS.transfer_abort.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.transfer_err
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value & ~(decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
+            next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value & ~(decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
             load_next_c = '1;
-        end else if(hwif_in.PIOControl.PIO_INTR_STATUS.transfer_err.next != '0) begin // stickybit
-            next_c = field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value | hwif_in.PIOControl.PIO_INTR_STATUS.transfer_err.next;
+        end else if(hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next != '0) begin // stickybit
+            next_c = field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value | hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS.transfer_err.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS.transfer_err.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.transfer_err.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value <= field_combo.PIOControl.PIO_INTR_STATUS.transfer_err.next;
+            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next;
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_STATUS.intr =
-        |(field_storage.PIOControl.PIO_INTR_STATUS.tx_threshold.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.rx_threshold.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.ibi_status.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.resp_ready.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value)
-        || |(field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value);
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en
+        |(field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value)
+        || |(field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value & field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value);
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
+            next_c = (field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.next;
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en
+    // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value;
+        next_c = field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
+            next_c = (field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.next = next_c;
-        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next = next_c;
+        field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.next;
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next) begin
+            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_tx_threshold
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_tx_threshold.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_tx_threshold.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_tx_threshold.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_tx_threshold.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value = field_storage.PIOControl.PIO_INTR_FORCE.force_tx_threshold.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_rx_threshold
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_rx_threshold.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_rx_threshold.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_rx_threshold.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_rx_threshold.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value = field_storage.PIOControl.PIO_INTR_FORCE.force_rx_threshold.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_ibi_status
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_ibi_status.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_ibi_status.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_ibi_status.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_ibi_status.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_ibi_status.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_ibi_status.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_ibi_status.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_ibi_status.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_ibi_status.value = field_storage.PIOControl.PIO_INTR_FORCE.force_ibi_status.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value = field_storage.PIOControl.PIO_INTR_FORCE.force_cmd_queue_ready.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_resp_ready
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_resp_ready.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_resp_ready.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_resp_ready.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_resp_ready.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_resp_ready.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_resp_ready.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_resp_ready.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_resp_ready.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_resp_ready.value = field_storage.PIOControl.PIO_INTR_FORCE.force_resp_ready.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_transfer_abort
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_abort.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_abort.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_abort.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_abort.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value = field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_abort.value;
-    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.force_transfer_err
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_err.value;
+        next_c = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_err.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
+            next_c = (field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value & ~decoded_wr_biten[9:9]) | (decoded_wr_data[9:9] & decoded_wr_biten[9:9]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_err.next = next_c;
-        field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_err.load_next = load_next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next = next_c;
+        field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_err.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_err.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_err.value <= field_combo.PIOControl.PIO_INTR_FORCE.force_transfer_err.next;
+            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next) begin
+            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_INTR_FORCE.force_transfer_err.value = field_storage.PIOControl.PIO_INTR_FORCE.force_transfer_err.value;
-    // Field: I3CCSR.PIOControl.PIO_CONTROL.enable_req
+    assign hwif_out.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value;
+    // Field: I3CCSR.PIOControl.PIO_CONTROL.ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_CONTROL.enable_req.value;
+        next_c = field_storage.PIOControl.PIO_CONTROL.ENABLE.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_CONTROL.enable_req.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            next_c = (field_storage.PIOControl.PIO_CONTROL.ENABLE.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_CONTROL.enable_req.next = next_c;
-        field_combo.PIOControl.PIO_CONTROL.enable_req.load_next = load_next_c;
+        field_combo.PIOControl.PIO_CONTROL.ENABLE.next = next_c;
+        field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_CONTROL.enable_req.value <= 1'h1;
-        end else if(field_combo.PIOControl.PIO_CONTROL.enable_req.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.enable_req.value <= field_combo.PIOControl.PIO_CONTROL.enable_req.next;
+            field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= 1'h1;
+        end else if(field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next) begin
+            field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= field_combo.PIOControl.PIO_CONTROL.ENABLE.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_CONTROL.enable_req.value = field_storage.PIOControl.PIO_CONTROL.enable_req.value;
-    // Field: I3CCSR.PIOControl.PIO_CONTROL.rs_req
+    assign hwif_out.PIOControl.PIO_CONTROL.ENABLE.value = field_storage.PIOControl.PIO_CONTROL.ENABLE.value;
+    // Field: I3CCSR.PIOControl.PIO_CONTROL.RS
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_CONTROL.rs_req.value;
+        next_c = field_storage.PIOControl.PIO_CONTROL.RS.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_CONTROL.rs_req.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            next_c = (field_storage.PIOControl.PIO_CONTROL.RS.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else if(hwif_in.PIOControl.PIO_CONTROL.rs_req.we) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_CONTROL.rs_req.next;
+        end else if(hwif_in.PIOControl.PIO_CONTROL.RS.we) begin // HW Write - we
+            next_c = hwif_in.PIOControl.PIO_CONTROL.RS.next;
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_CONTROL.rs_req.next = next_c;
-        field_combo.PIOControl.PIO_CONTROL.rs_req.load_next = load_next_c;
+        field_combo.PIOControl.PIO_CONTROL.RS.next = next_c;
+        field_combo.PIOControl.PIO_CONTROL.RS.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_CONTROL.rs_req.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_CONTROL.rs_req.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.rs_req.value <= field_combo.PIOControl.PIO_CONTROL.rs_req.next;
+            field_storage.PIOControl.PIO_CONTROL.RS.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_CONTROL.RS.load_next) begin
+            field_storage.PIOControl.PIO_CONTROL.RS.value <= field_combo.PIOControl.PIO_CONTROL.RS.next;
         end
     end
-    // Field: I3CCSR.PIOControl.PIO_CONTROL.abort_req
+    // Field: I3CCSR.PIOControl.PIO_CONTROL.ABORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.PIOControl.PIO_CONTROL.abort_req.value;
+        next_c = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.PIO_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.PIOControl.PIO_CONTROL.abort_req.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            next_c = (field_storage.PIOControl.PIO_CONTROL.ABORT.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end
-        field_combo.PIOControl.PIO_CONTROL.abort_req.next = next_c;
-        field_combo.PIOControl.PIO_CONTROL.abort_req.load_next = load_next_c;
+        field_combo.PIOControl.PIO_CONTROL.ABORT.next = next_c;
+        field_combo.PIOControl.PIO_CONTROL.ABORT.load_next = load_next_c;
     end
     always_ff @(posedge clk) begin
         if(rst) begin
-            field_storage.PIOControl.PIO_CONTROL.abort_req.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_CONTROL.abort_req.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.abort_req.value <= field_combo.PIOControl.PIO_CONTROL.abort_req.next;
+            field_storage.PIOControl.PIO_CONTROL.ABORT.value <= 1'h0;
+        end else if(field_combo.PIOControl.PIO_CONTROL.ABORT.load_next) begin
+            field_storage.PIOControl.PIO_CONTROL.ABORT.value <= field_combo.PIOControl.PIO_CONTROL.ABORT.next;
         end
     end
-    assign hwif_out.PIOControl.PIO_CONTROL.abort_req.value = field_storage.PIOControl.PIO_CONTROL.abort_req.value;
+    assign hwif_out.PIOControl.PIO_CONTROL.ABORT.value = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
     assign hwif_out.DAT.req = decoded_reg_strb.DAT;
     assign hwif_out.DAT.addr = decoded_addr[10:0];
     assign hwif_out.DAT.req_is_wr = decoded_req_is_wr;
@@ -2754,24 +2754,24 @@ module I3CCSR (
     // Assign readback values to a flattened array
     logic [31:0] readback_array[33];
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
-    assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.iba_include.value : '0;
+    assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
     assign readback_array[1][3:3] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[1][4:4] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[1][5:5] = '0;
     assign readback_array[1][6:6] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? 1'h1 : '0;
-    assign readback_array[1][7:7] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.i2c_devs.value : '0;
-    assign readback_array[1][8:8] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.hot_join.value : '0;
+    assign readback_array[1][7:7] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value : '0;
+    assign readback_array[1][8:8] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value : '0;
     assign readback_array[1][11:9] = '0;
-    assign readback_array[1][12:12] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.halt_on_cmd_seq_timeout.value : '0;
+    assign readback_array[1][12:12] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value : '0;
     assign readback_array[1][28:13] = '0;
-    assign readback_array[1][29:29] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.abort.value : '0;
-    assign readback_array[1][30:30] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.resume.value : '0;
-    assign readback_array[1][31:31] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.bus_enable.value : '0;
+    assign readback_array[1][29:29] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.ABORT.value : '0;
+    assign readback_array[1][30:30] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.RESUME.value : '0;
+    assign readback_array[1][31:31] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value : '0;
     assign readback_array[2][15:0] = '0;
-    assign readback_array[2][22:16] = (decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr.value : '0;
+    assign readback_array[2][22:16] = (decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value : '0;
     assign readback_array[2][30:23] = '0;
-    assign readback_array[2][31:31] = (decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.dynamic_addr_valid.value : '0;
+    assign readback_array[2][31:31] = (decoded_reg_strb.I3CBase.CONTROLLER_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value : '0;
     assign readback_array[3][1:0] = '0;
     assign readback_array[3][2:2] = (decoded_reg_strb.I3CBase.HC_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[3][3:3] = (decoded_reg_strb.I3CBase.HC_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
@@ -2791,36 +2791,36 @@ module I3CCSR (
     assign readback_array[3][29:29] = (decoded_reg_strb.I3CBase.HC_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[3][30:30] = (decoded_reg_strb.I3CBase.HC_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[3][31:31] = '0;
-    assign readback_array[4][0:0] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.soft_rst.value : '0;
-    assign readback_array[4][1:1] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.cmd_queue.value : '0;
-    assign readback_array[4][2:2] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.resp_queue.value : '0;
-    assign readback_array[4][3:3] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.tx_fifo.value : '0;
-    assign readback_array[4][4:4] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.rx_fifo.value : '0;
-    assign readback_array[4][5:5] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.ibi_queue.value : '0;
+    assign readback_array[4][0:0] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value : '0;
+    assign readback_array[4][1:1] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value : '0;
+    assign readback_array[4][2:2] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value : '0;
+    assign readback_array[4][3:3] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value : '0;
+    assign readback_array[4][4:4] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value : '0;
+    assign readback_array[4][5:5] = (decoded_reg_strb.I3CBase.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value : '0;
     assign readback_array[4][31:6] = '0;
     assign readback_array[5][1:0] = '0;
-    assign readback_array[5][2:2] = (decoded_reg_strb.I3CBase.PRESENT_STATE && !decoded_req_is_wr) ? hwif_in.I3CBase.PRESENT_STATE.ac_current_own.next : '0;
+    assign readback_array[5][2:2] = (decoded_reg_strb.I3CBase.PRESENT_STATE && !decoded_req_is_wr) ? hwif_in.I3CBase.PRESENT_STATE.AC_CURRENT_OWN.next : '0;
     assign readback_array[5][31:3] = '0;
     assign readback_array[6][9:0] = '0;
-    assign readback_array[6][10:10] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.hc_internal_err.value : '0;
-    assign readback_array[6][11:11] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.hc_seq_cancel_stat.value : '0;
-    assign readback_array[6][12:12] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.hc_warn_cmd_seq_stall.value : '0;
-    assign readback_array[6][13:13] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.hc_err_cmd_seq_timeout.value : '0;
-    assign readback_array[6][14:14] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.sched_cmd_missed_tick.value : '0;
+    assign readback_array[6][10:10] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value : '0;
+    assign readback_array[6][11:11] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value : '0;
+    assign readback_array[6][12:12] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value : '0;
+    assign readback_array[6][13:13] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value : '0;
+    assign readback_array[6][14:14] = (decoded_reg_strb.I3CBase.INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value : '0;
     assign readback_array[6][31:15] = '0;
     assign readback_array[7][9:0] = '0;
-    assign readback_array[7][10:10] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.hc_internal_err_en.value : '0;
-    assign readback_array[7][11:11] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.hc_seq_cancel_stat_en.value : '0;
-    assign readback_array[7][12:12] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.hc_warn_cmd_seq_stall_en.value : '0;
-    assign readback_array[7][13:13] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.hc_err_cmd_seq_timeout_en.value : '0;
-    assign readback_array[7][14:14] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.sched_cmd_missed_tick_en.value : '0;
+    assign readback_array[7][10:10] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value : '0;
+    assign readback_array[7][11:11] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value : '0;
+    assign readback_array[7][12:12] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value : '0;
+    assign readback_array[7][13:13] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value : '0;
+    assign readback_array[7][14:14] = (decoded_reg_strb.I3CBase.INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value : '0;
     assign readback_array[7][31:15] = '0;
     assign readback_array[8][9:0] = '0;
-    assign readback_array[8][10:10] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_internal_err_intr_en.value : '0;
-    assign readback_array[8][11:11] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_seq_cancel_stat_intr_en.value : '0;
-    assign readback_array[8][12:12] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_warn_cmd_seq_stall_intr_en.value : '0;
-    assign readback_array[8][13:13] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.hc_err_cmd_seq_timeout_intr_en.value : '0;
-    assign readback_array[8][14:14] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.sched_cmd_missed_tick_intr_en.value : '0;
+    assign readback_array[8][10:10] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value : '0;
+    assign readback_array[8][11:11] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value : '0;
+    assign readback_array[8][12:12] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value : '0;
+    assign readback_array[8][13:13] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value : '0;
+    assign readback_array[8][14:14] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value : '0;
     assign readback_array[8][31:15] = '0;
     assign readback_array[9][11:0] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h400 : '0;
     assign readback_array[9][18:12] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
@@ -2828,7 +2828,7 @@ module I3CCSR (
     assign readback_array[9][31:28] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;
     assign readback_array[10][11:0] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h800 : '0;
     assign readback_array[10][18:12] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
-    assign readback_array[10][23:19] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? field_storage.I3CBase.DCT_SECTION_OFFSET.table_idx.value : '0;
+    assign readback_array[10][23:19] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value : '0;
     assign readback_array[10][27:24] = '0;
     assign readback_array[10][31:28] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;
     assign readback_array[11][15:0] = (decoded_reg_strb.I3CBase.RING_HEADERS_SECTION_OFFSET && !decoded_req_is_wr) ? 16'h0 : '0;
@@ -2840,20 +2840,20 @@ module I3CCSR (
     assign readback_array[14][0:0] = (decoded_reg_strb.I3CBase.INT_CTRL_CMDS_EN && !decoded_req_is_wr) ? 1'h1 : '0;
     assign readback_array[14][15:1] = (decoded_reg_strb.I3CBase.INT_CTRL_CMDS_EN && !decoded_req_is_wr) ? 15'h35 : '0;
     assign readback_array[14][31:16] = '0;
-    assign readback_array[15][0:0] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.hj_rejected.value : '0;
-    assign readback_array[15][1:1] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.crr_rejected.value : '0;
+    assign readback_array[15][0:0] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value : '0;
+    assign readback_array[15][1:1] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value : '0;
     assign readback_array[15][2:2] = '0;
-    assign readback_array[15][3:3] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.ibi_rejected.value : '0;
+    assign readback_array[15][3:3] = (decoded_reg_strb.I3CBase.IBI_NOTIFY_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value : '0;
     assign readback_array[15][31:4] = '0;
     assign readback_array[16][7:0] = '0;
-    assign readback_array[16][15:8] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.match_id.value : '0;
-    assign readback_array[16][17:16] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.max_data_length.value : '0;
-    assign readback_array[16][20:18] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.ibi_match_statsus.value : '0;
+    assign readback_array[16][15:8] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value : '0;
+    assign readback_array[16][17:16] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value : '0;
+    assign readback_array[16][20:18] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value : '0;
     assign readback_array[16][30:21] = '0;
-    assign readback_array[16][31:31] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.data_abort_monitor.value : '0;
-    assign readback_array[17][0:0] = (decoded_reg_strb.I3CBase.DEV_CTX_BASE_LO && !decoded_req_is_wr) ? field_storage.I3CBase.DEV_CTX_BASE_LO.base_lo.value : '0;
+    assign readback_array[16][31:31] = (decoded_reg_strb.I3CBase.IBI_DATA_ABORT_CTRL && !decoded_req_is_wr) ? field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value : '0;
+    assign readback_array[17][0:0] = (decoded_reg_strb.I3CBase.DEV_CTX_BASE_LO && !decoded_req_is_wr) ? field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value : '0;
     assign readback_array[17][31:1] = '0;
-    assign readback_array[18][0:0] = (decoded_reg_strb.I3CBase.DEV_CTX_BASE_HI && !decoded_req_is_wr) ? field_storage.I3CBase.DEV_CTX_BASE_HI.base_hi.value : '0;
+    assign readback_array[18][0:0] = (decoded_reg_strb.I3CBase.DEV_CTX_BASE_HI && !decoded_req_is_wr) ? field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value : '0;
     assign readback_array[18][31:1] = '0;
     assign readback_array[19][15:0] = (decoded_reg_strb.I3CBase.DEV_CTX_SG && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[19][30:16] = '0;
@@ -2861,17 +2861,17 @@ module I3CCSR (
     assign readback_array[20] = hwif_in.PIOControl.RESPONSE_PORT.rd_ack ? hwif_in.PIOControl.RESPONSE_PORT.rd_data : '0;
     assign readback_array[21] = hwif_in.PIOControl.XFER_DATA_PORT.rd_ack ? hwif_in.PIOControl.XFER_DATA_PORT.rd_data : '0;
     assign readback_array[22] = hwif_in.PIOControl.IBI_PORT.rd_ack ? hwif_in.PIOControl.IBI_PORT.rd_data : '0;
-    assign readback_array[23][7:0] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value : '0;
-    assign readback_array[23][15:8] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.resp_buf.value : '0;
-    assign readback_array[23][23:16] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_data_size.value : '0;
-    assign readback_array[23][31:24] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.ibi_status.value : '0;
-    assign readback_array[24][2:0] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value : '0;
+    assign readback_array[23][7:0] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value : '0;
+    assign readback_array[23][15:8] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value : '0;
+    assign readback_array[23][23:16] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value : '0;
+    assign readback_array[23][31:24] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value : '0;
+    assign readback_array[24][2:0] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value : '0;
     assign readback_array[24][7:3] = '0;
-    assign readback_array[24][10:8] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value : '0;
+    assign readback_array[24][10:8] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value : '0;
     assign readback_array[24][15:11] = '0;
-    assign readback_array[24][18:16] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.tx_start_log.value : '0;
+    assign readback_array[24][18:16] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value : '0;
     assign readback_array[24][23:19] = '0;
-    assign readback_array[24][26:24] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.rx_start_log.value : '0;
+    assign readback_array[24][26:24] = (decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value : '0;
     assign readback_array[24][31:27] = '0;
     assign readback_array[25][7:0] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h40 : '0;
     assign readback_array[25][15:8] = (decoded_reg_strb.PIOControl.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h40 : '0;
@@ -2883,36 +2883,36 @@ module I3CCSR (
     assign readback_array[26][27:25] = '0;
     assign readback_array[26][28:28] = (decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[26][31:29] = '0;
-    assign readback_array[27][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.tx_threshold.value : '0;
-    assign readback_array[27][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.rx_threshold.value : '0;
-    assign readback_array[27][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.ibi_status.value : '0;
-    assign readback_array[27][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.cmd_queue_ready.value : '0;
-    assign readback_array[27][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.resp_ready.value : '0;
-    assign readback_array[27][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.transfer_abort.value : '0;
+    assign readback_array[27][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value : '0;
+    assign readback_array[27][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value : '0;
+    assign readback_array[27][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value : '0;
+    assign readback_array[27][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value : '0;
+    assign readback_array[27][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value : '0;
+    assign readback_array[27][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value : '0;
     assign readback_array[27][8:6] = '0;
-    assign readback_array[27][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.transfer_err.value : '0;
+    assign readback_array[27][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value : '0;
     assign readback_array[27][31:10] = '0;
-    assign readback_array[28][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.tx_threshold_en.value : '0;
-    assign readback_array[28][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.rx_threshold_en.value : '0;
-    assign readback_array[28][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.ibi_status_en.value : '0;
-    assign readback_array[28][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.cmd_queue_ready_en.value : '0;
-    assign readback_array[28][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.resp_ready_en.value : '0;
-    assign readback_array[28][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_abort_en.value : '0;
+    assign readback_array[28][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value : '0;
+    assign readback_array[28][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value : '0;
+    assign readback_array[28][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value : '0;
+    assign readback_array[28][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value : '0;
+    assign readback_array[28][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value : '0;
+    assign readback_array[28][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value : '0;
     assign readback_array[28][8:6] = '0;
-    assign readback_array[28][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.transfer_err_en.value : '0;
+    assign readback_array[28][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value : '0;
     assign readback_array[28][31:10] = '0;
-    assign readback_array[29][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.tx_threshold_intr_en.value : '0;
-    assign readback_array[29][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.rx_threshold_intr_en.value : '0;
-    assign readback_array[29][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.ibi_status_intr_en.value : '0;
-    assign readback_array[29][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.cmd_queue_ready_intr_en.value : '0;
-    assign readback_array[29][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.resp_ready_intr_en.value : '0;
-    assign readback_array[29][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_abort_intr_en.value : '0;
+    assign readback_array[29][0:0] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value : '0;
+    assign readback_array[29][1:1] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value : '0;
+    assign readback_array[29][2:2] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value : '0;
+    assign readback_array[29][3:3] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value : '0;
+    assign readback_array[29][4:4] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value : '0;
+    assign readback_array[29][5:5] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value : '0;
     assign readback_array[29][8:6] = '0;
-    assign readback_array[29][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.transfer_err_intr_en.value : '0;
+    assign readback_array[29][9:9] = (decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value : '0;
     assign readback_array[29][31:10] = '0;
-    assign readback_array[30][0:0] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.enable_req.value : '0;
-    assign readback_array[30][1:1] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.rs_req.value : '0;
-    assign readback_array[30][2:2] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.abort_req.value : '0;
+    assign readback_array[30][0:0] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.ENABLE.value : '0;
+    assign readback_array[30][1:1] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.RS.value : '0;
+    assign readback_array[30][2:2] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.ABORT.value : '0;
     assign readback_array[30][31:3] = '0;
     assign readback_array[31] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
     assign readback_array[32] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
