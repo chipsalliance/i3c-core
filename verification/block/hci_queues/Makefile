@@ -15,7 +15,6 @@ TOPLEVEL     = hci_queues_wrapper
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(SRCDIR)/i3c_pkg.sv \
     $(SRCDIR)/csr/I3CCSR_pkg.sv \
     $(SRCDIR)/csr/I3CCSR.sv \
