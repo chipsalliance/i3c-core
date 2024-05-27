@@ -137,28 +137,28 @@ module hci
 
   always_comb begin : wire_hwif
     // Reset control
-    cmdrst = hwif_out.I3CBase.RESET_CONTROL.cmd_queue.value;
-    rxrst = hwif_out.I3CBase.RESET_CONTROL.rx_fifo.value;
-    txrst = hwif_out.I3CBase.RESET_CONTROL.tx_fifo.value;
-    resprst = hwif_out.I3CBase.RESET_CONTROL.resp_queue.value;
+    cmdrst = hwif_out.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
+    rxrst = hwif_out.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
+    txrst = hwif_out.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
+    resprst = hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
 
-    hwif_in.I3CBase.RESET_CONTROL.cmd_queue.we = cmd_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.cmd_queue.next = cmd_reset_ctrl_next;
+    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
+    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.rx_fifo.we = rx_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.rx_fifo.next = rx_reset_ctrl_next;
+    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.we = rx_reset_ctrl_we;
+    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.next = rx_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.tx_fifo.we = tx_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.tx_fifo.next = tx_reset_ctrl_next;
+    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.we = tx_reset_ctrl_we;
+    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.next = tx_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.resp_queue.we = resp_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.resp_queue.next = resp_reset_ctrl_next;
+    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we = resp_reset_ctrl_we;
+    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next = resp_reset_ctrl_next;
 
     // Threshold
-    cmd_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.cmd_empty.value;
-    rx_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.rx_buf.value;
-    tx_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.tx_buf.value;
-    resp_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.resp_buf.value;
+    cmd_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    rx_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
+    tx_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
+    resp_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
 
     // HCI queue port handling
 
