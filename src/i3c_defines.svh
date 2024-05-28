@@ -14,7 +14,7 @@
   `define DAT_DEPTH         32
   `define DCT_DEPTH         32
   `define I3C_USE_AHB       1
-  `define AHB_ADDR_WIDTH    32
+  `define AHB_ADDR_WIDTH    12
   `define AHB_DATA_WIDTH    64
 
 `endif  // I3C_CONFIG

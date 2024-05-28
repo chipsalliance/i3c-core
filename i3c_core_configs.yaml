@@ -14,7 +14,7 @@ default:
   DatDepth: 32
   DctDepth: 32
   FrontendBusInterface: "AHB"
-  FrontendBusAddrWidth: 32
+  FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 64
 
 # TODO: AXI configuration

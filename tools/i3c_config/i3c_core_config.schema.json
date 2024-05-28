@@ -71,7 +71,7 @@
         "FrontendBusAddrWidth": {
             "description": "I3C Core <-> System bus address width in bits.",
             "type": "integer",
-            "minimum": 32,
+            "minimum": 12,
             "maximum": 128
         },
         "FrontendBusDataWidth": {
