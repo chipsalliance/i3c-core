@@ -59,22 +59,26 @@ module i3c_wrapper
     // TODO: Check if anything missing; Interrupts?
 );
 
+  `define REPORT_INCOMPATIBLE_PARAM(param_name, received, expected) \
+    `ifdef DEBUG \
+      $warning("%s: %0d doesn't match the I3C config: %0d (instance %m).", \
+        param_name, received, expected); \
+      $info("Overriding %s to %0d.", param_name, expected); \
+    `else \
+      $fatal(0, "%s: %0d doesn't match the I3C config: %0d (instance %m).", \
+      param_name, received, expected); \
+    `endif
+
   // Check widths match the I3C configuration
   initial begin : clptra_vs_i3c_config_param_check
 `ifdef I3C_USE_AHB
     if (AHB_ADDR_WIDTH != `AHB_ADDR_WIDTH) begin : clptra_ahb_addr_w_check
-      $warning("AHB address width %0h doesn't match the I3C config: %0h (instance %m).",
-               AHB_ADDR_WIDTH, `AHB_ADDR_WIDTH);
-      $info("Overriding AHB address width to %0h.", AHB_ADDR_WIDTH);
-      $finish;
+      `REPORT_INCOMPATIBLE_PARAM("AHB address width", AHB_ADDR_WIDTH, `AHB_ADDR_WIDTH)
     end
     if (AHB_DATA_WIDTH != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
-      $warning("AHB data width %0h doesn't match the I3C config: %0h (instance %m).",
-               AHB_DATA_WIDTH, `AHB_DATA_WIDTH);
-      $info("Overriding AHB data width to %0h.", AHB_DATA_WIDTH);
-      $finish;
+      `REPORT_INCOMPATIBLE_PARAM("AHB data width", AHB_DATA_WIDTH, `AHB_DATA_WIDTH)
     end
-`endif  // TODO: AXI4 I/O
+`endif  // I3C_USE_AHB TODO: AXI4 I/O
   end
 
   logic i3c_scl_io;

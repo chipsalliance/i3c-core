@@ -32,6 +32,12 @@ ifeq ($(MAKECMDGOALS), test)
     $(error Run this target with the `TEST` flag set, i.e. 'TEST=i3c_ctrl make test')
     endif
 endif
+
+ifdef DEBUG
+VCS_DEBUG = -debug_access
+VERILATOR_DEBUG = --trace --trace-structs
+CALIPTRA_DEBUG = debug=1
+endif
 #
 # I3C configuration
 #
@@ -83,7 +89,7 @@ $(SW_BUILD_DIR):
 	mkdir -p $(SW_BUILD_DIR)
 
 sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra I3C software test
-	debug=$(DEBUG) TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile verilator
+	TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile $(CALIPTRA_DEBUG) verilator
 
 #
 # SystemRDL
