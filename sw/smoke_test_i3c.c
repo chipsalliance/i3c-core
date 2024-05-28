@@ -24,8 +24,8 @@
 #define TEST_ADDR (0x5f)
 #define TEST_WORD1 (0xdeadbeef)
 #define TEST_WORD2 (0xabcd9876)
-#define TX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__TX_QUEUE_SIZE_reset)
-#define RX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__RX_QUEUE_SIZE_reset)
+#define TX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__TX_DATA_BUFFER_SIZE_reset)
+#define RX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__RX_DATA_BUFFER_SIZE_reset)
 #define PIO_CONTROL_ENABLED (0x7)
 #define RETRY_CNT (0x2)
 #define AUTOCMD_HDR (0xc3)
@@ -129,14 +129,14 @@ void main() {
   // TODO: Add R/W to queue ports when it's implemented
 
   data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_QUEUE_SIZE_LOW,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_QUEUE_SIZE_MASK);
+    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_DATA_BUFFER_SIZE_LOW,
+    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_DATA_BUFFER_SIZE_MASK);
   printf("Check I3C TX Queue Size: ");
   error += check_and_report_value(data, TX_QUEUE_SIZE);
 
   data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_QUEUE_SIZE_LOW,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_QUEUE_SIZE_MASK);
+    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_DATA_BUFFER_SIZE_LOW,
+    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_DATA_BUFFER_SIZE_MASK);
   printf("Check I3C RX Queue Size: ");
   error += check_and_report_value(data, RX_QUEUE_SIZE);
 
@@ -163,31 +163,31 @@ void main() {
   printf("Check I3C DAT value (entry=5, word=1): ");
   error += check_and_report_value(dat_buf[1], TEST_WORD2);
 
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDR_LOW,
-    I3C_REG_DAT_MEMORY_STATIC_ADDR_MASK, TEST_ADDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDR_LOW,
-    I3C_REG_DAT_MEMORY_STATIC_ADDR_MASK);
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDRESS_LOW,
+    I3C_REG_DAT_MEMORY_STATIC_ADDRESS_MASK, TEST_ADDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDRESS_LOW,
+    I3C_REG_DAT_MEMORY_STATIC_ADDRESS_MASK);
   printf("Check I3C DAT static address value (entry=0): ");
   error += check_and_report_value(data, TEST_ADDR);
 
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADR_LOW,
-    I3C_REG_DAT_MEMORY_DYNAMIC_ADR_MASK, TEST_ADDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADR_LOW,
-    I3C_REG_DAT_MEMORY_DYNAMIC_ADR_MASK);
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_LOW,
+    I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_MASK, TEST_ADDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_LOW,
+    I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_MASK);
   printf("Check I3C DAT dynamic address value (entry=0): ");
   error += check_and_report_value(data, TEST_ADDR);
 
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_RETRY_CNT_LOW,
-    I3C_REG_DAT_MEMORY_RETRY_CNT_MASK, RETRY_CNT);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_RETRY_CNT_LOW,
-    I3C_REG_DAT_MEMORY_RETRY_CNT_MASK);
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_LOW,
+    I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_MASK, RETRY_CNT);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_LOW,
+    I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_MASK);
   printf("Check I3C DAT NACK retry count value (entry=0): ");
   error += check_and_report_value(data, RETRY_CNT);
 
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_LOW,
-    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_MASK, AUTOCMD_HDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_LOW,
-    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_MASK);
+  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_LOW,
+    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_MASK, AUTOCMD_HDR);
+  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_LOW,
+    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_MASK);
   printf("Check I3C DAT Auto-Command HDR Command Code value (entry=0): ");
   error += check_and_report_value(data, AUTOCMD_HDR);
 
