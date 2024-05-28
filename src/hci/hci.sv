@@ -236,12 +236,15 @@ module hci
       cmd_fifo_wdata_o <= '0;
       cmd_fifo_wvalid_o <= '0;
     end else begin : push_cmds_to_fifo
-      cmd_ready <= (cmd_dword == CmdSizeInDwords);
+      cmd_ready  <= (cmd_dword == CmdSizeInDwords);
+      cmd_wr_ack <= cmd_req & ~cmdrst;
       if (cmd_req && !cmd_ready) begin : collect_cmd_dwords
         cmd <= cmd | cmd_wr_data << (I3CCSR_DATA_WIDTH * cmd_dword);
         cmd_dword <= cmd_dword + 1'b1;
-        cmd_wr_ack <= !cmdrst;
-      end : collect_cmd_dwords
+      end else begin : keep_register_states
+        cmd <= cmd;
+        cmd_dword <= cmd_dword;
+      end
       if (cmd_fifo_wready_i && cmd_fifo_wvalid_o) begin : cmd_queued
         cmd <= '0;
         cmd_dword <= '0;
