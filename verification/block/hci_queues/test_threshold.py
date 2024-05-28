@@ -23,7 +23,7 @@ async def should_setup_threshold(dut: SimHandleBase, q: str):
     # Bit offset to each queue's threshold
     off = {"rx": 8, "tx": 0, "cmd": 0, "resp": 8}
     # TODO: FIXME when QUEUE_SIZE CSRs are initialized properly
-    qsize = {"cmd": 64, "rx": 64, "tx": 64, "resp": 256}
+    qsize = {"cmd": 64, "rx": 64, "tx": 64, "resp": 64}
     (thld_bit_size, reg) = (3, DATA_BUFFER_THLD_CTRL) if q in ["tx", "rx"] else (8, QUEUE_THLD_CTRL)
     thld = randint(1, 2**thld_bit_size - 1)
     expected_thld = thld
@@ -111,13 +111,13 @@ async def should_raise_apch_thld_receiver(dut: SimHandleBase, q: str):
         resp_size = cmd_q_size
 
     # TODO: FIXME when the QUEUE_SIZE CSRs are properly initialized
-    qsize = {"rx": 64, "resp": 256}
+    qsize = {"rx": 64, "resp": 64}
 
     thld = 2 ** (thld + 1) if q == "rx" else thld
 
     # Enqueue `thld` number of elements & check the reported `apch_thld`
     # If `thld` exceeds the size of the queue, the threshold is set to queue size
-    thld = min(thld, qsize[q])
+    thld = min(thld, qsize[q] if q == "rx" else qsize[q] - 1)
 
     for _ in range(thld - 1):
         await enqueue[q]()

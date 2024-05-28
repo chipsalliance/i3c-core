@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module hci_queues_wrapper
+  import i3c_pkg::*;
   import hci_pkg::*;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
     parameter int unsigned AHB_DATA_WIDTH  = 64,
     parameter int unsigned AHB_ADDR_WIDTH  = 32,
-    parameter int unsigned AHB_BURST_WIDTH = 3,
     parameter int unsigned CMD_FIFO_DEPTH  = 64,
     parameter int unsigned RESP_FIFO_DEPTH = 256,
     parameter int unsigned RX_FIFO_DEPTH   = 64,
@@ -17,15 +17,15 @@ module hci_queues_wrapper
     input hreset_n,  // active low reset
 
     // AHB-Lite interface
-    input logic [AHB_ADDR_WIDTH-1:0] haddr,
-    input logic [AHB_BURST_WIDTH-1:0] hburst,
+    input logic [`AHB_ADDR_WIDTH-1:0] haddr,
+    input logic [2:0] hburst,
     input logic [3:0] hprot,
     input logic [2:0] hsize,
     input logic [1:0] htrans,
-    input logic [AHB_DATA_WIDTH-1:0] hwdata,
-    input logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input logic [`AHB_DATA_WIDTH-1:0] hwdata,
+    input logic [`AHB_DATA_WIDTH/8-1:0] hwstrb,
     input logic hwrite,
-    output logic [AHB_DATA_WIDTH-1:0] hrdata,
+    output logic [`AHB_DATA_WIDTH-1:0] hrdata,
     output logic hreadyout,
     output logic hresp,
     input logic hsel,
@@ -114,9 +114,8 @@ module hci_queues_wrapper
   logic [RespFifoWidth-1:0] resp_fifo_rdata;
 
   ahb_if #(
-      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
-      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
+      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),
