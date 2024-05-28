@@ -161,7 +161,7 @@ package i3c_pkg;
     // DWORD 0
     logic toc;  // Terminate on completion
     logic wroc;  // Response on completion
-    logic rnw;  // Direction transfer; Read iff 1b'1 else write
+    logic rnw;  // Direction transfer; Read if 1b'1 else write
     i3c_trans_mode_e mode;
     logic dbp;  // Defining byte for CCC present
     logic sre;  // iff 0'b0 permits short reads
