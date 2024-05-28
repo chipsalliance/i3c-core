@@ -59,7 +59,7 @@ class immediate_transfer_descriptor:
     cmd: int
     cp: bool
     device_index: int
-    defined_data_byte: int
+    byte_count: int
     mode: int
     rnw: bool
     wroc: bool
@@ -74,7 +74,7 @@ class immediate_transfer_descriptor:
             | (int(self.wroc) & 0x1) << 30
             | (int(self.rnw) & 0x1) << 29
             | (self.mode & 0x7) << 26
-            | (self.defined_data_byte & 0xF) << 23
+            | (self.byte_count & 0x7) << 23
             | (self.device_index & 0x1F) << 16
             | (int(self.cp) & 0x1) << 15
             | (self.cmd & 0xFF) << 7
