@@ -9,6 +9,10 @@ from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
 from ahb_if import AHBFIFOTestInterface, ahb_data_to_int, int_to_ahb_data
 
+# DAT and DCT tables
+DAT_ADDR = 0x400
+DCT_ADDR = 0x800
+
 # HCI queue port addresses
 CMD_PORT = 0x100
 RX_PORT = 0x108
@@ -80,6 +84,40 @@ class immediate_transfer_descriptor:
             | (self.cmd & 0xFF) << 7
             | (self.tid & 0xF) << 3
             | (cmd_attr & 0x7)
+        )
+
+
+@dataclass
+class dat_entry:
+    static_addr: int
+    ibi_payload: int
+    ibi_reject: int
+    crr_reject: int
+    ts: int
+    ring_id: int
+    dynamic_addr: int
+    dev_nack_retry_cnt: int
+    device: int
+    autocmd_mask: int
+    autocmd_value: int
+    autocmd_mode: int
+    autocmd_hdr_code: int
+
+    def to_int(self):
+        return (
+            (self.autocmd_hdr_code & 0xFF) << 51
+            | (self.autocmd_mode & 0x7) << 48
+            | (self.autocmd_value & 0xFF) << 40
+            | (self.autocmd_mask & 0xFF) << 32
+            | (self.device & 0x1) << 31
+            | (self.dev_nack_retry_cnt & 0x3) << 29
+            | (self.ring_id & 0x7) << 26
+            | (self.dynamic_addr & 0xFF) << 16
+            | (self.ts & 0x1) << 15
+            | (self.crr_reject & 0x1) << 14
+            | (self.ibi_reject & 0x1) << 13
+            | (self.ibi_payload & 0x1) << 12
+            | self.static_addr & 0x7F
         )
 
 
@@ -185,3 +223,15 @@ class HCIBaseTestInterface:
 
     async def get_rx_data(self) -> int:
         return ahb_data_to_int(await self.read_csr(RX_PORT, 4))
+
+    async def write_dat_entry(self, index, entry):
+        if isinstance(entry, dat_entry):
+            entry = entry.to_int()
+        elif not isinstance(entry, int):
+            self.dut._log.error("DAT entry must be either `integer` or `dat_entry` type")
+
+        self.dut._log.debug(f"Writing {hex(entry)} to DAT entry {index}")
+        await self.write_csr(DAT_ADDR + index * 8, int_to_ahb_data(entry & 0xFFFFFFFF), 4)
+        await self.write_csr(
+            DAT_ADDR + index * 8 + 4, int_to_ahb_data((entry >> 32) & 0xFFFFFFFF), 4
+        )
