@@ -51,7 +51,10 @@ module i3c_wrapper
 
     input        i3c_sda_i,    // serial data input from i3c bus
     output logic i3c_sda_o,    // serial data output to i3c bus
-    output logic i3c_sda_en_o  // serial data output to i3c bus
+    output logic i3c_sda_en_o, // serial data output to i3c bus
+
+    input  logic i3c_fsm_en_i,
+    output logic i3c_fsm_idle_o
 
     // TODO: Check if anything missing; Interrupts?
 );
@@ -74,12 +77,15 @@ module i3c_wrapper
 `endif  // TODO: AXI4 I/O
   end
 
+  logic i3c_scl_io;
+  logic i3c_sda_io;
+
   // DAT memory export interface
-  dat_mem_src_t  dat_mem_src;
+  dat_mem_src_t dat_mem_src;
   dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  dct_mem_src_t  dct_mem_src;
+  dct_mem_src_t dct_mem_src;
   dct_mem_sink_t dct_mem_sink;
 
   i3c #(
@@ -117,7 +123,10 @@ module i3c_wrapper
       .dat_mem_sink_o(dat_mem_sink),
 
       .dct_mem_src_i (dct_mem_src),
-      .dct_mem_sink_o(dct_mem_sink)
+      .dct_mem_sink_o(dct_mem_sink),
+
+      .i3c_fsm_en_i,
+      .i3c_fsm_idle_o
   );
 
   prim_ram_1p_adv #(
@@ -154,6 +163,16 @@ module i3c_wrapper
       .rvalid_o(),  // Unused
       .rerror_o(),  // Unused
       .cfg_i('0)  // Unused
+  );
+
+  i3c_io phy_io (
+      .scl_io(i3c_scl_io),
+      .scl_i(i3c_scl_o),
+      .scl_en_i(i3c_scl_en_o),
+
+      .sda_io(i3c_sda_io),
+      .sda_i(i3c_sda_o),
+      .sda_en_i(i3c_sda_en_o)
   );
 
 endmodule

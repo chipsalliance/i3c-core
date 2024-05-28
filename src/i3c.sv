@@ -60,7 +60,10 @@ module i3c
 
     // DCT memory export interface
     input  dct_mem_src_t  dct_mem_src_i,
-    output dct_mem_sink_t dct_mem_sink_o
+    output dct_mem_sink_t dct_mem_sink_o,
+
+    input  logic i3c_fsm_en_i,
+    output logic i3c_fsm_idle_o
 
     // TODO: Check if anything missing; Interrupts?
 );
@@ -153,16 +156,16 @@ module i3c
   logic [        RespFifoWidth-1:0] resp_fifo_rdata;
 
   // DAT <-> Controller interface
-  logic                             dat_read_valid_hw_i;
-  logic [   $clog2(`DAT_DEPTH)-1:0] dat_index_hw_i;
-  logic [                     63:0] dat_rdata_hw_o;
+  logic                             dat_read_valid_hw;
+  logic [   $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
+  logic [                     63:0] dat_rdata_hw;
 
   // DCT <-> Controller interface
-  logic                             dct_write_valid_hw_i;
-  logic                             dct_read_valid_hw_i;
-  logic [   $clog2(`DCT_DEPTH)-1:0] dct_index_hw_i;
-  logic [                    127:0] dct_wdata_hw_i;
-  logic [                    127:0] dct_rdata_hw_o;
+  logic                             dct_write_valid_hw;
+  logic                             dct_read_valid_hw;
+  logic [   $clog2(`DCT_DEPTH)-1:0] dct_index_hw;
+  logic [                    127:0] dct_wdata_hw;
+  logic [                    127:0] dct_rdata_hw;
 
 `ifdef I3C_USE_AHB
   ahb_if #(
@@ -242,6 +245,21 @@ module i3c
       .resp_fifo_wready_i(resp_fifo_wready),
       .resp_fifo_wdata_o(resp_fifo_wdata),
 
+      // DAT <-> Controller interface
+      .dat_read_valid_hw_o(dat_read_valid_hw),
+      .dat_index_hw_o(dat_index_hw),
+      .dat_rdata_hw_i(dat_rdata_hw),
+
+      // DCT <-> Controller interface
+      .dct_write_valid_hw_o(dct_write_valid_hw),
+      .dct_read_valid_hw_o(dct_read_valid_hw),
+      .dct_index_hw_o(dct_index_hw),
+      .dct_wdata_hw_o(dct_wdata_hw),
+      .dct_rdata_hw_i(dct_rdata_hw),
+
+      .i3c_fsm_en_i,
+      .i3c_fsm_idle_o,
+
       .err(),  // TODO: Handle errors
       .irq()   // TODO: Handle interrupts
   );
@@ -262,15 +280,15 @@ module i3c
       .s_cpuif_wr_ack,
       .s_cpuif_wr_err,
 
-      .dat_read_valid_hw_i,
-      .dat_index_hw_i,
-      .dat_rdata_hw_o,
+      .dat_read_valid_hw_i(dat_read_valid_hw),
+      .dat_index_hw_i(dat_index_hw),
+      .dat_rdata_hw_o(dat_rdata_hw),
 
-      .dct_write_valid_hw_i,
-      .dct_read_valid_hw_i,
-      .dct_index_hw_i,
-      .dct_wdata_hw_i,
-      .dct_rdata_hw_o,
+      .dct_write_valid_hw_i(dct_write_valid_hw),
+      .dct_read_valid_hw_i(dct_read_valid_hw),
+      .dct_index_hw_i(dct_index_hw),
+      .dct_wdata_hw_i(dct_wdata_hw),
+      .dct_rdata_hw_o(dct_rdata_hw),
 
       .dat_mem_src_i,
       .dat_mem_sink_o,

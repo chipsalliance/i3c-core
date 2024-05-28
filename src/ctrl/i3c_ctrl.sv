@@ -7,6 +7,8 @@
 
 module i3c_ctrl
   import i3c_ctrl_pkg::*;
+  import i2c_pkg::*;
+  import i3c_pkg::*;
   import hci_pkg::*;
 #(
     parameter int TEMP = 0
@@ -53,32 +55,159 @@ module i3c_ctrl
     input logic resp_fifo_wready_i,
     output logic [RespFifoWidth-1:0] resp_fifo_wdata_o,
 
+    // DAT <-> Controller interface
+    output logic                          dat_read_valid_hw_o,
+    output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
+    input  logic [                  63:0] dat_rdata_hw_i,
+
+    // DCT <-> Controller interface
+    output logic                          dct_write_valid_hw_o,
+    output logic                          dct_read_valid_hw_o,
+    output logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_o,
+    output logic [                 127:0] dct_wdata_hw_o,
+    input  logic [                 127:0] dct_rdata_hw_i,
+
+    input  logic i3c_fsm_en_i,
+    output logic i3c_fsm_idle_o,
+
     // Errors and Interrupts
     output i3c_err_t err,
     output i3c_irq_t irq
 );
 
-  always_ff @(posedge clk or negedge rst_n) begin : proc_test
-    if (!rst_n) begin
-      sda_o <= '0;
-    end else begin
-      sda_o <= '1;
-    end
-  end
+  logic host_enable;
+  logic fmt_fifo_rvalid;
+  logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth;
+  logic fmt_fifo_rready;
+  logic [7:0] fmt_byte;
+  logic fmt_flag_start_before;
+  logic fmt_flag_stop_after;
+  logic fmt_flag_read_bytes;
+  logic fmt_flag_read_continue;
+  logic fmt_flag_nak_ok;
+  logic unhandled_unexp_nak;
+  logic unhandled_nak_timeout;
+  logic rx_fifo_wvalid;
+  logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata;
 
-  i2c_controller_shim i2c_fsm (
+  // TODO: Connect I2C Controller SDA/SCL to I3C Flow FSM
+
+  i2c_controller_fsm i2c_fsm (
       .clk_i (clk),
       .rst_ni(rst_n),
-      .scl_i (),
+      .scl_i,
       .scl_o (),
-      .sda_i (),
-      .sda_o ()
-      // TODO: Remaining control / data signals
+      .sda_i,
+      .sda_o (),
+
+      // These should be controlled by the flow FSM
+      .host_enable_i(host_enable),
+      .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
+      .fmt_fifo_depth_i(fmt_fifo_depth),
+      .fmt_fifo_rready_o(fmt_fifo_rready),
+      .fmt_byte_i(fmt_byte),
+      .fmt_flag_start_before_i(fmt_flag_start_before),
+      .fmt_flag_stop_after_i(fmt_flag_stop_after),
+      .fmt_flag_read_bytes_i(fmt_flag_read_bytes),
+      .fmt_flag_read_continue_i(fmt_flag_read_continue),
+      .fmt_flag_nak_ok_i(fmt_flag_nak_ok),
+      .unhandled_unexp_nak_i(unhandled_unexp_nak),
+      .unhandled_nak_timeout_i(unhandled_nak_timeout),
+      .rx_fifo_wvalid_o(rx_fifo_wvalid),
+      .rx_fifo_wdata_o(rx_fifo_wdata),
+      .host_idle_o(),
+
+      // TODO: Use calculated timing values
+      .thigh_i(16'd10),
+      .tlow_i(16'd10),
+      .t_r_i(16'd1),
+      .t_f_i(16'd1),
+      .thd_sta_i(16'd1),
+      .tsu_sta_i(16'd1),
+      .tsu_sto_i(16'd1),
+      .tsu_dat_i(16'd1),
+      .thd_dat_i(16'd1),
+      .t_buf_i(16'd1),
+
+      // Clock stretch is not supported by I3C bus
+      .stretch_timeout_i('0),
+      .timeout_enable_i ('0),
+
+      // TODO: Handle NACK on bus
+      .host_nack_handler_timeout_i('0),
+      .host_nack_handler_timeout_en_i('0),
+
+      // TODO: Handle bus events
+      .event_nak_o(),
+      .event_unhandled_nak_timeout_o(),
+      .event_scl_interference_o(),
+      .event_sda_interference_o(),
+      .event_stretch_timeout_o(),
+      .event_sda_unstable_o(),
+      .event_cmd_complete_o()
   );
 
-  assign scl_o = '1;
-
-
-  //
+  i3c_flow_fsm flow_fsm (
+      .clk,
+      .rst_n,
+      .sda_i,
+      .sda_o,
+      .scl_i,
+      .scl_o,
+      .cmd_fifo_thld_i,
+      .cmd_fifo_full_i,
+      .cmd_fifo_apch_thld_i,
+      .cmd_fifo_empty_i,
+      .cmd_fifo_rvalid_i,
+      .cmd_fifo_rready_o,
+      .cmd_fifo_rdata_i,
+      .rx_fifo_thld_i,
+      .rx_fifo_full_i,
+      .rx_fifo_apch_thld_i,
+      .rx_fifo_empty_i,
+      .rx_fifo_wvalid_o,
+      .rx_fifo_wready_i,
+      .rx_fifo_wdata_o,
+      .tx_fifo_thld_i,
+      .tx_fifo_full_i,
+      .tx_fifo_apch_thld_i,
+      .tx_fifo_empty_i,
+      .tx_fifo_rvalid_i,
+      .tx_fifo_rready_o,
+      .tx_fifo_rdata_i,
+      .resp_fifo_thld_i,
+      .resp_fifo_full_i,
+      .resp_fifo_apch_thld_i,
+      .resp_fifo_empty_i,
+      .resp_fifo_wvalid_o,
+      .resp_fifo_wready_i,
+      .resp_fifo_wdata_o,
+      .dat_read_valid_hw_o,
+      .dat_index_hw_o,
+      .dat_rdata_hw_i,
+      .dct_write_valid_hw_o,
+      .dct_read_valid_hw_o,
+      .dct_index_hw_o,
+      .dct_wdata_hw_o,
+      .dct_rdata_hw_i,
+      .host_enable_o(host_enable),
+      .fmt_fifo_rvalid_o(fmt_fifo_rvalid),
+      .fmt_fifo_depth_o(fmt_fifo_depth),
+      .fmt_fifo_rready_i(fmt_fifo_rready),
+      .fmt_byte_o(fmt_byte),
+      .fmt_flag_start_before_o(fmt_flag_start_before),
+      .fmt_flag_stop_after_o(fmt_flag_stop_after),
+      .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
+      .fmt_flag_read_continue_o(fmt_flag_read_continue),
+      .fmt_flag_nak_ok_o(fmt_flag_nak_ok),
+      .unhandled_unexp_nak_o(unhandled_unexp_nak),
+      .unhandled_nak_timeout_o(unhandled_nak_timeout),
+      .rx_fifo_wvalid_i(rx_fifo_wvalid),
+      .rx_fifo_wdata_i(rx_fifo_wdata),
+      .i3c_fsm_en_i,
+      .i3c_fsm_idle_o,
+      .err,
+      .irq
+  );
 
 endmodule
