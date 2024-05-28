@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 package i3c_pkg;
+  `include "i3c_defines.svh"
 
   localparam int unsigned RespErrIdWidth = 4;
   localparam int unsigned DatDepth = 128;

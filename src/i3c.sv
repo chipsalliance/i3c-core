@@ -6,15 +6,12 @@ module i3c
   import I3CCSR_pkg::*;
   import hci_pkg::*;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32,
-    parameter int unsigned AHB_BURST_WIDTH = 3,
     parameter int unsigned DAT_DEPTH = 128,
-    parameter int unsigned DCT_DEPTH = 128,
-    parameter int unsigned CMD_FIFO_DEPTH = 64,
-    parameter int unsigned RESP_FIFO_DEPTH = 256,
-    parameter int unsigned RX_FIFO_DEPTH = 64,
-    parameter int unsigned TX_FIFO_DEPTH = 64
+    parameter int unsigned DCT_DEPTH = 128
+`ifdef I3C_USE_AHB
+    parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
+    parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
+`endif  // TODO: AXI4 I/O
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -24,7 +21,7 @@ module i3c
     // Byte address of the transfer
     input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [ AHB_BURST_WIDTH-1:0] hburst_i,     // Unhandled
+    input  logic [                 2:0] hburst_i,     // Unhandled
     // Protection control; provides information on the access type
     input  logic [                 3:0] hprot_i,      // Unhandled
     // Indicates the size of the transfer
@@ -48,7 +45,6 @@ module i3c
     // Indicates all subordinates have finished transfers
     input  logic                        hready_i,
     // TODO: AXI4 I/O
-    // `else
 `endif
 
     // I3C bus IO
@@ -71,10 +67,10 @@ module i3c
     // TODO: Check if anything missing; Interrupts?
 );
   // HCI queues' depth widths
-  localparam int unsigned CmdFifoDepthW = $clog2(CMD_FIFO_DEPTH + 1);
-  localparam int unsigned RxFifoDepthW = $clog2(RX_FIFO_DEPTH + 1);
-  localparam int unsigned TxFifoDepthW = $clog2(TX_FIFO_DEPTH + 1);
-  localparam int unsigned RespFifoDepthW = $clog2(RESP_FIFO_DEPTH + 1);
+  localparam int unsigned CmdFifoDepthW = $clog2(`CMD_FIFO_DEPTH + 1);
+  localparam int unsigned RxFifoDepthW = $clog2(`RX_FIFO_DEPTH + 1);
+  localparam int unsigned TxFifoDepthW = $clog2(`TX_FIFO_DEPTH + 1);
+  localparam int unsigned RespFifoDepthW = $clog2(`RESP_FIFO_DEPTH + 1);
 
   // IOs between PHY and I3C bus
   logic                             scl_o;
@@ -172,9 +168,8 @@ module i3c
 
 `ifdef I3C_USE_AHB
   ahb_if #(
-      .AHB_DATA_WIDTH (AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH (AHB_ADDR_WIDTH),
-      .AHB_BURST_WIDTH(AHB_BURST_WIDTH)
+      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
   ) i3c_ahb_if (
       .hclk_i(clk_i),
       .hreset_n_i(rst_ni),
@@ -253,12 +248,7 @@ module i3c
       .irq()   // TODO: Handle interrupts
   );
 
-  hci #(
-      .CMD_FIFO_DEPTH (CMD_FIFO_DEPTH),
-      .RESP_FIFO_DEPTH(RESP_FIFO_DEPTH),
-      .RX_FIFO_DEPTH  (RX_FIFO_DEPTH),
-      .TX_FIFO_DEPTH  (TX_FIFO_DEPTH)
-  ) hci (
+  hci hci (
       .clk_i,
       .rst_ni,
       .s_cpuif_req,
@@ -325,10 +315,10 @@ module i3c
 
   // HCI queues
   hci_ctrl_queues #(
-      .CMD_FIFO_DEPTH (CMD_FIFO_DEPTH),
-      .RESP_FIFO_DEPTH(RESP_FIFO_DEPTH),
-      .RX_FIFO_DEPTH  (RX_FIFO_DEPTH),
-      .TX_FIFO_DEPTH  (TX_FIFO_DEPTH)
+      .CMD_FIFO_DEPTH (`CMD_FIFO_DEPTH),
+      .RESP_FIFO_DEPTH(`RESP_FIFO_DEPTH),
+      .RX_FIFO_DEPTH  (`RX_FIFO_DEPTH),
+      .TX_FIFO_DEPTH  (`TX_FIFO_DEPTH)
   ) hci_ctrl_queues (
       .clk_i,
       .rst_ni,

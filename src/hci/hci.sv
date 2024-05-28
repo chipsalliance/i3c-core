@@ -5,12 +5,7 @@ module hci
   import I3CCSR_pkg::*;
   import i3c_pkg::*;
   import hci_pkg::*;
-#(
-    parameter int unsigned CMD_FIFO_DEPTH  = 64,
-    parameter int unsigned RESP_FIFO_DEPTH = 256,
-    parameter int unsigned RX_FIFO_DEPTH   = 64,
-    parameter int unsigned TX_FIFO_DEPTH   = 64
-) (
+(
     input clk_i,  // clock
     input rst_ni, // active low reset
 
@@ -226,10 +221,10 @@ module hci
       tx_fifo_thld_o   <= 3'h1;
       resp_fifo_thld_o <= 8'h1;
     end else begin
-      cmd_fifo_thld_o  <= cmd_thld > CMD_FIFO_DEPTH - 1 ? CMD_FIFO_DEPTH - 1 : cmd_thld;
-      rx_fifo_thld_o   <= rx_thld >= $clog2(RX_FIFO_DEPTH) ? $clog2(RX_FIFO_DEPTH) - 1 : rx_thld;
-      tx_fifo_thld_o   <= tx_thld >= $clog2(TX_FIFO_DEPTH) ? $clog2(TX_FIFO_DEPTH) - 1 : tx_thld;
-      resp_fifo_thld_o <= resp_thld > RESP_FIFO_DEPTH - 1 ? RESP_FIFO_DEPTH - 1 : resp_thld;
+      cmd_fifo_thld_o  <= cmd_thld > `CMD_FIFO_DEPTH - 1 ? `CMD_FIFO_DEPTH - 1 : cmd_thld;
+      rx_fifo_thld_o   <= rx_thld >= $clog2(`RX_FIFO_DEPTH) ? $clog2(`RX_FIFO_DEPTH) - 1 : rx_thld;
+      tx_fifo_thld_o   <= tx_thld >= $clog2(`TX_FIFO_DEPTH) ? $clog2(`TX_FIFO_DEPTH) - 1 : tx_thld;
+      resp_fifo_thld_o <= resp_thld > `RESP_FIFO_DEPTH - 1 ? `RESP_FIFO_DEPTH - 1 : resp_thld;
     end
   end : populate_thld
 

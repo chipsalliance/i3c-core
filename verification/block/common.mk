@@ -7,6 +7,7 @@ WAVES           ?= 1
 
 # Paths
 CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+I3C_ROOT := $(abspath $(CURDIR)/../..)
 CFGDIR :=
 CONFIG :=
 
@@ -23,7 +24,8 @@ COMMON_SOURCES  = \
 
 COMMON_INCLUDES = \
     -I$(CALIPTRA_ROOT)/src/libs/rtl \
-    -I$(CALIPTRA_ROOT)/src/caliptra_prim/rtl
+    -I$(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
+    -I$(I3C_ROOT)/src
 
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 

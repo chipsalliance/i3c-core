@@ -30,7 +30,5 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/libs/mem/prim_ram_1p_adv.sv \
     $(CURDIR)/hci_queues/hci_queues_wrapper.sv
 
-EXTRA_ARGS += +define+I3C_USE_AHB
-
 include $(CURDIR)/../common.mk
 export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/ahb_if
