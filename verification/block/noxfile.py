@@ -150,19 +150,6 @@ def verify_block(session, blockName, testName, coverage=None):
 
 
 @nox.session(tags=["tests"])
-@nox.parametrize("blockName", ["i3c_ctrl"])
-@nox.parametrize(
-    "testName",
-    [
-        "test_reset",
-    ],
-)
-@nox.parametrize("coverage", None)
-def i3c_ctrl_verify(session, blockName, testName, coverage):
-    verify_block(session, blockName, testName, coverage)
-
-
-@nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["ahb_if"])
 @nox.parametrize(
     "testName",
@@ -242,6 +229,19 @@ def i3c_phy_tb_verify(session, blockName, simulator):
 )
 @nox.parametrize("coverage", None)
 def i2c_phy_integration_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["i3c"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_i2c_flow",
+    ],
+)
+@nox.parametrize("coverage", None)
+def i3c_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 
