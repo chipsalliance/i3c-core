@@ -17,166 +17,165 @@ module hci_ctrl_queues
     input logic rst_ni,
 
     // TODO: Ensure if the _depth_o need to be exposed
-    // Command FIFO: status / control
-    input  logic                     cmd_fifo_clr_i,
-    input  logic [ CmdThldWidth-1:0] cmd_fifo_thld_i,
-    output logic [CmdFifoDepthW-1:0] cmd_fifo_depth_o,
-    output logic                     cmd_fifo_full_o,
-    output logic                     cmd_fifo_apch_thld_o,  // Almost full
-    output logic                     cmd_fifo_empty_o,
-    // Command FIFO: writes controlled by CSR
-    input  logic                     cmd_fifo_wvalid_i,
-    output logic                     cmd_fifo_wready_o,
-    input  logic [ CmdFifoWidth-1:0] cmd_fifo_wdata_i,
-    // Command FIFO: reads controlled by FSM
-    output logic                     cmd_fifo_rvalid_o,
-    input  logic                     cmd_fifo_rready_i,
-    output logic [ CmdFifoWidth-1:0] cmd_fifo_rdata_o,
+    // Direct FIFO read control
+    output logic cmd_full_o,
+    output logic cmd_below_thld_o,
+    output logic cmd_empty_o,
+    output logic cmd_rvalid_o,
+    input logic cmd_rready_i,
+    output logic [CmdFifoWidth-1:0] cmd_rdata_o,
+    input logic cmd_req_i,
+    output logic cmd_ack_o,
+    input logic [CmdFifoWidth-1:0] cmd_data_i,
+    input logic [CmdThldWidth-1:0] cmd_thld_i,
+    output logic [CmdThldWidth-1:0] cmd_thld_o,
+    input logic cmd_reg_rst_i,
+    output logic cmd_reg_rst_we_o,
+    output logic cmd_reg_rst_data_o,
 
-    // RX FIFO: status / control
-    input  logic                    rx_fifo_clr_i,
-    input  logic [ RxThldWidth-1:0] rx_fifo_thld_i,
-    output logic [RxFifoDepthW-1:0] rx_fifo_depth_o,
-    output logic                    rx_fifo_full_o,
-    output logic                    rx_fifo_apch_thld_o,  // Reached thld_i entries
-    output logic                    rx_fifo_empty_o,
-    // RX FIFO: writes controller by FSM
-    input  logic                    rx_fifo_wvalid_i,
-    output logic                    rx_fifo_wready_o,
-    input  logic [ RxFifoWidth-1:0] rx_fifo_wdata_i,
-    // RX FIFO: reads controlled by CSR
-    output logic                    rx_fifo_rvalid_o,
-    input  logic                    rx_fifo_rready_i,
-    output logic [ RxFifoWidth-1:0] rx_fifo_rdata_o,
+    // RX FIFO
+    output logic rx_full_o,
+    output logic rx_above_thld_o,
+    output logic rx_empty_o,
+    input logic rx_wvalid_i,
+    output logic rx_wready_o,
+    input logic [RxFifoWidth-1:0] rx_wdata_i,
+    input logic rx_req_i,
+    output logic rx_ack_o,
+    output logic [RxFifoWidth-1:0] rx_data_o,
+    input logic [RxThldWidth-1:0] rx_thld_i,
+    output logic [RxThldWidth-1:0] rx_thld_o,
+    input logic rx_reg_rst_i,
+    output logic rx_reg_rst_we_o,
+    output logic rx_reg_rst_data_o,
 
     // TX FIFO: status / control
-    input  logic                    tx_fifo_clr_i,
-    input  logic [ TxThldWidth-1:0] tx_fifo_thld_i,
-    output logic [TxFifoDepthW-1:0] tx_fifo_depth_o,
-    output logic                    tx_fifo_full_o,
-    output logic                    tx_fifo_apch_thld_o,  // Almost full
-    output logic                    tx_fifo_empty_o,
-    // TX FIFO: writes controlled by CSR
-    input  logic                    tx_fifo_wvalid_i,
-    output logic                    tx_fifo_wready_o,
-    input  logic [ TxFifoWidth-1:0] tx_fifo_wdata_i,
-    // TX FIFO: reads controlled by FSM
-    output logic                    tx_fifo_rvalid_o,
-    input  logic                    tx_fifo_rready_i,
-    output logic [ TxFifoWidth-1:0] tx_fifo_rdata_o,
+    output logic tx_full_o,
+    output logic tx_below_thld_o,
+    output logic tx_empty_o,
+    output logic tx_rvalid_o,
+    input logic tx_rready_i,
+    output logic [TxFifoWidth-1:0] tx_rdata_o,
+    input logic tx_req_i,
+    output logic tx_ack_o,
+    input logic [TxFifoWidth-1:0] tx_data_i,
+    input logic [TxThldWidth-1:0] tx_thld_i,
+    output logic [TxThldWidth-1:0] tx_thld_o,
+    input logic tx_reg_rst_i,
+    output logic tx_reg_rst_we_o,
+    output logic tx_reg_rst_data_o,
 
     // Response FIFO: status / control
-    input  logic                      resp_fifo_clr_i,
-    input  logic [ RespThldWidth-1:0] resp_fifo_thld_i,
-    output logic [RespFifoDepthW-1:0] resp_fifo_depth_o,
-    output logic                      resp_fifo_full_o,
-    output logic                      resp_fifo_apch_thld_o,  // Reached thld_i entries
-    output logic                      resp_fifo_empty_o,
-    // Response FIFO: writes controlled by FSM
-    input  logic                      resp_fifo_wvalid_i,
-    output logic                      resp_fifo_wready_o,
-    input  logic [ RespFifoWidth-1:0] resp_fifo_wdata_i,
-    // Response FIFO: reads controlled by CSR
-    output logic                      resp_fifo_rvalid_o,
-    input  logic                      resp_fifo_rready_i,
-    output logic [ RespFifoWidth-1:0] resp_fifo_rdata_o
+    output logic resp_full_o,
+    output logic resp_above_thld_o,
+    output logic resp_empty_o,
+    input logic resp_wvalid_i,
+    output logic resp_wready_o,
+    input logic [RespFifoWidth-1:0] resp_wdata_i,
+    input logic resp_req_i,
+    output logic resp_ack_o,
+    output logic [RespFifoWidth-1:0] resp_data_o,
+    input logic [RespThldWidth-1:0] resp_thld_i,
+    output logic [RespThldWidth-1:0] resp_thld_o,
+    input logic resp_reg_rst_i,
+    output logic resp_reg_rst_we_o,
+    output logic resp_reg_rst_data_o
 );
-  logic [CmdFifoDepthW-1:0] cmd_empty_entries;
-  logic [ TxFifoDepthW-1:0] tx_empty_entries;
 
-  always_comb begin : gen_fifos_status_indicators
-    cmd_fifo_empty_o = ~|cmd_fifo_depth_o;
-    rx_fifo_empty_o = ~|rx_fifo_depth_o;
-    tx_fifo_empty_o = ~|tx_fifo_depth_o;
-    resp_fifo_empty_o = ~|resp_fifo_depth_o;
-
-    // Queue approached the threshold
-    // 'cmd_fifo_apch_thld' is raised with at least 'cmd_fifo_thld' empty entries available
-    cmd_empty_entries = CMD_FIFO_DEPTH - cmd_fifo_depth_o;
-    cmd_fifo_apch_thld_o = cmd_fifo_thld_i && (cmd_empty_entries >= cmd_fifo_thld_i);
-    // 'rx_fifo_pch_thld' is raised with at least '2^(rx_fifo_thld+1)' entries enqueued
-    rx_fifo_apch_thld_o = rx_fifo_thld_i && (rx_fifo_depth_o >= (1 << (rx_fifo_thld_i + 1)));
-    // 'tx_fifo_apch_thld' is raised with at least '2^(tx_fifo_thld+1)' empty entries available
-    tx_empty_entries = TX_FIFO_DEPTH - tx_fifo_depth_o;
-    tx_fifo_apch_thld_o = tx_fifo_thld_i && (tx_empty_entries >= (1 << (tx_fifo_thld_i + 1)));
-    // 'resp_fifo_apch_thld' is raised with at least 'resp_fifo_thld' entries enqueued
-    resp_fifo_apch_thld_o = resp_fifo_thld_i && (resp_fifo_depth_o >= resp_fifo_thld_i);
-  end
-
-  caliptra_prim_fifo_sync #(
-      .Width(CmdFifoWidth),
-      .Pass (1'b0),
-      .Depth(CMD_FIFO_DEPTH)
+  write_queue #(
+      .DEPTH(CMD_FIFO_DEPTH),
+      .DATA_WIDTH(CmdFifoWidth),
+      .THLD_WIDTH(CmdThldWidth),
+      .THLD_IS_POW(0)
   ) cmd_fifo (
       .clk_i,
       .rst_ni,
-      .clr_i   (cmd_fifo_clr_i),
-      .wvalid_i(cmd_fifo_wvalid_i),
-      .wready_o(cmd_fifo_wready_o),
-      .wdata_i (cmd_fifo_wdata_i),
-      .depth_o (cmd_fifo_depth_o),
-      .rvalid_o(cmd_fifo_rvalid_o),
-      .rready_i(cmd_fifo_rready_i),
-      .rdata_o (cmd_fifo_rdata_o),
-      .full_o  (cmd_fifo_full_o),
-      .err_o   ()
+      .full_o(cmd_full_o),
+      .below_thld_o(cmd_below_thld_o),
+      .empty_o(cmd_empty_o),
+      .rvalid_o(cmd_rvalid_o),
+      .rready_i(cmd_rready_i),
+      .rdata_o(cmd_rdata_o),
+      .req_i(cmd_req_i),
+      .ack_o(cmd_ack_o),
+      .data_i(cmd_data_i),
+      .thld_i(cmd_thld_i),
+      .thld_o(cmd_thld_o),
+      .reg_rst_i(cmd_reg_rst_i),
+      .reg_rst_we_o(cmd_reg_rst_we_o),
+      .reg_rst_data_o(cmd_reg_rst_data_o)
   );
 
-  caliptra_prim_fifo_sync #(
-      .Width(RxFifoWidth),
-      .Pass (1'b0),
-      .Depth(RX_FIFO_DEPTH)
+  read_queue #(
+      .DEPTH(RX_FIFO_DEPTH),
+      .DATA_WIDTH(RxFifoWidth),
+      .THLD_WIDTH(RxThldWidth),
+      .THLD_IS_POW(1)
   ) rx_fifo (
       .clk_i,
       .rst_ni,
-      .clr_i   (rx_fifo_clr_i),
-      .wvalid_i(rx_fifo_wvalid_i),
-      .wready_o(rx_fifo_wready_o),
-      .wdata_i (rx_fifo_wdata_i),
-      .depth_o (rx_fifo_depth_o),
-      .rvalid_o(rx_fifo_rvalid_o),
-      .rready_i(rx_fifo_rready_i),
-      .rdata_o (rx_fifo_rdata_o),
-      .full_o  (rx_fifo_full_o),
-      .err_o   ()
+      .full_o(rx_full_o),
+      .above_thld_o(rx_above_thld_o),
+      .empty_o(rx_empty_o),
+      .wvalid_i(rx_wvalid_i),
+      .wready_o(rx_wready_o),
+      .wdata_i(rx_wdata_i),
+      .req_i(rx_req_i),
+      .ack_o(rx_ack_o),
+      .data_o(rx_data_o),
+      .thld_i(rx_thld_i),
+      .thld_o(rx_thld_o),
+      .reg_rst_i(rx_reg_rst_i),
+      .reg_rst_we_o(rx_reg_rst_we_o),
+      .reg_rst_data_o(rx_reg_rst_data_o)
   );
 
-  caliptra_prim_fifo_sync #(
-      .Width(TxFifoWidth),
-      .Pass (1'b0),
-      .Depth(TX_FIFO_DEPTH)
+  write_queue #(
+      .DEPTH(TX_FIFO_DEPTH),
+      .DATA_WIDTH(TxFifoWidth),
+      .THLD_WIDTH(TxThldWidth),
+      .THLD_IS_POW(1)
   ) tx_fifo (
       .clk_i,
       .rst_ni,
-      .clr_i   (tx_fifo_clr_i),
-      .wvalid_i(tx_fifo_wvalid_i),
-      .wready_o(tx_fifo_wready_o),
-      .wdata_i (tx_fifo_wdata_i),
-      .depth_o (tx_fifo_depth_o),
-      .rvalid_o(tx_fifo_rvalid_o),
-      .rready_i(tx_fifo_rready_i),
-      .rdata_o (tx_fifo_rdata_o),
-      .full_o  (tx_fifo_full_o),
-      .err_o   ()
+      .full_o(tx_full_o),
+      .below_thld_o(tx_below_thld_o),
+      .empty_o(tx_empty_o),
+      .rvalid_o(tx_rvalid_o),
+      .rready_i(tx_rready_i),
+      .rdata_o(tx_rdata_o),
+      .req_i(tx_req_i),
+      .ack_o(tx_ack_o),
+      .data_i(tx_data_i),
+      .thld_i(tx_thld_i),
+      .thld_o(tx_thld_o),
+      .reg_rst_i(tx_reg_rst_i),
+      .reg_rst_we_o(tx_reg_rst_we_o),
+      .reg_rst_data_o(tx_reg_rst_data_o)
   );
 
-  caliptra_prim_fifo_sync #(
-      .Width(RespFifoWidth),
-      .Pass (1'b0),
-      .Depth(RESP_FIFO_DEPTH)
+  read_queue #(
+      .DEPTH(RESP_FIFO_DEPTH),
+      .DATA_WIDTH(RespFifoWidth),
+      .THLD_WIDTH(RespThldWidth),
+      .THLD_IS_POW(0)
   ) resp_fifo (
       .clk_i,
       .rst_ni,
-      .clr_i   (resp_fifo_clr_i),
-      .wvalid_i(resp_fifo_wvalid_i),
-      .wready_o(resp_fifo_wready_o),
-      .wdata_i (resp_fifo_wdata_i),
-      .depth_o (resp_fifo_depth_o),
-      .rvalid_o(resp_fifo_rvalid_o),
-      .rready_i(resp_fifo_rready_i),
-      .rdata_o (resp_fifo_rdata_o),
-      .full_o  (resp_fifo_full_o),
-      .err_o   ()
+      .full_o(resp_full_o),
+      .above_thld_o(resp_above_thld_o),
+      .empty_o(resp_empty_o),
+      .wvalid_i(resp_wvalid_i),
+      .wready_o(resp_wready_o),
+      .wdata_i(resp_wdata_i),
+      .req_i(resp_req_i),
+      .ack_o(resp_ack_o),
+      .data_o(resp_data_o),
+      .thld_i(resp_thld_i),
+      .thld_o(resp_thld_o),
+      .reg_rst_i(resp_reg_rst_i),
+      .reg_rst_we_o(resp_reg_rst_we_o),
+      .reg_rst_data_o(resp_reg_rst_data_o)
   );
 
 endmodule

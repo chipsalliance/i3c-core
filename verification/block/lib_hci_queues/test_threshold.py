@@ -187,9 +187,8 @@ async def should_raise_apch_thld_receiver(dut: SimHandleBase, q: QueueThldHandle
 
     await ClockCycles(tb.clk, 5)
 
-    s_apch_thld = tb.get_apch_thld(q.name)
-
     # Check the `apch_thld` is not set before reaching the threshold
+    s_apch_thld = tb.get_thld_status(q.name)
     assert s_apch_thld == 0, (
         f"{q} queue: apch_thld is raised before the threshold has been reached."
         f"Threshold: {thld} currently enqueued elements {thld-1}"
@@ -199,8 +198,8 @@ async def should_raise_apch_thld_receiver(dut: SimHandleBase, q: QueueThldHandle
     await q.enqueue(tb)
     await RisingEdge(tb.clk)
 
-    # Verify the `apch_thld` is risen just after reaching the threshold
-    s_apch_thld = tb.get_apch_thld(q.name)
+    # Verify the signal is risen
+    s_apch_thld = tb.get_thld_status(q.name)
     assert s_apch_thld == 1, (
         f"{q} queue: apch_thld should be raised after reaching the threshold."
         f"Threshold: {thld} currently enqueued elements {thld}"
@@ -241,7 +240,7 @@ async def should_raise_apch_thld_transmitter(dut: SimHandleBase, q: QueueThldHan
     qsize = await tb.read_queue_size(q.name)
 
     # Empty queue, check if `apch_thld` properly reports number of empty entires
-    s_apch_thld = tb.get_apch_thld(q.name)
+    s_apch_thld = tb.get_thld_status(q.name)
     assert s_apch_thld == 1, (
         f"{q} queue: apch_thld should be raised with empty queue. "
         f"Threshold: {thld} currently enqueued elements: 0"
@@ -253,7 +252,7 @@ async def should_raise_apch_thld_transmitter(dut: SimHandleBase, q: QueueThldHan
     await ClockCycles(tb.clk, 5)
 
     # The `apch_thld` should stop being reported when there's less than thld empty entries
-    s_apch_thld = tb.get_apch_thld(q.name)
+    s_apch_thld = tb.get_thld_status(q.name)
     assert s_apch_thld == 0, (
         f"{q} queue: Less than threshold empty entries apch_thld should not be raised. "
         f"Threshold: {thld} currently enqueued elements {qsize - thld + 1}"

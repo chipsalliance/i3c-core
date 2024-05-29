@@ -151,7 +151,7 @@ module i3c
   logic [         CmdThldWidth-1:0] cmd_fifo_thld;
   logic [        CmdFifoDepthW-1:0] cmd_fifo_depth;
   logic                             cmd_fifo_full;
-  logic                             cmd_fifo_apch_thld;
+  logic                             cmd_fifo_below_thld;
   logic                             cmd_fifo_empty;
   logic                             cmd_fifo_wvalid;
   logic                             cmd_fifo_wready;
@@ -165,7 +165,7 @@ module i3c
   logic [          RxThldWidth-1:0] rx_fifo_thld;
   logic [         RxFifoDepthW-1:0] rx_fifo_depth;
   logic                             rx_fifo_full;
-  logic                             rx_fifo_apch_thld;
+  logic                             rx_fifo_above_thld;
   logic                             rx_fifo_empty;
   logic                             rx_fifo_wvalid;
   logic                             rx_fifo_wready;
@@ -179,7 +179,7 @@ module i3c
   logic [          TxThldWidth-1:0] tx_fifo_thld;
   logic [         TxFifoDepthW-1:0] tx_fifo_depth;
   logic                             tx_fifo_full;
-  logic                             tx_fifo_apch_thld;
+  logic                             tx_fifo_below_thld;
   logic                             tx_fifo_empty;
   logic                             tx_fifo_wvalid;
   logic                             tx_fifo_wready;
@@ -193,7 +193,7 @@ module i3c
   logic [        RespThldWidth-1:0] resp_fifo_thld;
   logic [       RespFifoDepthW-1:0] resp_fifo_depth;
   logic                             resp_fifo_full;
-  logic                             resp_fifo_apch_thld;
+  logic                             resp_fifo_above_thld;
   logic                             resp_fifo_empty;
   logic                             resp_fifo_wvalid;
   logic                             resp_fifo_wready;
@@ -326,7 +326,7 @@ module i3c
       .cmd_fifo_thld_i(cmd_fifo_thld),
       .cmd_fifo_empty_i(cmd_fifo_empty),
       .cmd_fifo_full_i(cmd_fifo_full),
-      .cmd_fifo_apch_thld_i(cmd_fifo_apch_thld),
+      .cmd_fifo_below_thld_i(cmd_fifo_below_thld),
       .cmd_fifo_rvalid_i(cmd_fifo_rvalid),
       .cmd_fifo_rready_o(cmd_fifo_rready),
       .cmd_fifo_rdata_i(cmd_fifo_rdata),
@@ -334,7 +334,7 @@ module i3c
       .rx_fifo_thld_i(rx_fifo_thld),
       .rx_fifo_empty_i(rx_fifo_empty),
       .rx_fifo_full_i(rx_fifo_full),
-      .rx_fifo_apch_thld_i(rx_fifo_apch_thld),
+      .rx_fifo_above_thld_i(rx_fifo_above_thld),
       .rx_fifo_wvalid_o(rx_fifo_wvalid),
       .rx_fifo_wready_i(rx_fifo_wready),
       .rx_fifo_wdata_o(rx_fifo_wdata),
@@ -342,7 +342,7 @@ module i3c
       .tx_fifo_thld_i(tx_fifo_thld),
       .tx_fifo_empty_i(tx_fifo_empty),
       .tx_fifo_full_i(tx_fifo_full),
-      .tx_fifo_apch_thld_i(tx_fifo_apch_thld),
+      .tx_fifo_below_thld_i(tx_fifo_below_thld),
       .tx_fifo_rvalid_i(tx_fifo_rvalid),
       .tx_fifo_rready_o(tx_fifo_rready),
       .tx_fifo_rdata_i(tx_fifo_rdata),
@@ -350,7 +350,7 @@ module i3c
       .resp_fifo_thld_i(resp_fifo_thld),
       .resp_fifo_empty_i(resp_fifo_empty),
       .resp_fifo_full_i(resp_fifo_full),
-      .resp_fifo_apch_thld_i(resp_fifo_apch_thld),
+      .resp_fifo_above_thld_i(resp_fifo_above_thld),
       .resp_fifo_wvalid_o(resp_fifo_wvalid),
       .resp_fifo_wready_i(resp_fifo_wready),
       .resp_fifo_wdata_o(resp_fifo_wdata),
@@ -407,99 +407,40 @@ module i3c
       .dct_mem_sink_o,
 
       // Command queue
-      .cmdrst,
-      .cmd_fifo_thld_o  (cmd_fifo_thld),
-      .cmd_fifo_empty_i (cmd_fifo_empty),
-      .cmd_fifo_wvalid_o(cmd_fifo_wvalid),
-      .cmd_fifo_wready_i(cmd_fifo_wready),
-      .cmd_fifo_wdata_o (cmd_fifo_wdata),
+      .cmd_full_o(cmd_fifo_full),
+      .cmd_thld_o(cmd_fifo_thld),
+      .cmd_below_thld_o(cmd_fifo_below_thld),
+      .cmd_empty_o(cmd_fifo_empty),
+      .cmd_rvalid_o(cmd_fifo_rvalid),
+      .cmd_rready_i(cmd_fifo_rready),
+      .cmd_rdata_o(cmd_fifo_rdata),
 
       // RX queue
-      .rxrst,
-      .rx_fifo_thld_o  (rx_fifo_thld),
-      .rx_fifo_empty_i (rx_fifo_empty),
-      .rx_fifo_rvalid_i(rx_fifo_rvalid),
-      .rx_fifo_rready_o(rx_fifo_rready),
-      .rx_fifo_rdata_i (rx_fifo_rdata),
+      .rx_full_o(rx_fifo_full),
+      .rx_thld_o(rx_fifo_thld),
+      .rx_above_thld_o(rx_fifo_above_thld),
+      .rx_empty_o(rx_fifo_empty),
+      .rx_wvalid_i(rx_fifo_wvalid),
+      .rx_wready_o(rx_fifo_wready),
+      .rx_wdata_i(rx_fifo_wdata),
 
       // TX queue
-      .txrst,
-      .tx_fifo_thld_o  (tx_fifo_thld),
-      .tx_fifo_empty_i (tx_fifo_empty),
-      .tx_fifo_wvalid_o(tx_fifo_wvalid),
-      .tx_fifo_wready_i(tx_fifo_wready),
-      .tx_fifo_wdata_o (tx_fifo_wdata),
+      .tx_full_o(tx_fifo_full),
+      .tx_thld_o(tx_fifo_thld),
+      .tx_below_thld_o(tx_fifo_below_thld),
+      .tx_empty_o(tx_fifo_empty),
+      .tx_rvalid_o(tx_fifo_rvalid),
+      .tx_rready_i(tx_fifo_rready),
+      .tx_rdata_o(tx_fifo_rdata),
 
       // Response queue
-      .resprst,
-      .resp_fifo_thld_o  (resp_fifo_thld),
-      .resp_fifo_empty_i (resp_fifo_empty),
-      .resp_fifo_rvalid_i(resp_fifo_rvalid),
-      .resp_fifo_rready_o(resp_fifo_rready),
-      .resp_fifo_rdata_i (resp_fifo_rdata)
-  );
-
-  // HCI queues
-  hci_ctrl_queues #(
-      .CMD_FIFO_DEPTH (`CMD_FIFO_DEPTH),
-      .RESP_FIFO_DEPTH(`RESP_FIFO_DEPTH),
-      .RX_FIFO_DEPTH  (`RX_FIFO_DEPTH),
-      .TX_FIFO_DEPTH  (`TX_FIFO_DEPTH)
-  ) hci_ctrl_queues (
-      .clk_i,
-      .rst_ni,
-
-      .cmd_fifo_clr_i   (cmdrst),
-      .cmd_fifo_thld_i  (cmd_fifo_thld),
-      .cmd_fifo_depth_o (cmd_fifo_depth),
-      .cmd_fifo_full_o  (cmd_fifo_full),
-      .cmd_fifo_apch_thld_o(cmd_fifo_apch_thld),
-      .cmd_fifo_empty_o (cmd_fifo_empty),
-      .cmd_fifo_wvalid_i(cmd_fifo_wvalid),
-      .cmd_fifo_wready_o(cmd_fifo_wready),
-      .cmd_fifo_wdata_i (cmd_fifo_wdata),
-      .cmd_fifo_rvalid_o(cmd_fifo_rvalid),
-      .cmd_fifo_rready_i(cmd_fifo_rready),
-      .cmd_fifo_rdata_o (cmd_fifo_rdata),
-
-      .rx_fifo_clr_i   (rxrst),
-      .rx_fifo_thld_i  (rx_fifo_thld),
-      .rx_fifo_depth_o (rx_fifo_depth),
-      .rx_fifo_full_o  (rx_fifo_full),
-      .rx_fifo_apch_thld_o(rx_fifo_apch_thld),
-      .rx_fifo_empty_o (rx_fifo_empty),
-      .rx_fifo_wvalid_i(rx_fifo_wvalid),
-      .rx_fifo_wready_o(rx_fifo_wready),
-      .rx_fifo_wdata_i (rx_fifo_wdata),
-      .rx_fifo_rvalid_o(rx_fifo_rvalid),
-      .rx_fifo_rready_i(rx_fifo_rready),
-      .rx_fifo_rdata_o (rx_fifo_rdata),
-
-      .tx_fifo_clr_i   (txrst),
-      .tx_fifo_thld_i  (tx_fifo_thld),
-      .tx_fifo_depth_o (tx_fifo_depth),
-      .tx_fifo_full_o  (tx_fifo_full),
-      .tx_fifo_apch_thld_o(tx_fifo_apch_thld),
-      .tx_fifo_empty_o (tx_fifo_empty),
-      .tx_fifo_wvalid_i(tx_fifo_wvalid),
-      .tx_fifo_wready_o(tx_fifo_wready),
-      .tx_fifo_wdata_i (tx_fifo_wdata),
-      .tx_fifo_rvalid_o(tx_fifo_rvalid),
-      .tx_fifo_rready_i(tx_fifo_rready),
-      .tx_fifo_rdata_o (tx_fifo_rdata),
-
-      .resp_fifo_clr_i   (resprst),
-      .resp_fifo_thld_i  (resp_fifo_thld),
-      .resp_fifo_depth_o (resp_fifo_depth),
-      .resp_fifo_full_o  (resp_fifo_full),
-      .resp_fifo_apch_thld_o(resp_fifo_apch_thld),
-      .resp_fifo_empty_o (resp_fifo_empty),
-      .resp_fifo_wvalid_i(resp_fifo_wvalid),
-      .resp_fifo_wready_o(resp_fifo_wready),
-      .resp_fifo_wdata_i (resp_fifo_wdata),
-      .resp_fifo_rvalid_o(resp_fifo_rvalid),
-      .resp_fifo_rready_i(resp_fifo_rready),
-      .resp_fifo_rdata_o (resp_fifo_rdata)
+      .resp_full_o(resp_fifo_full),
+      .resp_thld_o(resp_fifo_thld),
+      .resp_above_thld_o(resp_fifo_above_thld),
+      .resp_empty_o(resp_fifo_empty),
+      .resp_wvalid_i(resp_fifo_wvalid),
+      .resp_wready_o(resp_fifo_wready),
+      .resp_wdata_i(resp_fifo_wdata)
   );
 
   // I3C PHY

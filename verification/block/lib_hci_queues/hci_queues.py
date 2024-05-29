@@ -46,18 +46,6 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         alt_resp_en = (alt_queue_size >> 24) & 0x1
         return alt_resp_size if alt_resp_en else cr_size
 
-    def get_empty(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_empty_o").value
-
-    def get_full(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_full_o").value
-
-    def get_thld(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_thld_o").value
-
-    def get_apch_thld(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_apch_thld_o").value
-
     # Helper functions to fetch / put data to either side
     # of the queues
     async def put_response_desc(self, resp: int = None, timeout: int = 2, units: str = "ms"):

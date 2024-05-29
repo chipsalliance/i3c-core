@@ -227,8 +227,15 @@ class HCIBaseTestInterface:
     def get_thld(self, queue: str):
         return getattr(self.dut, f"{queue}_fifo_thld_o").value
 
-    def get_apch_thld(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_apch_thld_o").value
+    def get_thld_status(self, queue: str):
+        if queue in ["cmd", "tx"]:
+            trig = "below"
+        elif queue in ["resp", "rx"]:
+            trig = "above"
+        else:
+            self.dut._log.error(f"Queue {queue} not supported")
+
+        return getattr(self.dut, f"{queue}_fifo_{trig}_thld_o").value
 
     # Helper functions to fetch / put data to either side
     # of the queues

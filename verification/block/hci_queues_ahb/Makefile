@@ -24,6 +24,8 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/hci/ahb_if.sv \
     $(SRCDIR)/hci/dxt.sv \
     $(SRCDIR)/hci/hci_pkg.sv \
+    $(SRCDIR)/hci/queues/write_queue.sv \
+    $(SRCDIR)/hci/queues/read_queue.sv \
     $(SRCDIR)/hci/hci_ctrl_queues.sv \
     $(SRCDIR)/hci/hci.sv \
     $(SRCDIR)/libs/mem/prim_ram_1p_pkg.sv \
