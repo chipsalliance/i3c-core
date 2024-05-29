@@ -5,14 +5,7 @@ module hci_queues_wrapper
   import hci_pkg::*;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
-#(
-    parameter int unsigned AHB_DATA_WIDTH  = 64,
-    parameter int unsigned AHB_ADDR_WIDTH  = 32,
-    parameter int unsigned CMD_FIFO_DEPTH  = 64,
-    parameter int unsigned RESP_FIFO_DEPTH = 256,
-    parameter int unsigned RX_FIFO_DEPTH   = 64,
-    parameter int unsigned TX_FIFO_DEPTH   = 64
-) (
+(
     input hclk,  // clock
     input hreset_n,  // active low reset
 
@@ -66,10 +59,10 @@ module hci_queues_wrapper
     input logic [RespFifoWidth-1:0] resp_fifo_wdata_i
 );
   // HCI queues' depth widths
-  localparam int unsigned CmdFifoDepthW = $clog2(CMD_FIFO_DEPTH + 1);
-  localparam int unsigned RxFifoDepthW = $clog2(RX_FIFO_DEPTH + 1);
-  localparam int unsigned TxFifoDepthW = $clog2(TX_FIFO_DEPTH + 1);
-  localparam int unsigned RespFifoDepthW = $clog2(RESP_FIFO_DEPTH + 1);
+  localparam int unsigned CmdFifoDepthW = $clog2(`CMD_FIFO_DEPTH + 1);
+  localparam int unsigned RxFifoDepthW = $clog2(`RX_FIFO_DEPTH + 1);
+  localparam int unsigned TxFifoDepthW = $clog2(`TX_FIFO_DEPTH + 1);
+  localparam int unsigned RespFifoDepthW = $clog2(`RESP_FIFO_DEPTH + 1);
 
   // I3C SW CSR IF
   logic s_cpuif_req;
@@ -114,8 +107,8 @@ module hci_queues_wrapper
   logic [RespFifoWidth-1:0] resp_fifo_rdata;
 
   ahb_if #(
-      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
+      .AHB_DATA_WIDTH(`AHB_DATA_WIDTH),
+      .AHB_ADDR_WIDTH(`AHB_ADDR_WIDTH)
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),
@@ -196,7 +189,12 @@ module hci_queues_wrapper
   );
 
   // HCI queues
-  hci_ctrl_queues hci_ctrl_queues (
+  hci_ctrl_queues #(
+      .CMD_FIFO_DEPTH (`CMD_FIFO_DEPTH),
+      .RESP_FIFO_DEPTH(`RESP_FIFO_DEPTH),
+      .RX_FIFO_DEPTH  (`RX_FIFO_DEPTH),
+      .TX_FIFO_DEPTH  (`TX_FIFO_DEPTH)
+  ) hci_ctrl_queues (
       .clk_i (hclk),
       .rst_ni(hreset_n),
 
