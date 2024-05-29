@@ -40,13 +40,16 @@ package i3c_agent_pkg;
   typedef enum int {
     DrvIdle,
     DrvStart,
+    DrvRStart,
+    DrvRStartPushPull,
     DrvAddr,
     DrvAddrPushPull,
     DrvWr,
     DrvWrPushPull,
     DrvRd,
     DrvRdPushPull,
-    DrvStop
+    DrvStop,
+    DrvStopPushPull
   } i3c_drv_phase_e;
 
   typedef enum logic[7:0] {

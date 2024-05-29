@@ -92,57 +92,81 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_item), .RSP(i3c_item));
 
   virtual task drive_host_item(i3c_seq_item req);
     i3c_seq_item rsp;
+    if (bus_state == DrvAddr || bus_state == DrvAddrPushPull) begin
+      bus_state = req.i3c ? DrvAddrPushPull : DrvAddr;
+      scl_i3c_mode = req.i3c;
+      scl_i3c_OD = 1'b0;
+    end
     forever begin
       case (bus_state)
         DrvIdle: begin
           if (req.IBI && !IBI_START) begin
-            bus_state = Drv_Start;
-            host_i2c_start(cfg.tc.i2c_tc);
+            bus_state = DrvStart;
           end else if (req.IBI) begin
             wait_for_host_start();
+            bus_state = DrvAddr;
           end else begin
-            bus_state = Drv_Start;
-            host_i2c_start(cfg.tc.i2c_tc);
+            bus_state = DrvStart;
           end
         end
-        HostStart: begin
-          cfg.vif.drv_phase = DrvAddr;
-          cfg.vif.host_i2c_start(cfg.tc.i2c_tc);
-          cfg.host_scl_start = 1;
+        DrvStart: begin
+          bus_state = DrvAddr;
+          host_i2c_start(cfg.tc.i2c_tc);
+          scl_i3c_mode = req.i3c;
+          scl_i3c_OD = 1'b1;
+          host_scl_start = 1;
         end
-        HostRStart: begin
-          cfg.vif.host_i2c_rstart(cfg.tc.i2c_tc);
+        DrvRStart: begin
+          host_scl_stop = 1;
+          host_i2c_rstart(cfg.tc.i2c_tc);
+          bus_state = DrvAddr;
+          break;
         end
-        HostData: begin
-          drive_host_data_bits(req);
-          cfg.vif.wait_scl(.iter(1));
+        DrvRStartPushPull: begin
+          host_scl_stop = 1;
+          host_i3c_rstart(cfg.tc.i3c_tc);
+          bus_state = DrvAddrPushPull;
+          break;
         end
-        HostDataNoWaitForACK: begin
-          drive_host_data_bits(req);
+        DrvStop: begin
+          host_scl_stop = 1;
+          host_i2c_stop(cfg.tc.i2c_tc);
+          bus_state = DrvIdle;
+          break;
         end
-        HostAck: begin
-          // Wait for read data and send ack
-          cfg.vif.wait_scl(.iter(8));
-          cfg.vif.host_i2c_data(cfg.tc.i2c_tc, 0);
+        DrvStopPushPull: begin
+          host_scl_stop = 1;
+          host_i3c_stop(cfg.tc.i3c_tc);
+          bus_state = DrvIdle;
+          break;
         end
-        HostNAck: begin
-          // Wait for read data and send nack
-          cfg.vif.wait_scl(.iter(8));
-          cfg.vif.host_i2c_data(cfg.tc.i2c_tc, 1);
+        DrvAddr: begin
+          cfg.vif.sda_pp_en = 0;
+          fork
+            begin
+              for(int i = 6; i>=0; i--) begin
+                if(req.i3c) begin
+                  host_i3c_data(cfg.tc.i3c_tc, req.addr[i]);
+                end else begin
+                  host_i3c_data(cfg.tc.i2c_tc, req.addr[i]);
+                end
+              end
+              if(req.i3c) begin
+                host_i3c_data(cfg.tc.i3c_tc, req.dir);
+              end else begin
+                host_i3c_data(cfg.tc.i2c_tc, req.dir);
+              end
+            end
+            begin
+              for(int i = 6; i>=0; i--) begin
+                sample_target_data(.data(rsp.addr[i]));
+              end
+              sample_target_data(.data(rsp.dir));
+            end
+          join
         end
-        HostWait: begin
-        end
-        HostStop: begin
-          cfg.vif.drv_phase = DrvStop;
-          // If SCL is paused high, wait for it to fall.
-          `DV_WAIT(cfg.vif.scl_i === 1'b0,, scl_spinwait_timeout_ns, "drive_host_item HostStop")
-          // Now disable the SCL drive thread.
-          cfg.host_scl_stop = 1;
-          cfg.vif.host_i2c_stop(cfg.tc.i2c_tc);
-          if (cfg.allow_bad_addr & !(
-              cfg.valid_i2c_addr || cfg.valid_i3c_addr || cfg.valid_i3c_broadcast)) begin
-            cfg.got_stop = 1;
-          end
+        DrvAddrPushPull: begin
+          
         end
         default: begin
           `uvm_fatal(get_full_name(), $sformatf("\n  host_driver, received invalid request"))
@@ -210,27 +234,32 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_item), .RSP(i3c_item));
           // Original scl driver thread
           while(!host_scl_stop) begin
             if (scl_i3c_mode) begin
-              if (!scl_i3c_OD) cfg.vif.scl_pp_en <= 1'b1;
-              cfg.vif.scl_o <= 1'b0;
-              if (scl_i3c_OD) #(cfg.tc.i3c_tc.tClockLowOD * 1ns);
-              else #(cfg.tc.i3c_tc.tClockLowPP * 1ns);
-              if (cfg.host_scl_stop) break;
+              if (scl_i3c_OD) begin
+                cfg.vif.scl_pp_en <= 1'b0;
+                cfg.vif.scl_o <= 1'b0;
+                #(cfg.tc.i3c_tc.tClockLowOD * 1ns);
+              end else begin
+                cfg.vif.scl_pp_en <= 1'b1;
+                cfg.vif.scl_o <= 1'b0;
+                #(cfg.tc.i3c_tc.tClockLowPP * 1ns);
+              end
+              if (host_scl_stop) break;
               cfg.vif.scl_o <= 1'b1;
               #(cfg.tc.i3c_tc.tClockPulse * 1ns);
             end else begin
+              cfg.vif.scl_pp_en <= 1'b0;
               cfg.vif.scl_o <= 1'b0;
               #(cfg.tc.i2c_tc.tClockLow * 1ns);
-              if (cfg.host_scl_stop) break;
+              if (host_scl_stop) break;
               cfg.vif.scl_o <= 1'b1;
               #(cfg.tc.i2c_tc.tClockPulse * 1ns);
             end
-            if (!cfg.host_scl_stop) cfg.vif.scl_o = 1'b0;
           end
           // Force quit thread
           begin
-            wait(cfg.host_scl_force_high | cfg.host_scl_force_low);
-            cfg.host_scl_stop = 1;
-            if (cfg.host_scl_force_high) begin
+            wait(host_scl_force_high | host_scl_force_low);
+            host_scl_stop = 1;
+            if (host_scl_force_high) begin
               cfg.vif.scl_o <= 1'b1;
               cfg.vif.sda_o <= 1'b1;
             end else begin

@@ -8,6 +8,7 @@ class i3c_seq_item extends uvm_sequence_item;
   bit       T_bit[$];
   bit       i3c;
   bit       end_with_rstart;
+  bit       dev_ack;
 
   bit IBI;
   bit IBI_START; // Device triggers Start condition
