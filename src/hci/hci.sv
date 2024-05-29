@@ -216,15 +216,29 @@ module hci
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : populate_thld
     if (!rst_ni) begin : populate_thld_rst
-      cmd_fifo_thld_o  <= 8'h1;
-      rx_fifo_thld_o   <= 3'h1;
-      tx_fifo_thld_o   <= 3'h1;
-      resp_fifo_thld_o <= 8'h1;
+      cmd_fifo_thld_o  <= `CMD_FIFO_DEPTH;
+      rx_fifo_thld_o   <= $clog2(`RX_FIFO_DEPTH) - 2;
+      tx_fifo_thld_o   <= $clog2(`TX_FIFO_DEPTH) - 1;
+      resp_fifo_thld_o <= `RESP_FIFO_DEPTH - 1;
     end else begin
-      cmd_fifo_thld_o  <= cmd_thld > `CMD_FIFO_DEPTH - 1 ? `CMD_FIFO_DEPTH - 1 : cmd_thld;
-      rx_fifo_thld_o   <= rx_thld >= $clog2(`RX_FIFO_DEPTH) ? $clog2(`RX_FIFO_DEPTH) - 1 : rx_thld;
-      tx_fifo_thld_o   <= tx_thld >= $clog2(`TX_FIFO_DEPTH) ? $clog2(`TX_FIFO_DEPTH) - 1 : tx_thld;
-      resp_fifo_thld_o <= resp_thld > `RESP_FIFO_DEPTH - 1 ? `RESP_FIFO_DEPTH - 1 : resp_thld;
+      // Threshold for the CMD queue should be less or equal (<=) than CMD_FIFO_DEPTH
+      cmd_fifo_thld_o <= cmd_thld > `CMD_FIFO_DEPTH ? `CMD_FIFO_DEPTH : cmd_thld;
+      // Threshold for the RX queue should  decode to less (<) than RX_FIFO_DEPTH
+      // The actual threshold is calculated by 2^(rx_thld+1)
+      if ((1 << (rx_thld + 1)) >= `RX_FIFO_DEPTH) begin
+        rx_fifo_thld_o <= $clog2(`RX_FIFO_DEPTH) - 2;
+      end else begin
+        rx_fifo_thld_o <= rx_thld;
+      end
+      // Threshold for the TX queue should  decode to less or equal (<=) than TX_FIFO_DEPTH
+      // The actual threshold is calculated by 2^(tx_thld+1)
+      if ((1 << (tx_thld + 1)) > `TX_FIFO_DEPTH) begin
+        tx_fifo_thld_o <= $clog2(`TX_FIFO_DEPTH) - 1;
+      end else begin
+        tx_fifo_thld_o <= tx_thld;
+      end
+      // Threshold for the RESP queue should be less (<) than RESP_FIFO_DEPTH
+      resp_fifo_thld_o <= resp_thld >= `RESP_FIFO_DEPTH ? `RESP_FIFO_DEPTH - 1 : resp_thld;
     end
   end : populate_thld
 
