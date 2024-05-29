@@ -2,4 +2,6 @@ peakrdl
 peakrdl-markdown
 engineering_notation
 jsonschema
+nox
 pyyaml
+
