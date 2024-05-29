@@ -1,9 +1,70 @@
 # I3C Core
 
-// TODO description
+This repository provides an I3C Core, which will be:
+* compliant with
+  * MIPI Alliance Specification for I3C Basic, Version 1.1.1
+  * MIPI Alliance Specification for I3C HCI, Version 1.2
+  * MIPI Alliance Specification for I3C TCRI, Version 1.0
+* operational in both Active and Secondary Controller Mode
+
+A login with MIPI Alliance account is required to access the document on [MIPI website](https://www.mipi.org/specifications/i3c-sensor-specification).
+
+This repository provides:
+* [SystemVerilog description of the hardware](src)
+* [Software tests](sw)
+* [Cocotb/Verilator verification](verification/block)
+* [UVM tests](verification)
+
+This repository depends on:
+* [Caliptra RTL](https://github.com/chipsalliance/caliptra-rtl)
 
 ## Setup
-// TODO setup
+
+### System requirements
+
+This repository is currently tested on Debian 12 and Ubuntu 22.04. In order to use all features, you need to install:
+* RISC-V toolchain
+* Verilator
+* LCOV
+* Verible
+* Icarus Verilog
+
+Dockerfile will be provided with this repository, detailing how to prepare the OS environment.
+
+### Python
+
+Python 3.11 is recommended for this project. For BASH users, a bootstrap script is provided:
+
+```{bash}
+bash install.sh
+```
+
+This script installs pyenv tool. Then, you can activate the environment:
+
+```{bash}
+source ~/.bashrc
+. ./activate.sh
+```
+
+Activate script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt`.
+
+## Running simulations
+
+### Cocotb/Verilator
+
+Once setup is completed, the simulations can be launched with:
+
+```{bash}
+make tests
+```
+
+### UVM
+
+TBD
+
+## Debugging simulations
+
+TBD
 
 ## Configuration
 
