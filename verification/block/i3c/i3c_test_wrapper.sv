@@ -3,8 +3,8 @@
 module i3c_test_wrapper
   import i3c_pkg::*;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32
+    parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
+    parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
 ) (
     input hclk,  // clock
     input hreset_n,  // active low reset
