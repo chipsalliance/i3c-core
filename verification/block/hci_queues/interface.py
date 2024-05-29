@@ -30,13 +30,13 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         ALT_QUEUE_SIZE = 0x11C
         queue_size = ahb_data_to_int(await self.read_csr(QUEUE_SIZE, 4))
         if queue in ["rx", "tx"]:
-            return (queue_size >> off[queue]) & 0x7F
-        elif queue == "cmd":
-            return 2 ** (((queue_size >> off[queue]) & 0x7F) + 1)
+            return 2 ** (((queue_size >> off[queue]) & 0x7) + 1)
+        if queue == "cmd":
+            return (queue_size >> off[queue]) & 0xFF
         # Size of the response queue
         alt_queue_size = ahb_data_to_int(await self.read_csr(ALT_QUEUE_SIZE, 4))
-        cr_size = queue_size & 0x7F
-        alt_resp_size = alt_queue_size & 0x7F
+        cr_size = queue_size & 0xFF
+        alt_resp_size = alt_queue_size & 0xFF
         alt_resp_en = (alt_queue_size >> 24) & 0x1
         return alt_resp_size if alt_resp_en else cr_size
 
