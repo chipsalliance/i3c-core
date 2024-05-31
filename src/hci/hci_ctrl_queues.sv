@@ -83,20 +83,20 @@ module hci_ctrl_queues
 );
 
   always_comb begin : gen_fifos_status_indicators
-    assign cmd_fifo_empty_o = ~|cmd_fifo_depth_o;
-    assign rx_fifo_empty_o = ~|rx_fifo_depth_o;
-    assign tx_fifo_empty_o = ~|tx_fifo_depth_o;
-    assign resp_fifo_empty_o = ~|resp_fifo_depth_o;
+    cmd_fifo_empty_o = ~|cmd_fifo_depth_o;
+    rx_fifo_empty_o = ~|rx_fifo_depth_o;
+    tx_fifo_empty_o = ~|tx_fifo_depth_o;
+    resp_fifo_empty_o = ~|resp_fifo_depth_o;
 
     // Queue approached the threshold
     // 'cmd_fifo_apch_thld' is raised with at least 'cmd_fifo_thld' empty entries available
-    assign cmd_fifo_apch_thld_o = CMD_FIFO_DEPTH - cmd_fifo_depth_o >= cmd_fifo_thld_i;
+    cmd_fifo_apch_thld_o = CMD_FIFO_DEPTH - cmd_fifo_depth_o >= cmd_fifo_thld_i;
     // 'rx_fifo_pch_thld' is raised with at least '2^(rx_fifo_thld+1)' entries enqueued
-    assign rx_fifo_apch_thld_o = rx_fifo_depth_o >= (1 << (rx_fifo_thld_i + 1));
+    rx_fifo_apch_thld_o = rx_fifo_depth_o >= (1 << (rx_fifo_thld_i + 1));
     // 'tx_fifo_apch_thld' is raised with at least '2^(tx_fifo_thld+1)' empty entries available
-    assign tx_fifo_apch_thld_o = TX_FIFO_DEPTH - tx_fifo_depth_o >= (1 << (tx_fifo_thld_i + 1));
+    tx_fifo_apch_thld_o = TX_FIFO_DEPTH - tx_fifo_depth_o >= (1 << (tx_fifo_thld_i + 1));
     // 'resp_fifo_apch_thld' is raised with at least 'resp_fifo_thld' entries enqueued
-    assign resp_fifo_apch_thld_o = resp_fifo_depth_o >= resp_fifo_thld_i;
+    resp_fifo_apch_thld_o = resp_fifo_depth_o >= resp_fifo_thld_i;
   end
 
   caliptra_prim_fifo_sync #(
