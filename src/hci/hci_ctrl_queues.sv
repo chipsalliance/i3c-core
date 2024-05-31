@@ -89,13 +89,13 @@ module hci_ctrl_queues
     assign resp_fifo_empty_o = ~|resp_fifo_depth_o;
 
     // Queue approached the threshold
-    // 'cmd_fifo_apch_thld' is raised when there's at least 'cmd_fifo_thld' empty entries available
+    // 'cmd_fifo_apch_thld' is raised with at least 'cmd_fifo_thld' empty entries available
     assign cmd_fifo_apch_thld_o = CMD_FIFO_DEPTH - cmd_fifo_depth_o >= cmd_fifo_thld_i;
-    // 'rx_fifo_pch_thld' is raised when there's at least '2^(rx_fifo_thld+1)' entries enqueued
+    // 'rx_fifo_pch_thld' is raised with at least '2^(rx_fifo_thld+1)' entries enqueued
     assign rx_fifo_apch_thld_o = rx_fifo_depth_o >= (1 << (rx_fifo_thld_i + 1));
-    // 'tx_fifo_apch_thld' is raised when there's at least '2^(tx_fifo_thld+1)' empty entries available
+    // 'tx_fifo_apch_thld' is raised with at least '2^(tx_fifo_thld+1)' empty entries available
     assign tx_fifo_apch_thld_o = TX_FIFO_DEPTH - tx_fifo_depth_o >= (1 << (tx_fifo_thld_i + 1));
-    // 'resp_fifo_apch_thld' is raised when there's at least 'resp_fifo_thld' entries enqueued
+    // 'resp_fifo_apch_thld' is raised with at least 'resp_fifo_thld' entries enqueued
     assign resp_fifo_apch_thld_o = resp_fifo_depth_o >= resp_fifo_thld_i;
   end
 

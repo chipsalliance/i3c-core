@@ -221,23 +221,27 @@ module hci
       tx_fifo_thld_o   <= $clog2(`TX_FIFO_DEPTH) - 1;
       resp_fifo_thld_o <= `RESP_FIFO_DEPTH - 1;
     end else begin
-      // Threshold for the CMD queue should be less or equal (<=) than CMD_FIFO_DEPTH
+      // Specified threshold for the CMD queue in 'QUEUE_THLD_CTRL'
+      // must be less or equal (<=) than CMD_FIFO_DEPTH.
       cmd_fifo_thld_o <= cmd_thld > `CMD_FIFO_DEPTH ? `CMD_FIFO_DEPTH : cmd_thld;
-      // Threshold for the RX queue should  decode to less (<) than RX_FIFO_DEPTH
-      // The actual threshold is calculated by 2^(rx_thld+1)
+      // Threshold for RX queue is 2^(rx_thld+1) where 'rx_thld' is the value specified
+      // in the 'DATA_BUFFER_THLD_CTRL' CSR.
+      // Threshold must be less (<) than RX_FIFO_DEPTH.
       if ((1 << (rx_thld + 1)) >= `RX_FIFO_DEPTH) begin
         rx_fifo_thld_o <= $clog2(`RX_FIFO_DEPTH) - 2;
       end else begin
         rx_fifo_thld_o <= rx_thld;
       end
-      // Threshold for the TX queue should  decode to less or equal (<=) than TX_FIFO_DEPTH
-      // The actual threshold is calculated by 2^(tx_thld+1)
+      // Threshold for TX queue is 2^(tx_thld+1) where 'tx_thld' is specified
+      // in the 'DATA_BUFFER_THLD_CTRL' CSR.
+      // Threshold must be less or equal (<=) than TX_FIFO_DEPTH.
       if ((1 << (tx_thld + 1)) > `TX_FIFO_DEPTH) begin
         tx_fifo_thld_o <= $clog2(`TX_FIFO_DEPTH) - 1;
       end else begin
         tx_fifo_thld_o <= tx_thld;
       end
-      // Threshold for the RESP queue should be less (<) than RESP_FIFO_DEPTH
+      // Specified threshold for the RESP queue in 'QUEUE_THLD_CTRL'
+      // must be less (<) than RESP_FIFO_DEPTH.
       resp_fifo_thld_o <= resp_thld >= `RESP_FIFO_DEPTH ? `RESP_FIFO_DEPTH - 1 : resp_thld;
     end
   end : populate_thld
