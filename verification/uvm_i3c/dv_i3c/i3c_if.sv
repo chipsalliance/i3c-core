@@ -135,6 +135,7 @@ interface i3c_if(
         disable fork;
       end : iso_fork
     join
+    wait(scl_io == 0);
     ack_r = ack && !nack;
   endtask: wait_for_device_ack_or_nack
 
@@ -258,6 +259,7 @@ interface i3c_if(
 
   task automatic host_i2c_start(ref i2c_timing_t tc);
     `DV_WAIT(scl_i === 1'b1,, scl_spinwait_timeout_ns, "host_start")
+    #(tc.tSetupStart * 1ns);
     sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
     scl_o = 1'b0;
@@ -265,6 +267,7 @@ interface i3c_if(
 
   task automatic host_i3c_start(ref i3c_timing_t tc);
     `DV_WAIT(scl_i === 1'b1,, scl_spinwait_timeout_ns, "host_start")
+    #(tc.tSetupStart * 1ns);
     sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
     scl_o = 1'b0;
@@ -292,7 +295,7 @@ interface i3c_if(
     end
 
     if (scl_i === 1'b1)
-      @(negedge scl_i)
+      @(negedge scl_i);
     sda_o = 1'b0;
     #(tc.tClockLow * 1ns);
     scl_o = 1'b1;
@@ -308,7 +311,7 @@ interface i3c_if(
     end
 
     if (scl_i === 1'b1)
-      @(negedge scl_i)
+      @(negedge scl_i);
     sda_o = 1'b0;
     if (!scl_pp_en) begin
       #(tc.tClockLowOD * 1ns);

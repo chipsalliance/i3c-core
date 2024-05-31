@@ -114,6 +114,13 @@ deps: ## Install python dependencies
 	pip install -r requirements.txt
 
 ifdef QUESTA_ROOT
+
+ifeq ($(GUI),1)
+ENABLE_GUI := "-gui"
+else
+ENABLE_GUI := ""
+endif
+
 define questa_run =
 	mkdir -p questa_run
 	$(QUESTA_ROOT)/linux_x86_64/qrun -optimize \
@@ -135,8 +142,8 @@ define questa_run =
 	+UVM_TESTNAME=$(5) \
 	+UVM_TEST_SEQ=$(6) \
 	-log questa_run/run.log \
-	-do $(4)
-	$(7)
+	-do $(4) \
+	$(7) $(ENABLE_GUI)
 endef
 
 uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
@@ -150,15 +157,25 @@ uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
 
 i3c-monitor-tests:
 	$(call questa_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
 		i3c_monitor_test_from_csv,,\
 		verification/uvm_i3c/questa_sim.tcl,,\
 		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv")
 	$(call questa_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
 		i3c_monitor_test_from_csv,,\
 		verification/uvm_i3c/questa_sim.tcl,,\
 		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv")
+
+i3c-driver-tests:
+	$(call questa_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_driver.sv,\
+		i3c_driver_test,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/,\
+		verification/uvm_i3c/questa_sim.tcl,,\
+	)
 endif
 
 ifdef VCS
