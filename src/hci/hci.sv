@@ -216,10 +216,10 @@ module hci
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : populate_thld
     if (!rst_ni) begin : populate_thld_rst
-      cmd_fifo_thld_o  <= `CMD_FIFO_DEPTH;
-      rx_fifo_thld_o   <= $clog2(`RX_FIFO_DEPTH) - 2;
-      tx_fifo_thld_o   <= $clog2(`TX_FIFO_DEPTH) - 1;
-      resp_fifo_thld_o <= `RESP_FIFO_DEPTH - 1;
+      cmd_fifo_thld_o  <= '0;
+      rx_fifo_thld_o   <= '0;
+      tx_fifo_thld_o   <= '0;
+      resp_fifo_thld_o <= '0;
     end else begin
       // Specified threshold for the CMD queue in 'QUEUE_THLD_CTRL'
       // must be less or equal (<=) than CMD_FIFO_DEPTH.
