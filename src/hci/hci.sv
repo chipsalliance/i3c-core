@@ -202,10 +202,10 @@ module hci
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : reset_control
     if (!rst_ni) begin : reset_control_rst
-      cmd_reset_ctrl_we  <= 0;
-      rx_reset_ctrl_we   <= 0;
-      tx_reset_ctrl_we   <= 0;
-      resp_reset_ctrl_we <= 0;
+      cmd_reset_ctrl_we  <= '0;
+      rx_reset_ctrl_we   <= '0;
+      tx_reset_ctrl_we   <= '0;
+      resp_reset_ctrl_we <= '0;
     end else begin
       cmd_reset_ctrl_we  <= cmdrst && cmd_fifo_empty_i;
       rx_reset_ctrl_we   <= rxrst && rx_fifo_empty_i;
@@ -276,19 +276,19 @@ module hci
     if (!rst_ni | rxrst) begin : rx_fifo_to_port_rst
       rx_fifo_rready_o <= '0;
       rx_rd_ack <= '0;
-      rx_rd_data <= 0;
-      rx_rd_valid <= 0;
+      rx_rd_data <= '0;
+      rx_rd_valid <= '0;
     end else begin : push_rx_to_port
       if (rx_fifo_rvalid_i && !rx_rd_valid) begin
         rx_rd_data  <= rx_fifo_rdata_i;
         rx_rd_valid <= 1;
       end else begin
-        rx_fifo_rready_o <= 0;
+        rx_fifo_rready_o <= '0;
       end
 
       if (rx_req && rx_rd_valid) begin
         rx_rd_ack   <= 1;
-        rx_rd_valid <= 0;
+        rx_rd_valid <= '0;
       end
     end : push_rx_to_port
   end : rx_fifo_to_port
@@ -307,21 +307,21 @@ module hci
 
   always_ff @(posedge clk_i or negedge rst_ni or posedge resprst) begin : resp_fifo_to_port
     if (!rst_ni | resprst) begin : resp_fifo_to_port_rst
-      resp_fifo_rready_o <= 0;
-      resp_rd_ack <= 0;
-      resp_rd_data <= 0;
-      resp_rd_valid <= 0;
+      resp_fifo_rready_o <= '0;
+      resp_rd_ack <= '0;
+      resp_rd_data <= '0;
+      resp_rd_valid <= '0;
     end else begin : push_resp_to_port
       if (resp_fifo_rvalid_i && !resp_rd_valid) begin
         resp_rd_data  <= resp_fifo_rdata_i;
         resp_rd_valid <= 1;
       end else begin
-        resp_fifo_rready_o <= 0;
+        resp_fifo_rready_o <= '0;
       end
 
       if (resp_req && resp_rd_valid) begin
         resp_rd_ack   <= 1;
-        resp_rd_valid <= 0;
+        resp_rd_valid <= '0;
       end
     end : push_resp_to_port
   end : resp_fifo_to_port
