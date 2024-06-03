@@ -3,6 +3,7 @@
 from random import randint
 
 import cocotb
+from bus2csr import dword2int, int2dword
 from cocotb.handle import SimHandleBase
 from hci import (
     RESET_CONTROL,
@@ -10,9 +11,8 @@ from hci import (
     ResponseDescriptor,
     immediate_transfer_descriptor,
 )
-from interface import HCIQueuesTestInterface
 
-from ahb_if import ahb_data_to_int, int_to_ahb_data
+from hci_queues import HCIQueuesTestInterface
 
 
 @cocotb.test()
@@ -27,10 +27,10 @@ async def run_clear_on_nonempty_resp_queue(dut: SimHandleBase):
     resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
     for _ in range(10):
         await tb.put_response_desc(resp)
-    await tb.write_csr(RESET_CONTROL, int_to_ahb_data(1 << 2), 4)
+    await tb.write_csr(RESET_CONTROL, int2dword(1 << 2), 4)
 
     # Respond queue reset bit should be cleared after successful soft reset
-    while ahb_data_to_int(await tb.read_csr(RESET_CONTROL, 4), 4):
+    while dword2int(await tb.read_csr(RESET_CONTROL, 4)):
         pass
 
     # Enqueue a new response & ensure no other response was in the FIFO
@@ -57,9 +57,9 @@ async def run_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
         # Command is expected to be sent over 2 transfers
         await tb.put_command_desc(cmd)
 
-    await tb.write_csr(RESET_CONTROL, int_to_ahb_data(1 << 1), 4)
+    await tb.write_csr(RESET_CONTROL, int2dword(1 << 1), 4)
     # Respond queue reset bit should be cleared after successful soft reset
-    while ahb_data_to_int(await tb.read_csr(RESET_CONTROL, 4), 4):
+    while dword2int(await tb.read_csr(RESET_CONTROL, 4)):
         pass
 
     # Enqueue a new command & ensure no other command was in the FIFO
@@ -81,10 +81,10 @@ async def run_clear_on_nonempty_rx_queue(dut: SimHandleBase):
 
     for _ in range(10):
         await tb.put_rx_data(randint(0, 4294967295))
-    await tb.write_csr(RESET_CONTROL, int_to_ahb_data(1 << 4), 4)
+    await tb.write_csr(RESET_CONTROL, int2dword(1 << 4), 4)
 
     # Respond queue reset bit should be cleared after successful soft reset
-    while ahb_data_to_int(await tb.read_csr(RESET_CONTROL, 4), 4):
+    while dword2int(await tb.read_csr(RESET_CONTROL, 4)):
         pass
 
     # Enqueue a new response & ensure no other response was in the FIFO
@@ -107,9 +107,9 @@ async def run_clear_on_nonempty_tx_queue(dut: SimHandleBase):
     for _ in range(10):
         await tb.put_tx_data()
 
-    await tb.write_csr(RESET_CONTROL, int_to_ahb_data(1 << 3), 4)
+    await tb.write_csr(RESET_CONTROL, int2dword(1 << 3), 4)
     # Respond queue reset bit should be cleared after successful soft reset
-    while ahb_data_to_int(await tb.read_csr(RESET_CONTROL, 4), 4):
+    while dword2int(await tb.read_csr(RESET_CONTROL, 4)):
         pass
 
     # Enqueue a new command & ensure no other command was in the FIFO

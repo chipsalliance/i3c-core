@@ -4,28 +4,52 @@ from dataclasses import dataclass
 from enum import IntEnum
 from random import randint
 
+from bus2csr import FrontBusTestInterface, dword2int, int2dword
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
-
-from ahb_if import AHBFIFOTestInterface, ahb_data_to_int, int_to_ahb_data
 
 # TODO: obtain numbers from RDL description
 
 # DAT and DCT tables
-PIO_ADDR = 0x080
+PIO_ADDR = 0x80
 DAT_ADDR = 0x400
 DCT_ADDR = 0x800
 
-RESET_CONTROL = 0x10
-#
+# Default register values
+HCI_VERSION_v1_2_VALUE = 0x120
+
+# Base registers
+HCI_VERSION = 0x0
+HC_CONTROL = 0x4 * 1
+CONTROLLER_DEVICE_ADDR = 0x4 * 2
+HC_CAPABILITIES = 0x4 * 3
+RESET_CONTROL = 0x4 * 4
+DAT_SECTION_OFFSET = 0x4 * 12
+DCT_SECTION_OFFSET = 0x4 * 13
+PIO_SECTION_OFFSET = 0x4 * 15
+INT_CTRL_CMDS_EN = 0x4 * 19
+
+# PIO registers
 CMD_PORT = PIO_ADDR
-RESP_PORT = PIO_ADDR + (0x04) * 1
-RX_PORT = PIO_ADDR + (0x04) * 2
-TX_PORT = PIO_ADDR + (0x04) * 2
-QUEUE_THLD_CTRL = PIO_ADDR + (0x04) * 4
-DATA_BUFFER_THLD_CTRL = PIO_ADDR + (0x04) * 5
-QUEUE_SIZE = PIO_ADDR + (0x04) * 6
-ALT_QUEUE_SIZE = PIO_ADDR + (0x04) * 7
+RESP_PORT = PIO_ADDR + 0x04 * 1
+RX_PORT = PIO_ADDR + 0x04 * 2
+TX_PORT = PIO_ADDR + 0x04 * 2
+QUEUE_THLD_CTRL = PIO_ADDR + 0x04 * 4
+DATA_BUFFER_THLD_CTRL = PIO_ADDR + 0x04 * 5
+QUEUE_SIZE = PIO_ADDR + 0x04 * 6
+ALT_QUEUE_SIZE = PIO_ADDR + 0x04 * 7
+PIO_INTR_STATUS_ENABLE = PIO_ADDR + 0x4 * 9
+PIO_INTR_SIGNAL_ENABLE = PIO_ADDR + 0x4 * 10
+PIO_CONTROL = PIO_ADDR + 0x4 * 12
+
+# Reset values
+HC_CONTROL_RESET = 0x1 << 6
+DAT_SECTION_OFFSET_RESET = 0x7F << 12 | DAT_ADDR
+DCT_SECTION_OFFSET_RESET = 0x7F << 12 | DCT_ADDR
+INT_CTRL_CMDS_EN_RESET = 0x35 << 1 | 0x1
+QUEUE_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
+DATA_BUFFER_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
+QUEUE_SIZE_RESET = 0x5 << 24 | 0x5 << 16 | 0x40 << 8 | 0x40
 
 
 @dataclass
@@ -175,22 +199,24 @@ class HCIBaseTestInterface:
         self.queue_names = ["cmd", "tx", "rx", "resp"]
         self.status_indicators = ["thld", "full", "empty", "apch_thld"]
 
-    async def _setup(self):
-        self.ahb_if = AHBFIFOTestInterface(self.dut)
-        await self.ahb_if.register_test_interfaces()
+    async def _setup(self, busIfType: FrontBusTestInterface):
+        self.busIf = busIfType(self.dut)
+        self.clk = self.busIf.clk
+        self.rst_n = self.busIf.rst_n
+        await self.busIf.register_test_interfaces()
         # Borrow CSR access methods
-        self.read_csr = self.ahb_if.read_csr
-        self.write_csr = self.ahb_if.write_csr
+        self.read_csr = self.busIf.read_csr
+        self.write_csr = self.busIf.write_csr
 
         await self._reset()
 
     async def _reset(self):
-        self.dut.hreset_n.value = 0
-        await ClockCycles(self.dut.hclk, 10)
-        await RisingEdge(self.dut.hclk)
+        self.rst_n.value = 0
+        await ClockCycles(self.clk, 10)
+        await RisingEdge(self.clk)
         await Timer(1, units="ns")
-        self.dut.hreset_n.value = 1
-        await RisingEdge(self.dut.hclk)
+        self.rst_n.value = 1
+        await RisingEdge(self.clk)
 
     def get_empty(self, queue: str):
         return getattr(self.dut, f"{queue}_fifo_empty_o").value
@@ -207,15 +233,15 @@ class HCIBaseTestInterface:
     # Helper functions to fetch / put data to either side
     # of the queues
     async def get_response_desc(self) -> int:
-        return ahb_data_to_int(await self.read_csr(RESP_PORT, 4))
+        return dword2int(await self.read_csr(RESP_PORT, 4))
 
     async def put_command_desc(self, desc: int = None) -> None:
         # If descriptor is not passed, utilize the default
         if not desc:
             desc = immediate_transfer_descriptor(0, 0, 0, 0, 1, 0, 0, 1, 1, 0xBEEF).to_int()
 
-        cmd0 = int_to_ahb_data(desc & 0xFFFFFFFF)
-        cmd1 = int_to_ahb_data((desc >> 32) & 0xFFFFFFFF)
+        cmd0 = int2dword(desc & 0xFFFFFFFF)
+        cmd1 = int2dword((desc >> 32) & 0xFFFFFFFF)
 
         # Command is expected to be sent over 2 transfers
         await self.write_csr(CMD_PORT, cmd0, 4)
@@ -224,10 +250,10 @@ class HCIBaseTestInterface:
     async def put_tx_data(self, tx_data: int = None):
         if not tx_data:
             tx_data = randint(0, 2**32 - 1)
-        await self.write_csr(TX_PORT, int_to_ahb_data(tx_data), 4)
+        await self.write_csr(TX_PORT, int2dword(tx_data), 4)
 
     async def get_rx_data(self) -> int:
-        return ahb_data_to_int(await self.read_csr(RX_PORT, 4))
+        return dword2int(await self.read_csr(RX_PORT, 4))
 
     async def write_dat_entry(self, index, entry):
         if isinstance(entry, dat_entry):
@@ -236,7 +262,5 @@ class HCIBaseTestInterface:
             self.dut._log.error("DAT entry must be either `integer` or `dat_entry` type")
 
         self.dut._log.debug(f"Writing {hex(entry)} to DAT entry {index}")
-        await self.write_csr(DAT_ADDR + index * 8, int_to_ahb_data(entry & 0xFFFFFFFF), 4)
-        await self.write_csr(
-            DAT_ADDR + index * 8 + 4, int_to_ahb_data((entry >> 32) & 0xFFFFFFFF), 4
-        )
+        await self.write_csr(DAT_ADDR + index * 8, int2dword(entry & 0xFFFFFFFF), 4)
+        await self.write_csr(DAT_ADDR + index * 8 + 4, int2dword((entry >> 32) & 0xFFFFFFFF), 4)

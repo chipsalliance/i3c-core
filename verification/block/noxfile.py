@@ -169,7 +169,20 @@ def ahb_if_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
-@nox.parametrize("blockName", ["hci_queues"])
+@nox.parametrize("blockName", ["axi_adapter"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_csr_sw_access",
+    ],
+)
+@nox.parametrize("coverage", None)
+def axi_adapter_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["hci_queues_ahb"])
 @nox.parametrize(
     "testName",
     [
@@ -180,7 +193,23 @@ def ahb_if_verify(session, blockName, testName, coverage):
     ],
 )
 @nox.parametrize("coverage", None)
-def hci_queues_verify(session, blockName, testName, coverage):
+def hci_queues_ahb_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["hci_queues_axi"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_clear",
+        "test_empty",
+        "test_read_write_ports",
+        "test_threshold",
+    ],
+)
+@nox.parametrize("coverage", None)
+def hci_queues_axi_verify(session, blockName, testName, coverage):
     verify_block(session, blockName, testName, coverage)
 
 

@@ -3,13 +3,13 @@
 from random import randint
 
 import cocotb
+from bus2csr import dword2int, int2dword
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge
 from hci import DATA_BUFFER_THLD_CTRL, QUEUE_THLD_CTRL
-from interface import HCIQueuesTestInterface
 from utils import clog2
 
-from ahb_if import ahb_data_to_int, int_to_ahb_data
+from hci_queues import HCIQueuesTestInterface
 
 
 class QueueThldHandler:
@@ -41,15 +41,15 @@ class QueueThldHandler:
 
     async def set_new_thld(self, tb, new_thld):
         thld_field_mask = 2**self.thld_reg_field_size - 1
-        prev_thld_reg = ahb_data_to_int(await tb.read_csr(self.thld_reg_addr, 4))
+        prev_thld_reg = dword2int(await tb.read_csr(self.thld_reg_addr, 4))
         clear_q_prev_thld = prev_thld_reg & ~(thld_field_mask << self.thld_field_off)
-        new_thld_reg_value = int_to_ahb_data(clear_q_prev_thld | (new_thld << self.thld_field_off))
+        new_thld_reg_value = int2dword(clear_q_prev_thld | (new_thld << self.thld_field_off))
         await tb.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
 
     async def get_curr_thld(self, tb):
         thld_field_mask = 2**self.thld_reg_field_size - 1
         reg_value = await tb.read_csr(self.thld_reg_addr, 4)
-        return (ahb_data_to_int(reg_value) >> self.thld_field_off) & thld_field_mask
+        return (dword2int(reg_value) >> self.thld_field_off) & thld_field_mask
 
     def get_thld_in_entries(self, thld):
         return thld
@@ -124,7 +124,7 @@ async def should_setup_threshold(dut: SimHandleBase, q: QueueThldHandler):
     # Setup threshold through appropriate register
     await q.set_new_thld(tb, thld)
 
-    await ClockCycles(dut.hclk, 5)
+    await ClockCycles(tb.clk, 5)
 
     # Ensure the register reads appropriate value
     read_thld = await q.get_curr_thld(tb)
@@ -134,7 +134,7 @@ async def should_setup_threshold(dut: SimHandleBase, q: QueueThldHandler):
         f"Expected {thld} retrieved {read_thld}."
     )
 
-    await RisingEdge(dut.hclk)
+    await RisingEdge(tb.clk)
 
     # Check if the threshold signal is properly propagated onto thld_o signal
     s_thld = tb.get_thld(q.name)
@@ -142,7 +142,7 @@ async def should_setup_threshold(dut: SimHandleBase, q: QueueThldHandler):
         f"The thld signal doesn't reflect the CSR-defined value. "
         f"Expected {expected_thld} got {s_thld.integer}."
     )
-    await RisingEdge(dut.hclk)
+    await RisingEdge(tb.clk)
 
 
 @cocotb.test()
@@ -186,7 +186,7 @@ async def should_raise_apch_thld_receiver(dut: SimHandleBase, q: QueueThldHandle
     for _ in range(thld - 1):
         await q.enqueue(tb)
 
-    await ClockCycles(dut.hclk, 5)
+    await ClockCycles(tb.clk, 5)
 
     s_apch_thld = tb.get_apch_thld(q.name)
 
@@ -198,7 +198,7 @@ async def should_raise_apch_thld_receiver(dut: SimHandleBase, q: QueueThldHandle
 
     # Reach the threshold
     await q.enqueue(tb)
-    await RisingEdge(dut.hclk)
+    await RisingEdge(tb.clk)
 
     # Verify the `apch_thld` is risen just after reaching the threshold
     s_apch_thld = tb.get_apch_thld(q.name)
@@ -251,7 +251,7 @@ async def should_raise_apch_thld_transmitter(dut: SimHandleBase, q: QueueThldHan
     # Leave threshold - 1 entries in the queue
     for _ in range(qsize - thld + 1):
         await q.enqueue(tb)
-    await ClockCycles(dut.hclk, 5)
+    await ClockCycles(tb.clk, 5)
 
     # The `apch_thld` should stop being reported when there's less than thld empty entries
     s_apch_thld = tb.get_apch_thld(q.name)

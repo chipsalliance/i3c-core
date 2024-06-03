@@ -2,6 +2,9 @@
 
 from random import randint
 
+# AHBTestInterface and AXITestInterface imports are used with the search
+# for appropriate TestInterface in `get_frontend_bus_if`
+from bus2csr import bytes2int, get_frontend_bus_if
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge
 from hci import (
@@ -11,9 +14,7 @@ from hci import (
     HCIBaseTestInterface,
     ResponseDescriptor,
 )
-from utils import expect_with_timeout
-
-from ahb_if import ahb_data_to_int
+from utils import expect_with_timeout, mask_bits
 
 
 class HCIQueuesTestInterface(HCIBaseTestInterface):
@@ -21,7 +22,7 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         super().__init__(dut)
 
     async def setup(self):
-        await self._setup()
+        await super()._setup(get_frontend_bus_if())
 
         # Set queue's ready to 0 (hold accepting the data)
         self.dut.cmd_fifo_rready_i.value = 0
@@ -33,15 +34,15 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
     async def read_queue_size(self, queue: str):
         # Queue size offsets in appropriate registers
         off = {"rx": 16, "tx": 24, "cmd": 0, "resp": 0}
-        queue_size = ahb_data_to_int(await self.read_csr(QUEUE_SIZE, 4))
+        queue_size = bytes2int(await self.read_csr(QUEUE_SIZE, 4))
         if queue in ["rx", "tx"]:
             return 2 ** (((queue_size >> off[queue]) & 0x7) + 1)
         if queue == "cmd":
-            return (queue_size >> off[queue]) & 0xFF
+            return (queue_size >> off[queue]) & mask_bits(8)
         # Size of the response queue
-        alt_queue_size = ahb_data_to_int(await self.read_csr(ALT_QUEUE_SIZE, 4))
-        cr_size = queue_size & 0xFF
-        alt_resp_size = alt_queue_size & 0xFF
+        alt_queue_size = bytes2int(await self.read_csr(ALT_QUEUE_SIZE, 4))
+        cr_size = queue_size & mask_bits(8)
+        alt_resp_size = alt_queue_size & mask_bits(8)
         alt_resp_en = (alt_queue_size >> 24) & 0x1
         return alt_resp_size if alt_resp_en else cr_size
 
@@ -65,21 +66,21 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.resp_fifo_wdata_i.value = resp
         self.dut.resp_fifo_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
-        await RisingEdge(self.dut.hclk)
-        await expect_with_timeout(self.dut.resp_fifo_wready_o, True, self.dut.hclk, timeout, units)
+        await RisingEdge(self.clk)
+        await expect_with_timeout(self.dut.resp_fifo_wready_o, True, self.clk, timeout, units)
         self.dut.resp_fifo_wvalid_i.value = 0
 
     async def get_command_desc(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.cmd_fifo_rready_i.value = 1
-        await RisingEdge(self.dut.hclk)
-        await expect_with_timeout(self.dut.cmd_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
+        await RisingEdge(self.clk)
+        await expect_with_timeout(self.dut.cmd_fifo_rvalid_o, True, self.clk, timeout, units)
         self.dut.cmd_fifo_rready_i.value = 0
         return self.dut.cmd_fifo_rdata_o.value.integer
 
     async def get_tx_data(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.tx_fifo_rready_i.value = 1
-        await RisingEdge(self.dut.hclk)
-        await expect_with_timeout(self.dut.tx_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
+        await RisingEdge(self.clk)
+        await expect_with_timeout(self.dut.tx_fifo_rvalid_o, True, self.clk, timeout, units)
         self.dut.tx_fifo_rready_i.value = 0
         return self.dut.tx_fifo_rdata_o.value.integer
 
@@ -89,6 +90,6 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.rx_fifo_wdata_i.value = rx_data
         self.dut.rx_fifo_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
-        await RisingEdge(self.dut.hclk)
-        await expect_with_timeout(self.dut.rx_fifo_wready_o, True, self.dut.hclk, timeout, units)
+        await RisingEdge(self.clk)
+        await expect_with_timeout(self.dut.rx_fifo_wready_o, True, self.clk, timeout, units)
         self.dut.rx_fifo_wvalid_i.value = 0

@@ -53,7 +53,7 @@ endif
 # I3C configuration
 #
 CFG_FILE ?= i3c_core_configs.yaml
-CFG_NAME ?= default
+CFG_NAME ?= ahb
 CFG_GEN = $(ROOT_DIR)/tools/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files

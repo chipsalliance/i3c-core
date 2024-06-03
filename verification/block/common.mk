@@ -11,7 +11,7 @@ CFGDIR :=
 CONFIG :=
 
 # Set pythonpath so that tests can access common modules
-export PYTHONPATH := $(CURDIR)/common
+export PYTHONPATH := $(CURDIR)/common:$(CURDIR)/lib_hci_queues:$(CURDIR)/lib_adapter
 
 # Common sources
 COMMON_SOURCES  = \
@@ -24,7 +24,8 @@ COMMON_SOURCES  = \
 COMMON_INCLUDES = \
     -I$(CALIPTRA_ROOT)/src/libs/rtl \
     -I$(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
-    -I$(I3C_ROOT)/src
+    -I$(I3C_ROOT)/src \
+    -I$(I3C_ROOT)/src/libs/axi
 
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 

@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from math import ceil, log2
+from random import randint
 
 import cocotb
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, with_timeout
@@ -31,3 +32,15 @@ async def expect_with_timeout(signal, expected, clk, timeout: int = 2, units: st
 
     # Apply timeout
     await with_timeout(wait_cond(), timeout, units)
+
+
+def rand_bits(width):
+    return randint(1, 2 ** (width - 1) - 1)
+
+
+def rand_bits32():
+    return rand_bits(32)
+
+
+def mask_bits(width):
+    return 2**width - 1

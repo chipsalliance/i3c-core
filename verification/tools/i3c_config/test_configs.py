@@ -55,13 +55,21 @@ def tool(request):
     return request.param
 
 
-def test_happy_path_cmdline(tool):
+@pytest.fixture(
+    params=["ahb", "axi"],
+    ids=["ahb", "axi"],
+)
+def supported_config(request):
+    return request.param
+
+
+def test_happy_path_cmdline(supported_config, tool):
     """
-    Invokes valid `default` configuration from `i3c_core_configs` in project's
+    Invokes valid default configurations from `i3c_core_configs` in project's
     root directory and validates options output to command line in accordance
     to pre declared option patterns in `Opts`.
     """
-    out = run_and_capture_output("default", "i3c_core_configs.yaml", tool.opts_arg)
+    out = run_and_capture_output(supported_config, "i3c_core_configs.yaml", tool.opts_arg)
     assert tool.is_valid_opts(out)
 
 
