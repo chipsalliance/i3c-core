@@ -5,6 +5,7 @@ from random import randint
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge
 from hci import ErrorStatus, HCIBaseTestInterface, ResponseDescriptor
+from utils import expect_with_timeout
 
 from ahb_if import ahb_data_to_int
 
@@ -54,38 +55,34 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
 
     # Helper functions to fetch / put data to either side
     # of the queues
-    async def put_response_desc(self, resp: int = None):
+    async def put_response_desc(self, resp: int = None, timeout: int = 2, units: str = "ms"):
         if not resp:
             resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
         self.dut.resp_fifo_wdata_i.value = resp
         self.dut.resp_fifo_wvalid_i.value = 1
-        while True:
-            await RisingEdge(self.dut.hclk)
-            if self.dut.resp_fifo_wready_o.value:
-                break
+        # In case ready is already set, assert valid at the next rising edge
+        await RisingEdge(self.dut.hclk)
+        await expect_with_timeout(self.dut.resp_fifo_wready_o, True, self.dut.hclk, timeout, units)
         self.dut.resp_fifo_wvalid_i.value = 0
 
-    async def get_command_desc(self) -> int:
+    async def get_command_desc(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.cmd_fifo_rready_i.value = 1
-        while not self.dut.cmd_fifo_rvalid_o.value:
-            await RisingEdge(self.dut.hclk)
+        await expect_with_timeout(self.dut.cmd_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
         self.dut.cmd_fifo_rready_i.value = 0
         return self.dut.cmd_fifo_rdata_o.value.integer
 
-    async def get_tx_data(self) -> int:
+    async def get_tx_data(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.tx_fifo_rready_i.value = 1
-        while not self.dut.tx_fifo_rvalid_o.value:
-            await RisingEdge(self.dut.hclk)
+        await expect_with_timeout(self.dut.tx_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
         self.dut.tx_fifo_rready_i.value = 0
         return self.dut.tx_fifo_rdata_o.value.integer
 
-    async def put_rx_data(self, rx_data: int = None):
+    async def put_rx_data(self, rx_data: int = None, timeout: int = 2, units: str = "ms"):
         if not rx_data:
             rx_data = randint(0, 2**32 - 1)
         self.dut.rx_fifo_wdata_i.value = rx_data
         self.dut.rx_fifo_wvalid_i.value = 1
-        while True:
-            await RisingEdge(self.dut.hclk)
-            if self.dut.rx_fifo_wready_o.value:
-                break
+        # In case ready is already set, assert valid at the next rising edge
+        await RisingEdge(self.dut.hclk)
+        await expect_with_timeout(self.dut.rx_fifo_wready_o, True, self.dut.hclk, timeout, units)
         self.dut.rx_fifo_wvalid_i.value = 0

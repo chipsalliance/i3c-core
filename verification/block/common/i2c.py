@@ -1,14 +1,40 @@
 # SPDX-License-Identifier: Apache-2.0
 
-from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
+from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge, with_timeout
 
 I3C_PHY_DELAY = 2
 
 
-async def i2c_cmd(dut, data, sta_before=False, sto_after=False, read=False, cont=False, ack=True):
+async def i2c_cmd(
+    dut,
+    data,
+    sta_before=False,
+    sto_after=False,
+    read=False,
+    cont=False,
+    ack=True,
+    timeout: int = 2,
+    units: str = "ms",
+):
     """
     Issues a command to the FSM. Returns (ack, data) tuple
     """
+
+    async def issue_command():
+        resp_ack = True
+        while True:
+            await RisingEdge(dut.clk_i)
+
+            if dut.rx_fifo_wvalid_o.value:
+                resp_dat.append(int(dut.rx_fifo_wdata_o.value))
+
+            if dut.event_nak_o.value:
+                resp_ack = False
+
+            if dut.fmt_fifo_rready_o.value:
+                dut.fmt_fifo_rvalid_i.value = 0
+                break
+        return resp_ack
 
     await RisingEdge(dut.clk_i)
 
@@ -24,19 +50,7 @@ async def i2c_cmd(dut, data, sta_before=False, sto_after=False, read=False, cont
     resp_dat = []
 
     # Issue the command
-    while True:
-
-        await RisingEdge(dut.clk_i)
-
-        if dut.rx_fifo_wvalid_o.value:
-            resp_dat.append(int(dut.rx_fifo_wdata_o.value))
-
-        if dut.event_nak_o.value:
-            resp_ack = False
-
-        if dut.fmt_fifo_rready_o.value:
-            dut.fmt_fifo_rvalid_i.value = 0
-            break
+    resp_ack = await with_timeout(issue_command(), timeout, units)
 
     return resp_ack, resp_dat
 

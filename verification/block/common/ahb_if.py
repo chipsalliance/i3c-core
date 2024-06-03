@@ -7,7 +7,7 @@ from typing import List, Tuple
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandle, SimHandleBase
-from cocotb.triggers import ClockCycles, RisingEdge, Timer
+from cocotb.triggers import ClockCycles, RisingEdge, Timer, with_timeout
 from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper
 from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate
 from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager
@@ -79,21 +79,23 @@ class AHBFIFOTestInterface:
         await cocotb.start(self.wrapper.start())
         await cocotb.start(setup_dut(self.dut, (10, "ns")))
 
-    async def read_csr(self, addr: int, size: int = 4) -> List[int]:
-        """Send a read request & await the response."""
+    async def read_csr(
+        self, addr: int, size: int = 4, timeout: int = 2, units: str = "ms"
+    ) -> List[int]:
+        """Send a read request & await the response for 'timeout' in 'units'."""
         self.AHBManager.read(addr, size)
-        # TODO: Make await dependent on clock cycles; throw error with timeouts
-        await self.AHBManager.transfer_done()
+        await with_timeout(self.AHBManager.transfer_done(), timeout, units)
         read = self.AHBManager.get_rsp(addr, self.data_byte_width)
         return read
 
-    async def write_csr(self, addr: int, data: List[int], size: int = 4) -> None:
-        """Send a write request & await transfer to finish."""
+    async def write_csr(
+        self, addr: int, data: List[int], size: int = 4, timeout: int = 2, units: str = "ms"
+    ) -> None:
+        """Send a write request & await transfer to finish for 'timeout' in 'units'."""
         # Write strobe is not supported by DUT's AHB-Lite; enable all bytes
         strb = [1 for _ in range(size)]
         self.AHBManager.write(addr, len(strb), data, strb)
-        # TODO: Make await dependent on clock cycles
-        await self.AHBManager.transfer_done()
+        await with_timeout(self.AHBManager.transfer_done(), timeout, units)
 
 
 def compare_values(expected: List[int], actual: List[int], addr: int):

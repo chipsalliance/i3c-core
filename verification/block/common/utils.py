@@ -3,7 +3,7 @@
 from math import ceil, log2
 
 import cocotb
-from cocotb.triggers import ClockCycles, ReadOnly
+from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, with_timeout
 
 
 def get_current_time_ns():
@@ -22,3 +22,12 @@ async def check_delayed(clock, signal, expected, delay):
 
 def clog2(val: int):
     return ceil(log2(val))
+
+
+async def expect_with_timeout(signal, expected, clk, timeout: int = 2, units: str = "ms"):
+    async def wait_cond():
+        while signal.value != expected:
+            await RisingEdge(clk)
+
+    # Apply timeout
+    await with_timeout(wait_cond(), timeout, units)
