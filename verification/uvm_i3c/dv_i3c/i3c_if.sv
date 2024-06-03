@@ -13,8 +13,10 @@ interface i3c_if(
   logic scl_o = 1'b1;
   logic scl_pp_en = 1'b0;
   logic sda_i;
-  logic sda_o = 1'b1;
-  logic sda_pp_en = 1'b0;
+  logic host_sda_o = 1'b1;
+  logic host_sda_pp_en = 1'b0;
+  logic device_sda_o = 1'b1;
+  logic device_sda_pp_en = 1'b0;
 
   assign scl_i = scl_io;
   assign sda_i = sda_io;
@@ -23,9 +25,12 @@ interface i3c_if(
     scl_o : (scl_o ?
       1'bz : scl_o);
   assign (highz0, weak1) scl_io = 1'b1;
-  assign sda_io = sda_pp_en ?
-    sda_o : (sda_o ?
-      1'bz : sda_o);
+  assign sda_io = host_sda_pp_en ?
+    host_sda_o : (host_sda_o ?
+      1'bz : host_sda_o);
+  assign sda_io = device_sda_pp_en ?
+    device_sda_o : (device_sda_o ?
+      1'bz : device_sda_o);
   assign (highz0, weak1) sda_io = 1'b1;
 
   string msg_id = "i3c_if";
@@ -39,9 +44,11 @@ interface i3c_if(
     input scl_i;
     input sda_i;
     output scl_o;
-    output sda_o;
+    output host_sda_o;
+    output device_sda_o;
     output scl_pp_en;
-    output sda_pp_en;
+    output host_sda_pp_en;
+    output device_sda_pp_en;
   endclocking
 
   //---------------------------------
@@ -218,10 +225,9 @@ interface i3c_if(
   endtask: wait_for_host_nack
 
 
-  task automatic wait_for_host_ack_or_nack(output bit   ack,
-                                           output bit   nack);
-    ack = 1'b0;
-    nack = 1'b0;
+  task automatic wait_for_host_ack_or_nack(output bit   ack_r);
+    bit ack = 1'b0;
+    bit nack = 1'b0;
     fork
       begin : iso_fork
         fork
@@ -237,6 +243,8 @@ interface i3c_if(
         disable fork;
       end : iso_fork
     join
+    wait(scl_io == 0);
+    ack_r = ack && !nack;
   endtask: wait_for_host_ack_or_nack
 
   task automatic time_check(input int delay, input bit exp_value, ref check_wire, input string msg);
@@ -260,7 +268,7 @@ interface i3c_if(
   task automatic host_i2c_start(ref i2c_timing_t tc);
     `DV_WAIT(scl_i === 1'b1,, scl_spinwait_timeout_ns, "host_start")
     #(tc.tSetupStart * 1ns);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
     scl_o = 1'b0;
   endtask: host_i2c_start
@@ -268,15 +276,22 @@ interface i3c_if(
   task automatic host_i3c_start(ref i3c_timing_t tc);
     `DV_WAIT(scl_i === 1'b1,, scl_spinwait_timeout_ns, "host_start")
     #(tc.tSetupStart * 1ns);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
     scl_o = 1'b0;
   endtask: host_i3c_start
 
+  task automatic device_i3c_start(ref i3c_timing_t tc);
+    `DV_WAIT(scl_i === 1'b1,, scl_spinwait_timeout_ns, "host_start")
+    #(tc.tSetupStart * 1ns);
+    device_sda_o = 1'b0;
+    #(tc.tHoldStart * 1ns);
+  endtask: device_i3c_start
+
   task automatic host_i2c_rstart(ref i2c_timing_t tc);
     @(posedge scl_i && sda_i);
     #(tc.tSetupStart * 1ns);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
     #(tc.tHoldBit * 1ns);
   endtask: host_i2c_rstart
@@ -284,7 +299,7 @@ interface i3c_if(
   task automatic host_i3c_rstart(ref i3c_timing_t tc);
     @(posedge scl_i && sda_i);
     #(tc.tSetupStart * 1ns);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     #(tc.tHoldRStart * 1ns);
     #(tc.tHoldBit * 1ns);
   endtask: host_i3c_rstart
@@ -296,12 +311,12 @@ interface i3c_if(
 
     if (scl_i === 1'b1)
       @(negedge scl_i);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     #(tc.tClockLow * 1ns);
     scl_o = 1'b1;
     wait(scl_i === 1'b1);
     #(tc.tSetupStop * 1ns);
-    sda_o = 1'b1;
+    host_sda_o = 1'b1;
     #(tc.tHoldStop * 1ns);
   endtask: host_i2c_stop
 
@@ -312,7 +327,7 @@ interface i3c_if(
 
     if (scl_i === 1'b1)
       @(negedge scl_i);
-    sda_o = 1'b0;
+    host_sda_o = 1'b0;
     if (!scl_pp_en) begin
       #(tc.tClockLowOD * 1ns);
     end else begin
@@ -321,41 +336,41 @@ interface i3c_if(
     scl_o = 1'b1;
     wait(scl_i === 1'b1);
     #(tc.tSetupStop * 1ns);
-    sda_o = 1'b1;
+    host_sda_o = 1'b1;
     #(tc.tHoldStop * 1ns);
   endtask: host_i3c_stop
 
   task automatic host_i2c_data(input i2c_timing_t tc, input bit bit_i);
     wait(scl_i === 1'b0);
-    sda_o = bit_i;
+    host_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I2C host bit setup");
     time_check(tc.tClockPulse, 1'b0, scl_i, "I2C host bit clock high pulse width");
     #(tc.tHoldBit * 1ns);
-    sda_o = 1;
+    host_sda_o = 1;
   endtask: host_i2c_data
 
   task automatic host_i3c_data(input i3c_timing_t tc, input bit bit_i);
     wait(scl_i === 1'b0);
-    sda_o = bit_i;
+    host_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I3C host bit setup");
     time_check(tc.tClockPulse, 1'b0, scl_i, "I3C host bit clock high pulse width");
     #(tc.tHoldBit * 1ns);
-    sda_o = 1;
+    host_sda_o = 1;
   endtask: host_i3c_data
 
   task automatic device_i2c_send_bit(ref i2c_timing_t tc,
                                  input bit bit_i);
-    sda_o = 1'b1;
+    device_sda_o = 1'b1;
     wait(!scl_i);
     `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
-    sda_o = bit_i;
+    device_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I2C device bit setup");
     `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
     // Hold the bit steady for the rest of the clock low time.
     time_check(tc.tClockPulse, 1'b0, scl_i, "I2C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
     #(tc.tHoldBit * 1ns);
-    sda_o = 1'b1;
+    device_sda_o = 1'b1;
   endtask: device_i2c_send_bit
 
   task automatic device_i2c_send_ack(ref i2c_timing_t tc);
@@ -365,5 +380,20 @@ interface i3c_if(
   task automatic device_i2c_send_nack(ref i2c_timing_t tc);
     device_i2c_send_bit(tc, 1'b1);
   endtask: device_i2c_send_nack
+
+  task automatic device_i3c_send_bit(ref i3c_timing_t tc,
+                                 input bit bit_i);
+    device_sda_o = 1'b1;
+    wait(!scl_i);
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    device_sda_o = bit_i;
+    time_check(tc.tSetupBit, 1'b1, scl_i, "I2C device bit setup");
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    // Hold the bit steady for the rest of the clock low time.
+    time_check(tc.tClockPulse, 1'b0, scl_i, "I2C device bit clock high pulse width");
+    // Hold the bit past SCL going low, then release.
+    #(tc.tHoldBit * 1ns);
+    device_sda_o = 1'b1;
+  endtask: device_i3c_send_bit
 
 endinterface : i3c_if

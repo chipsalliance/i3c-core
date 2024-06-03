@@ -192,7 +192,6 @@ class i3c_monitor extends uvm_monitor;
     transaction.stop   = 1'b0;
     transaction.rstart = 1'b0;
     transaction.ack    = 1'b0;
-    transaction.nack   = 1'b0;
     // Sample CCC value
     ccc_get_value(transaction, temp_val);
     transaction = temp_val;
@@ -422,7 +421,6 @@ class i3c_monitor extends uvm_monitor;
     transaction.stop   = 1'b0;
     transaction.rstart = 1'b0;
     transaction.ack    = 1'b0;
-    transaction.nack   = 1'b0;
     while (!transaction.stop && !transaction.rstart) begin
       // sample read data
       for (int i = 7; i >= 0; i--) begin
@@ -435,13 +433,12 @@ class i3c_monitor extends uvm_monitor;
       `uvm_info(get_full_name(), $sformatf("\nmonitor, rd_data, trans %0d, byte %0d 0x%0x",
           transaction.tran_id, transaction.num_data, mon_data), UVM_HIGH)
       // sample host ack/nack (in the last byte, nack can be issue if rcont is set)
-      cfg.vif.wait_for_host_ack_or_nack(transaction.ack, transaction.nack);
-      transaction.data_ack_q.push_back(transaction.ack && !transaction.nack);
-      `DV_CHECK_NE_FATAL({transaction.ack, transaction.nack}, 2'b11)
+      cfg.vif.wait_for_host_ack_or_nack(transaction.ack);
+      transaction.data_ack_q.push_back(transaction.ack);
       `uvm_info(get_full_name(), $sformatf("\nmonitor, detect HOST %s",
           (transaction.ack) ? "ACK" : "NO_ACK"), UVM_HIGH)
       // if nack is issued, next bit must be stop or rstart
-      if (transaction.nack) begin
+      if (!transaction.ack) begin
         cfg.vif.wait_for_i2c_host_stop_or_rstart(cfg.tc.i2c_tc,
                                                  transaction.rstart,
                                                  transaction.stop);

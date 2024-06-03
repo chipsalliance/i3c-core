@@ -43,6 +43,7 @@ package i3c_agent_pkg;
     DrvRStart,
     DrvRStartPushPull,
     DrvAddr,
+    DrvAddrArbit,
     DrvAddrPushPull,
     DrvWr,
     DrvWrPushPull,
@@ -281,6 +282,7 @@ package i3c_agent_pkg;
 
   // forward declare classes to allow typedefs below
   typedef class i3c_item;
+  typedef class i3c_seq_item;
   typedef class i3c_agent_cfg;
 
   // package sources
