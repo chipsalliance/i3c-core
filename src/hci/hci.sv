@@ -115,9 +115,6 @@ module hci
 
   // HCI queue port control
   logic cmd_req;  // Read DWORD from the COMMAND_PORT request
-  logic cmd_ready;  // Command has been collected from the COMMAND_PORT
-  logic [CmdFifoWidth:0] cmd;  // Buffered command
-  logic [CmdSizeInDwords:0] cmd_dword;  // Size of currently buffered `cmd`
   logic cmd_wr_ack;  // Feedback to the COMMAND_PORT; command has been fetched
   logic [CmdFifoWidth-1:0] cmd_wr_data;  // DWORD collected from the COMMAND_PORT
 
@@ -127,7 +124,6 @@ module hci
   logic rx_req;  // Write RX data to the RX_PORT request
   logic rx_rd_ack;  // XFER_DATA_PORT drives valid RX data
   logic [RxFifoWidth-1:0] rx_rd_data;  // RX data read from the rx_fifo to be put to RX port
-  logic rx_rd_valid;  // Data stored in rx_rd_data is valid
 
   logic tx_req;  // Read TX data from the TX_PORT request
   logic tx_wr_ack;  // Feedback to the XFER_DATA_PORT; data has been read from TX port
@@ -136,7 +132,6 @@ module hci
   logic resp_req;  // Write response to the RESPONSE_PORT request
   logic resp_rd_ack;  // resp_req is fulfilled; RESPONSE_PORT drives valid data
   logic [RespFifoWidth-1:0] resp_rd_data;  // Response read from resp_fifo; placed in RESPONSE_PORT
-  logic resp_rd_valid;  // Data stored in resp_rd_data is valid
 
   always_comb begin : wire_hwif
     // Reset control
@@ -169,7 +164,7 @@ module hci
     xfer_req = hwif_out.PIOControl.XFER_DATA_PORT.req;
     xfer_req_is_wr = hwif_out.PIOControl.XFER_DATA_PORT.req_is_wr;
 
-    cmd_req = hwif_out.PIOControl.COMMAND_PORT.req;
+    cmd_req = hwif_out.PIOControl.COMMAND_PORT.req & hwif_out.PIOControl.COMMAND_PORT.req_is_wr;
     rx_req = xfer_req && !xfer_req_is_wr;
     tx_req = xfer_req && xfer_req_is_wr;
     resp_req = hwif_out.PIOControl.RESPONSE_PORT.req;
@@ -249,49 +244,58 @@ module hci
     end
   end : populate_thld
 
+  logic cmd_dword_index;  // Index of currently processed DWORD
+  logic cmd_start_valid;  // Start of FIFO valid signal assertion
+  assign cmd_start_valid = cmd_req & cmd_dword_index;
+
   always_ff @(posedge clk_i or negedge rst_ni) begin : cmd_port_to_fifo
     if (!rst_ni) begin : cmd_port_to_fifo_rst
-      cmd <= '0;
-      cmd_dword <= '0;
+      cmd_dword_index <= '0;
       cmd_wr_ack <= '0;
       cmd_fifo_wdata_o <= '0;
       cmd_fifo_wvalid_o <= '0;
     end else begin : push_cmds_to_fifo
-      cmd_ready  <= (cmd_dword == CmdSizeInDwords);
-      cmd_wr_ack <= cmd_req & ~cmdrst;
-      if (cmd_req && !cmd_ready) begin : collect_cmd_dwords
-        cmd <= cmd | cmd_wr_data << (I3CCSR_DATA_WIDTH * cmd_dword);
-        cmd_dword <= cmd_dword + 1'b1;
-      end else begin : keep_register_states
-        cmd <= cmd;
-        cmd_dword <= cmd_dword;
+      cmd_wr_ack <= 1'b0;
+
+      if (cmd_req) begin
+        cmd_dword_index <= 1'b1;
+        if (cmd_dword_index) begin
+          cmd_fifo_wdata_o[63:32] <= cmd_wr_data;
+        end else begin
+          cmd_fifo_wdata_o[31:0] <= cmd_wr_data;
+          cmd_wr_ack <= 1'b1;
+        end
       end
-      if (cmd_fifo_wready_i && cmd_fifo_wvalid_o) begin : cmd_queued
-        cmd <= '0;
-        cmd_dword <= '0;
-      end : cmd_queued
-      cmd_fifo_wdata_o  <= cmd;
-      cmd_fifo_wvalid_o <= cmd_ready;
+
+      if (cmd_start_valid) begin
+        cmd_fifo_wvalid_o <= 1'b1;
+      end
+
+      if (cmd_fifo_wvalid_o & cmd_fifo_wready_i) begin
+        cmd_fifo_wvalid_o <= 1'b0;
+        cmd_wr_ack <= 1'b1;
+        cmd_dword_index <= 1'b0;
+      end
     end : push_cmds_to_fifo
   end : cmd_port_to_fifo
 
   always_ff @(posedge clk_i or negedge rst_ni or posedge rxrst) begin : rx_fifo_to_port
     if (!rst_ni | rxrst) begin : rx_fifo_to_port_rst
       rx_fifo_rready_o <= '0;
-      rx_rd_ack <= '0;
       rx_rd_data <= '0;
-      rx_rd_valid <= '0;
+      rx_rd_ack <= '0;
     end else begin : push_rx_to_port
-      if (rx_fifo_rvalid_i && !rx_rd_valid) begin
-        rx_rd_data  <= rx_fifo_rdata_i;
-        rx_rd_valid <= 1;
-      end else begin
-        rx_fifo_rready_o <= '0;
+      if (rx_req) begin
+        rx_fifo_rready_o <= 1'b1;
       end
 
-      if (rx_req && rx_rd_valid) begin
-        rx_rd_ack   <= 1;
-        rx_rd_valid <= '0;
+      if (rx_fifo_rready_o & rx_fifo_rvalid_i) begin
+        rx_fifo_rready_o <= 1'b0;
+        rx_rd_data <= rx_fifo_rdata_i;
+        rx_rd_ack <= 1'b1;
+      end else begin
+        rx_rd_data <= '0;
+        rx_rd_ack  <= 1'b0;
       end
     end : push_rx_to_port
   end : rx_fifo_to_port
@@ -302,29 +306,38 @@ module hci
       tx_wr_ack <= '0;
       tx_fifo_wdata_o <= '0;
     end else begin : push_tx_to_fifo
-      tx_fifo_wvalid_o <= tx_req && tx_fifo_wready_i && !txrst;
-      tx_wr_ack <= tx_fifo_wvalid_o && tx_fifo_wready_i;
-      tx_fifo_wdata_o <= tx_wr_data;
+      if (tx_req) begin
+        tx_fifo_wdata_o  <= tx_wr_data;
+        tx_fifo_wvalid_o <= 1'b1;
+      end
+
+      if (tx_fifo_wready_i & tx_fifo_wvalid_o) begin
+        tx_fifo_wdata_o <= '0;
+        tx_fifo_wvalid_o <= 1'b0;
+        tx_wr_ack <= 1'b1;
+      end else begin
+        tx_wr_ack <= 1'b0;
+      end
     end : push_tx_to_fifo
   end : tx_port_to_fifo
 
   always_ff @(posedge clk_i or negedge rst_ni or posedge resprst) begin : resp_fifo_to_port
     if (!rst_ni | resprst) begin : resp_fifo_to_port_rst
       resp_fifo_rready_o <= '0;
-      resp_rd_ack <= '0;
       resp_rd_data <= '0;
-      resp_rd_valid <= '0;
+      resp_rd_ack <= '0;
     end else begin : push_resp_to_port
-      if (resp_fifo_rvalid_i && !resp_rd_valid) begin
-        resp_rd_data  <= resp_fifo_rdata_i;
-        resp_rd_valid <= 1;
-      end else begin
-        resp_fifo_rready_o <= '0;
+      if (resp_req) begin
+        resp_fifo_rready_o <= 1'b1;
       end
 
-      if (resp_req && resp_rd_valid) begin
-        resp_rd_ack   <= 1;
-        resp_rd_valid <= '0;
+      if (resp_fifo_rready_o & resp_fifo_rvalid_i) begin
+        resp_fifo_rready_o <= 1'b0;
+        resp_rd_data <= resp_fifo_rdata_i;
+        resp_rd_ack <= 1'b1;
+      end else begin
+        resp_rd_data <= '0;
+        resp_rd_ack  <= 1'b0;
       end
     end : push_resp_to_port
   end : resp_fifo_to_port
