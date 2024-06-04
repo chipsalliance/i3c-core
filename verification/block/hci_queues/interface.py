@@ -71,12 +71,14 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
 
     async def get_command_desc(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.cmd_fifo_rready_i.value = 1
+        await RisingEdge(self.dut.hclk)
         await expect_with_timeout(self.dut.cmd_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
         self.dut.cmd_fifo_rready_i.value = 0
         return self.dut.cmd_fifo_rdata_o.value.integer
 
     async def get_tx_data(self, timeout: int = 2, units: str = "ms") -> int:
         self.dut.tx_fifo_rready_i.value = 1
+        await RisingEdge(self.dut.hclk)
         await expect_with_timeout(self.dut.tx_fifo_rvalid_o, True, self.dut.hclk, timeout, units)
         self.dut.tx_fifo_rready_i.value = 0
         return self.dut.tx_fifo_rdata_o.value.integer
