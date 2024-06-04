@@ -16,6 +16,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
   bit host_scl_force_high = 0;
   bit host_scl_force_low = 0;
   i3c_drv_phase_e bus_state;
+  bit stop, rstart;
 
   virtual task reset_signals();
     forever begin
@@ -42,9 +43,10 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
     i3c_seq_item req, rsp;
     @(posedge cfg.vif.rst_ni);
     forever begin
-      bit stop, rstart;
       if (cfg.if_mode == Device) release_bus();
       // driver drives bus per mode
+      stop = 0;
+      rstart = 0;
       seq_item_port.get_next_item(req);
       fork
         begin: iso_fork
@@ -77,10 +79,13 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           disable fork;
         end: iso_fork
       join
-      if (cfg.if_mode == Device && stop)
+      if (cfg.if_mode == Device && stop) begin
+        `uvm_info(get_full_name(), "Device got Stop", UVM_MEDIUM)
         bus_state = DrvIdle;
-      else if (cfg.if_mode == Device && rstart)
+      end else if (cfg.if_mode == Device && rstart) begin
+        `uvm_info(get_full_name(), "Device got RStart", UVM_MEDIUM)
         bus_state = DrvAddr;
+      end
       seq_item_port.item_done(rsp);
       // When agent reset happens, flush all sequence items from sequencer request queue,
       // before it starts a new sequence.
@@ -93,15 +98,6 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
       end
     end
   endtask : get_and_drive
-
-  // Task to drive bits on SDA from TB to DUT while DUT is operating in Target mode
-//  virtual task drive_host_data_bits(ref i3c_item req);
-//    int num_bits = $bits(req.wdata);
-//    `uvm_info(get_full_name(), $sformatf("Driving host item 0x%x", req.wdata), UVM_MEDIUM)
-//    for (int i = num_bits - 1; i >= num_bits; i--) begin
-//      cfg.vif.host_i2c_data(cfg.tc.i2c_tc, req.wdata[i]);
-//    end
-//  endtask
 
   virtual task drive_host_item(i3c_seq_item req, output i3c_seq_item rsp);
     rsp = new;
@@ -116,6 +112,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         DrvIdle: begin
           if (req.IBI && req.IBI_START) begin
             cfg.vif.wait_for_host_start();
+            scl_i3c_mode = req.i3c;
+            scl_i3c_OD = 1'b1;
+            host_scl_start = 1;
             bus_state = DrvAddrArbit;
           end else begin
             bus_state = DrvStart;
@@ -138,6 +137,10 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
               host_scl_stop = 1;
             end
           join
+          if (!req.end_with_rstart) begin
+            bus_state = DrvStop;
+            continue;
+          end
           bus_state = DrvAddr;
           break;
         end
@@ -150,7 +153,49 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
               host_scl_stop = 1;
             end
           join
+          if (!req.end_with_rstart) begin
+            bus_state = DrvStopPushPull;
+            continue;
+          end
           bus_state = DrvAddrPushPull;
+          break;
+        end
+        DrvStop: begin
+          scl_i3c_mode = 0;
+          scl_i3c_OD = 1'b0;
+          cfg.vif.host_sda_pp_en = 0;
+          fork
+            `uvm_info(get_full_name(), "Host I2C STOP", UVM_MEDIUM)
+            begin
+              if(host_scl_start) begin
+                wait(cfg.vif.scl_i == 0);
+                host_scl_stop = 1;
+              end
+            end
+            begin
+              if (req.i3c) cfg.vif.host_i3c_stop(cfg.tc.i3c_tc);
+              else cfg.vif.host_i2c_stop(cfg.tc.i2c_tc);
+            end
+          join
+          bus_state = DrvIdle;
+          break;
+        end
+        DrvStopPushPull: begin
+          scl_i3c_mode = 1;
+          scl_i3c_OD = 1'b0;
+          cfg.vif.host_sda_pp_en = 1;
+          fork
+            `uvm_info(get_full_name(), "Host I3C STOP", UVM_MEDIUM)
+            begin
+              if(host_scl_start) begin
+                wait(cfg.vif.scl_i == 0);
+                host_scl_stop = 1;
+              end
+            end
+            cfg.vif.host_i3c_stop(cfg.tc.i3c_tc);
+          join
+          cfg.vif.host_sda_pp_en = 0;
+          bus_state = DrvIdle;
           break;
         end
         DrvAddrArbit: begin
@@ -191,11 +236,13 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
           end else if (req.IBI && req.IBI_ADDR == rsp.addr) begin
             // Check if expecting IBI and if received address is correct
-            cfg.vif.host_i3c_data(cfg.tc.i3c_tc, req.IBI_ACK);
+            cfg.vif.host_i3c_data(cfg.tc.i3c_tc, !req.IBI_ACK);
+            `uvm_info(get_full_name(), $sformatf("IBI recived from addr=%d\n%s",
+                rsp.addr, req.IBI_ACK?"ACK":"NACK"), UVM_MEDIUM)
           end else begin
             `uvm_error(get_full_name(), $sformatf("\nHost driver lost arbitraion!" +
                 "\n--> EXP:\n%0x\--> RSP:\n%0x" +
-                "\nNACKing and emmiting%s",
+                "\nNACK and emmiting%s",
             {req.addr, req.dir}, {rsp.addr, rsp.dir}, req.end_with_rstart?"RStart":"Stop"))
             cfg.vif.host_i3c_data(cfg.tc.i3c_tc, 0);
           end
@@ -271,6 +318,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         end
         DrvRd: begin
           bit [7:0] data;
+          cfg.vif.host_sda_pp_en = 0;
           for(int i = 0; i < req.data_cnt; i++) begin
             for(int j = 7; j >= 0; j--) begin
               cfg.vif.sample_target_data(data[j]);
@@ -286,37 +334,54 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             end
           end
         end
-        DrvStop: begin
-          scl_i3c_mode = 0;
-          scl_i3c_OD = 1'b0;
+        DrvRdPushPull: begin
+          bit [7:0] data;
+          bit t_bit;
           cfg.vif.host_sda_pp_en = 0;
-          fork
-            begin
-              wait(cfg.vif.scl_i == 0);
-              host_scl_stop = 1;
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.sample_target_data(data[j]);
             end
-            begin
-              if (req.i3c) cfg.vif.host_i3c_stop(cfg.tc.i3c_tc);
-              else cfg.vif.host_i2c_stop(cfg.tc.i2c_tc);
+            rsp.data.push_back(data);
+            if (req.T_bits_valid) begin
+              cfg.vif.sample_target_data(t_bit);
+              rsp.T_bit.push_back(t_bit);
             end
-          join
-          bus_state = DrvIdle;
-          break;
+            `uvm_info(get_full_name(), $sformatf("Host sampled device data data[%0d]=%d, T_bit=%b",
+                i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
+          end
+          //host_scl_stop = 1;
+          if (rsp.T_bit[req.data_cnt-1]) begin
+            bus_state = DrvRStartPushPull;
+            continue;
+          end
+          wait(!cfg.vif.scl_i);
+          if (req.end_with_rstart) begin
+            bus_state = DrvRStartPushPull;
+          end else begin
+            bus_state = DrvStopPushPull;
+          end
         end
-        DrvStopPushPull: begin
-          scl_i3c_mode = 1;
-          scl_i3c_OD = 1'b0;
-          cfg.vif.host_sda_pp_en = 1;
-          fork
-            begin
-              wait(cfg.vif.scl_i == 0);
-              host_scl_stop = 1;
+        DrvWr: begin
+          bit ack;
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.host_i2c_data(cfg.tc.i2c_tc, req.data[i][j]);
             end
-            cfg.vif.host_i3c_stop(cfg.tc.i3c_tc);
-          join
-          bus_state = DrvIdle;
-          break;
+            cfg.vif.wait_for_device_ack_or_nack(.ack_r(ack));
+            rsp.T_bit.push_back(ack);
+            if (!ack) begin
+              break;
+            end
+          end
+          if (req.end_with_rstart) begin
+            bus_state = DrvRStart;
+          end else begin
+            bus_state = DrvStop;
+          end
         end
+//        DrvWrPushPull: begin
+//        end
         default: begin
           `uvm_fatal(get_full_name(), $sformatf("\n  host_driver, received invalid request"))
         end
@@ -368,17 +433,17 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           end
           fork
             if (device_won) begin
-              cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, req.dir);
+              cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, 1);
             end
             cfg.vif.sample_target_data(.data(rsp.dir));
           join
-          device_won = (req.dir == rsp.dir) && device_won;
+          device_won = (1'b1 == rsp.dir) && device_won;
           if (device_won) begin
             // Won IBI arbitration, wait for host ACK/NACK
             cfg.vif.wait_for_host_ack_or_nack(.ack_r(rsp.dev_ack));
           end else if (req.addr == rsp.addr) begin
             // Arbitration lost or no IBI
-            if (req.i3c) cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, !req.dev_ack);
+            if (req.i3c) cfg.vif.device_i3c_od_send_bit(cfg.tc.i3c_tc, !req.dev_ack);
             else begin
               `uvm_info(get_full_name(), $sformatf("Device sent %d[%s]",
                 !req.dev_ack, req.dev_ack?"ACK":"NACK"), UVM_MEDIUM)
@@ -387,7 +452,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           end else begin
             `uvm_error(get_full_name(), $sformatf("\nDevice driver got unexpected address!" +
                 "\n--> EXP:\n%0x\--> RSP:\n%0x" +
-                "\nNACKing and waiting for bus Stop/RStart",
+                "\nNACK and waiting for bus Stop/RStart",
             {req.addr, req.dir}, {rsp.addr, rsp.dir}))
             if (req.i3c) cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, 0);
             else cfg.vif.device_i2c_send_bit(cfg.tc.i2c_tc, 0);
@@ -421,7 +486,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           if (req.addr == rsp.addr) begin
             cfg.vif.device_i2c_send_bit(cfg.tc.i2c_tc, !req.dev_ack);
           end else begin
-            `uvm_error(get_full_name(), $sformatf("\nDevice driver got unexpected address!\n--> EXP:\n%0x\--> RSP:\n%0x",
+            `uvm_error(get_full_name(), $sformatf("\nDevice driver got unexpected address!\n--> EXP:\n%0x\--> RSP:\n%0x\nNACK and waiting for bus Stop/RStart",
             {req.addr, req.dir}, {rsp.addr, rsp.dir}))
             cfg.vif.device_i2c_send_bit(cfg.tc.i2c_tc, 0);
             bus_state = DrvStop;
@@ -449,8 +514,8 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           if (req.addr == rsp.addr) begin
             cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, !req.dev_ack);
           end else begin
-            `uvm_error(get_full_name(), $sformatf("\nDevice driver got unexpected address!\n--> EXP:\n%0x\--> RSP:\n%0x",
-            {req.addr, req.dir}, {rsp.addr, rsp.dir}))
+            `uvm_error(get_full_name(), $sformatf("\nDevice driver got unexpected address!\n--> EXP:\n%0x %b\--> RSP:\n%0x %b\nNACK and waiting for bus Stop/RStart",
+            req.addr, req.dir, rsp.addr, rsp.dir))
             cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, 0);
             bus_state = DrvStop;
             continue;
@@ -466,7 +531,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           end
         end
         DrvStop: begin
-          bit stop, rstart;
+          release_bus();
           wait(0);
         end
         DrvRd: begin
@@ -484,7 +549,30 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           end
         end
         DrvRdPushPull: begin
-          
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, req.data[i][j]);
+            end
+            if (req.T_bits_valid) begin
+              cfg.vif.device_send_T_bit(cfg.tc.i3c_tc, req.T_bit[i]);
+            end
+          end
+          bus_state = DrvStop;
+        end
+        DrvWr: begin
+          bit [7:0] data;
+          cfg.vif.device_sda_pp_en = 0;
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.sample_target_data(data[j]);
+            end
+            rsp.data.push_back(data);
+            cfg.vif.device_i2c_send_bit(cfg.tc.i2c_tc, !req.T_bit[i]);
+            if (!req.T_bit[i]) begin
+              bus_state = DrvStop;
+              break;
+            end
+          end
         end
         default: begin
           `uvm_fatal(get_full_name(), $sformatf("\n  host_driver, received invalid request"))
@@ -492,38 +580,6 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
       endcase
     end
   endtask : drive_device_item
-
-//  virtual task drive_device_item(i3c_item req);
-//    bit [7:0] rd_data_cnt = 8'd0;
-//    bit [7:0] rdata;
-//
-//    case (req.drv_type)
-//      DevAck: begin
-//        `uvm_info(get_full_name(), $sformatf("sending an ack"), UVM_MEDIUM)
-//        cfg.vif.device_send_ack(cfg.tc.i2c_tc);
-//      end
-//      DevNack: begin
-//        cfg.vif.device_send_nack(cfg.tc.i2c_tc);
-//      end
-//      RdData: begin
-//        `uvm_info(get_full_name(), $sformatf("Send readback data %0x", req.rdata), UVM_MEDIUM)
-//        for (int i = 7; i >= 0; i--) begin
-//          bit can_stretch = (i == 0) && cfg.stretch_after_ack;
-//          cfg.vif.device_send_bit(cfg.tc.i2c_tc, req.rdata[i]);
-//        end
-//        `uvm_info(get_full_name(), $sformatf("\n  device_driver, trans %0d, byte %0d  %0x",
-//            req.tran_id, req.num_data+1, rd_data[rd_data_cnt]), UVM_DEBUG)
-//        // rd_data_cnt is rollled back (no overflow) after reading 256 bytes
-//        rd_data_cnt++;
-//      end
-//      WrData: begin
-//        // nothing to do
-//      end
-//      default: begin
-//        `uvm_fatal(get_full_name(), $sformatf("\n  device_driver, received invalid request"))
-//      end
-//    endcase
-//  endtask : drive_device_item
 
   virtual task process_reset();
     @(negedge cfg.vif.rst_ni);
@@ -551,7 +607,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
     // I3C SCL is only driven by the controller and can't be stretch by
     // I2C/I3C target devices.
     forever begin
-      @(cfg.vif.cb);
+      @(cfg.vif.clk_i);
       wait(host_scl_start);
       fork begin
         fork

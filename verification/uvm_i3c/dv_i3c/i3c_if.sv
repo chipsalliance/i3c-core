@@ -94,10 +94,7 @@ interface i3c_if(
     forever begin
       @(negedge sda_i);
       if(!scl_i) continue;
-      @(negedge scl_i);
-      if (!sda_i) begin
-        break;
-      end else continue;
+      break;
     end
   endtask : wait_for_host_start
 
@@ -152,10 +149,8 @@ interface i3c_if(
       @(posedge scl_i && sda_i);
       @(negedge sda_i);
       if (scl_i) begin
-        @(negedge scl_i) begin
-          rstart = 1'b1;
-          break;
-        end
+        rstart = 1'b1;
+        break;
       end
     end
   endtask: wait_for_host_rstart
@@ -164,7 +159,8 @@ interface i3c_if(
                                     output bit stop);
     stop = 1'b0;
     forever begin
-      @(posedge scl_i);
+      if (scl_i === 0)
+        @(posedge scl_i);
       @(posedge sda_i);
       if (scl_i) begin
         stop = 1'b1;
@@ -289,7 +285,11 @@ interface i3c_if(
   endtask: device_i3c_start
 
   task automatic host_i2c_rstart(ref i2c_timing_t tc);
-    @(posedge scl_i && sda_i);
+    if (scl_i === 1'b1 && sda_i === 1'b0) begin
+      `uvm_fatal(msg_id, "Cannot begin host_rstart when scl is high and sda is low")
+    end
+    if (scl_i === 1'b0)
+      @(posedge scl_i && sda_i);
     #(tc.tSetupStart * 1ns);
     host_sda_o = 1'b0;
     #(tc.tHoldStart * 1ns);
@@ -297,7 +297,11 @@ interface i3c_if(
   endtask: host_i2c_rstart
 
   task automatic host_i3c_rstart(ref i3c_timing_t tc);
-    @(posedge scl_i && sda_i);
+    if (scl_i === 1'b1 && sda_i === 1'b0) begin
+      `uvm_fatal(msg_id, "Cannot begin host_rstart when scl is high and sda is low")
+    end
+    if (scl_i === 1'b0)
+      @(posedge scl_i && sda_i);
     #(tc.tSetupStart * 1ns);
     host_sda_o = 1'b0;
     #(tc.tHoldRStart * 1ns);
@@ -309,8 +313,6 @@ interface i3c_if(
       `uvm_fatal(msg_id, "Cannot begin host_stop when both scl and sda are high")
     end
 
-    if (scl_i === 1'b1)
-      @(negedge scl_i);
     host_sda_o = 1'b0;
     #(tc.tClockLow * 1ns);
     scl_o = 1'b1;
@@ -325,8 +327,6 @@ interface i3c_if(
       `uvm_fatal(msg_id, "Cannot begin host_stop when both scl and sda are high")
     end
 
-    if (scl_i === 1'b1)
-      @(negedge scl_i);
     host_sda_o = 1'b0;
     if (!scl_pp_en) begin
       #(tc.tClockLowOD * 1ns);
@@ -360,6 +360,7 @@ interface i3c_if(
 
   task automatic device_i2c_send_bit(ref i2c_timing_t tc,
                                  input bit bit_i);
+    device_sda_pp_en = 0;
     device_sda_o = 1'b1;
     wait(!scl_i);
     `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
@@ -381,19 +382,46 @@ interface i3c_if(
     device_i2c_send_bit(tc, 1'b1);
   endtask: device_i2c_send_nack
 
-  task automatic device_i3c_send_bit(ref i3c_timing_t tc,
+  task automatic device_i3c_od_send_bit(ref i3c_timing_t tc,
                                  input bit bit_i);
-    device_sda_o = 1'b1;
     wait(!scl_i);
+    device_sda_pp_en = 0;
     `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
     device_sda_o = bit_i;
-    time_check(tc.tSetupBit, 1'b1, scl_i, "I2C device bit setup");
+    time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
     `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
     // Hold the bit steady for the rest of the clock low time.
-    time_check(tc.tClockPulse, 1'b0, scl_i, "I2C device bit clock high pulse width");
+    time_check(tc.tClockPulse, 1'b0, scl_i, "I3C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
     #(tc.tHoldBit * 1ns);
-    device_sda_o = 1'b1;
+  endtask: device_i3c_od_send_bit
+
+  task automatic device_i3c_send_bit(ref i3c_timing_t tc,
+                                 input bit bit_i);
+    wait(!scl_i);
+    device_sda_pp_en = 1;
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    device_sda_o = bit_i;
+    time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    // Hold the bit steady for the rest of the clock low time.
+    time_check(tc.tClockPulse, 1'b0, scl_i, "I3C device bit clock high pulse width");
+    // Hold the bit past SCL going low, then release.
+    #(tc.tHoldBit * 1ns);
+    device_sda_pp_en = 0;
   endtask: device_i3c_send_bit
+
+  task automatic device_send_T_bit(ref i3c_timing_t tc,
+                                 input bit bit_i);
+    wait(!scl_i);
+    device_sda_pp_en = 1;
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    device_sda_o = bit_i;
+    time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    // Hold the bit steady for the maximal Tsco (12ns)
+    #(12 * 1ns);
+    device_sda_pp_en = 0;
+  endtask: device_send_T_bit
 
 endinterface : i3c_if
