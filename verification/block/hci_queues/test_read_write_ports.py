@@ -1,9 +1,21 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from random import randint
+
 import cocotb
 from cocotb.handle import SimHandleBase
-from hci import ErrorStatus, ResponseDescriptor, immediate_transfer_descriptor
 from interface import HCIQueuesTestInterface
+
+TEST_SIZE = 5
+
+
+async def test_write_read(data, write_handle, read_handle):
+    for e in data:
+        await write_handle(e)
+
+    for e in data:
+        received_desc = await read_handle()
+        assert e == received_desc, f"Expected: {hex(e)}, got: {hex(received_desc)}"
 
 
 @cocotb.test()
@@ -15,13 +27,8 @@ async def issue_command_through_command_port(dut: SimHandleBase):
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
 
-    cmd_desc = immediate_transfer_descriptor(0, 0, 0, 0, 1, 0, 0, 1, 1, 0xBEEF).to_int()
-    await tb.put_command_desc(cmd_desc)
-
-    received_desc = await tb.get_command_desc()
-    assert (
-        received_desc == cmd_desc
-    ), f"Expected: {hex(cmd_desc)} command descriptor, got: {hex(received_desc)}"
+    cmd_data = [randint(1, 2**64 - 1) for _ in range(TEST_SIZE)]
+    await test_write_read(cmd_data, tb.put_command_desc, tb.get_command_desc)
 
 
 @cocotb.test()
@@ -32,11 +39,8 @@ async def issue_data_through_xfer_data_port(dut: SimHandleBase):
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
 
-    tx = 0xAAC0FFEE
-    await tb.put_tx_data(tx)
-
-    received_tx = await tb.get_tx_data()
-    assert received_tx == tx, f"Expected: {hex(tx)} command descriptor, got: {hex(received_tx)}"
+    tx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
+    await test_write_read(tx_data, tb.put_tx_data, tb.get_tx_data)
 
 
 @cocotb.test()
@@ -46,10 +50,9 @@ async def fetch_read_data_from_xfer_data_port(dut: SimHandleBase):
     """
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
-    rx = 0xAAC0FFEE
-    await tb.put_rx_data(rx)
-    received_rx = await tb.get_rx_data()
-    assert received_rx == rx, f"Expected: {hex(rx)} command descriptor, got: {hex(received_rx)}"
+
+    rx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
+    await test_write_read(rx_data, tb.put_rx_data, tb.get_rx_data)
 
 
 @cocotb.test()
@@ -61,10 +64,5 @@ async def fetch_response_from_response_port(dut: SimHandleBase):
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
 
-    resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
-    await tb.put_response_desc(resp)
-    received_resp = await tb.get_response_desc()
-
-    assert (
-        received_resp == resp
-    ), f"Expected: {hex(resp)} response descriptor, got: {hex(received_resp)}"
+    resp_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
+    await test_write_read(resp_data, tb.put_response_desc, tb.get_response_desc)
