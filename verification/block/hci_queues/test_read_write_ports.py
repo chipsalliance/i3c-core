@@ -38,6 +38,7 @@ async def write_read_command_queue(dut: SimHandleBase):
 
     cmd_data = [randint(1, 2**64 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(cmd_data, tb.put_command_desc, tb.get_command_desc)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -58,6 +59,7 @@ async def overflow_command_queue(dut: SimHandleBase):
     read_coroutine = cocotb.start_soon(test_read(cmd_data, tb.get_command_desc))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -75,6 +77,7 @@ async def underflow_command_queue(dut: SimHandleBase):
     write_coroutine = cocotb.start_soon(test_write(cmd_data, tb.put_command_desc))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -88,6 +91,7 @@ async def write_read_tx_queue(dut: SimHandleBase):
 
     tx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(tx_data, tb.put_tx_data, tb.get_tx_data)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -108,6 +112,7 @@ async def overflow_tx_queue(dut: SimHandleBase):
     read_coroutine = cocotb.start_soon(test_read(tx_data, tb.get_tx_data))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -125,6 +130,7 @@ async def underflow_tx_queue(dut: SimHandleBase):
     write_coroutine = cocotb.start_soon(test_write(tx_data, tb.put_tx_data))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -137,6 +143,7 @@ async def write_read_rx_queue(dut: SimHandleBase):
 
     rx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(rx_data, tb.put_rx_data, tb.get_rx_data)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -156,6 +163,7 @@ async def overflow_rx_queue(dut: SimHandleBase):
     read_coroutine = cocotb.start_soon(test_read(rx_data, tb.get_rx_data))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -173,6 +181,7 @@ async def underflow_rx_queue(dut: SimHandleBase):
     write_coroutine = cocotb.start_soon(test_write(rx_data, tb.put_rx_data))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -186,6 +195,7 @@ async def fetch_response_from_response_port(dut: SimHandleBase):
 
     resp_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(resp_data, tb.put_response_desc, tb.get_response_desc)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -206,6 +216,7 @@ async def overflow_response_queue(dut: SimHandleBase):
     read_coroutine = cocotb.start_soon(test_read(resp_data, tb.get_response_desc))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
 
 
 @cocotb.test()
@@ -223,3 +234,4 @@ async def underflow_response_queue(dut: SimHandleBase):
     write_coroutine = cocotb.start_soon(test_write(resp_data, tb.put_response_desc))
 
     await Combine(write_coroutine, read_coroutine)
+    await ClockCycles(dut.hclk, 10)
