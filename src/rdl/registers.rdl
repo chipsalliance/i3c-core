@@ -2,11 +2,14 @@
 
 `include "base_registers.rdl"
 `include "pio_registers.rdl"
+`include "ec_registers.rdl"
 `include "DAT_structure.rdl"
 `include "DCT_structure.rdl"
 
+
 addrmap I3CCSR #(
-    bit PIO_offset = 0x100,
+    bit PIO_offset = 0x080,
+    bit EC_offset = 0x100,
     bit DAT_offset = 0x400,
     bit DCT_offset = 0x800,
     bit cmd_fifo_size = 0x40, // 64 commands by default
@@ -18,6 +21,7 @@ addrmap I3CCSR #(
     bit dat_depth = 0x7f, // Max allowed by default
     bit dct_depth = 0x7f // Max allowed by default
 ){
+    signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
     BaseRegs #(
         .PIO_offset(PIO_offset),
         // TODO: verify that DMA is not supported
@@ -71,4 +75,6 @@ addrmap I3CCSR #(
         sw = rw;
         DCT_structure DCT_MEMORY [128];
     } external DCT @ DCT_offset;
+
+    ECRegisters I3C_EC @ EC_offset;
 };

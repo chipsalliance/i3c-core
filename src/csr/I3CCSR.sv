@@ -58,8 +58,8 @@ module I3CCSR (
     logic external_pending;
     logic external_wr_ack;
     logic external_rd_ack;
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             external_pending <= '0;
         end else begin
             if(external_req & ~external_wr_ack & ~external_rd_ack) external_pending <= '1;
@@ -121,6 +121,49 @@ module I3CCSR (
             logic PIO_INTR_FORCE;
             logic PIO_CONTROL;
         } PIOControl;
+        struct {
+            struct {
+                logic EXTCAP_HEADER;
+                logic PROT_CAP_0;
+                logic PROT_CAP_1;
+                logic PROT_CAP_2;
+                logic PROT_CAP_3;
+                logic DEVICE_ID_0;
+                logic DEVICE_ID_1;
+                logic DEVICE_ID_2;
+                logic DEVICE_ID_3;
+                logic DEVICE_ID_4;
+                logic DEVICE_ID_5;
+                logic DEVICE_ID_6;
+                logic DEVICE_STATUS_0;
+                logic DEVICE_STATUS_1;
+                logic DEVICE_RESET;
+                logic RECOVERY_CTRL;
+                logic RECOVERY_STATUS;
+                logic HW_STATUS;
+                logic INDIRECT_FIFO_CTRL_0;
+                logic INDIRECT_FIFO_CTRL_1;
+                logic INDIRECT_FIFO_STATUS_0;
+                logic INDIRECT_FIFO_STATUS_1;
+                logic INDIRECT_FIFO_STATUS_2;
+                logic INDIRECT_FIFO_STATUS_3;
+                logic INDIRECT_FIFO_STATUS_4;
+                logic INDIRECT_FIFO_STATUS_5;
+                logic INDIRECT_FIFO_DATA;
+            } SecureFirmwareRecoveryInterfaceRegisters;
+            struct {
+                logic EXTCAP_HEADER;
+                logic PLACE_HOLDER_1;
+            } TargetTransactionInterfaceRegisters;
+            struct {
+                logic EXTCAP_HEADER;
+                logic PLACE_HOLDER_1;
+            } SoCManagementInterfaceRegisters;
+            struct {
+                logic EXTCAP_HEADER;
+                logic PLACE_HOLDER_1;
+            } ControllerConfigRegisters;
+        } I3C_EC;
         logic DAT;
         logic DCT;
     } decoded_reg_strb_t;
@@ -158,23 +201,56 @@ module I3CCSR (
         decoded_reg_strb.I3CBase.DEV_CTX_BASE_LO = cpuif_req_masked & (cpuif_addr == 12'h60);
         decoded_reg_strb.I3CBase.DEV_CTX_BASE_HI = cpuif_req_masked & (cpuif_addr == 12'h64);
         decoded_reg_strb.I3CBase.DEV_CTX_SG = cpuif_req_masked & (cpuif_addr == 12'h68);
-        decoded_reg_strb.PIOControl.COMMAND_PORT = cpuif_req_masked & (cpuif_addr == 12'h100);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h100) & cpuif_req_is_wr;
-        decoded_reg_strb.PIOControl.RESPONSE_PORT = cpuif_req_masked & (cpuif_addr == 12'h104);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h104) & !cpuif_req_is_wr;
-        decoded_reg_strb.PIOControl.XFER_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h108);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h108);
-        decoded_reg_strb.PIOControl.IBI_PORT = cpuif_req_masked & (cpuif_addr == 12'h10c);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h10c) & !cpuif_req_is_wr;
-        decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h110);
-        decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h114);
-        decoded_reg_strb.PIOControl.QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h118);
-        decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h11c);
-        decoded_reg_strb.PIOControl.PIO_INTR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h120);
-        decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h124);
-        decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h128);
-        decoded_reg_strb.PIOControl.PIO_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'h12c);
-        decoded_reg_strb.PIOControl.PIO_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h130);
+        decoded_reg_strb.PIOControl.COMMAND_PORT = cpuif_req_masked & (cpuif_addr == 12'h80);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h80) & cpuif_req_is_wr;
+        decoded_reg_strb.PIOControl.RESPONSE_PORT = cpuif_req_masked & (cpuif_addr == 12'h84);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h84) & !cpuif_req_is_wr;
+        decoded_reg_strb.PIOControl.XFER_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h88);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h88);
+        decoded_reg_strb.PIOControl.IBI_PORT = cpuif_req_masked & (cpuif_addr == 12'h8c);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h8c) & !cpuif_req_is_wr;
+        decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h90);
+        decoded_reg_strb.PIOControl.DATA_BUFFER_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h94);
+        decoded_reg_strb.PIOControl.QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h98);
+        decoded_reg_strb.PIOControl.ALT_QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h9c);
+        decoded_reg_strb.PIOControl.PIO_INTR_STATUS = cpuif_req_masked & (cpuif_addr == 12'ha0);
+        decoded_reg_strb.PIOControl.PIO_INTR_STATUS_ENABLE = cpuif_req_masked & (cpuif_addr == 12'ha4);
+        decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'ha8);
+        decoded_reg_strb.PIOControl.PIO_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'hac);
+        decoded_reg_strb.PIOControl.PIO_CONTROL = cpuif_req_masked & (cpuif_addr == 12'hb0);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h100);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 = cpuif_req_masked & (cpuif_addr == 12'h104);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 = cpuif_req_masked & (cpuif_addr == 12'h108);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 = cpuif_req_masked & (cpuif_addr == 12'h10c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 = cpuif_req_masked & (cpuif_addr == 12'h110);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 = cpuif_req_masked & (cpuif_addr == 12'h114);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 = cpuif_req_masked & (cpuif_addr == 12'h118);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 = cpuif_req_masked & (cpuif_addr == 12'h11c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 = cpuif_req_masked & (cpuif_addr == 12'h120);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 = cpuif_req_masked & (cpuif_addr == 12'h124);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 = cpuif_req_masked & (cpuif_addr == 12'h128);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 = cpuif_req_masked & (cpuif_addr == 12'h12c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h130);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h134);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET = cpuif_req_masked & (cpuif_addr == 12'h138);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL = cpuif_req_masked & (cpuif_addr == 12'h13c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS = cpuif_req_masked & (cpuif_addr == 12'h140);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS = cpuif_req_masked & (cpuif_addr == 12'h144);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 = cpuif_req_masked & (cpuif_addr == 12'h148);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 = cpuif_req_masked & (cpuif_addr == 12'h14c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h150);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h154);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 = cpuif_req_masked & (cpuif_addr == 12'h158);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 = cpuif_req_masked & (cpuif_addr == 12'h15c);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 = cpuif_req_masked & (cpuif_addr == 12'h164);
+        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h170);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h174);
+        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h178);
+        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h17c);
+        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
+        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h184);
         decoded_reg_strb.DAT = cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         is_external |= cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         decoded_reg_strb.DCT = cpuif_req_masked & (cpuif_addr >= 12'h800) & (cpuif_addr <= 12'h800 + 12'h7ff);
@@ -573,6 +649,190 @@ module I3CCSR (
                 } ABORT;
             } PIO_CONTROL;
         } PIOControl;
+        struct {
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PROT_CAP_0;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PROT_CAP_1;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PROT_CAP_2;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PROT_CAP_3;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_0;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_1;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_2;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_3;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_4;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_5;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_ID_6;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_STATUS_0;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_STATUS_1;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } DEVICE_RESET;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } RECOVERY_CTRL;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } RECOVERY_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } HW_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_CTRL_0;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_CTRL_1;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_0;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_1;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_2;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_3;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_4;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_5;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_DATA;
+            } SecureFirmwareRecoveryInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } TargetTransactionInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } SoCManagementInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } ControllerConfigRegisters;
+        } I3C_EC;
     } field_combo_t;
     field_combo_t field_combo;
 
@@ -871,6 +1131,161 @@ module I3CCSR (
                 } ABORT;
             } PIO_CONTROL;
         } PIOControl;
+        struct {
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PROT_CAP_0;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PROT_CAP_1;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PROT_CAP_2;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PROT_CAP_3;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_0;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_1;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_2;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_3;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_4;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_5;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_ID_6;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_STATUS_0;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_STATUS_1;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } DEVICE_RESET;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } RECOVERY_CTRL;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } RECOVERY_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } HW_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_CTRL_0;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_CTRL_1;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_0;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_1;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_2;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_3;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_4;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_STATUS_5;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } INDIRECT_FIFO_DATA;
+            } SecureFirmwareRecoveryInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } TargetTransactionInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } SoCManagementInterfaceRegisters;
+            struct {
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } PLACE_HOLDER_1;
+            } ControllerConfigRegisters;
+        } I3C_EC;
     } field_storage_t;
     field_storage_t field_storage;
 
@@ -887,8 +1302,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next = next_c;
         field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next) begin
             field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next;
@@ -908,8 +1323,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next = next_c;
         field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next) begin
             field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next;
@@ -929,8 +1344,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next = next_c;
         field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next) begin
             field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next;
@@ -950,8 +1365,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next = next_c;
         field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next) begin
             field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next;
@@ -971,8 +1386,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.ABORT.next = next_c;
         field_combo.I3CBase.HC_CONTROL.ABORT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.ABORT.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.ABORT.load_next) begin
             field_storage.I3CBase.HC_CONTROL.ABORT.value <= field_combo.I3CBase.HC_CONTROL.ABORT.next;
@@ -995,8 +1410,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.RESUME.next = next_c;
         field_combo.I3CBase.HC_CONTROL.RESUME.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.RESUME.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.RESUME.load_next) begin
             field_storage.I3CBase.HC_CONTROL.RESUME.value <= field_combo.I3CBase.HC_CONTROL.RESUME.next;
@@ -1019,8 +1434,8 @@ module I3CCSR (
         field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next = next_c;
         field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= 1'h0;
         end else if(field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next) begin
             field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next;
@@ -1043,8 +1458,8 @@ module I3CCSR (
         field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = next_c;
         field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= 7'h0;
         end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next;
@@ -1067,8 +1482,8 @@ module I3CCSR (
         field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = next_c;
         field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= 1'h0;
         end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
@@ -1091,8 +1506,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next;
@@ -1115,8 +1530,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next;
@@ -1139,8 +1554,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next;
@@ -1163,8 +1578,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next;
@@ -1187,8 +1602,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next;
@@ -1211,8 +1626,8 @@ module I3CCSR (
         field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next = next_c;
         field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= 1'h0;
         end else if(field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
             field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next;
@@ -1235,8 +1650,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = next_c;
         field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next) begin
             field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next;
@@ -1258,8 +1673,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = next_c;
         field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next) begin
             field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next;
@@ -1281,8 +1696,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = next_c;
         field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next) begin
             field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next;
@@ -1304,8 +1719,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = next_c;
         field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next) begin
             field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next;
@@ -1327,8 +1742,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = next_c;
         field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next) begin
             field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next;
@@ -1353,8 +1768,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next = next_c;
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next;
@@ -1374,8 +1789,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next = next_c;
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next;
@@ -1395,8 +1810,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next = next_c;
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next;
@@ -1416,8 +1831,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next = next_c;
         field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next;
@@ -1437,8 +1852,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next = next_c;
         field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next;
@@ -1458,8 +1873,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next = next_c;
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next;
@@ -1479,8 +1894,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next = next_c;
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next;
@@ -1500,8 +1915,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next = next_c;
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next;
@@ -1521,8 +1936,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next = next_c;
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next;
@@ -1542,8 +1957,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next = next_c;
         field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next;
@@ -1563,8 +1978,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next = next_c;
         field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next) begin
             field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next;
@@ -1584,8 +1999,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next = next_c;
         field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next) begin
             field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next;
@@ -1605,8 +2020,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next = next_c;
         field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next) begin
             field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next;
@@ -1626,8 +2041,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next = next_c;
         field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next) begin
             field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next;
@@ -1647,8 +2062,8 @@ module I3CCSR (
         field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next = next_c;
         field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= 1'h0;
         end else if(field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next) begin
             field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next;
@@ -1671,8 +2086,8 @@ module I3CCSR (
         field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next = next_c;
         field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= 5'h0;
         end else if(field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next) begin
             field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next;
@@ -1692,8 +2107,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next = next_c;
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= 1'h0;
         end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next;
@@ -1713,8 +2128,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next = next_c;
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= 1'h0;
         end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next;
@@ -1734,8 +2149,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next = next_c;
         field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= 1'h0;
         end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next;
@@ -1755,8 +2170,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next = next_c;
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= 8'h0;
         end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next;
@@ -1776,8 +2191,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next = next_c;
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= 2'h0;
         end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next;
@@ -1797,8 +2212,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next = next_c;
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= 3'h0;
         end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next;
@@ -1821,8 +2236,8 @@ module I3CCSR (
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = next_c;
         field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= 1'h0;
         end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next;
@@ -1842,8 +2257,8 @@ module I3CCSR (
         field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next = next_c;
         field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= 1'h0;
         end else if(field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next) begin
             field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next;
@@ -1863,8 +2278,8 @@ module I3CCSR (
         field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next = next_c;
         field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= 1'h0;
         end else if(field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next) begin
             field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next;
@@ -1900,8 +2315,8 @@ module I3CCSR (
         field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = next_c;
         field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= 8'h1;
         end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next;
@@ -1921,8 +2336,8 @@ module I3CCSR (
         field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = next_c;
         field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= 8'h1;
         end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next;
@@ -1942,8 +2357,8 @@ module I3CCSR (
         field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next = next_c;
         field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= 8'h1;
         end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next;
@@ -1963,8 +2378,8 @@ module I3CCSR (
         field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next = next_c;
         field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= 8'h1;
         end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next;
@@ -1984,8 +2399,8 @@ module I3CCSR (
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next = next_c;
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= 3'h1;
         end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next;
@@ -2005,8 +2420,8 @@ module I3CCSR (
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next = next_c;
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= 3'h1;
         end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next;
@@ -2026,8 +2441,8 @@ module I3CCSR (
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next = next_c;
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= 3'h1;
         end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
@@ -2047,8 +2462,8 @@ module I3CCSR (
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next = next_c;
         field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= 3'h1;
         end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
@@ -2068,8 +2483,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next;
@@ -2088,8 +2503,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next;
@@ -2108,8 +2523,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next;
@@ -2128,8 +2543,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next;
@@ -2148,8 +2563,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next;
@@ -2171,8 +2586,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next;
@@ -2194,8 +2609,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next;
@@ -2222,8 +2637,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next;
@@ -2242,8 +2657,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next;
@@ -2262,8 +2677,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next;
@@ -2282,8 +2697,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next;
@@ -2302,8 +2717,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next;
@@ -2322,8 +2737,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next;
@@ -2342,8 +2757,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next;
@@ -2362,8 +2777,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next;
@@ -2382,8 +2797,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next;
@@ -2402,8 +2817,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next;
@@ -2422,8 +2837,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next;
@@ -2442,8 +2857,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next;
@@ -2462,8 +2877,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next;
@@ -2482,8 +2897,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next = next_c;
         field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next;
@@ -2502,8 +2917,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next;
@@ -2523,8 +2938,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next;
@@ -2544,8 +2959,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next;
@@ -2565,8 +2980,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next;
@@ -2586,8 +3001,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next;
@@ -2607,8 +3022,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next;
@@ -2628,8 +3043,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next = next_c;
         field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next;
@@ -2649,8 +3064,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_CONTROL.ENABLE.next = next_c;
         field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= 1'h1;
         end else if(field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next) begin
             field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= field_combo.PIOControl.PIO_CONTROL.ENABLE.next;
@@ -2673,8 +3088,8 @@ module I3CCSR (
         field_combo.PIOControl.PIO_CONTROL.RS.next = next_c;
         field_combo.PIOControl.PIO_CONTROL.RS.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.RS.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_CONTROL.RS.load_next) begin
             field_storage.PIOControl.PIO_CONTROL.RS.value <= field_combo.PIOControl.PIO_CONTROL.RS.next;
@@ -2693,14 +3108,718 @@ module I3CCSR (
         field_combo.PIOControl.PIO_CONTROL.ABORT.next = next_c;
         field_combo.PIOControl.PIO_CONTROL.ABORT.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.ABORT.value <= 1'h0;
         end else if(field_combo.PIOControl.PIO_CONTROL.ABORT.load_next) begin
             field_storage.PIOControl.PIO_CONTROL.ABORT.value <= field_combo.PIOControl.PIO_CONTROL.ABORT.next;
         end
     end
     assign hwif_out.PIOControl.PIO_CONTROL.ABORT.value = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
+    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
+    assign hwif_out.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= field_combo.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value = field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
     assign hwif_out.DAT.req = decoded_reg_strb.DAT;
     assign hwif_out.DAT.addr = decoded_addr[10:0];
     assign hwif_out.DAT.req_is_wr = decoded_req_is_wr;
@@ -2752,7 +3871,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [31:0] readback_array[33];
+    logic [31:0] readback_array[66];
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -2823,17 +3942,17 @@ module I3CCSR (
     assign readback_array[8][14:14] = (decoded_reg_strb.I3CBase.INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value : '0;
     assign readback_array[8][31:15] = '0;
     assign readback_array[9][11:0] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h400 : '0;
-    assign readback_array[9][18:12] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
+    assign readback_array[9][18:12] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h7f : '0;
     assign readback_array[9][27:19] = '0;
     assign readback_array[9][31:28] = (decoded_reg_strb.I3CBase.DAT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;
     assign readback_array[10][11:0] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 12'h800 : '0;
-    assign readback_array[10][18:12] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h1f : '0;
+    assign readback_array[10][18:12] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 7'h7f : '0;
     assign readback_array[10][23:19] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value : '0;
     assign readback_array[10][27:24] = '0;
     assign readback_array[10][31:28] = (decoded_reg_strb.I3CBase.DCT_SECTION_OFFSET && !decoded_req_is_wr) ? 4'h0 : '0;
     assign readback_array[11][15:0] = (decoded_reg_strb.I3CBase.RING_HEADERS_SECTION_OFFSET && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[11][31:16] = '0;
-    assign readback_array[12][15:0] = (decoded_reg_strb.I3CBase.PIO_SECTION_OFFSET && !decoded_req_is_wr) ? 16'h100 : '0;
+    assign readback_array[12][15:0] = (decoded_reg_strb.I3CBase.PIO_SECTION_OFFSET && !decoded_req_is_wr) ? 16'h80 : '0;
     assign readback_array[12][31:16] = '0;
     assign readback_array[13][15:0] = (decoded_reg_strb.I3CBase.EXT_CAPS_SECTION_OFFSET && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[13][31:16] = '0;
@@ -2914,8 +4033,49 @@ module I3CCSR (
     assign readback_array[30][1:1] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.RS.value : '0;
     assign readback_array[30][2:2] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.ABORT.value : '0;
     assign readback_array[30][31:3] = '0;
-    assign readback_array[31] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
-    assign readback_array[32] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
+    assign readback_array[31][7:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[31][23:8] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[31][31:24] = '0;
+    assign readback_array[32][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value : '0;
+    assign readback_array[33][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value : '0;
+    assign readback_array[34][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value : '0;
+    assign readback_array[35][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value : '0;
+    assign readback_array[36][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value : '0;
+    assign readback_array[37][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value : '0;
+    assign readback_array[38][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value : '0;
+    assign readback_array[39][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value : '0;
+    assign readback_array[40][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value : '0;
+    assign readback_array[41][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value : '0;
+    assign readback_array[42][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value : '0;
+    assign readback_array[43][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value : '0;
+    assign readback_array[44][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value : '0;
+    assign readback_array[45][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value : '0;
+    assign readback_array[46][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value : '0;
+    assign readback_array[47][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[48][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[49][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value : '0;
+    assign readback_array[50][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value : '0;
+    assign readback_array[51][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value : '0;
+    assign readback_array[52][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value : '0;
+    assign readback_array[53][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value : '0;
+    assign readback_array[54][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value : '0;
+    assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value : '0;
+    assign readback_array[56][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value : '0;
+    assign readback_array[57][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value : '0;
+    assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[58][23:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[58][31:24] = '0;
+    assign readback_array[59][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
+    assign readback_array[60][7:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[60][23:8] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[60][31:24] = '0;
+    assign readback_array[61][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
+    assign readback_array[62][7:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[62][23:8] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[62][31:24] = '0;
+    assign readback_array[63][31:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
+    assign readback_array[64] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
+    assign readback_array[65] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
 
     // Reduce the array
     always_comb begin
@@ -2923,7 +4083,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<33; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<66; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

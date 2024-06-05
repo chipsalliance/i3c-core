@@ -1,0 +1,13 @@
+// I3C controller register map based on MIPI HCI 1.2
+
+`include "secure_firmware_recovery_interface.rdl"
+`include "target_transaction_interface.rdl"
+`include "soc_management_interface.rdl"
+`include "controller_config.rdl"
+
+regfile ECRegisters{
+    SecureFirmwareRecoveryInterfaceRegisters SecureFirmwareRecoveryInterfaceRegisters @ 0x0;
+    TargetTransactionInterfaceRegisters TargetTransactionInterfaceRegisters;
+    SoCManagementInterfaceRegisters SoCManagementInterfaceRegisters;
+    ControllerConfigRegisters ControllerConfigRegisters;
+};

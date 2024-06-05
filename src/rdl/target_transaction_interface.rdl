@@ -1,0 +1,33 @@
+// I3C controller register map based on MIPI HCI 1.2
+
+
+regfile TargetTransactionInterfaceRegisters{
+    default regwidth = 32;
+    reg {
+        regwidth = 32;
+        field {
+            name = "CAP_LENGTH";
+            desc = "Capability Structure Length in DWORDs";
+            sw = r;
+            hw = r;
+            reset = 16'h0000;
+        } CAP_LENGTH[23:8];
+        field {
+            name = "CAP_ID";
+            desc = "Extended Capability ID";
+            sw = r;
+            hw = r;
+            reset = 8'h00;
+        } CAP_ID[7:0];
+    } EXTCAP_HEADER;
+    reg {
+        name = "PLACE_HOLDER_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+            } PLACEHOLDER[31:0];
+    } PLACE_HOLDER_1 ;
+};

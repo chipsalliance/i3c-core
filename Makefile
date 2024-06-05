@@ -98,23 +98,17 @@ sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra
 #
 # SystemRDL
 #
-PEAKRDL_CFG := $(SRC_DIR)/rdl/peakrdl.toml
 RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/
 RDL_ARGS := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
 
-export PEAKRDL_CFG
 generate: deps used-config-info ## Generate I3C SystemVerilog registers from SystemRDL definition
 	python -m peakrdl regblock $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR) --cpuif passthrough --type-style hier
-	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h
+	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h  --type-style hier
 
 generate-docs: deps ## Generate documentation from SystemRDL definition
 	python -m peakrdl html $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
 	python -m peakrdl markdown $(RDL_REGS) -o $(RDL_GEN_DIR)/md/documentation.md
-
-generate-example: deps used-config-info ## Generate example SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock src/rdl/example.rdl $(RDL_ARGS) -o $(RDL_GEN_DIR) --cpuif passthrough --type-style hier
-	python -m peakrdl html src/rdl/example.rdl -o $(RDL_GEN_DIR)/html/
 
 #
 # Utilities
@@ -276,7 +270,7 @@ clean: ## Clean all generated sources
 
 .PHONY: lint lint-check lint-rtl lint-tests \
 		test tests sw-caliptra-test \
-		generate generate-example deps defs timings clean \
+		generate deps defs timings clean \
 		used-config-info config \
 		uvm-verilator verilator-uvm-verilator
 

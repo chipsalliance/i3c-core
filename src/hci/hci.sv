@@ -80,8 +80,11 @@ module hci
     input  logic [RespFifoWidth-1:0] resp_fifo_rdata_i
 );
   localparam int unsigned CmdSizeInDwords = CmdFifoWidth / I3CCSR_DATA_WIDTH;
-  I3CCSR__in_t hwif_in;
+  I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
+
+  // Propagate reset to CSRs
+  assign hwif_in.rst_ni = rst_ni;
 
   // DAT CSR interface
   I3CCSR__DAT__out_t dat_o;
@@ -328,7 +331,7 @@ module hci
 
   I3CCSR i3c_csr (
       .clk(clk_i),
-      .rst(~rst_ni),
+      .rst('0),  // Unused, CSRs are reset through hwif_in.rst_ni
 
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),

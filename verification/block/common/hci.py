@@ -9,18 +9,23 @@ from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
 from ahb_if import AHBFIFOTestInterface, ahb_data_to_int, int_to_ahb_data
 
+# TODO: obtain numbers from RDL description
+
 # DAT and DCT tables
+PIO_ADDR = 0x080
 DAT_ADDR = 0x400
 DCT_ADDR = 0x800
 
-# HCI queue port addresses
-CMD_PORT = 0x100
-RX_PORT = 0x108
-TX_PORT = 0x108
-RESP_PORT = 0x104
 RESET_CONTROL = 0x10
-QUEUE_THLD_CTRL = 0x110
-DATA_BUFFER_THLD_CTRL = 0x114
+#
+CMD_PORT = PIO_ADDR
+RESP_PORT = PIO_ADDR + (0x04) * 1
+RX_PORT = PIO_ADDR + (0x04) * 2
+TX_PORT = PIO_ADDR + (0x04) * 2
+QUEUE_THLD_CTRL = PIO_ADDR + (0x04) * 4
+DATA_BUFFER_THLD_CTRL = PIO_ADDR + (0x04) * 5
+QUEUE_SIZE = PIO_ADDR + (0x04) * 6
+ALT_QUEUE_SIZE = PIO_ADDR + (0x04) * 7
 
 
 @dataclass

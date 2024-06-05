@@ -77,6 +77,8 @@ module ahb_if_wrapper
   I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
 
+  assign hwif_in.rst_ni = hreset_n;
+
   // Connect to I3C CSRs to test SW access
   I3CCSR i3c_csr (
       .clk(hclk),

@@ -2,6 +2,7 @@
 
 import cocotb
 from cocotb.handle import SimHandleBase
+from hci import PIO_ADDR
 
 from ahb_if import AHBFIFOTestInterface, compare_values, int_to_ahb_data
 
@@ -28,7 +29,7 @@ async def run_read_pio_section_offset(dut: SimHandleBase):
     await tb.register_test_interfaces()
 
     addr = 0x3C
-    expected = int_to_ahb_data(0x100, 4)
+    expected = int_to_ahb_data(PIO_ADDR, 4)
 
     read_value = await tb.read_csr(addr)
     compare_values(expected, read_value, addr)
@@ -41,6 +42,7 @@ async def run_write_to_controller_device_addr(dut: SimHandleBase):
     tb = AHBFIFOTestInterface(dut)
     await tb.register_test_interfaces()
 
+    # TODO: Remove hard-coded values
     addr = 0x8
     new_dynamic_address = 0x42 << 16  # [22:16]
     new_dynamic_address_valid = 1 << 31  # [31:31]
@@ -59,6 +61,7 @@ async def run_write_should_not_affect_ro_csr(dut: SimHandleBase):
     tb = AHBFIFOTestInterface(dut)
     await tb.register_test_interfaces()
 
+    # TODO: Remove hard-coded values
     addr = 0xC
 
     hc_cap = await tb.read_csr(addr)

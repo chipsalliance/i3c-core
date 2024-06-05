@@ -1,0 +1,283 @@
+// I3C controller register map based on MIPI HCI 1.2
+
+
+regfile SecureFirmwareRecoveryInterfaceRegisters{
+    default regwidth = 32;
+    reg {
+        regwidth = 32;
+        field {
+            name = "CAP_LENGTH";
+            desc = "Capability Structure Length in DWORDs";
+            sw = r;
+            hw = r;
+            reset = 16'h0000;
+        } CAP_LENGTH[23:8];
+        field {
+            name = "CAP_ID";
+            desc = "Extended Capability ID";
+            sw = r;
+            hw = r;
+            reset = 8'h00;
+        } CAP_ID[7:0];
+    } EXTCAP_HEADER;
+    reg {
+        name = "PROT_CAP_0";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } PROT_CAP_0 ;
+    reg {
+        name = "PROT_CAP_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+            } PLACEHOLDER[31:0];
+        } PROT_CAP_1 ;
+    reg {
+        name = "PROT_CAP_2";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } PROT_CAP_2;
+    reg {
+        name = "PROT_CAP_3";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } PROT_CAP_3;
+    reg {
+        name = "DEVICE_ID_0";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_0;
+    reg {
+        name = "DEVICE_ID_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_1;
+    reg {
+        name = "DEVICE_ID_2";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_2;
+    reg {
+        name = "DEVICE_ID_3";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_3;
+    reg {
+        name = "DEVICE_ID_4";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_4;
+    reg {
+        name = "DEVICE_ID_5";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_5;
+    reg {
+        name = "DEVICE_ID_6";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_ID_6;
+    reg {
+        name = "DEVICE_STATUS_0";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_STATUS_0;
+    reg {
+        name = "DEVICE_STATUS_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_STATUS_1;
+    reg {
+        name = "DEVICE_RESET";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } DEVICE_RESET;
+    reg {
+        name = "RECOVERY_CTRL";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } RECOVERY_CTRL;
+    reg {
+        name = "RECOVERY_STATUS";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } RECOVERY_STATUS;
+    reg {
+        name = "HW_STATUS";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } HW_STATUS;
+    reg {
+        name = "INDIRECT_FIFO_CTRL_0";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_CTRL_0;
+    reg {
+        name = "INDIRECT_FIFO_CTRL_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_CTRL_1;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_0";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_0;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_1";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_1;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_2";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_2;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_3";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_3;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_4";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_4;
+    reg {
+        name = "INDIRECT_FIFO_STATUS_5";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_STATUS_5;
+    reg {
+        name = "INDIRECT_FIFO_DATA";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } INDIRECT_FIFO_DATA;
+};

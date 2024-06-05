@@ -54,14 +54,14 @@
             "type": "integer",
             "minimum": 1,
             "default": 32,
-            "maximum": 32
+            "maximum": 128
         },
         "DctDepth": {
             "description": "Maximum number of DCT entries.",
             "type": "integer",
             "minimum": 1,
             "default": 32,
-            "maximum": 32
+            "maximum": 128
         },
         "FrontendBusInterface": {
             "description": "Bus protocol to be utilized for the I3C Core <-> System integration.",

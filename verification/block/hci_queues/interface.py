@@ -4,7 +4,13 @@ from random import randint
 
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge
-from hci import ErrorStatus, HCIBaseTestInterface, ResponseDescriptor
+from hci import (
+    ALT_QUEUE_SIZE,
+    QUEUE_SIZE,
+    ErrorStatus,
+    HCIBaseTestInterface,
+    ResponseDescriptor,
+)
 from utils import expect_with_timeout
 
 from ahb_if import ahb_data_to_int
@@ -27,8 +33,6 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
     async def read_queue_size(self, queue: str):
         # Queue size offsets in appropriate registers
         off = {"rx": 16, "tx": 24, "cmd": 0, "resp": 0}
-        QUEUE_SIZE = 0x118
-        ALT_QUEUE_SIZE = 0x11C
         queue_size = ahb_data_to_int(await self.read_csr(QUEUE_SIZE, 4))
         if queue in ["rx", "tx"]:
             return 2 ** (((queue_size >> off[queue]) & 0x7) + 1)

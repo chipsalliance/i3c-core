@@ -230,6 +230,286 @@ package I3CCSR_pkg;
     } I3CCSR__PIOControl__in_t;
 
     typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__in_t PROT_CAP_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__in_t PROT_CAP_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__in_t PROT_CAP_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__in_t PROT_CAP_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__in_t DEVICE_ID_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__in_t DEVICE_ID_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__in_t DEVICE_ID_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__in_t DEVICE_ID_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__in_t DEVICE_ID_4;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__in_t DEVICE_ID_5;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__in_t DEVICE_ID_6;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__in_t DEVICE_STATUS_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__in_t DEVICE_STATUS_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__in_t DEVICE_RESET;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__in_t RECOVERY_CTRL;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__in_t RECOVERY_STATUS;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__in_t HW_STATUS;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__in_t INDIRECT_FIFO_CTRL_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__in_t INDIRECT_FIFO_CTRL_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__in_t INDIRECT_FIFO_STATUS_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__in_t INDIRECT_FIFO_STATUS_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__in_t INDIRECT_FIFO_STATUS_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__in_t INDIRECT_FIFO_STATUS_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__in_t INDIRECT_FIFO_STATUS_4;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__in_t INDIRECT_FIFO_STATUS_5;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__in_t INDIRECT_FIFO_DATA;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__in_t SecureFirmwareRecoveryInterfaceRegisters;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__in_t TargetTransactionInterfaceRegisters;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__in_t SoCManagementInterfaceRegisters;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__in_t ControllerConfigRegisters;
+    } I3CCSR__I3C_EC__in_t;
+
+    typedef struct {
         logic rd_ack;
         logic [31:0] rd_data;
         logic wr_ack;
@@ -242,8 +522,10 @@ package I3CCSR_pkg;
     } I3CCSR__DCT__in_t;
 
     typedef struct {
+        logic rst_ni;
         I3CCSR__I3CBase__in_t I3CBase;
         I3CCSR__PIOControl__in_t PIOControl;
+        I3CCSR__I3C_EC__in_t I3C_EC;
         I3CCSR__DAT__in_t DAT;
         I3CCSR__DCT__in_t DCT;
     } I3CCSR__in_t;
@@ -647,6 +929,342 @@ package I3CCSR_pkg;
     } I3CCSR__PIOControl__out_t;
 
     typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct {
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0__out_t PROT_CAP_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1__out_t PROT_CAP_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2__out_t PROT_CAP_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3__out_t PROT_CAP_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0__out_t DEVICE_ID_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1__out_t DEVICE_ID_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2__out_t DEVICE_ID_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3__out_t DEVICE_ID_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4__out_t DEVICE_ID_4;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5__out_t DEVICE_ID_5;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6__out_t DEVICE_ID_6;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0__out_t DEVICE_STATUS_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1__out_t DEVICE_STATUS_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET__out_t DEVICE_RESET;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL__out_t RECOVERY_CTRL;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS__out_t RECOVERY_STATUS;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS__out_t HW_STATUS;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0__out_t INDIRECT_FIFO_CTRL_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1__out_t INDIRECT_FIFO_CTRL_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0__out_t INDIRECT_FIFO_STATUS_0;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1__out_t INDIRECT_FIFO_STATUS_1;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2__out_t INDIRECT_FIFO_STATUS_2;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3__out_t INDIRECT_FIFO_STATUS_3;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4__out_t INDIRECT_FIFO_STATUS_4;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5__out_t INDIRECT_FIFO_STATUS_5;
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA__out_t INDIRECT_FIFO_DATA;
+    } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct {
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct {
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct {
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__out_t SecureFirmwareRecoveryInterfaceRegisters;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__out_t TargetTransactionInterfaceRegisters;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__out_t SoCManagementInterfaceRegisters;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__out_t ControllerConfigRegisters;
+    } I3CCSR__I3C_EC__out_t;
+
+    typedef struct {
         logic req;
         logic [9:0] addr;
         logic req_is_wr;
@@ -665,6 +1283,7 @@ package I3CCSR_pkg;
     typedef struct {
         I3CCSR__I3CBase__out_t I3CBase;
         I3CCSR__PIOControl__out_t PIOControl;
+        I3CCSR__I3C_EC__out_t I3C_EC;
         I3CCSR__DAT__out_t DAT;
         I3CCSR__DCT__out_t DCT;
     } I3CCSR__out_t;
