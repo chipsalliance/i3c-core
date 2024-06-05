@@ -89,10 +89,10 @@ lint-tests: ## Run lint on tests source code
 #
 # RTL tests
 #
-test: ## Run single module test (use `TEST=<test_name>` flag)
+test: config ## Run single module test (use `TEST=<test_name>` flag)
 	cd $(VERIFICATION_DIR) && nox -R -s $(TEST)_verify
 
-tests: ## Run all RTL tests
+tests: config ## Run all RTL tests
 	cd $(VERIFICATION_DIR) && nox -R -k "verify"
 
 #
