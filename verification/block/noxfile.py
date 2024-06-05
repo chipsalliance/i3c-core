@@ -1,4 +1,3 @@
-# Copyright (c) 2024 Antmicro <www.antmicro.com>
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -17,7 +16,7 @@ nox.options.no_install = True
 
 # Test configuration
 blockPath = "."
-pipRequirementsPath = "requirements.txt"
+pipRequirementsPath = "../../requirements.txt"
 
 # Coverage types to collect
 coverageTypes = [

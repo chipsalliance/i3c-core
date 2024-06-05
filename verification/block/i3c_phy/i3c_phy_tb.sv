@@ -1,11 +1,14 @@
-// Copyright (c) 2024 Antmicro <www.antmicro.com>
 // SPDX-License-Identifier: Apache-2.0
 
 `timescale 1ns / 1ps
 
 module i3c_phy_tb ();
 `ifdef SIM
-  string simfile = {"dump_", `STRINGIFY(`SIM), ".vcd"};
+  string simfile = {
+    "dump_",
+    `STRINGIFY(`SIM),
+    ".vcd"
+  };
 `else
   string simfile = {"dump_rtl.vcd"};
 `endif

@@ -9,7 +9,7 @@ import nox
 nox.options.report = "status.json"
 
 # Test configuration
-pip_requirements_path = "requirements.txt"
+pip_requirements_path = "../../requirements.txt"
 
 
 @nox.session(tags=["tests"])
