@@ -381,6 +381,7 @@ class i3c_monitor extends uvm_monitor;
               end
               transaction.data_q.push_back(mon_data[8:1]);
               transaction.data_ack_q.push_back(mon_data[0]);
+              transaction.num_data++;
               `uvm_info(get_full_name(), $sformatf("\nmonitor, %s, trans %0d, 0x%0x",
                         msg, transaction.tran_id, mon_data[8:1]), UVM_HIGH)
               // Device to host tarnsfers end when T-bit is low
@@ -414,6 +415,12 @@ class i3c_monitor extends uvm_monitor;
         disable fork;
       end : iso_fork
     join
+    // Device to host transfer ended with device T-bit set to 0.
+    // In this case wait for controller to issue RStart or Stop condition
+    if (!transaction.rstart && !transaction.stop)
+      cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc,
+                                               transaction.rstart,
+                                               transaction.stop);
     updated_transaction = transaction;
   endtask : ccc_data
 

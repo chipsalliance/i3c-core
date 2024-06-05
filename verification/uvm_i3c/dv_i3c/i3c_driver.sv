@@ -183,7 +183,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         DrvStopPushPull: begin
           scl_i3c_mode = 1;
           scl_i3c_OD = 1'b0;
-          cfg.vif.host_sda_pp_en = 1;
+          cfg.vif.host_sda_pp_en = 0;
           fork
             `uvm_info(get_full_name(), "Host I3C STOP", UVM_MEDIUM)
             begin
@@ -337,16 +337,15 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         DrvRdPushPull: begin
           bit [7:0] data;
           bit t_bit;
+          scl_i3c_OD = 1'b0;
           cfg.vif.host_sda_pp_en = 0;
           for(int i = 0; i < req.data_cnt; i++) begin
             for(int j = 7; j >= 0; j--) begin
               cfg.vif.sample_target_data(data[j]);
             end
             rsp.data.push_back(data);
-            if (req.T_bits_valid) begin
-              cfg.vif.sample_target_data(t_bit);
-              rsp.T_bit.push_back(t_bit);
-            end
+            cfg.vif.sample_target_data(t_bit);
+            rsp.T_bit.push_back(t_bit);
             `uvm_info(get_full_name(), $sformatf("Host sampled device data data[%0d]=%d, T_bit=%b",
                 i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
           end
@@ -380,8 +379,21 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             bus_state = DrvStop;
           end
         end
-//        DrvWrPushPull: begin
-//        end
+        DrvWrPushPull: begin
+          scl_i3c_OD = 1'b0;
+          cfg.vif.host_sda_pp_en = 1;
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.host_i3c_data(cfg.tc.i3c_tc, req.data[i][j]);
+            end
+            cfg.vif.host_i3c_data(cfg.tc.i3c_tc, req.T_bit[i]);
+          end
+          if (req.end_with_rstart) begin
+            bus_state = DrvRStart;
+          end else begin
+            bus_state = DrvStop;
+          end
+        end
         default: begin
           `uvm_fatal(get_full_name(), $sformatf("\n  host_driver, received invalid request"))
         end
@@ -553,9 +565,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             for(int j = 7; j >= 0; j--) begin
               cfg.vif.device_i3c_send_bit(cfg.tc.i3c_tc, req.data[i][j]);
             end
-            if (req.T_bits_valid) begin
-              cfg.vif.device_send_T_bit(cfg.tc.i3c_tc, req.T_bit[i]);
-            end
+            cfg.vif.device_send_T_bit(cfg.tc.i3c_tc, req.T_bit[i]);
           end
           bus_state = DrvStop;
         end
@@ -573,6 +583,22 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
               break;
             end
           end
+        end
+        DrvWrPushPull: begin
+          bit [7:0] data;
+          bit t_bit;
+          cfg.vif.device_sda_pp_en = 0;
+          for(int i = 0; i < req.data_cnt; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.sample_target_data(data[j]);
+            end
+            rsp.data.push_back(data);
+            cfg.vif.sample_target_data(t_bit);
+            rsp.T_bit.push_back(t_bit);
+            `uvm_info(get_full_name(), $sformatf("Device sampled device data data[%0d]=%d, T_bit=%b",
+                i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
+          end
+          bus_state = DrvStop;
         end
         default: begin
           `uvm_fatal(get_full_name(), $sformatf("\n  host_driver, received invalid request"))

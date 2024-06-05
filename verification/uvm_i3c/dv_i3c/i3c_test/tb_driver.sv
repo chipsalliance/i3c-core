@@ -40,12 +40,7 @@ module i3c_driver_test;
     .sda_io(sda)
   );
 
-  //assign scl = scl_state ? 1'b1: 1'b0;
-  //assign sda = sda_state ? 1'b1: 1'b0;
-
   //i3c dut
-
-
   initial begin
     static i3c_agent_cfg cfg = new;
     static i3c_agent_cfg cfg_dev = new;
@@ -257,7 +252,6 @@ module i3c_driver_test;
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(0);
-    test_item.T_bits_valid = 1;
     test_item.end_with_rstart = 0;
     test_item.dev_ack = 1;
     seq_device.add_item(test_item);
@@ -277,7 +271,6 @@ module i3c_driver_test;
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(0);
-    test_item.T_bits_valid = 1;
     test_item.end_with_rstart = 0;
     test_item.dev_ack = 1;
     seq_device.add_item(test_item);
@@ -304,7 +297,6 @@ module i3c_driver_test;
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(0);
-    test_item.T_bits_valid = 1;
     test_item.end_with_rstart = 0;
     test_item.dev_ack = 1;
     seq_device.add_item(test_item);
@@ -328,7 +320,6 @@ module i3c_driver_test;
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(0);
-    test_item.T_bits_valid = 1;
     test_item.end_with_rstart = 0;
     test_item.dev_ack = 1;
     seq_device.add_item(test_item);
@@ -355,11 +346,47 @@ module i3c_driver_test;
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(1);
     test_item.T_bit.push_back(0);
-    test_item.T_bits_valid = 1;
     test_item.end_with_rstart = 0;
     test_item.dev_ack = 1;
     seq_device.add_item(test_item);
     seq_host.add_item(test_item);
+
+    // I3C write
+    test_item = new();
+    test_item.i3c = 1;
+    test_item.addr = 7'h72;
+    test_item.dir = 0;
+    test_item.data_cnt = 2;
+    test_item.data.push_back(8'hDE);
+    test_item.data.push_back(8'hAD);
+    test_item.T_bit.push_back(1);
+    test_item.T_bit.push_back(0);
+    test_item.end_with_rstart = 0;
+    test_item.dev_ack = 1;
+    seq_host.add_item(test_item);
+    seq_device.add_item(test_item);
+
+    // I3C write with interruption
+    test_item = new();
+    test_item.i3c = 1;
+    test_item.addr = 7'h72;
+    test_item.dir = 0;
+    test_item.data_cnt = 2;
+    test_item.data.push_back(8'hDE);
+    test_item.data.push_back(8'hAD);
+    test_item.data.push_back(8'hBE);
+    test_item.data.push_back(8'hEF);
+    test_item.T_bit.push_back(1);
+    test_item.T_bit.push_back(0);
+    test_item.T_bit.push_back(1);
+    test_item.T_bit.push_back(0);
+    test_item.end_with_rstart = 0;
+    test_item.dev_ack = 1;
+    seq_device.add_item(test_item);
+    $cast(test_item_copy, test_item.clone());
+    test_item_copy.data_cnt = 4;
+    seq_host.add_item(test_item_copy);
+
     //uvm_config_db#(virtual clk_rst_if)::set(null, "*.env", "clk_rst_vif", clk_rst_if);
     //uvm_config_db#(virtual i3c_if)::set(null, "*.env.m_i3c_agent*", "vif", i3c_if);
     //uvm_config_db#(virtual i2c_dv_if)::set(null, "*.env", "i2c_dv_vif", i2c_dv_if);

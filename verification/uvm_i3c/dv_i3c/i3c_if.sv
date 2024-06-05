@@ -37,9 +37,6 @@ interface i3c_if(
 
   int scl_spinwait_timeout_ns = 10_000_000; // 10ms
 
-  // Trace drivers' status
-  i3c_drv_phase_e drv_phase;
-
   clocking cb @(posedge clk_i);
     input scl_i;
     input sda_i;
@@ -394,6 +391,7 @@ interface i3c_if(
     time_check(tc.tClockPulse, 1'b0, scl_i, "I3C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
     #(tc.tHoldBit * 1ns);
+    device_sda_o = 1;
   endtask: device_i3c_od_send_bit
 
   task automatic device_i3c_send_bit(ref i3c_timing_t tc,
@@ -409,6 +407,7 @@ interface i3c_if(
     // Hold the bit past SCL going low, then release.
     #(tc.tHoldBit * 1ns);
     device_sda_pp_en = 0;
+    device_sda_o = 1;
   endtask: device_i3c_send_bit
 
   task automatic device_send_T_bit(ref i3c_timing_t tc,
@@ -422,6 +421,8 @@ interface i3c_if(
     // Hold the bit steady for the maximal Tsco (12ns)
     #(12 * 1ns);
     device_sda_pp_en = 0;
+    time_check(tc.tClockPulse-12, 1'b0, scl_i, "I3C device bit clock high pulse width");
+    device_sda_o = 1;
   endtask: device_send_T_bit
 
 endinterface : i3c_if
