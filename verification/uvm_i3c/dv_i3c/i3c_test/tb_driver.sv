@@ -387,6 +387,57 @@ module i3c_driver_test;
     test_item_copy.data_cnt = 4;
     seq_host.add_item(test_item_copy);
 
+    // I3C DAA
+    test_item = new();
+    test_item.i3c = 1;
+    test_item.addr = 7'h7E;
+    test_item.dir = 0;
+    test_item.data_cnt = 1;
+    test_item.data.push_back(8'h07);
+    test_item.T_bit.push_back(0);
+    test_item.end_with_rstart = 1;
+    test_item.dev_ack = 1;
+    seq_host.add_item(test_item);
+    seq_device.add_item(test_item);
+    // Set first addr
+    test_item = new();
+    test_item.i3c = 1;
+    test_item.addr = 7'h7E;
+    test_item.dir = 1;
+    test_item.data_cnt = 1;
+    test_item.data.push_back(8'h43);
+    test_item.end_with_rstart = 1;
+    test_item.dev_ack = 1;
+    test_item.is_daa = 1;
+    seq_host.add_item(test_item);
+    test_item_copy = new();
+    test_item_copy.i3c = 1;
+    test_item_copy.addr = 7'h7E;
+    test_item_copy.dir = 1;
+    test_item_copy.is_daa = 1;
+    test_item_copy.data.push_back(8'hDE);
+    test_item_copy.data.push_back(8'hAD);
+    test_item_copy.data.push_back(8'hBE);
+    test_item_copy.data.push_back(8'hEF);
+    test_item_copy.data.push_back(8'h55);
+    test_item_copy.data.push_back(8'hAA);
+    test_item_copy.data.push_back(8'h55);
+    test_item_copy.data.push_back(8'hAA);
+    test_item_copy.data_cnt = 8;
+    test_item_copy.end_with_rstart = 1;
+    test_item_copy.dev_ack = 1;
+    test_item_copy.T_bit.push_back(1);
+    seq_device.add_item(test_item_copy);
+    // Finish DAA
+    test_item = new();
+    test_item.i3c = 1;
+    test_item.addr = 7'h7E;
+    test_item.dir = 1;
+    test_item.end_with_rstart = 0;
+    test_item.dev_ack = 0;
+    seq_host.add_item(test_item);
+    seq_device.add_item(test_item);
+
     //uvm_config_db#(virtual clk_rst_if)::set(null, "*.env", "clk_rst_vif", clk_rst_if);
     //uvm_config_db#(virtual i3c_if)::set(null, "*.env.m_i3c_agent*", "vif", i3c_if);
     //uvm_config_db#(virtual i2c_dv_if)::set(null, "*.env", "i2c_dv_vif", i2c_dv_if);

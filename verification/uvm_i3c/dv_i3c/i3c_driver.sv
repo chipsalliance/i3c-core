@@ -247,7 +247,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             cfg.vif.host_i3c_data(cfg.tc.i3c_tc, 0);
           end
           if (rsp.dev_ack || req.IBI_ACK) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               if (req.i3c) bus_state = DrvRdPushPull;
               else bus_state = DrvRd;
             end else begin
@@ -275,7 +277,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           cfg.vif.host_i2c_data(cfg.tc.i2c_tc, req.dir);
           cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
           if (rsp.dev_ack) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               bus_state = DrvRd;
             end else begin
               bus_state = DrvWr;
@@ -303,7 +307,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           cfg.vif.host_sda_o = 1;
           cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
           if (rsp.dev_ack) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               bus_state = DrvRdPushPull;
             end else begin
               bus_state = DrvWrPushPull;
@@ -314,6 +320,27 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             end else begin
               bus_state = DrvStopPushPull;
             end
+          end
+        end
+        DrvDAA: begin
+          bit [7:0] data;
+          bit ack;
+          cfg.vif.host_sda_pp_en = 0;
+          for(int i = 0; i < 8; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.sample_target_data(data[j]);
+            end
+            rsp.data.push_back(data);
+          end
+          for(int j = 7; j >= 0; j--) begin
+            cfg.vif.host_i3c_data(cfg.tc.i3c_tc, req.data[0][j]);
+          end
+          cfg.vif.wait_for_device_ack_or_nack(.ack_r(ack));
+          rsp.T_bit.push_back(ack);
+          if (req.end_with_rstart) begin
+            bus_state = DrvRStart;
+          end else begin
+            bus_state = DrvStop;
           end
         end
         DrvRd: begin
@@ -475,7 +502,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           // Correct device address and device should have ACKed or device
           // request IBI and Host ACKed
           if (req.IBI && rsp.dev_ack || req.dev_ack) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               if (req.i3c) bus_state = DrvRdPushPull;
               else bus_state = DrvRd;
             end else begin
@@ -505,7 +534,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             continue;
           end
           if (req.dev_ack) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               bus_state = DrvRd;
             end else begin
               bus_state = DrvWr;
@@ -533,7 +564,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             continue;
           end
           if (req.dev_ack) begin
-            if (rsp.dir) begin
+            if (req.is_daa) begin
+              bus_state = DrvDAA;
+            end else if (rsp.dir) begin
               bus_state = DrvRdPushPull;
             end else begin
               bus_state = DrvWrPushPull;
@@ -545,6 +578,23 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         DrvStop: begin
           release_bus();
           wait(0);
+        end
+        DrvDAA: begin
+          bit [7:0] data;
+          bit ack;
+          cfg.vif.host_sda_pp_en = 0;
+          `uvm_info(get_full_name(), $sformatf("\n%s", req.sprint()),UVM_MEDIUM)
+          for(int i = 0; i < 8; i++) begin
+            for(int j = 7; j >= 0; j--) begin
+              cfg.vif.device_i3c_od_send_bit(cfg.tc.i3c_tc, req.data[i][j]);
+            end
+          end
+          for(int j = 7; j >= 0; j--) begin
+            cfg.vif.sample_target_data(data[j]);
+          end
+          rsp.data.push_back(data);
+          cfg.vif.device_i3c_od_send_bit(cfg.tc.i3c_tc, !req.T_bit[0]);
+          bus_state = DrvStop;
         end
         DrvRd: begin
           bit ack;

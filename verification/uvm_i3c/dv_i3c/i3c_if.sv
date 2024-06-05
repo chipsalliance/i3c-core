@@ -100,7 +100,6 @@ interface i3c_if(
     @(posedge scl_i);
     bit_o = sda_i;
 
-
     if (src == "host") begin // host transmits data (addr/wr_data)
       `uvm_info(msg_id, $sformatf("get bit data %d", bit_o), UVM_HIGH)
       @(negedge scl_i);

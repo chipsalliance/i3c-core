@@ -210,6 +210,8 @@ class i3c_monitor extends uvm_monitor;
 
     if (transaction.i3c_direct) begin
       i3c_direct(transaction);
+    end else if (transaction.CCC == ENTDAA) begin
+      i3c_daa(transaction);
     end
   endtask : i3c_thread
 
@@ -332,6 +334,73 @@ class i3c_monitor extends uvm_monitor;
       next_item = null;
     end
   endtask : i3c_direct
+
+  virtual protected task i3c_daa(ref i3c_item transaction);
+    i3c_item temp_val;
+    forever begin
+      next_item = new;
+      next_item.rstart = 1'b0;
+      next_item.start = 1'b1;
+      address_thread(next_item, temp_val);
+      next_item = temp_val;
+
+      if (!next_item.stop && !next_item.rstart) begin
+        // Address thread was successful
+        if (next_item.addr_ack) begin
+          // Device ACKed address
+          daa_data(.transaction(next_item),
+                   .updated_transaction(temp_val));
+          next_item = temp_val;
+          transaction.CCC_direct.push_back(next_item);
+        end else begin
+          // I3C transfer was denied by target
+          transaction.CCC_direct.push_back(next_item);
+          cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc,
+                                                   transaction.rstart,
+                                                   transaction.stop);
+        end
+      end else begin
+        `uvm_fatal(get_full_name(), $sformatf("\nmonitor, DAA was incorrect: %s",
+          (next_item.stop) ? "STOP" : "RSTART"))
+      end
+      `DV_CHECK_NE_FATAL({next_item.rstart, next_item.stop}, 2'b11)
+      `uvm_info(get_full_name(), $sformatf("\nmonitor, CCC, detect HOST %s",
+          (next_item.stop) ? "STOP" : "RSTART"), UVM_HIGH)
+      next_item = null;
+      if(transaction.stop) break;
+    end
+  endtask : i3c_daa
+
+  virtual protected task daa_data(i3c_item transaction,
+                                  output i3c_item updated_transaction);
+    int i;
+    for(int j=0; j < 8; j++) begin
+      for (i = 7; i >= 0; i--) begin
+        cfg.vif.get_bit_data("device", mon_data[i]);
+        `uvm_info(get_full_name(), $sformatf("\nmonitor, DAA arbitration, trans %0d, DAA byte %0d, bit[%0d] %0b",
+            transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
+      end
+      transaction.data_q.push_back(mon_data[7:0]);
+      transaction.num_data++;
+      `uvm_info(get_full_name(), $sformatf("\nmonitor, DAA arbitration, trans %0d, 0x%0x",
+                transaction.tran_id, mon_data[7:0]), UVM_HIGH)
+    end
+    for (i = 8; i > 0; i--) begin
+      cfg.vif.get_bit_data("device", mon_data[i]);
+      `uvm_info(get_full_name(), $sformatf("\nmonitor, DAA new address, trans %0d, bit[%0d] %0b",
+          transaction.tran_id, i, mon_data[i]), UVM_HIGH)
+    end
+    `DV_CHECK_NE_FATAL(^mon_data[8:2], mon_data[1])
+    transaction.data_q.push_back(mon_data[8:1]);
+    transaction.data_ack_q.push_back(mon_data[0]);
+    if (mon_data[0])
+      `uvm_info(get_full_name(), "Device rejected new address", UVM_MEDIUM)
+    transaction.num_data++;
+    cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc,
+                                             transaction.rstart,
+                                             transaction.stop);
+    updated_transaction = transaction;
+  endtask : daa_data
 
   virtual protected task ccc_direct(ref i3c_item transaction, ref i3c_item next_item);
     i3c_item temp_val;

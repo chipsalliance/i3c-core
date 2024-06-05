@@ -16,26 +16,6 @@ package i3c_agent_pkg;
     BusOpRead  = 1'b1
   } bus_op_e;
 
-  // Bus/Transaction types for the agent driver
-  typedef enum logic [4:0] {
-    None,
-    DevAck, DevNack,
-    WrData,
-    BroadcastCCC,
-    DirectCCCAddr,
-    WrDataPP,
-
-
-    HostRStart, HostStop,
-    HostNAck, HostAck,
-    RdData,     // I2C read transaction
-    RdDataPP,   // I3C read transcation
-
-    HostDevStart,
-    HostDevAck, HostDevNAck,
-    HostDevAddr
-  } i3c_drv_type_e;
-
   // Driver phase
   typedef enum int {
     DrvIdle,
@@ -50,7 +30,8 @@ package i3c_agent_pkg;
     DrvRd,
     DrvRdPushPull,
     DrvStop,
-    DrvStopPushPull
+    DrvStopPushPull,
+    DrvDAA
   } i3c_drv_phase_e;
 
   typedef enum logic[7:0] {
