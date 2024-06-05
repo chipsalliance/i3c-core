@@ -107,6 +107,10 @@ def isSimFailure(
 def verify_block(session, blockName, testName, coverage=None):
     session.install("-r", pipRequirementsPath)
     testPath = os.path.join(blockPath, blockName)
+    defaultNameVCD = os.path.join("dump.vcd")
+    defaultNameVCDPath = os.path.join(testPath, defaultNameVCD)
+    testNameVCD = os.path.join("dump_" + testName + ".vcd")
+    testNameVCDPath = os.path.join(testPath, testNameVCD)
     testNameXML = os.path.join(testName + ".xml")
     testNameXMLPath = os.path.join(testPath, testNameXML)
     testNameLog = os.path.join(testName + ".log")
@@ -142,6 +146,9 @@ def verify_block(session, blockName, testName, coverage=None):
         newTestNameLog = testName + "_" + coverage + ".log"
         newTestNameLogPath = os.path.join(testPath, newTestNameLog)
         os.rename(testNameLogPath, newTestNameLogPath)
+
+    os.rename(defaultNameVCDPath, testNameVCDPath)
+
     # Add check from results.xml to notify nox that test failed
     isTBFailure = isSimFailure(resultsFile=testNameXMLPath, verbose=False)
     if isTBFailure:
