@@ -4,25 +4,34 @@ from random import randint
 
 import cocotb
 from cocotb.handle import SimHandleBase
+from cocotb.triggers import ClockCycles, Combine
 from interface import HCIQueuesTestInterface
 
 TEST_SIZE = 5
+QUEUE_SIZE = 64
 
 
-async def test_write_read(data, write_handle, read_handle):
+async def test_write(data, write_handle):
     for e in data:
         await write_handle(e)
 
+
+async def test_read(data, read_handle):
     for e in data:
         received_desc = await read_handle()
         assert e == received_desc, f"Expected: {hex(e)}, got: {hex(received_desc)}"
 
 
+async def test_write_read(data, write_handle, read_handle):
+    await test_write(data, write_handle)
+    await test_read(data, read_handle)
+
+
 @cocotb.test()
-async def issue_command_through_command_port(dut: SimHandleBase):
+async def write_read_command_queue(dut: SimHandleBase):
     """
-    Enqueue immediate transfer command through COMMAND_PORT &
-    verify the enqueued descriptor from the controller's side
+    Enqueue multiple transfers through COMMAND_PORT and verify
+    whether the data matches after fetching it from the controller
     """
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
@@ -32,9 +41,30 @@ async def issue_command_through_command_port(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def issue_data_through_xfer_data_port(dut: SimHandleBase):
+async def overflow_command_queue(dut: SimHandleBase):
     """
-    Place TX data through XFER_DATA_PORT & verify it from the other (controller's) side of the queue
+    Enqueue multiple transfers through COMMAND_PORT and verify
+    whether the data matches after fetching it from the controller
+    """
+    tb = HCIQueuesTestInterface(dut)
+    await tb.setup()
+
+    cmd_data = [randint(1, 2**64 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
+    await test_write(cmd_data[:-TEST_SIZE], tb.put_command_desc)
+
+    write_coroutine = cocotb.start_soon(test_write(cmd_data[-TEST_SIZE:], tb.put_command_desc))
+    await ClockCycles(dut.hclk, 10)
+
+    read_coroutine = cocotb.start_soon(test_read(cmd_data, tb.get_command_desc))
+
+    await Combine(write_coroutine, read_coroutine)
+
+
+@cocotb.test()
+async def write_read_tx_queue(dut: SimHandleBase):
+    """
+    Place TX data through XFER_DATA_PORT & verify it from the other (controller's)
+    side of the queue
     """
     tb = HCIQueuesTestInterface(dut)
     await tb.setup()
@@ -44,7 +74,27 @@ async def issue_data_through_xfer_data_port(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def fetch_read_data_from_xfer_data_port(dut: SimHandleBase):
+async def overflow_tx_queue(dut: SimHandleBase):
+    """
+    Place TX data through XFER_DATA_PORT (and overflow it) & verify it from the
+    other (controller's) side of the queue
+    """
+    tb = HCIQueuesTestInterface(dut)
+    await tb.setup()
+
+    tx_data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
+    await test_write(tx_data[:-TEST_SIZE], tb.put_tx_data)
+
+    write_coroutine = cocotb.start_soon(test_write(tx_data[-TEST_SIZE:], tb.put_tx_data))
+    await ClockCycles(dut.hclk, 10)
+
+    read_coroutine = cocotb.start_soon(test_read(tx_data, tb.get_tx_data))
+
+    await Combine(write_coroutine, read_coroutine)
+
+
+@cocotb.test()
+async def write_read_rx_queue(dut: SimHandleBase):
     """
     Put read data onto the RX queue & fetch it through XFER_DATA_PORT
     """
@@ -56,9 +106,28 @@ async def fetch_read_data_from_xfer_data_port(dut: SimHandleBase):
 
 
 @cocotb.test()
+async def overflow_rx_queue(dut: SimHandleBase):
+    """
+    Put read data onto the RX queue (and overflow it) & fetch it through XFER_DATA_PORT
+    """
+    tb = HCIQueuesTestInterface(dut)
+    await tb.setup()
+
+    rx_data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
+    await test_write(rx_data[:-TEST_SIZE], tb.put_rx_data)
+
+    write_coroutine = cocotb.start_soon(test_write(rx_data[-TEST_SIZE:], tb.put_rx_data))
+    await ClockCycles(dut.hclk, 10)
+
+    read_coroutine = cocotb.start_soon(test_read(rx_data, tb.get_rx_data))
+
+    await Combine(write_coroutine, read_coroutine)
+
+
+@cocotb.test()
 async def fetch_response_from_response_port(dut: SimHandleBase):
     """
-    Put response onto the response queue (from controller logic) & fetch it from
+    Put response into the response queue (from controller logic) & fetch it from
     the RESPONSE_PORT
     """
     tb = HCIQueuesTestInterface(dut)
@@ -66,3 +135,23 @@ async def fetch_response_from_response_port(dut: SimHandleBase):
 
     resp_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(resp_data, tb.put_response_desc, tb.get_response_desc)
+
+
+@cocotb.test()
+async def overflow_response_queue(dut: SimHandleBase):
+    """
+    Put multiple response data into the response queue (from controller logic)
+    to overflow it & fetch it from the RESPONSE_PORT
+    """
+    tb = HCIQueuesTestInterface(dut)
+    await tb.setup()
+
+    resp_data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
+    await test_write(resp_data[:-TEST_SIZE], tb.put_response_desc)
+
+    write_coroutine = cocotb.start_soon(test_write(resp_data[-TEST_SIZE:], tb.put_response_desc))
+    await ClockCycles(dut.hclk, 10)
+
+    read_coroutine = cocotb.start_soon(test_read(resp_data, tb.get_response_desc))
+
+    await Combine(write_coroutine, read_coroutine)
