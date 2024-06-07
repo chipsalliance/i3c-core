@@ -14,7 +14,8 @@ Don't override. Generated from: I3CCSR
 |Offset|Identifier|Name|
 |------|----------|----|
 | 0x000|  I3CBase |  — |
-| 0x100|PIOControl|  — |
+| 0x080|PIOControl|  — |
+| 0x100|  I3C_EC  |  — |
 | 0x400|    DAT   |  — |
 | 0x800|    DCT   |  — |
 
@@ -56,7 +57,7 @@ Don't override. Generated from: I3CCSR
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|31:0|   value  |   r  |0x120|  — |
+|31:0|  VERSION |   r  |0x120|  — |
 
 ### HC_CONTROL register
 
@@ -66,69 +67,69 @@ Don't override. Generated from: I3CCSR
 
 |Bits|       Identifier      |  Access |Reset|          Name         |
 |----|-----------------------|---------|-----|-----------------------|
-|  0 |      iba_include      |    rw   | 0x0 |      IBA_INCLUDE      |
-|  3 |    autocmd_data_rpt   |    r    | 0x0 |    AUTOCMD_DATA_RPT   |
-|  4 |       byte_order      |    r    | 0x0 |  DATA_BYTE_ORDER_MODE |
-|  6 |          mode         |    r    | 0x1 |     MODE_SELECTOR     |
-|  7 |        i2c_devs       |    rw   | 0x0 |    I2C_DEV_PRESENT    |
-|  8 |        hot_join       |    rw   | 0x0 |     HOT_JOIN_CTRL     |
-| 12 |halt_on_cmd_seq_timeout|    rw   | 0x0 |HALT_ON_CMD_SEQ_TIMEOUT|
-| 29 |         abort         |    rw   | 0x0 |         ABORT         |
-| 30 |         resume        |rw, woclr| 0x0 |         RESUME        |
-| 31 |       bus_enable      |    rw   | 0x0 |       BUS_ENABLE      |
+|  0 |      IBA_INCLUDE      |    rw   | 0x0 |      IBA_INCLUDE      |
+|  3 |    AUTOCMD_DATA_RPT   |    r    | 0x0 |    AUTOCMD_DATA_RPT   |
+|  4 |  DATA_BYTE_ORDER_MODE |    r    | 0x0 |  DATA_BYTE_ORDER_MODE |
+|  6 |     MODE_SELECTOR     |    r    | 0x1 |     MODE_SELECTOR     |
+|  7 |    I2C_DEV_PRESENT    |    rw   | 0x0 |    I2C_DEV_PRESENT    |
+|  8 |     HOT_JOIN_CTRL     |    rw   | 0x0 |     HOT_JOIN_CTRL     |
+| 12 |HALT_ON_CMD_SEQ_TIMEOUT|    rw   | 0x0 |HALT_ON_CMD_SEQ_TIMEOUT|
+| 29 |         ABORT         |    rw   | 0x0 |         ABORT         |
+| 30 |         RESUME        |rw, woclr| 0x0 |         RESUME        |
+| 31 |       BUS_ENABLE      |    rw   | 0x0 |       BUS_ENABLE      |
 
-#### iba_include field
+#### IBA_INCLUDE field
 
 <p>Include I3C Broadcast Address:
 0 - skips I3C Broadcast Address for private transfers,
 1 - includes I3C Broadcast Address for private transfers.</p>
 
-#### autocmd_data_rpt field
+#### AUTOCMD_DATA_RPT field
 
 <p>Auto-Command Data Report:
 0 - coalesced reporting,
 1 - separated reporting.</p>
 
-#### byte_order field
+#### DATA_BYTE_ORDER_MODE field
 
 <p>Data Byte Ordering Mode:
 0 - Little Endian
 1 - Big Endian</p>
 
-#### mode field
+#### MODE_SELECTOR field
 
 <p>DMA/PIO Mode Selector:
 0 - DMA,
 1 - PIO.</p>
 
-#### i2c_devs field
+#### I2C_DEV_PRESENT field
 
 <p>I2C Device Present on Bus:
 0 - pure I3C bus,
 1 - legacy I2C devices on the bus.</p>
 
-#### hot_join field
+#### HOT_JOIN_CTRL field
 
 <p>Hot-Join ACK/NACK Control:
 0 - ACK Hot-Join request,
 1 - NACK Hot-Join request and send Broadcast CCC to disable Hot-Join.</p>
 
-#### halt_on_cmd_seq_timeout field
+#### HALT_ON_CMD_SEQ_TIMEOUT field
 
 <p>Halt on Command Sequence Timeout when set to 1</p>
 
-#### abort field
+#### ABORT field
 
 <p>Host Controller Abort when set to 1</p>
 
-#### resume field
+#### RESUME field
 
 <p>Host Controller Resume:
 0 - Controller is running,
 1 - Controller is suspended.
 Write 1 to resume Controller operations.</p>
 
-#### bus_enable field
+#### BUS_ENABLE field
 
 <p>Host Controller Bus Enable</p>
 
@@ -140,14 +141,14 @@ Write 1 to resume Controller operations.</p>
 
 | Bits|    Identifier    |Access|Reset|       Name       |
 |-----|------------------|------|-----|------------------|
-|22:16|   dynamic_addr   |  rw  | 0x0 |   DYNAMIC_ADDR   |
-|  31 |dynamic_addr_valid|  rw  | 0x0 |DYNAMIC_ADDR_VALID|
+|22:16|   DYNAMIC_ADDR   |  rw  | 0x0 |   DYNAMIC_ADDR   |
+|  31 |DYNAMIC_ADDR_VALID|  rw  | 0x0 |DYNAMIC_ADDR_VALID|
 
-#### dynamic_addr field
+#### DYNAMIC_ADDR field
 
 <p>Device Dynamic Address</p>
 
-#### dynamic_addr_valid field
+#### DYNAMIC_ADDR_VALID field
 
 <p>Dynamic Address is Valid:
 0 - dynamic address is invalid,
@@ -159,95 +160,95 @@ Write 1 to resume Controller operations.</p>
 - Base Offset: 0xC
 - Size: 0x4
 
-| Bits|    Identifier    |Access|Reset|         Name        |
-|-----|------------------|------|-----|---------------------|
-|  2  |     comb_cmd     |   r  | 0x0 |    COMBO_COMMAND    |
-|  3  |     auto_cmd     |   r  | 0x0 |     AUTO_COMMAND    |
-|  5  |    standby_cr    |   r  | 0x0 |    STANDBY_CR_CAP   |
-|  6  |      hdr_ddr     |   r  | 0x0 |      HDR_DDR_EN     |
-|  7  |      hdr_ts      |   r  | 0x0 |      HDR_TS_EN      |
-|  10 |  cmd_ccc_defbyte |   r  | 0x1 |   CMD_CCC_DEFBYTE   |
-|  11 |  ibi_data_abort  |   r  | 0x0 |  IBI_DATA_ABORT_EN  |
-|  12 | ibi_credit_count |   r  | 0x0 | IBI_CREDIT_COUNT_EN |
-|  13 |scheduled_commands|   r  | 0x0 |SCHEDULED_COMMANDS_EN|
-|21:20|     cmd_size     |   r  | 0x0 |       CMD_SIZE      |
-|  28 |     sc_cr_en     |   r  | 0x0 | SG_CAPABILITY_CR_EN |
-|  29 |     sc_ibi_en    |   r  | 0x0 | SG_CAPABILITY_IBI_EN|
-|  30 |     sg_dc_en     |   r  | 0x0 | SG_CAPABILITY_DC_EN |
+| Bits|      Identifier     |Access|Reset|         Name        |
+|-----|---------------------|------|-----|---------------------|
+|  2  |    COMBO_COMMAND    |   r  | 0x0 |    COMBO_COMMAND    |
+|  3  |     AUTO_COMMAND    |   r  | 0x0 |     AUTO_COMMAND    |
+|  5  |    STANDBY_CR_CAP   |   r  | 0x0 |    STANDBY_CR_CAP   |
+|  6  |      HDR_DDR_EN     |   r  | 0x0 |      HDR_DDR_EN     |
+|  7  |      HDR_TS_EN      |   r  | 0x0 |      HDR_TS_EN      |
+|  10 |   CMD_CCC_DEFBYTE   |   r  | 0x1 |   CMD_CCC_DEFBYTE   |
+|  11 |  IBI_DATA_ABORT_EN  |   r  | 0x0 |  IBI_DATA_ABORT_EN  |
+|  12 | IBI_CREDIT_COUNT_EN |   r  | 0x0 | IBI_CREDIT_COUNT_EN |
+|  13 |SCHEDULED_COMMANDS_EN|   r  | 0x0 |SCHEDULED_COMMANDS_EN|
+|21:20|       CMD_SIZE      |   r  | 0x0 |       CMD_SIZE      |
+|  28 | SG_CAPABILITY_CR_EN |   r  | 0x0 | SG_CAPABILITY_CR_EN |
+|  29 | SG_CAPABILITY_IBI_EN|   r  | 0x0 | SG_CAPABILITY_IBI_EN|
+|  30 | SG_CAPABILITY_DC_EN |   r  | 0x0 | SG_CAPABILITY_DC_EN |
 
-#### comb_cmd field
+#### COMBO_COMMAND field
 
 <p>Controller combined command:
 0 - not supported,
 1 - supported.</p>
 
-#### auto_cmd field
+#### AUTO_COMMAND field
 
 <p>Automatic read command on IBI:
 0 - not supported,
 1 - supported.</p>
 
-#### standby_cr field
+#### STANDBY_CR_CAP field
 
 <p>Switching from active to standby mode:
 0 - not supported, this controller is always active on I3C,
 1- supported, this controller can hand off I3C to secondary controller.</p>
 
-#### hdr_ddr field
+#### HDR_DDR_EN field
 
 <p>HDR-DDR transfers:
 0 - not supported,
 1 - supported.</p>
 
-#### hdr_ts field
+#### HDR_TS_EN field
 
 <p>HDR-Ternary transfers:
 0 - not supported,
 1 - supported.</p>
 
-#### cmd_ccc_defbyte field
+#### CMD_CCC_DEFBYTE field
 
 <p>CCC with defining byte:
 0 - not supported,
 1 - supported.</p>
 
-#### ibi_data_abort field
+#### IBI_DATA_ABORT_EN field
 
 <p>Controller IBI data abort:
 0 - not supported,
 1 - supported.</p>
 
-#### ibi_credit_count field
+#### IBI_CREDIT_COUNT_EN field
 
 <p>Controller IBI credit count:
 0 - not supported,
 1 - supported.</p>
 
-#### scheduled_commands field
+#### SCHEDULED_COMMANDS_EN field
 
 <p>Controller command scheduling:
 0 - not supported,
 1 - supported.</p>
 
-#### cmd_size field
+#### CMD_SIZE field
 
 <p>Size and structure of the Command Descriptor:
 2'b0: 2 DWORDs,
 all other reserved.</p>
 
-#### sc_cr_en field
+#### SG_CAPABILITY_CR_EN field
 
 <p>DMA only: Command and Response rings memory:
 0 - must be physically continuous,
 1 - controller supports scatter-gather.</p>
 
-#### sc_ibi_en field
+#### SG_CAPABILITY_IBI_EN field
 
 <p>DMA only: IBI status and IBI Data rings memory:
 0 - must be physically continuous,
 1 - controller supports scatter-gather.</p>
 
-#### sg_dc_en field
+#### SG_CAPABILITY_DC_EN field
 
 <p>Device context memory:
 0 - must be physically continuous,
@@ -259,36 +260,36 @@ all other reserved.</p>
 - Base Offset: 0x10
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|     Name     |
-|----|----------|------|-----|--------------|
-|  0 | soft_rst |  rw  | 0x0 |   SOFT_RST   |
-|  1 | cmd_queue|  rw  | 0x0 | CMD_QUEUE_RST|
-|  2 |resp_queue|  rw  | 0x0 |RESP_QUEUE_RST|
-|  3 |  tx_fifo |  rw  | 0x0 |  TX_FIFO_RST |
-|  4 |  rx_fifo |  rw  | 0x0 |  RX_FIFO_RST |
-|  5 | ibi_queue|  rw  | 0x0 | IBI_QUEUE_RST|
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+|  0 |   SOFT_RST   |  rw  | 0x0 |   SOFT_RST   |
+|  1 | CMD_QUEUE_RST|  rw  | 0x0 | CMD_QUEUE_RST|
+|  2 |RESP_QUEUE_RST|  rw  | 0x0 |RESP_QUEUE_RST|
+|  3 |  TX_FIFO_RST |  rw  | 0x0 |  TX_FIFO_RST |
+|  4 |  RX_FIFO_RST |  rw  | 0x0 |  RX_FIFO_RST |
+|  5 | IBI_QUEUE_RST|  rw  | 0x0 | IBI_QUEUE_RST|
 
-#### soft_rst field
+#### SOFT_RST field
 
 <p>Reset controller from software.</p>
 
-#### cmd_queue field
+#### CMD_QUEUE_RST field
 
 <p>Clear command queue from software. Valid only in PIO mode.</p>
 
-#### resp_queue field
+#### RESP_QUEUE_RST field
 
 <p>Clear response queue from software. Valid only in PIO mode.</p>
 
-#### tx_fifo field
+#### TX_FIFO_RST field
 
 <p>Clear TX FIFO from software. Valid only in PIO mode.</p>
 
-#### rx_fifo field
+#### RX_FIFO_RST field
 
 <p>Clear RX FIFO from software. Valid only in PIO mode.</p>
 
-#### ibi_queue field
+#### IBI_QUEUE_RST field
 
 <p>Clear IBI queue from software. Valid only in PIO mode.</p>
 
@@ -300,9 +301,9 @@ all other reserved.</p>
 
 |Bits|  Identifier  |Access|Reset|     Name     |
 |----|--------------|------|-----|--------------|
-|  2 |ac_current_own|   r  | 0x1 |AC_CURRENT_OWN|
+|  2 |AC_CURRENT_OWN|   r  | 0x1 |AC_CURRENT_OWN|
 
-#### ac_current_own field
+#### AC_CURRENT_OWN field
 
 <p>Controller I3C state:
 0 - not bus owner,
@@ -314,31 +315,31 @@ all other reserved.</p>
 - Base Offset: 0x20
 - Size: 0x4
 
-|Bits|      Identifier      |  Access |Reset|            Name           |
-|----|----------------------|---------|-----|---------------------------|
-| 10 |    hc_internal_err   |rw, woclr| 0x0 |    HC_INTERNAL_ERR_STAT   |
-| 11 |  hc_seq_cancel_stat  |rw, woclr| 0x0 |     HC_SEQ_CANCEL_STAT    |
-| 12 | hc_warn_cmd_seq_stall|rw, woclr| 0x0 | HC_WARN_CMD_SEQ_STALL_STAT|
-| 13 |hc_err_cmd_seq_timeout|rw, woclr| 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_STAT|
-| 14 | sched_cmd_missed_tick|rw, woclr| 0x0 | SCHED_CMD_MISSED_TICK_STAT|
+|Bits|         Identifier        |  Access |Reset|            Name           |
+|----|---------------------------|---------|-----|---------------------------|
+| 10 |    HC_INTERNAL_ERR_STAT   |rw, woclr| 0x0 |    HC_INTERNAL_ERR_STAT   |
+| 11 |     HC_SEQ_CANCEL_STAT    |rw, woclr| 0x0 |     HC_SEQ_CANCEL_STAT    |
+| 12 | HC_WARN_CMD_SEQ_STALL_STAT|rw, woclr| 0x0 | HC_WARN_CMD_SEQ_STALL_STAT|
+| 13 |HC_ERR_CMD_SEQ_TIMEOUT_STAT|rw, woclr| 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_STAT|
+| 14 | SCHED_CMD_MISSED_TICK_STAT|rw, woclr| 0x0 | SCHED_CMD_MISSED_TICK_STAT|
 
-#### hc_internal_err field
+#### HC_INTERNAL_ERR_STAT field
 
 <p>Controller internal unrecoverable error.</p>
 
-#### hc_seq_cancel_stat field
+#### HC_SEQ_CANCEL_STAT field
 
 <p>Controller had to cancel command sequence.</p>
 
-#### hc_warn_cmd_seq_stall field
+#### HC_WARN_CMD_SEQ_STALL_STAT field
 
 <p>Clock stalled due to lack of commands.</p>
 
-#### hc_err_cmd_seq_timeout field
+#### HC_ERR_CMD_SEQ_TIMEOUT_STAT field
 
 <p>Command timeout after prolonged stall.</p>
 
-#### sched_cmd_missed_tick field
+#### SCHED_CMD_MISSED_TICK_STAT field
 
 <p>Scheduled commands could be executed due to controller being busy.</p>
 
@@ -348,31 +349,31 @@ all other reserved.</p>
 - Base Offset: 0x24
 - Size: 0x4
 
-|Bits|        Identifier       |Access|Reset|             Name             |
-|----|-------------------------|------|-----|------------------------------|
-| 10 |    hc_internal_err_en   |  rw  | 0x0 |    HC_INTERNAL_ERR_STAT_EN   |
-| 11 |  hc_seq_cancel_stat_en  |  rw  | 0x0 |     HC_SEQ_CANCEL_STAT_EN    |
-| 12 | hc_warn_cmd_seq_stall_en|  rw  | 0x0 | HC_WARN_CMD_SEQ_STALL_STAT_EN|
-| 13 |hc_err_cmd_seq_timeout_en|  rw  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN|
-| 14 | sched_cmd_missed_tick_en|  rw  | 0x0 | SCHED_CMD_MISSED_TICK_STAT_EN|
+|Bits|          Identifier          |Access|Reset|             Name             |
+|----|------------------------------|------|-----|------------------------------|
+| 10 |    HC_INTERNAL_ERR_STAT_EN   |  rw  | 0x0 |    HC_INTERNAL_ERR_STAT_EN   |
+| 11 |     HC_SEQ_CANCEL_STAT_EN    |  rw  | 0x0 |     HC_SEQ_CANCEL_STAT_EN    |
+| 12 | HC_WARN_CMD_SEQ_STALL_STAT_EN|  rw  | 0x0 | HC_WARN_CMD_SEQ_STALL_STAT_EN|
+| 13 |HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN|  rw  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN|
+| 14 | SCHED_CMD_MISSED_TICK_STAT_EN|  rw  | 0x0 | SCHED_CMD_MISSED_TICK_STAT_EN|
 
-#### hc_internal_err_en field
+#### HC_INTERNAL_ERR_STAT_EN field
 
 <p>Enable HC_INTERNAL_ERR_STAT monitoring.</p>
 
-#### hc_seq_cancel_stat_en field
+#### HC_SEQ_CANCEL_STAT_EN field
 
 <p>Enable HC_SEQ_CANCEL_STAT monitoring.</p>
 
-#### hc_warn_cmd_seq_stall_en field
+#### HC_WARN_CMD_SEQ_STALL_STAT_EN field
 
 <p>Enable HC_WARN_CMD_SEQ_STALL_STAT monitoring.</p>
 
-#### hc_err_cmd_seq_timeout_en field
+#### HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN field
 
 <p>Enable HC_ERR_CMD_SEQ_TIMEOUT_STAT monitoring.</p>
 
-#### sched_cmd_missed_tick_en field
+#### SCHED_CMD_MISSED_TICK_STAT_EN field
 
 <p>Enable SCHED_CMD_MISSED_TICK_STAT monitoring.</p>
 
@@ -382,31 +383,31 @@ all other reserved.</p>
 - Base Offset: 0x28
 - Size: 0x4
 
-|Bits|          Identifier          |Access|Reset|              Name              |
-|----|------------------------------|------|-----|--------------------------------|
-| 10 |    hc_internal_err_intr_en   |  rw  | 0x0 |    HC_INTERNAL_ERR_SIGNAL_EN   |
-| 11 |  hc_seq_cancel_stat_intr_en  |  rw  | 0x0 |     HC_SEQ_CANCEL_SIGNAL_EN    |
-| 12 | hc_warn_cmd_seq_stall_intr_en|  rw  | 0x0 | HC_WARN_CMD_SEQ_STALL_SIGNAL_EN|
-| 13 |hc_err_cmd_seq_timeout_intr_en|  rw  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN|
-| 14 | sched_cmd_missed_tick_intr_en|  rw  | 0x0 | SCHED_CMD_MISSED_TICK_SIGNAL_EN|
+|Bits|           Identifier           |Access|Reset|              Name              |
+|----|--------------------------------|------|-----|--------------------------------|
+| 10 |    HC_INTERNAL_ERR_SIGNAL_EN   |  rw  | 0x0 |    HC_INTERNAL_ERR_SIGNAL_EN   |
+| 11 |     HC_SEQ_CANCEL_SIGNAL_EN    |  rw  | 0x0 |     HC_SEQ_CANCEL_SIGNAL_EN    |
+| 12 | HC_WARN_CMD_SEQ_STALL_SIGNAL_EN|  rw  | 0x0 | HC_WARN_CMD_SEQ_STALL_SIGNAL_EN|
+| 13 |HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN|  rw  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN|
+| 14 | SCHED_CMD_MISSED_TICK_SIGNAL_EN|  rw  | 0x0 | SCHED_CMD_MISSED_TICK_SIGNAL_EN|
 
-#### hc_internal_err_intr_en field
+#### HC_INTERNAL_ERR_SIGNAL_EN field
 
 <p>Enable HC_INTERNAL_ERR_STAT interrupt.</p>
 
-#### hc_seq_cancel_stat_intr_en field
+#### HC_SEQ_CANCEL_SIGNAL_EN field
 
 <p>Enable HC_SEQ_CANCEL_STAT interrupt.</p>
 
-#### hc_warn_cmd_seq_stall_intr_en field
+#### HC_WARN_CMD_SEQ_STALL_SIGNAL_EN field
 
 <p>Enable HC_WARN_CMD_SEQ_STALL_STAT interrupt.</p>
 
-#### hc_err_cmd_seq_timeout_intr_en field
+#### HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN field
 
 <p>Enable HC_ERR_CMD_SEQ_TIMEOUT_STAT interrupt.</p>
 
-#### sched_cmd_missed_tick_intr_en field
+#### SCHED_CMD_MISSED_TICK_SIGNAL_EN field
 
 <p>Enable SCHED_CMD_MISSED_TICK_STAT interrupt.</p>
 
@@ -418,29 +419,29 @@ all other reserved.</p>
 
 |Bits|         Identifier         |Access|Reset|            Name            |
 |----|----------------------------|------|-----|----------------------------|
-| 10 |    force_hc_internal_err   |   w  | 0x0 |    HC_INTERNAL_ERR_FORCE   |
-| 11 |  force_hc_seq_cancel_stat  |   w  | 0x0 |     HC_SEQ_CANCEL_FORCE    |
-| 12 | force_hc_warn_cmd_seq_stall|   w  | 0x0 | HC_WARN_CMD_SEQ_STALL_FORCE|
-| 13 |force_hc_err_cmd_seq_timeout|   w  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_FORCE|
-| 14 | force_sched_cmd_missed_tick|   w  | 0x0 | SCHED_CMD_MISSED_TICK_FORCE|
+| 10 |    HC_INTERNAL_ERR_FORCE   |   w  | 0x0 |    HC_INTERNAL_ERR_FORCE   |
+| 11 |     HC_SEQ_CANCEL_FORCE    |   w  | 0x0 |     HC_SEQ_CANCEL_FORCE    |
+| 12 | HC_WARN_CMD_SEQ_STALL_FORCE|   w  | 0x0 | HC_WARN_CMD_SEQ_STALL_FORCE|
+| 13 |HC_ERR_CMD_SEQ_TIMEOUT_FORCE|   w  | 0x0 |HC_ERR_CMD_SEQ_TIMEOUT_FORCE|
+| 14 | SCHED_CMD_MISSED_TICK_FORCE|   w  | 0x0 | SCHED_CMD_MISSED_TICK_FORCE|
 
-#### force_hc_internal_err field
+#### HC_INTERNAL_ERR_FORCE field
 
 <p>Force HC_INTERNAL_ERR_STAT interrupt.</p>
 
-#### force_hc_seq_cancel_stat field
+#### HC_SEQ_CANCEL_FORCE field
 
 <p>Force HC_SEQ_CANCEL_STAT interrupt.</p>
 
-#### force_hc_warn_cmd_seq_stall field
+#### HC_WARN_CMD_SEQ_STALL_FORCE field
 
 <p>Force HC_WARN_CMD_SEQ_STALL_STAT interrupt.</p>
 
-#### force_hc_err_cmd_seq_timeout field
+#### HC_ERR_CMD_SEQ_TIMEOUT_FORCE field
 
 <p>Force HC_ERR_CMD_SEQ_TIMEOUT_STAT interrupt.</p>
 
-#### force_sched_cmd_missed_tick field
+#### SCHED_CMD_MISSED_TICK_FORCE field
 
 <p>Force SCHED_CMD_MISSED_TICK_STAT interrupt.</p>
 
@@ -452,19 +453,19 @@ all other reserved.</p>
 
 | Bits| Identifier |Access|Reset|    Name    |
 |-----|------------|------|-----|------------|
-| 11:0|table_offset|   r  |0x400|TABLE_OFFSET|
-|18:12| dat_entires|   r  | 0x7F| TABLE_SIZE |
-|31:28| entry_size |   r  | 0x0 | ENTRY_SIZE |
+| 11:0|TABLE_OFFSET|   r  |0x400|TABLE_OFFSET|
+|18:12| TABLE_SIZE |   r  | 0x7F| TABLE_SIZE |
+|31:28| ENTRY_SIZE |   r  | 0x0 | ENTRY_SIZE |
 
-#### table_offset field
+#### TABLE_OFFSET field
 
 <p>DAT entry offset in respect to BASE address.</p>
 
-#### dat_entires field
+#### TABLE_SIZE field
 
 <p>Max number of DAT entries.</p>
 
-#### entry_size field
+#### ENTRY_SIZE field
 
 <p>Individual DAT entry size.
 0 - 2 DWRODs,
@@ -478,24 +479,24 @@ all other reserved.</p>
 
 | Bits| Identifier |Access|Reset|    Name    |
 |-----|------------|------|-----|------------|
-| 11:0|table_offset|   r  |0x800|TABLE_OFFSET|
-|18:12|  dct_size  |   r  | 0x7F| TABLE_SIZE |
-|23:19|  table_idx |  rw  | 0x0 | TABLE_INDEX|
-|31:28| entry_size |   r  | 0x0 | ENTRY_SIZE |
+| 11:0|TABLE_OFFSET|   r  |0x800|TABLE_OFFSET|
+|18:12| TABLE_SIZE |   r  | 0x7F| TABLE_SIZE |
+|23:19| TABLE_INDEX|  rw  | 0x0 | TABLE_INDEX|
+|31:28| ENTRY_SIZE |   r  | 0x0 | ENTRY_SIZE |
 
-#### table_offset field
+#### TABLE_OFFSET field
 
 <p>DCT entry offset in respect to BASE address.</p>
 
-#### dct_size field
+#### TABLE_SIZE field
 
 <p>Max number of DCT entries.</p>
 
-#### table_idx field
+#### TABLE_INDEX field
 
 <p>Index to DCT used during ENTDAA.</p>
 
-#### entry_size field
+#### ENTRY_SIZE field
 
 <p>Individual DCT entry size.
 0 - 4 DWORDs,
@@ -507,11 +508,11 @@ all other reserved.</p>
 - Base Offset: 0x38
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|     Name     |
-|----|-----------|------|-----|--------------|
-|15:0|ring_offset|   r  | 0x0 |SECTION_OFFSET|
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+|15:0|SECTION_OFFSET|   r  | 0x0 |SECTION_OFFSET|
 
-#### ring_offset field
+#### SECTION_OFFSET field
 
 <p>DMA ring headers section offset. Invalid if 0.</p>
 
@@ -521,11 +522,11 @@ all other reserved.</p>
 - Base Offset: 0x3C
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|     Name     |
-|----|----------|------|-----|--------------|
-|15:0|pio_offset|   r  |0x100|SECTION_OFFSET|
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+|15:0|SECTION_OFFSET|   r  | 0x80|SECTION_OFFSET|
 
-#### pio_offset field
+#### SECTION_OFFSET field
 
 <p>PIO section offset. Invalid if 0.</p>
 
@@ -535,11 +536,11 @@ all other reserved.</p>
 - Base Offset: 0x40
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|     Name     |
-|----|----------|------|-----|--------------|
-|15:0|ext_offset|   r  | 0x0 |SECTION_OFFSET|
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+|15:0|SECTION_OFFSET|   r  | 0x0 |SECTION_OFFSET|
 
-#### ext_offset field
+#### SECTION_OFFSET field
 
 <p>Extended Capabilities section offset. Invalid if 0.</p>
 
@@ -549,10 +550,10 @@ all other reserved.</p>
 - Base Offset: 0x4C
 - Size: 0x4
 
-|Bits| Identifier |Access|Reset|        Name       |
-|----|------------|------|-----|-------------------|
-|  0 | ICC_SUPPORT|   r  | 0x1 |    ICC_SUPPORT    |
-|15:1|MIPI_SUPPORT|   r  | 0x35|MIPI_CMDS_SUPPORTED|
+|Bits|     Identifier    |Access|Reset|        Name       |
+|----|-------------------|------|-----|-------------------|
+|  0 |    ICC_SUPPORT    |   r  | 0x1 |    ICC_SUPPORT    |
+|15:1|MIPI_CMDS_SUPPORTED|   r  | 0x35|MIPI_CMDS_SUPPORTED|
 
 #### ICC_SUPPORT field
 
@@ -560,7 +561,7 @@ all other reserved.</p>
 1 - some or all internals commands sub-commands are supported,
 0 - illegal.</p>
 
-#### MIPI_SUPPORT field
+#### MIPI_CMDS_SUPPORTED field
 
 <p>Bitmask of supported MIPI commands.</p>
 
@@ -570,25 +571,25 @@ all other reserved.</p>
 - Base Offset: 0x58
 - Size: 0x4
 
-|Bits| Identifier |Access|Reset|        Name       |
-|----|------------|------|-----|-------------------|
-|  0 | hj_rejected|  rw  | 0x0 | NOTIFY_HJ_REJECTED|
-|  1 |crr_rejected|  rw  | 0x0 |NOTIFY_CRR_REJECTED|
-|  3 |ibi_rejected|  rw  | 0x0 |NOTIFY_IBI_REJECTED|
+|Bits|     Identifier    |Access|Reset|        Name       |
+|----|-------------------|------|-----|-------------------|
+|  0 | NOTIFY_HJ_REJECTED|  rw  | 0x0 | NOTIFY_HJ_REJECTED|
+|  1 |NOTIFY_CRR_REJECTED|  rw  | 0x0 |NOTIFY_CRR_REJECTED|
+|  3 |NOTIFY_IBI_REJECTED|  rw  | 0x0 |NOTIFY_IBI_REJECTED|
 
-#### hj_rejected field
+#### NOTIFY_HJ_REJECTED field
 
 <p>Notify about rejected hot-join:
 0 - do not enqueue rejected HJ,
 1 = enqueue rejected HJ on IBI queue/ring.</p>
 
-#### crr_rejected field
+#### NOTIFY_CRR_REJECTED field
 
 <p>Notify about rejected controller role request:
 0 - do not enqueue rejected CRR,
 1 = enqueue rejected CRR on IBI queue/ring.</p>
 
-#### ibi_rejected field
+#### NOTIFY_IBI_REJECTED field
 
 <p>Notify about rejected IBI:
 0 - do not enqueue rejected IBI,
@@ -602,31 +603,31 @@ all other reserved.</p>
 
 | Bits|    Identifier    |Access|Reset|       Name       |
 |-----|------------------|------|-----|------------------|
-| 15:8|     match_id     |  rw  | 0x0 |   MATCH_IBI_ID   |
-|17:16|  max_data_length |  rw  | 0x0 |  AFTER_N_CHUNKS  |
-|20:18| ibi_match_statsus|  rw  | 0x0 | MATCH_STATUS_TYPE|
-|  31 |data_abort_monitor|  rw  | 0x0 |IBI_DATA_ABORT_MON|
+| 15:8|   MATCH_IBI_ID   |  rw  | 0x0 |   MATCH_IBI_ID   |
+|17:16|  AFTER_N_CHUNKS  |  rw  | 0x0 |  AFTER_N_CHUNKS  |
+|20:18| MATCH_STATUS_TYPE|  rw  | 0x0 | MATCH_STATUS_TYPE|
+|  31 |IBI_DATA_ABORT_MON|  rw  | 0x0 |IBI_DATA_ABORT_MON|
 
-#### match_id field
+#### MATCH_IBI_ID field
 
 <p>IBI target address:
 [15:9] - device address,
 [8] - must always be set to 1'b1</p>
 
-#### max_data_length field
+#### AFTER_N_CHUNKS field
 
 <p>Number of data chunks to be allowed before forced termination:
 0 - immediate,
 1:3 - delay by 1-3 data chunks.</p>
 
-#### ibi_match_statsus field
+#### MATCH_STATUS_TYPE field
 
 <p>Define which IBI should be aborted:
 3'b000 - Regular IBI,
 3'b100 - Autocmd IBI,
 other values - not supported.</p>
 
-#### data_abort_monitor field
+#### IBI_DATA_ABORT_MON field
 
 <p>Enable/disable IBI monitoring logic.</p>
 
@@ -638,7 +639,7 @@ other values - not supported.</p>
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|  0 |  base_lo |  rw  | 0x0 |  — |
+|  0 |  BASE_LO |  rw  | 0x0 |  — |
 
 ### DEV_CTX_BASE_HI register
 
@@ -648,7 +649,7 @@ other values - not supported.</p>
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|  0 |  base_hi |  rw  | 0x0 |  — |
+|  0 |  BASE_HI |  rw  | 0x0 |  — |
 
 ### DEV_CTX_SG register
 
@@ -658,14 +659,14 @@ other values - not supported.</p>
 
 |Bits|Identifier|Access|Reset|   Name  |
 |----|----------|------|-----|---------|
-|15:0| list_size|   r  | 0x0 |LIST_SIZE|
-| 31 |    blp   |   r  | 0x0 |   BLP   |
+|15:0| LIST_SIZE|   r  | 0x0 |LIST_SIZE|
+| 31 |    BLP   |   r  | 0x0 |   BLP   |
 
-#### list_size field
+#### LIST_SIZE field
 
 <p>Number of SG entries.</p>
 
-#### blp field
+#### BLP field
 
 <p>Buffer vs list pointer in device context:
 0 - continuous physical memory region,
@@ -673,8 +674,8 @@ other values - not supported.</p>
 
 ## PIOControl register file
 
-- Absolute Address: 0x100
-- Base Offset: 0x100
+- Absolute Address: 0x80
+- Base Offset: 0x80
 - Size: 0x34
 
 |Offset|      Identifier      |             Name            |
@@ -695,360 +696,1060 @@ other values - not supported.</p>
 
 ### COMMAND_PORT register
 
-- Absolute Address: 0x100
+- Absolute Address: 0x80
 - Base Offset: 0x0
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|       Name       |
-|----|----------|------|-----|------------------|
-|  0 |    cmd   |   w  |  —  |COMMAND_QUEUE_PORT|
+|Bits| Identifier |Access|Reset|       Name       |
+|----|------------|------|-----|------------------|
+|  0 |COMMAND_DATA|   w  |  —  |COMMAND_QUEUE_PORT|
 
 ### RESPONSE_PORT register
 
-- Absolute Address: 0x104
+- Absolute Address: 0x84
 - Base Offset: 0x4
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|        Name       |
-|----|----------|------|-----|-------------------|
-|  0 |   resp   |   r  |  —  |RESPONSE_QUEUE_PORT|
+|Bits|  Identifier |Access|Reset|        Name       |
+|----|-------------|------|-----|-------------------|
+|  0 |RESPONSE_DATA|   r  |  —  |RESPONSE_QUEUE_PORT|
 
 ### XFER_DATA_PORT register
 
-- Absolute Address: 0x108
+- Absolute Address: 0x88
 - Base Offset: 0x8
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|  Name |
 |----|----------|------|-----|-------|
-|31:0|  tx_data |   w  |  —  |TX_DATA|
-|31:0|  rx_data |   r  |  —  |RX_DATA|
+|31:0|  TX_DATA |   w  |  —  |TX_DATA|
+|31:0|  RX_DATA |   r  |  —  |RX_DATA|
 
 ### IBI_PORT register
 
-- Absolute Address: 0x10C
+- Absolute Address: 0x8C
 - Base Offset: 0xC
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|  Name  |
 |----|----------|------|-----|--------|
-|  0 | ibi_port |   r  |  —  |IBI_DATA|
+|  0 | IBI_DATA |   r  |  —  |IBI_DATA|
 
 ### QUEUE_THLD_CTRL register
 
-- Absolute Address: 0x110
+- Absolute Address: 0x90
 - Base Offset: 0x10
 - Size: 0x4
 
-| Bits|  Identifier |Access|Reset|         Name        |
-|-----|-------------|------|-----|---------------------|
-| 7:0 |  cmd_empty  |  rw  | 0x1 |  CMD_EMPTY_BUF_THLD |
-| 15:8|   resp_buf  |  rw  | 0x1 |    RESP_BUF_THLD    |
-|23:16|ibi_data_size|  rw  | 0x1 |IBI_DATA_SEGMENT_SIZE|
-|31:24|  ibi_status |  rw  | 0x1 |   IBI_STATUS_THLD   |
+| Bits|      Identifier     |Access|Reset|         Name        |
+|-----|---------------------|------|-----|---------------------|
+| 7:0 |  CMD_EMPTY_BUF_THLD |  rw  | 0x1 |  CMD_EMPTY_BUF_THLD |
+| 15:8|    RESP_BUF_THLD    |  rw  | 0x1 |    RESP_BUF_THLD    |
+|23:16|IBI_DATA_SEGMENT_SIZE|  rw  | 0x1 |IBI_DATA_SEGMENT_SIZE|
+|31:24|   IBI_STATUS_THLD   |  rw  | 0x1 |   IBI_STATUS_THLD   |
 
-#### cmd_empty field
+#### CMD_EMPTY_BUF_THLD field
 
 <p>Triggers CMD_QUEUE_READY_STAT interrupt when CMD queue has N or more free entries. Accepted values are 1:255</p>
 
-#### resp_buf field
+#### RESP_BUF_THLD field
 
 <p>Triggers RESP_READY_STAT interrupt when RESP queue has N or more entries. Accepted values are 1:255</p>
 
-#### ibi_data_size field
+#### IBI_DATA_SEGMENT_SIZE field
 
 <p>IBI Queue data segment size. Valida values are 1:63</p>
 
-#### ibi_status field
+#### IBI_STATUS_THLD field
 
 <p>Triggers IBI_STATUS_THLD_STAT interrupt when IBI queue has N or more entries. Accepted values are 1:255</p>
 
 ### DATA_BUFFER_THLD_CTRL register
 
-- Absolute Address: 0x114
+- Absolute Address: 0x94
 - Base Offset: 0x14
 - Size: 0x4
 
-| Bits| Identifier |Access|Reset|     Name    |
-|-----|------------|------|-----|-------------|
-| 2:0 |   tx_bux   |  rw  | 0x1 | TX_BUF_THLD |
-| 10:8|   rx_buf   |  rw  | 0x1 | RX_BUF_THLD |
-|18:16|tx_start_log|  rw  | 0x1 |TX_START_THLD|
-|26:24|rx_start_log|  rw  | 0x1 |RX_START_THLD|
+| Bits|  Identifier |Access|Reset|     Name    |
+|-----|-------------|------|-----|-------------|
+| 2:0 | TX_BUF_THLD |  rw  | 0x1 | TX_BUF_THLD |
+| 10:8| RX_BUF_THLD |  rw  | 0x1 | RX_BUF_THLD |
+|18:16|TX_START_THLD|  rw  | 0x1 |TX_START_THLD|
+|26:24|RX_START_THLD|  rw  | 0x1 |RX_START_THLD|
 
-#### tx_bux field
+#### TX_BUF_THLD field
 
 <p>Trigger TX_THLD_STAT interrupt when TX queue has 2^(N+1) or more free entries</p>
 
-#### rx_buf field
+#### RX_BUF_THLD field
 
 <p>Trigger RX_THLD_STAT interrupt when RX queue has 2^(N+1) or more entries</p>
 
-#### tx_start_log field
+#### TX_START_THLD field
 
 <p>Postpone write command until TX queue has 2^(N+1) entries</p>
 
-#### rx_start_log field
+#### RX_START_THLD field
 
 <p>Postpone read command until RX queue has 2^(N+1) free entries</p>
 
 ### QUEUE_SIZE register
 
-- Absolute Address: 0x118
+- Absolute Address: 0x98
 - Base Offset: 0x18
 - Size: 0x4
 
-| Bits|  Identifier  |Access|Reset|        Name       |
-|-----|--------------|------|-----|-------------------|
-| 7:0 | cr_queue_size|   r  | 0xFF|   CR_QUEUE_SIZE   |
-| 15:8|ibi_queue_size|   r  | 0xFF|  IBI_STATUS_SIZE  |
-|23:16| rx_queue_size|   r  | 0x7 |RX_DATA_BUFFER_SIZE|
-|31:24| tx_queue_size|   r  | 0x7 |TX_DATA_BUFFER_SIZE|
+| Bits|     Identifier    |Access|Reset|        Name       |
+|-----|-------------------|------|-----|-------------------|
+| 7:0 |   CR_QUEUE_SIZE   |   r  | 0x40|   CR_QUEUE_SIZE   |
+| 15:8|  IBI_STATUS_SIZE  |   r  | 0x40|  IBI_STATUS_SIZE  |
+|23:16|RX_DATA_BUFFER_SIZE|   r  | 0x5 |RX_DATA_BUFFER_SIZE|
+|31:24|TX_DATA_BUFFER_SIZE|   r  | 0x5 |TX_DATA_BUFFER_SIZE|
 
-#### cr_queue_size field
+#### CR_QUEUE_SIZE field
 
 <p>Command/Response queue size is equal to N</p>
 
-#### ibi_queue_size field
+#### IBI_STATUS_SIZE field
 
 <p>IBI Queue size is equal to N</p>
 
-#### rx_queue_size field
+#### RX_DATA_BUFFER_SIZE field
 
 <p>RX queue size is equal to 2^(N+1), where N is this field value</p>
 
-#### tx_queue_size field
+#### TX_DATA_BUFFER_SIZE field
 
 <p>TX queue size is equal to 2^(N+1), where N is this field value</p>
 
 ### ALT_QUEUE_SIZE register
 
-- Absolute Address: 0x11C
+- Absolute Address: 0x9C
 - Base Offset: 0x1C
 - Size: 0x4
 
 |Bits|     Identifier    |Access|Reset|        Name       |
 |----|-------------------|------|-----|-------------------|
-| 7:0|alt_resp_queue_size|   r  | 0x0 |ALT_RESP_QUEUE_SIZE|
-| 24 | alt_resp_queue_en |   r  | 0x0 | ALT_RESP_QUEUE_EN |
-| 28 | ext_ibi_queue_size|   r  | 0x0 |  EXT_IBI_QUEUE_EN |
+| 7:0|ALT_RESP_QUEUE_SIZE|   r  | 0x40|ALT_RESP_QUEUE_SIZE|
+| 24 | ALT_RESP_QUEUE_EN |   r  | 0x0 | ALT_RESP_QUEUE_EN |
+| 28 |  EXT_IBI_QUEUE_EN |   r  | 0x0 |  EXT_IBI_QUEUE_EN |
 
-#### alt_resp_queue_size field
+#### ALT_RESP_QUEUE_SIZE field
 
 <p>Response queue size</p>
 
-#### alt_resp_queue_en field
+#### ALT_RESP_QUEUE_EN field
 
 <p>If set, response and command queues are equal lengths.
 ALT_RESP_QUEUE_SIZE contains response queue size</p>
 
-#### ext_ibi_queue_size field
+#### EXT_IBI_QUEUE_EN field
 
 <p>1 indicates that IBI queue size is equal to 8*IBI_STATUS_SIZE</p>
 
 ### PIO_INTR_STATUS register
 
-- Absolute Address: 0x120
+- Absolute Address: 0xA0
 - Base Offset: 0x20
 - Size: 0x4
 
-|Bits|   Identifier  |  Access |Reset|        Name        |
-|----|---------------|---------|-----|--------------------|
-|  0 |  tx_threshold |    r    | 0x0 |    TX_THLD_STAT    |
-|  1 |  rx_threshold |    r    | 0x0 |    RX_THLD_STAT    |
-|  2 |   ibi_status  |    r    | 0x0 |IBI_STATUS_THLD_STAT|
-|  3 |cmd_queue_ready|    r    | 0x0 |CMD_QUEUE_READY_STAT|
-|  4 |   resp_ready  |    r    | 0x0 |   RESP_READY_STAT  |
-|  5 | transfer_abort|rw, woclr| 0x0 | TRANSFER_ABORT_STAT|
-|  9 |  transfer_err |rw, woclr| 0x0 |  TRANSFER_ERR_STAT |
+|Bits|     Identifier     |  Access |Reset|        Name        |
+|----|--------------------|---------|-----|--------------------|
+|  0 |    TX_THLD_STAT    |    r    | 0x0 |    TX_THLD_STAT    |
+|  1 |    RX_THLD_STAT    |    r    | 0x0 |    RX_THLD_STAT    |
+|  2 |IBI_STATUS_THLD_STAT|    r    | 0x0 |IBI_STATUS_THLD_STAT|
+|  3 |CMD_QUEUE_READY_STAT|    r    | 0x0 |CMD_QUEUE_READY_STAT|
+|  4 |   RESP_READY_STAT  |    r    | 0x0 |   RESP_READY_STAT  |
+|  5 | TRANSFER_ABORT_STAT|rw, woclr| 0x0 | TRANSFER_ABORT_STAT|
+|  9 |  TRANSFER_ERR_STAT |rw, woclr| 0x0 |  TRANSFER_ERR_STAT |
 
-#### tx_threshold field
+#### TX_THLD_STAT field
 
 <p>TX queue fulfils TX_BUF_THLD</p>
 
-#### rx_threshold field
+#### RX_THLD_STAT field
 
 <p>RX queue fulfils RX_BUF_THLD</p>
 
-#### ibi_status field
+#### IBI_STATUS_THLD_STAT field
 
 <p>IBI queue fulfils IBI_STATUS_THLD</p>
 
-#### cmd_queue_ready field
+#### CMD_QUEUE_READY_STAT field
 
 <p>Command queue fulfils CMD_EMPTY_BUF_THLD</p>
 
-#### resp_ready field
+#### RESP_READY_STAT field
 
 <p>Response queue fulfils RESP_BUF_THLD</p>
 
-#### transfer_abort field
+#### TRANSFER_ABORT_STAT field
 
 <p>Transfer aborted</p>
 
-#### transfer_err field
+#### TRANSFER_ERR_STAT field
 
 <p>Transfer error</p>
 
 ### PIO_INTR_STATUS_ENABLE register
 
-- Absolute Address: 0x124
+- Absolute Address: 0xA4
 - Base Offset: 0x24
 - Size: 0x4
 
-|Bits|    Identifier    |Access|Reset|          Name         |
-|----|------------------|------|-----|-----------------------|
-|  0 |  tx_threshold_en |  rw  | 0x0 |    TX_THLD_STAT_EN    |
-|  1 |  rx_threshold_en |  rw  | 0x0 |    RX_THLD_STAT_EN    |
-|  2 |   ibi_status_en  |  rw  | 0x0 |IBI_STATUS_THLD_STAT_EN|
-|  3 |cmd_queue_ready_en|  rw  | 0x0 |CMD_QUEUE_READY_STAT_EN|
-|  4 |   resp_ready_en  |  rw  | 0x0 |   RESP_READY_STAT_EN  |
-|  5 | transfer_abort_en|  rw  | 0x0 | TRANSFER_ABORT_STAT_EN|
-|  9 |  transfer_err_en |  rw  | 0x0 |  TRANSFER_ERR_STAT_EN |
+|Bits|       Identifier      |Access|Reset|          Name         |
+|----|-----------------------|------|-----|-----------------------|
+|  0 |    TX_THLD_STAT_EN    |  rw  | 0x0 |    TX_THLD_STAT_EN    |
+|  1 |    RX_THLD_STAT_EN    |  rw  | 0x0 |    RX_THLD_STAT_EN    |
+|  2 |IBI_STATUS_THLD_STAT_EN|  rw  | 0x0 |IBI_STATUS_THLD_STAT_EN|
+|  3 |CMD_QUEUE_READY_STAT_EN|  rw  | 0x0 |CMD_QUEUE_READY_STAT_EN|
+|  4 |   RESP_READY_STAT_EN  |  rw  | 0x0 |   RESP_READY_STAT_EN  |
+|  5 | TRANSFER_ABORT_STAT_EN|  rw  | 0x0 | TRANSFER_ABORT_STAT_EN|
+|  9 |  TRANSFER_ERR_STAT_EN |  rw  | 0x0 |  TRANSFER_ERR_STAT_EN |
 
-#### tx_threshold_en field
+#### TX_THLD_STAT_EN field
 
 <p>Enable TX queue monitoring</p>
 
-#### rx_threshold_en field
+#### RX_THLD_STAT_EN field
 
 <p>Enable RX queue monitoring</p>
 
-#### ibi_status_en field
+#### IBI_STATUS_THLD_STAT_EN field
 
 <p>Enable IBI queue monitoring</p>
 
-#### cmd_queue_ready_en field
+#### CMD_QUEUE_READY_STAT_EN field
 
 <p>Enable command queue monitoring</p>
 
-#### resp_ready_en field
+#### RESP_READY_STAT_EN field
 
 <p>Enable response queue monitoring</p>
 
-#### transfer_abort_en field
+#### TRANSFER_ABORT_STAT_EN field
 
 <p>Enable transfer abort monitoring</p>
 
-#### transfer_err_en field
+#### TRANSFER_ERR_STAT_EN field
 
 <p>Enable transfer error monitoring</p>
 
 ### PIO_INTR_SIGNAL_ENABLE register
 
-- Absolute Address: 0x128
+- Absolute Address: 0xA8
 - Base Offset: 0x28
 - Size: 0x4
 
-|Bits|       Identifier      |Access|Reset|           Name          |
-|----|-----------------------|------|-----|-------------------------|
-|  0 |  tx_threshold_intr_en |  rw  | 0x0 |    TX_THLD_SIGNAL_EN    |
-|  1 |  rx_threshold_intr_en |  rw  | 0x0 |    RX_THLD_SIGNAL_EN    |
-|  2 |   ibi_status_intr_en  |  rw  | 0x0 |IBI_STATUS_THLD_SIGNAL_EN|
-|  3 |cmd_queue_ready_intr_en|  rw  | 0x0 |CMD_QUEUE_READY_SIGNAL_EN|
-|  4 |   resp_ready_intr_en  |  rw  | 0x0 |   RESP_READY_SIGNAL_EN  |
-|  5 | transfer_abort_intr_en|  rw  | 0x0 | TRANSFER_ABORT_SIGNAL_EN|
-|  9 |  transfer_err_intr_en |  rw  | 0x0 |  TRANSFER_ERR_SIGNAL_EN |
+|Bits|        Identifier       |Access|Reset|           Name          |
+|----|-------------------------|------|-----|-------------------------|
+|  0 |    TX_THLD_SIGNAL_EN    |  rw  | 0x0 |    TX_THLD_SIGNAL_EN    |
+|  1 |    RX_THLD_SIGNAL_EN    |  rw  | 0x0 |    RX_THLD_SIGNAL_EN    |
+|  2 |IBI_STATUS_THLD_SIGNAL_EN|  rw  | 0x0 |IBI_STATUS_THLD_SIGNAL_EN|
+|  3 |CMD_QUEUE_READY_SIGNAL_EN|  rw  | 0x0 |CMD_QUEUE_READY_SIGNAL_EN|
+|  4 |   RESP_READY_SIGNAL_EN  |  rw  | 0x0 |   RESP_READY_SIGNAL_EN  |
+|  5 | TRANSFER_ABORT_SIGNAL_EN|  rw  | 0x0 | TRANSFER_ABORT_SIGNAL_EN|
+|  9 |  TRANSFER_ERR_SIGNAL_EN |  rw  | 0x0 |  TRANSFER_ERR_SIGNAL_EN |
 
-#### tx_threshold_intr_en field
+#### TX_THLD_SIGNAL_EN field
 
 <p>Enable TX queue interrupt</p>
 
-#### rx_threshold_intr_en field
+#### RX_THLD_SIGNAL_EN field
 
 <p>Enable RX queue interrupt</p>
 
-#### ibi_status_intr_en field
+#### IBI_STATUS_THLD_SIGNAL_EN field
 
 <p>Enable IBI queue interrupt</p>
 
-#### cmd_queue_ready_intr_en field
+#### CMD_QUEUE_READY_SIGNAL_EN field
 
 <p>Enable command queue interrupt</p>
 
-#### resp_ready_intr_en field
+#### RESP_READY_SIGNAL_EN field
 
 <p>Enable response ready interrupt</p>
 
-#### transfer_abort_intr_en field
+#### TRANSFER_ABORT_SIGNAL_EN field
 
 <p>Enable transfer abort interrupt</p>
 
-#### transfer_err_intr_en field
+#### TRANSFER_ERR_SIGNAL_EN field
 
 <p>Enable transfer error interrupt</p>
 
 ### PIO_INTR_FORCE register
 
-- Absolute Address: 0x12C
+- Absolute Address: 0xAC
 - Base Offset: 0x2C
 - Size: 0x4
 
 |Bits|      Identifier     |Access|Reset|         Name        |
 |----|---------------------|------|-----|---------------------|
-|  0 |  force_tx_threshold |   w  | 0x0 |    TX_THLD_FORCE    |
-|  1 |  force_rx_threshold |   w  | 0x0 |    RX_THLD_FORCE    |
-|  2 |   force_ibi_status  |   w  | 0x0 |    IBI_THLD_FORCE   |
-|  3 |force_cmd_queue_ready|   w  | 0x0 |CMD_QUEUE_READY_FORCE|
-|  4 |   force_resp_ready  |   w  | 0x0 |   RESP_READY_FORCE  |
-|  5 | force_transfer_abort|   w  | 0x0 | TRANSFER_ABORT_FORCE|
-|  9 |  force_transfer_err |   w  | 0x0 |  TRANSFER_ERR_FORCE |
+|  0 |    TX_THLD_FORCE    |   w  | 0x0 |    TX_THLD_FORCE    |
+|  1 |    RX_THLD_FORCE    |   w  | 0x0 |    RX_THLD_FORCE    |
+|  2 |    IBI_THLD_FORCE   |   w  | 0x0 |    IBI_THLD_FORCE   |
+|  3 |CMD_QUEUE_READY_FORCE|   w  | 0x0 |CMD_QUEUE_READY_FORCE|
+|  4 |   RESP_READY_FORCE  |   w  | 0x0 |   RESP_READY_FORCE  |
+|  5 | TRANSFER_ABORT_FORCE|   w  | 0x0 | TRANSFER_ABORT_FORCE|
+|  9 |  TRANSFER_ERR_FORCE |   w  | 0x0 |  TRANSFER_ERR_FORCE |
 
-#### force_tx_threshold field
+#### TX_THLD_FORCE field
 
 <p>Force TX queue interrupt</p>
 
-#### force_rx_threshold field
+#### RX_THLD_FORCE field
 
 <p>Force RX queue interrupt</p>
 
-#### force_ibi_status field
+#### IBI_THLD_FORCE field
 
 <p>Force IBI queue interrupt</p>
 
-#### force_cmd_queue_ready field
+#### CMD_QUEUE_READY_FORCE field
 
 <p>Force command queue interrupt</p>
 
-#### force_resp_ready field
+#### RESP_READY_FORCE field
 
 <p>Force response queue interrupt</p>
 
-#### force_transfer_abort field
+#### TRANSFER_ABORT_FORCE field
 
 <p>Force transfer aborted</p>
 
-#### force_transfer_err field
+#### TRANSFER_ERR_FORCE field
 
 <p>Force transfer error</p>
 
 ### PIO_CONTROL register
 
-- Absolute Address: 0x130
+- Absolute Address: 0xB0
 - Base Offset: 0x30
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset| Name |
 |----|----------|------|-----|------|
-|  0 |enable_req|  rw  | 0x1 |ENABLE|
-|  1 |  rs_req  |  rw  | 0x0 |  RS  |
-|  2 | abort_req|  rw  | 0x0 | ABORT|
+|  0 |  ENABLE  |  rw  | 0x1 |ENABLE|
+|  1 |    RS    |  rw  | 0x0 |  RS  |
+|  2 |   ABORT  |  rw  | 0x0 | ABORT|
 
-#### enable_req field
+#### ENABLE field
 
 <p>Enables PIO queues. When disabled, SW may not read from/write to PIO queues.
 1 - PIO queue enable request,
 0 - PIO queue disable request</p>
 
-#### rs_req field
+#### RS field
 
 <p>Run/Stop execution of enqueued commands.
 When set to 0, it holds execution of enqueued commands and runs current command to completion.
 1 - PIO Queue start request,
 0 - PIO Queue stop request.</p>
 
-#### abort_req field
+#### ABORT field
 
 <p>Stop current command descriptor execution forcefully and hold remaining commands.
 1 - Request PIO Abort,
 0 - Resume PIO execution</p>
+
+## I3C_EC register file
+
+- Absolute Address: 0x100
+- Base Offset: 0x100
+- Size: 0x88
+
+|Offset|               Identifier               |Name|
+|------|----------------------------------------|----|
+| 0x00 |SecureFirmwareRecoveryInterfaceRegisters|  — |
+| 0x70 |   TargetTransactionInterfaceRegisters  |  — |
+| 0x78 |     SoCManagementInterfaceRegisters    |  — |
+| 0x80 |        ControllerConfigRegisters       |  — |
+
+## SecureFirmwareRecoveryInterfaceRegisters register file
+
+- Absolute Address: 0x100
+- Base Offset: 0x0
+- Size: 0x6C
+
+|Offset|      Identifier      |         Name         |
+|------|----------------------|----------------------|
+| 0x00 |     EXTCAP_HEADER    |           —          |
+| 0x04 |      PROT_CAP_0      |      PROT_CAP_0      |
+| 0x08 |      PROT_CAP_1      |      PROT_CAP_1      |
+| 0x0C |      PROT_CAP_2      |      PROT_CAP_2      |
+| 0x10 |      PROT_CAP_3      |      PROT_CAP_3      |
+| 0x14 |      DEVICE_ID_0     |      DEVICE_ID_0     |
+| 0x18 |      DEVICE_ID_1     |      DEVICE_ID_1     |
+| 0x1C |      DEVICE_ID_2     |      DEVICE_ID_2     |
+| 0x20 |      DEVICE_ID_3     |      DEVICE_ID_3     |
+| 0x24 |      DEVICE_ID_4     |      DEVICE_ID_4     |
+| 0x28 |      DEVICE_ID_5     |      DEVICE_ID_5     |
+| 0x2C |      DEVICE_ID_6     |      DEVICE_ID_6     |
+| 0x30 |    DEVICE_STATUS_0   |    DEVICE_STATUS_0   |
+| 0x34 |    DEVICE_STATUS_1   |    DEVICE_STATUS_1   |
+| 0x38 |     DEVICE_RESET     |     DEVICE_RESET     |
+| 0x3C |     RECOVERY_CTRL    |     RECOVERY_CTRL    |
+| 0x40 |    RECOVERY_STATUS   |    RECOVERY_STATUS   |
+| 0x44 |       HW_STATUS      |       HW_STATUS      |
+| 0x48 | INDIRECT_FIFO_CTRL_0 | INDIRECT_FIFO_CTRL_0 |
+| 0x4C | INDIRECT_FIFO_CTRL_1 | INDIRECT_FIFO_CTRL_1 |
+| 0x50 |INDIRECT_FIFO_STATUS_0|INDIRECT_FIFO_STATUS_0|
+| 0x54 |INDIRECT_FIFO_STATUS_1|INDIRECT_FIFO_STATUS_1|
+| 0x58 |INDIRECT_FIFO_STATUS_2|INDIRECT_FIFO_STATUS_2|
+| 0x5C |INDIRECT_FIFO_STATUS_3|INDIRECT_FIFO_STATUS_3|
+| 0x60 |INDIRECT_FIFO_STATUS_4|INDIRECT_FIFO_STATUS_4|
+| 0x64 |INDIRECT_FIFO_STATUS_5|INDIRECT_FIFO_STATUS_5|
+| 0x68 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
+
+### EXTCAP_HEADER register
+
+- Absolute Address: 0x100
+- Base Offset: 0x0
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
+
+### PROT_CAP_0 register
+
+- Absolute Address: 0x104
+- Base Offset: 0x4
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### PROT_CAP_1 register
+
+- Absolute Address: 0x108
+- Base Offset: 0x8
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### PROT_CAP_2 register
+
+- Absolute Address: 0x10C
+- Base Offset: 0xC
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### PROT_CAP_3 register
+
+- Absolute Address: 0x110
+- Base Offset: 0x10
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_0 register
+
+- Absolute Address: 0x114
+- Base Offset: 0x14
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_1 register
+
+- Absolute Address: 0x118
+- Base Offset: 0x18
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_2 register
+
+- Absolute Address: 0x11C
+- Base Offset: 0x1C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_3 register
+
+- Absolute Address: 0x120
+- Base Offset: 0x20
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_4 register
+
+- Absolute Address: 0x124
+- Base Offset: 0x24
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_5 register
+
+- Absolute Address: 0x128
+- Base Offset: 0x28
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_ID_6 register
+
+- Absolute Address: 0x12C
+- Base Offset: 0x2C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_STATUS_0 register
+
+- Absolute Address: 0x130
+- Base Offset: 0x30
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_STATUS_1 register
+
+- Absolute Address: 0x134
+- Base Offset: 0x34
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### DEVICE_RESET register
+
+- Absolute Address: 0x138
+- Base Offset: 0x38
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### RECOVERY_CTRL register
+
+- Absolute Address: 0x13C
+- Base Offset: 0x3C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### RECOVERY_STATUS register
+
+- Absolute Address: 0x140
+- Base Offset: 0x40
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### HW_STATUS register
+
+- Absolute Address: 0x144
+- Base Offset: 0x44
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_CTRL_0 register
+
+- Absolute Address: 0x148
+- Base Offset: 0x48
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_CTRL_1 register
+
+- Absolute Address: 0x14C
+- Base Offset: 0x4C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_0 register
+
+- Absolute Address: 0x150
+- Base Offset: 0x50
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_1 register
+
+- Absolute Address: 0x154
+- Base Offset: 0x54
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_2 register
+
+- Absolute Address: 0x158
+- Base Offset: 0x58
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_3 register
+
+- Absolute Address: 0x15C
+- Base Offset: 0x5C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_4 register
+
+- Absolute Address: 0x160
+- Base Offset: 0x60
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_STATUS_5 register
+
+- Absolute Address: 0x164
+- Base Offset: 0x64
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_DATA register
+
+- Absolute Address: 0x168
+- Base Offset: 0x68
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+## TargetTransactionInterfaceRegisters register file
+
+- Absolute Address: 0x170
+- Base Offset: 0x70
+- Size: 0x8
+
+|Offset|  Identifier  |     Name     |
+|------|--------------|--------------|
+|  0x0 | EXTCAP_HEADER|       —      |
+|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+
+### EXTCAP_HEADER register
+
+- Absolute Address: 0x170
+- Base Offset: 0x0
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
+
+### PLACE_HOLDER_1 register
+
+- Absolute Address: 0x174
+- Base Offset: 0x4
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+## SoCManagementInterfaceRegisters register file
+
+- Absolute Address: 0x178
+- Base Offset: 0x78
+- Size: 0x8
+
+|Offset|  Identifier  |     Name     |
+|------|--------------|--------------|
+|  0x0 | EXTCAP_HEADER|       —      |
+|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+
+### EXTCAP_HEADER register
+
+- Absolute Address: 0x178
+- Base Offset: 0x0
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
+
+### PLACE_HOLDER_1 register
+
+- Absolute Address: 0x17C
+- Base Offset: 0x4
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+## ControllerConfigRegisters register file
+
+- Absolute Address: 0x180
+- Base Offset: 0x80
+- Size: 0x8
+
+|Offset|  Identifier  |     Name     |
+|------|--------------|--------------|
+|  0x0 | EXTCAP_HEADER|       —      |
+|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+
+### EXTCAP_HEADER register
+
+- Absolute Address: 0x180
+- Base Offset: 0x0
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
+
+### PLACE_HOLDER_1 register
+
+- Absolute Address: 0x184
+- Base Offset: 0x4
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+## DAT memory
+
+- Absolute Address: 0x400
+- Base Offset: 0x400
+- Size: 0x400
+
+|Offset|   Identifier  |Name|
+|------|---------------|----|
+|  0x0 |DAT_MEMORY[128]|  — |
+
+### DAT_MEMORY register
+
+- Absolute Address: 0x400
+- Base Offset: 0x0
+- Size: 0x400
+- Array Dimensions: [128]
+- Array Stride: 0x8
+- Total Size: 0x400
+
+| Bits|    Identifier    |Access|Reset|       Name       |
+|-----|------------------|------|-----|------------------|
+| 6:0 |  STATIC_ADDRESS  |  rw  |  —  |  STATIC_ADDRESS  |
+|  12 |    IBI_PAYLOAD   |  rw  |  —  |    IBI_PAYLOAD   |
+|  13 |    IBI_REJECT    |  rw  |  —  |    IBI_REJECT    |
+|  14 |    CRR_REJECT    |  rw  |  —  |    CRR_REJECT    |
+|  15 |        TS        |  rw  |  —  |        TS        |
+|23:16|  DYNAMIC_ADDRESS |  rw  |  —  |  DYNAMIC_ADDRESS |
+|28:26|      RING_ID     |  rw  |  —  |      RING_ID     |
+|30:29|DEV_NACK_RETRY_CNT|  rw  |  —  |DEV_NACK_RETRY_CNT|
+|  31 |      DEVICE      |  rw  |  —  |      DEVICE      |
+|39:32|   AUTOCMD_MASK   |  rw  |  —  |   AUTOCMD_MASK   |
+|47:40|   AUTOCMD_VALUE  |  rw  |  —  |   AUTOCMD_VALUE  |
+|50:48|   AUTOCMD_MODE   |  rw  |  —  |   AUTOCMD_MODE   |
+|58:51| AUTOCMD_HDR_CODE |  rw  |  —  | AUTOCMD_HDR_CODE |
+
+#### STATIC_ADDRESS field
+
+<p>I3C/I2C static device address</p>
+
+#### IBI_PAYLOAD field
+
+<p>Device's IBI contains data payload</p>
+
+#### IBI_REJECT field
+
+<p>Reject device's request for IBI</p>
+
+#### CRR_REJECT field
+
+<p>Reject device's request for controller change</p>
+
+#### TS field
+
+<p>Enable/disable IBI timestamp</p>
+
+#### DYNAMIC_ADDRESS field
+
+<p>I3C dynamic address</p>
+
+#### RING_ID field
+
+<p>Send IBI read to ring bundle</p>
+
+#### DEV_NACK_RETRY_CNT field
+
+<p>Number of retries before giving up</p>
+
+#### DEVICE field
+
+<p>Device type:
+0 - I3C device,
+1 - I2C device.</p>
+
+#### AUTOCMD_MASK field
+
+<p>IBI mask</p>
+
+#### AUTOCMD_VALUE field
+
+<p>IBI value that triggers auto command</p>
+
+#### AUTOCMD_MODE field
+
+<p>Auto command mode and speed</p>
+
+#### AUTOCMD_HDR_CODE field
+
+<p>Device auto command in HDR mode</p>
+
+## DCT memory
+
+- Absolute Address: 0x800
+- Base Offset: 0x800
+- Size: 0x800
+
+|Offset|   Identifier  |Name|
+|------|---------------|----|
+|  0x0 |DCT_MEMORY[128]|  — |
+
+### DCT_MEMORY register
+
+- Absolute Address: 0x800
+- Base Offset: 0x0
+- Size: 0x800
+- Array Dimensions: [128]
+- Array Stride: 0x10
+- Total Size: 0x800
+
+| Bits |   Identifier  |Access|Reset|      Name     |
+|------|---------------|------|-----|---------------|
+| 31:0 |     PID_HI    |   r  |  —  |     PID_HI    |
+| 47:32|     PID_LO    |   r  |  —  |     PID_LO    |
+| 71:64|      DCR      |   r  |  —  |      DCR      |
+| 79:72|      BCR      |   r  |  —  |      BCR      |
+|103:96|DYNAMIC_ADDRESS|   r  |  —  |DYNAMIC_ADDRESS|
+
+#### PID_HI field
+
+<p>Device Provisional ID High</p>
+
+#### PID_LO field
+
+<p>Device Provisional ID Low</p>
+
+#### DCR field
+
+<p>Value of the I3C device's Device Characteristics Register</p>
+
+#### BCR field
+
+<p>Value of the I3C device's Bus Characteristics Register</p>
+
+#### DYNAMIC_ADDRESS field
+
+<p>Device I3C Dynamic Address after ENTDAA</p>

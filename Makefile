@@ -99,7 +99,7 @@ sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra
 # SystemRDL
 #
 RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
-RDL_GEN_DIR := $(SRC_DIR)/csr/
+RDL_GEN_DIR := $(SRC_DIR)/csr
 RDL_ARGS := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
 
 generate: deps used-config-info ## Generate I3C SystemVerilog registers from SystemRDL definition
@@ -107,8 +107,8 @@ generate: deps used-config-info ## Generate I3C SystemVerilog registers from Sys
 	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h  --type-style hier
 
 generate-docs: deps ## Generate documentation from SystemRDL definition
-	python -m peakrdl html $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
-	python -m peakrdl markdown $(RDL_REGS) -o $(RDL_GEN_DIR)/md/documentation.md
+	python -m peakrdl html $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
+	python -m peakrdl markdown $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR)/Documentation.md
 
 #
 # Utilities
