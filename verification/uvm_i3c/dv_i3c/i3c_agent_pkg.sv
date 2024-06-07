@@ -42,9 +42,6 @@ package i3c_agent_pkg;
     DrvStart,
     DrvAddr,
     DrvAddrPushPull,
-    DrvCCC,
-    DrvCCCDef,
-    DrvCCCSubCmd,
     DrvWr,
     DrvWrPushPull,
     DrvRd,
@@ -248,9 +245,9 @@ package i3c_agent_pkg;
     int tHoldRStart = 20;
     int tSetupBit   = 3;
     int tHoldBit    = 0;
-    int tClockPulse = 24;
+    int tClockPulse = 32;
     int tClockLowOD = 200;
-    int tClockLowPP = 32;
+    int tClockLowPP = 48;
     int tSetupStop  = 20;
   } i3c_timing_t;
 
@@ -285,9 +282,10 @@ package i3c_agent_pkg;
 
   // package sources
   `include "i3c_item.sv"
+  `include "i3c_seq_item.sv"
   `include "i3c_agent_cfg.sv"
   `include "i3c_monitor.sv"
-//  `include "i3c_driver.sv"
+  `include "i3c_driver.sv"
 //  `include "i3c_sequencer.sv"
   `include "i3c_agent.sv"
 //  `include "seq_lib/i2c_seq_list.sv"
