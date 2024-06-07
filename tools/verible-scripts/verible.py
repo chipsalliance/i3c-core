@@ -13,7 +13,7 @@ EXCLUDE_FILES = [
     "prim_generic_ram_1p.sv",
 ]
 
-EXCLUDE_DIRS = ["html", "md", ".nox", "obj_dir", "__pycache__"]
+EXCLUDE_DIRS = ["html", "md", ".nox", "obj_dir", "__pycache__", "axi"]
 
 
 def main():
