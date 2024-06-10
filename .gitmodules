@@ -1,3 +1,6 @@
 [submodule "third_party/caliptra-rtl"]
 	path = third_party/caliptra-rtl
 	url = ../caliptra-rtl
+[submodule "third_party/axi-vip"]
+	path = third_party/axi-vip
+	url = ../microsoft-i3c-core-axi-vip

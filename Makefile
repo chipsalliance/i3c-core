@@ -42,6 +42,7 @@ VCS_DEBUG = -debug_access
 VERILATOR_DEBUG = --trace --trace-structs
 CALIPTRA_DEBUG = debug=1
 endif
+
 #
 # I3C configuration
 #
@@ -49,13 +50,21 @@ CFG_FILE ?= i3c_core_configs.yaml
 CFG_NAME ?= default
 CFG_GEN = $(ROOT_DIR)/tools/i3c_config/i3c_core_config.py
 
-config: defs generate
+config: config-rtl config-rdl ## Generate RDL and RTL configuration files
 
-defs: deps used-config-info ## Generate top I3C definitions svh file
+config-rtl: config-print ## Generate top I3C definitions svh file
 	python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
 
-used-config-info: ## Output the config name & filename while generating configuration
+RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
+RDL_GEN_DIR := $(SRC_DIR)/csr/
+RDL_ARGS := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
+
+config-rdl: config-print
+	python tools/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS)
+
+config-print: ## Print configuration name, filename and RDL arguments
 	@echo Using \'$(CFG_NAME)\' I3C configuration from \'$(CFG_FILE)\'.
+	@echo Using RDL options: $(RDL_ARGS).
 
 #
 # Source code lint and format
@@ -96,24 +105,9 @@ sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra
 	TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile $(CALIPTRA_DEBUG) verilator
 
 #
-# SystemRDL
-#
-RDL_REGS := $(SRC_DIR)/rdl/registers.rdl
-RDL_GEN_DIR := $(SRC_DIR)/csr
-RDL_ARGS := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
-
-generate: deps used-config-info ## Generate I3C SystemVerilog registers from SystemRDL definition
-	python -m peakrdl regblock $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR) --cpuif passthrough --type-style hier
-	python -m peakrdl c-header $(RDL_REGS) -o $(SW_DIR)/I3CCSR.h  --type-style hier
-
-generate-docs: deps ## Generate documentation from SystemRDL definition
-	python -m peakrdl html $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR)/html/
-	python -m peakrdl markdown $(RDL_ARGS) $(RDL_REGS) -o $(RDL_GEN_DIR)/Documentation.md
-
-#
 # Utilities
 #
-timings: deps ## Generate values for I2C/I3C timings
+timings: ## Generate values for I2C/I3C timings
 	python tools/timing/timing.py
 
 deps: ## Install python dependencies
@@ -270,8 +264,8 @@ clean: ## Clean all generated sources
 
 .PHONY: lint lint-check lint-rtl lint-tests \
 		test tests sw-caliptra-test \
-		generate deps defs timings clean \
-		used-config-info config \
+		config config-rtl config-rdl config-print  \
+		clean config deps timings \
 		uvm-verilator verilator-uvm-verilator
 
 .DEFAULT_GOAL := help

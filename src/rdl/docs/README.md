@@ -2,7 +2,6 @@
 Markdown description for SystemRDL register map.
 
 Don't override. Generated from: I3CCSR
-  - src/rdl/registers.rdl
 -->
 
 ## I3CCSR address map
@@ -836,11 +835,11 @@ other values - not supported.</p>
 
 #### ALT_RESP_QUEUE_SIZE field
 
-<p>Response queue size</p>
+<p>Valid only if ALT_RESP_QUEUE_EN is set. Contains response queue size</p>
 
 #### ALT_RESP_QUEUE_EN field
 
-<p>If set, response and command queues are equal lengths.
+<p>If set, response and command queues are not equal lengths, then
 ALT_RESP_QUEUE_SIZE contains response queue size</p>
 
 #### EXT_IBI_QUEUE_EN field

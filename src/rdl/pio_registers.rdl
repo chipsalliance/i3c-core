@@ -151,7 +151,7 @@ regfile PIORegs #(
         } EXT_IBI_QUEUE_EN[28:28];
         field {
             name = "ALT_RESP_QUEUE_EN";
-            desc = "If set, response and command queues are equal lengths.
+            desc = "If set, response and command queues are not equal lengths, then
                 ALT_RESP_QUEUE_SIZE contains response queue size";
             sw = r;
             hw = na;
@@ -159,7 +159,7 @@ regfile PIORegs #(
         } ALT_RESP_QUEUE_EN[24:24];
         field {
             name = "ALT_RESP_QUEUE_SIZE";
-            desc = "Response queue size";
+            desc = "Valid only if ALT_RESP_QUEUE_EN is set. Contains response queue size";
             sw = r;
             hw = na;
             reset = resp_fifo_size;
