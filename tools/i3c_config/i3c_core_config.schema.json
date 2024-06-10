@@ -79,6 +79,62 @@
             "type": "integer",
             "minimum": 32,
             "maximum": 128
+        },
+        "FrontendBusUserWidth": {
+            "description": "I3C Core <-> System bus user width.\n.",
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 128
+        },
+        "FrontendBusIdWidth": {
+            "description": "I3C Core <-> System bus identifier width.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 128
         }
+    },
+    "if": {
+        "properties": {
+            "FrontendBusInterface": {
+                "const": "AXI"
+            }
+        }
+    },
+    "then": {
+        "properties": {
+            "FrontendBusUserWidth": {
+                "type": "integer"
+            },
+            "FrontendBusIdWidth": {
+                "type": "integer"
+            }
+        },
+        "required": [
+            "FrontendBusUserWidth",
+            "FrontendBusIdWidth"
+        ]
+    },
+    "else": {
+        "properties": {
+            "FrontendBusInterface": {
+                "const": "AHB"
+            }
+        },
+        "allOf": [
+            {
+                "not": {
+                    "required": [
+                        "FrontendBusUserWidth"
+                    ]
+                }
+            },
+            {
+                "not": {
+                    "required": [
+                        "FrontendBusIdWidth"
+                    ]
+                }
+            }
+        ]
     }
 }

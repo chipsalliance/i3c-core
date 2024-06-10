@@ -28,6 +28,8 @@ axi:
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
 
 invalid_missing_cmd_fifo_depth:
   RxFifoDepth: 64
@@ -40,6 +42,8 @@ invalid_missing_cmd_fifo_depth:
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
 
 invalid_too_many_args:
   CmdFifoDepth: 64
@@ -51,6 +55,8 @@ invalid_too_many_args:
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
   AdditionalArg: "arg"
 
 invalid_wrong_type:
@@ -63,6 +69,8 @@ invalid_wrong_type:
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
 
 invalid_out_of_range:
   CmdFifoDepth: 64
@@ -74,6 +82,32 @@ invalid_out_of_range:
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
+
+invalid_axi_missing_usr_width:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  FrontendBusIdWidth: 2
+
+invalid_axi_missing_id_width:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
 
 invalid_unsupported_bus:
   CmdFifoDepth: 64
@@ -85,6 +119,43 @@ invalid_unsupported_bus:
   FrontendBusInterface: "TileLink"
   FrontendBusAddrWidth: 32
   FrontendBusDataWidth: 64
+
+invalid_ahb_with_id_width:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  FrontendBusIdWidth: 2
+
+invalid_ahb_with_usr_width:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+
+invalid_ahb_with_axi_props:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 32
+  FrontendBusDataWidth: 64
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
 
 invalid_empty_arg:
   CmdFifoDepth:

@@ -63,24 +63,21 @@ class I3CCoreConfig:
     _defines = {}  # List of parameters to be defined in I3C configuration file
 
     def __init__(self, cfg: I3CGenericConfig) -> None:
+        bus = cfg.FrontendBusInterface
+
         # Parse to SVH format
         for name, value in cfg.items():
-            # Skip frontend parametrization; performed later
-            if "Frontend" in name:
+            # Map BusInterface -> I3C_USE_[AXI|AHB]
+            if "BusInterface" in name:
+                self._defines[f"I3C_USE_{bus}"] = 1
                 continue
+
             # For those parameters that map directly, change the name format:
             # PascalCase -> UPPER_SNAKE_CASE
-            new_name = self._format_name(name)
+            new_name = self._format_name(name).replace("FRONTEND_BUS", bus)
+
             # Resolve the parameter type (i.e. booleans)
             self._defines[new_name] = self._py_to_sv_type(value, name)
-
-        # Set frontend bus parameters in accordance to chosen protocol
-        # The core expects `I3C_USE_AHB` or `I3C_USE_AXI` and the widths to
-        # be set accordingly
-        bus = cfg.FrontendBusInterface
-        self._defines[f"I3C_USE_{bus}"] = 1
-        self._defines[f"{bus}_ADDR_WIDTH"] = cfg.FrontendBusAddrWidth
-        self._defines[f"{bus}_DATA_WIDTH"] = cfg.FrontendBusDataWidth
 
     # Change camel case name format to upper snake case
     def _format_name(self, name: str) -> str:
