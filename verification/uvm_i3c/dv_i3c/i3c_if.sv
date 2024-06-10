@@ -169,10 +169,11 @@ interface i3c_if(
   task automatic wait_for_i2c_host_stop_or_rstart(ref i2c_timing_t tc,
                                                   output bit   rstart,
                                                   output bit   stop);
+    int delay = tc.tHoldStop;
     fork
       begin : iso_fork
         fork
-          wait_for_host_stop(tc.tHoldStop, stop);
+          wait_for_host_stop(delay, stop);
           wait_for_host_rstart(rstart);
         join_any
         disable fork;
@@ -183,10 +184,11 @@ interface i3c_if(
   task automatic wait_for_i3c_host_stop_or_rstart(ref i3c_timing_t tc,
                                                   output bit   rstart,
                                                   output bit   stop);
+    int delay = tc.tHoldStop;
     fork
       begin : iso_fork
         fork
-          wait_for_host_stop(tc.tHoldStop, stop);
+          wait_for_host_stop(delay, stop);
           wait_for_host_rstart(rstart);
         join_any
         disable fork;

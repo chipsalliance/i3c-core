@@ -300,7 +300,7 @@ interface clk_rst_if #(
     // wait a whole number of clock periods, which means it's possible for the clock to synchronise
     // with the "expected" timestamps.
     bit done;
-    @set_active_called;
+    wait(set_active_called.triggered);
     if (drive_clk) begin
       fork
         begin

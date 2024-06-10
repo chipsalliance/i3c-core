@@ -30,7 +30,6 @@ third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_buf.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_onehot_check.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_reg_we_check.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_flop.sv
-third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_flop.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_flop_2sync.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_fifo_sync.sv
 third_party/caliptra-rtl/src/caliptra_prim/rtl/caliptra_prim_fifo_sync_cnt.sv

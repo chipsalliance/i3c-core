@@ -26,6 +26,12 @@ else
 VCS = $(shell which vcs)
 endif
 
+ifeq (, $(shell which dsim))
+else
+DSIM = $(shell which dsim)
+DSIM_HOME = $(abspath $(dir $(shell which dsim))../)
+endif
+
 UVM_VSEQ_TEST ?= i2c_host_stress_all_vseq
 
 export CALIPTRA_ROOT
@@ -155,7 +161,7 @@ uvm-test-questa: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
 		,i2c_base_test\
 		,$(UVM_VSEQ_TEST))
 
-i3c-monitor-tests:
+i3c-monitor-tests-questa:
 	$(call questa_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
@@ -176,6 +182,54 @@ i3c-driver-tests:
 		i3c_driver_test,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/,\
 		verification/uvm_i3c/questa_sim.tcl,,\
 	)
+endif
+
+# $1 - defining file
+# $2 - top module(s)
+# $3 - extra build args
+# $4 - simulation script
+# $5 - UVM_TESTNAME plusarg
+# $6 - UVM_TEST_SEQ plusarg
+# $7 - extra run args
+# $8 - log file prefix
+ifdef DSIM
+define dsim_run =
+	mkdir -p dsim_run
+	DSIM_HOME=$(DSIM_HOME) dsim -sv +acc+b -uvm 1.2 -work dsim_run -genimage image \
+	-f $(1) -timescale 1ns/1ps -all-class-spec -all-pkgs \
+	$(foreach top,$(2), -top $(top)) -l dsim_run/$(8)dsim.build \
+	-suppress EnumMustBePositive -suppress NeedExplicitStatic -j $$(nproc) $(3)
+	DSIM_HOME=$(DSIM_HOME) dsim +acc+rwb -work dsim_run -uvm 1.2 -image image \
+	-cov-db dsim_run/$(8)dsim_metrics.db -sv_seed 10012002 \
+	-waves dump.vcd -dump-agg \
+	+UVM_TESTNAME=$(5) +UVM_PHASE_TRACE \
+	+UVM_TEST_SEQ=$(6) +UVM_VERBOSITY=UVM_MEDIUM \
+	-l dsim_run/$(8)dsim.run $(7)
+endef
+
+uvm-test-dsim: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
+	$(call dsim_run, \
+		verification/uvm_i2c/dv_i2c_sim.scr,\
+		i2c_bind sec_cm_prim_onehot_check_bind tb,\
+		,\
+		verification/uvm_i2c/dsim_sim.tcl\
+		,i2c_base_test\
+		,$(UVM_VSEQ_TEST))
+
+i3c-monitor-tests-dsim:
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i3c/dsim_sim.tcl,,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv",simple_I3C_transaction.)
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
+		i3c_monitor_test_from_csv,,\
+		verification/uvm_i3c/dsim_sim.tcl,,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv",IBI_I3C_transaction.)
+
 endif
 
 ifdef VCS
@@ -210,7 +264,7 @@ uvm-test-vcs: config ## Run I2C UVM_VSEQ_TEST sequence in VCS
 		,i2c_base_test\
 		,$(UVM_VSEQ_TEST))
 
-i3c-monitor-tests:
+i3c-monitor-tests-vcs:
 	$(call vcs_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr,\
 		i3c_monitor_test_from_csv,,\
@@ -275,7 +329,7 @@ clean: ## Clean all generated sources
 	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
-	$(RM) -rf vcs_run questa_run
+	$(RM) -rf vcs_run questa_run dsim_run
 	$(RM) -rf download-uvm-1.2 uvm-verilator-build download-verilator-uvm-1.2 verilator-uvm-verilator-build
 	$(RM) -rf $(GENERIC_UVM_DIR) $(VERILATOR_UVM_DIR)
 
