@@ -167,7 +167,7 @@ i3c-monitor-tests-questa:
 		verification/uvm_i3c/questa_sim.tcl,,\
 		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv")
 
-i3c-driver-tests:
+i3c-driver-tests-questa:
 	$(call questa_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_driver.sv,\
@@ -222,6 +222,13 @@ i3c-monitor-tests-dsim:
 		verification/uvm_i3c/dsim_sim.tcl,,,\
 		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv",IBI_I3C_transaction.)
 
+i3c-driver-tests-dsim:
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_driver.sv,\
+		i3c_driver_test,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/,\
+		verification/uvm_i3c/dsim_sim.tcl,,\
+	)
 endif
 
 ifdef VCS
