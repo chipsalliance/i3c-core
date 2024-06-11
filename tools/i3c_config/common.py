@@ -14,7 +14,6 @@ class ConfigException(Exception):
 # The the properties defined in the i3c_core_config.schema.json
 class I3CGenericConfig:
     def __init__(self, dict_cfg: dict, schema: dict):
-        skip_flag = "skipIfNotPresent"
         self.__dict__ = dict_cfg
 
         # Go over schema-defined fields
@@ -25,14 +24,9 @@ class I3CGenericConfig:
             # Otherwise, if schema specifies such, take the default value
             elif "default" in schema[n]:
                 value = schema[n]["default"]
-            # If a node is explicitly set to optional, skip it
-            elif skip_flag in schema[n] and schema[n][skip_flag]:
-                continue
-            # Otherwise, raise exception when there's nowhere to take the parameter value from
+            # Otherwise, not applicable
             else:
-                raise ConfigException(
-                    f"Parameter {n} was neither specified nor has a 'default' value defined."
-                )
+                continue
             setattr(self, n, value)
 
     def items(self):
