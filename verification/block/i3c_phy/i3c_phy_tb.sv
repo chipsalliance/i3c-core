@@ -4,11 +4,7 @@
 
 module i3c_phy_tb ();
 `ifdef SIM
-  string simfile = {
-    "dump_",
-    `STRINGIFY(`SIM),
-    ".vcd"
-  };
+  string simfile = {"dump_", `STRINGIFY(`SIM), ".vcd"};
 `else
   string simfile = {"dump_rtl.vcd"};
 `endif

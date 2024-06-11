@@ -256,9 +256,7 @@ covergroup I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg with function sample (inpu
 
 endgroup
 covergroup I3CCSR__I3CBase__DAT_SECTION_OFFSET_fld_cg with function sample (
-    input bit [12-1:0] TABLE_OFFSET,
-    input bit [7-1:0] TABLE_SIZE,
-    input bit [4-1:0] ENTRY_SIZE
+    input bit [12-1:0] TABLE_OFFSET, input bit [7-1:0] TABLE_SIZE, input bit [4-1:0] ENTRY_SIZE
 );
   option.per_instance = 1;
   TABLE_OFFSET_cp: coverpoint TABLE_OFFSET;
@@ -398,9 +396,7 @@ covergroup I3CCSR__I3CBase__DEV_CTX_BASE_LO_bit_cg with function sample (input b
   reg_bit_edge_cp: coverpoint reg_bit {bins rise = (0 => 1); bins fall = (1 => 0);}
 
 endgroup
-covergroup I3CCSR__I3CBase__DEV_CTX_BASE_LO_fld_cg with function sample (
-    input bit [1-1:0] BASE_LO
-);
+covergroup I3CCSR__I3CBase__DEV_CTX_BASE_LO_fld_cg with function sample (input bit [1-1:0] BASE_LO);
   option.per_instance = 1;
   BASE_LO_cp: coverpoint BASE_LO;
 
@@ -413,9 +409,7 @@ covergroup I3CCSR__I3CBase__DEV_CTX_BASE_HI_bit_cg with function sample (input b
   reg_bit_edge_cp: coverpoint reg_bit {bins rise = (0 => 1); bins fall = (1 => 0);}
 
 endgroup
-covergroup I3CCSR__I3CBase__DEV_CTX_BASE_HI_fld_cg with function sample (
-    input bit [1-1:0] BASE_HI
-);
+covergroup I3CCSR__I3CBase__DEV_CTX_BASE_HI_fld_cg with function sample (input bit [1-1:0] BASE_HI);
   option.per_instance = 1;
   BASE_HI_cp: coverpoint BASE_HI;
 
