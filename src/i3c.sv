@@ -9,7 +9,11 @@ module i3c
 `ifdef I3C_USE_AHB
     parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
     parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
-`endif  // TODO: AXI4 I/O
+`elsif I3C_USE_AXI
+    parameter unsigned AXI_DATA_WIDTH = `AXI_DATA_WIDTH,
+    parameter unsigned AXI_ADDR_WIDTH = `AXI_ADDR_WIDTH,
+    localparam unsigned AxiIdWidth = 2
+`endif
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -42,7 +46,49 @@ module i3c
     input  logic                        hsel_i,
     // Indicates all subordinates have finished transfers
     input  logic                        hready_i,
-    // TODO: AXI4 I/O
+
+`elsif I3C_USE_AXI
+    // AXI4 Interface
+    // AXI Read Channels
+    input  logic [AXI_ADDR_WIDTH-1:0] araddr_i,
+    input        [               1:0] arburst_i,
+    input  logic [               2:0] arsize_i,
+    input        [               7:0] arlen_i,
+    input        [            UW-1:0] aruser_i,
+    input  logic [    AxiIdWidth-1:0] arid_i,
+    input  logic                      arlock_i,
+    input  logic                      arvalid_i,
+    output logic                      arready_o,
+
+    output logic [AXI_DATA_WIDTH-1:0] rdata_o,
+    output logic [               1:0] rresp_o,
+    output logic [    AxiIdWidth-1:0] rid_o,
+    output logic                      rlast_o,
+    output logic                      rvalid_o,
+    input  logic                      rready_i,
+
+    // AXI Write Channels
+    input  logic [AXI_ADDR_WIDTH-1:0] awaddr_i,
+    input        [               1:0] awburst_i,
+    input  logic [               2:0] awsize_i,
+    input        [               7:0] awlen_i,
+    input        [            UW-1:0] awuser_i,
+    input  logic [    AxiIdWidth-1:0] awid_i,
+    input  logic                      awlock_i,
+    input  logic                      awvalid_i,
+    output logic                      awready_o,
+
+    input  logic [AXI_DATA_WIDTH-1:0] wdata_i,
+    input  logic [               7:0] wstrb_i,
+    input  logic                      wlast_i,
+    input  logic                      wvalid_i,
+    output logic                      wready_o,
+
+    output logic [           1:0] bresp_o,
+    output logic [AxiIdWidth-1:0] bid_o,
+    output logic                  bvalid_o,
+    input  logic                  bready_i,
+
 `endif
 
     // I3C bus IO
@@ -200,8 +246,70 @@ module i3c
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err)
   );
-  // TODO: AXI4 I/O
-  // `else
+
+`elsif I3C_USE_AXI
+  axi_adapter #(
+      .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
+      .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+      .AXI_ID_WIDTH  (AxiIdWidth)
+  ) i3c_axi_if (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+
+      // AXI Read Channels
+      .araddr_i(araddr_i),
+      .arburst_i(arburst_i),
+      .arsize_i(arsize_i),
+      .arlen_i(arlen_i),
+      .aruser_i(aruser_i),
+      .arid_i(arid_i),
+      .arlock_i(arlock_i),
+      .arvalid_i(arvalid_i),
+      .arready_o(arready_o),
+
+      .rdata_o(rdata_o),
+      .rresp_o(rresp_o),
+      .rid_o(rid_o),
+      .rlast_o(rlast_o),
+      .rvalid_o(rvalid_o),
+      .rready_i(rready_i),
+
+      // AXI Write Channels
+      .awaddr_i(awaddr_i),
+      .awburst_i(awburst_i),
+      .awsize_i(awsize_i),
+      .awlen_i(awlen_i),
+      .awuser_i(awuser_i),
+      .awid_i(awid_i),
+      .awlock_i(awlock_i),
+      .awvalid_i(awvalid_i),
+      .awready_o(awready_o),
+
+      .wdata_i (wdata_i),
+      .wstrb_i (wstrb_i),
+      .wlast_i (wlast_i),
+      .wvalid_i(wvalid_i),
+      .wready_o(wready_o),
+
+      .bresp_o(bresp_o),
+      .bid_o(bid_o),
+      .bvalid_o(bvalid_o),
+      .bready_i(bready_i),
+
+      // I3C SW CSR access interface
+      .s_cpuif_req(s_cpuif_req),
+      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
+      .s_cpuif_addr(s_cpuif_addr),
+      .s_cpuif_wr_data(s_cpuif_wr_data),
+      .s_cpuif_wr_biten(s_cpuif_wr_biten),
+      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
+      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
+      .s_cpuif_rd_ack(s_cpuif_rd_ack),
+      .s_cpuif_rd_err(s_cpuif_rd_err),
+      .s_cpuif_rd_data(s_cpuif_rd_data),
+      .s_cpuif_wr_ack(s_cpuif_wr_ack),
+      .s_cpuif_wr_err(s_cpuif_wr_err)
+  );
 `endif
 
   i3c_ctrl #() i3c_ctrl (
