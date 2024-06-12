@@ -12,7 +12,8 @@ module i3c
 `elsif I3C_USE_AXI
     parameter unsigned AXI_DATA_WIDTH = `AXI_DATA_WIDTH,
     parameter unsigned AXI_ADDR_WIDTH = `AXI_ADDR_WIDTH,
-    localparam unsigned AxiIdWidth = 2
+    parameter unsigned AXI_USER_WIDTH = `AXI_USER_WIDTH,
+    parameter unsigned AXI_ID_WIDTH = `AXI_ID_WIDTH
 `endif
 ) (
     input clk_i,  // clock
@@ -51,29 +52,29 @@ module i3c
     // AXI4 Interface
     // AXI Read Channels
     input  logic [AXI_ADDR_WIDTH-1:0] araddr_i,
-    input        [               1:0] arburst_i,
+    input  logic [               1:0] arburst_i,
     input  logic [               2:0] arsize_i,
-    input        [               7:0] arlen_i,
-    input        [            UW-1:0] aruser_i,
-    input  logic [    AxiIdWidth-1:0] arid_i,
+    input  logic [               7:0] arlen_i,
+    input  logic [AXI_USER_WIDTH-1:0] aruser_i,
+    input  logic [  AXI_ID_WIDTH-1:0] arid_i,
     input  logic                      arlock_i,
     input  logic                      arvalid_i,
     output logic                      arready_o,
 
     output logic [AXI_DATA_WIDTH-1:0] rdata_o,
     output logic [               1:0] rresp_o,
-    output logic [    AxiIdWidth-1:0] rid_o,
+    output logic [  AXI_ID_WIDTH-1:0] rid_o,
     output logic                      rlast_o,
     output logic                      rvalid_o,
     input  logic                      rready_i,
 
     // AXI Write Channels
     input  logic [AXI_ADDR_WIDTH-1:0] awaddr_i,
-    input        [               1:0] awburst_i,
+    input  logic [               1:0] awburst_i,
     input  logic [               2:0] awsize_i,
-    input        [               7:0] awlen_i,
-    input        [            UW-1:0] awuser_i,
-    input  logic [    AxiIdWidth-1:0] awid_i,
+    input  logic [               7:0] awlen_i,
+    input  logic [AXI_USER_WIDTH-1:0] awuser_i,
+    input  logic [  AXI_ID_WIDTH-1:0] awid_i,
     input  logic                      awlock_i,
     input  logic                      awvalid_i,
     output logic                      awready_o,
@@ -84,15 +85,15 @@ module i3c
     input  logic                      wvalid_i,
     output logic                      wready_o,
 
-    output logic [           1:0] bresp_o,
-    output logic [AxiIdWidth-1:0] bid_o,
-    output logic                  bvalid_o,
-    input  logic                  bready_i,
+    output logic [             1:0] bresp_o,
+    output logic [AXI_ID_WIDTH-1:0] bid_o,
+    output logic                    bvalid_o,
+    input  logic                    bready_i,
 
 `endif
 
     // I3C bus IO
-    input        i3c_scl_i,    // serial clock input from i3c bus
+    input  logic i3c_scl_i,    // serial clock input from i3c bus
     output logic i3c_scl_o,    // serial clock output to i3c bus
     output logic i3c_scl_en_o, // serial clock output to i3c bus
 
@@ -251,7 +252,8 @@ module i3c
   axi_adapter #(
       .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
       .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
-      .AXI_ID_WIDTH  (AxiIdWidth)
+      .AXI_USER_WIDTH(AXI_USER_WIDTH),
+      .AXI_ID_WIDTH  (AXI_ID_WIDTH)
   ) i3c_axi_if (
       .clk_i (clk_i),
       .rst_ni(rst_ni),

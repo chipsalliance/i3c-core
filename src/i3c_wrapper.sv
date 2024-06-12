@@ -7,7 +7,12 @@ module i3c_wrapper
 `ifdef I3C_USE_AHB
     parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
     parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
-`endif  // TODO: AXI4 I/O
+`elsif I3C_USE_AXI
+    parameter unsigned AXI_DATA_WIDTH = `AXI_DATA_WIDTH,
+    parameter unsigned AXI_ADDR_WIDTH = `AXI_ADDR_WIDTH,
+    parameter unsigned AXI_USER_WIDTH = `AXI_USER_WIDTH,
+    parameter unsigned AXI_ID_WIDTH = `AXI_ID_WIDTH
+`endif
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -40,16 +45,57 @@ module i3c_wrapper
     input  logic                        hsel_i,
     // Indicates all subordinates have finished transfers
     input  logic                        hready_i,
-    // TODO: AXI4 I/O
-    // `else
+
+`elsif I3C_USE_AXI
+    // AXI4 Interface
+    // AXI Read Channels
+    input  logic [AXI_ADDR_WIDTH-1:0] araddr_i,
+    input  logic [               1:0] arburst_i,
+    input  logic [               2:0] arsize_i,
+    input  logic [               7:0] arlen_i,
+    input  logic [AXI_USER_WIDTH-1:0] aruser_i,
+    input  logic [  AXI_ID_WIDTH-1:0] arid_i,
+    input  logic                      arlock_i,
+    input  logic                      arvalid_i,
+    output logic                      arready_o,
+
+    output logic [AXI_DATA_WIDTH-1:0] rdata_o,
+    output logic [               1:0] rresp_o,
+    output logic [  AXI_ID_WIDTH-1:0] rid_o,
+    output logic                      rlast_o,
+    output logic                      rvalid_o,
+    input  logic                      rready_i,
+
+    // AXI Write Channels
+    input  logic [AXI_ADDR_WIDTH-1:0] awaddr_i,
+    input  logic [               1:0] awburst_i,
+    input  logic [               2:0] awsize_i,
+    input  logic [               7:0] awlen_i,
+    input  logic [AXI_USER_WIDTH-1:0] awuser_i,
+    input  logic [  AXI_ID_WIDTH-1:0] awid_i,
+    input  logic                      awlock_i,
+    input  logic                      awvalid_i,
+    output logic                      awready_o,
+
+    input  logic [AXI_DATA_WIDTH-1:0] wdata_i,
+    input  logic [               7:0] wstrb_i,
+    input  logic                      wlast_i,
+    input  logic                      wvalid_i,
+    output logic                      wready_o,
+
+    output logic [             1:0] bresp_o,
+    output logic [AXI_ID_WIDTH-1:0] bid_o,
+    output logic                    bvalid_o,
+    input  logic                    bready_i,
+
 `endif
 
     // I3C bus IO
-    input        i3c_scl_i,    // serial clock input from i3c bus
+    input  logic i3c_scl_i,    // serial clock input from i3c bus
     output logic i3c_scl_o,    // serial clock output to i3c bus
     output logic i3c_scl_en_o, // serial clock output to i3c bus
 
-    input        i3c_sda_i,    // serial data input from i3c bus
+    input  logic i3c_sda_i,    // serial data input from i3c bus
     output logic i3c_sda_o,    // serial data output to i3c bus
     output logic i3c_sda_en_o, // serial data output to i3c bus
 
@@ -78,8 +124,31 @@ module i3c_wrapper
     if (AHB_DATA_WIDTH != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
       `REPORT_INCOMPATIBLE_PARAM("AHB data width", AHB_DATA_WIDTH, `AHB_DATA_WIDTH)
     end
-`endif  // I3C_USE_AHB TODO: AXI4 I/O
+`elsif I3C_USE_AXI
+    if (AXI_ADDR_WIDTH != `AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AXI_ADDR_WIDTH, `AXI_ADDR_WIDTH)
+    end
+    if (AXI_DATA_WIDTH != `AXI_DATA_WIDTH) begin : clptra_axi_data_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI data width", AXI_DATA_WIDTH, `AXI_DATA_WIDTH)
+    end
+    if (AXI_USER_WIDTH != `AXI_USER_WIDTH) begin : clptra_axi_user_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI user width", AXI_USER_WIDTH, `AXI_USER_WIDTH)
+    end
+    if (AXI_ID_WIDTH != `AXI_ID_WIDTH) begin : clptra_axi_id_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AXI_ID_WIDTH, `AXI_ID_WIDTH)
+    end
+`endif
   end
+
+`ifdef I3C_USE_AXI
+  initial begin : axi_data_user_w_check
+    if (AXI_USER_WIDTH != AXI_DATA_WIDTH) begin
+      $fatal(0, "AXI_USER_WIDTH (%0d) != AXI_DATA_WIDTH (%0d): Current AXI doesn't support",
+             param_name, received, expected, "different USER and DATA widths. (instance %m).");
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AXI_ID_WIDTH, `AXI_ID_WIDTH)
+    end
+  end
+`endif
 
   logic i3c_scl_io;
   logic i3c_sda_io;
