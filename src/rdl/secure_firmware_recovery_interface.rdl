@@ -17,7 +17,7 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             desc = "Extended Capability ID";
             sw = r;
             hw = r;
-            reset = 8'h00;
+            reset = 8'hC0;
         } CAP_ID[7:0];
     } EXTCAP_HEADER;
     reg {

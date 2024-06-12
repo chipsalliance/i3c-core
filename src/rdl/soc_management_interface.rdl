@@ -17,11 +17,11 @@ regfile SoCManagementInterfaceRegisters{
             desc = "Extended Capability ID";
             sw = r;
             hw = r;
-            reset = 8'h00;
+            reset = 8'hC1;
         } CAP_ID[7:0];
     } EXTCAP_HEADER;
     reg {
-        name = "PLACE_HOLDER_1";
+        name = "SoC Management Control";
         field {
             name = "";
             desc = "";
@@ -29,5 +29,215 @@ regfile SoCManagementInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } PLACE_HOLDER_1 ;
+    } SOC_MGMT_CONTROL;
+    reg {
+        name = "SoC Management Status";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_STATUS;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_RSVD_0;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_RSVD_1;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_RSVD_2;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_RSVD_3;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_0;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_1;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_2;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_3;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_4;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_5;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_6;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_7;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_8;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_9;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_10;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_11;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_12;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_13;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_14;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+    } SOC_MGMT_FEATURE_15;
 };

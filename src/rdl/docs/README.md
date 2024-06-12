@@ -1057,14 +1057,15 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x100
 - Base Offset: 0x100
-- Size: 0xC0
+- Size: 0x168
 
 |Offset|               Identifier               |Name|
 |------|----------------------------------------|----|
-| 0x00 |SecureFirmwareRecoveryInterfaceRegisters|  — |
-| 0x80 |   TargetTransactionInterfaceRegisters  |  — |
-| 0xB0 |     SoCManagementInterfaceRegisters    |  — |
-| 0xB8 |        ControllerConfigRegisters       |  — |
+| 0x000|SecureFirmwareRecoveryInterfaceRegisters|  — |
+| 0x080|     StandbyControllerModeRegisters     |  — |
+| 0x0C0|   TargetTransactionInterfaceRegisters  |  — |
+| 0x100|     SoCManagementInterfaceRegisters    |  — |
+| 0x160|        ControllerConfigRegisters       |  — |
 
 ## SecureFirmwareRecoveryInterfaceRegisters register file
 
@@ -1110,7 +1111,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
-| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+| 7:0|  CAP_ID  |   r  | 0xC0|  CAP_ID  |
 |23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
 
 #### CAP_ID field
@@ -1485,10 +1486,594 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-## TargetTransactionInterfaceRegisters register file
+## StandbyControllerModeRegisters register file
 
 - Absolute Address: 0x180
 - Base Offset: 0x80
+- Size: 0x40
+
+|Offset|           Identifier           |                    Name                    |
+|------|--------------------------------|--------------------------------------------|
+| 0x00 |          EXTCAP_HEADER         |                      —                     |
+| 0x04 |         STBY_CR_CONTROL        |         Standby Controller Control         |
+| 0x08 |       STBY_CR_DEVICE_ADDR      |      Standby Controller Device Address     |
+| 0x0C |      STBY_CR_CAPABILITIES      |       Standby Controller Capabilities      |
+| 0x10 |            __rsvd_0            |                 Reserved 0                 |
+| 0x14 |         STBY_CR_STATUS         |          Standby Controller Status         |
+| 0x18 |       STBY_CR_DEVICE_CHAR      |  Standby Controller Device Characteristics |
+| 0x1C |      STBY_CR_DEVICE_PID_LO     |      Standby Controller Device PID Low     |
+| 0x20 |       STBY_CR_INTR_STATUS      |     Standby Controller Interrupt Status    |
+| 0x24 |            __rsvd_1            |                 Reserved 1                 |
+| 0x28 |   STBY_CR_INTR_SIGNAL_ENABLE   | Standby Controller Interrupt Signal Enable |
+| 0x2C |       STBY_CR_INTR_FORCE       |     Standby Controller Interrupt Force     |
+| 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |Standby Controller CCC Configuration GETCAPS|
+| 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS| Standby Controller CCC Configuration RSTACT|
+| 0x38 |            __rsvd_2            |                 Reserved 2                 |
+| 0x3C |            __rsvd_3            |                 Reserved 3                 |
+
+### EXTCAP_HEADER register
+
+- Absolute Address: 0x180
+- Base Offset: 0x0
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x12|  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
+
+### STBY_CR_CONTROL register
+
+- Absolute Address: 0x184
+- Base Offset: 0x4
+- Size: 0x4
+
+
+
+| Bits|      Identifier     |Access|Reset|                       Name                       |
+|-----|---------------------|------|-----|--------------------------------------------------|
+|  0  |   PENDING_RX_NACK   |  rw  |  —  |                  Pending RX NACK                 |
+|  1  |  HANDOFF_DELAY_NACK |  rw  |  —  |                Handoff Delay NACK                |
+|  2  |  ACR_FSM_OP_SELECT  |  rw  |  —  |             Active Controller Select             |
+|  3  |PRIME_ACCEPT_GETACCCR|  rw  |  —  |          Prime to Accept Controller Role         |
+|  4  |  HANDOFF_DEEP_SLEEP |  rw  | 0x0 |                Handoff Deep Sleep                |
+|  5  |   CR_REQUEST_SEND   |  rw  | 0x0 |           Send Controller Role Request           |
+| 10:8|  BAST_CCC_IBI_RING  |  rw  | 0x0 |Ring Bundle IBI Selector for Broadcast CCC Capture|
+|  12 |  TARGET_XACT_ENABLE |  rw  | 0x0 |   Target Transaction Interface Servicing Enable  |
+|  13 |  DAA_SETAASA_ENABLE |  rw  | 0x0 |       Dynamic Address Method Enable SETAASA      |
+|  14 |  DAA_SETDASA_ENABLE |  rw  | 0x0 |       Dynamic Address Method Enable SETDASA      |
+|  15 |  DAA_ENTDAA_ENABLE  |  rw  | 0x0 |       Dynamic Address Method Enable ENTDAA       |
+|  20 |  RSTACT_DEFBYTE_02  |  rw  | 0x0 |            RSTACT Support DefByte 0x02           |
+|31:30|  STBY_CR_ENABLE_INT |  rw  | 0x0 |    Host Controller Secondary Controller Enable   |
+
+#### PENDING_RX_NACK field
+
+
+
+#### HANDOFF_DELAY_NACK field
+
+
+
+#### ACR_FSM_OP_SELECT field
+
+
+
+#### PRIME_ACCEPT_GETACCCR field
+
+
+
+#### HANDOFF_DEEP_SLEEP field
+
+
+
+#### CR_REQUEST_SEND field
+
+
+
+#### BAST_CCC_IBI_RING field
+
+
+
+#### TARGET_XACT_ENABLE field
+
+
+
+#### DAA_SETAASA_ENABLE field
+
+
+
+#### DAA_SETDASA_ENABLE field
+
+
+
+#### DAA_ENTDAA_ENABLE field
+
+
+
+#### RSTACT_DEFBYTE_02 field
+
+
+
+#### STBY_CR_ENABLE_INT field
+
+
+
+### STBY_CR_DEVICE_ADDR register
+
+- Absolute Address: 0x188
+- Base Offset: 0x8
+- Size: 0x4
+
+
+
+| Bits|    Identifier    |Access|Reset|          Name          |
+|-----|------------------|------|-----|------------------------|
+| 6:0 |    STATIC_ADDR   |  rw  |  —  |  Device Static Address |
+|  15 | STATIC_ADDR_VALID|  rw  |  —  | Static Address is Valid|
+|22:16|   DYNAMIC_ADDR   |  rw  |  —  | Device Dynamic Address |
+|  31 |DYNAMIC_ADDR_VALID|  rw  |  —  |Dynamic Address is Valid|
+
+#### STATIC_ADDR field
+
+
+
+#### STATIC_ADDR_VALID field
+
+
+
+#### DYNAMIC_ADDR field
+
+
+
+#### DYNAMIC_ADDR_VALID field
+
+
+
+### STBY_CR_CAPABILITIES register
+
+- Absolute Address: 0x18C
+- Base Offset: 0xC
+- Size: 0x4
+
+
+
+|Bits|     Identifier    |Access|Reset|        Name       |
+|----|-------------------|------|-----|-------------------|
+|  5 | SIMPLE_CRR_SUPPORT|  rw  |  —  | SIMPLE_CRR_SUPPORT|
+| 12 |TARGET_XACT_SUPPORT|  rw  |  —  |TARGET_XACT_SUPPORT|
+| 13 |DAA_SETAASA_SUPPORT|  rw  |  —  |DAA_SETAASA_SUPPORT|
+| 14 |DAA_SETDASA_SUPPORT|  rw  |  —  |DAA_SETDASA_SUPPORT|
+| 15 | DAA_ENTDAA_SUPPORT|  rw  |  —  | DAA_ENTDAA_SUPPORT|
+
+#### SIMPLE_CRR_SUPPORT field
+
+
+
+#### TARGET_XACT_SUPPORT field
+
+
+
+#### DAA_SETAASA_SUPPORT field
+
+
+
+#### DAA_SETDASA_SUPPORT field
+
+
+
+#### DAA_ENTDAA_SUPPORT field
+
+
+
+### __rsvd_0 register
+
+- Absolute Address: 0x190
+- Base Offset: 0x10
+- Size: 0x4
+
+
+
+|Bits|Identifier|Access|Reset|  Name  |
+|----|----------|------|-----|--------|
+|31:0|  __rsvd  |  rw  |  —  |Reserved|
+
+#### __rsvd field
+
+
+
+### STBY_CR_STATUS register
+
+- Absolute Address: 0x194
+- Base Offset: 0x14
+- Size: 0x4
+
+
+
+|Bits|    Identifier   |Access|Reset|       Name      |
+|----|-----------------|------|-----|-----------------|
+|  2 |  AC_CURRENT_OWN |  rw  |  —  |  AC_CURRENT_OWN |
+| 7:5|SIMPLE_CRR_STATUS|  rw  |  —  |SIMPLE_CRR_STATUS|
+|  8 |  HJ_REQ_STATUS  |  rw  |  —  |  HJ_REQ_STATUS  |
+
+#### AC_CURRENT_OWN field
+
+
+
+#### SIMPLE_CRR_STATUS field
+
+
+
+#### HJ_REQ_STATUS field
+
+
+
+### STBY_CR_DEVICE_CHAR register
+
+- Absolute Address: 0x198
+- Base Offset: 0x18
+- Size: 0x4
+
+
+
+| Bits|Identifier|Access|Reset|   Name  |
+|-----|----------|------|-----|---------|
+| 15:1|  PID_HI  |  rw  |  —  |  PID_HI |
+|23:16|    DCR   |  rw  |  —  |   DCR   |
+|28:24|  BCR_VAR |  rw  |  —  | BCR_VAR |
+|31:29| BCR_FIXED|  rw  |  —  |BCR_FIXED|
+
+#### PID_HI field
+
+
+
+#### DCR field
+
+
+
+#### BCR_VAR field
+
+
+
+#### BCR_FIXED field
+
+
+
+### STBY_CR_DEVICE_PID_LO register
+
+- Absolute Address: 0x19C
+- Base Offset: 0x1C
+- Size: 0x4
+
+
+
+|Bits|Identifier|Access|Reset| Name |
+|----|----------|------|-----|------|
+|31:0|  PID_LO  |  rw  |  —  |PID_LO|
+
+#### PID_LO field
+
+
+
+### STBY_CR_INTR_STATUS register
+
+- Absolute Address: 0x1A0
+- Base Offset: 0x20
+- Size: 0x4
+
+
+
+|Bits|        Identifier        |Access|Reset|Name|
+|----|--------------------------|------|-----|----|
+|  0 |ACR_HANDOFF_OK_REMAIN_STAT|  rw  |  —  |    |
+|  1 |ACR_HANDOFF_OK_PRIMED_STAT|  rw  |  —  |    |
+|  2 | ACR_HANDOFF_ERR_FAIL_STAT|  rw  |  —  |    |
+|  3 |  ACR_HANDOFF_ERR_M3_STAT |  rw  |  —  |    |
+| 10 |     CRR_RESPONSE_STAT    |  rw  |  —  |    |
+| 11 |   STBY_CR_DYN_ADDR_STAT  |  rw  |  —  |    |
+| 12 |STBY_CR_ACCEPT_NACKED_STAT|  rw  |  —  |    |
+| 13 |  STBY_CR_ACCEPT_OK_STAT  |  rw  |  —  |    |
+| 14 |  STBY_CR_ACCEPT_ERR_STAT |  rw  |  —  |    |
+| 16 |  STBY_CR_OP_RSTACT_STAT  |  rw  |  —  |    |
+| 17 |  CCC_PARAM_MODIFIED_STAT |  rw  |  —  |    |
+| 18 |  CCC_UNHANDLED_NACK_STAT |  rw  |  —  |    |
+| 19 | CCC_FATAL_RSTDAA_ERR_STAT|  rw  |  —  |    |
+
+#### ACR_HANDOFF_OK_REMAIN_STAT field
+
+
+
+#### ACR_HANDOFF_OK_PRIMED_STAT field
+
+
+
+#### ACR_HANDOFF_ERR_FAIL_STAT field
+
+
+
+#### ACR_HANDOFF_ERR_M3_STAT field
+
+
+
+#### CRR_RESPONSE_STAT field
+
+
+
+#### STBY_CR_DYN_ADDR_STAT field
+
+
+
+#### STBY_CR_ACCEPT_NACKED_STAT field
+
+
+
+#### STBY_CR_ACCEPT_OK_STAT field
+
+
+
+#### STBY_CR_ACCEPT_ERR_STAT field
+
+
+
+#### STBY_CR_OP_RSTACT_STAT field
+
+
+
+#### CCC_PARAM_MODIFIED_STAT field
+
+
+
+#### CCC_UNHANDLED_NACK_STAT field
+
+
+
+#### CCC_FATAL_RSTDAA_ERR_STAT field
+
+
+
+### __rsvd_1 register
+
+- Absolute Address: 0x1A4
+- Base Offset: 0x24
+- Size: 0x4
+
+
+
+|Bits|Identifier|Access|Reset|  Name  |
+|----|----------|------|-----|--------|
+|31:0|  __rsvd  |  rw  |  —  |Reserved|
+
+#### __rsvd field
+
+
+
+### STBY_CR_INTR_SIGNAL_ENABLE register
+
+- Absolute Address: 0x1A8
+- Base Offset: 0x28
+- Size: 0x4
+
+
+
+|Bits|           Identifier          |Access|Reset|Name|
+|----|-------------------------------|------|-----|----|
+|  0 |ACR_HANDOFF_OK_REMAIN_SIGNAL_EN|  rw  |  —  |    |
+|  1 |ACR_HANDOFF_OK_PRIMED_SIGNAL_EN|  rw  |  —  |    |
+|  2 | ACR_HANDOFF_ERR_FAIL_SIGNAL_EN|  rw  |  —  |    |
+|  3 |  ACR_HANDOFF_ERR_M3_SIGNAL_EN |  rw  |  —  |    |
+| 10 |     CRR_RESPONSE_SIGNAL_EN    |  rw  |  —  |    |
+| 11 |   STBY_CR_DYN_ADDR_SIGNAL_EN  |  rw  |  —  |    |
+| 12 |STBY_CR_ACCEPT_NACKED_SIGNAL_EN|  rw  |  —  |    |
+| 13 |  STBY_CR_ACCEPT_OK_SIGNAL_EN  |  rw  |  —  |    |
+| 14 |  STBY_CR_ACCEPT_ERR_SIGNAL_EN |  rw  |  —  |    |
+| 16 |  STBY_CR_OP_RSTACT_SIGNAL_EN  |  rw  |  —  |    |
+| 17 |  CCC_PARAM_MODIFIED_SIGNAL_EN |  rw  |  —  |    |
+| 18 |  CCC_UNHANDLED_NACK_SIGNAL_EN |  rw  |  —  |    |
+| 19 | CCC_FATAL_RSTDAA_ERR_SIGNAL_EN|  rw  |  —  |    |
+
+#### ACR_HANDOFF_OK_REMAIN_SIGNAL_EN field
+
+
+
+#### ACR_HANDOFF_OK_PRIMED_SIGNAL_EN field
+
+
+
+#### ACR_HANDOFF_ERR_FAIL_SIGNAL_EN field
+
+
+
+#### ACR_HANDOFF_ERR_M3_SIGNAL_EN field
+
+
+
+#### CRR_RESPONSE_SIGNAL_EN field
+
+
+
+#### STBY_CR_DYN_ADDR_SIGNAL_EN field
+
+
+
+#### STBY_CR_ACCEPT_NACKED_SIGNAL_EN field
+
+
+
+#### STBY_CR_ACCEPT_OK_SIGNAL_EN field
+
+
+
+#### STBY_CR_ACCEPT_ERR_SIGNAL_EN field
+
+
+
+#### STBY_CR_OP_RSTACT_SIGNAL_EN field
+
+
+
+#### CCC_PARAM_MODIFIED_SIGNAL_EN field
+
+
+
+#### CCC_UNHANDLED_NACK_SIGNAL_EN field
+
+
+
+#### CCC_FATAL_RSTDAA_ERR_SIGNAL_EN field
+
+
+
+### STBY_CR_INTR_FORCE register
+
+- Absolute Address: 0x1AC
+- Base Offset: 0x2C
+- Size: 0x4
+
+
+
+|Bits|         Identifier        |Access|Reset|Name|
+|----|---------------------------|------|-----|----|
+| 10 |     CRR_RESPONSE_FORCE    |  rw  |  —  |    |
+| 11 |   STBY_CR_DYN_ADDR_FORCE  |  rw  |  —  |    |
+| 12 |STBY_CR_ACCEPT_NACKED_FORCE|  rw  |  —  |    |
+| 13 |  STBY_CR_ACCEPT_OK_FORCE  |  rw  |  —  |    |
+| 14 |  STBY_CR_ACCEPT_ERR_FORCE |  rw  |  —  |    |
+| 16 |  STBY_CR_OP_RSTACT_FORCE  |  rw  |  —  |    |
+| 17 |  CCC_PARAM_MODIFIED_FORCE |  rw  |  —  |    |
+| 18 |  CCC_UNHANDLED_NACK_FORCE |  rw  |  —  |    |
+| 19 | CCC_FATAL_RSTDAA_ERR_FORCE|  rw  |  —  |    |
+
+#### CRR_RESPONSE_FORCE field
+
+
+
+#### STBY_CR_DYN_ADDR_FORCE field
+
+
+
+#### STBY_CR_ACCEPT_NACKED_FORCE field
+
+
+
+#### STBY_CR_ACCEPT_OK_FORCE field
+
+
+
+#### STBY_CR_ACCEPT_ERR_FORCE field
+
+
+
+#### STBY_CR_OP_RSTACT_FORCE field
+
+
+
+#### CCC_PARAM_MODIFIED_FORCE field
+
+
+
+#### CCC_UNHANDLED_NACK_FORCE field
+
+
+
+#### CCC_FATAL_RSTDAA_ERR_FORCE field
+
+
+
+### STBY_CR_CCC_CONFIG_GETCAPS register
+
+- Absolute Address: 0x1B0
+- Base Offset: 0x30
+- Size: 0x4
+
+
+
+|Bits|      Identifier      |Access|Reset|Name|
+|----|----------------------|------|-----|----|
+| 2:0| F2_CRCAP1_BUS_CONFIG |  rw  |  —  |    |
+|11:8|F2_CRCAP2_DEV_INTERACT|  rw  |  —  |    |
+
+#### F2_CRCAP1_BUS_CONFIG field
+
+
+
+#### F2_CRCAP2_DEV_INTERACT field
+
+
+
+### STBY_CR_CCC_CONFIG_RSTACT_PARAMS register
+
+- Absolute Address: 0x1B4
+- Base Offset: 0x34
+- Size: 0x4
+
+
+
+| Bits|      Identifier     |Access|Reset|Name|
+|-----|---------------------|------|-----|----|
+| 7:0 |      RST_ACTION     |  rw  |  —  |    |
+| 15:8|RESET_TIME_PERIPHERAL|  rw  |  —  |    |
+|23:16|  RESET_TIME_TARGET  |  rw  |  —  |    |
+|  31 |  RESET_DYNAMIC_ADDR |  rw  |  —  |    |
+
+#### RST_ACTION field
+
+
+
+#### RESET_TIME_PERIPHERAL field
+
+
+
+#### RESET_TIME_TARGET field
+
+
+
+#### RESET_DYNAMIC_ADDR field
+
+
+
+### __rsvd_2 register
+
+- Absolute Address: 0x1B8
+- Base Offset: 0x38
+- Size: 0x4
+
+
+
+|Bits|Identifier|Access|Reset|  Name  |
+|----|----------|------|-----|--------|
+|31:0|  __rsvd  |  rw  |  —  |Reserved|
+
+#### __rsvd field
+
+
+
+### __rsvd_3 register
+
+- Absolute Address: 0x1BC
+- Base Offset: 0x3C
+- Size: 0x4
+
+
+
+|Bits|Identifier|Access|Reset|  Name  |
+|----|----------|------|-----|--------|
+|31:0|  __rsvd  |  rw  |  —  |Reserved|
+
+#### __rsvd field
+
+
+
+## TargetTransactionInterfaceRegisters register file
+
+- Absolute Address: 0x1C0
+- Base Offset: 0xC0
 - Size: 0x30
 
 |Offset|         Identifier         |            Name            |
@@ -1508,13 +2093,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x180
+- Absolute Address: 0x1C0
 - Base Offset: 0x0
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
-| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+| 7:0|  CAP_ID  |   r  | 0xC4|  CAP_ID  |
 |23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
 
 #### CAP_ID field
@@ -1527,7 +2112,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_CONTROL register
 
-- Absolute Address: 0x184
+- Absolute Address: 0x1C4
 - Base Offset: 0x4
 - Size: 0x4
 
@@ -1543,7 +2128,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_STATUS register
 
-- Absolute Address: 0x188
+- Absolute Address: 0x1C8
 - Base Offset: 0x8
 - Size: 0x4
 
@@ -1559,7 +2144,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_INTERRUPT_STATUS register
 
-- Absolute Address: 0x18C
+- Absolute Address: 0x1CC
 - Base Offset: 0xC
 - Size: 0x4
 
@@ -1575,7 +2160,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_INTERRUPT_ENABLE register
 
-- Absolute Address: 0x190
+- Absolute Address: 0x1D0
 - Base Offset: 0x10
 - Size: 0x4
 
@@ -1591,7 +2176,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_INTERRUPT_FORCE register
 
-- Absolute Address: 0x194
+- Absolute Address: 0x1D4
 - Base Offset: 0x14
 - Size: 0x4
 
@@ -1607,7 +2192,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_RX_DESCRIPTOR_QUEUE_PORT register
 
-- Absolute Address: 0x198
+- Absolute Address: 0x1D8
 - Base Offset: 0x18
 - Size: 0x4
 
@@ -1623,7 +2208,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_RX_DATA_PORT register
 
-- Absolute Address: 0x19C
+- Absolute Address: 0x1DC
 - Base Offset: 0x1C
 - Size: 0x4
 
@@ -1639,7 +2224,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_TX_DESCRIPTOR_QUEUE_PORT register
 
-- Absolute Address: 0x1A0
+- Absolute Address: 0x1E0
 - Base Offset: 0x20
 - Size: 0x4
 
@@ -1655,7 +2240,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_TX_DATA_PORT register
 
-- Absolute Address: 0x1A4
+- Absolute Address: 0x1E4
 - Base Offset: 0x24
 - Size: 0x4
 
@@ -1671,7 +2256,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_QUEUE_SIZE register
 
-- Absolute Address: 0x1A8
+- Absolute Address: 0x1E8
 - Base Offset: 0x28
 - Size: 0x4
 
@@ -1702,7 +2287,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TTI_QUEUE_THRESHOLD_CONTROL register
 
-- Absolute Address: 0x1AC
+- Absolute Address: 0x1EC
 - Base Offset: 0x2C
 - Size: 0x4
 
@@ -1733,24 +2318,45 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ## SoCManagementInterfaceRegisters register file
 
-- Absolute Address: 0x1B0
-- Base Offset: 0xB0
-- Size: 0x8
+- Absolute Address: 0x200
+- Base Offset: 0x100
+- Size: 0x5C
 
-|Offset|  Identifier  |     Name     |
-|------|--------------|--------------|
-|  0x0 | EXTCAP_HEADER|       —      |
-|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+|Offset|     Identifier    |         Name         |
+|------|-------------------|----------------------|
+| 0x00 |   EXTCAP_HEADER   |           —          |
+| 0x04 |  SOC_MGMT_CONTROL |SoC Management Control|
+| 0x08 |  SOC_MGMT_STATUS  | SoC Management Status|
+| 0x0C |  SOC_MGMT_RSVD_0  |                      |
+| 0x10 |  SOC_MGMT_RSVD_1  |                      |
+| 0x14 |  SOC_MGMT_RSVD_2  |                      |
+| 0x18 |  SOC_MGMT_RSVD_3  |                      |
+| 0x1C | SOC_MGMT_FEATURE_0|                      |
+| 0x20 | SOC_MGMT_FEATURE_1|                      |
+| 0x24 | SOC_MGMT_FEATURE_2|                      |
+| 0x28 | SOC_MGMT_FEATURE_3|                      |
+| 0x2C | SOC_MGMT_FEATURE_4|                      |
+| 0x30 | SOC_MGMT_FEATURE_5|                      |
+| 0x34 | SOC_MGMT_FEATURE_6|                      |
+| 0x38 | SOC_MGMT_FEATURE_7|                      |
+| 0x3C | SOC_MGMT_FEATURE_8|                      |
+| 0x40 | SOC_MGMT_FEATURE_9|                      |
+| 0x44 |SOC_MGMT_FEATURE_10|                      |
+| 0x48 |SOC_MGMT_FEATURE_11|                      |
+| 0x4C |SOC_MGMT_FEATURE_12|                      |
+| 0x50 |SOC_MGMT_FEATURE_13|                      |
+| 0x54 |SOC_MGMT_FEATURE_14|                      |
+| 0x58 |SOC_MGMT_FEATURE_15|                      |
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x1B0
+- Absolute Address: 0x200
 - Base Offset: 0x0
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
-| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+| 7:0|  CAP_ID  |   r  | 0xC1|  CAP_ID  |
 |23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
 
 #### CAP_ID field
@@ -1761,10 +2367,304 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 <p>Capability Structure Length in DWORDs</p>
 
-### PLACE_HOLDER_1 register
+### SOC_MGMT_CONTROL register
 
-- Absolute Address: 0x1B4
+- Absolute Address: 0x204
 - Base Offset: 0x4
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_STATUS register
+
+- Absolute Address: 0x208
+- Base Offset: 0x8
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_RSVD_0 register
+
+- Absolute Address: 0x20C
+- Base Offset: 0xC
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_RSVD_1 register
+
+- Absolute Address: 0x210
+- Base Offset: 0x10
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_RSVD_2 register
+
+- Absolute Address: 0x214
+- Base Offset: 0x14
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_RSVD_3 register
+
+- Absolute Address: 0x218
+- Base Offset: 0x18
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_0 register
+
+- Absolute Address: 0x21C
+- Base Offset: 0x1C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_1 register
+
+- Absolute Address: 0x220
+- Base Offset: 0x20
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_2 register
+
+- Absolute Address: 0x224
+- Base Offset: 0x24
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_3 register
+
+- Absolute Address: 0x228
+- Base Offset: 0x28
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_4 register
+
+- Absolute Address: 0x22C
+- Base Offset: 0x2C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_5 register
+
+- Absolute Address: 0x230
+- Base Offset: 0x30
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_6 register
+
+- Absolute Address: 0x234
+- Base Offset: 0x34
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_7 register
+
+- Absolute Address: 0x238
+- Base Offset: 0x38
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_8 register
+
+- Absolute Address: 0x23C
+- Base Offset: 0x3C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_9 register
+
+- Absolute Address: 0x240
+- Base Offset: 0x40
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_10 register
+
+- Absolute Address: 0x244
+- Base Offset: 0x44
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_11 register
+
+- Absolute Address: 0x248
+- Base Offset: 0x48
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_12 register
+
+- Absolute Address: 0x24C
+- Base Offset: 0x4C
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_13 register
+
+- Absolute Address: 0x250
+- Base Offset: 0x50
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_14 register
+
+- Absolute Address: 0x254
+- Base Offset: 0x54
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### SOC_MGMT_FEATURE_15 register
+
+- Absolute Address: 0x258
+- Base Offset: 0x58
 - Size: 0x4
 
 |Bits| Identifier|Access|Reset|Name|
@@ -1777,25 +2677,25 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ## ControllerConfigRegisters register file
 
-- Absolute Address: 0x1B8
-- Base Offset: 0xB8
+- Absolute Address: 0x260
+- Base Offset: 0x160
 - Size: 0x8
 
-|Offset|  Identifier  |     Name     |
-|------|--------------|--------------|
-|  0x0 | EXTCAP_HEADER|       —      |
-|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+|Offset|    Identifier   |       Name      |
+|------|-----------------|-----------------|
+|  0x0 |  EXTCAP_HEADER  |        —        |
+|  0x4 |CONTROLLER_CONFIG|Controller Config|
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x1B8
+- Absolute Address: 0x260
 - Base Offset: 0x0
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
-| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
-|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+| 7:0|  CAP_ID  |   r  | 0x2 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x2 |CAP_LENGTH|
 
 #### CAP_ID field
 
@@ -1805,17 +2705,17 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 <p>Capability Structure Length in DWORDs</p>
 
-### PLACE_HOLDER_1 register
+### CONTROLLER_CONFIG register
 
-- Absolute Address: 0x1BC
+- Absolute Address: 0x264
 - Base Offset: 0x4
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+| 5:4|OPERATION_MODE|   r  | 0x1 |Operation Mode|
 
-#### PLACEHOLDER field
+#### OPERATION_MODE field
 
 
 

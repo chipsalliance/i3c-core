@@ -9,24 +9,24 @@ regfile ControllerConfigRegisters{
             desc = "Capability Structure Length in DWORDs";
             sw = r;
             hw = r;
-            reset = 16'h0000;
+            reset = 16'h0002;
         } CAP_LENGTH[23:8];
         field {
             name = "CAP_ID";
             desc = "Extended Capability ID";
             sw = r;
             hw = r;
-            reset = 8'h00;
+            reset = 8'h02;
         } CAP_ID[7:0];
     } EXTCAP_HEADER;
     reg {
-        name = "PLACE_HOLDER_1";
+        name = "Controller Config";
         field {
-            name = "";
+            name = "Operation Mode";
             desc = "";
-            sw = rw;
+            sw = r;
             hw = rw;
-            reset = 32'h00000000;
-            } PLACEHOLDER[31:0];
-    } PLACE_HOLDER_1 ;
+            reset = 2'h1;
+            } OPERATION_MODE[5:4];
+    } CONTROLLER_CONFIG ;
 };

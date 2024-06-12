@@ -467,6 +467,444 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__in_t;
 
     typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__CR_REQUEST_SEND__in_t;
+
+    typedef struct {
+        logic [2:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__BAST_CCC_IBI_RING__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t;
+
+    typedef struct {
+        logic [1:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__in_t PENDING_RX_NACK;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__in_t HANDOFF_DELAY_NACK;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__in_t ACR_FSM_OP_SELECT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__in_t PRIME_ACCEPT_GETACCCR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__in_t HANDOFF_DEEP_SLEEP;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__CR_REQUEST_SEND__in_t CR_REQUEST_SEND;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__BAST_CCC_IBI_RING__in_t BAST_CCC_IBI_RING;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t TARGET_XACT_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__in_t DAA_SETAASA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t DAA_SETDASA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t DAA_ENTDAA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t RSTACT_DEFBYTE_02;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__in_t STBY_CR_ENABLE_INT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__in_t;
+
+    typedef struct {
+        logic [6:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__in_t;
+
+    typedef struct {
+        logic [6:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR__in_t STATIC_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__in_t STATIC_ADDR_VALID;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__in_t DYNAMIC_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t DYNAMIC_ADDR_VALID;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__in_t SIMPLE_CRR_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__in_t TARGET_XACT_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__in_t DAA_SETAASA_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__in_t DAA_SETDASA_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__in_t DAA_ENTDAA_SUPPORT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0____rsvd__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0____rsvd__in_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__AC_CURRENT_OWN__in_t;
+
+    typedef struct {
+        logic [2:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__SIMPLE_CRR_STATUS__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__HJ_REQ_STATUS__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__AC_CURRENT_OWN__in_t AC_CURRENT_OWN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__SIMPLE_CRR_STATUS__in_t SIMPLE_CRR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__HJ_REQ_STATUS__in_t HJ_REQ_STATUS;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__in_t;
+
+    typedef struct {
+        logic [14:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__PID_HI__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__DCR__in_t;
+
+    typedef struct {
+        logic [4:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_VAR__in_t;
+
+    typedef struct {
+        logic [2:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_FIXED__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__PID_HI__in_t PID_HI;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__DCR__in_t DCR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_VAR__in_t BCR_VAR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_FIXED__in_t BCR_FIXED;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__PID_LO__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__PID_LO__in_t PID_LO;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__in_t ACR_HANDOFF_OK_REMAIN_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__in_t ACR_HANDOFF_OK_PRIMED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__in_t ACR_HANDOFF_ERR_FAIL_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__in_t ACR_HANDOFF_ERR_M3_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__in_t CRR_RESPONSE_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__in_t STBY_CR_DYN_ADDR_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__in_t STBY_CR_ACCEPT_NACKED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__in_t STBY_CR_ACCEPT_OK_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__in_t STBY_CR_ACCEPT_ERR_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__in_t STBY_CR_OP_RSTACT_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__in_t CCC_PARAM_MODIFIED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__in_t CCC_UNHANDLED_NACK_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__in_t CCC_FATAL_RSTDAA_ERR_STAT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1____rsvd__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1____rsvd__in_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__in_t ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__in_t ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__in_t ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__in_t ACR_HANDOFF_ERR_M3_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__in_t CRR_RESPONSE_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__in_t STBY_CR_DYN_ADDR_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__in_t STBY_CR_ACCEPT_NACKED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__in_t STBY_CR_ACCEPT_OK_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__in_t STBY_CR_ACCEPT_ERR_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__in_t STBY_CR_OP_RSTACT_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__in_t CCC_PARAM_MODIFIED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__in_t CCC_UNHANDLED_NACK_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__in_t CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__in_t CRR_RESPONSE_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__in_t STBY_CR_DYN_ADDR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__in_t STBY_CR_ACCEPT_NACKED_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__in_t STBY_CR_ACCEPT_OK_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__in_t STBY_CR_ACCEPT_ERR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__in_t STBY_CR_OP_RSTACT_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__in_t CCC_PARAM_MODIFIED_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__in_t CCC_UNHANDLED_NACK_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__in_t CCC_FATAL_RSTDAA_ERR_FORCE;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__in_t;
+
+    typedef struct {
+        logic [2:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__in_t;
+
+    typedef struct {
+        logic [3:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__in_t F2_CRCAP1_BUS_CONFIG;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__in_t F2_CRCAP2_DEV_INTERACT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__in_t;
+
+    typedef struct {
+        logic next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__in_t RST_ACTION;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__in_t RESET_TIME_PERIPHERAL;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__in_t RESET_TIME_TARGET;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__in_t RESET_DYNAMIC_ADDR;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2____rsvd__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2____rsvd__in_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3____rsvd__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3____rsvd__in_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__in_t STBY_CR_CONTROL;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__in_t STBY_CR_DEVICE_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__in_t STBY_CR_CAPABILITIES;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0__in_t __rsvd_0;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__in_t STBY_CR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__in_t STBY_CR_DEVICE_CHAR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__in_t STBY_CR_DEVICE_PID_LO;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__in_t STBY_CR_INTR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1__in_t __rsvd_1;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__in_t STBY_CR_INTR_SIGNAL_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__in_t STBY_CR_INTR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__in_t STBY_CR_CCC_CONFIG_GETCAPS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__in_t STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2__in_t __rsvd_2;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3__in_t __rsvd_3;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__in_t;
+
+    typedef struct {
         logic [31:0] next;
     } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__PLACEHOLDER__in_t;
 
@@ -552,30 +990,220 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__PLACEHOLDER__in_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__in_t;
-
-    typedef struct {
-        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
-    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__in_t;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__in_t;
 
     typedef struct {
         logic [31:0] next;
-    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__PLACEHOLDER__in_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__in_t;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__in_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__in_t SOC_MGMT_CONTROL;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__in_t SOC_MGMT_STATUS;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__in_t SOC_MGMT_RSVD_0;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__in_t SOC_MGMT_RSVD_1;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__in_t SOC_MGMT_RSVD_2;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__in_t SOC_MGMT_RSVD_3;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__in_t SOC_MGMT_FEATURE_0;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__in_t SOC_MGMT_FEATURE_1;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__in_t SOC_MGMT_FEATURE_2;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__in_t SOC_MGMT_FEATURE_3;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__in_t SOC_MGMT_FEATURE_4;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__in_t SOC_MGMT_FEATURE_5;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__in_t SOC_MGMT_FEATURE_6;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__in_t SOC_MGMT_FEATURE_7;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__in_t SOC_MGMT_FEATURE_8;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__in_t SOC_MGMT_FEATURE_9;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__in_t SOC_MGMT_FEATURE_10;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__in_t SOC_MGMT_FEATURE_11;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__in_t SOC_MGMT_FEATURE_12;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__in_t SOC_MGMT_FEATURE_13;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__in_t SOC_MGMT_FEATURE_14;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__in_t SOC_MGMT_FEATURE_15;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__in_t;
+
+    typedef struct {
+        logic [1:0] next;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__OPERATION_MODE__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__OPERATION_MODE__in_t OPERATION_MODE;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__in_t CONTROLLER_CONFIG;
     } I3CCSR__I3C_EC__ControllerConfigRegisters__in_t;
 
     typedef struct {
         I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__in_t SecureFirmwareRecoveryInterfaceRegisters;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__in_t StandbyControllerModeRegisters;
         I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__in_t TargetTransactionInterfaceRegisters;
         I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__in_t SoCManagementInterfaceRegisters;
         I3CCSR__I3C_EC__ControllerConfigRegisters__in_t ControllerConfigRegisters;
@@ -1253,6 +1881,458 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [7:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct {
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__CR_REQUEST_SEND__out_t;
+
+    typedef struct {
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__BAST_CCC_IBI_RING__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__TARGET_XACT_ENABLE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__out_t;
+
+    typedef struct {
+        logic [1:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__out_t PENDING_RX_NACK;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__out_t HANDOFF_DELAY_NACK;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__out_t ACR_FSM_OP_SELECT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__out_t PRIME_ACCEPT_GETACCCR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__out_t HANDOFF_DEEP_SLEEP;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__CR_REQUEST_SEND__out_t CR_REQUEST_SEND;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__BAST_CCC_IBI_RING__out_t BAST_CCC_IBI_RING;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__TARGET_XACT_ENABLE__out_t TARGET_XACT_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__out_t DAA_SETAASA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__out_t DAA_SETDASA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__out_t DAA_ENTDAA_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__out_t RSTACT_DEFBYTE_02;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__out_t STBY_CR_ENABLE_INT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__out_t;
+
+    typedef struct {
+        logic [6:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__out_t;
+
+    typedef struct {
+        logic [6:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR__out_t STATIC_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__out_t STATIC_ADDR_VALID;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__out_t DYNAMIC_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t DYNAMIC_ADDR_VALID;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__out_t SIMPLE_CRR_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__out_t TARGET_XACT_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__out_t DAA_SETAASA_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__out_t DAA_SETDASA_SUPPORT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__out_t DAA_ENTDAA_SUPPORT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0____rsvd__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0____rsvd__out_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__AC_CURRENT_OWN__out_t;
+
+    typedef struct {
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__SIMPLE_CRR_STATUS__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__HJ_REQ_STATUS__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__AC_CURRENT_OWN__out_t AC_CURRENT_OWN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__SIMPLE_CRR_STATUS__out_t SIMPLE_CRR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__HJ_REQ_STATUS__out_t HJ_REQ_STATUS;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__out_t;
+
+    typedef struct {
+        logic [14:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__PID_HI__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__DCR__out_t;
+
+    typedef struct {
+        logic [4:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_VAR__out_t;
+
+    typedef struct {
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_FIXED__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__PID_HI__out_t PID_HI;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__DCR__out_t DCR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__PID_LO__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__PID_LO__out_t PID_LO;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__out_t ACR_HANDOFF_OK_REMAIN_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__out_t ACR_HANDOFF_OK_PRIMED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__out_t ACR_HANDOFF_ERR_FAIL_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__out_t ACR_HANDOFF_ERR_M3_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__out_t CRR_RESPONSE_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__out_t STBY_CR_DYN_ADDR_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__out_t STBY_CR_ACCEPT_NACKED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__out_t STBY_CR_ACCEPT_OK_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__out_t STBY_CR_ACCEPT_ERR_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__out_t STBY_CR_OP_RSTACT_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__out_t CCC_PARAM_MODIFIED_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__out_t CCC_UNHANDLED_NACK_STAT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__out_t CCC_FATAL_RSTDAA_ERR_STAT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1____rsvd__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1____rsvd__out_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__out_t ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__out_t ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__out_t ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__out_t ACR_HANDOFF_ERR_M3_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__out_t CRR_RESPONSE_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__out_t STBY_CR_DYN_ADDR_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__out_t STBY_CR_ACCEPT_NACKED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__out_t STBY_CR_ACCEPT_OK_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__out_t STBY_CR_ACCEPT_ERR_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__out_t STBY_CR_OP_RSTACT_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__out_t CCC_PARAM_MODIFIED_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__out_t CCC_UNHANDLED_NACK_SIGNAL_EN;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__out_t CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__out_t CRR_RESPONSE_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__out_t STBY_CR_DYN_ADDR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__out_t STBY_CR_ACCEPT_NACKED_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__out_t STBY_CR_ACCEPT_OK_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__out_t STBY_CR_ACCEPT_ERR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__out_t STBY_CR_OP_RSTACT_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__out_t CCC_PARAM_MODIFIED_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__out_t CCC_UNHANDLED_NACK_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__out_t CCC_FATAL_RSTDAA_ERR_FORCE;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__out_t;
+
+    typedef struct {
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__out_t;
+
+    typedef struct {
+        logic [3:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__out_t F2_CRCAP1_BUS_CONFIG;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__out_t F2_CRCAP2_DEV_INTERACT;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__out_t;
+
+    typedef struct {
+        logic value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__out_t RST_ACTION;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__out_t RESET_TIME_PERIPHERAL;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__out_t RESET_TIME_TARGET;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__out_t RESET_DYNAMIC_ADDR;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2____rsvd__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2____rsvd__out_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3____rsvd__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3____rsvd__out_t __rsvd;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__out_t STBY_CR_CONTROL;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_ADDR__out_t STBY_CR_DEVICE_ADDR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CAPABILITIES__out_t STBY_CR_CAPABILITIES;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_0__out_t __rsvd_0;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_STATUS__out_t STBY_CR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_CHAR__out_t STBY_CR_DEVICE_CHAR;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_DEVICE_PID_LO__out_t STBY_CR_DEVICE_PID_LO;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_STATUS__out_t STBY_CR_INTR_STATUS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_1__out_t __rsvd_1;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_SIGNAL_ENABLE__out_t STBY_CR_INTR_SIGNAL_ENABLE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_INTR_FORCE__out_t STBY_CR_INTR_FORCE;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_GETCAPS__out_t STBY_CR_CCC_CONFIG_GETCAPS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__out_t STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_2__out_t __rsvd_2;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters____rsvd_3__out_t __rsvd_3;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__out_t;
+
+    typedef struct {
+        logic [7:0] value;
     } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__CAP_ID__out_t;
 
     typedef struct {
@@ -1388,15 +2468,204 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__PLACEHOLDER__out_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__out_t;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__out_t;
 
     typedef struct {
         I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
-        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_CONTROL__out_t SOC_MGMT_CONTROL;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_STATUS__out_t SOC_MGMT_STATUS;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_0__out_t SOC_MGMT_RSVD_0;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_1__out_t SOC_MGMT_RSVD_1;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_2__out_t SOC_MGMT_RSVD_2;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_RSVD_3__out_t SOC_MGMT_RSVD_3;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_0__out_t SOC_MGMT_FEATURE_0;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_1__out_t SOC_MGMT_FEATURE_1;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_2__out_t SOC_MGMT_FEATURE_2;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_3__out_t SOC_MGMT_FEATURE_3;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_4__out_t SOC_MGMT_FEATURE_4;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_5__out_t SOC_MGMT_FEATURE_5;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_6__out_t SOC_MGMT_FEATURE_6;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_7__out_t SOC_MGMT_FEATURE_7;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_8__out_t SOC_MGMT_FEATURE_8;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_9__out_t SOC_MGMT_FEATURE_9;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_10__out_t SOC_MGMT_FEATURE_10;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_11__out_t SOC_MGMT_FEATURE_11;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_12__out_t SOC_MGMT_FEATURE_12;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_13__out_t SOC_MGMT_FEATURE_13;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_14__out_t SOC_MGMT_FEATURE_14;
+        I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__SOC_MGMT_FEATURE_15__out_t SOC_MGMT_FEATURE_15;
     } I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__out_t;
 
     typedef struct {
@@ -1413,20 +2682,21 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__out_t;
 
     typedef struct {
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+        logic [1:0] value;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__OPERATION_MODE__out_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__out_t;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__OPERATION_MODE__out_t OPERATION_MODE;
+    } I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__out_t;
 
     typedef struct {
         I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
-        I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+        I3CCSR__I3C_EC__ControllerConfigRegisters__CONTROLLER_CONFIG__out_t CONTROLLER_CONFIG;
     } I3CCSR__I3C_EC__ControllerConfigRegisters__out_t;
 
     typedef struct {
         I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__out_t SecureFirmwareRecoveryInterfaceRegisters;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__out_t StandbyControllerModeRegisters;
         I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__out_t TargetTransactionInterfaceRegisters;
         I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__out_t SoCManagementInterfaceRegisters;
         I3CCSR__I3C_EC__ControllerConfigRegisters__out_t ControllerConfigRegisters;

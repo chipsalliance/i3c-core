@@ -4,9 +4,11 @@
 `include "target_transaction_interface.rdl"
 `include "soc_management_interface.rdl"
 `include "controller_config.rdl"
+`include "standby_controller_mode.rdl"
 
 regfile ECRegisters{
     SecureFirmwareRecoveryInterfaceRegisters SecureFirmwareRecoveryInterfaceRegisters @ 0x0;
+    StandbyControllerModeRegisters StandbyControllerModeRegisters;
     TargetTransactionInterfaceRegisters TargetTransactionInterfaceRegisters;
     SoCManagementInterfaceRegisters SoCManagementInterfaceRegisters;
     ControllerConfigRegisters ControllerConfigRegisters;
