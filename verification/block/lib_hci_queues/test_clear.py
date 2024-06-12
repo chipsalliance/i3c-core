@@ -11,7 +11,6 @@ from hci import (
     ResponseDescriptor,
     immediate_transfer_descriptor,
 )
-
 from hci_queues import HCIQueuesTestInterface
 
 

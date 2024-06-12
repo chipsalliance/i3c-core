@@ -7,9 +7,8 @@ from bus2csr import dword2int, int2dword
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge
 from hci import DATA_BUFFER_THLD_CTRL, QUEUE_THLD_CTRL
-from utils import clog2
-
 from hci_queues import HCIQueuesTestInterface
+from utils import clog2
 
 
 class QueueThldHandler:

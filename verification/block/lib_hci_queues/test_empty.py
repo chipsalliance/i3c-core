@@ -2,7 +2,6 @@
 
 import cocotb
 from cocotb.handle import SimHandleBase
-
 from hci_queues import HCIQueuesTestInterface
 
 

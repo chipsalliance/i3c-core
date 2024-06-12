@@ -5,7 +5,6 @@ from random import randint
 import cocotb
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, Combine
-
 from hci_queues import HCIQueuesTestInterface
 
 TEST_SIZE = 5
