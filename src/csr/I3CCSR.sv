@@ -153,7 +153,17 @@ module I3CCSR (
             } SecureFirmwareRecoveryInterfaceRegisters;
             struct {
                 logic EXTCAP_HEADER;
-                logic PLACE_HOLDER_1;
+                logic TTI_CONTROL;
+                logic TTI_STATUS;
+                logic TTI_INTERRUPT_STATUS;
+                logic TTI_INTERRUPT_ENABLE;
+                logic TTI_INTERRUPT_FORCE;
+                logic TTI_RX_DESCRIPTOR_QUEUE_PORT;
+                logic TTI_RX_DATA_PORT;
+                logic TTI_TX_DESCRIPTOR_QUEUE_PORT;
+                logic TTI_TX_DATA_PORT;
+                logic TTI_QUEUE_SIZE;
+                logic TTI_QUEUE_THRESHOLD_CONTROL;
             } TargetTransactionInterfaceRegisters;
             struct {
                 logic EXTCAP_HEADER;
@@ -245,12 +255,22 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
         decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 = cpuif_req_masked & (cpuif_addr == 12'h164);
         decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h170);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h174);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h178);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h17c);
-        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
-        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h184);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS = cpuif_req_masked & (cpuif_addr == 12'h188);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h18c);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h190);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE = cpuif_req_masked & (cpuif_addr == 12'h194);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h198);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h19c);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1a0);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1a4);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1a8);
+        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1ac);
+        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1b0);
+        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h1b4);
+        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1b8);
+        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 = cpuif_req_masked & (cpuif_addr == 12'h1bc);
         decoded_reg_strb.DAT = cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         is_external |= cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         decoded_reg_strb.DCT = cpuif_req_masked & (cpuif_addr >= 12'h800) & (cpuif_addr <= 12'h800 + 12'h7ff);
@@ -814,7 +834,73 @@ module I3CCSR (
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } PLACE_HOLDER_1;
+                } TTI_CONTROL;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } TTI_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_ENABLE;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_FORCE;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } TTI_RX_DESCRIPTOR;
+                } TTI_RX_DESCRIPTOR_QUEUE_PORT;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } TTI_RX_DATA;
+                } TTI_RX_DATA_PORT;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } TTI_TX_DESCRIPTOR;
+                } TTI_TX_DESCRIPTOR_QUEUE_PORT;
+                struct {
+                    struct {
+                        logic [31:0] next;
+                        logic load_next;
+                    } TTI_TX_DATA;
+                } TTI_TX_DATA_PORT;
+                struct {
+                    struct {
+                        logic [7:0] next;
+                        logic load_next;
+                    } TTI_RX_DESCRIPTOR_THLD;
+                    struct {
+                        logic [7:0] next;
+                        logic load_next;
+                    } TTI_TX_DESCRIPTOR_THLD;
+                    struct {
+                        logic [7:0] next;
+                        logic load_next;
+                    } TTI_RX_DATA_THLD;
+                    struct {
+                        logic [7:0] next;
+                        logic load_next;
+                    } TTI_TX_DATA_THLD;
+                } TTI_QUEUE_THRESHOLD_CONTROL;
             } TargetTransactionInterfaceRegisters;
             struct {
                 struct {
@@ -1269,7 +1355,61 @@ module I3CCSR (
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } PLACE_HOLDER_1;
+                } TTI_CONTROL;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } TTI_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_STATUS;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_ENABLE;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } PLACEHOLDER;
+                } TTI_INTERRUPT_FORCE;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } TTI_RX_DESCRIPTOR;
+                } TTI_RX_DESCRIPTOR_QUEUE_PORT;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } TTI_RX_DATA;
+                } TTI_RX_DATA_PORT;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } TTI_TX_DESCRIPTOR;
+                } TTI_TX_DESCRIPTOR_QUEUE_PORT;
+                struct {
+                    struct {
+                        logic [31:0] value;
+                    } TTI_TX_DATA;
+                } TTI_TX_DATA_PORT;
+                struct {
+                    struct {
+                        logic [7:0] value;
+                    } TTI_RX_DESCRIPTOR_THLD;
+                    struct {
+                        logic [7:0] value;
+                    } TTI_TX_DESCRIPTOR_THLD;
+                    struct {
+                        logic [7:0] value;
+                    } TTI_RX_DATA_THLD;
+                    struct {
+                        logic [7:0] value;
+                    } TTI_TX_DATA_THLD;
+                } TTI_QUEUE_THRESHOLD_CONTROL;
             } TargetTransactionInterfaceRegisters;
             struct {
                 struct {
@@ -3744,30 +3884,306 @@ module I3CCSR (
     assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
     assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
     assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value;
+    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value;
     assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h0;
     assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
     // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER
@@ -3871,7 +4287,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [31:0] readback_array[66];
+    logic [31:0] readback_array[76];
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -4065,17 +4481,33 @@ module I3CCSR (
     assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
     assign readback_array[58][23:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[58][31:24] = '0;
-    assign readback_array[59][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
-    assign readback_array[60][7:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
-    assign readback_array[60][23:8] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
-    assign readback_array[60][31:24] = '0;
-    assign readback_array[61][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
-    assign readback_array[62][7:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
-    assign readback_array[62][23:8] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
-    assign readback_array[62][31:24] = '0;
-    assign readback_array[63][31:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
-    assign readback_array[64] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
-    assign readback_array[65] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
+    assign readback_array[59][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value : '0;
+    assign readback_array[60][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[61][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[62][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value : '0;
+    assign readback_array[63][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value : '0;
+    assign readback_array[64][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value : '0;
+    assign readback_array[65][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value : '0;
+    assign readback_array[66][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value : '0;
+    assign readback_array[67][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value : '0;
+    assign readback_array[68][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[68][15:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[68][23:16] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[68][31:24] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[69][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value : '0;
+    assign readback_array[69][15:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value : '0;
+    assign readback_array[69][23:16] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value : '0;
+    assign readback_array[69][31:24] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value : '0;
+    assign readback_array[70][7:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[70][23:8] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[70][31:24] = '0;
+    assign readback_array[71][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
+    assign readback_array[72][7:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[72][23:8] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[72][31:24] = '0;
+    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1.PLACEHOLDER.value : '0;
+    assign readback_array[74] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
+    assign readback_array[75] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
 
     // Reduce the array
     always_comb begin
@@ -4083,7 +4515,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<66; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<76; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

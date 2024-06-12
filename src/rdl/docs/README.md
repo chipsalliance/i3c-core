@@ -1057,14 +1057,14 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x100
 - Base Offset: 0x100
-- Size: 0x88
+- Size: 0xC0
 
 |Offset|               Identifier               |Name|
 |------|----------------------------------------|----|
 | 0x00 |SecureFirmwareRecoveryInterfaceRegisters|  — |
-| 0x70 |   TargetTransactionInterfaceRegisters  |  — |
-| 0x78 |     SoCManagementInterfaceRegisters    |  — |
-| 0x80 |        ControllerConfigRegisters       |  — |
+| 0x80 |   TargetTransactionInterfaceRegisters  |  — |
+| 0xB0 |     SoCManagementInterfaceRegisters    |  — |
+| 0xB8 |        ControllerConfigRegisters       |  — |
 
 ## SecureFirmwareRecoveryInterfaceRegisters register file
 
@@ -1487,18 +1487,28 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ## TargetTransactionInterfaceRegisters register file
 
-- Absolute Address: 0x170
-- Base Offset: 0x70
-- Size: 0x8
+- Absolute Address: 0x180
+- Base Offset: 0x80
+- Size: 0x30
 
-|Offset|  Identifier  |     Name     |
-|------|--------------|--------------|
-|  0x0 | EXTCAP_HEADER|       —      |
-|  0x4 |PLACE_HOLDER_1|PLACE_HOLDER_1|
+|Offset|         Identifier         |            Name            |
+|------|----------------------------|----------------------------|
+| 0x00 |        EXTCAP_HEADER       |              —             |
+| 0x04 |         TTI_CONTROL        |         TTI Control        |
+| 0x08 |         TTI_STATUS         |         TTI Status         |
+| 0x0C |    TTI_INTERRUPT_STATUS    |    TTI Interrupt Status    |
+| 0x10 |    TTI_INTERRUPT_ENABLE    |    TTI Interrupt Enable    |
+| 0x14 |     TTI_INTERRUPT_FORCE    |     TTI Interrupt Force    |
+| 0x18 |TTI_RX_DESCRIPTOR_QUEUE_PORT|TTI RX Descriptor Queue Port|
+| 0x1C |      TTI_RX_DATA_PORT      |      TTI RX Data Port      |
+| 0x20 |TTI_TX_DESCRIPTOR_QUEUE_PORT|TTI TX Descriptor Queue Port|
+| 0x24 |      TTI_TX_DATA_PORT      |      TTI TX Data Port      |
+| 0x28 |       TTI_QUEUE_SIZE       |       TTI Queue Size       |
+| 0x2C | TTI_QUEUE_THRESHOLD_CONTROL| TTI Queue Threshold Control|
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x170
+- Absolute Address: 0x180
 - Base Offset: 0x0
 - Size: 0x4
 
@@ -1515,11 +1525,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 <p>Capability Structure Length in DWORDs</p>
 
-### PLACE_HOLDER_1 register
+### TTI_CONTROL register
 
-- Absolute Address: 0x174
+- Absolute Address: 0x184
 - Base Offset: 0x4
 - Size: 0x4
+
+<p>Control Register</p>
 
 |Bits| Identifier|Access|Reset|Name|
 |----|-----------|------|-----|----|
@@ -1529,10 +1541,200 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
+### TTI_STATUS register
+
+- Absolute Address: 0x188
+- Base Offset: 0x8
+- Size: 0x4
+
+<p>Status Register</p>
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### TTI_INTERRUPT_STATUS register
+
+- Absolute Address: 0x18C
+- Base Offset: 0xC
+- Size: 0x4
+
+<p>Interrupt Status</p>
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### TTI_INTERRUPT_ENABLE register
+
+- Absolute Address: 0x190
+- Base Offset: 0x10
+- Size: 0x4
+
+<p>Interrupt Enable</p>
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### TTI_INTERRUPT_FORCE register
+
+- Absolute Address: 0x194
+- Base Offset: 0x14
+- Size: 0x4
+
+<p>Interrupt Force</p>
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### TTI_RX_DESCRIPTOR_QUEUE_PORT register
+
+- Absolute Address: 0x198
+- Base Offset: 0x18
+- Size: 0x4
+
+<p>RX Descriptor Queue Port</p>
+
+|Bits|    Identifier   |Access|Reset|       Name      |
+|----|-----------------|------|-----|-----------------|
+|31:0|TTI_RX_DESCRIPTOR|  rw  | 0x0 |TTI_RX_DESCRIPTOR|
+
+#### TTI_RX_DESCRIPTOR field
+
+<p>RX Data</p>
+
+### TTI_RX_DATA_PORT register
+
+- Absolute Address: 0x19C
+- Base Offset: 0x1C
+- Size: 0x4
+
+<p>RX Data Port</p>
+
+|Bits| Identifier|Access|Reset|    Name   |
+|----|-----------|------|-----|-----------|
+|31:0|TTI_RX_DATA|  rw  | 0x0 |TTI_RX_DATA|
+
+#### TTI_RX_DATA field
+
+<p>RX Data</p>
+
+### TTI_TX_DESCRIPTOR_QUEUE_PORT register
+
+- Absolute Address: 0x1A0
+- Base Offset: 0x20
+- Size: 0x4
+
+<p>TX Descriptor Queue Port</p>
+
+|Bits|    Identifier   |Access|Reset|       Name      |
+|----|-----------------|------|-----|-----------------|
+|31:0|TTI_TX_DESCRIPTOR|  rw  | 0x0 |TTI_TX_DESCRIPTOR|
+
+#### TTI_TX_DESCRIPTOR field
+
+<p>TX Data</p>
+
+### TTI_TX_DATA_PORT register
+
+- Absolute Address: 0x1A4
+- Base Offset: 0x24
+- Size: 0x4
+
+<p>TX Data Port</p>
+
+|Bits| Identifier|Access|Reset|    Name   |
+|----|-----------|------|-----|-----------|
+|31:0|TTI_TX_DATA|  rw  | 0x0 |TTI_TX_DATA|
+
+#### TTI_TX_DATA field
+
+<p>TX Data</p>
+
+### TTI_QUEUE_SIZE register
+
+- Absolute Address: 0x1A8
+- Base Offset: 0x28
+- Size: 0x4
+
+<p>Queue Size</p>
+
+| Bits|          Identifier         |Access|Reset|             Name            |
+|-----|-----------------------------|------|-----|-----------------------------|
+| 7:0 |TTI_RX_DESCRIPTOR_BUFFER_SIZE|   r  | 0x7 |TTI_RX_DESCRIPTOR_BUFFER_SIZE|
+| 15:8|TTI_TX_DESCRIPTOR_BUFFER_SIZE|   r  | 0x7 |TTI_TX_DESCRIPTOR_BUFFER_SIZE|
+|23:16|   TTI_RX_DATA_BUFFER_SIZE   |   r  | 0x7 |   TTI_RX_DATA_BUFFER_SIZE   |
+|31:24|   TTI_TX_DATA_BUFFER_SIZE   |   r  | 0x7 |   TTI_TX_DATA_BUFFER_SIZE   |
+
+#### TTI_RX_DESCRIPTOR_BUFFER_SIZE field
+
+
+
+#### TTI_TX_DESCRIPTOR_BUFFER_SIZE field
+
+
+
+#### TTI_RX_DATA_BUFFER_SIZE field
+
+
+
+#### TTI_TX_DATA_BUFFER_SIZE field
+
+
+
+### TTI_QUEUE_THRESHOLD_CONTROL register
+
+- Absolute Address: 0x1AC
+- Base Offset: 0x2C
+- Size: 0x4
+
+<p>Queue Threshold Control</p>
+
+| Bits|      Identifier      |Access|Reset|         Name         |
+|-----|----------------------|------|-----|----------------------|
+| 7:0 |TTI_RX_DESCRIPTOR_THLD|  rw  | 0x0 |TTI_RX_DESCRIPTOR_THLD|
+| 15:8|TTI_TX_DESCRIPTOR_THLD|  rw  | 0x0 |TTI_TX_DESCRIPTOR_THLD|
+|23:16|   TTI_RX_DATA_THLD   |  rw  | 0x0 |   TTI_RX_DATA_THLD   |
+|31:24|   TTI_TX_DATA_THLD   |  rw  | 0x0 |   TTI_TX_DATA_THLD   |
+
+#### TTI_RX_DESCRIPTOR_THLD field
+
+
+
+#### TTI_TX_DESCRIPTOR_THLD field
+
+
+
+#### TTI_RX_DATA_THLD field
+
+
+
+#### TTI_TX_DATA_THLD field
+
+
+
 ## SoCManagementInterfaceRegisters register file
 
-- Absolute Address: 0x178
-- Base Offset: 0x78
+- Absolute Address: 0x1B0
+- Base Offset: 0xB0
 - Size: 0x8
 
 |Offset|  Identifier  |     Name     |
@@ -1542,7 +1744,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x178
+- Absolute Address: 0x1B0
 - Base Offset: 0x0
 - Size: 0x4
 
@@ -1561,7 +1763,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### PLACE_HOLDER_1 register
 
-- Absolute Address: 0x17C
+- Absolute Address: 0x1B4
 - Base Offset: 0x4
 - Size: 0x4
 
@@ -1575,8 +1777,8 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ## ControllerConfigRegisters register file
 
-- Absolute Address: 0x180
-- Base Offset: 0x80
+- Absolute Address: 0x1B8
+- Base Offset: 0xB8
 - Size: 0x8
 
 |Offset|  Identifier  |     Name     |
@@ -1586,7 +1788,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x180
+- Absolute Address: 0x1B8
 - Base Offset: 0x0
 - Size: 0x4
 
@@ -1605,7 +1807,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### PLACE_HOLDER_1 register
 
-- Absolute Address: 0x184
+- Absolute Address: 0x1BC
 - Base Offset: 0x4
 - Size: 0x4
 

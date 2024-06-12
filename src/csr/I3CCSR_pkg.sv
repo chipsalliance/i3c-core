@@ -468,14 +468,86 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [31:0] next;
-    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__PLACEHOLDER__in_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__in_t;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__in_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__in_t PLACE_HOLDER_1;
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__PLACEHOLDER__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__TTI_RX_DESCRIPTOR__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__TTI_RX_DESCRIPTOR__in_t TTI_RX_DESCRIPTOR;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__TTI_RX_DATA__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__TTI_RX_DATA__in_t TTI_RX_DATA;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__TTI_TX_DESCRIPTOR__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__TTI_TX_DESCRIPTOR__in_t TTI_TX_DESCRIPTOR;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__TTI_TX_DATA__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__TTI_TX_DATA__in_t TTI_TX_DATA;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__in_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__in_t TTI_CONTROL;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__in_t TTI_STATUS;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__in_t TTI_INTERRUPT_STATUS;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__in_t TTI_INTERRUPT_ENABLE;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__in_t TTI_INTERRUPT_FORCE;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__in_t TTI_RX_DESCRIPTOR_QUEUE_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__in_t TTI_RX_DATA_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__in_t TTI_TX_DESCRIPTOR_QUEUE_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__in_t TTI_TX_DATA_PORT;
     } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__in_t;
 
     typedef struct {
@@ -1194,15 +1266,111 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [31:0] value;
-    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__PLACEHOLDER__out_t;
 
     typedef struct {
-        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__out_t;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__PLACEHOLDER__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__TTI_RX_DESCRIPTOR__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__TTI_RX_DESCRIPTOR__out_t TTI_RX_DESCRIPTOR;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__TTI_RX_DATA__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__TTI_RX_DATA__out_t TTI_RX_DATA;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__TTI_TX_DESCRIPTOR__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__TTI_TX_DESCRIPTOR__out_t TTI_TX_DESCRIPTOR;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__out_t;
+
+    typedef struct {
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__TTI_TX_DATA__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__TTI_TX_DATA__out_t TTI_TX_DATA;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_RX_DESCRIPTOR_THLD__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_TX_DESCRIPTOR_THLD__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_RX_DATA_THLD__out_t;
+
+    typedef struct {
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_TX_DATA_THLD__out_t;
+
+    typedef struct {
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_RX_DESCRIPTOR_THLD__out_t TTI_RX_DESCRIPTOR_THLD;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_TX_DESCRIPTOR_THLD__out_t TTI_TX_DESCRIPTOR_THLD;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_RX_DATA_THLD__out_t TTI_RX_DATA_THLD;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__TTI_TX_DATA_THLD__out_t TTI_TX_DATA_THLD;
+    } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__out_t;
 
     typedef struct {
         I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER__out_t EXTCAP_HEADER;
-        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1__out_t PLACE_HOLDER_1;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL__out_t TTI_CONTROL;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS__out_t TTI_STATUS;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS__out_t TTI_INTERRUPT_STATUS;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE__out_t TTI_INTERRUPT_ENABLE;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE__out_t TTI_INTERRUPT_FORCE;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT__out_t TTI_RX_DESCRIPTOR_QUEUE_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT__out_t TTI_RX_DATA_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT__out_t TTI_TX_DESCRIPTOR_QUEUE_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT__out_t TTI_TX_DATA_PORT;
+        I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL__out_t TTI_QUEUE_THRESHOLD_CONTROL;
     } I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__out_t;
 
     typedef struct {

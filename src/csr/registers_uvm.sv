@@ -3,68 +3,37 @@
 package registers_uvm;
   `include "uvm_macros.svh"
   import uvm_pkg::*;
-  `include "I3CCSR_covergroups.svh"
+
   // Reg - I3CCSR.I3CBase.HCI_VERSION
   class I3CCSR__I3CBase__HCI_VERSION extends uvm_reg;
-    protected uvm_reg_data_t            m_current;
-    protected uvm_reg_data_t            m_data;
-    protected bit                       m_is_read;
-
-    I3CCSR__I3CBase__HCI_VERSION_bit_cg VERSION_bit_cg[32];
-    I3CCSR__I3CBase__HCI_VERSION_fld_cg fld_cg;
-    rand uvm_reg_field                  VERSION;
+    rand uvm_reg_field VERSION;
 
     function new(string name = "I3CCSR__I3CBase__HCI_VERSION");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.VERSION = new("VERSION");
       this.VERSION.configure(this, 32, 0, "RO", 0, 'h120, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (VERSION_bit_cg[bt]) VERSION_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__HCI_VERSION
 
   // Reg - I3CCSR.I3CBase.HC_CONTROL
   class I3CCSR__I3CBase__HC_CONTROL extends uvm_reg;
-    protected uvm_reg_data_t           m_current;
-    protected uvm_reg_data_t           m_data;
-    protected bit                      m_is_read;
-
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg IBA_INCLUDE_bit_cg            [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg AUTOCMD_DATA_RPT_bit_cg       [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg DATA_BYTE_ORDER_MODE_bit_cg   [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg MODE_SELECTOR_bit_cg          [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg I2C_DEV_PRESENT_bit_cg        [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg HOT_JOIN_CTRL_bit_cg          [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg HALT_ON_CMD_SEQ_TIMEOUT_bit_cg[1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg ABORT_bit_cg                  [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg RESUME_bit_cg                 [1];
-    I3CCSR__I3CBase__HC_CONTROL_bit_cg BUS_ENABLE_bit_cg             [1];
-    I3CCSR__I3CBase__HC_CONTROL_fld_cg fld_cg;
-    rand uvm_reg_field                 IBA_INCLUDE;
-    rand uvm_reg_field                 AUTOCMD_DATA_RPT;
-    rand uvm_reg_field                 DATA_BYTE_ORDER_MODE;
-    rand uvm_reg_field                 MODE_SELECTOR;
-    rand uvm_reg_field                 I2C_DEV_PRESENT;
-    rand uvm_reg_field                 HOT_JOIN_CTRL;
-    rand uvm_reg_field                 HALT_ON_CMD_SEQ_TIMEOUT;
-    rand uvm_reg_field                 ABORT;
-    rand uvm_reg_field                 RESUME;
-    rand uvm_reg_field                 BUS_ENABLE;
+    rand uvm_reg_field IBA_INCLUDE;
+    rand uvm_reg_field AUTOCMD_DATA_RPT;
+    rand uvm_reg_field DATA_BYTE_ORDER_MODE;
+    rand uvm_reg_field MODE_SELECTOR;
+    rand uvm_reg_field I2C_DEV_PRESENT;
+    rand uvm_reg_field HOT_JOIN_CTRL;
+    rand uvm_reg_field HALT_ON_CMD_SEQ_TIMEOUT;
+    rand uvm_reg_field ABORT;
+    rand uvm_reg_field RESUME;
+    rand uvm_reg_field BUS_ENABLE;
 
     function new(string name = "I3CCSR__I3CBase__HC_CONTROL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.IBA_INCLUDE = new("IBA_INCLUDE");
@@ -87,94 +56,45 @@ package registers_uvm;
       this.RESUME.configure(this, 1, 30, "W1C", 1, 'h0, 1, 1, 0);
       this.BUS_ENABLE = new("BUS_ENABLE");
       this.BUS_ENABLE.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (IBA_INCLUDE_bit_cg[bt]) IBA_INCLUDE_bit_cg[bt] = new();
-        foreach (AUTOCMD_DATA_RPT_bit_cg[bt]) AUTOCMD_DATA_RPT_bit_cg[bt] = new();
-        foreach (DATA_BYTE_ORDER_MODE_bit_cg[bt]) DATA_BYTE_ORDER_MODE_bit_cg[bt] = new();
-        foreach (MODE_SELECTOR_bit_cg[bt]) MODE_SELECTOR_bit_cg[bt] = new();
-        foreach (I2C_DEV_PRESENT_bit_cg[bt]) I2C_DEV_PRESENT_bit_cg[bt] = new();
-        foreach (HOT_JOIN_CTRL_bit_cg[bt]) HOT_JOIN_CTRL_bit_cg[bt] = new();
-        foreach (HALT_ON_CMD_SEQ_TIMEOUT_bit_cg[bt]) HALT_ON_CMD_SEQ_TIMEOUT_bit_cg[bt] = new();
-        foreach (ABORT_bit_cg[bt]) ABORT_bit_cg[bt] = new();
-        foreach (RESUME_bit_cg[bt]) RESUME_bit_cg[bt] = new();
-        foreach (BUS_ENABLE_bit_cg[bt]) BUS_ENABLE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__HC_CONTROL
 
   // Reg - I3CCSR.I3CBase.CONTROLLER_DEVICE_ADDR
   class I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR extends uvm_reg;
-    protected uvm_reg_data_t                       m_current;
-    protected uvm_reg_data_t                       m_data;
-    protected bit                                  m_is_read;
-
-    I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_bit_cg      [7];
-    I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_VALID_bit_cg[1];
-    I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_fld_cg fld_cg;
-    rand uvm_reg_field                             DYNAMIC_ADDR;
-    rand uvm_reg_field                             DYNAMIC_ADDR_VALID;
+    rand uvm_reg_field DYNAMIC_ADDR;
+    rand uvm_reg_field DYNAMIC_ADDR_VALID;
 
     function new(string name = "I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.DYNAMIC_ADDR = new("DYNAMIC_ADDR");
       this.DYNAMIC_ADDR.configure(this, 7, 16, "RW", 1, 'h0, 1, 1, 0);
       this.DYNAMIC_ADDR_VALID = new("DYNAMIC_ADDR_VALID");
       this.DYNAMIC_ADDR_VALID.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (DYNAMIC_ADDR_bit_cg[bt]) DYNAMIC_ADDR_bit_cg[bt] = new();
-        foreach (DYNAMIC_ADDR_VALID_bit_cg[bt]) DYNAMIC_ADDR_VALID_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR
 
   // Reg - I3CCSR.I3CBase.HC_CAPABILITIES
   class I3CCSR__I3CBase__HC_CAPABILITIES extends uvm_reg;
-    protected uvm_reg_data_t                m_current;
-    protected uvm_reg_data_t                m_data;
-    protected bit                           m_is_read;
-
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg COMBO_COMMAND_bit_cg        [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg AUTO_COMMAND_bit_cg         [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg STANDBY_CR_CAP_bit_cg       [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg HDR_DDR_EN_bit_cg           [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg HDR_TS_EN_bit_cg            [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg CMD_CCC_DEFBYTE_bit_cg      [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg IBI_DATA_ABORT_EN_bit_cg    [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg IBI_CREDIT_COUNT_EN_bit_cg  [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SCHEDULED_COMMANDS_EN_bit_cg[1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg CMD_SIZE_bit_cg             [2];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_CR_EN_bit_cg  [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_IBI_EN_bit_cg [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_DC_EN_bit_cg  [1];
-    I3CCSR__I3CBase__HC_CAPABILITIES_fld_cg fld_cg;
-    rand uvm_reg_field                      COMBO_COMMAND;
-    rand uvm_reg_field                      AUTO_COMMAND;
-    rand uvm_reg_field                      STANDBY_CR_CAP;
-    rand uvm_reg_field                      HDR_DDR_EN;
-    rand uvm_reg_field                      HDR_TS_EN;
-    rand uvm_reg_field                      CMD_CCC_DEFBYTE;
-    rand uvm_reg_field                      IBI_DATA_ABORT_EN;
-    rand uvm_reg_field                      IBI_CREDIT_COUNT_EN;
-    rand uvm_reg_field                      SCHEDULED_COMMANDS_EN;
-    rand uvm_reg_field                      CMD_SIZE;
-    rand uvm_reg_field                      SG_CAPABILITY_CR_EN;
-    rand uvm_reg_field                      SG_CAPABILITY_IBI_EN;
-    rand uvm_reg_field                      SG_CAPABILITY_DC_EN;
+    rand uvm_reg_field COMBO_COMMAND;
+    rand uvm_reg_field AUTO_COMMAND;
+    rand uvm_reg_field STANDBY_CR_CAP;
+    rand uvm_reg_field HDR_DDR_EN;
+    rand uvm_reg_field HDR_TS_EN;
+    rand uvm_reg_field CMD_CCC_DEFBYTE;
+    rand uvm_reg_field IBI_DATA_ABORT_EN;
+    rand uvm_reg_field IBI_CREDIT_COUNT_EN;
+    rand uvm_reg_field SCHEDULED_COMMANDS_EN;
+    rand uvm_reg_field CMD_SIZE;
+    rand uvm_reg_field SG_CAPABILITY_CR_EN;
+    rand uvm_reg_field SG_CAPABILITY_IBI_EN;
+    rand uvm_reg_field SG_CAPABILITY_DC_EN;
 
     function new(string name = "I3CCSR__I3CBase__HC_CAPABILITIES");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.COMBO_COMMAND = new("COMBO_COMMAND");
@@ -203,51 +123,21 @@ package registers_uvm;
       this.SG_CAPABILITY_IBI_EN.configure(this, 1, 29, "RO", 0, 'h0, 1, 1, 0);
       this.SG_CAPABILITY_DC_EN = new("SG_CAPABILITY_DC_EN");
       this.SG_CAPABILITY_DC_EN.configure(this, 1, 30, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (COMBO_COMMAND_bit_cg[bt]) COMBO_COMMAND_bit_cg[bt] = new();
-        foreach (AUTO_COMMAND_bit_cg[bt]) AUTO_COMMAND_bit_cg[bt] = new();
-        foreach (STANDBY_CR_CAP_bit_cg[bt]) STANDBY_CR_CAP_bit_cg[bt] = new();
-        foreach (HDR_DDR_EN_bit_cg[bt]) HDR_DDR_EN_bit_cg[bt] = new();
-        foreach (HDR_TS_EN_bit_cg[bt]) HDR_TS_EN_bit_cg[bt] = new();
-        foreach (CMD_CCC_DEFBYTE_bit_cg[bt]) CMD_CCC_DEFBYTE_bit_cg[bt] = new();
-        foreach (IBI_DATA_ABORT_EN_bit_cg[bt]) IBI_DATA_ABORT_EN_bit_cg[bt] = new();
-        foreach (IBI_CREDIT_COUNT_EN_bit_cg[bt]) IBI_CREDIT_COUNT_EN_bit_cg[bt] = new();
-        foreach (SCHEDULED_COMMANDS_EN_bit_cg[bt]) SCHEDULED_COMMANDS_EN_bit_cg[bt] = new();
-        foreach (CMD_SIZE_bit_cg[bt]) CMD_SIZE_bit_cg[bt] = new();
-        foreach (SG_CAPABILITY_CR_EN_bit_cg[bt]) SG_CAPABILITY_CR_EN_bit_cg[bt] = new();
-        foreach (SG_CAPABILITY_IBI_EN_bit_cg[bt]) SG_CAPABILITY_IBI_EN_bit_cg[bt] = new();
-        foreach (SG_CAPABILITY_DC_EN_bit_cg[bt]) SG_CAPABILITY_DC_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__HC_CAPABILITIES
 
   // Reg - I3CCSR.I3CBase.RESET_CONTROL
   class I3CCSR__I3CBase__RESET_CONTROL extends uvm_reg;
-    protected uvm_reg_data_t              m_current;
-    protected uvm_reg_data_t              m_data;
-    protected bit                         m_is_read;
-
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg SOFT_RST_bit_cg      [1];
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg CMD_QUEUE_RST_bit_cg [1];
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg RESP_QUEUE_RST_bit_cg[1];
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg TX_FIFO_RST_bit_cg   [1];
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg RX_FIFO_RST_bit_cg   [1];
-    I3CCSR__I3CBase__RESET_CONTROL_bit_cg IBI_QUEUE_RST_bit_cg [1];
-    I3CCSR__I3CBase__RESET_CONTROL_fld_cg fld_cg;
-    rand uvm_reg_field                    SOFT_RST;
-    rand uvm_reg_field                    CMD_QUEUE_RST;
-    rand uvm_reg_field                    RESP_QUEUE_RST;
-    rand uvm_reg_field                    TX_FIFO_RST;
-    rand uvm_reg_field                    RX_FIFO_RST;
-    rand uvm_reg_field                    IBI_QUEUE_RST;
+    rand uvm_reg_field SOFT_RST;
+    rand uvm_reg_field CMD_QUEUE_RST;
+    rand uvm_reg_field RESP_QUEUE_RST;
+    rand uvm_reg_field TX_FIFO_RST;
+    rand uvm_reg_field RX_FIFO_RST;
+    rand uvm_reg_field IBI_QUEUE_RST;
 
     function new(string name = "I3CCSR__I3CBase__RESET_CONTROL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.SOFT_RST = new("SOFT_RST");
@@ -262,69 +152,34 @@ package registers_uvm;
       this.RX_FIFO_RST.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
       this.IBI_QUEUE_RST = new("IBI_QUEUE_RST");
       this.IBI_QUEUE_RST.configure(this, 1, 5, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (SOFT_RST_bit_cg[bt]) SOFT_RST_bit_cg[bt] = new();
-        foreach (CMD_QUEUE_RST_bit_cg[bt]) CMD_QUEUE_RST_bit_cg[bt] = new();
-        foreach (RESP_QUEUE_RST_bit_cg[bt]) RESP_QUEUE_RST_bit_cg[bt] = new();
-        foreach (TX_FIFO_RST_bit_cg[bt]) TX_FIFO_RST_bit_cg[bt] = new();
-        foreach (RX_FIFO_RST_bit_cg[bt]) RX_FIFO_RST_bit_cg[bt] = new();
-        foreach (IBI_QUEUE_RST_bit_cg[bt]) IBI_QUEUE_RST_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__RESET_CONTROL
 
   // Reg - I3CCSR.I3CBase.PRESENT_STATE
   class I3CCSR__I3CBase__PRESENT_STATE extends uvm_reg;
-    protected uvm_reg_data_t              m_current;
-    protected uvm_reg_data_t              m_data;
-    protected bit                         m_is_read;
-
-    I3CCSR__I3CBase__PRESENT_STATE_bit_cg AC_CURRENT_OWN_bit_cg[1];
-    I3CCSR__I3CBase__PRESENT_STATE_fld_cg fld_cg;
-    rand uvm_reg_field                    AC_CURRENT_OWN;
+    rand uvm_reg_field AC_CURRENT_OWN;
 
     function new(string name = "I3CCSR__I3CBase__PRESENT_STATE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.AC_CURRENT_OWN = new("AC_CURRENT_OWN");
       this.AC_CURRENT_OWN.configure(this, 1, 2, "RO", 1, 'h1, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (AC_CURRENT_OWN_bit_cg[bt]) AC_CURRENT_OWN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__PRESENT_STATE
 
   // Reg - I3CCSR.I3CBase.INTR_STATUS
   class I3CCSR__I3CBase__INTR_STATUS extends uvm_reg;
-    protected uvm_reg_data_t            m_current;
-    protected uvm_reg_data_t            m_data;
-    protected bit                       m_is_read;
-
-    I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_INTERNAL_ERR_STAT_bit_cg       [1];
-    I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_SEQ_CANCEL_STAT_bit_cg         [1];
-    I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_WARN_CMD_SEQ_STALL_STAT_bit_cg [1];
-    I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_STAT_bit_cg[1];
-    I3CCSR__I3CBase__INTR_STATUS_bit_cg SCHED_CMD_MISSED_TICK_STAT_bit_cg [1];
-    I3CCSR__I3CBase__INTR_STATUS_fld_cg fld_cg;
-    rand uvm_reg_field                  HC_INTERNAL_ERR_STAT;
-    rand uvm_reg_field                  HC_SEQ_CANCEL_STAT;
-    rand uvm_reg_field                  HC_WARN_CMD_SEQ_STALL_STAT;
-    rand uvm_reg_field                  HC_ERR_CMD_SEQ_TIMEOUT_STAT;
-    rand uvm_reg_field                  SCHED_CMD_MISSED_TICK_STAT;
+    rand uvm_reg_field HC_INTERNAL_ERR_STAT;
+    rand uvm_reg_field HC_SEQ_CANCEL_STAT;
+    rand uvm_reg_field HC_WARN_CMD_SEQ_STALL_STAT;
+    rand uvm_reg_field HC_ERR_CMD_SEQ_TIMEOUT_STAT;
+    rand uvm_reg_field SCHED_CMD_MISSED_TICK_STAT;
 
     function new(string name = "I3CCSR__I3CBase__INTR_STATUS");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.HC_INTERNAL_ERR_STAT = new("HC_INTERNAL_ERR_STAT");
@@ -337,44 +192,20 @@ package registers_uvm;
       this.HC_ERR_CMD_SEQ_TIMEOUT_STAT.configure(this, 1, 13, "W1C", 1, 'h0, 1, 1, 0);
       this.SCHED_CMD_MISSED_TICK_STAT = new("SCHED_CMD_MISSED_TICK_STAT");
       this.SCHED_CMD_MISSED_TICK_STAT.configure(this, 1, 14, "W1C", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (HC_INTERNAL_ERR_STAT_bit_cg[bt]) HC_INTERNAL_ERR_STAT_bit_cg[bt] = new();
-        foreach (HC_SEQ_CANCEL_STAT_bit_cg[bt]) HC_SEQ_CANCEL_STAT_bit_cg[bt] = new();
-        foreach (HC_WARN_CMD_SEQ_STALL_STAT_bit_cg[bt])
-        HC_WARN_CMD_SEQ_STALL_STAT_bit_cg[bt] = new();
-        foreach (HC_ERR_CMD_SEQ_TIMEOUT_STAT_bit_cg[bt])
-        HC_ERR_CMD_SEQ_TIMEOUT_STAT_bit_cg[bt] = new();
-        foreach (SCHED_CMD_MISSED_TICK_STAT_bit_cg[bt])
-        SCHED_CMD_MISSED_TICK_STAT_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__INTR_STATUS
 
   // Reg - I3CCSR.I3CBase.INTR_STATUS_ENABLE
   class I3CCSR__I3CBase__INTR_STATUS_ENABLE extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_INTERNAL_ERR_STAT_EN_bit_cg       [1];
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_SEQ_CANCEL_STAT_EN_bit_cg         [1];
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_WARN_CMD_SEQ_STALL_STAT_EN_bit_cg [1];
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN_bit_cg[1];
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg SCHED_CMD_MISSED_TICK_STAT_EN_bit_cg [1];
-    I3CCSR__I3CBase__INTR_STATUS_ENABLE_fld_cg fld_cg;
-    rand uvm_reg_field                         HC_INTERNAL_ERR_STAT_EN;
-    rand uvm_reg_field                         HC_SEQ_CANCEL_STAT_EN;
-    rand uvm_reg_field                         HC_WARN_CMD_SEQ_STALL_STAT_EN;
-    rand uvm_reg_field                         HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
-    rand uvm_reg_field                         SCHED_CMD_MISSED_TICK_STAT_EN;
+    rand uvm_reg_field HC_INTERNAL_ERR_STAT_EN;
+    rand uvm_reg_field HC_SEQ_CANCEL_STAT_EN;
+    rand uvm_reg_field HC_WARN_CMD_SEQ_STALL_STAT_EN;
+    rand uvm_reg_field HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
+    rand uvm_reg_field SCHED_CMD_MISSED_TICK_STAT_EN;
 
     function new(string name = "I3CCSR__I3CBase__INTR_STATUS_ENABLE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.HC_INTERNAL_ERR_STAT_EN = new("HC_INTERNAL_ERR_STAT_EN");
@@ -387,44 +218,20 @@ package registers_uvm;
       this.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.configure(this, 1, 13, "RW", 0, 'h0, 1, 1, 0);
       this.SCHED_CMD_MISSED_TICK_STAT_EN = new("SCHED_CMD_MISSED_TICK_STAT_EN");
       this.SCHED_CMD_MISSED_TICK_STAT_EN.configure(this, 1, 14, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (HC_INTERNAL_ERR_STAT_EN_bit_cg[bt]) HC_INTERNAL_ERR_STAT_EN_bit_cg[bt] = new();
-        foreach (HC_SEQ_CANCEL_STAT_EN_bit_cg[bt]) HC_SEQ_CANCEL_STAT_EN_bit_cg[bt] = new();
-        foreach (HC_WARN_CMD_SEQ_STALL_STAT_EN_bit_cg[bt])
-        HC_WARN_CMD_SEQ_STALL_STAT_EN_bit_cg[bt] = new();
-        foreach (HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN_bit_cg[bt])
-        HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN_bit_cg[bt] = new();
-        foreach (SCHED_CMD_MISSED_TICK_STAT_EN_bit_cg[bt])
-        SCHED_CMD_MISSED_TICK_STAT_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__INTR_STATUS_ENABLE
 
   // Reg - I3CCSR.I3CBase.INTR_SIGNAL_ENABLE
   class I3CCSR__I3CBase__INTR_SIGNAL_ENABLE extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_INTERNAL_ERR_SIGNAL_EN_bit_cg       [1];
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_SEQ_CANCEL_SIGNAL_EN_bit_cg         [1];
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_WARN_CMD_SEQ_STALL_SIGNAL_EN_bit_cg [1];
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN_bit_cg[1];
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg SCHED_CMD_MISSED_TICK_SIGNAL_EN_bit_cg [1];
-    I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_fld_cg fld_cg;
-    rand uvm_reg_field                         HC_INTERNAL_ERR_SIGNAL_EN;
-    rand uvm_reg_field                         HC_SEQ_CANCEL_SIGNAL_EN;
-    rand uvm_reg_field                         HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
-    rand uvm_reg_field                         HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
-    rand uvm_reg_field                         SCHED_CMD_MISSED_TICK_SIGNAL_EN;
+    rand uvm_reg_field HC_INTERNAL_ERR_SIGNAL_EN;
+    rand uvm_reg_field HC_SEQ_CANCEL_SIGNAL_EN;
+    rand uvm_reg_field HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
+    rand uvm_reg_field HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
+    rand uvm_reg_field SCHED_CMD_MISSED_TICK_SIGNAL_EN;
 
     function new(string name = "I3CCSR__I3CBase__INTR_SIGNAL_ENABLE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.HC_INTERNAL_ERR_SIGNAL_EN = new("HC_INTERNAL_ERR_SIGNAL_EN");
@@ -437,44 +244,20 @@ package registers_uvm;
       this.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.configure(this, 1, 13, "RW", 0, 'h0, 1, 1, 0);
       this.SCHED_CMD_MISSED_TICK_SIGNAL_EN = new("SCHED_CMD_MISSED_TICK_SIGNAL_EN");
       this.SCHED_CMD_MISSED_TICK_SIGNAL_EN.configure(this, 1, 14, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (HC_INTERNAL_ERR_SIGNAL_EN_bit_cg[bt]) HC_INTERNAL_ERR_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (HC_SEQ_CANCEL_SIGNAL_EN_bit_cg[bt]) HC_SEQ_CANCEL_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (HC_WARN_CMD_SEQ_STALL_SIGNAL_EN_bit_cg[bt])
-        HC_WARN_CMD_SEQ_STALL_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN_bit_cg[bt])
-        HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (SCHED_CMD_MISSED_TICK_SIGNAL_EN_bit_cg[bt])
-        SCHED_CMD_MISSED_TICK_SIGNAL_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__INTR_SIGNAL_ENABLE
 
   // Reg - I3CCSR.I3CBase.INTR_FORCE
   class I3CCSR__I3CBase__INTR_FORCE extends uvm_reg;
-    protected uvm_reg_data_t           m_current;
-    protected uvm_reg_data_t           m_data;
-    protected bit                      m_is_read;
-
-    I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_INTERNAL_ERR_FORCE_bit_cg       [1];
-    I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_SEQ_CANCEL_FORCE_bit_cg         [1];
-    I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_WARN_CMD_SEQ_STALL_FORCE_bit_cg [1];
-    I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_FORCE_bit_cg[1];
-    I3CCSR__I3CBase__INTR_FORCE_bit_cg SCHED_CMD_MISSED_TICK_FORCE_bit_cg [1];
-    I3CCSR__I3CBase__INTR_FORCE_fld_cg fld_cg;
-    rand uvm_reg_field                 HC_INTERNAL_ERR_FORCE;
-    rand uvm_reg_field                 HC_SEQ_CANCEL_FORCE;
-    rand uvm_reg_field                 HC_WARN_CMD_SEQ_STALL_FORCE;
-    rand uvm_reg_field                 HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
-    rand uvm_reg_field                 SCHED_CMD_MISSED_TICK_FORCE;
+    rand uvm_reg_field HC_INTERNAL_ERR_FORCE;
+    rand uvm_reg_field HC_SEQ_CANCEL_FORCE;
+    rand uvm_reg_field HC_WARN_CMD_SEQ_STALL_FORCE;
+    rand uvm_reg_field HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
+    rand uvm_reg_field SCHED_CMD_MISSED_TICK_FORCE;
 
     function new(string name = "I3CCSR__I3CBase__INTR_FORCE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.HC_INTERNAL_ERR_FORCE = new("HC_INTERNAL_ERR_FORCE");
@@ -487,40 +270,18 @@ package registers_uvm;
       this.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.configure(this, 1, 13, "WO", 0, 'h0, 1, 1, 0);
       this.SCHED_CMD_MISSED_TICK_FORCE = new("SCHED_CMD_MISSED_TICK_FORCE");
       this.SCHED_CMD_MISSED_TICK_FORCE.configure(this, 1, 14, "WO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (HC_INTERNAL_ERR_FORCE_bit_cg[bt]) HC_INTERNAL_ERR_FORCE_bit_cg[bt] = new();
-        foreach (HC_SEQ_CANCEL_FORCE_bit_cg[bt]) HC_SEQ_CANCEL_FORCE_bit_cg[bt] = new();
-        foreach (HC_WARN_CMD_SEQ_STALL_FORCE_bit_cg[bt])
-        HC_WARN_CMD_SEQ_STALL_FORCE_bit_cg[bt] = new();
-        foreach (HC_ERR_CMD_SEQ_TIMEOUT_FORCE_bit_cg[bt])
-        HC_ERR_CMD_SEQ_TIMEOUT_FORCE_bit_cg[bt] = new();
-        foreach (SCHED_CMD_MISSED_TICK_FORCE_bit_cg[bt])
-        SCHED_CMD_MISSED_TICK_FORCE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__INTR_FORCE
 
   // Reg - I3CCSR.I3CBase.DAT_SECTION_OFFSET
   class I3CCSR__I3CBase__DAT_SECTION_OFFSET extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg TABLE_OFFSET_bit_cg[12];
-    I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg TABLE_SIZE_bit_cg  [ 7];
-    I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg ENTRY_SIZE_bit_cg  [ 4];
-    I3CCSR__I3CBase__DAT_SECTION_OFFSET_fld_cg fld_cg;
-    rand uvm_reg_field                         TABLE_OFFSET;
-    rand uvm_reg_field                         TABLE_SIZE;
-    rand uvm_reg_field                         ENTRY_SIZE;
+    rand uvm_reg_field TABLE_OFFSET;
+    rand uvm_reg_field TABLE_SIZE;
+    rand uvm_reg_field ENTRY_SIZE;
 
     function new(string name = "I3CCSR__I3CBase__DAT_SECTION_OFFSET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TABLE_OFFSET = new("TABLE_OFFSET");
@@ -529,37 +290,19 @@ package registers_uvm;
       this.TABLE_SIZE.configure(this, 7, 12, "RO", 0, 'h7f, 1, 1, 0);
       this.ENTRY_SIZE = new("ENTRY_SIZE");
       this.ENTRY_SIZE.configure(this, 4, 28, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TABLE_OFFSET_bit_cg[bt]) TABLE_OFFSET_bit_cg[bt] = new();
-        foreach (TABLE_SIZE_bit_cg[bt]) TABLE_SIZE_bit_cg[bt] = new();
-        foreach (ENTRY_SIZE_bit_cg[bt]) ENTRY_SIZE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__DAT_SECTION_OFFSET
 
   // Reg - I3CCSR.I3CBase.DCT_SECTION_OFFSET
   class I3CCSR__I3CBase__DCT_SECTION_OFFSET extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_OFFSET_bit_cg[12];
-    I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_SIZE_bit_cg  [ 7];
-    I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_INDEX_bit_cg [ 5];
-    I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg ENTRY_SIZE_bit_cg  [ 4];
-    I3CCSR__I3CBase__DCT_SECTION_OFFSET_fld_cg fld_cg;
-    rand uvm_reg_field                         TABLE_OFFSET;
-    rand uvm_reg_field                         TABLE_SIZE;
-    rand uvm_reg_field                         TABLE_INDEX;
-    rand uvm_reg_field                         ENTRY_SIZE;
+    rand uvm_reg_field TABLE_OFFSET;
+    rand uvm_reg_field TABLE_SIZE;
+    rand uvm_reg_field TABLE_INDEX;
+    rand uvm_reg_field ENTRY_SIZE;
 
     function new(string name = "I3CCSR__I3CBase__DCT_SECTION_OFFSET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TABLE_OFFSET = new("TABLE_OFFSET");
@@ -570,149 +313,77 @@ package registers_uvm;
       this.TABLE_INDEX.configure(this, 5, 19, "RW", 1, 'h0, 1, 1, 0);
       this.ENTRY_SIZE = new("ENTRY_SIZE");
       this.ENTRY_SIZE.configure(this, 4, 28, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TABLE_OFFSET_bit_cg[bt]) TABLE_OFFSET_bit_cg[bt] = new();
-        foreach (TABLE_SIZE_bit_cg[bt]) TABLE_SIZE_bit_cg[bt] = new();
-        foreach (TABLE_INDEX_bit_cg[bt]) TABLE_INDEX_bit_cg[bt] = new();
-        foreach (ENTRY_SIZE_bit_cg[bt]) ENTRY_SIZE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__DCT_SECTION_OFFSET
 
   // Reg - I3CCSR.I3CBase.RING_HEADERS_SECTION_OFFSET
   class I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET extends uvm_reg;
-    protected uvm_reg_data_t                            m_current;
-    protected uvm_reg_data_t                            m_data;
-    protected bit                                       m_is_read;
-
-    I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
-    I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET_fld_cg fld_cg;
-    rand uvm_reg_field                                  SECTION_OFFSET;
+    rand uvm_reg_field SECTION_OFFSET;
 
     function new(string name = "I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.SECTION_OFFSET = new("SECTION_OFFSET");
       this.SECTION_OFFSET.configure(this, 16, 0, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (SECTION_OFFSET_bit_cg[bt]) SECTION_OFFSET_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET
 
   // Reg - I3CCSR.I3CBase.PIO_SECTION_OFFSET
   class I3CCSR__I3CBase__PIO_SECTION_OFFSET extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__I3CBase__PIO_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
-    I3CCSR__I3CBase__PIO_SECTION_OFFSET_fld_cg fld_cg;
-    rand uvm_reg_field                         SECTION_OFFSET;
+    rand uvm_reg_field SECTION_OFFSET;
 
     function new(string name = "I3CCSR__I3CBase__PIO_SECTION_OFFSET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.SECTION_OFFSET = new("SECTION_OFFSET");
       this.SECTION_OFFSET.configure(this, 16, 0, "RO", 0, 'h80, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (SECTION_OFFSET_bit_cg[bt]) SECTION_OFFSET_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__PIO_SECTION_OFFSET
 
   // Reg - I3CCSR.I3CBase.EXT_CAPS_SECTION_OFFSET
   class I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET extends uvm_reg;
-    protected uvm_reg_data_t                        m_current;
-    protected uvm_reg_data_t                        m_data;
-    protected bit                                   m_is_read;
-
-    I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
-    I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET_fld_cg fld_cg;
-    rand uvm_reg_field                              SECTION_OFFSET;
+    rand uvm_reg_field SECTION_OFFSET;
 
     function new(string name = "I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.SECTION_OFFSET = new("SECTION_OFFSET");
       this.SECTION_OFFSET.configure(this, 16, 0, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (SECTION_OFFSET_bit_cg[bt]) SECTION_OFFSET_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET
 
   // Reg - I3CCSR.I3CBase.INT_CTRL_CMDS_EN
   class I3CCSR__I3CBase__INT_CTRL_CMDS_EN extends uvm_reg;
-    protected uvm_reg_data_t                 m_current;
-    protected uvm_reg_data_t                 m_data;
-    protected bit                            m_is_read;
-
-    I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg ICC_SUPPORT_bit_cg        [ 1];
-    I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg MIPI_CMDS_SUPPORTED_bit_cg[15];
-    I3CCSR__I3CBase__INT_CTRL_CMDS_EN_fld_cg fld_cg;
-    rand uvm_reg_field                       ICC_SUPPORT;
-    rand uvm_reg_field                       MIPI_CMDS_SUPPORTED;
+    rand uvm_reg_field ICC_SUPPORT;
+    rand uvm_reg_field MIPI_CMDS_SUPPORTED;
 
     function new(string name = "I3CCSR__I3CBase__INT_CTRL_CMDS_EN");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.ICC_SUPPORT = new("ICC_SUPPORT");
       this.ICC_SUPPORT.configure(this, 1, 0, "RO", 0, 'h1, 1, 1, 0);
       this.MIPI_CMDS_SUPPORTED = new("MIPI_CMDS_SUPPORTED");
       this.MIPI_CMDS_SUPPORTED.configure(this, 15, 1, "RO", 0, 'h35, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (ICC_SUPPORT_bit_cg[bt]) ICC_SUPPORT_bit_cg[bt] = new();
-        foreach (MIPI_CMDS_SUPPORTED_bit_cg[bt]) MIPI_CMDS_SUPPORTED_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__INT_CTRL_CMDS_EN
 
   // Reg - I3CCSR.I3CBase.IBI_NOTIFY_CTRL
   class I3CCSR__I3CBase__IBI_NOTIFY_CTRL extends uvm_reg;
-    protected uvm_reg_data_t                m_current;
-    protected uvm_reg_data_t                m_data;
-    protected bit                           m_is_read;
-
-    I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_HJ_REJECTED_bit_cg [1];
-    I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_CRR_REJECTED_bit_cg[1];
-    I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_IBI_REJECTED_bit_cg[1];
-    I3CCSR__I3CBase__IBI_NOTIFY_CTRL_fld_cg fld_cg;
-    rand uvm_reg_field                      NOTIFY_HJ_REJECTED;
-    rand uvm_reg_field                      NOTIFY_CRR_REJECTED;
-    rand uvm_reg_field                      NOTIFY_IBI_REJECTED;
+    rand uvm_reg_field NOTIFY_HJ_REJECTED;
+    rand uvm_reg_field NOTIFY_CRR_REJECTED;
+    rand uvm_reg_field NOTIFY_IBI_REJECTED;
 
     function new(string name = "I3CCSR__I3CBase__IBI_NOTIFY_CTRL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.NOTIFY_HJ_REJECTED = new("NOTIFY_HJ_REJECTED");
@@ -721,37 +392,19 @@ package registers_uvm;
       this.NOTIFY_CRR_REJECTED.configure(this, 1, 1, "RW", 0, 'h0, 1, 1, 0);
       this.NOTIFY_IBI_REJECTED = new("NOTIFY_IBI_REJECTED");
       this.NOTIFY_IBI_REJECTED.configure(this, 1, 3, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (NOTIFY_HJ_REJECTED_bit_cg[bt]) NOTIFY_HJ_REJECTED_bit_cg[bt] = new();
-        foreach (NOTIFY_CRR_REJECTED_bit_cg[bt]) NOTIFY_CRR_REJECTED_bit_cg[bt] = new();
-        foreach (NOTIFY_IBI_REJECTED_bit_cg[bt]) NOTIFY_IBI_REJECTED_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__IBI_NOTIFY_CTRL
 
   // Reg - I3CCSR.I3CBase.IBI_DATA_ABORT_CTRL
   class I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL extends uvm_reg;
-    protected uvm_reg_data_t                    m_current;
-    protected uvm_reg_data_t                    m_data;
-    protected bit                               m_is_read;
-
-    I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg MATCH_IBI_ID_bit_cg      [8];
-    I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg AFTER_N_CHUNKS_bit_cg    [2];
-    I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg MATCH_STATUS_TYPE_bit_cg [3];
-    I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg IBI_DATA_ABORT_MON_bit_cg[1];
-    I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_fld_cg fld_cg;
-    rand uvm_reg_field                          MATCH_IBI_ID;
-    rand uvm_reg_field                          AFTER_N_CHUNKS;
-    rand uvm_reg_field                          MATCH_STATUS_TYPE;
-    rand uvm_reg_field                          IBI_DATA_ABORT_MON;
+    rand uvm_reg_field MATCH_IBI_ID;
+    rand uvm_reg_field AFTER_N_CHUNKS;
+    rand uvm_reg_field MATCH_STATUS_TYPE;
+    rand uvm_reg_field IBI_DATA_ABORT_MON;
 
     function new(string name = "I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.MATCH_IBI_ID = new("MATCH_IBI_ID");
@@ -762,99 +415,51 @@ package registers_uvm;
       this.MATCH_STATUS_TYPE.configure(this, 3, 18, "RW", 0, 'h0, 1, 1, 0);
       this.IBI_DATA_ABORT_MON = new("IBI_DATA_ABORT_MON");
       this.IBI_DATA_ABORT_MON.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (MATCH_IBI_ID_bit_cg[bt]) MATCH_IBI_ID_bit_cg[bt] = new();
-        foreach (AFTER_N_CHUNKS_bit_cg[bt]) AFTER_N_CHUNKS_bit_cg[bt] = new();
-        foreach (MATCH_STATUS_TYPE_bit_cg[bt]) MATCH_STATUS_TYPE_bit_cg[bt] = new();
-        foreach (IBI_DATA_ABORT_MON_bit_cg[bt]) IBI_DATA_ABORT_MON_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL
 
   // Reg - I3CCSR.I3CBase.DEV_CTX_BASE_LO
   class I3CCSR__I3CBase__DEV_CTX_BASE_LO extends uvm_reg;
-    protected uvm_reg_data_t                m_current;
-    protected uvm_reg_data_t                m_data;
-    protected bit                           m_is_read;
-
-    I3CCSR__I3CBase__DEV_CTX_BASE_LO_bit_cg BASE_LO_bit_cg[1];
-    I3CCSR__I3CBase__DEV_CTX_BASE_LO_fld_cg fld_cg;
-    rand uvm_reg_field                      BASE_LO;
+    rand uvm_reg_field BASE_LO;
 
     function new(string name = "I3CCSR__I3CBase__DEV_CTX_BASE_LO");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.BASE_LO = new("BASE_LO");
       this.BASE_LO.configure(this, 1, 0, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (BASE_LO_bit_cg[bt]) BASE_LO_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__DEV_CTX_BASE_LO
 
   // Reg - I3CCSR.I3CBase.DEV_CTX_BASE_HI
   class I3CCSR__I3CBase__DEV_CTX_BASE_HI extends uvm_reg;
-    protected uvm_reg_data_t                m_current;
-    protected uvm_reg_data_t                m_data;
-    protected bit                           m_is_read;
-
-    I3CCSR__I3CBase__DEV_CTX_BASE_HI_bit_cg BASE_HI_bit_cg[1];
-    I3CCSR__I3CBase__DEV_CTX_BASE_HI_fld_cg fld_cg;
-    rand uvm_reg_field                      BASE_HI;
+    rand uvm_reg_field BASE_HI;
 
     function new(string name = "I3CCSR__I3CBase__DEV_CTX_BASE_HI");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.BASE_HI = new("BASE_HI");
       this.BASE_HI.configure(this, 1, 0, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (BASE_HI_bit_cg[bt]) BASE_HI_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__DEV_CTX_BASE_HI
 
   // Reg - I3CCSR.I3CBase.DEV_CTX_SG
   class I3CCSR__I3CBase__DEV_CTX_SG extends uvm_reg;
-    protected uvm_reg_data_t           m_current;
-    protected uvm_reg_data_t           m_data;
-    protected bit                      m_is_read;
-
-    I3CCSR__I3CBase__DEV_CTX_SG_bit_cg LIST_SIZE_bit_cg[16];
-    I3CCSR__I3CBase__DEV_CTX_SG_bit_cg BLP_bit_cg      [ 1];
-    I3CCSR__I3CBase__DEV_CTX_SG_fld_cg fld_cg;
-    rand uvm_reg_field                 LIST_SIZE;
-    rand uvm_reg_field                 BLP;
+    rand uvm_reg_field LIST_SIZE;
+    rand uvm_reg_field BLP;
 
     function new(string name = "I3CCSR__I3CBase__DEV_CTX_SG");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.LIST_SIZE = new("LIST_SIZE");
       this.LIST_SIZE.configure(this, 16, 0, "RO", 0, 'h0, 1, 1, 0);
       this.BLP = new("BLP");
       this.BLP.configure(this, 1, 31, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (LIST_SIZE_bit_cg[bt]) LIST_SIZE_bit_cg[bt] = new();
-        foreach (BLP_bit_cg[bt]) BLP_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3CBase__DEV_CTX_SG
 
@@ -998,139 +603,73 @@ package registers_uvm;
 
   // Reg - I3CCSR.PIOControl.COMMAND_PORT
   class I3CCSR__PIOControl__COMMAND_PORT extends uvm_reg;
-    protected uvm_reg_data_t                m_current;
-    protected uvm_reg_data_t                m_data;
-    protected bit                           m_is_read;
-
-    I3CCSR__PIOControl__COMMAND_PORT_bit_cg COMMAND_DATA_bit_cg[1];
-    I3CCSR__PIOControl__COMMAND_PORT_fld_cg fld_cg;
-    rand uvm_reg_field                      COMMAND_DATA;
+    rand uvm_reg_field COMMAND_DATA;
 
     function new(string name = "I3CCSR__PIOControl__COMMAND_PORT");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.COMMAND_DATA = new("COMMAND_DATA");
       this.COMMAND_DATA.configure(this, 1, 0, "WO", 0, 'h0, 0, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (COMMAND_DATA_bit_cg[bt]) COMMAND_DATA_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__COMMAND_PORT
 
   // Reg - I3CCSR.PIOControl.RESPONSE_PORT
   class I3CCSR__PIOControl__RESPONSE_PORT extends uvm_reg;
-    protected uvm_reg_data_t                 m_current;
-    protected uvm_reg_data_t                 m_data;
-    protected bit                            m_is_read;
-
-    I3CCSR__PIOControl__RESPONSE_PORT_bit_cg RESPONSE_DATA_bit_cg[1];
-    I3CCSR__PIOControl__RESPONSE_PORT_fld_cg fld_cg;
-    rand uvm_reg_field                       RESPONSE_DATA;
+    rand uvm_reg_field RESPONSE_DATA;
 
     function new(string name = "I3CCSR__PIOControl__RESPONSE_PORT");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.RESPONSE_DATA = new("RESPONSE_DATA");
       this.RESPONSE_DATA.configure(this, 1, 0, "RO", 1, 'h0, 0, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (RESPONSE_DATA_bit_cg[bt]) RESPONSE_DATA_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__RESPONSE_PORT
 
   // Reg - I3CCSR.PIOControl.XFER_DATA_PORT
   class I3CCSR__PIOControl__XFER_DATA_PORT extends uvm_reg;
-    protected uvm_reg_data_t                  m_current;
-    protected uvm_reg_data_t                  m_data;
-    protected bit                             m_is_read;
-
-    I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg TX_DATA_bit_cg[32];
-    I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg RX_DATA_bit_cg[32];
-    I3CCSR__PIOControl__XFER_DATA_PORT_fld_cg fld_cg;
-    rand uvm_reg_field                        TX_DATA;
-    rand uvm_reg_field                        RX_DATA;
+    rand uvm_reg_field TX_DATA;
+    rand uvm_reg_field RX_DATA;
 
     function new(string name = "I3CCSR__PIOControl__XFER_DATA_PORT");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_DATA = new("TX_DATA");
       this.TX_DATA.configure(this, 32, 0, "WO", 0, 'h0, 0, 1, 0);
       this.RX_DATA = new("RX_DATA");
       this.RX_DATA.configure(this, 32, 0, "RO", 1, 'h0, 0, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_DATA_bit_cg[bt]) TX_DATA_bit_cg[bt] = new();
-        foreach (RX_DATA_bit_cg[bt]) RX_DATA_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__XFER_DATA_PORT
 
   // Reg - I3CCSR.PIOControl.IBI_PORT
   class I3CCSR__PIOControl__IBI_PORT extends uvm_reg;
-    protected uvm_reg_data_t            m_current;
-    protected uvm_reg_data_t            m_data;
-    protected bit                       m_is_read;
-
-    I3CCSR__PIOControl__IBI_PORT_bit_cg IBI_DATA_bit_cg[1];
-    I3CCSR__PIOControl__IBI_PORT_fld_cg fld_cg;
-    rand uvm_reg_field                  IBI_DATA;
+    rand uvm_reg_field IBI_DATA;
 
     function new(string name = "I3CCSR__PIOControl__IBI_PORT");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.IBI_DATA = new("IBI_DATA");
       this.IBI_DATA.configure(this, 1, 0, "RO", 1, 'h0, 0, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (IBI_DATA_bit_cg[bt]) IBI_DATA_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__IBI_PORT
 
   // Reg - I3CCSR.PIOControl.QUEUE_THLD_CTRL
   class I3CCSR__PIOControl__QUEUE_THLD_CTRL extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg CMD_EMPTY_BUF_THLD_bit_cg   [8];
-    I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg RESP_BUF_THLD_bit_cg        [8];
-    I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg IBI_DATA_SEGMENT_SIZE_bit_cg[8];
-    I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg IBI_STATUS_THLD_bit_cg      [8];
-    I3CCSR__PIOControl__QUEUE_THLD_CTRL_fld_cg fld_cg;
-    rand uvm_reg_field                         CMD_EMPTY_BUF_THLD;
-    rand uvm_reg_field                         RESP_BUF_THLD;
-    rand uvm_reg_field                         IBI_DATA_SEGMENT_SIZE;
-    rand uvm_reg_field                         IBI_STATUS_THLD;
+    rand uvm_reg_field CMD_EMPTY_BUF_THLD;
+    rand uvm_reg_field RESP_BUF_THLD;
+    rand uvm_reg_field IBI_DATA_SEGMENT_SIZE;
+    rand uvm_reg_field IBI_STATUS_THLD;
 
     function new(string name = "I3CCSR__PIOControl__QUEUE_THLD_CTRL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CMD_EMPTY_BUF_THLD = new("CMD_EMPTY_BUF_THLD");
@@ -1141,38 +680,19 @@ package registers_uvm;
       this.IBI_DATA_SEGMENT_SIZE.configure(this, 8, 16, "RW", 0, 'h1, 1, 1, 0);
       this.IBI_STATUS_THLD = new("IBI_STATUS_THLD");
       this.IBI_STATUS_THLD.configure(this, 8, 24, "RW", 0, 'h1, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CMD_EMPTY_BUF_THLD_bit_cg[bt]) CMD_EMPTY_BUF_THLD_bit_cg[bt] = new();
-        foreach (RESP_BUF_THLD_bit_cg[bt]) RESP_BUF_THLD_bit_cg[bt] = new();
-        foreach (IBI_DATA_SEGMENT_SIZE_bit_cg[bt]) IBI_DATA_SEGMENT_SIZE_bit_cg[bt] = new();
-        foreach (IBI_STATUS_THLD_bit_cg[bt]) IBI_STATUS_THLD_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__QUEUE_THLD_CTRL
 
   // Reg - I3CCSR.PIOControl.DATA_BUFFER_THLD_CTRL
   class I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL extends uvm_reg;
-    protected uvm_reg_data_t                         m_current;
-    protected uvm_reg_data_t                         m_data;
-    protected bit                                    m_is_read;
-
-    I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg TX_BUF_THLD_bit_cg  [3];
-    I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg RX_BUF_THLD_bit_cg  [3];
-    I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg TX_START_THLD_bit_cg[3];
-    I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg RX_START_THLD_bit_cg[3];
-    I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_fld_cg fld_cg;
-    rand uvm_reg_field                               TX_BUF_THLD;
-    rand uvm_reg_field                               RX_BUF_THLD;
-    rand uvm_reg_field                               TX_START_THLD;
-    rand uvm_reg_field                               RX_START_THLD;
+    rand uvm_reg_field TX_BUF_THLD;
+    rand uvm_reg_field RX_BUF_THLD;
+    rand uvm_reg_field TX_START_THLD;
+    rand uvm_reg_field RX_START_THLD;
 
     function new(string name = "I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_BUF_THLD = new("TX_BUF_THLD");
@@ -1183,38 +703,19 @@ package registers_uvm;
       this.TX_START_THLD.configure(this, 3, 16, "RW", 0, 'h1, 1, 1, 0);
       this.RX_START_THLD = new("RX_START_THLD");
       this.RX_START_THLD.configure(this, 3, 24, "RW", 0, 'h1, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_BUF_THLD_bit_cg[bt]) TX_BUF_THLD_bit_cg[bt] = new();
-        foreach (RX_BUF_THLD_bit_cg[bt]) RX_BUF_THLD_bit_cg[bt] = new();
-        foreach (TX_START_THLD_bit_cg[bt]) TX_START_THLD_bit_cg[bt] = new();
-        foreach (RX_START_THLD_bit_cg[bt]) RX_START_THLD_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL
 
   // Reg - I3CCSR.PIOControl.QUEUE_SIZE
   class I3CCSR__PIOControl__QUEUE_SIZE extends uvm_reg;
-    protected uvm_reg_data_t              m_current;
-    protected uvm_reg_data_t              m_data;
-    protected bit                         m_is_read;
-
-    I3CCSR__PIOControl__QUEUE_SIZE_bit_cg CR_QUEUE_SIZE_bit_cg      [8];
-    I3CCSR__PIOControl__QUEUE_SIZE_bit_cg IBI_STATUS_SIZE_bit_cg    [8];
-    I3CCSR__PIOControl__QUEUE_SIZE_bit_cg RX_DATA_BUFFER_SIZE_bit_cg[8];
-    I3CCSR__PIOControl__QUEUE_SIZE_bit_cg TX_DATA_BUFFER_SIZE_bit_cg[8];
-    I3CCSR__PIOControl__QUEUE_SIZE_fld_cg fld_cg;
-    rand uvm_reg_field                    CR_QUEUE_SIZE;
-    rand uvm_reg_field                    IBI_STATUS_SIZE;
-    rand uvm_reg_field                    RX_DATA_BUFFER_SIZE;
-    rand uvm_reg_field                    TX_DATA_BUFFER_SIZE;
+    rand uvm_reg_field CR_QUEUE_SIZE;
+    rand uvm_reg_field IBI_STATUS_SIZE;
+    rand uvm_reg_field RX_DATA_BUFFER_SIZE;
+    rand uvm_reg_field TX_DATA_BUFFER_SIZE;
 
     function new(string name = "I3CCSR__PIOControl__QUEUE_SIZE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CR_QUEUE_SIZE = new("CR_QUEUE_SIZE");
@@ -1225,36 +726,18 @@ package registers_uvm;
       this.RX_DATA_BUFFER_SIZE.configure(this, 8, 16, "RO", 0, 'h5, 1, 1, 0);
       this.TX_DATA_BUFFER_SIZE = new("TX_DATA_BUFFER_SIZE");
       this.TX_DATA_BUFFER_SIZE.configure(this, 8, 24, "RO", 0, 'h5, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CR_QUEUE_SIZE_bit_cg[bt]) CR_QUEUE_SIZE_bit_cg[bt] = new();
-        foreach (IBI_STATUS_SIZE_bit_cg[bt]) IBI_STATUS_SIZE_bit_cg[bt] = new();
-        foreach (RX_DATA_BUFFER_SIZE_bit_cg[bt]) RX_DATA_BUFFER_SIZE_bit_cg[bt] = new();
-        foreach (TX_DATA_BUFFER_SIZE_bit_cg[bt]) TX_DATA_BUFFER_SIZE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__QUEUE_SIZE
 
   // Reg - I3CCSR.PIOControl.ALT_QUEUE_SIZE
   class I3CCSR__PIOControl__ALT_QUEUE_SIZE extends uvm_reg;
-    protected uvm_reg_data_t                  m_current;
-    protected uvm_reg_data_t                  m_data;
-    protected bit                             m_is_read;
-
-    I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg ALT_RESP_QUEUE_SIZE_bit_cg[8];
-    I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg ALT_RESP_QUEUE_EN_bit_cg  [1];
-    I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg EXT_IBI_QUEUE_EN_bit_cg   [1];
-    I3CCSR__PIOControl__ALT_QUEUE_SIZE_fld_cg fld_cg;
-    rand uvm_reg_field                        ALT_RESP_QUEUE_SIZE;
-    rand uvm_reg_field                        ALT_RESP_QUEUE_EN;
-    rand uvm_reg_field                        EXT_IBI_QUEUE_EN;
+    rand uvm_reg_field ALT_RESP_QUEUE_SIZE;
+    rand uvm_reg_field ALT_RESP_QUEUE_EN;
+    rand uvm_reg_field EXT_IBI_QUEUE_EN;
 
     function new(string name = "I3CCSR__PIOControl__ALT_QUEUE_SIZE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.ALT_RESP_QUEUE_SIZE = new("ALT_RESP_QUEUE_SIZE");
@@ -1263,43 +746,22 @@ package registers_uvm;
       this.ALT_RESP_QUEUE_EN.configure(this, 1, 24, "RO", 0, 'h0, 1, 1, 0);
       this.EXT_IBI_QUEUE_EN = new("EXT_IBI_QUEUE_EN");
       this.EXT_IBI_QUEUE_EN.configure(this, 1, 28, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (ALT_RESP_QUEUE_SIZE_bit_cg[bt]) ALT_RESP_QUEUE_SIZE_bit_cg[bt] = new();
-        foreach (ALT_RESP_QUEUE_EN_bit_cg[bt]) ALT_RESP_QUEUE_EN_bit_cg[bt] = new();
-        foreach (EXT_IBI_QUEUE_EN_bit_cg[bt]) EXT_IBI_QUEUE_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__ALT_QUEUE_SIZE
 
   // Reg - I3CCSR.PIOControl.PIO_INTR_STATUS
   class I3CCSR__PIOControl__PIO_INTR_STATUS extends uvm_reg;
-    protected uvm_reg_data_t                   m_current;
-    protected uvm_reg_data_t                   m_data;
-    protected bit                              m_is_read;
-
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TX_THLD_STAT_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg RX_THLD_STAT_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg IBI_STATUS_THLD_STAT_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg CMD_QUEUE_READY_STAT_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg RESP_READY_STAT_bit_cg     [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TRANSFER_ABORT_STAT_bit_cg [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TRANSFER_ERR_STAT_bit_cg   [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_fld_cg fld_cg;
-    rand uvm_reg_field                         TX_THLD_STAT;
-    rand uvm_reg_field                         RX_THLD_STAT;
-    rand uvm_reg_field                         IBI_STATUS_THLD_STAT;
-    rand uvm_reg_field                         CMD_QUEUE_READY_STAT;
-    rand uvm_reg_field                         RESP_READY_STAT;
-    rand uvm_reg_field                         TRANSFER_ABORT_STAT;
-    rand uvm_reg_field                         TRANSFER_ERR_STAT;
+    rand uvm_reg_field TX_THLD_STAT;
+    rand uvm_reg_field RX_THLD_STAT;
+    rand uvm_reg_field IBI_STATUS_THLD_STAT;
+    rand uvm_reg_field CMD_QUEUE_READY_STAT;
+    rand uvm_reg_field RESP_READY_STAT;
+    rand uvm_reg_field TRANSFER_ABORT_STAT;
+    rand uvm_reg_field TRANSFER_ERR_STAT;
 
     function new(string name = "I3CCSR__PIOControl__PIO_INTR_STATUS");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_THLD_STAT = new("TX_THLD_STAT");
@@ -1316,47 +778,22 @@ package registers_uvm;
       this.TRANSFER_ABORT_STAT.configure(this, 1, 5, "W1C", 1, 'h0, 1, 1, 0);
       this.TRANSFER_ERR_STAT = new("TRANSFER_ERR_STAT");
       this.TRANSFER_ERR_STAT.configure(this, 1, 9, "W1C", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_THLD_STAT_bit_cg[bt]) TX_THLD_STAT_bit_cg[bt] = new();
-        foreach (RX_THLD_STAT_bit_cg[bt]) RX_THLD_STAT_bit_cg[bt] = new();
-        foreach (IBI_STATUS_THLD_STAT_bit_cg[bt]) IBI_STATUS_THLD_STAT_bit_cg[bt] = new();
-        foreach (CMD_QUEUE_READY_STAT_bit_cg[bt]) CMD_QUEUE_READY_STAT_bit_cg[bt] = new();
-        foreach (RESP_READY_STAT_bit_cg[bt]) RESP_READY_STAT_bit_cg[bt] = new();
-        foreach (TRANSFER_ABORT_STAT_bit_cg[bt]) TRANSFER_ABORT_STAT_bit_cg[bt] = new();
-        foreach (TRANSFER_ERR_STAT_bit_cg[bt]) TRANSFER_ERR_STAT_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__PIO_INTR_STATUS
 
   // Reg - I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE
   class I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE extends uvm_reg;
-    protected uvm_reg_data_t                          m_current;
-    protected uvm_reg_data_t                          m_data;
-    protected bit                                     m_is_read;
-
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TX_THLD_STAT_EN_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg RX_THLD_STAT_EN_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg IBI_STATUS_THLD_STAT_EN_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg CMD_QUEUE_READY_STAT_EN_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg RESP_READY_STAT_EN_bit_cg     [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TRANSFER_ABORT_STAT_EN_bit_cg [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TRANSFER_ERR_STAT_EN_bit_cg   [1];
-    I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_fld_cg fld_cg;
-    rand uvm_reg_field                                TX_THLD_STAT_EN;
-    rand uvm_reg_field                                RX_THLD_STAT_EN;
-    rand uvm_reg_field                                IBI_STATUS_THLD_STAT_EN;
-    rand uvm_reg_field                                CMD_QUEUE_READY_STAT_EN;
-    rand uvm_reg_field                                RESP_READY_STAT_EN;
-    rand uvm_reg_field                                TRANSFER_ABORT_STAT_EN;
-    rand uvm_reg_field                                TRANSFER_ERR_STAT_EN;
+    rand uvm_reg_field TX_THLD_STAT_EN;
+    rand uvm_reg_field RX_THLD_STAT_EN;
+    rand uvm_reg_field IBI_STATUS_THLD_STAT_EN;
+    rand uvm_reg_field CMD_QUEUE_READY_STAT_EN;
+    rand uvm_reg_field RESP_READY_STAT_EN;
+    rand uvm_reg_field TRANSFER_ABORT_STAT_EN;
+    rand uvm_reg_field TRANSFER_ERR_STAT_EN;
 
     function new(string name = "I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_THLD_STAT_EN = new("TX_THLD_STAT_EN");
@@ -1373,47 +810,22 @@ package registers_uvm;
       this.TRANSFER_ABORT_STAT_EN.configure(this, 1, 5, "RW", 0, 'h0, 1, 1, 0);
       this.TRANSFER_ERR_STAT_EN = new("TRANSFER_ERR_STAT_EN");
       this.TRANSFER_ERR_STAT_EN.configure(this, 1, 9, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_THLD_STAT_EN_bit_cg[bt]) TX_THLD_STAT_EN_bit_cg[bt] = new();
-        foreach (RX_THLD_STAT_EN_bit_cg[bt]) RX_THLD_STAT_EN_bit_cg[bt] = new();
-        foreach (IBI_STATUS_THLD_STAT_EN_bit_cg[bt]) IBI_STATUS_THLD_STAT_EN_bit_cg[bt] = new();
-        foreach (CMD_QUEUE_READY_STAT_EN_bit_cg[bt]) CMD_QUEUE_READY_STAT_EN_bit_cg[bt] = new();
-        foreach (RESP_READY_STAT_EN_bit_cg[bt]) RESP_READY_STAT_EN_bit_cg[bt] = new();
-        foreach (TRANSFER_ABORT_STAT_EN_bit_cg[bt]) TRANSFER_ABORT_STAT_EN_bit_cg[bt] = new();
-        foreach (TRANSFER_ERR_STAT_EN_bit_cg[bt]) TRANSFER_ERR_STAT_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE
 
   // Reg - I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE
   class I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE extends uvm_reg;
-    protected uvm_reg_data_t                          m_current;
-    protected uvm_reg_data_t                          m_data;
-    protected bit                                     m_is_read;
-
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TX_THLD_SIGNAL_EN_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg RX_THLD_SIGNAL_EN_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg IBI_STATUS_THLD_SIGNAL_EN_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg CMD_QUEUE_READY_SIGNAL_EN_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg RESP_READY_SIGNAL_EN_bit_cg     [1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TRANSFER_ABORT_SIGNAL_EN_bit_cg [1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TRANSFER_ERR_SIGNAL_EN_bit_cg   [1];
-    I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_fld_cg fld_cg;
-    rand uvm_reg_field                                TX_THLD_SIGNAL_EN;
-    rand uvm_reg_field                                RX_THLD_SIGNAL_EN;
-    rand uvm_reg_field                                IBI_STATUS_THLD_SIGNAL_EN;
-    rand uvm_reg_field                                CMD_QUEUE_READY_SIGNAL_EN;
-    rand uvm_reg_field                                RESP_READY_SIGNAL_EN;
-    rand uvm_reg_field                                TRANSFER_ABORT_SIGNAL_EN;
-    rand uvm_reg_field                                TRANSFER_ERR_SIGNAL_EN;
+    rand uvm_reg_field TX_THLD_SIGNAL_EN;
+    rand uvm_reg_field RX_THLD_SIGNAL_EN;
+    rand uvm_reg_field IBI_STATUS_THLD_SIGNAL_EN;
+    rand uvm_reg_field CMD_QUEUE_READY_SIGNAL_EN;
+    rand uvm_reg_field RESP_READY_SIGNAL_EN;
+    rand uvm_reg_field TRANSFER_ABORT_SIGNAL_EN;
+    rand uvm_reg_field TRANSFER_ERR_SIGNAL_EN;
 
     function new(string name = "I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_THLD_SIGNAL_EN = new("TX_THLD_SIGNAL_EN");
@@ -1430,47 +842,22 @@ package registers_uvm;
       this.TRANSFER_ABORT_SIGNAL_EN.configure(this, 1, 5, "RW", 0, 'h0, 1, 1, 0);
       this.TRANSFER_ERR_SIGNAL_EN = new("TRANSFER_ERR_SIGNAL_EN");
       this.TRANSFER_ERR_SIGNAL_EN.configure(this, 1, 9, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_THLD_SIGNAL_EN_bit_cg[bt]) TX_THLD_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (RX_THLD_SIGNAL_EN_bit_cg[bt]) RX_THLD_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (IBI_STATUS_THLD_SIGNAL_EN_bit_cg[bt]) IBI_STATUS_THLD_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (CMD_QUEUE_READY_SIGNAL_EN_bit_cg[bt]) CMD_QUEUE_READY_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (RESP_READY_SIGNAL_EN_bit_cg[bt]) RESP_READY_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (TRANSFER_ABORT_SIGNAL_EN_bit_cg[bt]) TRANSFER_ABORT_SIGNAL_EN_bit_cg[bt] = new();
-        foreach (TRANSFER_ERR_SIGNAL_EN_bit_cg[bt]) TRANSFER_ERR_SIGNAL_EN_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE
 
   // Reg - I3CCSR.PIOControl.PIO_INTR_FORCE
   class I3CCSR__PIOControl__PIO_INTR_FORCE extends uvm_reg;
-    protected uvm_reg_data_t                  m_current;
-    protected uvm_reg_data_t                  m_data;
-    protected bit                             m_is_read;
-
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TX_THLD_FORCE_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg RX_THLD_FORCE_bit_cg        [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg IBI_THLD_FORCE_bit_cg       [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg CMD_QUEUE_READY_FORCE_bit_cg[1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg RESP_READY_FORCE_bit_cg     [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TRANSFER_ABORT_FORCE_bit_cg [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TRANSFER_ERR_FORCE_bit_cg   [1];
-    I3CCSR__PIOControl__PIO_INTR_FORCE_fld_cg fld_cg;
-    rand uvm_reg_field                        TX_THLD_FORCE;
-    rand uvm_reg_field                        RX_THLD_FORCE;
-    rand uvm_reg_field                        IBI_THLD_FORCE;
-    rand uvm_reg_field                        CMD_QUEUE_READY_FORCE;
-    rand uvm_reg_field                        RESP_READY_FORCE;
-    rand uvm_reg_field                        TRANSFER_ABORT_FORCE;
-    rand uvm_reg_field                        TRANSFER_ERR_FORCE;
+    rand uvm_reg_field TX_THLD_FORCE;
+    rand uvm_reg_field RX_THLD_FORCE;
+    rand uvm_reg_field IBI_THLD_FORCE;
+    rand uvm_reg_field CMD_QUEUE_READY_FORCE;
+    rand uvm_reg_field RESP_READY_FORCE;
+    rand uvm_reg_field TRANSFER_ABORT_FORCE;
+    rand uvm_reg_field TRANSFER_ERR_FORCE;
 
     function new(string name = "I3CCSR__PIOControl__PIO_INTR_FORCE");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.TX_THLD_FORCE = new("TX_THLD_FORCE");
@@ -1487,39 +874,18 @@ package registers_uvm;
       this.TRANSFER_ABORT_FORCE.configure(this, 1, 5, "WO", 0, 'h0, 1, 1, 0);
       this.TRANSFER_ERR_FORCE = new("TRANSFER_ERR_FORCE");
       this.TRANSFER_ERR_FORCE.configure(this, 1, 9, "WO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (TX_THLD_FORCE_bit_cg[bt]) TX_THLD_FORCE_bit_cg[bt] = new();
-        foreach (RX_THLD_FORCE_bit_cg[bt]) RX_THLD_FORCE_bit_cg[bt] = new();
-        foreach (IBI_THLD_FORCE_bit_cg[bt]) IBI_THLD_FORCE_bit_cg[bt] = new();
-        foreach (CMD_QUEUE_READY_FORCE_bit_cg[bt]) CMD_QUEUE_READY_FORCE_bit_cg[bt] = new();
-        foreach (RESP_READY_FORCE_bit_cg[bt]) RESP_READY_FORCE_bit_cg[bt] = new();
-        foreach (TRANSFER_ABORT_FORCE_bit_cg[bt]) TRANSFER_ABORT_FORCE_bit_cg[bt] = new();
-        foreach (TRANSFER_ERR_FORCE_bit_cg[bt]) TRANSFER_ERR_FORCE_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__PIO_INTR_FORCE
 
   // Reg - I3CCSR.PIOControl.PIO_CONTROL
   class I3CCSR__PIOControl__PIO_CONTROL extends uvm_reg;
-    protected uvm_reg_data_t               m_current;
-    protected uvm_reg_data_t               m_data;
-    protected bit                          m_is_read;
-
-    I3CCSR__PIOControl__PIO_CONTROL_bit_cg ENABLE_bit_cg[1];
-    I3CCSR__PIOControl__PIO_CONTROL_bit_cg RS_bit_cg    [1];
-    I3CCSR__PIOControl__PIO_CONTROL_bit_cg ABORT_bit_cg [1];
-    I3CCSR__PIOControl__PIO_CONTROL_fld_cg fld_cg;
-    rand uvm_reg_field                     ENABLE;
-    rand uvm_reg_field                     RS;
-    rand uvm_reg_field                     ABORT;
+    rand uvm_reg_field ENABLE;
+    rand uvm_reg_field RS;
+    rand uvm_reg_field ABORT;
 
     function new(string name = "I3CCSR__PIOControl__PIO_CONTROL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.ENABLE = new("ENABLE");
@@ -1528,12 +894,6 @@ package registers_uvm;
       this.RS.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
       this.ABORT = new("ABORT");
       this.ABORT.configure(this, 1, 2, "RW", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (ENABLE_bit_cg[bt]) ENABLE_bit_cg[bt] = new();
-        foreach (RS_bit_cg[bt]) RS_bit_cg[bt] = new();
-        foreach (ABORT_bit_cg[bt]) ABORT_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__PIOControl__PIO_CONTROL
 
@@ -1629,762 +989,409 @@ package registers_uvm;
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER_fld_cg fld_cg;
     rand uvm_reg_field CAP_ID;
     rand uvm_reg_field CAP_LENGTH;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CAP_ID = new("CAP_ID");
       this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
       this.CAP_LENGTH = new("CAP_LENGTH");
       this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
-        foreach (CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__EXTCAP_HEADER
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_0
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_1
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_2
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__PROT_CAP_3
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_0
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_1
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_2
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_3
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_4
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_5
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_ID_6
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_0
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_STATUS_1
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__DEVICE_RESET
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_CTRL
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__RECOVERY_STATUS
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__HW_STATUS
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_0
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_CTRL_1
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_0
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_1
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_2
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_3
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_4
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_STATUS_5
 
   // Reg - I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA
   class I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA_fld_cg fld_cg;
     rand uvm_reg_field PLACEHOLDER;
 
     function new(
         string name = "I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SecureFirmwareRecoveryInterfaceRegisters__INDIRECT_FIFO_DATA
 
@@ -2582,69 +1589,229 @@ package registers_uvm;
 
   // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER
   class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
-    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER_fld_cg fld_cg;
     rand uvm_reg_field CAP_ID;
     rand uvm_reg_field CAP_LENGTH;
 
     function new(
         string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CAP_ID = new("CAP_ID");
       this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
       this.CAP_LENGTH = new("CAP_LENGTH");
       this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
-        foreach (CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER
 
-  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.PLACE_HOLDER_1
-  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1 extends uvm_reg;
-    protected uvm_reg_data_t m_current;
-    protected uvm_reg_data_t m_data;
-    protected bit m_is_read;
-
-    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1_fld_cg fld_cg;
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL extends uvm_reg;
     rand uvm_reg_field PLACEHOLDER;
 
-    function new(
-        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+    function new(string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL");
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
-  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS extends uvm_reg;
+    rand uvm_reg_field PLACEHOLDER;
+
+    function new(string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.PLACEHOLDER = new("PLACEHOLDER");
+      this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS extends uvm_reg;
+    rand uvm_reg_field PLACEHOLDER;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.PLACEHOLDER = new("PLACEHOLDER");
+      this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE extends uvm_reg;
+    rand uvm_reg_field PLACEHOLDER;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.PLACEHOLDER = new("PLACEHOLDER");
+      this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE extends uvm_reg;
+    rand uvm_reg_field PLACEHOLDER;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.PLACEHOLDER = new("PLACEHOLDER");
+      this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT extends uvm_reg;
+    rand uvm_reg_field TTI_RX_DESCRIPTOR;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_RX_DESCRIPTOR = new("TTI_RX_DESCRIPTOR");
+      this.TTI_RX_DESCRIPTOR.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT extends uvm_reg;
+    rand uvm_reg_field TTI_RX_DATA;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_RX_DATA = new("TTI_RX_DATA");
+      this.TTI_RX_DATA.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT extends uvm_reg;
+    rand uvm_reg_field TTI_TX_DESCRIPTOR;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_TX_DESCRIPTOR = new("TTI_TX_DESCRIPTOR");
+      this.TTI_TX_DESCRIPTOR.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT extends uvm_reg;
+    rand uvm_reg_field TTI_TX_DATA;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_TX_DATA = new("TTI_TX_DATA");
+      this.TTI_TX_DATA.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_SIZE extends uvm_reg;
+    rand uvm_reg_field TTI_RX_DESCRIPTOR_BUFFER_SIZE;
+    rand uvm_reg_field TTI_TX_DESCRIPTOR_BUFFER_SIZE;
+    rand uvm_reg_field TTI_RX_DATA_BUFFER_SIZE;
+    rand uvm_reg_field TTI_TX_DATA_BUFFER_SIZE;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_SIZE");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_RX_DESCRIPTOR_BUFFER_SIZE = new("TTI_RX_DESCRIPTOR_BUFFER_SIZE");
+      this.TTI_RX_DESCRIPTOR_BUFFER_SIZE.configure(this, 8, 0, "RO", 0, 'h7, 1, 1, 0);
+      this.TTI_TX_DESCRIPTOR_BUFFER_SIZE = new("TTI_TX_DESCRIPTOR_BUFFER_SIZE");
+      this.TTI_TX_DESCRIPTOR_BUFFER_SIZE.configure(this, 8, 8, "RO", 0, 'h7, 1, 1, 0);
+      this.TTI_RX_DATA_BUFFER_SIZE = new("TTI_RX_DATA_BUFFER_SIZE");
+      this.TTI_RX_DATA_BUFFER_SIZE.configure(this, 8, 16, "RO", 0, 'h7, 1, 1, 0);
+      this.TTI_TX_DATA_BUFFER_SIZE = new("TTI_TX_DATA_BUFFER_SIZE");
+      this.TTI_TX_DATA_BUFFER_SIZE.configure(this, 8, 24, "RO", 0, 'h7, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_SIZE
+
+  // Reg - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL
+  class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL extends uvm_reg;
+    rand uvm_reg_field TTI_RX_DESCRIPTOR_THLD;
+    rand uvm_reg_field TTI_TX_DESCRIPTOR_THLD;
+    rand uvm_reg_field TTI_RX_DATA_THLD;
+    rand uvm_reg_field TTI_TX_DATA_THLD;
+
+    function new(
+        string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL");
+      super.new(name, 32, UVM_NO_COVERAGE);
+    endfunction : new
+
+    virtual function void build();
+      this.TTI_RX_DESCRIPTOR_THLD = new("TTI_RX_DESCRIPTOR_THLD");
+      this.TTI_RX_DESCRIPTOR_THLD.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
+      this.TTI_TX_DESCRIPTOR_THLD = new("TTI_TX_DESCRIPTOR_THLD");
+      this.TTI_TX_DESCRIPTOR_THLD.configure(this, 8, 8, "RW", 0, 'h0, 1, 1, 0);
+      this.TTI_RX_DATA_THLD = new("TTI_RX_DATA_THLD");
+      this.TTI_RX_DATA_THLD.configure(this, 8, 16, "RW", 0, 'h0, 1, 1, 0);
+      this.TTI_TX_DATA_THLD = new("TTI_TX_DATA_THLD");
+      this.TTI_TX_DATA_THLD.configure(this, 8, 24, "RW", 0, 'h0, 1, 1, 0);
+    endfunction : build
+  endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL
 
   // Regfile - I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters
   class I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters extends uvm_reg_block;
-    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER  EXTCAP_HEADER;
-    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__PLACE_HOLDER_1 PLACE_HOLDER_1;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__EXTCAP_HEADER EXTCAP_HEADER;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_CONTROL TTI_CONTROL;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_STATUS TTI_STATUS;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_STATUS
+    TTI_INTERRUPT_STATUS;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_ENABLE
+    TTI_INTERRUPT_ENABLE;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_INTERRUPT_FORCE
+    TTI_INTERRUPT_FORCE;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DESCRIPTOR_QUEUE_PORT
+    TTI_RX_DESCRIPTOR_QUEUE_PORT;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_RX_DATA_PORT TTI_RX_DATA_PORT;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DESCRIPTOR_QUEUE_PORT
+    TTI_TX_DESCRIPTOR_QUEUE_PORT;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_TX_DATA_PORT TTI_TX_DATA_PORT;
+    rand I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_SIZE TTI_QUEUE_SIZE;
+    rand
+    I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters__TTI_QUEUE_THRESHOLD_CONTROL
+    TTI_QUEUE_THRESHOLD_CONTROL;
 
     function new(string name = "I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters");
       super.new(name);
@@ -2657,70 +1824,92 @@ package registers_uvm;
 
       this.EXTCAP_HEADER.build();
       this.default_map.add_reg(this.EXTCAP_HEADER, 'h0);
-      this.PLACE_HOLDER_1 = new("PLACE_HOLDER_1");
-      this.PLACE_HOLDER_1.configure(this);
+      this.TTI_CONTROL = new("TTI_CONTROL");
+      this.TTI_CONTROL.configure(this);
 
-      this.PLACE_HOLDER_1.build();
-      this.default_map.add_reg(this.PLACE_HOLDER_1, 'h4);
+      this.TTI_CONTROL.build();
+      this.default_map.add_reg(this.TTI_CONTROL, 'h4);
+      this.TTI_STATUS = new("TTI_STATUS");
+      this.TTI_STATUS.configure(this);
+
+      this.TTI_STATUS.build();
+      this.default_map.add_reg(this.TTI_STATUS, 'h8);
+      this.TTI_INTERRUPT_STATUS = new("TTI_INTERRUPT_STATUS");
+      this.TTI_INTERRUPT_STATUS.configure(this);
+
+      this.TTI_INTERRUPT_STATUS.build();
+      this.default_map.add_reg(this.TTI_INTERRUPT_STATUS, 'hc);
+      this.TTI_INTERRUPT_ENABLE = new("TTI_INTERRUPT_ENABLE");
+      this.TTI_INTERRUPT_ENABLE.configure(this);
+
+      this.TTI_INTERRUPT_ENABLE.build();
+      this.default_map.add_reg(this.TTI_INTERRUPT_ENABLE, 'h10);
+      this.TTI_INTERRUPT_FORCE = new("TTI_INTERRUPT_FORCE");
+      this.TTI_INTERRUPT_FORCE.configure(this);
+
+      this.TTI_INTERRUPT_FORCE.build();
+      this.default_map.add_reg(this.TTI_INTERRUPT_FORCE, 'h14);
+      this.TTI_RX_DESCRIPTOR_QUEUE_PORT = new("TTI_RX_DESCRIPTOR_QUEUE_PORT");
+      this.TTI_RX_DESCRIPTOR_QUEUE_PORT.configure(this);
+
+      this.TTI_RX_DESCRIPTOR_QUEUE_PORT.build();
+      this.default_map.add_reg(this.TTI_RX_DESCRIPTOR_QUEUE_PORT, 'h18);
+      this.TTI_RX_DATA_PORT = new("TTI_RX_DATA_PORT");
+      this.TTI_RX_DATA_PORT.configure(this);
+
+      this.TTI_RX_DATA_PORT.build();
+      this.default_map.add_reg(this.TTI_RX_DATA_PORT, 'h1c);
+      this.TTI_TX_DESCRIPTOR_QUEUE_PORT = new("TTI_TX_DESCRIPTOR_QUEUE_PORT");
+      this.TTI_TX_DESCRIPTOR_QUEUE_PORT.configure(this);
+
+      this.TTI_TX_DESCRIPTOR_QUEUE_PORT.build();
+      this.default_map.add_reg(this.TTI_TX_DESCRIPTOR_QUEUE_PORT, 'h20);
+      this.TTI_TX_DATA_PORT = new("TTI_TX_DATA_PORT");
+      this.TTI_TX_DATA_PORT.configure(this);
+
+      this.TTI_TX_DATA_PORT.build();
+      this.default_map.add_reg(this.TTI_TX_DATA_PORT, 'h24);
+      this.TTI_QUEUE_SIZE = new("TTI_QUEUE_SIZE");
+      this.TTI_QUEUE_SIZE.configure(this);
+
+      this.TTI_QUEUE_SIZE.build();
+      this.default_map.add_reg(this.TTI_QUEUE_SIZE, 'h28);
+      this.TTI_QUEUE_THRESHOLD_CONTROL = new("TTI_QUEUE_THRESHOLD_CONTROL");
+      this.TTI_QUEUE_THRESHOLD_CONTROL.configure(this);
+
+      this.TTI_QUEUE_THRESHOLD_CONTROL.build();
+      this.default_map.add_reg(this.TTI_QUEUE_THRESHOLD_CONTROL, 'h2c);
     endfunction : build
   endclass : I3CCSR__I3C_EC__TargetTransactionInterfaceRegisters
 
   // Reg - I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER
   class I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER extends uvm_reg;
-    protected uvm_reg_data_t                                              m_current;
-    protected uvm_reg_data_t                                              m_data;
-    protected bit                                                         m_is_read;
-
-    I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg    [ 8];
-    I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
-    I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER_fld_cg fld_cg;
-    rand uvm_reg_field                                                    CAP_ID;
-    rand uvm_reg_field                                                    CAP_LENGTH;
+    rand uvm_reg_field CAP_ID;
+    rand uvm_reg_field CAP_LENGTH;
 
     function new(string name = "I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CAP_ID = new("CAP_ID");
       this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
       this.CAP_LENGTH = new("CAP_LENGTH");
       this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
-        foreach (CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__EXTCAP_HEADER
 
   // Reg - I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.PLACE_HOLDER_1
   class I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1 extends uvm_reg;
-    protected uvm_reg_data_t                                               m_current;
-    protected uvm_reg_data_t                                               m_data;
-    protected bit                                                          m_is_read;
-
-    I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1_fld_cg fld_cg;
-    rand uvm_reg_field                                                     PLACEHOLDER;
+    rand uvm_reg_field PLACEHOLDER;
 
     function new(string name = "I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__SoCManagementInterfaceRegisters__PLACE_HOLDER_1
 
@@ -2750,60 +1939,32 @@ package registers_uvm;
 
   // Reg - I3CCSR.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER
   class I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER extends uvm_reg;
-    protected uvm_reg_data_t                                        m_current;
-    protected uvm_reg_data_t                                        m_data;
-    protected bit                                                   m_is_read;
-
-    I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg    [ 8];
-    I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
-    I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER_fld_cg fld_cg;
-    rand uvm_reg_field                                              CAP_ID;
-    rand uvm_reg_field                                              CAP_LENGTH;
+    rand uvm_reg_field CAP_ID;
+    rand uvm_reg_field CAP_LENGTH;
 
     function new(string name = "I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.CAP_ID = new("CAP_ID");
       this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
       this.CAP_LENGTH = new("CAP_LENGTH");
       this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
-        foreach (CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__ControllerConfigRegisters__EXTCAP_HEADER
 
   // Reg - I3CCSR.I3C_EC.ControllerConfigRegisters.PLACE_HOLDER_1
   class I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1 extends uvm_reg;
-    protected uvm_reg_data_t                                         m_current;
-    protected uvm_reg_data_t                                         m_data;
-    protected bit                                                    m_is_read;
-
-    I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1_bit_cg PLACEHOLDER_bit_cg[32];
-    I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1_fld_cg fld_cg;
-    rand uvm_reg_field                                               PLACEHOLDER;
+    rand uvm_reg_field PLACEHOLDER;
 
     function new(string name = "I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1");
-      super.new(name, 32, build_coverage(UVM_CVR_ALL));
+      super.new(name, 32, UVM_NO_COVERAGE);
     endfunction : new
-    extern virtual function void sample_values();
-    extern protected virtual function void sample (uvm_reg_data_t data, uvm_reg_data_t byte_en,
-                                                   bit is_read, uvm_reg_map map);
 
     virtual function void build();
       this.PLACEHOLDER = new("PLACEHOLDER");
       this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-      if (has_coverage(UVM_CVR_REG_BITS)) begin
-        foreach (PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-      end
-      if (has_coverage(UVM_CVR_FIELD_VALS)) fld_cg = new();
     endfunction : build
   endclass : I3CCSR__I3C_EC__ControllerConfigRegisters__PLACE_HOLDER_1
 
@@ -2854,15 +2015,15 @@ package registers_uvm;
       this.TargetTransactionInterfaceRegisters = new("TargetTransactionInterfaceRegisters");
       this.TargetTransactionInterfaceRegisters.configure(this);
       this.TargetTransactionInterfaceRegisters.build();
-      this.default_map.add_submap(this.TargetTransactionInterfaceRegisters.default_map, 'h70);
+      this.default_map.add_submap(this.TargetTransactionInterfaceRegisters.default_map, 'h80);
       this.SoCManagementInterfaceRegisters = new("SoCManagementInterfaceRegisters");
       this.SoCManagementInterfaceRegisters.configure(this);
       this.SoCManagementInterfaceRegisters.build();
-      this.default_map.add_submap(this.SoCManagementInterfaceRegisters.default_map, 'h78);
+      this.default_map.add_submap(this.SoCManagementInterfaceRegisters.default_map, 'hb0);
       this.ControllerConfigRegisters = new("ControllerConfigRegisters");
       this.ControllerConfigRegisters.configure(this);
       this.ControllerConfigRegisters.build();
-      this.default_map.add_submap(this.ControllerConfigRegisters.default_map, 'h80);
+      this.default_map.add_submap(this.ControllerConfigRegisters.default_map, 'hb8);
     endfunction : build
   endclass : I3CCSR__I3C_EC
 
@@ -3019,5 +2180,4 @@ package registers_uvm;
     endfunction : build
   endclass : I3CCSR
 
-  `include "I3CCSR_sample.svh"
 endpackage : registers_uvm
