@@ -340,7 +340,7 @@ clean: ## Clean all generated sources
 		uvm-verilator verilator-uvm-verilator
 
 .DEFAULT_GOAL := help
-HELP_COLUMN_SPAN = 11
+HELP_COLUMN_SPAN = 25
 HELP_FORMAT_STRING = "\033[36m%-$(HELP_COLUMN_SPAN)s\033[0m %s\n"
 help: ## Show this help message
 	@echo List of available targets:
