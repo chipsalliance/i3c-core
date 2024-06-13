@@ -32,3 +32,5 @@ src/rdl/docs/html*
 build
 questa_run
 uvm-1.2*
+# Generated defines for tests
+verification/tools/i3c_defines.svh
