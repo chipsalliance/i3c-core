@@ -11,12 +11,6 @@ module i3c_flow_fsm
     input logic clk,
     input logic rst_n,
 
-    // Interface to SDA/SCL
-    input  logic sda_i,
-    output logic sda_o,
-    input  logic scl_i,
-    output logic scl_o,
-
     // HCI queues
     // Command FIFO
     input logic [CmdThldWidth-1:0] cmd_queue_thld_i,

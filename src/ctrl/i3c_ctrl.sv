@@ -150,10 +150,6 @@ module i3c_ctrl
   i3c_flow_fsm flow_fsm (
       .clk,
       .rst_n,
-      .sda_i,
-      .sda_o(),
-      .scl_i,
-      .scl_o(),
       .cmd_queue_thld_i,
       .cmd_queue_full_i,
       .cmd_queue_below_thld_i,
