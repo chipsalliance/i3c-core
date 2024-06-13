@@ -96,9 +96,9 @@ module i3c_ctrl
       .clk_i (clk),
       .rst_ni(rst_n),
       .scl_i,
-      .scl_o (),
+      .scl_o,
       .sda_i,
-      .sda_o (),
+      .sda_o,
 
       // These should be controlled by the flow FSM
       .host_enable_i(host_enable),
@@ -151,9 +151,9 @@ module i3c_ctrl
       .clk,
       .rst_n,
       .sda_i,
-      .sda_o,
+      .sda_o(),
       .scl_i,
-      .scl_o,
+      .scl_o(),
       .cmd_queue_thld_i,
       .cmd_queue_full_i,
       .cmd_queue_below_thld_i,

@@ -318,10 +318,10 @@ module i3c
       .clk  (clk_i),
       .rst_n(rst_ni),
 
-      .sda_i(i3c_sda_i),
-      .sda_o(i3c_sda_o),
-      .scl_i(i3c_scl_i),
-      .scl_o(i3c_scl_o),
+      .sda_i(phy2ctrl_sda),
+      .sda_o(ctrl2phy_sda),
+      .scl_i(phy2ctrl_scl),
+      .scl_o(ctrl2phy_scl),
 
       .cmd_queue_thld_i(cmd_queue_thld),
       .cmd_queue_empty_i(cmd_queue_empty),
