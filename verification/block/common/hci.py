@@ -219,13 +219,13 @@ class HCIBaseTestInterface:
         await RisingEdge(self.clk)
 
     def get_empty(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_empty_o").value
+        return getattr(self.dut, f"{queue}_queue_empty_o").value
 
     def get_full(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_full_o").value
+        return getattr(self.dut, f"{queue}_queue_full_o").value
 
     def get_thld(self, queue: str):
-        return getattr(self.dut, f"{queue}_fifo_thld_o").value
+        return getattr(self.dut, f"{queue}_queue_thld_o").value
 
     def get_thld_status(self, queue: str):
         if queue in ["cmd", "tx"]:
@@ -235,7 +235,7 @@ class HCIBaseTestInterface:
         else:
             self.dut._log.error(f"Queue {queue} not supported")
 
-        return getattr(self.dut, f"{queue}_fifo_{trig}_thld_o").value
+        return getattr(self.dut, f"{queue}_queue_{trig}_thld_o").value
 
     # Helper functions to fetch / put data to either side
     # of the queues

@@ -25,8 +25,8 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         await super()._setup(get_frontend_bus_if())
 
         # Set queue's ready to 0 (hold accepting the data)
-        self.dut.cmd_fifo_rready_i.value = 0
-        self.dut.tx_fifo_rready_i.value = 0
+        self.dut.cmd_queue_rready_i.value = 0
+        self.dut.tx_queue_rready_i.value = 0
 
     async def reset(self):
         await self._reset()
@@ -51,33 +51,33 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
     async def put_response_desc(self, resp: int = None, timeout: int = 2, units: str = "ms"):
         if not resp:
             resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
-        self.dut.resp_fifo_wdata_i.value = resp
-        self.dut.resp_fifo_wvalid_i.value = 1
+        self.dut.resp_queue_wdata_i.value = resp
+        self.dut.resp_queue_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.resp_fifo_wready_o, True, self.clk, timeout, units)
-        self.dut.resp_fifo_wvalid_i.value = 0
+        await expect_with_timeout(self.dut.resp_queue_wready_o, True, self.clk, timeout, units)
+        self.dut.resp_queue_wvalid_i.value = 0
 
     async def get_command_desc(self, timeout: int = 2, units: str = "ms") -> int:
-        self.dut.cmd_fifo_rready_i.value = 1
+        self.dut.cmd_queue_rready_i.value = 1
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.cmd_fifo_rvalid_o, True, self.clk, timeout, units)
-        self.dut.cmd_fifo_rready_i.value = 0
-        return self.dut.cmd_fifo_rdata_o.value.integer
+        await expect_with_timeout(self.dut.cmd_queue_rvalid_o, True, self.clk, timeout, units)
+        self.dut.cmd_queue_rready_i.value = 0
+        return self.dut.cmd_queue_rdata_o.value.integer
 
     async def get_tx_data(self, timeout: int = 2, units: str = "ms") -> int:
-        self.dut.tx_fifo_rready_i.value = 1
+        self.dut.tx_queue_rready_i.value = 1
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.tx_fifo_rvalid_o, True, self.clk, timeout, units)
-        self.dut.tx_fifo_rready_i.value = 0
-        return self.dut.tx_fifo_rdata_o.value.integer
+        await expect_with_timeout(self.dut.tx_queue_rvalid_o, True, self.clk, timeout, units)
+        self.dut.tx_queue_rready_i.value = 0
+        return self.dut.tx_queue_rdata_o.value.integer
 
     async def put_rx_data(self, rx_data: int = None, timeout: int = 2, units: str = "ms"):
         if not rx_data:
             rx_data = randint(0, 2**32 - 1)
-        self.dut.rx_fifo_wdata_i.value = rx_data
-        self.dut.rx_fifo_wvalid_i.value = 1
+        self.dut.rx_queue_wdata_i.value = rx_data
+        self.dut.rx_queue_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.rx_fifo_wready_o, True, self.clk, timeout, units)
-        self.dut.rx_fifo_wvalid_i.value = 0
+        await expect_with_timeout(self.dut.rx_queue_wready_o, True, self.clk, timeout, units)
+        self.dut.rx_queue_wvalid_i.value = 0

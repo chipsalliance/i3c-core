@@ -19,37 +19,37 @@ module i3c_flow_fsm
 
     // HCI queues
     // Command FIFO
-    input logic [CmdThldWidth-1:0] cmd_fifo_thld_i,
-    input logic cmd_fifo_full_i,
-    input logic cmd_fifo_below_thld_i,
-    input logic cmd_fifo_empty_i,
-    input logic cmd_fifo_rvalid_i,
-    output logic cmd_fifo_rready_o,
-    input logic [CmdFifoWidth-1:0] cmd_fifo_rdata_i,
+    input logic [CmdThldWidth-1:0] cmd_queue_thld_i,
+    input logic cmd_queue_full_i,
+    input logic cmd_queue_below_thld_i,
+    input logic cmd_queue_empty_i,
+    input logic cmd_queue_rvalid_i,
+    output logic cmd_queue_rready_o,
+    input logic [CmdFifoWidth-1:0] cmd_queue_rdata_i,
     // RX FIFO
-    input logic [RxThldWidth-1:0] rx_fifo_thld_i,
-    input logic rx_fifo_full_i,
-    input logic rx_fifo_above_thld_i,
-    input logic rx_fifo_empty_i,
-    output logic rx_fifo_wvalid_o,
-    input logic rx_fifo_wready_i,
-    output logic [RxFifoWidth-1:0] rx_fifo_wdata_o,
+    input logic [RxThldWidth-1:0] rx_queue_thld_i,
+    input logic rx_queue_full_i,
+    input logic rx_queue_above_thld_i,
+    input logic rx_queue_empty_i,
+    output logic rx_queue_wvalid_o,
+    input logic rx_queue_wready_i,
+    output logic [RxFifoWidth-1:0] rx_queue_wdata_o,
     // TX FIFO
-    input logic [TxThldWidth-1:0] tx_fifo_thld_i,
-    input logic tx_fifo_full_i,
-    input logic tx_fifo_below_thld_i,
-    input logic tx_fifo_empty_i,
-    input logic tx_fifo_rvalid_i,
-    output logic tx_fifo_rready_o,
-    input logic [TxFifoWidth-1:0] tx_fifo_rdata_i,
+    input logic [TxThldWidth-1:0] tx_queue_thld_i,
+    input logic tx_queue_full_i,
+    input logic tx_queue_below_thld_i,
+    input logic tx_queue_empty_i,
+    input logic tx_queue_rvalid_i,
+    output logic tx_queue_rready_o,
+    input logic [TxFifoWidth-1:0] tx_queue_rdata_i,
     // Response FIFO
-    input logic [RespThldWidth-1:0] resp_fifo_thld_i,
-    input logic resp_fifo_full_i,
-    input logic resp_fifo_above_thld_i,
-    input logic resp_fifo_empty_i,
-    output logic resp_fifo_wvalid_o,
-    input logic resp_fifo_wready_i,
-    output logic [RespFifoWidth-1:0] resp_fifo_wdata_o,
+    input logic [RespThldWidth-1:0] resp_queue_thld_i,
+    input logic resp_queue_full_i,
+    input logic resp_queue_above_thld_i,
+    input logic resp_queue_empty_i,
+    output logic resp_queue_wvalid_o,
+    input logic resp_queue_wready_i,
+    output logic [RespFifoWidth-1:0] resp_queue_wdata_o,
 
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,
@@ -115,8 +115,8 @@ module i3c_flow_fsm
   logic transfer_cnt_en;
   logic transfer_cnt_rst;
 
-  logic [CmdFifoWidth-1:0] cmd_fifo_rdata;
-  logic cmd_fifo_rvalid;
+  logic [CmdFifoWidth-1:0] cmd_queue_rdata;
+  logic cmd_queue_rvalid;
 
   // DAT table
   dat_entry_t dat_rdata;
@@ -191,11 +191,11 @@ module i3c_flow_fsm
   // Capture command FIFO control signals
   always_ff @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
-      cmd_fifo_rvalid <= '0;
-      cmd_fifo_rdata  <= '0;
+      cmd_queue_rvalid <= '0;
+      cmd_queue_rdata  <= '0;
     end else begin
-      cmd_fifo_rvalid <= cmd_fifo_rvalid_i;
-      cmd_fifo_rdata  <= cmd_fifo_rdata_i;
+      cmd_queue_rvalid <= cmd_queue_rvalid_i;
+      cmd_queue_rdata  <= cmd_queue_rdata_i;
     end
   end
 
@@ -261,8 +261,8 @@ module i3c_flow_fsm
     if (~rst_n) begin
       cmd_desc <= '0;
     end else begin
-      if (cmd_fifo_rvalid_i & cmd_fifo_rready_o) begin
-        cmd_desc <= cmd_fifo_rdata_i;
+      if (cmd_queue_rvalid_i & cmd_queue_rready_o) begin
+        cmd_desc <= cmd_queue_rdata_i;
       end else begin
         cmd_desc <= cmd_desc;
       end
@@ -275,7 +275,7 @@ module i3c_flow_fsm
       tx_dword <= '0;
     end else begin
       if (pop_tx_fifo) begin
-        tx_dword <= tx_fifo_rdata_i;
+        tx_dword <= tx_queue_rdata_i;
       end else begin
         tx_dword <= tx_dword;
       end
@@ -315,11 +315,11 @@ module i3c_flow_fsm
   always_comb begin
     i3c_fsm_idle_o = 1'b0;
     transfer_cnt_en = 1'b0;
-    cmd_fifo_rready_o = 1'b0;
+    cmd_queue_rready_o = 1'b0;
     dat_read_valid_hw_o = 1'b0;
     dct_read_valid_hw_o = 1'b0;
     dat_index_hw_o = '0;
-    tx_fifo_rready_o = 1'b0;
+    tx_queue_rready_o = 1'b0;
     pop_tx_fifo = 1'b0;
     transfer_cnt_rst = 1'b1;
     fmt_fifo_rvalid_o = 1'b0;
@@ -331,7 +331,7 @@ module i3c_flow_fsm
       end
       // WaitForCmd: Fetch Command Descriptor
       WaitForCmd: begin
-        cmd_fifo_rready_o = 1'b1;
+        cmd_queue_rready_o = 1'b1;
       end
       // FetchDAT: Fetch DAT entry
       FetchDAT: begin
@@ -411,14 +411,14 @@ module i3c_flow_fsm
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
-        resp_fifo_wvalid_o = 1'b0;
+        resp_queue_wvalid_o = 1'b0;
         resp_desc.err_status = resp_err_status_d;
         resp_desc.tid = cmd_tid;
         resp_desc.data_length = resp_data_length_d;
 
-        if (resp_fifo_wready_i) begin
-          resp_fifo_wvalid_o = 1'b1;
-          resp_fifo_wdata_o  = resp_desc;
+        if (resp_queue_wready_i) begin
+          resp_queue_wvalid_o = 1'b1;
+          resp_queue_wdata_o  = resp_desc;
         end
       end
       default: begin
@@ -439,7 +439,7 @@ module i3c_flow_fsm
       end
       // WaitForCmd: Fetch Command Descriptor
       WaitForCmd: begin
-        if (~cmd_fifo_empty_i & cmd_fifo_rvalid_i) begin
+        if (~cmd_queue_empty_i & cmd_queue_rvalid_i) begin
           state_next = FetchDAT;
         end
       end
@@ -492,7 +492,7 @@ module i3c_flow_fsm
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
-        if (resp_fifo_wready_i) begin
+        if (resp_queue_wready_i) begin
           state_next = Idle;
         end
       end

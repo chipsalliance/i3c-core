@@ -148,59 +148,59 @@ module i3c
 
   // Command queue
   logic                             cmdrst;
-  logic [         CmdThldWidth-1:0] cmd_fifo_thld;
-  logic [        CmdFifoDepthW-1:0] cmd_fifo_depth;
-  logic                             cmd_fifo_full;
-  logic                             cmd_fifo_below_thld;
-  logic                             cmd_fifo_empty;
-  logic                             cmd_fifo_wvalid;
-  logic                             cmd_fifo_wready;
-  logic [         CmdFifoWidth-1:0] cmd_fifo_wdata;
-  logic                             cmd_fifo_rvalid;
-  logic                             cmd_fifo_rready;
-  logic [         CmdFifoWidth-1:0] cmd_fifo_rdata;
+  logic [         CmdThldWidth-1:0] cmd_queue_thld;
+  logic [        CmdFifoDepthW-1:0] cmd_queue_depth;
+  logic                             cmd_queue_full;
+  logic                             cmd_queue_below_thld;
+  logic                             cmd_queue_empty;
+  logic                             cmd_queue_wvalid;
+  logic                             cmd_queue_wready;
+  logic [         CmdFifoWidth-1:0] cmd_queue_wdata;
+  logic                             cmd_queue_rvalid;
+  logic                             cmd_queue_rready;
+  logic [         CmdFifoWidth-1:0] cmd_queue_rdata;
 
   // RX queue
   logic                             rxrst;
-  logic [          RxThldWidth-1:0] rx_fifo_thld;
-  logic [         RxFifoDepthW-1:0] rx_fifo_depth;
-  logic                             rx_fifo_full;
-  logic                             rx_fifo_above_thld;
-  logic                             rx_fifo_empty;
-  logic                             rx_fifo_wvalid;
-  logic                             rx_fifo_wready;
-  logic [          RxFifoWidth-1:0] rx_fifo_wdata;
-  logic                             rx_fifo_rvalid;
-  logic                             rx_fifo_rready;
-  logic [          RxFifoWidth-1:0] rx_fifo_rdata;
+  logic [          RxThldWidth-1:0] rx_queue_thld;
+  logic [         RxFifoDepthW-1:0] rx_queue_depth;
+  logic                             rx_queue_full;
+  logic                             rx_queue_above_thld;
+  logic                             rx_queue_empty;
+  logic                             rx_queue_wvalid;
+  logic                             rx_queue_wready;
+  logic [          RxFifoWidth-1:0] rx_queue_wdata;
+  logic                             rx_queue_rvalid;
+  logic                             rx_queue_rready;
+  logic [          RxFifoWidth-1:0] rx_queue_rdata;
 
   // TX queue
   logic                             txrst;
-  logic [          TxThldWidth-1:0] tx_fifo_thld;
-  logic [         TxFifoDepthW-1:0] tx_fifo_depth;
-  logic                             tx_fifo_full;
-  logic                             tx_fifo_below_thld;
-  logic                             tx_fifo_empty;
-  logic                             tx_fifo_wvalid;
-  logic                             tx_fifo_wready;
-  logic [          TxFifoWidth-1:0] tx_fifo_wdata;
-  logic                             tx_fifo_rvalid;
-  logic                             tx_fifo_rready;
-  logic [          RxFifoWidth-1:0] tx_fifo_rdata;
+  logic [          TxThldWidth-1:0] tx_queue_thld;
+  logic [         TxFifoDepthW-1:0] tx_queue_depth;
+  logic                             tx_queue_full;
+  logic                             tx_queue_below_thld;
+  logic                             tx_queue_empty;
+  logic                             tx_queue_wvalid;
+  logic                             tx_queue_wready;
+  logic [          TxFifoWidth-1:0] tx_queue_wdata;
+  logic                             tx_queue_rvalid;
+  logic                             tx_queue_rready;
+  logic [          RxFifoWidth-1:0] tx_queue_rdata;
 
   // Response queue
   logic                             resprst;
-  logic [        RespThldWidth-1:0] resp_fifo_thld;
-  logic [       RespFifoDepthW-1:0] resp_fifo_depth;
-  logic                             resp_fifo_full;
-  logic                             resp_fifo_above_thld;
-  logic                             resp_fifo_empty;
-  logic                             resp_fifo_wvalid;
-  logic                             resp_fifo_wready;
-  logic [        RespFifoWidth-1:0] resp_fifo_wdata;
-  logic                             resp_fifo_rvalid;
-  logic                             resp_fifo_rready;
-  logic [        RespFifoWidth-1:0] resp_fifo_rdata;
+  logic [        RespThldWidth-1:0] resp_queue_thld;
+  logic [       RespFifoDepthW-1:0] resp_queue_depth;
+  logic                             resp_queue_full;
+  logic                             resp_queue_above_thld;
+  logic                             resp_queue_empty;
+  logic                             resp_queue_wvalid;
+  logic                             resp_queue_wready;
+  logic [        RespFifoWidth-1:0] resp_queue_wdata;
+  logic                             resp_queue_rvalid;
+  logic                             resp_queue_rready;
+  logic [        RespFifoWidth-1:0] resp_queue_rdata;
 
   // DAT <-> Controller interface
   logic                             dat_read_valid_hw;
@@ -323,37 +323,37 @@ module i3c
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),
 
-      .cmd_fifo_thld_i(cmd_fifo_thld),
-      .cmd_fifo_empty_i(cmd_fifo_empty),
-      .cmd_fifo_full_i(cmd_fifo_full),
-      .cmd_fifo_below_thld_i(cmd_fifo_below_thld),
-      .cmd_fifo_rvalid_i(cmd_fifo_rvalid),
-      .cmd_fifo_rready_o(cmd_fifo_rready),
-      .cmd_fifo_rdata_i(cmd_fifo_rdata),
+      .cmd_queue_thld_i(cmd_queue_thld),
+      .cmd_queue_empty_i(cmd_queue_empty),
+      .cmd_queue_full_i(cmd_queue_full),
+      .cmd_queue_below_thld_i(cmd_queue_below_thld),
+      .cmd_queue_rvalid_i(cmd_queue_rvalid),
+      .cmd_queue_rready_o(cmd_queue_rready),
+      .cmd_queue_rdata_i(cmd_queue_rdata),
 
-      .rx_fifo_thld_i(rx_fifo_thld),
-      .rx_fifo_empty_i(rx_fifo_empty),
-      .rx_fifo_full_i(rx_fifo_full),
-      .rx_fifo_above_thld_i(rx_fifo_above_thld),
-      .rx_fifo_wvalid_o(rx_fifo_wvalid),
-      .rx_fifo_wready_i(rx_fifo_wready),
-      .rx_fifo_wdata_o(rx_fifo_wdata),
+      .rx_queue_thld_i(rx_queue_thld),
+      .rx_queue_empty_i(rx_queue_empty),
+      .rx_queue_full_i(rx_queue_full),
+      .rx_queue_above_thld_i(rx_queue_above_thld),
+      .rx_queue_wvalid_o(rx_queue_wvalid),
+      .rx_queue_wready_i(rx_queue_wready),
+      .rx_queue_wdata_o(rx_queue_wdata),
 
-      .tx_fifo_thld_i(tx_fifo_thld),
-      .tx_fifo_empty_i(tx_fifo_empty),
-      .tx_fifo_full_i(tx_fifo_full),
-      .tx_fifo_below_thld_i(tx_fifo_below_thld),
-      .tx_fifo_rvalid_i(tx_fifo_rvalid),
-      .tx_fifo_rready_o(tx_fifo_rready),
-      .tx_fifo_rdata_i(tx_fifo_rdata),
+      .tx_queue_thld_i(tx_queue_thld),
+      .tx_queue_empty_i(tx_queue_empty),
+      .tx_queue_full_i(tx_queue_full),
+      .tx_queue_below_thld_i(tx_queue_below_thld),
+      .tx_queue_rvalid_i(tx_queue_rvalid),
+      .tx_queue_rready_o(tx_queue_rready),
+      .tx_queue_rdata_i(tx_queue_rdata),
 
-      .resp_fifo_thld_i(resp_fifo_thld),
-      .resp_fifo_empty_i(resp_fifo_empty),
-      .resp_fifo_full_i(resp_fifo_full),
-      .resp_fifo_above_thld_i(resp_fifo_above_thld),
-      .resp_fifo_wvalid_o(resp_fifo_wvalid),
-      .resp_fifo_wready_i(resp_fifo_wready),
-      .resp_fifo_wdata_o(resp_fifo_wdata),
+      .resp_queue_thld_i(resp_queue_thld),
+      .resp_queue_empty_i(resp_queue_empty),
+      .resp_queue_full_i(resp_queue_full),
+      .resp_queue_above_thld_i(resp_queue_above_thld),
+      .resp_queue_wvalid_o(resp_queue_wvalid),
+      .resp_queue_wready_i(resp_queue_wready),
+      .resp_queue_wdata_o(resp_queue_wdata),
 
       // DAT <-> Controller interface
       .dat_read_valid_hw_o(dat_read_valid_hw),
@@ -407,40 +407,40 @@ module i3c
       .dct_mem_sink_o,
 
       // Command queue
-      .cmd_full_o(cmd_fifo_full),
-      .cmd_thld_o(cmd_fifo_thld),
-      .cmd_below_thld_o(cmd_fifo_below_thld),
-      .cmd_empty_o(cmd_fifo_empty),
-      .cmd_rvalid_o(cmd_fifo_rvalid),
-      .cmd_rready_i(cmd_fifo_rready),
-      .cmd_rdata_o(cmd_fifo_rdata),
+      .cmd_full_o(cmd_queue_full),
+      .cmd_thld_o(cmd_queue_thld),
+      .cmd_below_thld_o(cmd_queue_below_thld),
+      .cmd_empty_o(cmd_queue_empty),
+      .cmd_rvalid_o(cmd_queue_rvalid),
+      .cmd_rready_i(cmd_queue_rready),
+      .cmd_rdata_o(cmd_queue_rdata),
 
       // RX queue
-      .rx_full_o(rx_fifo_full),
-      .rx_thld_o(rx_fifo_thld),
-      .rx_above_thld_o(rx_fifo_above_thld),
-      .rx_empty_o(rx_fifo_empty),
-      .rx_wvalid_i(rx_fifo_wvalid),
-      .rx_wready_o(rx_fifo_wready),
-      .rx_wdata_i(rx_fifo_wdata),
+      .rx_full_o(rx_queue_full),
+      .rx_thld_o(rx_queue_thld),
+      .rx_above_thld_o(rx_queue_above_thld),
+      .rx_empty_o(rx_queue_empty),
+      .rx_wvalid_i(rx_queue_wvalid),
+      .rx_wready_o(rx_queue_wready),
+      .rx_wdata_i(rx_queue_wdata),
 
       // TX queue
-      .tx_full_o(tx_fifo_full),
-      .tx_thld_o(tx_fifo_thld),
-      .tx_below_thld_o(tx_fifo_below_thld),
-      .tx_empty_o(tx_fifo_empty),
-      .tx_rvalid_o(tx_fifo_rvalid),
-      .tx_rready_i(tx_fifo_rready),
-      .tx_rdata_o(tx_fifo_rdata),
+      .tx_full_o(tx_queue_full),
+      .tx_thld_o(tx_queue_thld),
+      .tx_below_thld_o(tx_queue_below_thld),
+      .tx_empty_o(tx_queue_empty),
+      .tx_rvalid_o(tx_queue_rvalid),
+      .tx_rready_i(tx_queue_rready),
+      .tx_rdata_o(tx_queue_rdata),
 
       // Response queue
-      .resp_full_o(resp_fifo_full),
-      .resp_thld_o(resp_fifo_thld),
-      .resp_above_thld_o(resp_fifo_above_thld),
-      .resp_empty_o(resp_fifo_empty),
-      .resp_wvalid_i(resp_fifo_wvalid),
-      .resp_wready_o(resp_fifo_wready),
-      .resp_wdata_i(resp_fifo_wdata)
+      .resp_full_o(resp_queue_full),
+      .resp_thld_o(resp_queue_thld),
+      .resp_above_thld_o(resp_queue_above_thld),
+      .resp_empty_o(resp_queue_empty),
+      .resp_wvalid_i(resp_queue_wvalid),
+      .resp_wready_o(resp_queue_wready),
+      .resp_wdata_i(resp_queue_wdata)
   );
 
   // I3C PHY
