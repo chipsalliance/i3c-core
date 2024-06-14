@@ -374,6 +374,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             rsp.T_bit.push_back(t_bit);
             `uvm_info(get_full_name(), $sformatf("Host sampled device data data[%0d]=%d, T_bit=%b",
                 i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
+            if (!rsp.T_bit[i]) begin  // Device finished transfer
+              break;
+            end
           end
           //host_scl_stop = 1;
           if (rsp.T_bit[req.data_cnt-1]) begin

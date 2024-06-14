@@ -311,6 +311,11 @@ module i3c_driver_test;
         {8'hDE, 8'hAD, 8'hBE, 8'hEF}, {1, 1, 1, 0});
     addr_test();
     assert (rsp_host.data == dev_item.data[0:1]);
+    // I3C device finish, but host wanted more
+    create_i3c_item(7'h72, 1, {8'h0, 8'h0, 8'h0, 8'h0, 8'h0}, {0, 0, 0, 0, 0},
+        {8'hDE, 8'hAD, 8'hBE, 8'hEF}, {1, 1, 1, 0});
+    addr_test();
+    assert (rsp_host.data == dev_item.data);
   endtask
 
   task i3c_write();
