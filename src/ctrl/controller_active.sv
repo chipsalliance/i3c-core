@@ -1,25 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// TODO: Consider arbitration difference from i2c:
-// Section 5.1.4
-// 48b provisioned id and bcr, dcr are used.
-// This is to enable dynamic addressing.
-
-module i3c_ctrl
-  import i3c_ctrl_pkg::*;
-  import i2c_pkg::*;
+module controller_active
+  import controller_pkg::*;
   import i3c_pkg::*;
   import hci_pkg::*;
-#(
-    parameter int TEMP = 0
-) (
-    input  logic clk,
-    input  logic rst_n,
+(
+    input logic clk_i,
+    input logic rst_ni,
+
     // Interface to SDA/SCL
-    input  logic sda_i,
-    output logic sda_o,
-    input  logic scl_i,
-    output logic scl_o,
+    input  logic ctrl_scl_i[2],
+    input  logic ctrl_sda_i[2],
+    output logic ctrl_scl_o[2],
+    output logic ctrl_sda_o[2],
 
     // HCI queues
     // Command FIFO
@@ -67,6 +60,7 @@ module i3c_ctrl
     output logic [                 127:0] dct_wdata_hw_o,
     input  logic [                 127:0] dct_rdata_hw_i,
 
+    // TODO: rename
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o,
 
@@ -92,64 +86,9 @@ module i3c_ctrl
 
   // TODO: Connect I2C Controller SDA/SCL to I3C Flow FSM
 
-  i2c_controller_fsm i2c_fsm (
-      .clk_i (clk),
-      .rst_ni(rst_n),
-      .scl_i,
-      .scl_o,
-      .sda_i,
-      .sda_o,
-
-      // These should be controlled by the flow FSM
-      .host_enable_i(host_enable),
-      .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
-      .fmt_fifo_depth_i(fmt_fifo_depth),
-      .fmt_fifo_rready_o(fmt_fifo_rready),
-      .fmt_byte_i(fmt_byte),
-      .fmt_flag_start_before_i(fmt_flag_start_before),
-      .fmt_flag_stop_after_i(fmt_flag_stop_after),
-      .fmt_flag_read_bytes_i(fmt_flag_read_bytes),
-      .fmt_flag_read_continue_i(fmt_flag_read_continue),
-      .fmt_flag_nak_ok_i(fmt_flag_nak_ok),
-      .unhandled_unexp_nak_i(unhandled_unexp_nak),
-      .unhandled_nak_timeout_i(unhandled_nak_timeout),
-      .rx_fifo_wvalid_o(rx_fifo_wvalid),
-      .rx_fifo_wdata_o(rx_fifo_wdata),
-      .host_idle_o(),
-
-      // TODO: Use calculated timing values
-      .thigh_i(16'd10),
-      .tlow_i(16'd10),
-      .t_r_i(16'd1),
-      .t_f_i(16'd1),
-      .thd_sta_i(16'd1),
-      .tsu_sta_i(16'd1),
-      .tsu_sto_i(16'd1),
-      .tsu_dat_i(16'd1),
-      .thd_dat_i(16'd1),
-      .t_buf_i(16'd1),
-
-      // Clock stretch is not supported by I3C bus
-      .stretch_timeout_i('0),
-      .timeout_enable_i ('0),
-
-      // TODO: Handle NACK on bus
-      .host_nack_handler_timeout_i('0),
-      .host_nack_handler_timeout_en_i('0),
-
-      // TODO: Handle bus events
-      .event_nak_o(),
-      .event_unhandled_nak_timeout_o(),
-      .event_scl_interference_o(),
-      .event_sda_interference_o(),
-      .event_stretch_timeout_o(),
-      .event_sda_unstable_o(),
-      .event_cmd_complete_o()
-  );
-
-  i3c_flow_fsm flow_fsm (
-      .clk,
-      .rst_n,
+  flow_active flow_fsm (
+      .clk_i,
+      .rst_ni,
       .cmd_queue_thld_i,
       .cmd_queue_full_i,
       .cmd_queue_below_thld_i,
@@ -204,6 +143,72 @@ module i3c_ctrl
       .i3c_fsm_idle_o,
       .err,
       .irq
+  );
+
+  i2c_controller_fsm i2c_fsm (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+      .scl_i (ctrl_scl_i[0]),
+      .scl_o (ctrl_scl_o[0]),
+      .sda_i (ctrl_sda_i[0]),
+      .sda_o (ctrl_sda_o[0]),
+
+      // These should be controlled by the flow FSM
+      .host_enable_i(host_enable),
+      .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
+      .fmt_fifo_depth_i(fmt_fifo_depth),
+      .fmt_fifo_rready_o(fmt_fifo_rready),
+      .fmt_byte_i(fmt_byte),
+      .fmt_flag_start_before_i(fmt_flag_start_before),
+      .fmt_flag_stop_after_i(fmt_flag_stop_after),
+      .fmt_flag_read_bytes_i(fmt_flag_read_bytes),
+      .fmt_flag_read_continue_i(fmt_flag_read_continue),
+      .fmt_flag_nak_ok_i(fmt_flag_nak_ok),
+      .unhandled_unexp_nak_i(unhandled_unexp_nak),
+      .unhandled_nak_timeout_i(unhandled_nak_timeout),
+      .rx_fifo_wvalid_o(rx_fifo_wvalid),
+      .rx_fifo_wdata_o(rx_fifo_wdata),
+      .host_idle_o(),
+
+      // TODO: Use calculated timing values
+      // TODO: Expose as programmable feature
+      .thigh_i(16'd10),
+      .tlow_i(16'd10),
+      .t_r_i(16'd1),
+      .t_f_i(16'd1),
+      .thd_sta_i(16'd1),
+      .tsu_sta_i(16'd1),
+      .tsu_sto_i(16'd1),
+      .tsu_dat_i(16'd1),
+      .thd_dat_i(16'd1),
+      .t_buf_i(16'd1),
+
+      // Clock stretch is not supported by I3C bus
+      .stretch_timeout_i('0),
+      .timeout_enable_i ('0),
+
+      // TODO: Handle NACK on bus
+      .host_nack_handler_timeout_i('0),
+      .host_nack_handler_timeout_en_i('0),
+
+      // TODO: Handle bus events
+      .event_nak_o(),
+      .event_unhandled_nak_timeout_o(),
+      .event_scl_interference_o(),
+      .event_sda_interference_o(),
+      .event_stretch_timeout_o(),
+      .event_sda_unstable_o(),
+      .event_cmd_complete_o()
+  );
+
+  // TODO: Handle i3c waveform
+  i3c_controller_fsm xi3c_controller_fsm (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .ctrl_scl_i(ctrl_scl_i[1]),
+      .ctrl_sda_i(ctrl_sda_i[1]),
+      .ctrl_scl_o(ctrl_scl_o[1]),
+      .ctrl_sda_o(ctrl_sda_o[1])
   );
 
 endmodule

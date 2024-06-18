@@ -2,14 +2,13 @@
 
 // TODO: Add support for data byte ordering modes (HC_CONTROL.DATA_BYTE_ORDER_MODE)
 
-module i3c_flow_fsm
-  import i3c_ctrl_pkg::*;
-  import i2c_pkg::*;
+module flow_active
+  import controller_pkg::*;
   import i3c_pkg::*;
   import hci_pkg::*;
 (
-    input logic clk,
-    input logic rst_n,
+    input logic clk_i,
+    input logic rst_ni,
 
     // HCI queues
     // Command FIFO
@@ -154,8 +153,8 @@ module i3c_flow_fsm
   assign fmt_fifo_depth_o = 8'd1;
 
   // Capture data from DAT/DCT tables
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       dat_read_valid_d <= 1'b0;
       dct_read_valid_d <= 1'b0;
       dat_rdata <= '0;
@@ -183,8 +182,8 @@ module i3c_flow_fsm
   end
 
   // Capture command FIFO control signals
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       cmd_queue_rvalid <= '0;
       cmd_queue_rdata  <= '0;
     end else begin
@@ -236,8 +235,8 @@ module i3c_flow_fsm
   // Control internal transfer counter
   // TODO: Consider using decremental counter with different load values
   // See i2c_controller_fsm.sv for reference
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       transfer_cnt <= '0;
     end else begin
       if (transfer_cnt_rst) begin
@@ -251,8 +250,8 @@ module i3c_flow_fsm
   end
 
   // Fetch Command Descriptor from the Command Queue
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       cmd_desc <= '0;
     end else begin
       if (cmd_queue_rvalid_i & cmd_queue_rready_o) begin
@@ -264,8 +263,8 @@ module i3c_flow_fsm
   end
 
   // Capture data from TX Queue
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       tx_dword <= '0;
     end else begin
       if (pop_tx_fifo) begin
@@ -277,8 +276,8 @@ module i3c_flow_fsm
   end
 
   // Catch every error detected during the Controller operation
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       resp_err_status_d <= Success;
     end else begin
       // TODO: Add proper error catching
@@ -291,8 +290,8 @@ module i3c_flow_fsm
   end
 
   // Catch every data_length update during the Controller operation
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       resp_data_length_d <= '0;
     end else begin
       if (i3c_fsm_idle_o) begin
@@ -497,8 +496,8 @@ module i3c_flow_fsm
   end
 
   // Sequential state update
-  always_ff @(posedge clk or negedge rst_n) begin : proc_test
-    if (~rst_n) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_test
+    if (~rst_ni) begin
       state <= Idle;
     end else begin
       state <= state_next;

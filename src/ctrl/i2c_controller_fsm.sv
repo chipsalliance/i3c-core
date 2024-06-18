@@ -5,7 +5,7 @@
 // Description: I2C finite state machine
 
 module i2c_controller_fsm
-  import i2c_pkg::*;
+  import controller_pkg::*;
 #(
     parameter int FifoDepth = 64,
     localparam int FifoDepthWidth = $clog2(FifoDepth + 1)
