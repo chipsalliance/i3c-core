@@ -25,6 +25,7 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/hci/axi_adapter.sv \
     $(SRCDIR)/hci/dxt.sv \
     $(SRCDIR)/hci/hci_pkg.sv \
+    $(SRCDIR)/hci/configuration.sv \
     $(SRCDIR)/hci/queues/write_queue.sv \
     $(SRCDIR)/hci/queues/read_queue.sv \
     $(SRCDIR)/hci/hci_ctrl_queues.sv \

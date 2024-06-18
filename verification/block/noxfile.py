@@ -273,6 +273,7 @@ def i2c_phy_integration_verify(session, blockName, testName, coverage):
     "testName",
     [
         "test_i2c_flow",
+        # "test_i3c_target",
     ],
 )
 @nox.parametrize("coverage", None)

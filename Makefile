@@ -3,6 +3,8 @@
 
 SHELL = /bin/bash
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+I3C_ROOT_DIR := $(ROOT_DIR)
+export I3C_ROOT_DIR
 SRC_DIR := $(ROOT_DIR)/src
 SW_DIR := $(ROOT_DIR)/sw
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
