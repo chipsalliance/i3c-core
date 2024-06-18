@@ -406,8 +406,7 @@ regfile PIORegs #(
                 1 - PIO Queue start request,
                 0 - PIO Queue stop request.";
             sw = rw;
-            hw = w;
-            we = true;
+            hw = r;
             reset = 1'b0;
         } RS[1:1];
         field {

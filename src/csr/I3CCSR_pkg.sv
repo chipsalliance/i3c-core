@@ -212,21 +212,11 @@ package I3CCSR_pkg;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__in_t;
 
     typedef struct {
-        logic next;
-        logic we;
-    } I3CCSR__PIOControl__PIO_CONTROL__RS__in_t;
-
-    typedef struct {
-        I3CCSR__PIOControl__PIO_CONTROL__RS__in_t RS;
-    } I3CCSR__PIOControl__PIO_CONTROL__in_t;
-
-    typedef struct {
         I3CCSR__PIOControl__COMMAND_PORT__in_t COMMAND_PORT;
         I3CCSR__PIOControl__RESPONSE_PORT__in_t RESPONSE_PORT;
         I3CCSR__PIOControl__XFER_DATA_PORT__in_t XFER_DATA_PORT;
         I3CCSR__PIOControl__IBI_PORT__in_t IBI_PORT;
         I3CCSR__PIOControl__PIO_INTR_STATUS__in_t PIO_INTR_STATUS;
-        I3CCSR__PIOControl__PIO_CONTROL__in_t PIO_CONTROL;
     } I3CCSR__PIOControl__in_t;
 
     typedef struct {
@@ -516,7 +506,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [1:0] next;
-    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__in_t;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__in_t;
 
     typedef struct {
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__in_t PENDING_RX_NACK;
@@ -531,7 +521,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t DAA_SETDASA_ENABLE;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t DAA_ENTDAA_ENABLE;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t RSTACT_DEFBYTE_02;
-        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__in_t STBY_CR_ENABLE_INT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__in_t STBY_CR_ENABLE_INIT;
     } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__in_t;
 
     typedef struct {
@@ -1609,10 +1599,15 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic value;
+    } I3CCSR__PIOControl__PIO_CONTROL__RS__out_t;
+
+    typedef struct {
+        logic value;
     } I3CCSR__PIOControl__PIO_CONTROL__ABORT__out_t;
 
     typedef struct {
         I3CCSR__PIOControl__PIO_CONTROL__ENABLE__out_t ENABLE;
+        I3CCSR__PIOControl__PIO_CONTROL__RS__out_t RS;
         I3CCSR__PIOControl__PIO_CONTROL__ABORT__out_t ABORT;
     } I3CCSR__PIOControl__PIO_CONTROL__out_t;
 
@@ -1942,7 +1937,7 @@ package I3CCSR_pkg;
 
     typedef struct {
         logic [1:0] value;
-    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__out_t;
+    } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__out_t;
 
     typedef struct {
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__PENDING_RX_NACK__out_t PENDING_RX_NACK;
@@ -1957,7 +1952,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__out_t DAA_SETDASA_ENABLE;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__out_t DAA_ENTDAA_ENABLE;
         I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__out_t RSTACT_DEFBYTE_02;
-        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INT__out_t STBY_CR_ENABLE_INT;
+        I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__out_t STBY_CR_ENABLE_INIT;
     } I3CCSR__I3C_EC__StandbyControllerModeRegisters__STBY_CR_CONTROL__out_t;
 
     typedef struct {

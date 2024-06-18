@@ -957,7 +957,7 @@ module I3CCSR (
                     struct {
                         logic [1:0] next;
                         logic load_next;
-                    } STBY_CR_ENABLE_INT;
+                    } STBY_CR_ENABLE_INIT;
                 } STBY_CR_CONTROL;
                 struct {
                     struct {
@@ -1924,7 +1924,7 @@ module I3CCSR (
                     } RSTACT_DEFBYTE_02;
                     struct {
                         logic [1:0] value;
-                    } STBY_CR_ENABLE_INT;
+                    } STBY_CR_ENABLE_INIT;
                 } STBY_CR_CONTROL;
                 struct {
                     struct {
@@ -4117,9 +4117,6 @@ module I3CCSR (
         if(decoded_reg_strb.PIOControl.PIO_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.PIOControl.PIO_CONTROL.RS.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else if(hwif_in.PIOControl.PIO_CONTROL.RS.we) begin // HW Write - we
-            next_c = hwif_in.PIOControl.PIO_CONTROL.RS.next;
-            load_next_c = '1;
         end
         field_combo.PIOControl.PIO_CONTROL.RS.next = next_c;
         field_combo.PIOControl.PIO_CONTROL.RS.load_next = load_next_c;
@@ -4131,6 +4128,7 @@ module I3CCSR (
             field_storage.PIOControl.PIO_CONTROL.RS.value <= field_combo.PIOControl.PIO_CONTROL.RS.next;
         end
     end
+    assign hwif_out.PIOControl.PIO_CONTROL.RS.value = field_storage.PIOControl.PIO_CONTROL.RS.value;
     // Field: I3CCSR.PIOControl.PIO_CONTROL.ABORT
     always_comb begin
         automatic logic [0:0] next_c;
@@ -5064,30 +5062,30 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT
+    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT
     always_comb begin
         automatic logic [1:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value;
+        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value & ~decoded_wr_biten[31:30]) | (decoded_wr_data[31:30] & decoded_wr_biten[31:30]);
+            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value & ~decoded_wr_biten[31:30]) | (decoded_wr_data[31:30] & decoded_wr_biten[31:30]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.next;
+            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.load_next = load_next_c;
+        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next = next_c;
+        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value <= 2'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.next;
+            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= 2'h0;
+        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next) begin
+            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value;
+    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
     // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR
     always_comb begin
         automatic logic [6:0] next_c;
@@ -7630,7 +7628,7 @@ module I3CCSR (
     assign readback_array[59][19:16] = '0;
     assign readback_array[59][20:20] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value : '0;
     assign readback_array[59][29:21] = '0;
-    assign readback_array[59][31:30] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INT.value : '0;
+    assign readback_array[59][31:30] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value : '0;
     assign readback_array[60][6:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value : '0;
     assign readback_array[60][14:7] = '0;
     assign readback_array[60][15:15] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value : '0;

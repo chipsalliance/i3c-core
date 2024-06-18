@@ -1552,7 +1552,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |  14 |  DAA_SETDASA_ENABLE |  rw  | 0x0 |       Dynamic Address Method Enable SETDASA      |
 |  15 |  DAA_ENTDAA_ENABLE  |  rw  | 0x0 |       Dynamic Address Method Enable ENTDAA       |
 |  20 |  RSTACT_DEFBYTE_02  |  rw  | 0x0 |            RSTACT Support DefByte 0x02           |
-|31:30|  STBY_CR_ENABLE_INT |  rw  | 0x0 |    Host Controller Secondary Controller Enable   |
+|31:30| STBY_CR_ENABLE_INIT |  rw  | 0x0 |    Host Controller Secondary Controller Enable   |
 
 #### PENDING_RX_NACK field
 
@@ -1602,7 +1602,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-#### STBY_CR_ENABLE_INT field
+#### STBY_CR_ENABLE_INIT field
 
 
 

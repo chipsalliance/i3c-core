@@ -29,7 +29,7 @@ regfile StandbyControllerModeRegisters{
             sw = rw;
             hw = rw;
             reset = 2'h0;
-        } STBY_CR_ENABLE_INT[31:30];
+        } STBY_CR_ENABLE_INIT[31:30];
         field {
             name = "RSTACT Support DefByte 0x02";
             desc = "";
