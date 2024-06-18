@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module i2c_phy_integration
-  import i2c_pkg::*;
+  import controller_pkg::*;
 #(
     parameter int FifoDepth = 64,
     parameter int AcqFifoDepth = 64,

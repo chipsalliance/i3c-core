@@ -77,9 +77,13 @@ module hci
     output logic resp_empty_o,
     input logic resp_wvalid_i,
     output logic resp_wready_o,
-    input logic [RespFifoWidth-1:0] resp_wdata_i
+    input logic [RespFifoWidth-1:0] resp_wdata_i,
+
+    // Controller configuration
+    output i3c_config_t core_config
 );
   localparam int unsigned CmdSizeInDwords = CmdFifoWidth / I3CCSR_DATA_WIDTH;
+
   I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
 
@@ -310,6 +314,13 @@ module hci
       .resp_reg_rst_i(resprst),
       .resp_reg_rst_we_o(resp_reset_ctrl_we),
       .resp_reg_rst_data_o(resp_reset_ctrl_next)
+  );
+
+  configuration xconfiguration (
+      .clk_i,
+      .rst_ni,
+      .hwif_out,
+      .core_config
   );
 
 endmodule : hci

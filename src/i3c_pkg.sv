@@ -2,36 +2,13 @@
 
 package i3c_pkg;
   `include "i3c_defines.svh"
+  `include "ccc.svh"
+  `define I3C_RSVD_ADDR 7'h7E
+  `define I3C_RSVD_BYTE 8'hFE
 
   localparam int unsigned RespErrIdWidth = 4;
   localparam int unsigned DatAw = $clog2(`DAT_DEPTH);
   localparam int unsigned DctAw = $clog2(`DCT_DEPTH);
-
-  // I3C Packet
-  typedef struct packed {
-    logic [6:0] address;
-    logic rnw;
-    logic ack;
-  } i3c_ah_t;
-
-  // Table 15 CCC Frame Field definitions
-  typedef struct packed {
-    logic s;
-    i3c_ah_t addr_header;
-
-    byte cmd_code;  // followed by t-bit
-    byte defining_byte;  // followed by t-bit
-    byte subcmd_byte;
-    byte data;  // TODO: this field changes per CCC
-    logic stop;
-    logic sr;
-  } i3c_ccc_t;
-
-  // Broadcast vs direct CCCs
-  // Broadcast: code: 0x00 to 0x7E
-  // Direct: code: 0x80 to 0xFE
-  // is_direct(ccc.cmd_code[7] == 1'b1)
-  // Command code 0xFF is reserved
 
   // Memory port to DAT table
   typedef struct packed {
@@ -47,7 +24,6 @@ package i3c_pkg;
     logic        rvalid;
     logic [1:0]  rerror;
   } dat_mem_src_t;
-
 
   // Memory port to DCT table
   typedef struct packed {
@@ -239,4 +215,28 @@ package i3c_pkg;
     logic [3:0] tid;  // Transaction ID
     i3c_cmd_attr_e attr;
   } internal_control_desc_t;
+
+  // Target Device 48-bit Provisioned ID
+  // Section 5.1.4.1.1 I3C Basic
+  typedef struct packed {
+    logic [15:0] part_id;
+    logic [3:0]  instance_id;
+    logic [11:0] generic_value;
+  } target_dev_id_value_t;
+
+  typedef struct packed {
+    logic [15:0] mipi_manufacturer_id;
+    logic id_type_selector;
+    target_dev_id_value_t vendor_random_value;
+  } target_dev_provisioned_id_t;
+
+  typedef struct packed {
+    logic phy_en;
+    logic [1:0] phy_mux_select;
+    logic i2c_active_en;
+    logic i2c_standby_en;
+    logic i3c_active_en;
+    logic i3c_standby_en;
+  } i3c_config_t;
+
 endpackage

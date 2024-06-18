@@ -2,7 +2,7 @@
 
 module i3c
   import i3c_pkg::*;
-  import i2c_pkg::*;
+  import controller_pkg::*;
   import I3CCSR_pkg::*;
   import hci_pkg::*;
 #(
@@ -126,11 +126,6 @@ module i3c
 
   logic                             sda_o;
   logic                             sda_en_o;
-
-  logic                             ctrl2phy_scl;
-  logic                             phy2ctrl_scl;
-  logic                             ctrl2phy_sda;
-  logic                             phy2ctrl_sda;
 
   // I3C SW CSR IF
   logic                             s_cpuif_req;
@@ -314,14 +309,35 @@ module i3c
   );
 `endif
 
-  i3c_ctrl #() i3c_ctrl (
-      .clk  (clk_i),
-      .rst_n(rst_ni),
+  // TODO: Move configuration to hci.configuration
+  // Array to mux SCL/SDA to 4 waveforms
+  // Phy select:
+  // 00 - i2c controller
+  // 01 - i3c controller
+  // 10 - i2c target
+  // 11 - i3c target
+  logic phy2ctrl_scl[4];
+  logic phy2ctrl_sda[4];
+  logic ctrl2phy_scl[4];
+  logic ctrl2phy_sda[4];
 
-      .sda_i(phy2ctrl_sda),
-      .sda_o(ctrl2phy_sda),
-      .scl_i(phy2ctrl_scl),
-      .scl_o(ctrl2phy_scl),
+  logic [1:0] phy_select_i;
+  assign phy_select_i = 2'b00;  // TODO: Warning: Static configuration
+
+  initial begin
+    $warning("phy_select gives access to i3c target! Change me in i3c.sv!");
+  end
+
+  i3c_config_t core_config;
+
+  controller #() xcontroller (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+
+      .ctrl_scl_i(phy2ctrl_scl),
+      .ctrl_sda_i(phy2ctrl_sda),
+      .ctrl_scl_o(ctrl2phy_scl),
+      .ctrl_sda_o(ctrl2phy_sda),
 
       .cmd_queue_thld_i(cmd_queue_thld),
       .cmd_queue_empty_i(cmd_queue_empty),
@@ -367,14 +383,18 @@ module i3c
       .dct_wdata_hw_o(dct_wdata_hw),
       .dct_rdata_hw_i(dct_rdata_hw),
 
+      // TODO: TTI interface
+
+      //TODO: Rename
       .i3c_fsm_en_i,
       .i3c_fsm_idle_o,
 
       .err(),  // TODO: Handle errors
-      .irq()   // TODO: Handle interrupts
+      .irq(),  // TODO: Handle interrupts
+      .core_config(core_config)
   );
 
-  hci hci (
+  hci xhci (
       .clk_i,
       .rst_ni,
       .s_cpuif_req,
@@ -440,13 +460,16 @@ module i3c
       .resp_empty_o(resp_queue_empty),
       .resp_wvalid_i(resp_queue_wvalid),
       .resp_wready_o(resp_queue_wready),
-      .resp_wdata_i(resp_queue_wdata)
+      .resp_wdata_i(resp_queue_wdata),
+      .core_config(core_config)
   );
 
-  // I3C PHY
-  i3c_phy phy (
+  // I3C muxed PHY
+  i3c_muxed_phy xi3c_muxed_phy (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
+
+      .select_i(phy_select_i),
 
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),
@@ -457,8 +480,8 @@ module i3c
       .sda_en_o(i3c_sda_en_o),
 
       .ctrl_scl_i(ctrl2phy_scl),
-      .ctrl_scl_o(phy2ctrl_scl),
       .ctrl_sda_i(ctrl2phy_sda),
+      .ctrl_scl_o(phy2ctrl_scl),
       .ctrl_sda_o(phy2ctrl_sda)
   );
 endmodule
