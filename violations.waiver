@@ -5,3 +5,4 @@ waive --rule=line-length --location="verification/block/i2c_phy_integration/i2c_
 waive --rule=line-length --location="src/csr/registers_covergroups.svh"
 waive --rule=line-length --location="src/csr/registers_sample.svh"
 waive --rule=line-length --location="src/csr/registers_uvm.sv"
+waive --rule=line-length --location="src/hci/configuration.sv"
