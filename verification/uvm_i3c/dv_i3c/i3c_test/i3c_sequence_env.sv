@@ -1,10 +1,11 @@
 class i3c_sequence_env extends uvm_env;
   `uvm_component_utils(i3c_sequence_env)
 
-  i3c_sequence_env_cfg  m_cfg;
+  i3c_sequence_env_cfg              m_cfg;
 
-  i3c_agent             m_i3c_agent_dev;
-  i3c_agent             m_i3c_agent_host;
+  i3c_agent                         m_i3c_agent_dev;
+  i3c_agent                         m_i3c_agent_host;
+  i3c_sequence_virtual_sequencer    m_vsequencer;
 
   function new (string name="", uvm_component parent=null);
     super.new(name, parent);
@@ -17,6 +18,11 @@ class i3c_sequence_env extends uvm_env;
       `uvm_fatal(get_full_name(), $sformatf("failed to get %s from uvm_config_db", m_cfg.get_type_name()))
     end
 
+    if (m_cfg.is_active) begin
+      m_vsequencer = i3c_sequence_virtual_sequencer::type_id::create("m_vsequence", this);
+      m_vsequencer.m_cfg = m_cfg;
+    end
+
     m_i3c_agent_dev = i3c_agent::type_id::create("m_i3c_agent_dev", this);
     m_i3c_agent_host = i3c_agent::type_id::create("m_i3c_agent_host", this);
     uvm_config_db#(i3c_agent_cfg)::set(this, "m_i3c_agent_dev", "cfg", m_cfg.m_i3c_agent_cfg_dev);
@@ -27,6 +33,8 @@ class i3c_sequence_env extends uvm_env;
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
+    m_vsequencer.m_i3c_sequencer_dev  = m_i3c_agent_dev.sequencer;
+    m_vsequencer.m_i3c_sequencer_host = m_i3c_agent_host.sequencer;
   endfunction
 
 endclass : i3c_sequence_env
