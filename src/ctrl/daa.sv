@@ -51,8 +51,6 @@ module daa
   logic [7:0] dcr;
   assign bcr = stby_cr_device_char_reg[31:24];
   assign dcr = stby_cr_device_char_reg[23:16];
-  assign daa_unique_response = {
-    pid, bcr, dcr
-  };
+  assign daa_unique_response = {pid, bcr, dcr};
 
 endmodule
