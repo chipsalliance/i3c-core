@@ -16,37 +16,37 @@ module controller_active
 
     // HCI queues
     // Command FIFO
-    input logic [CmdThldWidth-1:0] cmd_queue_thld_i,
+    input logic [HciCmdThldWidth-1:0] cmd_queue_thld_i,
     input logic cmd_queue_full_i,
     input logic cmd_queue_below_thld_i,
     input logic cmd_queue_empty_i,
     input logic cmd_queue_rvalid_i,
     output logic cmd_queue_rready_o,
-    input logic [CmdFifoWidth-1:0] cmd_queue_rdata_i,
+    input logic [HciCmdDataWidth-1:0] cmd_queue_rdata_i,
     // RX FIFO
-    input logic [RxThldWidth-1:0] rx_queue_thld_i,
+    input logic [HciRxThldWidth-1:0] rx_queue_thld_i,
     input logic rx_queue_full_i,
     input logic rx_queue_above_thld_i,
     input logic rx_queue_empty_i,
     output logic rx_queue_wvalid_o,
     input logic rx_queue_wready_i,
-    output logic [RxFifoWidth-1:0] rx_queue_wdata_o,
+    output logic [HciRxDataWidth-1:0] rx_queue_wdata_o,
     // TX FIFO
-    input logic [TxThldWidth-1:0] tx_queue_thld_i,
+    input logic [HciTxThldWidth-1:0] tx_queue_thld_i,
     input logic tx_queue_full_i,
     input logic tx_queue_below_thld_i,
     input logic tx_queue_empty_i,
     input logic tx_queue_rvalid_i,
     output logic tx_queue_rready_o,
-    input logic [TxFifoWidth-1:0] tx_queue_rdata_i,
+    input logic [HciTxDataWidth-1:0] tx_queue_rdata_i,
     // Response FIFO
-    input logic [RespThldWidth-1:0] resp_queue_thld_i,
+    input logic [HciRespThldWidth-1:0] resp_queue_thld_i,
     input logic resp_queue_full_i,
     input logic resp_queue_above_thld_i,
     input logic resp_queue_empty_i,
     output logic resp_queue_wvalid_o,
     input logic resp_queue_wready_i,
-    output logic [RespFifoWidth-1:0] resp_queue_wdata_o,
+    output logic [HciRespDataWidth-1:0] resp_queue_wdata_o,
 
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,

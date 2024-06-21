@@ -22,7 +22,7 @@ module configuration
   // Sources:
   logic [1:0] stby_cr_enable_init;
   assign stby_cr_enable_init =
-    hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
+    hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
 
   logic i2c_dev_present;
   assign i2c_dev_present = hwif_out.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
@@ -30,7 +30,7 @@ module configuration
   // This disables TTI for software
   logic target_xact_enable;
   assign target_xact_enable =
-    hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
+    hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
 
   // Note, this field is a capability, not a mode selector, do not use to make decisions
   // assign operation_mode = hwif_out.I3C_EC.StandbyControllerModeRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value;

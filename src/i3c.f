@@ -27,7 +27,8 @@ $(I3C_ROOT_DIR)/src/hci/ahb_if.sv
 $(I3C_ROOT_DIR)/src/hci/axi_adapter.sv
 $(I3C_ROOT_DIR)/src/hci/configuration.sv
 $(I3C_ROOT_DIR)/src/hci/dxt.sv
-$(I3C_ROOT_DIR)/src/hci/hci_ctrl_queues.sv
+$(I3C_ROOT_DIR)/src/hci/tti.sv
+$(I3C_ROOT_DIR)/src/hci/queues.sv
 $(I3C_ROOT_DIR)/src/hci/hci.sv
 $(I3C_ROOT_DIR)/src/ctrl/bus_state.sv
 $(I3C_ROOT_DIR)/src/ctrl/ccc.sv
