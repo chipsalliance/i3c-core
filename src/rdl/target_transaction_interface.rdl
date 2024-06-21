@@ -81,8 +81,8 @@ regfile TargetTransactionInterfaceRegisters{
         field {
             name = "TTI_RX_DESCRIPTOR";
             desc = "RX Data";
-            sw = rw;
-            hw = rw;
+            sw = r;
+            hw = w;
             reset = 32'h00000000;
         } TTI_RX_DESCRIPTOR[31:0];
     } TTI_RX_DESCRIPTOR_QUEUE_PORT;
@@ -92,8 +92,8 @@ regfile TargetTransactionInterfaceRegisters{
         field {
             name = "TTI_RX_DATA";
             desc = "RX Data";
-            sw = rw;
-            hw = rw;
+            sw = r;
+            hw = w;
             reset = 32'h00000000;
         } TTI_RX_DATA[31:0];
     } TTI_RX_DATA_PORT;
@@ -103,8 +103,8 @@ regfile TargetTransactionInterfaceRegisters{
         field {
             name = "TTI_TX_DESCRIPTOR";
             desc = "TX Data";
-            sw = rw;
-            hw = rw;
+            sw = w;
+            hw = r;
             reset = 32'h00000000;
         } TTI_TX_DESCRIPTOR[31:0];
     } TTI_TX_DESCRIPTOR_QUEUE_PORT;
@@ -114,8 +114,8 @@ regfile TargetTransactionInterfaceRegisters{
         field {
             name = "TTI_TX_DATA";
             desc = "TX Data";
-            sw = rw;
-            hw = rw;
+            sw = w;
+            hw = r;
             reset = 32'h00000000;
         } TTI_TX_DATA[31:0];
     } TTI_TX_DATA_PORT;
