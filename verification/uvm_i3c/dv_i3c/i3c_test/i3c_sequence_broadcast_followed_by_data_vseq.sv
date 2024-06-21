@@ -1,20 +1,20 @@
-class i3c_sequence_direct_vseq extends i3c_sequence_base_vseq #(
+class i3c_sequence_broadcast_followed_by_data_vseq extends i3c_sequence_base_vseq #(
     .CFG_T                (i3c_sequence_env_cfg),
     .VIRTUAL_SEQUENCER_T  (i3c_sequence_virtual_sequencer)
   );
 
-  `uvm_object_utils(i3c_sequence_direct_vseq)
+  `uvm_object_utils(i3c_sequence_broadcast_followed_by_data_vseq)
 
-  i3c_direct_data_seq dev;
-  i3c_direct_data_seq host;
+  i3c_broadcast_followed_by_data_seq dev;
+  i3c_broadcast_followed_by_data_seq host;
 
   function new (string name="");
     super.new(name);
   endfunction : new
 
   task body();
-    dev = i3c_direct_data_seq::type_id::create("dev");
-    host = i3c_direct_data_seq::type_id::create("host");
+    dev = i3c_broadcast_followed_by_data_seq::type_id::create("dev");
+    host = i3c_broadcast_followed_by_data_seq::type_id::create("host");
     prep_cfg(.t0(m_cfg.m_i3c_agent_cfg_dev.i3c_target0),
              .t1(m_cfg.m_i3c_agent_cfg_dev.i3c_target1));
     prep_cfg(.t0(m_cfg.m_i3c_agent_cfg_host.i3c_target0),

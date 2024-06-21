@@ -84,9 +84,11 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
       if (cfg.if_mode == Device && stop) begin
         `uvm_info(get_full_name(), "Device got Stop", UVM_HIGH)
         bus_state = DrvIdle;
+        rsp.end_with_rstart = 0;
       end else if (cfg.if_mode == Device && rstart) begin
         `uvm_info(get_full_name(), "Device got RStart", UVM_HIGH)
         bus_state = DrvAddr;
+        rsp.end_with_rstart = 1;
       end
       // Allow for stop after rstart
       if (rsp != null) begin
@@ -424,9 +426,9 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             cfg.vif.host_i3c_data(cfg.tc.i3c_tc, req.T_bit[i]);
           end
           if (req.end_with_rstart) begin
-            bus_state = DrvRStart;
+            bus_state = DrvRStartPushPull;
           end else begin
-            bus_state = DrvStop;
+            bus_state = DrvStopPushPull;
           end
         end
         default: begin

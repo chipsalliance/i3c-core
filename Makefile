@@ -248,8 +248,29 @@ i3c-sequencer-tests-dsim:
 		,tb\
 		,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/\
 		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,i3c_sequence_direct_with_repeated_start_vseq\
+		,i3c_sequence_direct_with_rstart_vseq\
 	)
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_env_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_test_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
+		,tb\
+		,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/\
+		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
+		,i3c_sequence_broadcast_followed_by_data_vseq\
+	)
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_env_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_test_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
+		,tb\
+		,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/\
+		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
+		,i3c_sequence_broadcast_followed_by_data_with_rstart_vseq\
+	)
+
 endif
 
 ifdef VCS

@@ -106,6 +106,47 @@ class i3c_sequence_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
     num_trans.rand_mode(0);
   endtask
 
+  function prep_cfg(output I3C_device t0, output I3C_device t1);
+    t0 = '{
+      IBI_enabled               : 1'b0,
+      controller_request_enable : 1'b0,
+      hot_join_request_enable   : 1'b0,
+
+      static_addr        : 7'b0,
+      static_addr_valid  : 1'b0,
+      dynamic_addr       : i3c_addr0,
+      dynamic_addr_valid : 1'b1,
+
+      bcr : bcr0,
+      dcr : dcr0,
+      pid : pid0,
+      device_read_limit  : device_read_limit0,
+      max_read_length    : max_read_limit0,
+      device_write_limit : device_write_limit0,
+      max_write_length   : max_write_limit0,
+      status             : status0
+    };
+    t1 = '{
+      IBI_enabled               : 1'b0,
+      controller_request_enable : 1'b0,
+      hot_join_request_enable   : 1'b0,
+
+      static_addr        : 7'b0,
+      static_addr_valid  : 1'b0,
+      dynamic_addr       : i3c_addr1,
+      dynamic_addr_valid : 1'b1,
+
+      bcr : bcr1,
+      dcr : dcr1,
+      pid : pid1,
+      device_read_limit  : device_read_limit1,
+      max_read_length    : max_read_limit1,
+      device_write_limit : device_write_limit1,
+      max_write_length   : max_write_limit1,
+      status             : status1
+    };
+  endfunction
+
   task body();
     `uvm_fatal(`gtn, "Need to override this when you extend from this class!")
   endtask : body

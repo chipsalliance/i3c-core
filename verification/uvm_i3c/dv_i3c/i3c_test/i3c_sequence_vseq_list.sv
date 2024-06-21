@@ -1,3 +1,5 @@
 `include "i3c_sequence_base_vseq.sv"
 `include "i3c_sequence_direct_vseq.sv"
-`include "i3c_sequence_direct_with_repeated_start_vseq.sv"
+`include "i3c_sequence_direct_with_rstart_vseq.sv"
+`include "i3c_sequence_broadcast_followed_by_data_vseq.sv"
+`include "i3c_sequence_broadcast_followed_by_data_with_rstart_vseq.sv"
