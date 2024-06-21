@@ -29,3 +29,23 @@ async def run_resp_capacity_status_test(dut: SimHandleBase):
 @cocotb.test()
 async def run_tx_capacity_status_test(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tx")
+
+
+@cocotb.test()
+async def run_tti_tx_desc_capacity_status_test(dut: SimHandleBase):
+    await should_be_empty_after_rst(dut, "tti_tx_desc")
+
+
+@cocotb.test()
+async def run_tti_rx_capacity_status_test(dut: SimHandleBase):
+    await should_be_empty_after_rst(dut, "tti_rx")
+
+
+@cocotb.test()
+async def run_tti_rx_desc_capacity_status_test(dut: SimHandleBase):
+    await should_be_empty_after_rst(dut, "tti_rx_desc")
+
+
+@cocotb.test()
+async def run_tti_tx_capacity_status_test(dut: SimHandleBase):
+    await should_be_empty_after_rst(dut, "tti_tx")

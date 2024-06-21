@@ -2,8 +2,6 @@
 
 from random import randint
 
-# AHBTestInterface and AXITestInterface imports are used with the search
-# for appropriate TestInterface in `get_frontend_bus_if`
 from bus2csr import bytes2int, get_frontend_bus_if
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge

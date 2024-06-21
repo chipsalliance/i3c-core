@@ -12,6 +12,7 @@ from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
 # DAT and DCT tables
 PIO_ADDR = 0x80
+EC_ADDR = 0x100
 DAT_ADDR = 0x400
 DCT_ADDR = 0x800
 
@@ -50,6 +51,22 @@ INT_CTRL_CMDS_EN_RESET = 0x35 << 1 | 0x1
 QUEUE_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
 DATA_BUFFER_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
 QUEUE_SIZE_RESET = 0x5 << 24 | 0x5 << 16 | 0x40 << 8 | 0x40
+
+
+# TTI Registers
+TTI_ADDR = EC_ADDR + 0xC0
+EXTCAP_HEADER = TTI_ADDR + 0x4 * 0
+TTI_CONTROL = TTI_ADDR + 0x4 * 1
+TTI_STATUS = TTI_ADDR + 0x4 * 2
+TTI_INTERRUPT_STATUS = TTI_ADDR + 0x4 * 3
+TTI_INTERRUPT_ENABLE = TTI_ADDR + 0x4 * 4
+TTI_INTERRUPT_FORCE = TTI_ADDR + 0x4 * 5
+TTI_RX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x4 * 6
+TTI_RX_DATA_PORT = TTI_ADDR + 0x4 * 7
+TTI_TX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x4 * 8
+TTI_TX_DATA_PORT = TTI_ADDR + 0x4 * 9
+TTI_QUEUE_SIZE = TTI_ADDR + 0x4 * 10
+TTI_QUEUE_THRESHOLD_CONTROL = TTI_ADDR + 0x4 * 11
 
 
 @dataclass
@@ -196,8 +213,6 @@ class ResponseDescriptor:
 class HCIBaseTestInterface:
     def __init__(self, dut: SimHandleBase) -> None:
         self.dut = dut
-        self.queue_names = ["cmd", "tx", "rx", "resp"]
-        self.status_indicators = ["thld", "full", "empty", "apch_thld"]
 
     async def _setup(self, busIfType: FrontBusTestInterface):
         self.busIf = busIfType(self.dut)
@@ -228,9 +243,9 @@ class HCIBaseTestInterface:
         return getattr(self.dut, f"{queue}_queue_thld_o").value
 
     def get_thld_status(self, queue: str):
-        if queue in ["cmd", "tx"]:
+        if queue in ["cmd", "tx", "tti_tx_desc", "tti_tx"]:
             trig = "below"
-        elif queue in ["resp", "rx"]:
+        elif queue in ["resp", "rx", "tti_rx_desc", "tti_rx"]:
             trig = "above"
         else:
             self.dut._log.error(f"Queue {queue} not supported")
