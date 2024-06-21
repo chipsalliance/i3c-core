@@ -7,9 +7,10 @@
 `include "standby_controller_mode.rdl"
 
 regfile ECRegisters{
-    SecureFirmwareRecoveryInterfaceRegisters SecureFirmwareRecoveryInterfaceRegisters @ 0x0;
-    StandbyControllerModeRegisters StandbyControllerModeRegisters;
-    TargetTransactionInterfaceRegisters TargetTransactionInterfaceRegisters;
-    SoCManagementInterfaceRegisters SoCManagementInterfaceRegisters;
-    ControllerConfigRegisters ControllerConfigRegisters;
+    name = "Extended Capabilities";
+    SecureFirmwareRecoveryInterfaceRegisters SecFwRecoveryIf @ 0x0;
+    StandbyControllerModeRegisters StdbyCtrlMode;
+    TargetTransactionInterfaceRegisters TTI;
+    SoCManagementInterfaceRegisters SoCMgmtIf;
+    ControllerConfigRegisters CtrlCfg;
 };

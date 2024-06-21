@@ -64,12 +64,14 @@ addrmap I3CCSR #(
         .ext_ibi_size(ext_ibi_size)
     ) PIOControl @ PIO_offset;
     mem {
+        name = "Device Address Table";
         mementries = 128;
         memwidth = 64;
         sw = rw;
         DAT_structure DAT_MEMORY [128];
     } external DAT @ DAT_offset;
     mem {
+        name = "Device Characteristic Table";
         mementries = 128;
         memwidth = 128;
         sw = rw;

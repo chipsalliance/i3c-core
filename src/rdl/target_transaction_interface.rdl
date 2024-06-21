@@ -2,6 +2,7 @@
 
 
 regfile TargetTransactionInterfaceRegisters{
+    name = "Target Transaction Interface";
     default regwidth = 32;
     reg {
         regwidth = 32;
@@ -30,7 +31,7 @@ regfile TargetTransactionInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } TTI_CONTROL;
+    } CONTROL;
     reg {
         name = "TTI Status";
         desc = "Status Register";
@@ -41,7 +42,7 @@ regfile TargetTransactionInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } TTI_STATUS;
+    } STATUS;
     reg {
         name = "TTI Interrupt Status";
         desc = "Interrupt Status";
@@ -52,7 +53,7 @@ regfile TargetTransactionInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } TTI_INTERRUPT_STATUS;
+    } INTERRUPT_STATUS;
     reg {
         name = "TTI Interrupt Enable";
         desc = "Interrupt Enable";
@@ -63,7 +64,7 @@ regfile TargetTransactionInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } TTI_INTERRUPT_ENABLE;
+    } INTERRUPT_ENABLE;
     reg {
         name = "TTI Interrupt Force";
         desc = "Interrupt Force";
@@ -74,114 +75,114 @@ regfile TargetTransactionInterfaceRegisters{
             hw = rw;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } TTI_INTERRUPT_FORCE;
-    reg {
+    } INTERRUPT_FORCE;
+    external reg {
         name = "TTI RX Descriptor Queue Port";
         desc = "RX Descriptor Queue Port";
         field {
-            name = "TTI_RX_DESCRIPTOR";
+            name = "RX_DESC";
             desc = "RX Data";
             sw = r;
             hw = w;
             reset = 32'h00000000;
-        } TTI_RX_DESCRIPTOR[31:0];
-    } TTI_RX_DESCRIPTOR_QUEUE_PORT;
-    reg {
+        } RX_DESC[31:0];
+    } RX_DESC_QUEUE_PORT;
+    external reg {
         name = "TTI RX Data Port";
         desc = "RX Data Port";
         field {
-            name = "TTI_RX_DATA";
+            name = "RX_DATA";
             desc = "RX Data";
             sw = r;
             hw = w;
             reset = 32'h00000000;
-        } TTI_RX_DATA[31:0];
-    } TTI_RX_DATA_PORT;
-    reg {
+        } RX_DATA[31:0];
+    } RX_DATA_PORT;
+    external reg {
         name = "TTI TX Descriptor Queue Port";
         desc = "TX Descriptor Queue Port";
         field {
-            name = "TTI_TX_DESCRIPTOR";
+            name = "TX_DESC";
             desc = "TX Data";
             sw = w;
             hw = r;
             reset = 32'h00000000;
-        } TTI_TX_DESCRIPTOR[31:0];
-    } TTI_TX_DESCRIPTOR_QUEUE_PORT;
-    reg {
+        } TX_DESC[31:0];
+    } TX_DESC_QUEUE_PORT;
+    external reg {
         name = "TTI TX Data Port";
         desc = "TX Data Port";
         field {
-            name = "TTI_TX_DATA";
+            name = "TX_DATA";
             desc = "TX Data";
             sw = w;
             hw = r;
             reset = 32'h00000000;
-        } TTI_TX_DATA[31:0];
-    } TTI_TX_DATA_PORT;
+        } TX_DATA[31:0];
+    } TX_DATA_PORT;
     reg {
         name = "TTI Queue Size";
         desc = "Queue Size";
         field {
-            name = "TTI_TX_DATA_BUFFER_SIZE";
+            name = "TX_DATA_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
             reset = 8'h07;
-        } TTI_TX_DATA_BUFFER_SIZE[31:24];
+        } TX_DATA_BUFFER_SIZE[31:24];
         field {
-            name = "TTI_RX_DATA_BUFFER_SIZE";
+            name = "RX_DATA_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
             reset = 8'h07;
-        } TTI_RX_DATA_BUFFER_SIZE[23:16];
+        } RX_DATA_BUFFER_SIZE[23:16];
         field {
-            name = "TTI_TX_DESCRIPTOR_BUFFER_SIZE";
+            name = "TX_DESC_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
             reset = 8'h07;
-        } TTI_TX_DESCRIPTOR_BUFFER_SIZE[15:8];
+        } TX_DESC_BUFFER_SIZE[15:8];
         field {
-            name = "TTI_RX_DESCRIPTOR_BUFFER_SIZE";
+            name = "RX_DESC_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
             reset = 8'h07;
-        } TTI_RX_DESCRIPTOR_BUFFER_SIZE[7:0];
-    } TTI_QUEUE_SIZE;
+        } RX_DESC_BUFFER_SIZE[7:0];
+    } QUEUE_SIZE;
     reg {
         name = "TTI Queue Threshold Control";
         desc = "Queue Threshold Control";
         field {
-            name = "TTI_TX_DATA_THLD";
+            name = "TX_DATA_THLD";
             desc = "";
             sw = rw;
             hw = r;
             reset = 8'h00;
-        } TTI_TX_DATA_THLD[31:24];
+        } TX_DATA_THLD[31:24];
         field {
-            name = "TTI_RX_DATA_THLD";
+            name = "RX_DATA_THLD";
             desc = "";
             sw = rw;
             hw = r;
             reset = 8'h00;
-        } TTI_RX_DATA_THLD[23:16];
+        } RX_DATA_THLD[23:16];
         field {
-            name = "TTI_TX_DESCRIPTOR_THLD";
+            name = "TX_DESC_THLD";
             desc = "";
             sw = rw;
             hw = r;
             reset = 8'h00;
-        } TTI_TX_DESCRIPTOR_THLD[15:8];
+        } TX_DESC_THLD[15:8];
         field {
-            name = "TTI_RX_DESCRIPTOR_THLD";
+            name = "RX_DESC_THLD";
             desc = "";
             sw = rw;
             hw = r;
             reset = 8'h00;
-        } TTI_RX_DESCRIPTOR_THLD[7:0];
-    } TTI_QUEUE_THRESHOLD_CONTROL;
+        } RX_DESC_THLD[7:0];
+    } QUEUE_THRESHOLD_CONTROL;
 
 };

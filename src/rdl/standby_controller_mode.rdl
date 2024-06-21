@@ -2,6 +2,7 @@
 
 
 regfile StandbyControllerModeRegisters{
+    name = "Standby Controller Mode";
     default regwidth = 32;
     reg {
         regwidth = 32;

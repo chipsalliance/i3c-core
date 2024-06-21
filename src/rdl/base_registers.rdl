@@ -28,6 +28,7 @@ regfile BaseRegs #(
     bit DCT_offset = 12'h0,
     bit MIPI_commands = 15'h0
 ){
+    name = "I3C Capability and Operational Registers";
     default regwidth = 32;
     reg {
         name = "HCI Version";

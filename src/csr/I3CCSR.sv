@@ -150,7 +150,7 @@ module I3CCSR (
                 logic INDIRECT_FIFO_STATUS_4;
                 logic INDIRECT_FIFO_STATUS_5;
                 logic INDIRECT_FIFO_DATA;
-            } SecureFirmwareRecoveryInterfaceRegisters;
+            } SecFwRecoveryIf;
             struct {
                 logic EXTCAP_HEADER;
                 logic STBY_CR_CONTROL;
@@ -168,21 +168,21 @@ module I3CCSR (
                 logic STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
                 logic __rsvd_2;
                 logic __rsvd_3;
-            } StandbyControllerModeRegisters;
+            } StdbyCtrlMode;
             struct {
                 logic EXTCAP_HEADER;
-                logic TTI_CONTROL;
-                logic TTI_STATUS;
-                logic TTI_INTERRUPT_STATUS;
-                logic TTI_INTERRUPT_ENABLE;
-                logic TTI_INTERRUPT_FORCE;
-                logic TTI_RX_DESCRIPTOR_QUEUE_PORT;
-                logic TTI_RX_DATA_PORT;
-                logic TTI_TX_DESCRIPTOR_QUEUE_PORT;
-                logic TTI_TX_DATA_PORT;
-                logic TTI_QUEUE_SIZE;
-                logic TTI_QUEUE_THRESHOLD_CONTROL;
-            } TargetTransactionInterfaceRegisters;
+                logic CONTROL;
+                logic STATUS;
+                logic INTERRUPT_STATUS;
+                logic INTERRUPT_ENABLE;
+                logic INTERRUPT_FORCE;
+                logic RX_DESC_QUEUE_PORT;
+                logic RX_DATA_PORT;
+                logic TX_DESC_QUEUE_PORT;
+                logic TX_DATA_PORT;
+                logic QUEUE_SIZE;
+                logic QUEUE_THRESHOLD_CONTROL;
+            } TTI;
             struct {
                 logic EXTCAP_HEADER;
                 logic SOC_MGMT_CONTROL;
@@ -207,11 +207,11 @@ module I3CCSR (
                 logic SOC_MGMT_FEATURE_13;
                 logic SOC_MGMT_FEATURE_14;
                 logic SOC_MGMT_FEATURE_15;
-            } SoCManagementInterfaceRegisters;
+            } SoCMgmtIf;
             struct {
                 logic EXTCAP_HEADER;
                 logic CONTROLLER_CONFIG;
-            } ControllerConfigRegisters;
+            } CtrlCfg;
         } I3C_EC;
         logic DAT;
         logic DCT;
@@ -267,86 +267,90 @@ module I3CCSR (
         decoded_reg_strb.PIOControl.PIO_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'ha8);
         decoded_reg_strb.PIOControl.PIO_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'hac);
         decoded_reg_strb.PIOControl.PIO_CONTROL = cpuif_req_masked & (cpuif_addr == 12'hb0);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h100);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 = cpuif_req_masked & (cpuif_addr == 12'h104);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 = cpuif_req_masked & (cpuif_addr == 12'h108);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 = cpuif_req_masked & (cpuif_addr == 12'h10c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 = cpuif_req_masked & (cpuif_addr == 12'h110);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 = cpuif_req_masked & (cpuif_addr == 12'h114);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 = cpuif_req_masked & (cpuif_addr == 12'h118);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 = cpuif_req_masked & (cpuif_addr == 12'h11c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 = cpuif_req_masked & (cpuif_addr == 12'h120);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 = cpuif_req_masked & (cpuif_addr == 12'h124);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 = cpuif_req_masked & (cpuif_addr == 12'h128);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 = cpuif_req_masked & (cpuif_addr == 12'h12c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h130);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h134);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET = cpuif_req_masked & (cpuif_addr == 12'h138);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL = cpuif_req_masked & (cpuif_addr == 12'h13c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS = cpuif_req_masked & (cpuif_addr == 12'h140);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS = cpuif_req_masked & (cpuif_addr == 12'h144);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 = cpuif_req_masked & (cpuif_addr == 12'h148);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 = cpuif_req_masked & (cpuif_addr == 12'h14c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h150);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h154);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 = cpuif_req_masked & (cpuif_addr == 12'h158);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 = cpuif_req_masked & (cpuif_addr == 12'h15c);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 = cpuif_req_masked & (cpuif_addr == 12'h164);
-        decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h188);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES = cpuif_req_masked & (cpuif_addr == 12'h18c);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_0 = cpuif_req_masked & (cpuif_addr == 12'h190);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h194);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR = cpuif_req_masked & (cpuif_addr == 12'h198);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO = cpuif_req_masked & (cpuif_addr == 12'h19c);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1a0);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_1 = cpuif_req_masked & (cpuif_addr == 12'h1a4);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1a8);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1ac);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS = cpuif_req_masked & (cpuif_addr == 12'h1b0);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS = cpuif_req_masked & (cpuif_addr == 12'h1b4);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_2 = cpuif_req_masked & (cpuif_addr == 12'h1b8);
-        decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_3 = cpuif_req_masked & (cpuif_addr == 12'h1bc);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1c0);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1c4);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1c8);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1cc);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1d0);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1d4);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1d8);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1dc);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e0);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e4);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1e8);
-        decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1ec);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h200);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h204);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h208);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0 = cpuif_req_masked & (cpuif_addr == 12'h20c);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1 = cpuif_req_masked & (cpuif_addr == 12'h210);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2 = cpuif_req_masked & (cpuif_addr == 12'h214);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3 = cpuif_req_masked & (cpuif_addr == 12'h218);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0 = cpuif_req_masked & (cpuif_addr == 12'h21c);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1 = cpuif_req_masked & (cpuif_addr == 12'h220);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2 = cpuif_req_masked & (cpuif_addr == 12'h224);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3 = cpuif_req_masked & (cpuif_addr == 12'h228);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4 = cpuif_req_masked & (cpuif_addr == 12'h22c);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5 = cpuif_req_masked & (cpuif_addr == 12'h230);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6 = cpuif_req_masked & (cpuif_addr == 12'h234);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7 = cpuif_req_masked & (cpuif_addr == 12'h238);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8 = cpuif_req_masked & (cpuif_addr == 12'h23c);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9 = cpuif_req_masked & (cpuif_addr == 12'h240);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10 = cpuif_req_masked & (cpuif_addr == 12'h244);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11 = cpuif_req_masked & (cpuif_addr == 12'h248);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12 = cpuif_req_masked & (cpuif_addr == 12'h24c);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13 = cpuif_req_masked & (cpuif_addr == 12'h250);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14 = cpuif_req_masked & (cpuif_addr == 12'h254);
-        decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15 = cpuif_req_masked & (cpuif_addr == 12'h258);
-        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h260);
-        decoded_reg_strb.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG = cpuif_req_masked & (cpuif_addr == 12'h264);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h100);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_0 = cpuif_req_masked & (cpuif_addr == 12'h104);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_1 = cpuif_req_masked & (cpuif_addr == 12'h108);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_2 = cpuif_req_masked & (cpuif_addr == 12'h10c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_3 = cpuif_req_masked & (cpuif_addr == 12'h110);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 = cpuif_req_masked & (cpuif_addr == 12'h114);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1 = cpuif_req_masked & (cpuif_addr == 12'h118);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2 = cpuif_req_masked & (cpuif_addr == 12'h11c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 = cpuif_req_masked & (cpuif_addr == 12'h120);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4 = cpuif_req_masked & (cpuif_addr == 12'h124);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5 = cpuif_req_masked & (cpuif_addr == 12'h128);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 = cpuif_req_masked & (cpuif_addr == 12'h12c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h130);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h134);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_RESET = cpuif_req_masked & (cpuif_addr == 12'h138);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL = cpuif_req_masked & (cpuif_addr == 12'h13c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS = cpuif_req_masked & (cpuif_addr == 12'h140);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.HW_STATUS = cpuif_req_masked & (cpuif_addr == 12'h144);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 = cpuif_req_masked & (cpuif_addr == 12'h148);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 = cpuif_req_masked & (cpuif_addr == 12'h14c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h150);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h154);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2 = cpuif_req_masked & (cpuif_addr == 12'h158);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3 = cpuif_req_masked & (cpuif_addr == 12'h15c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5 = cpuif_req_masked & (cpuif_addr == 12'h164);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h188);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES = cpuif_req_masked & (cpuif_addr == 12'h18c);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 = cpuif_req_masked & (cpuif_addr == 12'h190);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h194);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR = cpuif_req_masked & (cpuif_addr == 12'h198);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO = cpuif_req_masked & (cpuif_addr == 12'h19c);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1a0);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 = cpuif_req_masked & (cpuif_addr == 12'h1a4);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1a8);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1ac);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS = cpuif_req_masked & (cpuif_addr == 12'h1b0);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS = cpuif_req_masked & (cpuif_addr == 12'h1b4);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_2 = cpuif_req_masked & (cpuif_addr == 12'h1b8);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 = cpuif_req_masked & (cpuif_addr == 12'h1bc);
+        decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1c0);
+        decoded_reg_strb.I3C_EC.TTI.CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1c4);
+        decoded_reg_strb.I3C_EC.TTI.STATUS = cpuif_req_masked & (cpuif_addr == 12'h1c8);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1cc);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1d0);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1d4);
+        decoded_reg_strb.I3C_EC.TTI.RX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1d8);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1d8) & !cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1dc);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1dc) & !cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.TX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e0);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e0) & cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e4);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e4) & cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1e8);
+        decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1ec);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h200);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h204);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h208);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 = cpuif_req_masked & (cpuif_addr == 12'h20c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 = cpuif_req_masked & (cpuif_addr == 12'h210);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 = cpuif_req_masked & (cpuif_addr == 12'h214);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 = cpuif_req_masked & (cpuif_addr == 12'h218);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0 = cpuif_req_masked & (cpuif_addr == 12'h21c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1 = cpuif_req_masked & (cpuif_addr == 12'h220);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 = cpuif_req_masked & (cpuif_addr == 12'h224);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 = cpuif_req_masked & (cpuif_addr == 12'h228);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4 = cpuif_req_masked & (cpuif_addr == 12'h22c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5 = cpuif_req_masked & (cpuif_addr == 12'h230);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6 = cpuif_req_masked & (cpuif_addr == 12'h234);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7 = cpuif_req_masked & (cpuif_addr == 12'h238);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8 = cpuif_req_masked & (cpuif_addr == 12'h23c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9 = cpuif_req_masked & (cpuif_addr == 12'h240);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10 = cpuif_req_masked & (cpuif_addr == 12'h244);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11 = cpuif_req_masked & (cpuif_addr == 12'h248);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12 = cpuif_req_masked & (cpuif_addr == 12'h24c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13 = cpuif_req_masked & (cpuif_addr == 12'h250);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14 = cpuif_req_masked & (cpuif_addr == 12'h254);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15 = cpuif_req_masked & (cpuif_addr == 12'h258);
+        decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h260);
+        decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG = cpuif_req_masked & (cpuif_addr == 12'h264);
         decoded_reg_strb.DAT = cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         is_external |= cpuif_req_masked & (cpuif_addr >= 12'h400) & (cpuif_addr <= 12'h400 + 12'h3ff);
         decoded_reg_strb.DCT = cpuif_req_masked & (cpuif_addr >= 12'h800) & (cpuif_addr <= 12'h800 + 12'h7ff);
@@ -903,7 +907,7 @@ module I3CCSR (
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_DATA;
-            } SecureFirmwareRecoveryInterfaceRegisters;
+            } SecFwRecoveryIf;
             struct {
                 struct {
                     struct {
@@ -1235,81 +1239,57 @@ module I3CCSR (
                         logic load_next;
                     } __rsvd;
                 } __rsvd_3;
-            } StandbyControllerModeRegisters;
+            } StdbyCtrlMode;
             struct {
                 struct {
                     struct {
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } TTI_CONTROL;
+                } CONTROL;
                 struct {
                     struct {
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } TTI_STATUS;
+                } STATUS;
                 struct {
                     struct {
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_STATUS;
+                } INTERRUPT_STATUS;
                 struct {
                     struct {
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_ENABLE;
+                } INTERRUPT_ENABLE;
                 struct {
                     struct {
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_FORCE;
-                struct {
-                    struct {
-                        logic [31:0] next;
-                        logic load_next;
-                    } TTI_RX_DESCRIPTOR;
-                } TTI_RX_DESCRIPTOR_QUEUE_PORT;
-                struct {
-                    struct {
-                        logic [31:0] next;
-                        logic load_next;
-                    } TTI_RX_DATA;
-                } TTI_RX_DATA_PORT;
-                struct {
-                    struct {
-                        logic [31:0] next;
-                        logic load_next;
-                    } TTI_TX_DESCRIPTOR;
-                } TTI_TX_DESCRIPTOR_QUEUE_PORT;
-                struct {
-                    struct {
-                        logic [31:0] next;
-                        logic load_next;
-                    } TTI_TX_DATA;
-                } TTI_TX_DATA_PORT;
+                } INTERRUPT_FORCE;
                 struct {
                     struct {
                         logic [7:0] next;
                         logic load_next;
-                    } TTI_RX_DESCRIPTOR_THLD;
+                    } RX_DESC_THLD;
                     struct {
                         logic [7:0] next;
                         logic load_next;
-                    } TTI_TX_DESCRIPTOR_THLD;
+                    } TX_DESC_THLD;
                     struct {
                         logic [7:0] next;
                         logic load_next;
-                    } TTI_RX_DATA_THLD;
+                    } RX_DATA_THLD;
                     struct {
                         logic [7:0] next;
                         logic load_next;
-                    } TTI_TX_DATA_THLD;
-                } TTI_QUEUE_THRESHOLD_CONTROL;
-            } TargetTransactionInterfaceRegisters;
+                    } TX_DATA_THLD;
+                } QUEUE_THRESHOLD_CONTROL;
+            } TTI;
             struct {
                 struct {
                     struct {
@@ -1443,7 +1423,7 @@ module I3CCSR (
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_15;
-            } SoCManagementInterfaceRegisters;
+            } SoCMgmtIf;
             struct {
                 struct {
                     struct {
@@ -1451,7 +1431,7 @@ module I3CCSR (
                         logic load_next;
                     } OPERATION_MODE;
                 } CONTROLLER_CONFIG;
-            } ControllerConfigRegisters;
+            } CtrlCfg;
         } I3C_EC;
     } field_combo_t;
     field_combo_t field_combo;
@@ -1883,7 +1863,7 @@ module I3CCSR (
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_DATA;
-            } SecureFirmwareRecoveryInterfaceRegisters;
+            } SecFwRecoveryIf;
             struct {
                 struct {
                     struct {
@@ -2140,68 +2120,48 @@ module I3CCSR (
                         logic [31:0] value;
                     } __rsvd;
                 } __rsvd_3;
-            } StandbyControllerModeRegisters;
+            } StdbyCtrlMode;
             struct {
                 struct {
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } TTI_CONTROL;
+                } CONTROL;
                 struct {
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } TTI_STATUS;
+                } STATUS;
                 struct {
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_STATUS;
+                } INTERRUPT_STATUS;
                 struct {
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_ENABLE;
+                } INTERRUPT_ENABLE;
                 struct {
                     struct {
                         logic [31:0] value;
                     } PLACEHOLDER;
-                } TTI_INTERRUPT_FORCE;
-                struct {
-                    struct {
-                        logic [31:0] value;
-                    } TTI_RX_DESCRIPTOR;
-                } TTI_RX_DESCRIPTOR_QUEUE_PORT;
-                struct {
-                    struct {
-                        logic [31:0] value;
-                    } TTI_RX_DATA;
-                } TTI_RX_DATA_PORT;
-                struct {
-                    struct {
-                        logic [31:0] value;
-                    } TTI_TX_DESCRIPTOR;
-                } TTI_TX_DESCRIPTOR_QUEUE_PORT;
-                struct {
-                    struct {
-                        logic [31:0] value;
-                    } TTI_TX_DATA;
-                } TTI_TX_DATA_PORT;
+                } INTERRUPT_FORCE;
                 struct {
                     struct {
                         logic [7:0] value;
-                    } TTI_RX_DESCRIPTOR_THLD;
+                    } RX_DESC_THLD;
                     struct {
                         logic [7:0] value;
-                    } TTI_TX_DESCRIPTOR_THLD;
+                    } TX_DESC_THLD;
                     struct {
                         logic [7:0] value;
-                    } TTI_RX_DATA_THLD;
+                    } RX_DATA_THLD;
                     struct {
                         logic [7:0] value;
-                    } TTI_TX_DATA_THLD;
-                } TTI_QUEUE_THRESHOLD_CONTROL;
-            } TargetTransactionInterfaceRegisters;
+                    } TX_DATA_THLD;
+                } QUEUE_THRESHOLD_CONTROL;
+            } TTI;
             struct {
                 struct {
                     struct {
@@ -2313,14 +2273,14 @@ module I3CCSR (
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_15;
-            } SoCManagementInterfaceRegisters;
+            } SoCMgmtIf;
             struct {
                 struct {
                     struct {
                         logic [1:0] value;
                     } OPERATION_MODE;
                 } CONTROLLER_CONFIG;
-            } ControllerConfigRegisters;
+            } CtrlCfg;
         } I3C_EC;
     } field_storage_t;
     field_storage_t field_storage;
@@ -4150,3223 +4110,3143 @@ module I3CCSR (
         end
     end
     assign hwif_out.PIOControl.PIO_CONTROL.ABORT.value = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'hc0;
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_ID.value = 8'hc0;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_RESET && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.HW_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= field_combo.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h12;
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_ID.value = 8'h12;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= 3'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= 3'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value & ~decoded_wr_biten[20:20]) | (decoded_wr_data[20:20] & decoded_wr_biten[20:20]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value & ~decoded_wr_biten[20:20]) | (decoded_wr_data[20:20] & decoded_wr_biten[20:20]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= 1'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT
     always_comb begin
         automatic logic [1:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value & ~decoded_wr_biten[31:30]) | (decoded_wr_data[31:30] & decoded_wr_biten[31:30]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value & ~decoded_wr_biten[31:30]) | (decoded_wr_data[31:30] & decoded_wr_biten[31:30]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= 2'h0;
-        end else if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= 2'h0;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR
     always_comb begin
         automatic logic [6:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value & ~decoded_wr_biten[6:0]) | (decoded_wr_data[6:0] & decoded_wr_biten[6:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value & ~decoded_wr_biten[6:0]) | (decoded_wr_data[6:0] & decoded_wr_biten[6:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
     always_comb begin
         automatic logic [6:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value & ~decoded_wr_biten[7:5]) | (decoded_wr_data[7:5] & decoded_wr_biten[7:5]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value & ~decoded_wr_biten[7:5]) | (decoded_wr_data[7:5] & decoded_wr_biten[7:5]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value & ~decoded_wr_biten[8:8]) | (decoded_wr_data[8:8] & decoded_wr_biten[8:8]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value & ~decoded_wr_biten[8:8]) | (decoded_wr_data[8:8] & decoded_wr_biten[8:8]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI
     always_comb begin
         automatic logic [14:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value & ~decoded_wr_biten[15:1]) | (decoded_wr_data[15:1] & decoded_wr_biten[15:1]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value & ~decoded_wr_biten[15:1]) | (decoded_wr_data[15:1] & decoded_wr_biten[15:1]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR
     always_comb begin
         automatic logic [4:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value & ~decoded_wr_biten[28:24]) | (decoded_wr_data[28:24] & decoded_wr_biten[28:24]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value & ~decoded_wr_biten[28:24]) | (decoded_wr_data[28:24] & decoded_wr_biten[28:24]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value & ~decoded_wr_biten[31:29]) | (decoded_wr_data[31:29] & decoded_wr_biten[31:29]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value & ~decoded_wr_biten[31:29]) | (decoded_wr_data[31:29] & decoded_wr_biten[31:29]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value & ~decoded_wr_biten[16:16]) | (decoded_wr_data[16:16] & decoded_wr_biten[16:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value & ~decoded_wr_biten[17:17]) | (decoded_wr_data[17:17] & decoded_wr_biten[17:17]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value & ~decoded_wr_biten[18:18]) | (decoded_wr_data[18:18] & decoded_wr_biten[18:18]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value & ~decoded_wr_biten[19:19]) | (decoded_wr_data[19:19] & decoded_wr_biten[19:19]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG
     always_comb begin
         automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT
     always_comb begin
         automatic logic [3:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value & ~decoded_wr_biten[11:8]) | (decoded_wr_data[11:8] & decoded_wr_biten[11:8]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value & ~decoded_wr_biten[11:8]) | (decoded_wr_data[11:8] & decoded_wr_biten[11:8]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR
     always_comb begin
         automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value = field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value;
-    // Field: I3CCSR.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd
+    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.next;
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.next = next_c;
-        field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next = load_next_c;
     end
 
     always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.load_next) begin
-            field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value <= field_combo.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.next;
+        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next) begin
+            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
         end
     end
-    assign hwif_out.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value = field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value;
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER
+    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
+    assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
+    assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.TTI.CONTROL.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.CONTROL.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.CONTROL.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TTI.CONTROL.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TTI.CONTROL.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.CONTROL.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TTI.STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.STATUS.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TTI.STATUS.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TTI.STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.STATUS.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.next;
-        end
-    end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.next;
-        end
-    end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.next;
-        end
-    end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.next;
-        end
-    end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value;
+
+    assign hwif_out.I3C_EC.TTI.RX_DESC_QUEUE_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.RX_DESC_QUEUE_PORT : '0;
+    assign hwif_out.I3C_EC.TTI.RX_DESC_QUEUE_PORT.req_is_wr = decoded_req_is_wr;
+
+    assign hwif_out.I3C_EC.TTI.RX_DATA_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.RX_DATA_PORT : '0;
+    assign hwif_out.I3C_EC.TTI.RX_DATA_PORT.req_is_wr = decoded_req_is_wr;
+
+    assign hwif_out.I3C_EC.TTI.TX_DESC_QUEUE_PORT.req = decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.TX_DESC_QUEUE_PORT : '0;
+    assign hwif_out.I3C_EC.TTI.TX_DESC_QUEUE_PORT.req_is_wr = decoded_req_is_wr;
+    assign hwif_out.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_data = decoded_wr_data;
+    assign hwif_out.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_biten = decoded_wr_biten;
+
+    assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.req = decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.TX_DATA_PORT : '0;
+    assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.req_is_wr = decoded_req_is_wr;
+    assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.wr_data = decoded_wr_data;
+    assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.wr_biten = decoded_wr_biten;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value;
-    // Field: I3CCSR.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.next = next_c;
-        field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value <= field_combo.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value <= 8'h0;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value = field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value;
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_ID.value = 8'hc1;
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_ID.value = 8'hc1;
+    assign hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value <= field_combo.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.next;
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.load_next) begin
+            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.next;
         end
     end
-    assign hwif_out.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value = field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value;
-    assign hwif_out.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER.CAP_ID.value = 8'h2;
-    assign hwif_out.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER.CAP_LENGTH.value = 16'h2;
-    // Field: I3CCSR.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE
+    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.CtrlCfg.EXTCAP_HEADER.CAP_ID.value = 8'h2;
+    assign hwif_out.I3C_EC.CtrlCfg.EXTCAP_HEADER.CAP_LENGTH.value = 16'h2;
+    // Field: I3CCSR.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE
     always_comb begin
         automatic logic [1:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value;
+        next_c = field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value;
         load_next_c = '0;
         
         // HW Write
-        next_c = hwif_in.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.next;
+        next_c = hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next;
         load_next_c = '1;
-        field_combo.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.next = next_c;
-        field_combo.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.load_next = load_next_c;
+        field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next = next_c;
+        field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value <= 2'h1;
-        end else if(field_combo.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.load_next) begin
-            field_storage.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value <= field_combo.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.next;
+            field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value <= 2'h1;
+        end else if(field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.load_next) begin
+            field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value <= field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next;
         end
     end
-    assign hwif_out.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value = field_storage.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value;
+    assign hwif_out.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value = field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value;
     assign hwif_out.DAT.req = decoded_reg_strb.DAT;
     assign hwif_out.DAT.addr = decoded_addr[10:0];
     assign hwif_out.DAT.req_is_wr = decoded_req_is_wr;
@@ -7386,6 +7266,8 @@ module I3CCSR (
         wr_ack = '0;
         wr_ack |= hwif_in.PIOControl.COMMAND_PORT.wr_ack;
         wr_ack |= hwif_in.PIOControl.XFER_DATA_PORT.wr_ack;
+        wr_ack |= hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack;
+        wr_ack |= hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.DAT.wr_ack;
         wr_ack |= hwif_in.DCT.wr_ack;
         external_wr_ack = wr_ack;
@@ -7404,6 +7286,8 @@ module I3CCSR (
         rd_ack |= hwif_in.PIOControl.RESPONSE_PORT.rd_ack;
         rd_ack |= hwif_in.PIOControl.XFER_DATA_PORT.rd_ack;
         rd_ack |= hwif_in.PIOControl.IBI_PORT.rd_ack;
+        rd_ack |= hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack;
+        rd_ack |= hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack;
         rd_ack |= hwif_in.DAT.rd_ack;
         rd_ack |= hwif_in.DCT.rd_ack;
         readback_external_rd_ack_c = rd_ack;
@@ -7418,7 +7302,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [31:0] readback_array[113];
+    logic [31:0] readback_array[111];
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -7580,191 +7464,189 @@ module I3CCSR (
     assign readback_array[30][1:1] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.RS.value : '0;
     assign readback_array[30][2:2] = (decoded_reg_strb.PIOControl.PIO_CONTROL && !decoded_req_is_wr) ? field_storage.PIOControl.PIO_CONTROL.ABORT.value : '0;
     assign readback_array[30][31:3] = '0;
-    assign readback_array[31][7:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc0 : '0;
-    assign readback_array[31][23:8] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[31][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc0 : '0;
+    assign readback_array[31][23:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[31][31:24] = '0;
-    assign readback_array[32][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_0.PLACEHOLDER.value : '0;
-    assign readback_array[33][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_1.PLACEHOLDER.value : '0;
-    assign readback_array[34][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_2.PLACEHOLDER.value : '0;
-    assign readback_array[35][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.PROT_CAP_3.PLACEHOLDER.value : '0;
-    assign readback_array[36][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_0.PLACEHOLDER.value : '0;
-    assign readback_array[37][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_1.PLACEHOLDER.value : '0;
-    assign readback_array[38][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_2.PLACEHOLDER.value : '0;
-    assign readback_array[39][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_3.PLACEHOLDER.value : '0;
-    assign readback_array[40][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_4.PLACEHOLDER.value : '0;
-    assign readback_array[41][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_5.PLACEHOLDER.value : '0;
-    assign readback_array[42][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_ID_6.PLACEHOLDER.value : '0;
-    assign readback_array[43][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_0.PLACEHOLDER.value : '0;
-    assign readback_array[44][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_STATUS_1.PLACEHOLDER.value : '0;
-    assign readback_array[45][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.DEVICE_RESET.PLACEHOLDER.value : '0;
-    assign readback_array[46][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_CTRL.PLACEHOLDER.value : '0;
-    assign readback_array[47][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.RECOVERY_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[48][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.HW_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[49][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value : '0;
-    assign readback_array[50][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value : '0;
-    assign readback_array[51][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value : '0;
-    assign readback_array[52][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value : '0;
-    assign readback_array[53][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value : '0;
-    assign readback_array[54][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value : '0;
-    assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value : '0;
-    assign readback_array[56][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value : '0;
-    assign readback_array[57][31:0] = (decoded_reg_strb.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA && !decoded_req_is_wr) ? field_storage.I3C_EC.SecureFirmwareRecoveryInterfaceRegisters.INDIRECT_FIFO_DATA.PLACEHOLDER.value : '0;
-    assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h12 : '0;
-    assign readback_array[58][23:8] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[32][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.PLACEHOLDER.value : '0;
+    assign readback_array[33][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.PLACEHOLDER.value : '0;
+    assign readback_array[34][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.PLACEHOLDER.value : '0;
+    assign readback_array[35][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.PLACEHOLDER.value : '0;
+    assign readback_array[36][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.PLACEHOLDER.value : '0;
+    assign readback_array[37][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.PLACEHOLDER.value : '0;
+    assign readback_array[38][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.PLACEHOLDER.value : '0;
+    assign readback_array[39][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.PLACEHOLDER.value : '0;
+    assign readback_array[40][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.PLACEHOLDER.value : '0;
+    assign readback_array[41][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.PLACEHOLDER.value : '0;
+    assign readback_array[42][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.PLACEHOLDER.value : '0;
+    assign readback_array[43][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PLACEHOLDER.value : '0;
+    assign readback_array[44][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.PLACEHOLDER.value : '0;
+    assign readback_array[45][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_RESET && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.PLACEHOLDER.value : '0;
+    assign readback_array[46][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value : '0;
+    assign readback_array[47][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[48][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.HW_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[49][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value : '0;
+    assign readback_array[50][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value : '0;
+    assign readback_array[51][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value : '0;
+    assign readback_array[52][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value : '0;
+    assign readback_array[53][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value : '0;
+    assign readback_array[54][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value : '0;
+    assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value : '0;
+    assign readback_array[56][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value : '0;
+    assign readback_array[57][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value : '0;
+    assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h12 : '0;
+    assign readback_array[58][23:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[58][31:24] = '0;
-    assign readback_array[59][0:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PENDING_RX_NACK.value : '0;
-    assign readback_array[59][1:1] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value : '0;
-    assign readback_array[59][2:2] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value : '0;
-    assign readback_array[59][3:3] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value : '0;
-    assign readback_array[59][4:4] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value : '0;
-    assign readback_array[59][5:5] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.CR_REQUEST_SEND.value : '0;
+    assign readback_array[59][0:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value : '0;
+    assign readback_array[59][1:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value : '0;
+    assign readback_array[59][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value : '0;
+    assign readback_array[59][3:3] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value : '0;
+    assign readback_array[59][4:4] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value : '0;
+    assign readback_array[59][5:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value : '0;
     assign readback_array[59][7:6] = '0;
-    assign readback_array[59][10:8] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value : '0;
+    assign readback_array[59][10:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value : '0;
     assign readback_array[59][11:11] = '0;
-    assign readback_array[59][12:12] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value : '0;
-    assign readback_array[59][13:13] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value : '0;
-    assign readback_array[59][14:14] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value : '0;
-    assign readback_array[59][15:15] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value : '0;
+    assign readback_array[59][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value : '0;
+    assign readback_array[59][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value : '0;
+    assign readback_array[59][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value : '0;
+    assign readback_array[59][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value : '0;
     assign readback_array[59][19:16] = '0;
-    assign readback_array[59][20:20] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value : '0;
+    assign readback_array[59][20:20] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value : '0;
     assign readback_array[59][29:21] = '0;
-    assign readback_array[59][31:30] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value : '0;
-    assign readback_array[60][6:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value : '0;
+    assign readback_array[59][31:30] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value : '0;
+    assign readback_array[60][6:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value : '0;
     assign readback_array[60][14:7] = '0;
-    assign readback_array[60][15:15] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value : '0;
-    assign readback_array[60][22:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value : '0;
+    assign readback_array[60][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value : '0;
+    assign readback_array[60][22:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value : '0;
     assign readback_array[60][30:23] = '0;
-    assign readback_array[60][31:31] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value : '0;
+    assign readback_array[60][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value : '0;
     assign readback_array[61][4:0] = '0;
-    assign readback_array[61][5:5] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value : '0;
+    assign readback_array[61][5:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value : '0;
     assign readback_array[61][11:6] = '0;
-    assign readback_array[61][12:12] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value : '0;
-    assign readback_array[61][13:13] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value : '0;
-    assign readback_array[61][14:14] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value : '0;
-    assign readback_array[61][15:15] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value : '0;
+    assign readback_array[61][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value : '0;
+    assign readback_array[61][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value : '0;
+    assign readback_array[61][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value : '0;
+    assign readback_array[61][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value : '0;
     assign readback_array[61][31:16] = '0;
-    assign readback_array[62][31:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_0.__rsvd.value : '0;
+    assign readback_array[62][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value : '0;
     assign readback_array[63][1:0] = '0;
-    assign readback_array[63][2:2] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.AC_CURRENT_OWN.value : '0;
+    assign readback_array[63][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value : '0;
     assign readback_array[63][4:3] = '0;
-    assign readback_array[63][7:5] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value : '0;
-    assign readback_array[63][8:8] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_STATUS.HJ_REQ_STATUS.value : '0;
+    assign readback_array[63][7:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value : '0;
+    assign readback_array[63][8:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value : '0;
     assign readback_array[63][31:9] = '0;
     assign readback_array[64][0:0] = '0;
-    assign readback_array[64][15:1] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.PID_HI.value : '0;
-    assign readback_array[64][23:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.DCR.value : '0;
-    assign readback_array[64][28:24] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_VAR.value : '0;
-    assign readback_array[64][31:29] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_CHAR.BCR_FIXED.value : '0;
-    assign readback_array[65][31:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_DEVICE_PID_LO.PID_LO.value : '0;
-    assign readback_array[66][0:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value : '0;
-    assign readback_array[66][1:1] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value : '0;
-    assign readback_array[66][2:2] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value : '0;
-    assign readback_array[66][3:3] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value : '0;
+    assign readback_array[64][15:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value : '0;
+    assign readback_array[64][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value : '0;
+    assign readback_array[64][28:24] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value : '0;
+    assign readback_array[64][31:29] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value : '0;
+    assign readback_array[65][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value : '0;
+    assign readback_array[66][0:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value : '0;
+    assign readback_array[66][1:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value : '0;
+    assign readback_array[66][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value : '0;
+    assign readback_array[66][3:3] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value : '0;
     assign readback_array[66][9:4] = '0;
-    assign readback_array[66][10:10] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value : '0;
-    assign readback_array[66][11:11] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value : '0;
-    assign readback_array[66][12:12] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value : '0;
-    assign readback_array[66][13:13] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value : '0;
-    assign readback_array[66][14:14] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value : '0;
+    assign readback_array[66][10:10] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value : '0;
+    assign readback_array[66][11:11] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value : '0;
+    assign readback_array[66][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value : '0;
+    assign readback_array[66][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value : '0;
+    assign readback_array[66][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value : '0;
     assign readback_array[66][15:15] = '0;
-    assign readback_array[66][16:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value : '0;
-    assign readback_array[66][17:17] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value : '0;
-    assign readback_array[66][18:18] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value : '0;
-    assign readback_array[66][19:19] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value : '0;
+    assign readback_array[66][16:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value : '0;
+    assign readback_array[66][17:17] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value : '0;
+    assign readback_array[66][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value : '0;
+    assign readback_array[66][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value : '0;
     assign readback_array[66][31:20] = '0;
-    assign readback_array[67][31:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_1.__rsvd.value : '0;
-    assign readback_array[68][0:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value : '0;
-    assign readback_array[68][1:1] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value : '0;
-    assign readback_array[68][2:2] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value : '0;
-    assign readback_array[68][3:3] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value : '0;
+    assign readback_array[67][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value : '0;
+    assign readback_array[68][0:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value : '0;
+    assign readback_array[68][1:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value : '0;
+    assign readback_array[68][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value : '0;
+    assign readback_array[68][3:3] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value : '0;
     assign readback_array[68][9:4] = '0;
-    assign readback_array[68][10:10] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value : '0;
-    assign readback_array[68][11:11] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value : '0;
-    assign readback_array[68][12:12] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value : '0;
-    assign readback_array[68][13:13] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value : '0;
-    assign readback_array[68][14:14] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value : '0;
+    assign readback_array[68][10:10] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value : '0;
+    assign readback_array[68][11:11] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value : '0;
+    assign readback_array[68][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value : '0;
+    assign readback_array[68][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value : '0;
+    assign readback_array[68][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value : '0;
     assign readback_array[68][15:15] = '0;
-    assign readback_array[68][16:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value : '0;
-    assign readback_array[68][17:17] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value : '0;
-    assign readback_array[68][18:18] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value : '0;
-    assign readback_array[68][19:19] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value : '0;
+    assign readback_array[68][16:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value : '0;
+    assign readback_array[68][17:17] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value : '0;
+    assign readback_array[68][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value : '0;
+    assign readback_array[68][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value : '0;
     assign readback_array[68][31:20] = '0;
     assign readback_array[69][9:0] = '0;
-    assign readback_array[69][10:10] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value : '0;
-    assign readback_array[69][11:11] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value : '0;
-    assign readback_array[69][12:12] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value : '0;
-    assign readback_array[69][13:13] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value : '0;
-    assign readback_array[69][14:14] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value : '0;
+    assign readback_array[69][10:10] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value : '0;
+    assign readback_array[69][11:11] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value : '0;
+    assign readback_array[69][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value : '0;
+    assign readback_array[69][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value : '0;
+    assign readback_array[69][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value : '0;
     assign readback_array[69][15:15] = '0;
-    assign readback_array[69][16:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value : '0;
-    assign readback_array[69][17:17] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value : '0;
-    assign readback_array[69][18:18] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value : '0;
-    assign readback_array[69][19:19] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value : '0;
+    assign readback_array[69][16:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value : '0;
+    assign readback_array[69][17:17] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value : '0;
+    assign readback_array[69][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value : '0;
+    assign readback_array[69][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value : '0;
     assign readback_array[69][31:20] = '0;
-    assign readback_array[70][2:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value : '0;
+    assign readback_array[70][2:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value : '0;
     assign readback_array[70][7:3] = '0;
-    assign readback_array[70][11:8] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value : '0;
+    assign readback_array[70][11:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value : '0;
     assign readback_array[70][31:12] = '0;
-    assign readback_array[71][7:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value : '0;
-    assign readback_array[71][15:8] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value : '0;
-    assign readback_array[71][23:16] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value : '0;
+    assign readback_array[71][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value : '0;
+    assign readback_array[71][15:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value : '0;
+    assign readback_array[71][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value : '0;
     assign readback_array[71][30:24] = '0;
-    assign readback_array[71][31:31] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value : '0;
-    assign readback_array[72][31:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_2.__rsvd.value : '0;
-    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.StandbyControllerModeRegisters.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StandbyControllerModeRegisters.__rsvd_3.__rsvd.value : '0;
-    assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
-    assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[71][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value : '0;
+    assign readback_array[72][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_2.__rsvd.value : '0;
+    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value : '0;
+    assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
+    assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
     assign readback_array[74][31:24] = '0;
-    assign readback_array[75][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_CONTROL.PLACEHOLDER.value : '0;
-    assign readback_array[76][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[77][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[78][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_ENABLE.PLACEHOLDER.value : '0;
-    assign readback_array[79][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_INTERRUPT_FORCE.PLACEHOLDER.value : '0;
-    assign readback_array[80][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DESCRIPTOR_QUEUE_PORT.TTI_RX_DESCRIPTOR.value : '0;
-    assign readback_array[81][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_RX_DATA_PORT.TTI_RX_DATA.value : '0;
-    assign readback_array[82][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DESCRIPTOR_QUEUE_PORT.TTI_TX_DESCRIPTOR.value : '0;
-    assign readback_array[83][31:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_TX_DATA_PORT.TTI_TX_DATA.value : '0;
-    assign readback_array[84][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[84][15:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[84][23:16] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[84][31:24] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[85][7:0] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DESCRIPTOR_THLD.value : '0;
-    assign readback_array[85][15:8] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DESCRIPTOR_THLD.value : '0;
-    assign readback_array[85][23:16] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_RX_DATA_THLD.value : '0;
-    assign readback_array[85][31:24] = (decoded_reg_strb.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TargetTransactionInterfaceRegisters.TTI_QUEUE_THRESHOLD_CONTROL.TTI_TX_DATA_THLD.value : '0;
-    assign readback_array[86][7:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
-    assign readback_array[86][23:8] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
-    assign readback_array[86][31:24] = '0;
-    assign readback_array[87][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
-    assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_0.PLACEHOLDER.value : '0;
-    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_1.PLACEHOLDER.value : '0;
-    assign readback_array[91][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
-    assign readback_array[92][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
-    assign readback_array[93][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_0.PLACEHOLDER.value : '0;
-    assign readback_array[94][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_1.PLACEHOLDER.value : '0;
-    assign readback_array[95][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
-    assign readback_array[96][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
-    assign readback_array[97][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_4.PLACEHOLDER.value : '0;
-    assign readback_array[98][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_5.PLACEHOLDER.value : '0;
-    assign readback_array[99][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_6.PLACEHOLDER.value : '0;
-    assign readback_array[100][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_7.PLACEHOLDER.value : '0;
-    assign readback_array[101][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_8.PLACEHOLDER.value : '0;
-    assign readback_array[102][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_9.PLACEHOLDER.value : '0;
-    assign readback_array[103][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_10.PLACEHOLDER.value : '0;
-    assign readback_array[104][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_11.PLACEHOLDER.value : '0;
-    assign readback_array[105][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_12.PLACEHOLDER.value : '0;
-    assign readback_array[106][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_13.PLACEHOLDER.value : '0;
-    assign readback_array[107][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_14.PLACEHOLDER.value : '0;
-    assign readback_array[108][31:0] = (decoded_reg_strb.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCManagementInterfaceRegisters.SOC_MGMT_FEATURE_15.PLACEHOLDER.value : '0;
-    assign readback_array[109][7:0] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
-    assign readback_array[109][23:8] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
-    assign readback_array[109][31:24] = '0;
-    assign readback_array[110][3:0] = '0;
-    assign readback_array[110][5:4] = (decoded_reg_strb.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.ControllerConfigRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
-    assign readback_array[110][31:6] = '0;
-    assign readback_array[111] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
-    assign readback_array[112] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
+    assign readback_array[75][31:0] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value : '0;
+    assign readback_array[76][31:0] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[77][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[78][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value : '0;
+    assign readback_array[79][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value : '0;
+    assign readback_array[80] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
+    assign readback_array[81] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
+    assign readback_array[82][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[82][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[82][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[82][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[83][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value : '0;
+    assign readback_array[83][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value : '0;
+    assign readback_array[83][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value : '0;
+    assign readback_array[83][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value : '0;
+    assign readback_array[84][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
+    assign readback_array[84][23:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[84][31:24] = '0;
+    assign readback_array[85][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
+    assign readback_array[86][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[87][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value : '0;
+    assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value : '0;
+    assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
+    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
+    assign readback_array[91][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value : '0;
+    assign readback_array[92][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value : '0;
+    assign readback_array[93][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
+    assign readback_array[94][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
+    assign readback_array[95][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value : '0;
+    assign readback_array[96][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value : '0;
+    assign readback_array[97][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value : '0;
+    assign readback_array[98][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value : '0;
+    assign readback_array[99][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value : '0;
+    assign readback_array[100][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value : '0;
+    assign readback_array[101][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value : '0;
+    assign readback_array[102][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value : '0;
+    assign readback_array[103][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value : '0;
+    assign readback_array[104][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value : '0;
+    assign readback_array[105][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value : '0;
+    assign readback_array[106][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value : '0;
+    assign readback_array[107][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
+    assign readback_array[107][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
+    assign readback_array[107][31:24] = '0;
+    assign readback_array[108][3:0] = '0;
+    assign readback_array[108][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
+    assign readback_array[108][31:6] = '0;
+    assign readback_array[109] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
+    assign readback_array[110] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
 
     // Reduce the array
     always_comb begin
@@ -7772,7 +7654,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<113; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<111; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

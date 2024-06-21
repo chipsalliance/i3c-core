@@ -9,6 +9,7 @@ regfile PIORegs #(
     bit rx_fifo_size,
     bit ext_ibi_size
 ){
+    name = "Programmable I/O";
     default regwidth = 32;
     external reg {
         name = "Command issue port";
@@ -16,7 +17,7 @@ regfile PIORegs #(
             name = "COMMAND_QUEUE_PORT";
             sw = w;
             hw = r;
-        } COMMAND_DATA;
+        } COMMAND_DATA[31:0];
     } COMMAND_PORT @ 0x0;
     external reg {
         name = "Command response port";
@@ -24,7 +25,7 @@ regfile PIORegs #(
             name = "RESPONSE_QUEUE_PORT";
             sw = r;
             hw = w;
-        } RESPONSE_DATA;
+        } RESPONSE_DATA[31:0];
     } RESPONSE_PORT @ 0x4;
     external reg {
         name = "Data access port";

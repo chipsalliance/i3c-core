@@ -1,6 +1,7 @@
 // I3C controller register map based on MIPI HCI 1.2
 
 regfile ControllerConfigRegisters{
+    name = "Controller Config";
     default regwidth = 32;
     reg {
         regwidth = 32;
