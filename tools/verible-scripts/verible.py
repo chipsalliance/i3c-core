@@ -5,15 +5,13 @@ import os
 import sys
 
 EXCLUDE_FILES = [
-    "I3CCSR_pkg.sv",
-    "I3CCSR.sv",
     "prim_ram_1p_adv.sv",
     "prim_ram_1p_pkg.sv",
     "prim_ram_1p.sv",
     "prim_generic_ram_1p.sv",
 ]
 
-EXCLUDE_DIRS = ["html", "md", ".nox", "obj_dir", "__pycache__", "axi"]
+EXCLUDE_DIRS = ["html", "md", ".nox", "obj_dir", "__pycache__", "axi", "csr"]
 
 
 def main():
