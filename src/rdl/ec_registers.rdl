@@ -7,19 +7,19 @@
 `include "standby_controller_mode.rdl"
 
 regfile ECRegisters #(
-    bit tti_rx_fifo_size = 0x5, // 64 DWORDs by default
-    bit tti_tx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_rx_desc_fifo_size = 0x5, // 64 DWORDs by default
-    bit tti_tx_desc_fifo_size = 0x5 // 64 DWORDs by default
+    bit tti_tx_desc_fifo_size = 0x5, // 64 DWORDs by default
+    bit tti_rx_fifo_size = 0x5, // 64 DWORDs by default
+    bit tti_tx_fifo_size = 0x5 // 64 DWORDs by default
 ){
     name = "Extended Capabilities";
     SecureFirmwareRecoveryInterfaceRegisters SecFwRecoveryIf @ 0x0;
     StandbyControllerModeRegisters StdbyCtrlMode;
     TargetTransactionInterfaceRegisters #(
-        .rx_fifo_size(tti_rx_fifo_size),
-        .tx_fifo_size(tti_tx_fifo_size),
         .rx_desc_fifo_size(tti_rx_desc_fifo_size),
-        .tx_desc_fifo_size(tti_tx_desc_fifo_size)
+        .tx_desc_fifo_size(tti_tx_desc_fifo_size),
+        .rx_fifo_size(tti_rx_fifo_size),
+        .tx_fifo_size(tti_tx_fifo_size)
     ) TTI;
     SoCManagementInterfaceRegisters SoCMgmtIf;
     ControllerConfigRegisters CtrlCfg;

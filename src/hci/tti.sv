@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// I3C Target Transport Interface
+// I3C Target Transaction Interface
 module tti
   import I3CCSR_pkg::*;
   import i3c_pkg::*;
@@ -14,14 +14,14 @@ module tti
 
     // RX descriptors queue
     output logic rx_desc_queue_full_o,
-    output logic [TtiRespThldWidth-1:0] rx_desc_queue_thld_o,
+    output logic [TtiRxDescThldWidth-1:0] rx_desc_queue_thld_o,
     output logic rx_desc_queue_above_thld_o,
     output logic rx_desc_queue_empty_o,
     input logic rx_desc_queue_wvalid_i,
     output logic rx_desc_queue_wready_o,
-    input logic [TtiRespDataWidth-1:0] rx_desc_queue_wdata_i,
+    input logic [TtiRxDescDataWidth-1:0] rx_desc_queue_wdata_i,
     output logic rx_desc_queue_rd_ack_o,
-    output logic [TtiRespDataWidth-1:0] rx_desc_queue_rd_data_o,
+    output logic [TtiRxDescDataWidth-1:0] rx_desc_queue_rd_data_o,
 
     // RX queue
     output logic rx_queue_full_o,
@@ -36,12 +36,12 @@ module tti
 
     // TX descriptors queue
     output logic tx_desc_queue_full_o,
-    output logic [TtiCmdThldWidth-1:0] tx_desc_queue_thld_o,
+    output logic [TtiTxDescThldWidth-1:0] tx_desc_queue_thld_o,
     output logic tx_desc_queue_below_thld_o,
     output logic tx_desc_queue_empty_o,
     output logic tx_desc_queue_rvalid_o,
     input logic tx_desc_queue_rready_i,
-    output logic [TtiCmdDataWidth-1:0] tx_desc_queue_rdata_o,
+    output logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_o,
     output logic tx_desc_queue_wr_ack_o,
 
     // TX queue
@@ -55,15 +55,17 @@ module tti
     output logic tx_queue_wr_ack_o
 );
   // TTI queues thresholds
-  logic [TtiCmdThldWidth-1:0] rx_desc_queue_thld;
+  logic [TtiTxDescThldWidth-1:0] rx_desc_queue_thld;
+  logic [TtiRxDescThldWidth-1:0] tx_desc_queue_thld;
   logic [TtiRxThldWidth-1:0] rx_queue_thld;
   logic [TtiTxThldWidth-1:0] tx_queue_thld;
-  logic [TtiRespThldWidth-1:0] tx_desc_queue_thld;
 
   // TTI queues port control
+  logic rx_desc_queue_req;
+
   logic tx_desc_queue_req;
   logic tx_desc_queue_req_is_wr;
-  logic [TtiCmdDataWidth-1:0] tx_desc_queue_wr_data;
+  logic [TtiTxDescDataWidth-1:0] tx_desc_queue_wr_data;
 
   logic rx_queue_req;
   logic [TtiRxDataWidth-1:0] rx_queue_rd_data;
@@ -71,8 +73,6 @@ module tti
   logic tx_queue_req;
   logic tx_queue_req_is_wr;
   logic [TtiTxDataWidth-1:0] tx_queue_wr_data;
-
-  logic rx_desc_queue_req;
 
   // TODO: Connect queue soft resets
 
@@ -98,20 +98,20 @@ module tti
   end : wire_hwif_xfer
 
   queues #(
+      .RX_DESC_FIFO_DEPTH(`RESP_FIFO_DEPTH),
       .TX_DESC_FIFO_DEPTH(`CMD_FIFO_DEPTH),
       .RX_FIFO_DEPTH(`RX_FIFO_DEPTH),
       .TX_FIFO_DEPTH(`TX_FIFO_DEPTH),
-      .RX_DESC_FIFO_DEPTH(`RESP_FIFO_DEPTH),
 
-      .TX_DESC_FIFO_DATA_WIDTH(TtiCmdDataWidth),
+      .RX_DESC_FIFO_DATA_WIDTH(TtiRxDescDataWidth),
+      .TX_DESC_FIFO_DATA_WIDTH(TtiTxDescDataWidth),
       .RX_FIFO_DATA_WIDTH(TtiRxDataWidth),
       .TX_FIFO_DATA_WIDTH(TtiTxDataWidth),
-      .RX_DESC_FIFO_DATA_WIDTH(TtiRespDataWidth),
 
-      .TX_DESC_THLD_WIDTH(TtiCmdThldWidth),
+      .RX_DESC_THLD_WIDTH(TtiRxDescThldWidth),
+      .TX_DESC_THLD_WIDTH(TtiTxDescThldWidth),
       .TX_THLD_WIDTH(TtiTxThldWidth),
-      .RX_THLD_WIDTH(TtiRxThldWidth),
-      .RX_DESC_THLD_WIDTH(TtiRespThldWidth)
+      .RX_THLD_WIDTH(TtiRxThldWidth)
   ) tti_queues (
       .clk_i,
       .rst_ni,

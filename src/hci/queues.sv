@@ -27,7 +27,22 @@ module queues
     input logic clk_i,
     input logic rst_ni,
 
-    // TODO: Ensure if the _depth_o need to be exposed
+    // Response FIFO: status / control
+    output logic rx_desc_full_o,
+    output logic rx_desc_above_thld_o,
+    output logic rx_desc_empty_o,
+    input logic rx_desc_wvalid_i,
+    output logic rx_desc_wready_o,
+    input logic [RX_DESC_FIFO_DATA_WIDTH-1:0] rx_desc_wdata_i,
+    input logic rx_desc_req_i,
+    output logic rx_desc_ack_o,
+    output logic [RX_DESC_FIFO_DATA_WIDTH-1:0] rx_desc_data_o,
+    input logic [RX_DESC_THLD_WIDTH-1:0] rx_desc_thld_i,
+    output logic [RX_DESC_THLD_WIDTH-1:0] rx_desc_thld_o,
+    input logic rx_desc_reg_rst_i,
+    output logic rx_desc_reg_rst_we_o,
+    output logic rx_desc_reg_rst_data_o,
+
     // Direct FIFO read control
     output logic tx_desc_full_o,
     output logic tx_desc_below_thld_o,
@@ -74,24 +89,32 @@ module queues
     output logic [TX_THLD_WIDTH-1:0] tx_thld_o,
     input logic tx_reg_rst_i,
     output logic tx_reg_rst_we_o,
-    output logic tx_reg_rst_data_o,
-
-    // Response FIFO: status / control
-    output logic rx_desc_full_o,
-    output logic rx_desc_above_thld_o,
-    output logic rx_desc_empty_o,
-    input logic rx_desc_wvalid_i,
-    output logic rx_desc_wready_o,
-    input logic [RX_DESC_FIFO_DATA_WIDTH-1:0] rx_desc_wdata_i,
-    input logic rx_desc_req_i,
-    output logic rx_desc_ack_o,
-    output logic [RX_DESC_FIFO_DATA_WIDTH-1:0] rx_desc_data_o,
-    input logic [RX_DESC_THLD_WIDTH-1:0] rx_desc_thld_i,
-    output logic [RX_DESC_THLD_WIDTH-1:0] rx_desc_thld_o,
-    input logic rx_desc_reg_rst_i,
-    output logic rx_desc_reg_rst_we_o,
-    output logic rx_desc_reg_rst_data_o
+    output logic tx_reg_rst_data_o
 );
+
+  read_queue #(
+      .DEPTH(RX_DESC_FIFO_DEPTH),
+      .DATA_WIDTH(RX_DESC_FIFO_DATA_WIDTH),
+      .THLD_WIDTH(RX_DESC_THLD_WIDTH),
+      .THLD_IS_POW(0)
+  ) rx_desc_fifo (
+      .clk_i,
+      .rst_ni,
+      .full_o(rx_desc_full_o),
+      .above_thld_o(rx_desc_above_thld_o),
+      .empty_o(rx_desc_empty_o),
+      .wvalid_i(rx_desc_wvalid_i),
+      .wready_o(rx_desc_wready_o),
+      .wdata_i(rx_desc_wdata_i),
+      .req_i(rx_desc_req_i),
+      .ack_o(rx_desc_ack_o),
+      .data_o(rx_desc_data_o),
+      .thld_i(rx_desc_thld_i),
+      .thld_o(rx_desc_thld_o),
+      .reg_rst_i(rx_desc_reg_rst_i),
+      .reg_rst_we_o(rx_desc_reg_rst_we_o),
+      .reg_rst_data_o(rx_desc_reg_rst_data_o)
+  );
 
   write_queue #(
       .DEPTH(TX_DESC_FIFO_DEPTH),
@@ -163,30 +186,6 @@ module queues
       .reg_rst_i(tx_reg_rst_i),
       .reg_rst_we_o(tx_reg_rst_we_o),
       .reg_rst_data_o(tx_reg_rst_data_o)
-  );
-
-  read_queue #(
-      .DEPTH(RX_DESC_FIFO_DEPTH),
-      .DATA_WIDTH(RX_DESC_FIFO_DATA_WIDTH),
-      .THLD_WIDTH(RX_DESC_THLD_WIDTH),
-      .THLD_IS_POW(0)
-  ) rx_desc_fifo (
-      .clk_i,
-      .rst_ni,
-      .full_o(rx_desc_full_o),
-      .above_thld_o(rx_desc_above_thld_o),
-      .empty_o(rx_desc_empty_o),
-      .wvalid_i(rx_desc_wvalid_i),
-      .wready_o(rx_desc_wready_o),
-      .wdata_i(rx_desc_wdata_i),
-      .req_i(rx_desc_req_i),
-      .ack_o(rx_desc_ack_o),
-      .data_o(rx_desc_data_o),
-      .thld_i(rx_desc_thld_i),
-      .thld_o(rx_desc_thld_o),
-      .reg_rst_i(rx_desc_reg_rst_i),
-      .reg_rst_we_o(rx_desc_reg_rst_we_o),
-      .reg_rst_data_o(rx_desc_reg_rst_data_o)
   );
 
 endmodule

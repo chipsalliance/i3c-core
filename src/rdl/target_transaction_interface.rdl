@@ -2,10 +2,10 @@
 
 
 regfile TargetTransactionInterfaceRegisters #(
-    bit rx_fifo_size,
-    bit tx_fifo_size,
     bit rx_desc_fifo_size,
-    bit tx_desc_fifo_size
+    bit tx_desc_fifo_size,
+    bit rx_fifo_size,
+    bit tx_fifo_size
 ){
     name = "Target Transaction Interface";
     default regwidth = 32;
