@@ -1,7 +1,12 @@
 // I3C controller register map based on MIPI HCI 1.2
 
 
-regfile TargetTransactionInterfaceRegisters{
+regfile TargetTransactionInterfaceRegisters #(
+    bit rx_fifo_size,
+    bit tx_fifo_size,
+    bit rx_desc_fifo_size,
+    bit tx_desc_fifo_size
+){
     name = "Target Transaction Interface";
     default regwidth = 32;
     reg {
@@ -128,28 +133,28 @@ regfile TargetTransactionInterfaceRegisters{
             desc = "";
             sw = r;
             hw = na;
-            reset = 8'h07;
+            reset = tx_fifo_size;
         } TX_DATA_BUFFER_SIZE[31:24];
         field {
             name = "RX_DATA_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
-            reset = 8'h07;
+            reset = rx_fifo_size;
         } RX_DATA_BUFFER_SIZE[23:16];
         field {
             name = "TX_DESC_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
-            reset = 8'h07;
+            reset = tx_desc_fifo_size;
         } TX_DESC_BUFFER_SIZE[15:8];
         field {
             name = "RX_DESC_BUFFER_SIZE";
             desc = "";
             sw = r;
             hw = na;
-            reset = 8'h07;
+            reset = rx_desc_fifo_size;
         } RX_DESC_BUFFER_SIZE[7:0];
     } QUEUE_SIZE;
     reg {

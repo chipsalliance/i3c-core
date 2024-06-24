@@ -3931,13 +3931,13 @@ package registers_uvm;
 
         virtual function void build();
             this.RX_DESC_BUFFER_SIZE = new("RX_DESC_BUFFER_SIZE");
-            this.RX_DESC_BUFFER_SIZE.configure(this, 8, 0, "RO", 0, 'h7, 1, 1, 0);
+            this.RX_DESC_BUFFER_SIZE.configure(this, 8, 0, "RO", 0, 'h5, 1, 1, 0);
             this.TX_DESC_BUFFER_SIZE = new("TX_DESC_BUFFER_SIZE");
-            this.TX_DESC_BUFFER_SIZE.configure(this, 8, 8, "RO", 0, 'h7, 1, 1, 0);
+            this.TX_DESC_BUFFER_SIZE.configure(this, 8, 8, "RO", 0, 'h5, 1, 1, 0);
             this.RX_DATA_BUFFER_SIZE = new("RX_DATA_BUFFER_SIZE");
-            this.RX_DATA_BUFFER_SIZE.configure(this, 8, 16, "RO", 0, 'h7, 1, 1, 0);
+            this.RX_DATA_BUFFER_SIZE.configure(this, 8, 16, "RO", 0, 'h5, 1, 1, 0);
             this.TX_DATA_BUFFER_SIZE = new("TX_DATA_BUFFER_SIZE");
-            this.TX_DATA_BUFFER_SIZE.configure(this, 8, 24, "RO", 0, 'h7, 1, 1, 0);
+            this.TX_DATA_BUFFER_SIZE.configure(this, 8, 24, "RO", 0, 'h5, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(RX_DESC_BUFFER_SIZE_bit_cg[bt]) RX_DESC_BUFFER_SIZE_bit_cg[bt] = new();
                 foreach(TX_DESC_BUFFER_SIZE_bit_cg[bt]) TX_DESC_BUFFER_SIZE_bit_cg[bt] = new();

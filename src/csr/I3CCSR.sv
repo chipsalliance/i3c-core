@@ -7606,10 +7606,10 @@ module I3CCSR (
     assign readback_array[79][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value : '0;
     assign readback_array[80] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
     assign readback_array[81] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
-    assign readback_array[82][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[82][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[82][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
-    assign readback_array[82][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h7 : '0;
+    assign readback_array[82][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[82][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[82][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[82][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
     assign readback_array[83][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value : '0;
     assign readback_array[83][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value : '0;
     assign readback_array[83][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value : '0;

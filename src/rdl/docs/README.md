@@ -2264,10 +2264,10 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 | Bits|     Identifier    |Access|Reset|        Name       |
 |-----|-------------------|------|-----|-------------------|
-| 7:0 |RX_DESC_BUFFER_SIZE|   r  | 0x7 |RX_DESC_BUFFER_SIZE|
-| 15:8|TX_DESC_BUFFER_SIZE|   r  | 0x7 |TX_DESC_BUFFER_SIZE|
-|23:16|RX_DATA_BUFFER_SIZE|   r  | 0x7 |RX_DATA_BUFFER_SIZE|
-|31:24|TX_DATA_BUFFER_SIZE|   r  | 0x7 |TX_DATA_BUFFER_SIZE|
+| 7:0 |RX_DESC_BUFFER_SIZE|   r  | 0x5 |RX_DESC_BUFFER_SIZE|
+| 15:8|TX_DESC_BUFFER_SIZE|   r  | 0x5 |TX_DESC_BUFFER_SIZE|
+|23:16|RX_DATA_BUFFER_SIZE|   r  | 0x5 |RX_DATA_BUFFER_SIZE|
+|31:24|TX_DATA_BUFFER_SIZE|   r  | 0x5 |TX_DATA_BUFFER_SIZE|
 
 #### RX_DESC_BUFFER_SIZE field
 
