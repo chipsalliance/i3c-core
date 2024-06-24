@@ -198,8 +198,8 @@ package i3c_agent_pkg;
     int tSetupStart = 600;
     int tSetupBit   = 100;
     int tHoldBit    = 0;
-    int tClockPulse = 600;
-    int tClockLow   = 1_300;
+    int tClockPulse = 900;
+    int tClockLow   = 1_600;
     int tSetupStop  = 1_300;
   } i2c_timing_t;
 
@@ -209,8 +209,8 @@ package i3c_agent_pkg;
     tSetupStart : 600,
     tSetupBit   : 100,
     tHoldBit    : 0,
-    tClockPulse : 600,
-    tClockLow   : 1_300,
+    tClockPulse : 900,
+    tClockLow   : 1_600,
     tSetupStop  : 1_300
   };
 
@@ -220,8 +220,8 @@ package i3c_agent_pkg;
     tSetupStart : 260,
     tSetupBit   : 50,
     tHoldBit    : 0,
-    tClockPulse : 260,
-    tClockLow   : 500,
+    tClockPulse : 380,
+    tClockLow   : 620,
     tSetupStop  : 500
   };
 

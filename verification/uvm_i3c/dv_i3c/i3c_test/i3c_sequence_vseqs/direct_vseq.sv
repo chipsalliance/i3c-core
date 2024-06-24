@@ -1,9 +1,9 @@
-class i3c_sequence_direct_vseq extends i3c_sequence_base_vseq #(
+class direct_vseq extends base_vseq #(
     .CFG_T                (i3c_sequence_env_cfg),
     .VIRTUAL_SEQUENCER_T  (i3c_sequence_virtual_sequencer)
   );
 
-  `uvm_object_utils(i3c_sequence_direct_vseq)
+  `uvm_object_utils(direct_vseq)
 
   i3c_direct_data_seq dev;
   i3c_direct_data_seq host;
@@ -24,10 +24,11 @@ class i3c_sequence_direct_vseq extends i3c_sequence_base_vseq #(
         dev.start(p_sequencer.m_i3c_sequencer_dev);
         for (int i=0; i < num_runs; i++) begin
           host.start(p_sequencer.m_i3c_sequencer_host);
+          #(100*1us);
         end
       join_any
       disable fork;
     join
   endtask: body
 
-endclass
+endclass : direct_vseq

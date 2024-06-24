@@ -7,7 +7,7 @@ class i3c_item extends uvm_sequence_item;
   // transaction data part
   bit [7:0]                data_q[$];
   bit [6:0]                addr;
-  bit                      i3c_data_after_broadcast;
+  bit                      i3c_empty_broadcast;
   bit                      i3c_broadcast;
   bit                      i3c_direct;
   i3c_ccc_e                CCC;
@@ -36,7 +36,7 @@ class i3c_item extends uvm_sequence_item;
     `uvm_field_int(tran_id,                     UVM_DEFAULT)
     `uvm_field_enum(bus_op_e, bus_op,           UVM_DEFAULT)
     `uvm_field_int(addr,                        UVM_DEFAULT)
-    `uvm_field_int(i3c_data_after_broadcast,    UVM_DEFAULT)
+    `uvm_field_int(i3c_empty_broadcast,         UVM_DEFAULT)
     `uvm_field_int(i3c_broadcast,               UVM_DEFAULT)
     `uvm_field_int(i3c_direct,                  UVM_DEFAULT)
     `uvm_field_enum(i3c_ccc_e, CCC,             UVM_DEFAULT)

@@ -1,8 +1,8 @@
-class i3c_sequence_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
-                               type VIRTUAL_SEQUENCER_T = i3c_sequence_virtual_sequencer
+class base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
+                  type VIRTUAL_SEQUENCER_T = i3c_sequence_virtual_sequencer
 ) extends uvm_sequence;
 
-  `uvm_object_utils(i3c_sequence_base_vseq)
+  `uvm_object_utils(base_vseq)
   `uvm_declare_p_sequencer(VIRTUAL_SEQUENCER_T)
 
   CFG_T m_cfg;
@@ -151,5 +151,5 @@ class i3c_sequence_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
     `uvm_fatal(`gtn, "Need to override this when you extend from this class!")
   endtask : body
 
-endclass : i3c_sequence_base_vseq
+endclass : base_vseq
 

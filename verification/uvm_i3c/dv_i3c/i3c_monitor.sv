@@ -82,7 +82,7 @@ class i3c_monitor extends uvm_monitor;
     full_item.start = 1'b1;
 
     // Check if previous address was I3C broadcast address.
-    // It can only happen if direct CCCs were ended with RSTART
+    // It can happen when CCC starts with RStart and follows direct I3C RW access.
     if (!is_i3c_broadcast(full_item.addr)) begin
       address_thread(full_item, temp_val);
       full_item = temp_val;
@@ -125,7 +125,7 @@ class i3c_monitor extends uvm_monitor;
     full_item.stop = 1'b1;
     // send rsp_item to scoreboard
     if (cfg.vif.rst_ni && full_item.stop && full_item.start && !full_item.aborted) begin
-      if (full_item.i3c && full_item.CCC_valid) begin
+      if (full_item.i3c && (full_item.CCC_valid || full_item.i3c_empty_broadcast)) begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full ccc trans"),
           UVM_HIGH)
       end else if (full_item.i3c && full_item.bus_op == BusOpRead) begin
@@ -199,10 +199,9 @@ class i3c_monitor extends uvm_monitor;
     if (transaction.rstart == 0 && transaction.stop == 0) begin
       ccc_gather(transaction);
     end else if (transaction.rstart) begin
-      // 0x7E followed by RSTART means direct I3C access to target for RW
+      // 0x7E followed by RSTART means direct I2C/I3C access to target for RW
       // operations
-      transaction.i3c_direct = 1'b1;
-      transaction.i3c_data_after_broadcast = 1'b1;
+      transaction.i3c_empty_broadcast = 1'b1;
     end
     `DV_CHECK_NE_FATAL({transaction.rstart, transaction.stop}, 2'b11)
     `uvm_info(get_full_name(), $sformatf("\nmonitor, CCC, detect HOST %s",
@@ -284,7 +283,9 @@ class i3c_monitor extends uvm_monitor;
 
       if (!next_item.stop && !next_item.rstart) begin
         // Address thread was successful
-        if (next_item.addr == 7'h7E) break;
+        if (next_item.addr == 7'h7E)
+          // Potential CCC command, break to main collect thread.
+          break;
         if (next_item.addr_ack) begin
           // Device ACKed address
           if (transaction.CCC_valid) begin
@@ -296,9 +297,7 @@ class i3c_monitor extends uvm_monitor;
                      .device_to_host(next_item.bus_op == BusOpRead),
                      .msg("CCC Direct data byte"));
             next_item = temp_val;
-            if (!transaction.i3c_data_after_broadcast) begin
-              transaction.CCC_direct.push_back(next_item);
-            end
+            transaction.CCC_direct.push_back(next_item);
           end
         end else begin
           // I3C transfer was denied by target
@@ -308,7 +307,8 @@ class i3c_monitor extends uvm_monitor;
                                                    transaction.stop);
         end
       end else if (next_item.rstart) begin
-        // Ignore this I3C address and restart address phase
+        // I3C address aborted, log it and restart address phase
+        transaction.CCC_direct.push_back(next_item);
       end else if (next_item.stop) begin
         // I3C special case for RSTART followed by STOP
         // Don't create new i3c_item
@@ -319,15 +319,7 @@ class i3c_monitor extends uvm_monitor;
       `DV_CHECK_NE_FATAL({next_item.rstart, next_item.stop}, 2'b11)
       `uvm_info(get_full_name(), $sformatf("\nmonitor, CCC, detect HOST %s",
           (next_item.stop) ? "STOP" : "RSTART"), UVM_HIGH)
-      if (next_item.stop ||
-          next_item.rstart && transaction.i3c_data_after_broadcast) begin
-          if (transaction.i3c_data_after_broadcast) begin
-            transaction.data_q = next_item.data_q;
-            transaction.data_ack_q = next_item.data_ack_q;
-            transaction.addr = next_item.addr;
-            transaction.addr_ack = next_item.addr_ack;
-            transaction.bus_op = next_item.bus_op;
-          end
+      if (next_item.stop) begin
         next_item = null;
         break;
       end

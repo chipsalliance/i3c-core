@@ -29,7 +29,7 @@ class i3c_sequence_test extends uvm_test;
     uvm_factory     factory;
     uvm_sequence    test_seq;
 
-    string test_seq_s = "i3c_sequence_direct_vseq";
+    string test_seq_s = "direct_vseq";
     void'($value$plusargs("UVM_TEST_SEQ=%0s", test_seq_s));
     factory = uvm_factory::get();
     obj = factory.create_object_by_name(test_seq_s, "", test_seq_s);
