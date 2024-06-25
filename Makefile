@@ -197,7 +197,7 @@ define dsim_run =
 	-l dsim_run/$(8)dsim.run $(7)
 endef
 
-uvm-test-dsim: config ## Run I2C UVM_VSEQ_TEST sequence in Questa
+uvm-test-dsim: config ## Run I2C UVM_VSEQ_TEST sequence in DSim
 	$(call dsim_run, \
 		verification/uvm_i2c/dv_i2c_sim.scr,\
 		i2c_bind sec_cm_prim_onehot_check_bind tb,\
@@ -230,7 +230,7 @@ i3c-driver-tests-dsim:
 		verification/uvm_i3c/dsim_sim.tcl,,\
 	)
 
-i3c-sequence-tests-dsim:
+dsim_run/tb_sequence.%.dsim.run:
 	$(call dsim_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
@@ -238,72 +238,30 @@ i3c-sequence-tests-dsim:
 		,\
 		,verification/uvm_i3c/dsim_sim.tcl\
 		,i3c_sequence_test\
-		,direct_vseq\
+		,$*\
 		,\
-		,direct_vseq.)
+		,tb_sequence.$*.)
+
+tb_sequence.%.vcd:
 	$(call dsim_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
 		,tb\
 		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,direct_with_rstart_vseq\
-		,\
-		,direct_with_rstart_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,broadcast_followed_by_data_vseq\
-		,\
-		,broadcast_followed_by_data_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,broadcast_followed_by_data_with_rstart_vseq\
-		,\
-		,broadcast_followed_by_data_with_rstart_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,direct_i2c_vseq\
-		,\
-		,direct_i2c_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,direct_i2c_with_rstart_vseq\
-		,\
-		,direct_i2c_with_rstart_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,broadcast_followed_by_i2c_data_vseq\
-		,\
-		,broadcast_followed_by_i2c_data_vseq.)
-	$(call dsim_run,\
-		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
-		,tb\
-		,\
-		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
-		,broadcast_followed_by_i2c_data_with_rstart_vseq\
-		,\
-		,broadcast_followed_by_i2c_data_with_rstart_vseq.)
+		,verification/uvm_i3c/dsim_sim.tcl\
+		,i3c_sequence_test\
+		,$*\
+		,-waves $@\
+		,tb_sequence.$*.)
+
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.direct_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.direct_with_rstart_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.broadcast_followed_by_data_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.broadcast_followed_by_data_with_rstart_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.direct_i2c_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.direct_i2c_with_rstart_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.broadcast_followed_by_i2c_data_vseq.dsim.run
+i3c-sequence-tests-dsim: dsim_run/tb_sequence.broadcast_followed_by_i2c_data_with_rstart_vseq.dsim.run
 
 endif
 
