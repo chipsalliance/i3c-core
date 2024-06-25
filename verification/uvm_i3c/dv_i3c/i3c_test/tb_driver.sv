@@ -170,17 +170,21 @@ module i3c_driver_test;
     i3c_seq_item temp;
     seq_host.add_item(host_item);
     seq_device.add_item(dev_item);
+    // Device agent get address phase before ACK/NACK
     seq_device.get_rsp(rsp_dev);
     assert (rsp_dev.addr == host_item.addr);
     assert (rsp_dev.dir == host_item.dir);
-    #0 assert (seq_host.try_get_rsp(rsp_host) == 0);
+    // Device agent NACK transaction
     seq_device.add_item(dev_item);
+    // Host agent get address phase result
     seq_host.get_rsp(rsp_host);
-    #1;
     assert (rsp_host.addr == host_item.addr);
     assert (rsp_host.dir == host_item.dir);
     assert (rsp_host.dev_ack == dev_item.dev_ack);
-    assert (seq_device.try_get_rsp(rsp_dev) == 1);
+    seq_host.add_item(host_item);
+    seq_host.get_rsp(rsp_host);
+    seq_device.get_rsp(rsp_dev);
+
     temp = rsp_dev;
     assert (seq_device.try_get_rsp(rsp_dev) == 0);
     rsp_dev = temp;
@@ -193,18 +197,23 @@ module i3c_driver_test;
     i3c_seq_item temp;
     seq_host.add_item(host_item);
     seq_device.add_item(dev_item);
+    // Device agent get address phase before ACK/NACK
     seq_device.get_rsp(rsp_dev);
     assert (rsp_dev.addr == host_item.addr);
     assert (rsp_dev.dir == host_item.dir);
-    #0 assert (seq_host.try_get_rsp(rsp_host) == 0);
+    // Device agent ACK transaction
     dev_item.dev_ack = 1;
     seq_device.add_item(dev_item);
+    // Host agent get address phase result
     seq_host.get_rsp(rsp_host);
-    #1;
     assert (rsp_host.addr == host_item.addr);
     assert (rsp_host.dir == host_item.dir);
     assert (rsp_host.dev_ack == dev_item.dev_ack);
-    assert (seq_device.try_get_rsp(rsp_dev) == 1);
+    host_item.dev_ack = rsp_host.dev_ack;
+    seq_host.add_item(host_item);
+    seq_host.get_rsp(rsp_host);
+    seq_device.get_rsp(rsp_dev);
+
     temp = rsp_dev;
     assert (seq_device.try_get_rsp(rsp_dev) == 0);
     rsp_dev = temp;
@@ -228,17 +237,20 @@ module i3c_driver_test;
     assert (rsp_dev.addr == dev_item.IBI_ADDR);
     assert (rsp_dev.dir == 1);
     assert (rsp_dev.dev_ack == host_item.IBI_ACK);
+    seq_device.add_item(dev_item);
+
     rsp_host = null;
     fork
       fork
         seq_host.get_rsp(rsp_host);
 // Host takes time to send I2c/I3C STOP
 // Wait 2us timeout
-        #2us;
+        #20us;
       join_any
       disable fork;
     join
     assert (rsp_host != null);
+    assert (seq_device.try_get_rsp(rsp_dev) == 1);
     temp = rsp_host;
     assert (seq_host.try_get_rsp(rsp_host) == 0);
     rsp_host = temp;

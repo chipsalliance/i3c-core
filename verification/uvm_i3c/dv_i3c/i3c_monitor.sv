@@ -127,23 +127,23 @@ class i3c_monitor extends uvm_monitor;
     if (cfg.vif.rst_ni && full_item.stop && full_item.start && !full_item.aborted) begin
       if (full_item.i3c && full_item.CCC_valid) begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full ccc trans"),
-          UVM_DEBUG)
+          UVM_HIGH)
       end else if (full_item.i3c && full_item.bus_op == BusOpRead) begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full i3c read trans"),
-          UVM_DEBUG)
+          UVM_HIGH)
       end else if (full_item.i3c) begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full i3c write trans"),
-          UVM_DEBUG)
+          UVM_HIGH)
       end else if (full_item.bus_op == BusOpRead) begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full i2c read trans"),
-          UVM_DEBUG)
+          UVM_HIGH)
       end else begin
         `uvm_info(get_full_name(), $sformatf("\nmonitor, sending full i2c write trans"),
-          UVM_DEBUG)
+          UVM_HIGH)
       end
       analysis_port.write(full_item);
       `uvm_info(get_full_name(), $sformatf("\nmonitor, sent full transaction to scb\n%s",
-          full_item.sprint()), UVM_DEBUG)
+          full_item.sprint()), UVM_HIGH)
     end
   endtask: collect_thread
 
@@ -158,7 +158,7 @@ class i3c_monitor extends uvm_monitor;
             transaction.tran_id = num_dut_tran;
             for (int i = 6; i >= 0; i--) begin
               cfg.vif.get_bit_data("host", transaction.addr[i]);
-              `uvm_info(get_full_name(), $sformatf("\nmonitor, address[%0d] %b", i, transaction.addr[i]), UVM_HIGH)
+              `uvm_info(get_full_name(), $sformatf("\nmonitor, address[%0d] %b", i, transaction.addr[i]), UVM_DEBUG)
             end
             `uvm_info(get_full_name(), $sformatf("\nmonitor, address %0x", transaction.addr), UVM_HIGH)
             cfg.vif.get_bit_data("host", rw_req);
@@ -224,7 +224,7 @@ class i3c_monitor extends uvm_monitor;
             for (int i = 8; i >= 0; i--) begin
               cfg.vif.get_bit_data("device", mon_data[i]);
               `uvm_info(get_full_name(), $sformatf("\nmonitor, CCC, trans %0d, byte %0d, bit[%0d] %0b",
-                  transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
+                  transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_DEBUG)
             end
             `DV_CHECK_NE_FATAL(^mon_data[8:1], mon_data[0])
             transaction.CCC = i3c_ccc_e'(mon_data[8:1]);
@@ -378,7 +378,7 @@ class i3c_monitor extends uvm_monitor;
       for (i = 7; i >= 0; i--) begin
         cfg.vif.get_bit_data("device", mon_data[i]);
         `uvm_info(get_full_name(), $sformatf("\nmonitor, DAA arbitration, trans %0d, DAA byte %0d, bit[%0d] %0b",
-            transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
+            transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_DEBUG)
       end
       transaction.data_q.push_back(mon_data[7:0]);
       transaction.num_data++;
@@ -388,7 +388,7 @@ class i3c_monitor extends uvm_monitor;
     for (i = 8; i > 0; i--) begin
       cfg.vif.get_bit_data("device", mon_data[i]);
       `uvm_info(get_full_name(), $sformatf("\nmonitor, DAA new address, trans %0d, bit[%0d] %0b",
-          transaction.tran_id, i, mon_data[i]), UVM_HIGH)
+          transaction.tran_id, i, mon_data[i]), UVM_DEBUG)
     end
     `DV_CHECK_NE_FATAL(^mon_data[8:2], mon_data[1])
     transaction.data_q.push_back(mon_data[8:1]);
@@ -443,7 +443,7 @@ class i3c_monitor extends uvm_monitor;
               for (i = 8; i >= 0; i--) begin
                 cfg.vif.get_bit_data("device", mon_data[i]);
                 `uvm_info(get_full_name(), $sformatf("\nmonitor, %s, trans %0d, byte %0d, bit[%0d] %0b",
-                    msg, transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
+                    msg, transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_DEBUG)
               end
               if (!device_to_host) begin
                 if (^mon_data == 0) begin
@@ -504,7 +504,7 @@ class i3c_monitor extends uvm_monitor;
       for (int i = 7; i >= 0; i--) begin
         cfg.vif.get_bit_data("device", mon_data[i]);
         `uvm_info(get_full_name(), $sformatf("\nmonitor, rd_data, trans %0d, byte %0d, bit[%0d] %0b",
-            transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
+            transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_DEBUG)
       end
       transaction.data_q.push_back(mon_data);
       transaction.num_data++;

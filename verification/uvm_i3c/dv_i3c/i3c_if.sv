@@ -101,7 +101,7 @@ interface i3c_if(
     bit_o = sda_i;
 
     if (src == "host") begin // host transmits data (addr/wr_data)
-      `uvm_info(msg_id, $sformatf("get bit data %d", bit_o), UVM_HIGH)
+      `uvm_info(msg_id, $sformatf("get bit data %d", bit_o), UVM_DEBUG)
       @(negedge scl_i);
     end else begin // target transmits data (rd_data)
       @(negedge scl_i);
@@ -197,25 +197,25 @@ interface i3c_if(
   endtask: wait_for_i3c_host_stop_or_rstart
 
   task automatic wait_for_host_ack();
-    `uvm_info(msg_id, "Wait for host ack::Begin", UVM_HIGH)
+    `uvm_info(msg_id, "Wait for host ack::Begin", UVM_DEBUG)
     forever begin
       @(posedge scl_i);
       if (!sda_i) begin
         break;
       end
     end
-    `uvm_info(msg_id, "Wait for host ack::Ack received", UVM_HIGH)
+    `uvm_info(msg_id, "Wait for host ack::Ack received", UVM_DEBUG)
   endtask: wait_for_host_ack
 
   task automatic wait_for_host_nack();
-    `uvm_info(msg_id, "Wait for host nack::Begin", UVM_HIGH)
+    `uvm_info(msg_id, "Wait for host nack::Begin", UVM_DEBUG)
     forever begin
       @(posedge scl_i);
       if (sda_i) begin
         break;
       end
     end
-    `uvm_info(msg_id, "Wait for host nack::nack received", UVM_HIGH)
+    `uvm_info(msg_id, "Wait for host nack::nack received", UVM_DEBUG)
   endtask: wait_for_host_nack
 
 
@@ -361,10 +361,10 @@ interface i3c_if(
     device_sda_pp_en = 0;
     device_sda_o = 1'b1;
     wait(!scl_i);
-    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_DEBUG)
     device_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I2C device bit setup");
-    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_DEBUG)
     // Hold the bit steady for the rest of the clock low time.
     time_check(tc.tClockPulse, 1'b0, scl_i, "I2C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
@@ -384,10 +384,10 @@ interface i3c_if(
                                  input bit bit_i);
     wait(!scl_i);
     device_sda_pp_en = 0;
-    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_DEBUG)
     device_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
-    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_DEBUG)
     // Hold the bit steady for the rest of the clock low time.
     time_check(tc.tClockPulse, 1'b0, scl_i, "I3C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
@@ -399,10 +399,10 @@ interface i3c_if(
                                  input bit bit_i);
     wait(!scl_i);
     device_sda_pp_en = 1;
-    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_DEBUG)
     device_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
-    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_DEBUG)
     // Hold the bit steady for the rest of the clock low time.
     time_check(tc.tClockPulse, 1'b0, scl_i, "I3C device bit clock high pulse width");
     // Hold the bit past SCL going low, then release.
@@ -415,10 +415,10 @@ interface i3c_if(
                                  input bit bit_i);
     wait(!scl_i);
     device_sda_pp_en = 1;
-    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Drive bit", UVM_DEBUG)
     device_sda_o = bit_i;
     time_check(tc.tSetupBit, 1'b1, scl_i, "I3C device bit setup");
-    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_HIGH)
+    `uvm_info(msg_id, "device_send_bit::Value sampled ", UVM_DEBUG)
     // Hold the bit steady for the maximal Tsco (12ns)
     #(12 * 1ns);
     device_sda_pp_en = 0;

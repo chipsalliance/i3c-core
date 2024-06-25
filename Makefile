@@ -189,13 +189,11 @@ define dsim_run =
 	mkdir -p dsim_run
 	DSIM_HOME=$(DSIM_HOME) dsim -sv +acc+b -uvm 1.2 -work dsim_run -genimage image \
 	-f $(1) -timescale 1ns/1ps -all-class-spec -all-pkgs \
-	$(foreach top,$(2), -top $(top)) -l dsim_run/$(8)dsim.build \
-	-suppress EnumMustBePositive -suppress NeedExplicitStatic -j $$(nproc) $(3)
+	$(foreach top,$(2), -top $(top)) -l dsim_run/$(8)dsim.build -j $$(nproc) $(3)
 	DSIM_HOME=$(DSIM_HOME) dsim +acc+rwb -work dsim_run -uvm 1.2 -image image \
-	-cov-db dsim_run/$(8)dsim_metrics.db -sv_seed 10012002 \
-	-waves dump.vcd -dump-agg \
-	+UVM_TESTNAME=$(5) +UVM_PHASE_TRACE \
-	+UVM_TEST_SEQ=$(6) +UVM_VERBOSITY=UVM_LOW \
+	-cov-db dsim_run/$(8)dsim_metrics.db \
+	+UVM_TESTNAME=$(5) \
+	+UVM_TEST_SEQ=$(6) \
 	-l dsim_run/$(8)dsim.run $(7)
 endef
 
@@ -235,9 +233,22 @@ i3c-sequencer-tests-dsim:
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_env_pkg.sv \
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_test_pkg.sv \
-		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv,\
-		tb,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/,\
-		verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test,\
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
+		,tb\
+		,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/\
+		,verification/uvm_i3c/dsim_sim.tcl\
+		,i3c_sequence_test\
+		,i3c_sequence_direct_vseq\
+	)
+	$(call dsim_run,\
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_env_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sequence_test_pkg.sv \
+		verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv\
+		,tb\
+		,+incdir+verification/uvm_i3c/dv_i3c/i3c_test/\
+		,verification/uvm_i3c/dsim_sim.tcl,i3c_sequence_test\
+		,i3c_sequence_direct_with_repeated_start_vseq\
 	)
 endif
 

@@ -6,6 +6,5 @@ package i3c_sequence_env_pkg;
   `include "i3c_sequence_env_cfg.sv"
   `include "i3c_sequence_virtual_sequencer.sv"
   `include "i3c_sequence_env.sv"
-  `include "i3c_base_vseq.sv"
   `include "i3c_sequence_vseq_list.sv"
 endpackage

@@ -1,8 +1,8 @@
-class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
-                      type VIRTUAL_SEQUENCER_T = i3c_sequence_virtual_sequencer
+class i3c_sequence_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
+                               type VIRTUAL_SEQUENCER_T = i3c_sequence_virtual_sequencer
 ) extends uvm_sequence;
 
-  `uvm_object_utils(i3c_base_vseq)
+  `uvm_object_utils(i3c_sequence_base_vseq)
   `uvm_declare_p_sequencer(VIRTUAL_SEQUENCER_T)
 
   CFG_T m_cfg;
@@ -23,11 +23,11 @@ class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
   rand bit [15:0] status0, status1;
 
   constraint num_trans_c {
-    num_trans inside {[1:20]};
+    num_trans inside {[10:20]};
   }
 
   constraint num_runs_c {
-    num_runs inside {[1:20]};
+    num_runs inside {[16:20]};
   }
 
   constraint i2c_addr_c {
@@ -66,8 +66,8 @@ class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
   constraint read_limit_c {
     solve device_read_limit0 before max_read_limit0;
     solve device_read_limit1 before max_read_limit1;
-    device_read_limit0 inside {0, [16:65535]};
-    device_read_limit1 inside {0, [16:65535]};
+    device_read_limit0 inside {0, [16:4095]};
+    device_read_limit1 inside {0, [16:4095]};
     max_read_limit0 <= device_read_limit0;
     max_read_limit1 <= device_read_limit1;
   }
@@ -75,8 +75,8 @@ class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
   constraint write_limit_c {
     solve device_write_limit0 before max_write_limit0;
     solve device_write_limit1 before max_write_limit1;
-    device_write_limit0 inside {0, [16:65535]};
-    device_write_limit1 inside {0, [16:65535]};
+    device_write_limit0 inside {0, [16:4095]};
+    device_write_limit1 inside {0, [16:4095]};
     max_write_limit0 <= device_write_limit0;
     max_write_limit1 <= device_write_limit1;
   }
@@ -102,6 +102,7 @@ class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
   task pre_start();
     super.pre_start();
     if (m_cfg == null) set_handles();
+    num_runs.rand_mode(0);
     num_trans.rand_mode(0);
   endtask
 
@@ -109,5 +110,5 @@ class i3c_base_vseq #(type CFG_T               = i3c_sequence_env_cfg,
     `uvm_fatal(`gtn, "Need to override this when you extend from this class!")
   endtask : body
 
-endclass
+endclass : i3c_sequence_base_vseq
 

@@ -59,6 +59,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             begin
               // Device must always react to Stop/RStart conditions
               if (cfg.if_mode == Device) begin
+                wait(req != null);
                 if (req.i3c) cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc, rstart, stop);
                 else cfg.vif.wait_for_i2c_host_stop_or_rstart(cfg.tc.i2c_tc, rstart, stop);
               end
@@ -88,7 +89,10 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         bus_state = DrvAddr;
       end
       // Allow for stop after rstart
-      if (rsp != null) seq_item_port.item_done(rsp);
+      if (rsp != null) begin
+        rsp.set_id_info(req);
+        seq_item_port.item_done(rsp);
+      end
       // When agent reset happens, flush all sequence items from sequencer request queue,
       // before it starts a new sequence.
       if (cfg.driver_rst) begin
@@ -240,15 +244,15 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           // Check arbitration
           if (host_won) begin
             cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
+            bus_state = DrvSelectNext;
           end else begin
             `uvm_info(get_full_name(), $sformatf("IBI recived from addr=%d",
                 rsp.addr), UVM_MEDIUM)
             rsp.IBI = 1;
             rsp.IBI_ADDR = rsp.addr;
             bus_state = DrvAck;
-            break;
           end
-          bus_state = DrvSelectNext;
+          break;
         end
         DrvAck: begin
           // Check if expecting IBI and if received address is correct
@@ -274,6 +278,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           join
           cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
           bus_state = DrvSelectNext;
+          break;
         end
         DrvAddrPushPull: begin
           cfg.vif.host_sda_pp_en = 1;
@@ -298,12 +303,13 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           cfg.vif.host_sda_o = 1;
           cfg.vif.wait_for_device_ack_or_nack(.ack_r(rsp.dev_ack));
           bus_state = DrvSelectNext;
+          break;
         end
         DrvSelectNext: begin
-          if (rsp.dev_ack || req.IBI_ACK) begin
+          if (req.dev_ack || req.IBI_ACK) begin
             if (req.is_daa) begin
               bus_state = DrvDAA;
-            end else if (rsp.dir || req.IBI_ACK) begin
+            end else if (req.dir || req.IBI_ACK) begin
               if (req.i3c) bus_state = DrvRdPushPull;
               else bus_state = DrvRd;
             end else begin
@@ -372,7 +378,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             rsp.data.push_back(data);
             cfg.vif.sample_target_data(t_bit);
             rsp.T_bit.push_back(t_bit);
-            `uvm_info(get_full_name(), $sformatf("Host sampled device data data[%0d]=%d, T_bit=%b",
+            `uvm_info(get_full_name(), $sformatf("Host sampled device data data[%0d]=%x, T_bit=%b",
                 i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
             if (!rsp.T_bit[i]) begin  // Device finished transfer
               break;
@@ -486,11 +492,11 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           if (device_won) begin
             // Won IBI arbitration, wait for host ACK/NACK
             cfg.vif.wait_for_host_ack_or_nack(.ack_r(rsp.dev_ack));
+            bus_state = DrvSelectNext;
           end else begin
             bus_state = DrvAck;
-            break;
           end
-          bus_state = DrvSelectNext;
+          break;
         end
         DrvAddr: begin
           for(int i = 6; i>=0; i--) begin
@@ -528,7 +534,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
         DrvSelectNext: begin
           // Correct device address and device should have ACKed or device
           // request IBI and Host ACKed
-          if (req.IBI && rsp.dev_ack || req.dev_ack) begin
+          if (req.dev_ack || req.IBI) begin
             if (req.is_daa) begin
               bus_state = DrvDAA;
             end else if (req.dir || req.IBI) begin

@@ -18,9 +18,6 @@ class i3c_sequence_test extends uvm_test;
     `DV_CHECK_RANDOMIZE_FATAL(m_cfg)
 
     uvm_config_db#(i3c_sequence_env_cfg)::set(this, "m_top_env", "m_cfg", m_cfg);
-    `uvm_info(get_full_name(), $sformatf("\n%s", m_cfg.sprint()),UVM_LOW)
-    `uvm_info(get_full_name(), $sformatf("\n%s", m_cfg.m_i3c_agent_cfg_dev.sprint()),UVM_LOW)
-    `uvm_info(get_full_name(), $sformatf("\n%s", m_cfg.m_i3c_agent_cfg_host.sprint()),UVM_LOW)
   endfunction
 
   virtual function void end_of_elaboration_phase (uvm_phase phase);
@@ -33,7 +30,7 @@ class i3c_sequence_test extends uvm_test;
     uvm_sequence    test_seq;
 
     string test_seq_s = "i3c_sequence_direct_vseq";
-    //void'($value$plusargs("UVM_TEST_SEQ=%0s", test_seq_s));
+    void'($value$plusargs("UVM_TEST_SEQ=%0s", test_seq_s));
     factory = uvm_factory::get();
     obj = factory.create_object_by_name(test_seq_s, "", test_seq_s);
     if (obj == null) begin
