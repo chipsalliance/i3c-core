@@ -25,6 +25,8 @@ package i3c_agent_pkg;
     DrvAddr,
     DrvAddrArbit,
     DrvAddrPushPull,
+    DrvAck,
+    DrvSelectNext, // Intermediate state
     DrvWr,
     DrvWrPushPull,
     DrvRd,
@@ -272,7 +274,7 @@ package i3c_agent_pkg;
   `include "i3c_agent_cfg.sv"
   `include "i3c_monitor.sv"
   `include "i3c_driver.sv"
-//  `include "i3c_sequencer.sv"
+  `include "i3c_sequencer.sv"
   `include "i3c_agent.sv"
 //  `include "seq_lib/i2c_seq_list.sv"
 

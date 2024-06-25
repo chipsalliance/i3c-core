@@ -195,7 +195,7 @@ define dsim_run =
 	-cov-db dsim_run/$(8)dsim_metrics.db -sv_seed 10012002 \
 	-waves dump.vcd -dump-agg \
 	+UVM_TESTNAME=$(5) +UVM_PHASE_TRACE \
-	+UVM_TEST_SEQ=$(6) +UVM_VERBOSITY=UVM_MEDIUM \
+	+UVM_TEST_SEQ=$(6) +UVM_VERBOSITY=UVM_LOW \
 	-l dsim_run/$(8)dsim.run $(7)
 endef
 

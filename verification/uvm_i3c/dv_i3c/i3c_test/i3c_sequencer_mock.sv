@@ -66,6 +66,7 @@ endtask
 
 function void i3c_sequencer_mock::item_done(RSP item = null);
   REQ t;
+  `uvm_info(get_full_name(), "Item_done called", UVM_DEBUG)
   void'(reqs.try_get(t));
 
   if (item != null)

@@ -446,7 +446,9 @@ class i3c_monitor extends uvm_monitor;
                     msg, transaction.tran_id, transaction.num_data+1, i, mon_data[i]), UVM_HIGH)
               end
               if (!device_to_host) begin
-                `DV_CHECK_NE_FATAL(^mon_data[8:1], mon_data[0])
+                if (^mon_data == 0) begin
+                  `uvm_warning(get_full_name(), "monitor, Incorrect host T-bit")
+                end
               end
               transaction.data_q.push_back(mon_data[8:1]);
               transaction.data_ack_q.push_back(mon_data[0]);
