@@ -139,7 +139,7 @@ define questa_run =
 	-64 \
 	+UVM_TESTNAME=$(5) \
 	+UVM_TEST_SEQ=$(6) \
-	-log questa_run/run.log \
+	-log questa_run/$(8)run.log \
 	-do $(4) \
 	$(7) $(ENABLE_GUI)
 endef
@@ -158,14 +158,14 @@ i3c-monitor-tests-questa:
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
 		i3c_monitor_test_from_csv,,\
-		verification/uvm_i3c/questa_sim.tcl,,\
-		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv")
+		verification/uvm_i3c/questa_sim.tcl,,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv",simple_I3C_transaction.)
 	$(call questa_run,\
 		verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
 		verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv,\
 		i3c_monitor_test_from_csv,,\
-		verification/uvm_i3c/questa_sim.tcl,,\
-		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv")
+		verification/uvm_i3c/questa_sim.tcl,,,\
+		+CSV_FILE_PATH="$(PWD)/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv",IBI_I3C_transaction.)
 
 i3c-driver-tests-questa:
 	$(call questa_run,\

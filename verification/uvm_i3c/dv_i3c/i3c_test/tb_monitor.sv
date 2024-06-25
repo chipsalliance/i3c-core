@@ -78,10 +78,5 @@ module i3c_monitor_test_from_csv;
     recv.cfg = cfg;
     recv.build_phase(phase);
     recv.run_phase(phase);
-    //uvm_config_db#(virtual clk_rst_if)::set(null, "*.env", "clk_rst_vif", clk_rst_if);
-    //uvm_config_db#(virtual i3c_if)::set(null, "*.env.m_i3c_agent*", "vif", i3c_if);
-    //uvm_config_db#(virtual i2c_dv_if)::set(null, "*.env", "i2c_dv_vif", i2c_dv_if);
-    //$timeformat(-12, 0, " ps", 12);
-    //run_test();
   end
 endmodule

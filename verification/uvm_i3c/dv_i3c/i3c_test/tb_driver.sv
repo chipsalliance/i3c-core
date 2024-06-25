@@ -437,12 +437,6 @@ module i3c_driver_test;
     test_item.dev_ack = 0;
     seq_host.add_item(test_item);
     seq_device.add_item(test_item);
-
-    //uvm_config_db#(virtual clk_rst_if)::set(null, "*.env", "clk_rst_vif", clk_rst_if);
-    //uvm_config_db#(virtual i3c_if)::set(null, "*.env.m_i3c_agent*", "vif", i3c_if);
-    //uvm_config_db#(virtual i2c_dv_if)::set(null, "*.env", "i2c_dv_vif", i2c_dv_if);
-    //$timeformat(-12, 0, " ps", 12);
-    //run_test();
     #(400us);
     $finish();
   end
