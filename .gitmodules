@@ -1,9 +1,9 @@
 [submodule "third_party/caliptra-rtl"]
 	path = third_party/caliptra-rtl
 	url = ../caliptra-rtl
-[submodule "third_party/axi-vip"]
-	path = third_party/axi-vip
-	url = ../microsoft-i3c-core-axi-vip
 [submodule "third_party/cocotbext-i3c"]
 	path = third_party/cocotbext-i3c
 	url = ../cocotbext-i2c
+[submodule "third_party/axi-vip"]
+	path = third_party/axi-vip
+	url = https://github.com/SymbiFlow/axi-vip.git
