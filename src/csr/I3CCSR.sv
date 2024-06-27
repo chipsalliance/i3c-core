@@ -82,8 +82,8 @@ module I3CCSR (
     //--------------------------------------------------------------------------
     // Address Decode
     //--------------------------------------------------------------------------
-    typedef struct {
-        struct {
+    typedef struct packed{
+        struct packed{
             logic HCI_VERSION;
             logic HC_CONTROL;
             logic CONTROLLER_DEVICE_ADDR;
@@ -106,7 +106,7 @@ module I3CCSR (
             logic DEV_CTX_BASE_HI;
             logic DEV_CTX_SG;
         } I3CBase;
-        struct {
+        struct packed{
             logic COMMAND_PORT;
             logic RESPONSE_PORT;
             logic XFER_DATA_PORT;
@@ -121,8 +121,8 @@ module I3CCSR (
             logic PIO_INTR_FORCE;
             logic PIO_CONTROL;
         } PIOControl;
-        struct {
-            struct {
+        struct packed{
+            struct packed{
                 logic EXTCAP_HEADER;
                 logic PROT_CAP_0;
                 logic PROT_CAP_1;
@@ -151,7 +151,7 @@ module I3CCSR (
                 logic INDIRECT_FIFO_STATUS_5;
                 logic INDIRECT_FIFO_DATA;
             } SecFwRecoveryIf;
-            struct {
+            struct packed{
                 logic EXTCAP_HEADER;
                 logic STBY_CR_CONTROL;
                 logic STBY_CR_DEVICE_ADDR;
@@ -169,7 +169,7 @@ module I3CCSR (
                 logic __rsvd_2;
                 logic __rsvd_3;
             } StdbyCtrlMode;
-            struct {
+            struct packed{
                 logic EXTCAP_HEADER;
                 logic CONTROL;
                 logic STATUS;
@@ -183,7 +183,7 @@ module I3CCSR (
                 logic QUEUE_SIZE;
                 logic QUEUE_THRESHOLD_CONTROL;
             } TTI;
-            struct {
+            struct packed{
                 logic EXTCAP_HEADER;
                 logic SOC_MGMT_CONTROL;
                 logic SOC_MGMT_STATUS;
@@ -208,7 +208,7 @@ module I3CCSR (
                 logic SOC_MGMT_FEATURE_14;
                 logic SOC_MGMT_FEATURE_15;
             } SoCMgmtIf;
-            struct {
+            struct packed{
                 logic EXTCAP_HEADER;
                 logic CONTROLLER_CONFIG;
             } CtrlCfg;
@@ -370,1063 +370,1063 @@ module I3CCSR (
     //--------------------------------------------------------------------------
     // Field logic
     //--------------------------------------------------------------------------
-    typedef struct {
-        struct {
-            struct {
-                struct {
+    typedef struct packed{
+        struct packed{
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBA_INCLUDE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } I2C_DEV_PRESENT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HOT_JOIN_CTRL;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HALT_ON_CMD_SEQ_TIMEOUT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } ABORT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESUME;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } BUS_ENABLE;
             } HC_CONTROL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [6:0] next;
                     logic load_next;
                 } DYNAMIC_ADDR;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } DYNAMIC_ADDR_VALID;
             } CONTROLLER_DEVICE_ADDR;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } SOFT_RST;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } CMD_QUEUE_RST;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESP_QUEUE_RST;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TX_FIFO_RST;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RX_FIFO_RST;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_QUEUE_RST;
             } RESET_CONTROL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_INTERNAL_ERR_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_SEQ_CANCEL_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_WARN_CMD_SEQ_STALL_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_ERR_CMD_SEQ_TIMEOUT_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } SCHED_CMD_MISSED_TICK_STAT;
             } INTR_STATUS;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_INTERNAL_ERR_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_SEQ_CANCEL_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_WARN_CMD_SEQ_STALL_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } SCHED_CMD_MISSED_TICK_STAT_EN;
             } INTR_STATUS_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_INTERNAL_ERR_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_SEQ_CANCEL_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } SCHED_CMD_MISSED_TICK_SIGNAL_EN;
             } INTR_SIGNAL_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_INTERNAL_ERR_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_SEQ_CANCEL_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_WARN_CMD_SEQ_STALL_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } SCHED_CMD_MISSED_TICK_FORCE;
             } INTR_FORCE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [4:0] next;
                     logic load_next;
                 } TABLE_INDEX;
             } DCT_SECTION_OFFSET;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } NOTIFY_HJ_REJECTED;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } NOTIFY_CRR_REJECTED;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } NOTIFY_IBI_REJECTED;
             } IBI_NOTIFY_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [7:0] next;
                     logic load_next;
                 } MATCH_IBI_ID;
-                struct {
+                struct packed{
                     logic [1:0] next;
                     logic load_next;
                 } AFTER_N_CHUNKS;
-                struct {
+                struct packed{
                     logic [2:0] next;
                     logic load_next;
                 } MATCH_STATUS_TYPE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_DATA_ABORT_MON;
             } IBI_DATA_ABORT_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } BASE_LO;
             } DEV_CTX_BASE_LO;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } BASE_HI;
             } DEV_CTX_BASE_HI;
         } I3CBase;
-        struct {
-            struct {
-                struct {
+        struct packed{
+            struct packed{
+                struct packed{
                     logic [7:0] next;
                     logic load_next;
                 } CMD_EMPTY_BUF_THLD;
-                struct {
+                struct packed{
                     logic [7:0] next;
                     logic load_next;
                 } RESP_BUF_THLD;
-                struct {
+                struct packed{
                     logic [7:0] next;
                     logic load_next;
                 } IBI_DATA_SEGMENT_SIZE;
-                struct {
+                struct packed{
                     logic [7:0] next;
                     logic load_next;
                 } IBI_STATUS_THLD;
             } QUEUE_THLD_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [2:0] next;
                     logic load_next;
                 } TX_BUF_THLD;
-                struct {
+                struct packed{
                     logic [2:0] next;
                     logic load_next;
                 } RX_BUF_THLD;
-                struct {
+                struct packed{
                     logic [2:0] next;
                     logic load_next;
                 } TX_START_THLD;
-                struct {
+                struct packed{
                     logic [2:0] next;
                     logic load_next;
                 } RX_START_THLD;
             } DATA_BUFFER_THLD_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } TX_THLD_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RX_THLD_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_STATUS_THLD_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } CMD_QUEUE_READY_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESP_READY_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ABORT_STAT;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ERR_STAT;
             } PIO_INTR_STATUS;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } TX_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RX_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_STATUS_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } CMD_QUEUE_READY_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESP_READY_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ABORT_STAT_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ERR_STAT_EN;
             } PIO_INTR_STATUS_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } TX_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RX_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_STATUS_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } CMD_QUEUE_READY_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESP_READY_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ABORT_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ERR_SIGNAL_EN;
             } PIO_INTR_SIGNAL_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } TX_THLD_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RX_THLD_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } IBI_THLD_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } CMD_QUEUE_READY_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RESP_READY_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ABORT_FORCE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } TRANSFER_ERR_FORCE;
             } PIO_INTR_FORCE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic next;
                     logic load_next;
                 } ENABLE;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } RS;
-                struct {
+                struct packed{
                     logic next;
                     logic load_next;
                 } ABORT;
             } PIO_CONTROL;
         } PIOControl;
-        struct {
-            struct {
-                struct {
-                    struct {
+        struct packed{
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } PROT_CAP_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } PROT_CAP_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } PROT_CAP_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } PROT_CAP_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_ID_6;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_STATUS_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_STATUS_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } DEVICE_RESET;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } RECOVERY_CTRL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } RECOVERY_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } HW_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_CTRL_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_CTRL_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_DATA;
             } SecFwRecoveryIf;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } PENDING_RX_NACK;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } HANDOFF_DELAY_NACK;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_FSM_OP_SELECT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } PRIME_ACCEPT_GETACCCR;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } HANDOFF_DEEP_SLEEP;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CR_REQUEST_SEND;
-                    struct {
+                    struct packed{
                         logic [2:0] next;
                         logic load_next;
                     } BAST_CCC_IBI_RING;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } TARGET_XACT_ENABLE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_SETAASA_ENABLE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_SETDASA_ENABLE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_ENTDAA_ENABLE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } RSTACT_DEFBYTE_02;
-                    struct {
+                    struct packed{
                         logic [1:0] next;
                         logic load_next;
                     } STBY_CR_ENABLE_INIT;
                 } STBY_CR_CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [6:0] next;
                         logic load_next;
                     } STATIC_ADDR;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STATIC_ADDR_VALID;
-                    struct {
+                    struct packed{
                         logic [6:0] next;
                         logic load_next;
                     } DYNAMIC_ADDR;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DYNAMIC_ADDR_VALID;
                 } STBY_CR_DEVICE_ADDR;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } SIMPLE_CRR_SUPPORT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } TARGET_XACT_SUPPORT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_SETAASA_SUPPORT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_SETDASA_SUPPORT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } DAA_ENTDAA_SUPPORT;
                 } STBY_CR_CAPABILITIES;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } __rsvd;
                 } __rsvd_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } AC_CURRENT_OWN;
-                    struct {
+                    struct packed{
                         logic [2:0] next;
                         logic load_next;
                     } SIMPLE_CRR_STATUS;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } HJ_REQ_STATUS;
                 } STBY_CR_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [14:0] next;
                         logic load_next;
                     } PID_HI;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } DCR;
-                    struct {
+                    struct packed{
                         logic [4:0] next;
                         logic load_next;
                     } BCR_VAR;
-                    struct {
+                    struct packed{
                         logic [2:0] next;
                         logic load_next;
                     } BCR_FIXED;
                 } STBY_CR_DEVICE_CHAR;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PID_LO;
                 } STBY_CR_DEVICE_PID_LO;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_OK_REMAIN_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_OK_PRIMED_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_ERR_FAIL_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_ERR_M3_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CRR_RESPONSE_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_DYN_ADDR_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_NACKED_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_OK_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_ERR_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_OP_RSTACT_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_PARAM_MODIFIED_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_UNHANDLED_NACK_STAT;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_FATAL_RSTDAA_ERR_STAT;
                 } STBY_CR_INTR_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } __rsvd;
                 } __rsvd_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } ACR_HANDOFF_ERR_M3_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CRR_RESPONSE_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_DYN_ADDR_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_NACKED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_OK_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_ERR_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_OP_RSTACT_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_PARAM_MODIFIED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_UNHANDLED_NACK_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
                 } STBY_CR_INTR_SIGNAL_ENABLE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CRR_RESPONSE_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_DYN_ADDR_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_NACKED_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_OK_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_ACCEPT_ERR_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } STBY_CR_OP_RSTACT_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_PARAM_MODIFIED_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_UNHANDLED_NACK_FORCE;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } CCC_FATAL_RSTDAA_ERR_FORCE;
                 } STBY_CR_INTR_FORCE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [2:0] next;
                         logic load_next;
                     } F2_CRCAP1_BUS_CONFIG;
-                    struct {
+                    struct packed{
                         logic [3:0] next;
                         logic load_next;
                     } F2_CRCAP2_DEV_INTERACT;
                 } STBY_CR_CCC_CONFIG_GETCAPS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } RST_ACTION;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } RESET_TIME_PERIPHERAL;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } RESET_TIME_TARGET;
-                    struct {
+                    struct packed{
                         logic next;
                         logic load_next;
                     } RESET_DYNAMIC_ADDR;
                 } STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } __rsvd;
                 } __rsvd_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } __rsvd;
                 } __rsvd_3;
             } StdbyCtrlMode;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INTERRUPT_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INTERRUPT_ENABLE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } INTERRUPT_FORCE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } RX_DESC_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } TX_DESC_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } RX_DATA_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] next;
                         logic load_next;
                     } TX_DATA_THLD;
                 } QUEUE_THRESHOLD_CONTROL;
             } TTI;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_6;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_7;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_8;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_9;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_10;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_11;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_12;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_13;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_14;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_15;
             } SoCMgmtIf;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [1:0] next;
                         logic load_next;
                     } OPERATION_MODE;
@@ -1436,847 +1436,847 @@ module I3CCSR (
     } field_combo_t;
     field_combo_t field_combo;
 
-    typedef struct {
-        struct {
-            struct {
-                struct {
+    typedef struct packed{
+        struct packed{
+            struct packed{
+                struct packed{
                     logic value;
                 } IBA_INCLUDE;
-                struct {
+                struct packed{
                     logic value;
                 } I2C_DEV_PRESENT;
-                struct {
+                struct packed{
                     logic value;
                 } HOT_JOIN_CTRL;
-                struct {
+                struct packed{
                     logic value;
                 } HALT_ON_CMD_SEQ_TIMEOUT;
-                struct {
+                struct packed{
                     logic value;
                 } ABORT;
-                struct {
+                struct packed{
                     logic value;
                 } RESUME;
-                struct {
+                struct packed{
                     logic value;
                 } BUS_ENABLE;
             } HC_CONTROL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [6:0] value;
                 } DYNAMIC_ADDR;
-                struct {
+                struct packed{
                     logic value;
                 } DYNAMIC_ADDR_VALID;
             } CONTROLLER_DEVICE_ADDR;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } SOFT_RST;
-                struct {
+                struct packed{
                     logic value;
                 } CMD_QUEUE_RST;
-                struct {
+                struct packed{
                     logic value;
                 } RESP_QUEUE_RST;
-                struct {
+                struct packed{
                     logic value;
                 } TX_FIFO_RST;
-                struct {
+                struct packed{
                     logic value;
                 } RX_FIFO_RST;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_QUEUE_RST;
             } RESET_CONTROL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } HC_INTERNAL_ERR_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } HC_SEQ_CANCEL_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } HC_WARN_CMD_SEQ_STALL_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } HC_ERR_CMD_SEQ_TIMEOUT_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } SCHED_CMD_MISSED_TICK_STAT;
             } INTR_STATUS;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } HC_INTERNAL_ERR_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_SEQ_CANCEL_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_WARN_CMD_SEQ_STALL_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } SCHED_CMD_MISSED_TICK_STAT_EN;
             } INTR_STATUS_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } HC_INTERNAL_ERR_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_SEQ_CANCEL_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } SCHED_CMD_MISSED_TICK_SIGNAL_EN;
             } INTR_SIGNAL_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } HC_INTERNAL_ERR_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } HC_SEQ_CANCEL_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } HC_WARN_CMD_SEQ_STALL_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } HC_ERR_CMD_SEQ_TIMEOUT_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } SCHED_CMD_MISSED_TICK_FORCE;
             } INTR_FORCE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [4:0] value;
                 } TABLE_INDEX;
             } DCT_SECTION_OFFSET;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } NOTIFY_HJ_REJECTED;
-                struct {
+                struct packed{
                     logic value;
                 } NOTIFY_CRR_REJECTED;
-                struct {
+                struct packed{
                     logic value;
                 } NOTIFY_IBI_REJECTED;
             } IBI_NOTIFY_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [7:0] value;
                 } MATCH_IBI_ID;
-                struct {
+                struct packed{
                     logic [1:0] value;
                 } AFTER_N_CHUNKS;
-                struct {
+                struct packed{
                     logic [2:0] value;
                 } MATCH_STATUS_TYPE;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_DATA_ABORT_MON;
             } IBI_DATA_ABORT_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } BASE_LO;
             } DEV_CTX_BASE_LO;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } BASE_HI;
             } DEV_CTX_BASE_HI;
         } I3CBase;
-        struct {
-            struct {
-                struct {
+        struct packed{
+            struct packed{
+                struct packed{
                     logic [7:0] value;
                 } CMD_EMPTY_BUF_THLD;
-                struct {
+                struct packed{
                     logic [7:0] value;
                 } RESP_BUF_THLD;
-                struct {
+                struct packed{
                     logic [7:0] value;
                 } IBI_DATA_SEGMENT_SIZE;
-                struct {
+                struct packed{
                     logic [7:0] value;
                 } IBI_STATUS_THLD;
             } QUEUE_THLD_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic [2:0] value;
                 } TX_BUF_THLD;
-                struct {
+                struct packed{
                     logic [2:0] value;
                 } RX_BUF_THLD;
-                struct {
+                struct packed{
                     logic [2:0] value;
                 } TX_START_THLD;
-                struct {
+                struct packed{
                     logic [2:0] value;
                 } RX_START_THLD;
             } DATA_BUFFER_THLD_CTRL;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } TX_THLD_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } RX_THLD_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_STATUS_THLD_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } CMD_QUEUE_READY_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } RESP_READY_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ABORT_STAT;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ERR_STAT;
             } PIO_INTR_STATUS;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } TX_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } RX_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_STATUS_THLD_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } CMD_QUEUE_READY_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } RESP_READY_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ABORT_STAT_EN;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ERR_STAT_EN;
             } PIO_INTR_STATUS_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } TX_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } RX_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_STATUS_THLD_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } CMD_QUEUE_READY_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } RESP_READY_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ABORT_SIGNAL_EN;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ERR_SIGNAL_EN;
             } PIO_INTR_SIGNAL_ENABLE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } TX_THLD_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } RX_THLD_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } IBI_THLD_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } CMD_QUEUE_READY_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } RESP_READY_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ABORT_FORCE;
-                struct {
+                struct packed{
                     logic value;
                 } TRANSFER_ERR_FORCE;
             } PIO_INTR_FORCE;
-            struct {
-                struct {
+            struct packed{
+                struct packed{
                     logic value;
                 } ENABLE;
-                struct {
+                struct packed{
                     logic value;
                 } RS;
-                struct {
+                struct packed{
                     logic value;
                 } ABORT;
             } PIO_CONTROL;
         } PIOControl;
-        struct {
-            struct {
-                struct {
-                    struct {
+        struct packed{
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } PROT_CAP_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } PROT_CAP_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } PROT_CAP_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } PROT_CAP_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_ID_6;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_STATUS_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_STATUS_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } DEVICE_RESET;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } RECOVERY_CTRL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } RECOVERY_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } HW_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_CTRL_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_CTRL_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_DATA;
             } SecFwRecoveryIf;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic value;
                     } PENDING_RX_NACK;
-                    struct {
+                    struct packed{
                         logic value;
                     } HANDOFF_DELAY_NACK;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_FSM_OP_SELECT;
-                    struct {
+                    struct packed{
                         logic value;
                     } PRIME_ACCEPT_GETACCCR;
-                    struct {
+                    struct packed{
                         logic value;
                     } HANDOFF_DEEP_SLEEP;
-                    struct {
+                    struct packed{
                         logic value;
                     } CR_REQUEST_SEND;
-                    struct {
+                    struct packed{
                         logic [2:0] value;
                     } BAST_CCC_IBI_RING;
-                    struct {
+                    struct packed{
                         logic value;
                     } TARGET_XACT_ENABLE;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_SETAASA_ENABLE;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_SETDASA_ENABLE;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_ENTDAA_ENABLE;
-                    struct {
+                    struct packed{
                         logic value;
                     } RSTACT_DEFBYTE_02;
-                    struct {
+                    struct packed{
                         logic [1:0] value;
                     } STBY_CR_ENABLE_INIT;
                 } STBY_CR_CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [6:0] value;
                     } STATIC_ADDR;
-                    struct {
+                    struct packed{
                         logic value;
                     } STATIC_ADDR_VALID;
-                    struct {
+                    struct packed{
                         logic [6:0] value;
                     } DYNAMIC_ADDR;
-                    struct {
+                    struct packed{
                         logic value;
                     } DYNAMIC_ADDR_VALID;
                 } STBY_CR_DEVICE_ADDR;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic value;
                     } SIMPLE_CRR_SUPPORT;
-                    struct {
+                    struct packed{
                         logic value;
                     } TARGET_XACT_SUPPORT;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_SETAASA_SUPPORT;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_SETDASA_SUPPORT;
-                    struct {
+                    struct packed{
                         logic value;
                     } DAA_ENTDAA_SUPPORT;
                 } STBY_CR_CAPABILITIES;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } __rsvd;
                 } __rsvd_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic value;
                     } AC_CURRENT_OWN;
-                    struct {
+                    struct packed{
                         logic [2:0] value;
                     } SIMPLE_CRR_STATUS;
-                    struct {
+                    struct packed{
                         logic value;
                     } HJ_REQ_STATUS;
                 } STBY_CR_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [14:0] value;
                     } PID_HI;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } DCR;
-                    struct {
+                    struct packed{
                         logic [4:0] value;
                     } BCR_VAR;
-                    struct {
+                    struct packed{
                         logic [2:0] value;
                     } BCR_FIXED;
                 } STBY_CR_DEVICE_CHAR;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PID_LO;
                 } STBY_CR_DEVICE_PID_LO;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_OK_REMAIN_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_OK_PRIMED_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_ERR_FAIL_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_ERR_M3_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } CRR_RESPONSE_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_DYN_ADDR_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_NACKED_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_OK_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_ERR_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_OP_RSTACT_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_PARAM_MODIFIED_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_UNHANDLED_NACK_STAT;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_FATAL_RSTDAA_ERR_STAT;
                 } STBY_CR_INTR_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } __rsvd;
                 } __rsvd_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } ACR_HANDOFF_ERR_M3_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } CRR_RESPONSE_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_DYN_ADDR_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_NACKED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_OK_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_ERR_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_OP_RSTACT_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_PARAM_MODIFIED_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_UNHANDLED_NACK_SIGNAL_EN;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
                 } STBY_CR_INTR_SIGNAL_ENABLE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic value;
                     } CRR_RESPONSE_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_DYN_ADDR_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_NACKED_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_OK_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_ACCEPT_ERR_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } STBY_CR_OP_RSTACT_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_PARAM_MODIFIED_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_UNHANDLED_NACK_FORCE;
-                    struct {
+                    struct packed{
                         logic value;
                     } CCC_FATAL_RSTDAA_ERR_FORCE;
                 } STBY_CR_INTR_FORCE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [2:0] value;
                     } F2_CRCAP1_BUS_CONFIG;
-                    struct {
+                    struct packed{
                         logic [3:0] value;
                     } F2_CRCAP2_DEV_INTERACT;
                 } STBY_CR_CCC_CONFIG_GETCAPS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [7:0] value;
                     } RST_ACTION;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } RESET_TIME_PERIPHERAL;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } RESET_TIME_TARGET;
-                    struct {
+                    struct packed{
                         logic value;
                     } RESET_DYNAMIC_ADDR;
                 } STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } __rsvd;
                 } __rsvd_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } __rsvd;
                 } __rsvd_3;
             } StdbyCtrlMode;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INTERRUPT_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INTERRUPT_ENABLE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INTERRUPT_FORCE;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [7:0] value;
                     } RX_DESC_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } TX_DESC_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } RX_DATA_THLD;
-                    struct {
+                    struct packed{
                         logic [7:0] value;
                     } TX_DATA_THLD;
                 } QUEUE_THRESHOLD_CONTROL;
             } TTI;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_CONTROL;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_STATUS;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_RSVD_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_0;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_1;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_2;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_3;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_4;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_5;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_6;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_7;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_8;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_9;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_10;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_11;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_12;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_13;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_14;
-                struct {
-                    struct {
+                struct packed{
+                    struct packed{
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } SOC_MGMT_FEATURE_15;
             } SoCMgmtIf;
-            struct {
-                struct {
-                    struct {
+            struct packed{
+                struct packed{
+                    struct packed{
                         logic [1:0] value;
                     } OPERATION_MODE;
                 } CONTROLLER_CONFIG;
@@ -7302,7 +7302,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [31:0] readback_array[111];
+    logic [111-1:0][31:0] readback_array;
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -7662,4 +7662,7 @@ module I3CCSR (
     assign cpuif_rd_ack = readback_done | readback_external_rd_ack;
     assign cpuif_rd_data = readback_data;
     assign cpuif_rd_err = readback_err;
+
+`CALIPTRA_ASSERT_KNOWN(ERR_HWIF_IN, hwif_in, clk, !hwif_in.rst_ni)
+
 endmodule

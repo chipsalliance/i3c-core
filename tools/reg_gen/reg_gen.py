@@ -26,6 +26,7 @@ from peakrdl_regblock import RegblockExporter
 from peakrdl_regblock.cpuif.passthrough import PassthroughCpuif
 from peakrdl_regblock.udps import ALL_UDPS
 from peakrdl_uvm import UVMExporter
+from rdl_post_process import scrub_line_by_line
 from systemrdl import RDLCompiler
 
 
@@ -140,6 +141,11 @@ def main():
     output_file = os.path.join("src/rdl/docs/README.md")
     exporter.export(root, output_file, rename="I3CCSR")
     logging.info(f"Created: Markdown file {output_file}")
+
+    # Fix SystemVerilog files
+    for file in os.listdir(args.output_dir):
+        if os.path.isfile(os.path.join(args.output_dir, file)):
+            scrub_line_by_line(os.path.join(args.output_dir, file))
 
 
 if __name__ == "__main__":

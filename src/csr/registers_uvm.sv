@@ -10,7 +10,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__HCI_VERSION_bit_cg VERSION_bit_cg[32];
+        I3CCSR__I3CBase__HCI_VERSION_bit_cg [32-1:0]VERSION_bit_cg;
         I3CCSR__I3CBase__HCI_VERSION_fld_cg fld_cg;
         rand uvm_reg_field VERSION;
 
@@ -40,16 +40,16 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg IBA_INCLUDE_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg AUTOCMD_DATA_RPT_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg DATA_BYTE_ORDER_MODE_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg MODE_SELECTOR_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg I2C_DEV_PRESENT_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg HOT_JOIN_CTRL_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg HALT_ON_CMD_SEQ_TIMEOUT_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg ABORT_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg RESUME_bit_cg[1];
-        I3CCSR__I3CBase__HC_CONTROL_bit_cg BUS_ENABLE_bit_cg[1];
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]IBA_INCLUDE_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]AUTOCMD_DATA_RPT_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]DATA_BYTE_ORDER_MODE_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]MODE_SELECTOR_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]I2C_DEV_PRESENT_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]HOT_JOIN_CTRL_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]HALT_ON_CMD_SEQ_TIMEOUT_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]ABORT_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]RESUME_bit_cg;
+        I3CCSR__I3CBase__HC_CONTROL_bit_cg [1-1:0]BUS_ENABLE_bit_cg;
         I3CCSR__I3CBase__HC_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field IBA_INCLUDE;
         rand uvm_reg_field AUTOCMD_DATA_RPT;
@@ -115,8 +115,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_bit_cg[7];
-        I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_VALID_bit_cg[1];
+        I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg [7-1:0]DYNAMIC_ADDR_bit_cg;
+        I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_bit_cg [1-1:0]DYNAMIC_ADDR_VALID_bit_cg;
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR_fld_cg fld_cg;
         rand uvm_reg_field DYNAMIC_ADDR;
         rand uvm_reg_field DYNAMIC_ADDR_VALID;
@@ -150,19 +150,19 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg COMBO_COMMAND_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg AUTO_COMMAND_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg STANDBY_CR_CAP_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg HDR_DDR_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg HDR_TS_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg CMD_CCC_DEFBYTE_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg IBI_DATA_ABORT_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg IBI_CREDIT_COUNT_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SCHEDULED_COMMANDS_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg CMD_SIZE_bit_cg[2];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_CR_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_IBI_EN_bit_cg[1];
-        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg SG_CAPABILITY_DC_EN_bit_cg[1];
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]COMBO_COMMAND_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]AUTO_COMMAND_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]STANDBY_CR_CAP_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]HDR_DDR_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]HDR_TS_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]CMD_CCC_DEFBYTE_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]IBI_DATA_ABORT_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]IBI_CREDIT_COUNT_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]SCHEDULED_COMMANDS_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [2-1:0]CMD_SIZE_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]SG_CAPABILITY_CR_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]SG_CAPABILITY_IBI_EN_bit_cg;
+        I3CCSR__I3CBase__HC_CAPABILITIES_bit_cg [1-1:0]SG_CAPABILITY_DC_EN_bit_cg;
         I3CCSR__I3CBase__HC_CAPABILITIES_fld_cg fld_cg;
         rand uvm_reg_field COMBO_COMMAND;
         rand uvm_reg_field AUTO_COMMAND;
@@ -240,12 +240,12 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg SOFT_RST_bit_cg[1];
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg CMD_QUEUE_RST_bit_cg[1];
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg RESP_QUEUE_RST_bit_cg[1];
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg TX_FIFO_RST_bit_cg[1];
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg RX_FIFO_RST_bit_cg[1];
-        I3CCSR__I3CBase__RESET_CONTROL_bit_cg IBI_QUEUE_RST_bit_cg[1];
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]SOFT_RST_bit_cg;
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]CMD_QUEUE_RST_bit_cg;
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]RESP_QUEUE_RST_bit_cg;
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]TX_FIFO_RST_bit_cg;
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]RX_FIFO_RST_bit_cg;
+        I3CCSR__I3CBase__RESET_CONTROL_bit_cg [1-1:0]IBI_QUEUE_RST_bit_cg;
         I3CCSR__I3CBase__RESET_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field SOFT_RST;
         rand uvm_reg_field CMD_QUEUE_RST;
@@ -295,7 +295,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__PRESENT_STATE_bit_cg AC_CURRENT_OWN_bit_cg[1];
+        I3CCSR__I3CBase__PRESENT_STATE_bit_cg [1-1:0]AC_CURRENT_OWN_bit_cg;
         I3CCSR__I3CBase__PRESENT_STATE_fld_cg fld_cg;
         rand uvm_reg_field AC_CURRENT_OWN;
 
@@ -325,11 +325,11 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_INTERNAL_ERR_STAT_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_SEQ_CANCEL_STAT_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_WARN_CMD_SEQ_STALL_STAT_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_STAT_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_bit_cg SCHED_CMD_MISSED_TICK_STAT_bit_cg[1];
+        I3CCSR__I3CBase__INTR_STATUS_bit_cg [1-1:0]HC_INTERNAL_ERR_STAT_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_bit_cg [1-1:0]HC_SEQ_CANCEL_STAT_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_bit_cg [1-1:0]HC_WARN_CMD_SEQ_STALL_STAT_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_bit_cg [1-1:0]HC_ERR_CMD_SEQ_TIMEOUT_STAT_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_bit_cg [1-1:0]SCHED_CMD_MISSED_TICK_STAT_bit_cg;
         I3CCSR__I3CBase__INTR_STATUS_fld_cg fld_cg;
         rand uvm_reg_field HC_INTERNAL_ERR_STAT;
         rand uvm_reg_field HC_SEQ_CANCEL_STAT;
@@ -375,11 +375,11 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_INTERNAL_ERR_STAT_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_SEQ_CANCEL_STAT_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_WARN_CMD_SEQ_STALL_STAT_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg SCHED_CMD_MISSED_TICK_STAT_EN_bit_cg[1];
+        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg [1-1:0]HC_INTERNAL_ERR_STAT_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg [1-1:0]HC_SEQ_CANCEL_STAT_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg [1-1:0]HC_WARN_CMD_SEQ_STALL_STAT_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg [1-1:0]HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_STATUS_ENABLE_bit_cg [1-1:0]SCHED_CMD_MISSED_TICK_STAT_EN_bit_cg;
         I3CCSR__I3CBase__INTR_STATUS_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field HC_INTERNAL_ERR_STAT_EN;
         rand uvm_reg_field HC_SEQ_CANCEL_STAT_EN;
@@ -425,11 +425,11 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_INTERNAL_ERR_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_SEQ_CANCEL_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_WARN_CMD_SEQ_STALL_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg SCHED_CMD_MISSED_TICK_SIGNAL_EN_bit_cg[1];
+        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg [1-1:0]HC_INTERNAL_ERR_SIGNAL_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg [1-1:0]HC_SEQ_CANCEL_SIGNAL_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg [1-1:0]HC_WARN_CMD_SEQ_STALL_SIGNAL_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg [1-1:0]HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN_bit_cg;
+        I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_bit_cg [1-1:0]SCHED_CMD_MISSED_TICK_SIGNAL_EN_bit_cg;
         I3CCSR__I3CBase__INTR_SIGNAL_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field HC_INTERNAL_ERR_SIGNAL_EN;
         rand uvm_reg_field HC_SEQ_CANCEL_SIGNAL_EN;
@@ -475,11 +475,11 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_INTERNAL_ERR_FORCE_bit_cg[1];
-        I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_SEQ_CANCEL_FORCE_bit_cg[1];
-        I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_WARN_CMD_SEQ_STALL_FORCE_bit_cg[1];
-        I3CCSR__I3CBase__INTR_FORCE_bit_cg HC_ERR_CMD_SEQ_TIMEOUT_FORCE_bit_cg[1];
-        I3CCSR__I3CBase__INTR_FORCE_bit_cg SCHED_CMD_MISSED_TICK_FORCE_bit_cg[1];
+        I3CCSR__I3CBase__INTR_FORCE_bit_cg [1-1:0]HC_INTERNAL_ERR_FORCE_bit_cg;
+        I3CCSR__I3CBase__INTR_FORCE_bit_cg [1-1:0]HC_SEQ_CANCEL_FORCE_bit_cg;
+        I3CCSR__I3CBase__INTR_FORCE_bit_cg [1-1:0]HC_WARN_CMD_SEQ_STALL_FORCE_bit_cg;
+        I3CCSR__I3CBase__INTR_FORCE_bit_cg [1-1:0]HC_ERR_CMD_SEQ_TIMEOUT_FORCE_bit_cg;
+        I3CCSR__I3CBase__INTR_FORCE_bit_cg [1-1:0]SCHED_CMD_MISSED_TICK_FORCE_bit_cg;
         I3CCSR__I3CBase__INTR_FORCE_fld_cg fld_cg;
         rand uvm_reg_field HC_INTERNAL_ERR_FORCE;
         rand uvm_reg_field HC_SEQ_CANCEL_FORCE;
@@ -525,9 +525,9 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg TABLE_OFFSET_bit_cg[12];
-        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg TABLE_SIZE_bit_cg[7];
-        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg ENTRY_SIZE_bit_cg[4];
+        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg [12-1:0]TABLE_OFFSET_bit_cg;
+        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg [7-1:0]TABLE_SIZE_bit_cg;
+        I3CCSR__I3CBase__DAT_SECTION_OFFSET_bit_cg [4-1:0]ENTRY_SIZE_bit_cg;
         I3CCSR__I3CBase__DAT_SECTION_OFFSET_fld_cg fld_cg;
         rand uvm_reg_field TABLE_OFFSET;
         rand uvm_reg_field TABLE_SIZE;
@@ -565,10 +565,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_OFFSET_bit_cg[12];
-        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_SIZE_bit_cg[7];
-        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg TABLE_INDEX_bit_cg[5];
-        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg ENTRY_SIZE_bit_cg[4];
+        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg [12-1:0]TABLE_OFFSET_bit_cg;
+        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg [7-1:0]TABLE_SIZE_bit_cg;
+        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg [5-1:0]TABLE_INDEX_bit_cg;
+        I3CCSR__I3CBase__DCT_SECTION_OFFSET_bit_cg [4-1:0]ENTRY_SIZE_bit_cg;
         I3CCSR__I3CBase__DCT_SECTION_OFFSET_fld_cg fld_cg;
         rand uvm_reg_field TABLE_OFFSET;
         rand uvm_reg_field TABLE_SIZE;
@@ -610,7 +610,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
+        I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET_bit_cg [16-1:0]SECTION_OFFSET_bit_cg;
         I3CCSR__I3CBase__RING_HEADERS_SECTION_OFFSET_fld_cg fld_cg;
         rand uvm_reg_field SECTION_OFFSET;
 
@@ -640,7 +640,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__PIO_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
+        I3CCSR__I3CBase__PIO_SECTION_OFFSET_bit_cg [16-1:0]SECTION_OFFSET_bit_cg;
         I3CCSR__I3CBase__PIO_SECTION_OFFSET_fld_cg fld_cg;
         rand uvm_reg_field SECTION_OFFSET;
 
@@ -670,7 +670,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET_bit_cg SECTION_OFFSET_bit_cg[16];
+        I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET_bit_cg [16-1:0]SECTION_OFFSET_bit_cg;
         I3CCSR__I3CBase__EXT_CAPS_SECTION_OFFSET_fld_cg fld_cg;
         rand uvm_reg_field SECTION_OFFSET;
 
@@ -700,8 +700,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg ICC_SUPPORT_bit_cg[1];
-        I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg MIPI_CMDS_SUPPORTED_bit_cg[15];
+        I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg [1-1:0]ICC_SUPPORT_bit_cg;
+        I3CCSR__I3CBase__INT_CTRL_CMDS_EN_bit_cg [15-1:0]MIPI_CMDS_SUPPORTED_bit_cg;
         I3CCSR__I3CBase__INT_CTRL_CMDS_EN_fld_cg fld_cg;
         rand uvm_reg_field ICC_SUPPORT;
         rand uvm_reg_field MIPI_CMDS_SUPPORTED;
@@ -735,9 +735,9 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_HJ_REJECTED_bit_cg[1];
-        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_CRR_REJECTED_bit_cg[1];
-        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg NOTIFY_IBI_REJECTED_bit_cg[1];
+        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg [1-1:0]NOTIFY_HJ_REJECTED_bit_cg;
+        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg [1-1:0]NOTIFY_CRR_REJECTED_bit_cg;
+        I3CCSR__I3CBase__IBI_NOTIFY_CTRL_bit_cg [1-1:0]NOTIFY_IBI_REJECTED_bit_cg;
         I3CCSR__I3CBase__IBI_NOTIFY_CTRL_fld_cg fld_cg;
         rand uvm_reg_field NOTIFY_HJ_REJECTED;
         rand uvm_reg_field NOTIFY_CRR_REJECTED;
@@ -775,10 +775,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg MATCH_IBI_ID_bit_cg[8];
-        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg AFTER_N_CHUNKS_bit_cg[2];
-        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg MATCH_STATUS_TYPE_bit_cg[3];
-        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg IBI_DATA_ABORT_MON_bit_cg[1];
+        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg [8-1:0]MATCH_IBI_ID_bit_cg;
+        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg [2-1:0]AFTER_N_CHUNKS_bit_cg;
+        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg [3-1:0]MATCH_STATUS_TYPE_bit_cg;
+        I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_bit_cg [1-1:0]IBI_DATA_ABORT_MON_bit_cg;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL_fld_cg fld_cg;
         rand uvm_reg_field MATCH_IBI_ID;
         rand uvm_reg_field AFTER_N_CHUNKS;
@@ -820,7 +820,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__DEV_CTX_BASE_LO_bit_cg BASE_LO_bit_cg[1];
+        I3CCSR__I3CBase__DEV_CTX_BASE_LO_bit_cg [1-1:0]BASE_LO_bit_cg;
         I3CCSR__I3CBase__DEV_CTX_BASE_LO_fld_cg fld_cg;
         rand uvm_reg_field BASE_LO;
 
@@ -850,7 +850,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__DEV_CTX_BASE_HI_bit_cg BASE_HI_bit_cg[1];
+        I3CCSR__I3CBase__DEV_CTX_BASE_HI_bit_cg [1-1:0]BASE_HI_bit_cg;
         I3CCSR__I3CBase__DEV_CTX_BASE_HI_fld_cg fld_cg;
         rand uvm_reg_field BASE_HI;
 
@@ -880,8 +880,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3CBase__DEV_CTX_SG_bit_cg LIST_SIZE_bit_cg[16];
-        I3CCSR__I3CBase__DEV_CTX_SG_bit_cg BLP_bit_cg[1];
+        I3CCSR__I3CBase__DEV_CTX_SG_bit_cg [16-1:0]LIST_SIZE_bit_cg;
+        I3CCSR__I3CBase__DEV_CTX_SG_bit_cg [1-1:0]BLP_bit_cg;
         I3CCSR__I3CBase__DEV_CTX_SG_fld_cg fld_cg;
         rand uvm_reg_field LIST_SIZE;
         rand uvm_reg_field BLP;
@@ -1053,7 +1053,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__COMMAND_PORT_bit_cg COMMAND_DATA_bit_cg[32];
+        I3CCSR__PIOControl__COMMAND_PORT_bit_cg [32-1:0]COMMAND_DATA_bit_cg;
         I3CCSR__PIOControl__COMMAND_PORT_fld_cg fld_cg;
         rand uvm_reg_field COMMAND_DATA;
 
@@ -1083,7 +1083,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__RESPONSE_PORT_bit_cg RESPONSE_DATA_bit_cg[32];
+        I3CCSR__PIOControl__RESPONSE_PORT_bit_cg [32-1:0]RESPONSE_DATA_bit_cg;
         I3CCSR__PIOControl__RESPONSE_PORT_fld_cg fld_cg;
         rand uvm_reg_field RESPONSE_DATA;
 
@@ -1113,8 +1113,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg TX_DATA_bit_cg[32];
-        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg RX_DATA_bit_cg[32];
+        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg [32-1:0]TX_DATA_bit_cg;
+        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg [32-1:0]RX_DATA_bit_cg;
         I3CCSR__PIOControl__XFER_DATA_PORT_fld_cg fld_cg;
         rand uvm_reg_field TX_DATA;
         rand uvm_reg_field RX_DATA;
@@ -1148,7 +1148,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__IBI_PORT_bit_cg IBI_DATA_bit_cg[1];
+        I3CCSR__PIOControl__IBI_PORT_bit_cg [1-1:0]IBI_DATA_bit_cg;
         I3CCSR__PIOControl__IBI_PORT_fld_cg fld_cg;
         rand uvm_reg_field IBI_DATA;
 
@@ -1178,10 +1178,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg CMD_EMPTY_BUF_THLD_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg RESP_BUF_THLD_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg IBI_DATA_SEGMENT_SIZE_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg IBI_STATUS_THLD_bit_cg[8];
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg [8-1:0]CMD_EMPTY_BUF_THLD_bit_cg;
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg [8-1:0]RESP_BUF_THLD_bit_cg;
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg [8-1:0]IBI_DATA_SEGMENT_SIZE_bit_cg;
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL_bit_cg [8-1:0]IBI_STATUS_THLD_bit_cg;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL_fld_cg fld_cg;
         rand uvm_reg_field CMD_EMPTY_BUF_THLD;
         rand uvm_reg_field RESP_BUF_THLD;
@@ -1223,10 +1223,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg TX_BUF_THLD_bit_cg[3];
-        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg RX_BUF_THLD_bit_cg[3];
-        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg TX_START_THLD_bit_cg[3];
-        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg RX_START_THLD_bit_cg[3];
+        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]TX_BUF_THLD_bit_cg;
+        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]RX_BUF_THLD_bit_cg;
+        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]TX_START_THLD_bit_cg;
+        I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]RX_START_THLD_bit_cg;
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL_fld_cg fld_cg;
         rand uvm_reg_field TX_BUF_THLD;
         rand uvm_reg_field RX_BUF_THLD;
@@ -1268,10 +1268,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg CR_QUEUE_SIZE_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg IBI_STATUS_SIZE_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg RX_DATA_BUFFER_SIZE_bit_cg[8];
-        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg TX_DATA_BUFFER_SIZE_bit_cg[8];
+        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg [8-1:0]CR_QUEUE_SIZE_bit_cg;
+        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg [8-1:0]IBI_STATUS_SIZE_bit_cg;
+        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg [8-1:0]RX_DATA_BUFFER_SIZE_bit_cg;
+        I3CCSR__PIOControl__QUEUE_SIZE_bit_cg [8-1:0]TX_DATA_BUFFER_SIZE_bit_cg;
         I3CCSR__PIOControl__QUEUE_SIZE_fld_cg fld_cg;
         rand uvm_reg_field CR_QUEUE_SIZE;
         rand uvm_reg_field IBI_STATUS_SIZE;
@@ -1313,9 +1313,9 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg ALT_RESP_QUEUE_SIZE_bit_cg[8];
-        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg ALT_RESP_QUEUE_EN_bit_cg[1];
-        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg EXT_IBI_QUEUE_EN_bit_cg[1];
+        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg [8-1:0]ALT_RESP_QUEUE_SIZE_bit_cg;
+        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg [1-1:0]ALT_RESP_QUEUE_EN_bit_cg;
+        I3CCSR__PIOControl__ALT_QUEUE_SIZE_bit_cg [1-1:0]EXT_IBI_QUEUE_EN_bit_cg;
         I3CCSR__PIOControl__ALT_QUEUE_SIZE_fld_cg fld_cg;
         rand uvm_reg_field ALT_RESP_QUEUE_SIZE;
         rand uvm_reg_field ALT_RESP_QUEUE_EN;
@@ -1353,13 +1353,13 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TX_THLD_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg RX_THLD_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg IBI_STATUS_THLD_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg CMD_QUEUE_READY_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg RESP_READY_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TRANSFER_ABORT_STAT_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg TRANSFER_ERR_STAT_bit_cg[1];
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]TX_THLD_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]RX_THLD_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]IBI_STATUS_THLD_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]CMD_QUEUE_READY_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]RESP_READY_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]TRANSFER_ABORT_STAT_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_bit_cg [1-1:0]TRANSFER_ERR_STAT_bit_cg;
         I3CCSR__PIOControl__PIO_INTR_STATUS_fld_cg fld_cg;
         rand uvm_reg_field TX_THLD_STAT;
         rand uvm_reg_field RX_THLD_STAT;
@@ -1413,13 +1413,13 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TX_THLD_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg RX_THLD_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg IBI_STATUS_THLD_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg CMD_QUEUE_READY_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg RESP_READY_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TRANSFER_ABORT_STAT_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg TRANSFER_ERR_STAT_EN_bit_cg[1];
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]TX_THLD_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]RX_THLD_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]IBI_STATUS_THLD_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]CMD_QUEUE_READY_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]RESP_READY_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]TRANSFER_ABORT_STAT_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_bit_cg [1-1:0]TRANSFER_ERR_STAT_EN_bit_cg;
         I3CCSR__PIOControl__PIO_INTR_STATUS_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field TX_THLD_STAT_EN;
         rand uvm_reg_field RX_THLD_STAT_EN;
@@ -1473,13 +1473,13 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TX_THLD_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg RX_THLD_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg IBI_STATUS_THLD_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg CMD_QUEUE_READY_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg RESP_READY_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TRANSFER_ABORT_SIGNAL_EN_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg TRANSFER_ERR_SIGNAL_EN_bit_cg[1];
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]TX_THLD_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]RX_THLD_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]IBI_STATUS_THLD_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]CMD_QUEUE_READY_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]RESP_READY_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]TRANSFER_ABORT_SIGNAL_EN_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]TRANSFER_ERR_SIGNAL_EN_bit_cg;
         I3CCSR__PIOControl__PIO_INTR_SIGNAL_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field TX_THLD_SIGNAL_EN;
         rand uvm_reg_field RX_THLD_SIGNAL_EN;
@@ -1533,13 +1533,13 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TX_THLD_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg RX_THLD_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg IBI_THLD_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg CMD_QUEUE_READY_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg RESP_READY_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TRANSFER_ABORT_FORCE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg TRANSFER_ERR_FORCE_bit_cg[1];
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]TX_THLD_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]RX_THLD_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]IBI_THLD_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]CMD_QUEUE_READY_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]RESP_READY_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]TRANSFER_ABORT_FORCE_bit_cg;
+        I3CCSR__PIOControl__PIO_INTR_FORCE_bit_cg [1-1:0]TRANSFER_ERR_FORCE_bit_cg;
         I3CCSR__PIOControl__PIO_INTR_FORCE_fld_cg fld_cg;
         rand uvm_reg_field TX_THLD_FORCE;
         rand uvm_reg_field RX_THLD_FORCE;
@@ -1593,9 +1593,9 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__PIO_CONTROL_bit_cg ENABLE_bit_cg[1];
-        I3CCSR__PIOControl__PIO_CONTROL_bit_cg RS_bit_cg[1];
-        I3CCSR__PIOControl__PIO_CONTROL_bit_cg ABORT_bit_cg[1];
+        I3CCSR__PIOControl__PIO_CONTROL_bit_cg [1-1:0]ENABLE_bit_cg;
+        I3CCSR__PIOControl__PIO_CONTROL_bit_cg [1-1:0]RS_bit_cg;
+        I3CCSR__PIOControl__PIO_CONTROL_bit_cg [1-1:0]ABORT_bit_cg;
         I3CCSR__PIOControl__PIO_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field ENABLE;
         rand uvm_reg_field RS;
@@ -1723,8 +1723,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-        I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER_fld_cg fld_cg;
         rand uvm_reg_field CAP_ID;
         rand uvm_reg_field CAP_LENGTH;
@@ -1758,7 +1758,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1788,7 +1788,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1818,7 +1818,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1848,7 +1848,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1878,7 +1878,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1908,7 +1908,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1938,7 +1938,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1968,7 +1968,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -1998,7 +1998,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2028,7 +2028,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2058,7 +2058,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2088,7 +2088,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2118,7 +2118,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2148,7 +2148,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2178,7 +2178,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2208,7 +2208,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2238,7 +2238,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2268,7 +2268,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2298,7 +2298,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2328,7 +2328,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2358,7 +2358,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2388,7 +2388,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2418,7 +2418,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2448,7 +2448,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2478,7 +2478,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2508,7 +2508,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -2712,8 +2712,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
+        I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER_fld_cg fld_cg;
         rand uvm_reg_field CAP_ID;
         rand uvm_reg_field CAP_LENGTH;
@@ -2747,19 +2747,19 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg PENDING_RX_NACK_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg HANDOFF_DELAY_NACK_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg ACR_FSM_OP_SELECT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg PRIME_ACCEPT_GETACCCR_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg HANDOFF_DEEP_SLEEP_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg CR_REQUEST_SEND_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg BAST_CCC_IBI_RING_bit_cg[3];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg TARGET_XACT_ENABLE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg DAA_SETAASA_ENABLE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg DAA_SETDASA_ENABLE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg DAA_ENTDAA_ENABLE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg RSTACT_DEFBYTE_02_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg STBY_CR_ENABLE_INIT_bit_cg[2];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]PENDING_RX_NACK_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]HANDOFF_DELAY_NACK_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]ACR_FSM_OP_SELECT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]PRIME_ACCEPT_GETACCCR_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]HANDOFF_DEEP_SLEEP_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]CR_REQUEST_SEND_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [3-1:0]BAST_CCC_IBI_RING_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]TARGET_XACT_ENABLE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]DAA_SETAASA_ENABLE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]DAA_SETDASA_ENABLE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]DAA_ENTDAA_ENABLE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [1-1:0]RSTACT_DEFBYTE_02_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_bit_cg [2-1:0]STBY_CR_ENABLE_INIT_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field PENDING_RX_NACK;
         rand uvm_reg_field HANDOFF_DELAY_NACK;
@@ -2837,10 +2837,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg STATIC_ADDR_bit_cg[7];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg STATIC_ADDR_VALID_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_bit_cg[7];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg DYNAMIC_ADDR_VALID_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg [7-1:0]STATIC_ADDR_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg [1-1:0]STATIC_ADDR_VALID_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg [7-1:0]DYNAMIC_ADDR_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_bit_cg [1-1:0]DYNAMIC_ADDR_VALID_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR_fld_cg fld_cg;
         rand uvm_reg_field STATIC_ADDR;
         rand uvm_reg_field STATIC_ADDR_VALID;
@@ -2882,11 +2882,11 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg SIMPLE_CRR_SUPPORT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg TARGET_XACT_SUPPORT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg DAA_SETAASA_SUPPORT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg DAA_SETDASA_SUPPORT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg DAA_ENTDAA_SUPPORT_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg [1-1:0]SIMPLE_CRR_SUPPORT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg [1-1:0]TARGET_XACT_SUPPORT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg [1-1:0]DAA_SETAASA_SUPPORT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg [1-1:0]DAA_SETDASA_SUPPORT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_bit_cg [1-1:0]DAA_ENTDAA_SUPPORT_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES_fld_cg fld_cg;
         rand uvm_reg_field SIMPLE_CRR_SUPPORT;
         rand uvm_reg_field TARGET_XACT_SUPPORT;
@@ -2932,7 +2932,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_bit_cg __rsvd_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_bit_cg [32-1:0]__rsvd_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_fld_cg fld_cg;
         rand uvm_reg_field __rsvd;
 
@@ -2962,9 +2962,9 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg AC_CURRENT_OWN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg SIMPLE_CRR_STATUS_bit_cg[3];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg HJ_REQ_STATUS_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg [1-1:0]AC_CURRENT_OWN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg [3-1:0]SIMPLE_CRR_STATUS_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_bit_cg [1-1:0]HJ_REQ_STATUS_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS_fld_cg fld_cg;
         rand uvm_reg_field AC_CURRENT_OWN;
         rand uvm_reg_field SIMPLE_CRR_STATUS;
@@ -3002,10 +3002,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg PID_HI_bit_cg[15];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg DCR_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg BCR_VAR_bit_cg[5];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg BCR_FIXED_bit_cg[3];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg [15-1:0]PID_HI_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg [8-1:0]DCR_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg [5-1:0]BCR_VAR_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_bit_cg [3-1:0]BCR_FIXED_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR_fld_cg fld_cg;
         rand uvm_reg_field PID_HI;
         rand uvm_reg_field DCR;
@@ -3047,7 +3047,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO_bit_cg PID_LO_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO_bit_cg [32-1:0]PID_LO_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO_fld_cg fld_cg;
         rand uvm_reg_field PID_LO;
 
@@ -3077,19 +3077,19 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg ACR_HANDOFF_OK_REMAIN_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg ACR_HANDOFF_OK_PRIMED_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg ACR_HANDOFF_ERR_FAIL_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg ACR_HANDOFF_ERR_M3_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg CRR_RESPONSE_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg STBY_CR_DYN_ADDR_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg STBY_CR_ACCEPT_NACKED_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg STBY_CR_ACCEPT_OK_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg STBY_CR_ACCEPT_ERR_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg STBY_CR_OP_RSTACT_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg CCC_PARAM_MODIFIED_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg CCC_UNHANDLED_NACK_STAT_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg CCC_FATAL_RSTDAA_ERR_STAT_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]ACR_HANDOFF_OK_REMAIN_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]ACR_HANDOFF_OK_PRIMED_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]ACR_HANDOFF_ERR_FAIL_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]ACR_HANDOFF_ERR_M3_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]CRR_RESPONSE_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]STBY_CR_DYN_ADDR_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]STBY_CR_ACCEPT_NACKED_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]STBY_CR_ACCEPT_OK_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]STBY_CR_ACCEPT_ERR_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]STBY_CR_OP_RSTACT_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]CCC_PARAM_MODIFIED_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]CCC_UNHANDLED_NACK_STAT_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_bit_cg [1-1:0]CCC_FATAL_RSTDAA_ERR_STAT_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS_fld_cg fld_cg;
         rand uvm_reg_field ACR_HANDOFF_OK_REMAIN_STAT;
         rand uvm_reg_field ACR_HANDOFF_OK_PRIMED_STAT;
@@ -3167,7 +3167,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_bit_cg __rsvd_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_bit_cg [32-1:0]__rsvd_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_fld_cg fld_cg;
         rand uvm_reg_field __rsvd;
 
@@ -3197,19 +3197,19 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg ACR_HANDOFF_OK_REMAIN_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg ACR_HANDOFF_OK_PRIMED_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg ACR_HANDOFF_ERR_FAIL_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg ACR_HANDOFF_ERR_M3_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg CRR_RESPONSE_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg STBY_CR_DYN_ADDR_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg STBY_CR_ACCEPT_NACKED_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg STBY_CR_ACCEPT_OK_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg STBY_CR_ACCEPT_ERR_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg STBY_CR_OP_RSTACT_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg CCC_PARAM_MODIFIED_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg CCC_UNHANDLED_NACK_SIGNAL_EN_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg CCC_FATAL_RSTDAA_ERR_SIGNAL_EN_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]ACR_HANDOFF_OK_REMAIN_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]ACR_HANDOFF_OK_PRIMED_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]ACR_HANDOFF_ERR_FAIL_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]ACR_HANDOFF_ERR_M3_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]CRR_RESPONSE_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]STBY_CR_DYN_ADDR_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]STBY_CR_ACCEPT_NACKED_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]STBY_CR_ACCEPT_OK_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]STBY_CR_ACCEPT_ERR_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]STBY_CR_OP_RSTACT_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]CCC_PARAM_MODIFIED_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]CCC_UNHANDLED_NACK_SIGNAL_EN_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_bit_cg [1-1:0]CCC_FATAL_RSTDAA_ERR_SIGNAL_EN_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
         rand uvm_reg_field ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
@@ -3287,15 +3287,15 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg CRR_RESPONSE_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg STBY_CR_DYN_ADDR_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg STBY_CR_ACCEPT_NACKED_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg STBY_CR_ACCEPT_OK_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg STBY_CR_ACCEPT_ERR_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg STBY_CR_OP_RSTACT_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg CCC_PARAM_MODIFIED_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg CCC_UNHANDLED_NACK_FORCE_bit_cg[1];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg CCC_FATAL_RSTDAA_ERR_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]CRR_RESPONSE_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]STBY_CR_DYN_ADDR_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]STBY_CR_ACCEPT_NACKED_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]STBY_CR_ACCEPT_OK_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]STBY_CR_ACCEPT_ERR_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]STBY_CR_OP_RSTACT_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]CCC_PARAM_MODIFIED_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]CCC_UNHANDLED_NACK_FORCE_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_bit_cg [1-1:0]CCC_FATAL_RSTDAA_ERR_FORCE_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE_fld_cg fld_cg;
         rand uvm_reg_field CRR_RESPONSE_FORCE;
         rand uvm_reg_field STBY_CR_DYN_ADDR_FORCE;
@@ -3357,8 +3357,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS_bit_cg F2_CRCAP1_BUS_CONFIG_bit_cg[3];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS_bit_cg F2_CRCAP2_DEV_INTERACT_bit_cg[4];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS_bit_cg [3-1:0]F2_CRCAP1_BUS_CONFIG_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS_bit_cg [4-1:0]F2_CRCAP2_DEV_INTERACT_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS_fld_cg fld_cg;
         rand uvm_reg_field F2_CRCAP1_BUS_CONFIG;
         rand uvm_reg_field F2_CRCAP2_DEV_INTERACT;
@@ -3392,10 +3392,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg RST_ACTION_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg RESET_TIME_PERIPHERAL_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg RESET_TIME_TARGET_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg RESET_DYNAMIC_ADDR_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg [8-1:0]RST_ACTION_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg [8-1:0]RESET_TIME_PERIPHERAL_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg [8-1:0]RESET_TIME_TARGET_bit_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_bit_cg [1-1:0]RESET_DYNAMIC_ADDR_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS_fld_cg fld_cg;
         rand uvm_reg_field RST_ACTION;
         rand uvm_reg_field RESET_TIME_PERIPHERAL;
@@ -3437,7 +3437,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_bit_cg __rsvd_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_bit_cg [32-1:0]__rsvd_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_fld_cg fld_cg;
         rand uvm_reg_field __rsvd;
 
@@ -3467,7 +3467,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_bit_cg __rsvd_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_bit_cg [32-1:0]__rsvd_bit_cg;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_fld_cg fld_cg;
         rand uvm_reg_field __rsvd;
 
@@ -3605,8 +3605,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
+        I3CCSR__I3C_EC__TTI__EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__TTI__EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
         I3CCSR__I3C_EC__TTI__EXTCAP_HEADER_fld_cg fld_cg;
         rand uvm_reg_field CAP_ID;
         rand uvm_reg_field CAP_LENGTH;
@@ -3640,7 +3640,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__TTI__CONTROL_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -3670,7 +3670,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__TTI__STATUS_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -3700,7 +3700,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -3730,7 +3730,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -3760,7 +3760,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -3790,7 +3790,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT_bit_cg RX_DESC_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT_bit_cg [32-1:0]RX_DESC_bit_cg;
         I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC;
 
@@ -3820,7 +3820,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__RX_DATA_PORT_bit_cg RX_DATA_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__RX_DATA_PORT_bit_cg [32-1:0]RX_DATA_bit_cg;
         I3CCSR__I3C_EC__TTI__RX_DATA_PORT_fld_cg fld_cg;
         rand uvm_reg_field RX_DATA;
 
@@ -3850,7 +3850,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT_bit_cg TX_DESC_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT_bit_cg [32-1:0]TX_DESC_bit_cg;
         I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT_fld_cg fld_cg;
         rand uvm_reg_field TX_DESC;
 
@@ -3880,7 +3880,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__TX_DATA_PORT_bit_cg TX_DATA_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__TX_DATA_PORT_bit_cg [32-1:0]TX_DATA_bit_cg;
         I3CCSR__I3C_EC__TTI__TX_DATA_PORT_fld_cg fld_cg;
         rand uvm_reg_field TX_DATA;
 
@@ -3910,10 +3910,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg RX_DESC_BUFFER_SIZE_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg TX_DESC_BUFFER_SIZE_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg RX_DATA_BUFFER_SIZE_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg TX_DATA_BUFFER_SIZE_bit_cg[8];
+        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg [8-1:0]RX_DESC_BUFFER_SIZE_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg [8-1:0]TX_DESC_BUFFER_SIZE_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg [8-1:0]RX_DATA_BUFFER_SIZE_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg [8-1:0]TX_DATA_BUFFER_SIZE_bit_cg;
         I3CCSR__I3C_EC__TTI__QUEUE_SIZE_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC_BUFFER_SIZE;
         rand uvm_reg_field TX_DESC_BUFFER_SIZE;
@@ -3955,10 +3955,10 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg RX_DESC_THLD_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg TX_DESC_THLD_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg RX_DATA_THLD_bit_cg[8];
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg TX_DATA_THLD_bit_cg[8];
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]RX_DESC_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]TX_DESC_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]RX_DATA_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]TX_DATA_THLD_bit_cg;
         I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC_THLD;
         rand uvm_reg_field TX_DESC_THLD;
@@ -4084,8 +4084,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-        I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
+        I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER_fld_cg fld_cg;
         rand uvm_reg_field CAP_ID;
         rand uvm_reg_field CAP_LENGTH;
@@ -4119,7 +4119,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4149,7 +4149,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4179,7 +4179,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4209,7 +4209,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4239,7 +4239,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4269,7 +4269,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4299,7 +4299,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4329,7 +4329,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4359,7 +4359,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4389,7 +4389,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4419,7 +4419,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4449,7 +4449,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4479,7 +4479,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4509,7 +4509,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4539,7 +4539,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4569,7 +4569,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4599,7 +4599,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4629,7 +4629,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4659,7 +4659,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4689,7 +4689,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4719,7 +4719,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4749,7 +4749,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15_fld_cg fld_cg;
         rand uvm_reg_field PLACEHOLDER;
 
@@ -4929,8 +4929,8 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER_bit_cg CAP_ID_bit_cg[8];
-        I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER_bit_cg CAP_LENGTH_bit_cg[16];
+        I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
         I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER_fld_cg fld_cg;
         rand uvm_reg_field CAP_ID;
         rand uvm_reg_field CAP_LENGTH;
@@ -4964,7 +4964,7 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG_bit_cg OPERATION_MODE_bit_cg[2];
+        I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG_bit_cg [2-1:0]OPERATION_MODE_bit_cg;
         I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG_fld_cg fld_cg;
         rand uvm_reg_field OPERATION_MODE;
 
