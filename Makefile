@@ -101,6 +101,9 @@ tests-uvm: config ## Run all I3C UVM tests with nox
 tests-uvm-debug: config ## Run debugging I3C UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -t "uvm_debug_tests"
 
+tests-i3c-uvm: config ## Run all i3c-core UVM tests with nox
+	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm"
+
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && python -m nox -k "verify"
 

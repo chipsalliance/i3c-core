@@ -139,3 +139,25 @@ def i3c_driver(session, simulator, coverage):
         extra_make_args=[],
         coverage=coverage,
     )
+
+@nox.session(tags=["i3c_core_uvm_tests"])
+@nox.parametrize("simulator", [SIMULATOR])
+@nox.parametrize(
+    "uvm_vseq_test",
+    [
+        "",
+    ],
+)
+@nox.parametrize("coverage", coverageTypes)
+def i3c_core_verify_uvm(session, simulator, uvm_vseq_test, coverage):
+    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/i3c_core_sim.scr \
+                ${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/tb_i3c_core.sv"
+    verify_uvm(
+        session,
+        tb_files=tb_files,
+        uvm_testname="i3c_core_test",
+        uvm_vseq_test=uvm_vseq_test,
+        simulator=simulator,
+        extra_make_args=[],
+        coverage=coverage,
+    )

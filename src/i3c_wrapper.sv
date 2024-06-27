@@ -103,7 +103,10 @@ module i3c_wrapper #(
     output logic i3c_sda_en_o, // serial data output to i3c bus
 
     input  logic i3c_fsm_en_i,
-    output logic i3c_fsm_idle_o
+    output logic i3c_fsm_idle_o,
+
+    inout logic i3c_scl_io,
+    inout logic i3c_sda_io
 
     // TODO: Check if anything missing; Interrupts?
 );
@@ -152,9 +155,6 @@ module i3c_wrapper #(
     end
   end
 `endif
-
-  logic i3c_scl_io;
-  logic i3c_sda_io;
 
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t dat_mem_src;

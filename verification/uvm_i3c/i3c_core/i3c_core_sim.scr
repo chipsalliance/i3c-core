@@ -1,0 +1,11 @@
++incdir+verification/uvm_i3c/
++incdir+verification/uvm_i3c/i3c_core/
++incdir+verification/uvm_i3c/i3c_core/i3c_vseqs/
++incdir+verification/uvm_i3c/dv_inc/
++incdir+verification/uvm_i3c/dv_i3c/
++incdir+verification/uvm_i3c/dv_i3c/seq_lib/
+
+verification/uvm_i3c/dv_i3c/i3c_agent_pkg.sv
+verification/uvm_i3c/dv_i3c/i3c_if.sv
+verification/uvm_i3c/i3c_core/i3c_env_pkg.sv
+verification/uvm_i3c/i3c_core/i3c_test_pkg.sv
