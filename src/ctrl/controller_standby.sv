@@ -31,7 +31,7 @@ module controller_standby
   logic det_tbit_i;
   logic tbit_i;
   logic byte_valid_i;
-  logic byte_i;
+  logic [7:0] byte_i;
   logic byte_valid_o;
   logic terminate_force_i;
   logic terminate_soft_i;

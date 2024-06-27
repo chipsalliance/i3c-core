@@ -154,11 +154,11 @@ module i3c_wrapper
   logic i3c_sda_io;
 
   // DAT memory export interface
-  dat_mem_src_t dat_mem_src;
+  dat_mem_src_t  dat_mem_src;
   dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  dct_mem_src_t dct_mem_src;
+  dct_mem_src_t  dct_mem_src;
   dct_mem_sink_t dct_mem_sink;
 
   i3c #(

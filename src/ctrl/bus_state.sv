@@ -24,11 +24,9 @@ module bus_state
   end
 
   // Detect Stop condition
-  logic det_bus_stop;
-  assign det_bus_stop = sda_i & scl_i;
+  assign det_bus_stop  = sda_i & scl_i;
 
   // Detect Start Condition
-  logic det_bus_start;
   assign det_bus_start = (sda_i ^ sda_i_q) & (~sda_i);
 
   // State definitions
@@ -38,8 +36,6 @@ module bus_state
     Free,
     Busy
   } state_t;
-
-  state_t bus_state;
 
   // TODO: Add counters to calculate time durations from:
   // Like in src/ctrl/i2c_controller_fsm.sv#L102-152
