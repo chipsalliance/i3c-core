@@ -72,7 +72,7 @@ class FrontBusTestInterface:
         self.rst_n = rst_n
 
     async def register_test_interfaces(self):
-        await cocotb.start(setup_dut(self.clk, self.rst_n, (10, "ns")))
+        await cocotb.start(setup_dut(self.clk, self.rst_n, (2, "ns")))
 
     async def read_csr(
         self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"

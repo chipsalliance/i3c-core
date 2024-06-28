@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Any
+
 from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge, with_timeout
+from utils import SequenceFailed
 
 I3C_PHY_DELAY = 2
 
@@ -102,6 +105,14 @@ async def i2c_mem_read(dut, i2c_addr, mem_addr, length=1):
     return res
 
 
+async def reset_controller(dut):
+    dut.rst_ni.value = 0
+    await ClockCycles(dut.clk_i, 100)
+    await FallingEdge(dut.clk_i)
+    dut.rst_ni.value = 1
+    await ClockCycles(dut.clk_i, 2)
+
+
 def init_i2c_controller_ports(dut):
     # Drive constant DUT inputs
     dut.host_enable_i.value = 1
@@ -132,9 +143,55 @@ def init_i2c_controller_ports(dut):
     dut.fmt_fifo_rvalid_i.value = 0
 
 
-async def reset(dut):
-    dut.rst_ni.value = 0
-    await ClockCycles(dut.clk_i, 100)
-    await FallingEdge(dut.clk_i)
-    dut.rst_ni.value = 1
-    await ClockCycles(dut.clk_i, 2)
+def init_i2c_target_ports(dut, address):
+    # Timing
+    dut.t_r_i.value = 1
+    dut.tsu_dat_i.value = 1
+    dut.thd_dat_i.value = 1
+    dut.host_timeout_i.value = 0
+    dut.nack_timeout_i.value = 0
+    dut.nack_timeout_en_i.value = 0
+
+    # Addressing
+    dut.target_address0_i.value = address
+    dut.target_mask0_i.value = 0x7F
+    dut.target_address1_i.value = address
+    dut.target_mask1_i.value = 0x7F
+
+    # Others / unused
+    dut.target_enable_i.value = 1
+
+
+def MatchOTAcqDataExact(value: int, dut: Any, mask: int = 0x3FF) -> bool:
+    """Sequence predicate: Match data in ACQ queue"""
+    breakpoint()
+    if dut.xcontroller_standby_i2c.acq_fifo_valid_int.value:
+        if (
+            dut.xcontroller_standby.xcontroller_standby_i2c.acq_fifo_wdata_int.value & mask
+            == value & mask
+        ):
+            return True
+        raise SequenceFailed()
+    return False
+
+
+def MatchTTIDataExact(value: int, dut: Any, mask: int = 0xFFFF_FFFF) -> bool:
+    """Sequence predicate: Match data in TTI RX queue"""
+    if dut.tti_rx_queue_wvalid.value:
+        if (dut.tti_rx_queue_wdata.value & mask) == (
+            value & mask
+        ) and dut.tti_rx_queue_wready.value:
+            return True
+        raise SequenceFailed()
+    return False
+
+
+def MatchTTIResponseExact(byte_count: int, dut: Any) -> bool:
+    """Sequence predicate: Match byte count in TTI response queue"""
+    if dut.tti_rx_desc_queue_wvalid.value:
+        if (
+            dut.tti_rx_desc_queue_wdata.value & 0xFFFF0000
+        ) >> 16 == byte_count and dut.tti_rx_desc_queue_wready.value:
+            return True
+        raise SequenceFailed()
+    return False

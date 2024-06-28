@@ -2,11 +2,15 @@
 
 from dataclasses import dataclass
 from enum import IntEnum
+from functools import reduce
 from random import randint
+from typing import Any, Callable, Iterable
 
+import cocotb
 from bus2csr import FrontBusTestInterface, dword2int, int2dword
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
+from utils import SequenceFailed
 
 # TODO: obtain numbers from RDL description
 
@@ -286,3 +290,63 @@ class HCIBaseTestInterface:
         self.dut._log.debug(f"Writing {hex(entry)} to DAT entry {index}")
         await self.write_csr(DAT_ADDR + index * 8, int2dword(entry & 0xFFFFFFFF), 4)
         await self.write_csr(DAT_ADDR + index * 8 + 4, int2dword((entry >> 32) & 0xFFFFFFFF), 4)
+
+
+class TxFifo:
+    def __init__(
+        self,
+        clk: Any,
+        data_port: Any,
+        valid_port: Any,
+        ready_port: Any,
+        content: Iterable[int],
+        name: str = "<unnamed>",
+    ) -> None:
+        self.queue = list(content)
+        self.clk = clk
+        self.data_port = data_port
+        self.valid_port = valid_port
+        self.ready_port = ready_port
+        self.name = name
+
+    def fill(self, content: Iterable[int]) -> None:
+        self.queue = list(content)
+
+    def _prepare_queue_match(self) -> None:
+        if len(self.queue) == 0:
+            raise SequenceFailed()
+
+        self.data_port.value = self.queue[0]
+        self.valid_port.value = 1
+
+    def _pop(self, dut: Any):
+        data = self.queue[0]
+        log = cocotb.logging.getLogger(f"cocotb.{dut._path}")
+        log.info(f"[FIFO `{self.name}`] popping word {hex(data)} ('{chr(data & 0xff)}')")
+        self.queue.pop(0)
+
+    def MatchPop(self, dut: Any) -> bool:
+        self._prepare_queue_match()
+
+        if self.ready_port.value:
+            self._pop(dut)
+            return True
+
+        return False
+
+    @staticmethod
+    def MatchPopMany(*args: "TxFifo") -> Callable[[Any], bool]:
+        def pred(dut: Any) -> bool:
+            nonlocal args
+
+            for fifo in args:
+                fifo._prepare_queue_match()
+
+            if reduce(lambda a, b: a & b, (fifo.ready_port.value for fifo in args)):
+                for fifo in args:
+                    fifo._pop(dut)
+                return True
+
+            return False
+
+        return pred
