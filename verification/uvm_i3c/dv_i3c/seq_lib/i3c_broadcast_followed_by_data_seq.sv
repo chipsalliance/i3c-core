@@ -71,11 +71,13 @@ class i3c_broadcast_followed_by_data_seq extends i3c_direct_data_seq;
       finish_item(req);
       get_response(rsp);
       `uvm_info(get_full_name(), $sformatf("\n%s", rsp.sprint()), UVM_DEBUG)
-      host_direct_phase(0);
+      host_direct_phase();
       `uvm_info(get_full_name(), $sformatf("\nHost recived:\n%s", rsp.sprint()), UVM_LOW)
     end else begin
       req.end_with_rstart = 0;
       `uvm_error(get_full_name(), $sformatf("\nHost recived:\n%s", rsp.sprint()))
+      finish_item(req);
+      get_response(rsp);
     end
   endtask
 

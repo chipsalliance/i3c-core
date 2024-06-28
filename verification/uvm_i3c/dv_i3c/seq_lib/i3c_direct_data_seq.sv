@@ -6,24 +6,112 @@ class i3c_direct_data_seq extends uvm_sequence#(i3c_seq_item, i3c_seq_item);
   i3c_agent_cfg cfg;
 
   // data to be sent to target dut
-  rand bit [7:0] data_q[$];
+  rand i3c_seq_item transfer;
 
   function int max(int a, int b);
     return a >= b ? a : b;
   endfunction
 
+  function int min(int a, int b);
+    return a >= b ? b : a;
+  endfunction
+
   // Stops running this sequence
   protected bit stop;
 
-  // constrain size of data sent/received
-  constraint data_q_size_c {
-    data_q.size() inside {[0 :
-      max(cfg.i3c_target0.max_write_length, cfg.i3c_target1.max_write_length)]};
+  constraint transfer_addr_c {
+    if (cfg.if_mode == Device) {
+      transfer.addr == rsp.addr;
+      transfer.dir  == rsp.dir;
+    } else {
+      transfer.addr inside {cfg.i3c_target0.dynamic_addr, cfg.i3c_target1.dynamic_addr};
+      transfer.dir inside {0, 1};
+    }
+  }
+
+  constraint transfer_i3c_direct_c {
+    transfer.is_daa == 0;
+    transfer.i3c == 1;
+    transfer.IBI == 0;
+    transfer.IBI_ACK == 0;
+    transfer.IBI_ADDR == 0;
+    transfer.IBI_START == 0;
+  }
+
+  constraint transfer_i3c_end_c {
+    transfer.end_with_rstart == 0;
+  }
+
+  constraint transfer_dev_ack_c {
+    if (cfg.if_mode == Host) {
+      transfer.dev_ack == 1;
+    } else {
+      if ((rsp.addr == cfg.i3c_target0.dynamic_addr) ||
+          (rsp.addr == cfg.i3c_target1.dynamic_addr))
+        transfer.dev_ack == 1;
+      else
+        transfer.dev_ack == 0;
+    }
+  }
+
+  constraint transfer_i3c_data_c {
+    solve transfer.addr before transfer.data;
+    solve transfer.dir  before transfer.data;
+    solve transfer.data before transfer.data_cnt, transfer.T_bit;
+    if (cfg.if_mode == Device) {
+      if (transfer.dir == 1) {
+        if(transfer.addr == cfg.i3c_target0.dynamic_addr)
+          transfer.data.size() <= cfg.i3c_target0.max_read_length;
+        if(transfer.addr == cfg.i3c_target1.dynamic_addr)
+          transfer.data.size() <= cfg.i3c_target1.max_read_length;
+        transfer.data_cnt == transfer.data.size();
+        transfer.T_bit.size() == transfer.data.size();
+        foreach (transfer.T_bit[i])
+          if (i < transfer.T_bit.size() - 1)
+            transfer.T_bit[i] == 1;
+          else
+            transfer.T_bit[i] == 0;
+      } else {
+        if(transfer.addr == cfg.i3c_target0.dynamic_addr)
+          transfer.data.size() == cfg.i3c_target0.max_write_length;
+        if(transfer.addr == cfg.i3c_target1.dynamic_addr)
+          transfer.data.size() == cfg.i3c_target1.max_write_length;
+        transfer.data_cnt == transfer.data.size();
+        transfer.T_bit.size() == transfer.data.size();
+      }
+    } else {
+      if (transfer.dir == 0) {
+        0 < transfer.data.size();
+        if(transfer.addr == cfg.i3c_target0.dynamic_addr)
+          transfer.data.size() <= cfg.i3c_target0.max_write_length;
+        if(transfer.addr == cfg.i3c_target1.dynamic_addr)
+          transfer.data.size() <= cfg.i3c_target1.max_write_length;
+        transfer.T_bit.size() == transfer.data.size();
+        foreach(transfer.data[i]) {
+          transfer.T_bit[i] == !(^transfer.data[i]);
+        }
+        transfer.data_cnt == transfer.data.size();
+      } else {
+        if(transfer.addr == cfg.i3c_target0.dynamic_addr)
+          transfer.data.size() == cfg.i3c_target0.max_read_length;
+        if(transfer.addr == cfg.i3c_target1.dynamic_addr)
+          transfer.data.size() == cfg.i3c_target1.max_read_length;
+        transfer.data_cnt == transfer.data.size();
+        transfer.T_bit.size() == transfer.data.size();
+        foreach(transfer.T_bit[i]) {
+          if (i < transfer.T_bit.size() - 1)
+            transfer.T_bit[i] == 1;
+          else
+            transfer.T_bit[i] == 0;
+        }
+      }
+    }
   }
 
   task pre_start();
     super.pre_start();
     cfg = p_sequencer.cfg;
+    transfer = new();
     this.randomize();
   endtask
 
@@ -49,45 +137,9 @@ class i3c_direct_data_seq extends uvm_sequence#(i3c_seq_item, i3c_seq_item);
       `uvm_info(get_full_name(), $sformatf("\n%s", rsp.sprint()), UVM_LOW)
       `uvm_error(get_full_name(),"Incorrect I3C address!")
     end
-    req = i3c_seq_item::type_id::create("req");
+    this.randomize();
+    $cast(req, transfer.clone());
     start_item(req);
-    req.randomize() with {
-      solve req.addr before req.data;
-      solve req.dir  before req.data;
-      solve req.data before req.data_cnt, req.T_bit;
-      req.addr == rsp.addr;
-      req.i3c == 1;
-      if ((rsp.addr == cfg.i3c_target0.dynamic_addr) || (rsp.addr == cfg.i3c_target1.dynamic_addr))
-        req.dev_ack == 1;
-      else
-        req.dev_ack == 0;
-      req.is_daa == 0;
-      req.dir == rsp.dir;
-      req.IBI == 0;
-      req.IBI_ACK == 0;
-      req.IBI_ADDR == 0;
-      req.IBI_START == 0;
-      if (rsp.dir == 1) {
-        if(rsp.addr == cfg.i3c_target0.dynamic_addr)
-          req.data.size() <= cfg.i3c_target0.max_read_length;
-        if(rsp.addr == cfg.i3c_target1.dynamic_addr)
-          req.data.size() <= cfg.i3c_target1.max_read_length;
-        req.data_cnt == req.data.size();
-        req.T_bit.size() == req.data.size();
-        foreach (req.T_bit[i])
-          if (i < req.T_bit.size() - 1)
-            req.T_bit[i] == 1;
-          else
-            req.T_bit[i] == 0;
-      } else {
-        if(rsp.addr == cfg.i3c_target0.dynamic_addr)
-          req.data.size() == cfg.i3c_target0.max_write_length;
-        if(rsp.addr == cfg.i3c_target1.dynamic_addr)
-          req.data.size() == cfg.i3c_target1.max_write_length;
-        req.data_cnt == req.data.size();
-        req.T_bit.size() == req.data.size();
-      }
-    };
     `uvm_info(get_full_name(), $sformatf("\n%s", req.sprint()), UVM_DEBUG)
     finish_item(req);
     get_response(rsp);
@@ -103,77 +155,17 @@ class i3c_direct_data_seq extends uvm_sequence#(i3c_seq_item, i3c_seq_item);
     end
   endtask
 
-  virtual task host_direct_phase(input bit RStart);
-    req = i3c_seq_item::type_id::create("req");
+  virtual task host_direct_phase();
+    this.randomize();
+    $cast(req, transfer.clone());
     start_item(req);
-    req.randomize() with {
-      solve req.addr before req.data;
-      solve req.dir  before req.data;
-      solve req.data before req.data_cnt, req.T_bit;
-      req.is_daa == 0;
-      req.addr inside {cfg.i3c_target0.dynamic_addr, cfg.i3c_target1.dynamic_addr};
-      req.dir inside {0, 1};
-      req.i3c == 1;
-      req.dev_ack == 1;
-      req.data.size() == 0;
-      req.T_bit.size() == 0;
-      req.data_cnt == 0;
-      req.IBI == 0;
-      req.IBI_ACK == 0;
-      req.IBI_ADDR == 0;
-      req.IBI_START == 0;
-    };
     `uvm_info(get_full_name(), $sformatf("\n%s", req.sprint()), UVM_DEBUG)
     finish_item(req);
     get_response(rsp);
     `uvm_info(get_full_name(), $sformatf("\n%s", rsp.sprint()), UVM_DEBUG)
     if (rsp.dev_ack) begin
-      req = i3c_seq_item::type_id::create("req");
+      $cast(req, transfer.clone());
       start_item(req);
-      req.randomize() with {
-        solve req.addr before req.data;
-        solve req.dir  before req.data;
-        solve req.data before req.data_cnt, req.T_bit;
-        req.is_daa == 0;
-        req.addr == rsp.addr;
-        req.dir == rsp.dir;
-        req.i3c == 1;
-        req.dev_ack == 1;
-        req.end_with_rstart == RStart;
-        if (req.dir == 0) {
-          0 < req.data.size();
-          req.data.size() <= local::data_q.size();
-          if(req.addr == cfg.i3c_target0.dynamic_addr)
-            req.data.size() <= cfg.i3c_target0.max_write_length;
-          if(req.addr == cfg.i3c_target1.dynamic_addr)
-            req.data.size() <= cfg.i3c_target1.max_write_length;
-          foreach(req.data[i]) {
-            req.data[i] == local::data_q[i];
-          }
-          req.T_bit.size() == req.data.size();
-          foreach(req.data[i]) {
-            req.T_bit[i] == !(^local::data_q[i]);
-          }
-          req.data_cnt == req.data.size();
-        } else {
-          if(req.addr == cfg.i3c_target0.dynamic_addr)
-            req.data.size() == cfg.i3c_target0.max_read_length;
-          if(req.addr == cfg.i3c_target1.dynamic_addr)
-            req.data.size() == cfg.i3c_target1.max_read_length;
-          req.data_cnt == req.data.size();
-          req.T_bit.size() == req.data.size();
-          foreach(req.T_bit[i]) {
-            if (i < req.T_bit.size() - 1)
-              req.T_bit[i] == 1;
-            else
-              req.T_bit[i] == 0;
-          }
-        }
-        req.IBI == 0;
-        req.IBI_ACK == 0;
-        req.IBI_ADDR == 0;
-        req.IBI_START == 0;
-      };
       `uvm_info(get_full_name(), $sformatf("\n%s", req.sprint()), UVM_DEBUG)
       finish_item(req);
       get_response(rsp);
@@ -185,7 +177,7 @@ class i3c_direct_data_seq extends uvm_sequence#(i3c_seq_item, i3c_seq_item);
 
   virtual task send_host_mode_txn();
     // get seq for agent running in Host mode
-    host_direct_phase(0);
+    host_direct_phase();
     `uvm_info(get_full_name(), $sformatf("\nHost recived:\n%s", rsp.sprint()), UVM_LOW)
   endtask
 
