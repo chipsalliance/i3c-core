@@ -47,9 +47,13 @@ $(I3C_ROOT_DIR)/src/ctrl/daa.sv
 $(I3C_ROOT_DIR)/src/ctrl/i2c_controller_fsm.sv
 $(I3C_ROOT_DIR)/src/ctrl/i2c_target_fsm.sv
 $(I3C_ROOT_DIR)/src/ctrl/i3c_controller_fsm.sv
+$(I3C_ROOT_DIR)/src/ctrl/bus_monitor.sv
 $(I3C_ROOT_DIR)/src/ctrl/i3c_target_fsm.sv
 $(I3C_ROOT_DIR)/src/ctrl/flow_active.sv
-$(I3C_ROOT_DIR)/src/ctrl/flow_standby.sv
+$(I3C_ROOT_DIR)/src/ctrl/flow_standby_i2c.sv
+$(I3C_ROOT_DIR)/src/ctrl/flow_standby_i3c.sv
+$(I3C_ROOT_DIR)/src/ctrl/controller_standby_i2c.sv
+$(I3C_ROOT_DIR)/src/ctrl/controller_standby_i3c.sv
 $(I3C_ROOT_DIR)/src/ctrl/controller_active.sv
 $(I3C_ROOT_DIR)/src/ctrl/controller_standby.sv
 $(I3C_ROOT_DIR)/src/ctrl/controller.sv

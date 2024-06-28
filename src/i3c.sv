@@ -357,13 +357,6 @@ module i3c
   logic ctrl2phy_scl[4];
   logic ctrl2phy_sda[4];
 
-  logic [1:0] phy_select_i;
-  assign phy_select_i = 2'b00;  // TODO: Warning: Static configuration
-
-  initial begin
-    $warning("phy_select gives access to i3c target! Change me in i3c.sv!");
-  end
-
   i3c_config_t core_config;
 
   controller #() xcontroller (
@@ -410,6 +403,42 @@ module i3c
       .tx_queue_rvalid_i(tx_queue_rvalid),
       .tx_queue_rready_o(tx_queue_rready),
       .tx_queue_rdata_i(tx_queue_rdata),
+
+      // TTI: RX Descriptor
+      .tti_rx_desc_queue_full_i(tti_rx_desc_queue_full),
+      .tti_rx_desc_queue_thld_i(tti_rx_desc_queue_thld),
+      .tti_rx_desc_queue_above_thld_i(tti_rx_desc_queue_above_thld),
+      .tti_rx_desc_queue_empty_i(tti_rx_desc_queue_empty),
+      .tti_rx_desc_queue_wvalid_o(tti_rx_desc_queue_wvalid),
+      .tti_rx_desc_queue_wready_i(tti_rx_desc_queue_wready),
+      .tti_rx_desc_queue_wdata_o(tti_rx_desc_queue_wdata),
+
+      // TTI: RX Data
+      .tti_rx_queue_full_i(tti_rx_queue_full),
+      .tti_rx_queue_thld_i(tti_rx_queue_thld),
+      .tti_rx_queue_above_thld_i(tti_rx_queue_above_thld),
+      .tti_rx_queue_empty_i(tti_rx_queue_empty),
+      .tti_rx_queue_wvalid_o(tti_rx_queue_wvalid),
+      .tti_rx_queue_wready_i(tti_rx_queue_wready),
+      .tti_rx_queue_wdata_o(tti_rx_queue_wdata),
+
+      // TTI: TX Descriptor
+      .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full),
+      .tti_tx_desc_queue_thld_i(tti_tx_desc_queue_thld),
+      .tti_tx_desc_queue_below_thld_i(tti_tx_desc_queue_below_thld),
+      .tti_tx_desc_queue_empty_i(tti_tx_desc_queue_empty),
+      .tti_tx_desc_queue_rvalid_i(tti_tx_desc_queue_rvalid),
+      .tti_tx_desc_queue_rready_o(tti_tx_desc_queue_rready),
+      .tti_tx_desc_queue_rdata_i(tti_tx_desc_queue_rdata),
+
+      // TTI: TX Data
+      .tti_tx_queue_full_i(tti_tx_queue_full),
+      .tti_tx_queue_thld_i(tti_tx_queue_thld),
+      .tti_tx_queue_below_thld_i(tti_tx_queue_below_thld),
+      .tti_tx_queue_empty_i(tti_tx_queue_empty),
+      .tti_tx_queue_rvalid_i(tti_tx_queue_rvalid),
+      .tti_tx_queue_rready_o(tti_tx_queue_rready),
+      .tti_tx_queue_rdata_i(tti_tx_queue_rdata),
 
       // DAT <-> Controller interface
       .dat_read_valid_hw_o(dat_read_valid_hw),
@@ -546,7 +575,7 @@ module i3c
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .select_i(phy_select_i),
+      .select_i(core_config.phy_mux_select),
 
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),
@@ -561,4 +590,5 @@ module i3c
       .ctrl_scl_o(phy2ctrl_scl),
       .ctrl_sda_o(phy2ctrl_sda)
   );
+
 endmodule

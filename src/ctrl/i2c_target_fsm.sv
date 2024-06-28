@@ -298,45 +298,45 @@ module i2c_target_fsm
 
   // State definitions
   typedef enum logic [4:0] {
-    Idle,
+    Idle = 0,
     /////////////////////////
     // Target function states
     /////////////////////////
 
     // Target function receives start and address from external host
-    AcquireStart,
-    AddrRead,
+    AcquireStart = 'h1,
+    AddrRead = 'h2,
     // Target function acknowledges the address and returns an ack to external host
-    AddrAckWait,
-    AddrAckSetup,
-    AddrAckPulse,
-    AddrAckHold,
+    AddrAckWait = 'h3,
+    AddrAckSetup = 'h4,
+    AddrAckPulse = 'h5,
+    AddrAckHold = 'h6,
     // Target function sends read data to external host-receiver
-    TransmitWait,
-    TransmitSetup,
-    TransmitPulse,
-    TransmitHold,
+    TransmitWait = 'h7,
+    TransmitSetup = 'h8,
+    TransmitPulse = 'h9,
+    TransmitHold = 'ha,
     // Target function receives ack from external host
-    TransmitAck,
-    TransmitAckPulse,
-    WaitForStop,
+    TransmitAck = 'hb,
+    TransmitAckPulse = 'hc,
+    WaitForStop = 'hd,
     // Target function receives write data from the external host
-    AcquireByte,
+    AcquireByte = 'he,
     // Target function sends ack to external host
-    AcquireAckWait,
-    AcquireAckSetup,
-    AcquireAckPulse,
-    AcquireAckHold,
+    AcquireAckWait = 'hf,
+    AcquireAckSetup = 'h10,
+    AcquireAckPulse = 'h11,
+    AcquireAckHold = 'h12,
     // Target function sends not acknowledge to external host
-    NackWait,
-    NackSetup,
-    NackPulse,
-    NackHold,
+    NackWait = 'h13,
+    NackSetup = 'h14,
+    NackPulse = 'h15,
+    NackHold = 'h16,
     // Target function clock stretch handling.
-    StretchAddr,
-    StretchTx,
-    StretchTxSetup,
-    StretchAcqFull
+    StretchAddr = 'h17,
+    StretchTx = 'h18,
+    StretchTxSetup = 'h19,
+    StretchAcqFull = 'h1a
   } state_e;
 
   state_e state_q, state_d;
@@ -598,14 +598,16 @@ module i2c_target_fsm
   // timeout in which case it must now send a NACK to the host.
   assign nack_timeout = nack_timeout_en_i && stretch_active_cnt >= nack_timeout_i;
 
-  // Stretch Tx phase when:
-  // 1. When there is no data to return to host
-  // 2. When the acq_fifo contains any entry other than a singular start condition
-  //    read command.
-  //
-  // Only the fifo depth is checked here, because stretch_tx is only evaluated by the
-  // fsm on the read path. This means a read start byte has already been deposited.
-  assign stretch_tx   = ~tx_fifo_rvalid_i | (acq_fifo_depth_i > AcqFifoDepthWidth'(1'b1));
+  // TODO: Reenable stretching
+  //// Stretch Tx phase when:
+  //// 1. When there is no data to return to host
+  //// 2. When the acq_fifo contains any entry other than a singular start condition
+  ////    read command.
+  ////
+  //// Only the fifo depth is checked here, because stretch_tx is only evaluated by the
+  //// fsm on the read path. This means a read start byte has already been deposited.
+  //assign stretch_tx   = ~tx_fifo_rvalid_i | (acq_fifo_depth_i > AcqFifoDepthWidth'(1'b1));
+  assign stretch_tx   = 0;
 
   // Only used for assertion
   logic unused_acq_rdata;

@@ -8,18 +8,17 @@
 module daa
   import controller_pkg::*;
   import i3c_pkg::*;
-#(
-    parameter int TEMP = 0
-) (
+(
     input logic clk_i,
     input logic rst_ni,
 
     // Check bus_addr for matching address
     input logic [6:0] bus_addr,
-    output logic is_sta_addr_match,
-    output logic is_dyn_addr_match,
-    output logic is_i3c_rsvd_addr_match,
-    output logic is_any_addr_match,
+    input logic bus_addr_valid,
+    output logic is_sta_addr_match_o,
+    output logic is_dyn_addr_match_o,
+    output logic is_i3c_rsvd_addr_match_o,
+    output logic is_any_addr_match_o,
 
     // Produce response for ENTDAA
     input  [31:0] stby_cr_device_addr_reg,
@@ -27,10 +26,16 @@ module daa
     input  [31:0] stby_cr_device_pid_lo_reg,
     output [63:0] daa_unique_response
 );
-
   // Address matching
+  logic is_sta_addr_match;
+  logic is_dyn_addr_match;
+  logic is_i3c_rsvd_addr_match;
+  logic is_any_addr_match;
   logic [6:0] target_sta_addr;
   logic [6:0] target_dyn_addr;
+  logic target_sta_addr_valid;
+  logic target_dyn_addr_valid;
+
   assign target_sta_addr_valid = stby_cr_device_addr_reg[15];
   assign target_sta_addr = stby_cr_device_addr_reg[6:0];
 
@@ -53,4 +58,19 @@ module daa
   assign dcr = stby_cr_device_char_reg[23:16];
   assign daa_unique_response = {pid, bcr, dcr};
 
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      is_sta_addr_match_o <= '0;
+      is_dyn_addr_match_o <= '0;
+      is_i3c_rsvd_addr_match_o <= '0;
+      is_any_addr_match_o <= '0;
+    end else begin
+      if (bus_addr_valid) begin
+        is_sta_addr_match_o <= is_sta_addr_match;
+        is_dyn_addr_match_o <= is_dyn_addr_match;
+        is_i3c_rsvd_addr_match_o <= is_i3c_rsvd_addr_match;
+        is_any_addr_match_o <= is_any_addr_match;
+      end
+    end
+  end
 endmodule

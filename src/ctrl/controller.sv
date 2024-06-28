@@ -52,6 +52,44 @@ module controller
     input logic resp_queue_wready_i,
     output logic [HciRespDataWidth-1:0] resp_queue_wdata_o,
 
+    // Target Transaction Interface
+
+    // TTI: RX Descriptor
+    input logic tti_rx_desc_queue_full_i,
+    input logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_thld_i,
+    input logic tti_rx_desc_queue_above_thld_i,
+    input logic tti_rx_desc_queue_empty_i,
+    output logic tti_rx_desc_queue_wvalid_o,
+    input logic tti_rx_desc_queue_wready_i,
+    output logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata_o,
+
+    // TTI: TX Descriptor
+    input logic tti_tx_desc_queue_full_i,
+    input logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_thld_i,
+    input logic tti_tx_desc_queue_below_thld_i,
+    input logic tti_tx_desc_queue_empty_i,
+    input logic tti_tx_desc_queue_rvalid_i,
+    output logic tti_tx_desc_queue_rready_o,
+    input logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata_i,
+
+    // TTI: RX Data
+    input logic tti_rx_queue_full_i,
+    input logic [TtiRxThldWidth-1:0] tti_rx_queue_thld_i,
+    input logic tti_rx_queue_above_thld_i,
+    input logic tti_rx_queue_empty_i,
+    output logic tti_rx_queue_wvalid_o,
+    input logic tti_rx_queue_wready_i,
+    output logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_o,
+
+    // TTI: TX Data
+    input logic tti_tx_queue_full_i,
+    input logic [TtiTxThldWidth-1:0] tti_tx_queue_thld_i,
+    input logic tti_tx_queue_below_thld_i,
+    input logic tti_tx_queue_empty_i,
+    input logic tti_tx_queue_rvalid_i,
+    output logic tti_tx_queue_rready_o,
+    input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
+
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,
     output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
@@ -76,6 +114,7 @@ module controller
   controller_active xcontroller_active (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[0:1]),
       .ctrl_sda_i(ctrl_sda_i[0:1]),
       .ctrl_scl_o(ctrl_scl_o[0:1]),
@@ -125,10 +164,39 @@ module controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[2:3]),
       .ctrl_sda_i(ctrl_sda_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
-      .ctrl_sda_o(ctrl_sda_o[2:3])
+      .ctrl_sda_o(ctrl_sda_o[2:3]),
+      .tti_rx_desc_queue_full_i(tti_rx_desc_queue_full_i),
+      .tti_rx_desc_queue_thld_i(tti_rx_desc_queue_thld_i),
+      .tti_rx_desc_queue_above_thld_i(tti_rx_desc_queue_above_thld_i),
+      .tti_rx_desc_queue_empty_i(tti_rx_desc_queue_empty_i),
+      .tti_rx_desc_queue_wvalid_o(tti_rx_desc_queue_wvalid_o),
+      .tti_rx_desc_queue_wready_i(tti_rx_desc_queue_wready_i),
+      .tti_rx_desc_queue_wdata_o(tti_rx_desc_queue_wdata_o),
+      .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full_i),
+      .tti_tx_desc_queue_thld_i(tti_tx_desc_queue_thld_i),
+      .tti_tx_desc_queue_below_thld_i(tti_tx_desc_queue_below_thld_i),
+      .tti_tx_desc_queue_empty_i(tti_tx_desc_queue_empty_i),
+      .tti_tx_desc_queue_rvalid_i(tti_tx_desc_queue_rvalid_i),
+      .tti_tx_desc_queue_rready_o(tti_tx_desc_queue_rready_o),
+      .tti_tx_desc_queue_rdata_i(tti_tx_desc_queue_rdata_i),
+      .tti_rx_queue_full_i(tti_rx_queue_full_i),
+      .tti_rx_queue_thld_i(tti_rx_queue_thld_i),
+      .tti_rx_queue_above_thld_i(tti_rx_queue_above_thld_i),
+      .tti_rx_queue_empty_i(tti_rx_queue_empty_i),
+      .tti_rx_queue_wvalid_o(tti_rx_queue_wvalid_o),
+      .tti_rx_queue_wready_i(tti_rx_queue_wready_i),
+      .tti_rx_queue_wdata_o(tti_rx_queue_wdata_o),
+      .tti_tx_queue_full_i(tti_tx_queue_full_i),
+      .tti_tx_queue_thld_i(tti_tx_queue_thld_i),
+      .tti_tx_queue_below_thld_i(tti_tx_queue_below_thld_i),
+      .tti_tx_queue_empty_i(tti_tx_queue_empty_i),
+      .tti_tx_queue_rvalid_i(tti_tx_queue_rvalid_i),
+      .tti_tx_queue_rready_o(tti_tx_queue_rready_o),
+      .tti_tx_queue_rdata_i(tti_tx_queue_rdata_i)
   );
 
 endmodule

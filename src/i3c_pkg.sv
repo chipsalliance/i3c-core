@@ -78,6 +78,17 @@ package i3c_pkg;
     logic [15:0] data_length;
   } i3c_response_desc_t;
 
+  typedef struct packed {
+    logic [31:16] data_length;
+    logic [15:0]  __rsvd15_0;
+  } i3c_tti_response_desc_t;
+
+  typedef struct packed {
+    logic [31:16] data_length;
+    logic end_of_transfer;
+    logic [14:0] __rsvd14_0;
+  } i3c_tti_command_desc_t;
+
   // Defined command types (See TCRI 7.1.2 Table 6)
   typedef enum logic [2:0] {
     RegularTransfer = 3'b000,
@@ -230,6 +241,8 @@ package i3c_pkg;
     target_dev_id_value_t vendor_random_value;
   } target_dev_provisioned_id_t;
 
+
+  // TODO: Enum for ixc_*_en signals
   typedef struct packed {
     logic phy_en;
     logic [1:0] phy_mux_select;

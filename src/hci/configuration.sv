@@ -53,4 +53,22 @@ module configuration
   assign pio_abort = hwif_out.PIOControl.PIO_CONTROL.ABORT.value;
   assign pio_rs = hwif_out.PIOControl.PIO_CONTROL.RS.value;
 
+  // TODO: Assert that these 4 are not 1 at the same time
+  assign core_config.i2c_active_en = 1'b0;
+  assign core_config.i3c_active_en = 1'b0;
+  assign core_config.i2c_standby_en = 1'b0;
+  assign core_config.i3c_standby_en = 1'b1;
+
+  // Phy select:
+  // 00 - i2c controller
+  // 01 - i3c controller
+  // 10 - i2c target
+  // 11 - i3c target
+  always_comb begin
+    if (core_config.i2c_active_en) core_config.phy_mux_select = 2'b00;
+    if (core_config.i3c_active_en) core_config.phy_mux_select = 2'b01;
+    if (core_config.i2c_standby_en) core_config.phy_mux_select = 2'b10;
+    if (core_config.i3c_standby_en) core_config.phy_mux_select = 2'b11;
+  end
+
 endmodule

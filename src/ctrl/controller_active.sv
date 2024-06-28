@@ -8,6 +8,8 @@ module controller_active
     input logic clk_i,
     input logic rst_ni,
 
+    input i3c_config_t core_config,
+
     // Interface to SDA/SCL
     input  logic ctrl_scl_i[2],
     input  logic ctrl_sda_i[2],
@@ -154,7 +156,8 @@ module controller_active
       .sda_o (ctrl_sda_o[0]),
 
       // These should be controlled by the flow FSM
-      .host_enable_i(host_enable),
+      // TODO: reconnect to flow fsm once configuration.sv is connected properly to CSRs
+      .host_enable_i(0),
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),
       .fmt_fifo_rready_o(fmt_fifo_rready),
@@ -210,5 +213,4 @@ module controller_active
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1])
   );
-
 endmodule
