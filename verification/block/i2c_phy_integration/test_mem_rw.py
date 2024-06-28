@@ -6,7 +6,14 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 from cocotbext.i2c import I2cMemory
-from i2c import i2c_cmd, i2c_mem_read, i2c_mem_write, init_i2c_controller_ports, reset
+
+from i2c import (
+    i2c_cmd,
+    i2c_mem_read,
+    i2c_mem_write,
+    init_i2c_controller_ports,
+    reset_controller,
+)
 
 
 @cocotb.test()
@@ -28,7 +35,7 @@ async def run_test(dut):
     cocotb.start_soon(clock.start())
 
     # Reset
-    await reset(dut)
+    await reset_controller(dut)
 
     # Execute single I2C command test -----------------------------------------
     await i2c_cmd(dut, I2C_REG_ADDR << 1, sta_before=True, sto_after=True)
@@ -45,7 +52,7 @@ async def run_test(dut):
     assert received == TEST_PAYLOAD
 
     # Reset
-    await reset(dut)
+    await reset_controller(dut)
 
     # Execute long payload read & write test ----------------------------------
     # Write test payload to I2C memory
