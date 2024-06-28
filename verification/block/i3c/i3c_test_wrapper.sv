@@ -33,8 +33,9 @@ module i3c_test_wrapper
     output logic i3c_sda_o,    // serial data output to i3c bus
     output logic i3c_sda_en_o, // serial data output to i3c bus
 
-    input  logic i3c_fsm_en_i,
-    output logic i3c_fsm_idle_o
+    input logic i3c_fsm_en_i,
+    output logic i3c_fsm_idle_o,
+    output logic [3:0] debug_state
 );
 
   i3c_wrapper #(

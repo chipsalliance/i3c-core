@@ -3,16 +3,17 @@
 import logging
 
 import cocotb
+from bus2csr import dword2int
 from cocotb.triggers import ClockCycles
-from i3c_master import I3cMaster
+from cocotbext_i3c.i3c_master import I3cMaster
+from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
 from interface import I3CTopTestInterface
 
 
 @cocotb.test()
 async def test_i3c_target(dut):
 
-    log = logging.getLogger("cocotb.tb")
-    log.setLevel(logging.DEBUG)
+    cocotb.log.setLevel(logging.DEBUG)
 
     i3c_master = I3cMaster(
         sda_i=None,
@@ -25,15 +26,33 @@ async def test_i3c_target(dut):
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-    await ClockCycles(dut.hclk, 10)
+    await ClockCycles(dut.hclk, 20)
 
-    test_data = b"\xaa\xbb\xcc\xdd"
+    # Send Private Write on I3C
+    test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
+    for test_vec in test_data:
+        await i3c_master.i3c_write(0x5A, test_vec)
+        await ClockCycles(dut.hclk, 10)
 
-    await i3c_master.i3c_private_write(0x50, b"\x00" + test_data)
+    # Wait for an interrupt
+    wait_irq = True
+    timeout = 0
+    # Number of clock cycles after which we should observe an interrupt
+    TIMEOUT_THRESHOLD = 50
+    while wait_irq:
+        timeout += 1
+        await ClockCycles(dut.hclk, 10)
+        irq = dword2int(await tb.read_csr(TTI_INTERRUPT_STATUS, 4))
+        if irq:
+            wait_irq = False
+            dut._log.debug(":::Interrupt was raised:::")
+        if timeout > TIMEOUT_THRESHOLD:
+            wait_irq = False
+            dut._log.debug(":::Timeout cancelled polling:::")
 
-    await ClockCycles(dut.hclk, 10)
-
-    cocotb.log.setLevel(logging.DEBUG)
-
-    # dut.i3c_scl_i.value = 1
-    # dut.i3c_sda_i.value = 1
+    # Read data
+    test_data_lin = test_data[0] + test_data[1]
+    for i in range(len(test_data_lin)):
+        r_data = dword2int(await tb.read_csr(TTI_RX_DATA_PORT, 4))
+        dut._log.debug(f"Comparing input {test_data_lin[i]} and CSR value {r_data}")
+        assert test_data_lin[i] == r_data

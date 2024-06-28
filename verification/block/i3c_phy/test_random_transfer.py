@@ -6,10 +6,10 @@ import random
 
 import cocotb
 from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
-from i2c import I3C_PHY_DELAY
 from utils import check_delayed
 
 from common import I3C_CLOCK_DIV, init_phy
+from i2c import I3C_PHY_DELAY
 
 random.seed()
 
