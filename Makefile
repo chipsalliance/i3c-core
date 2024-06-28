@@ -10,11 +10,13 @@ VERIFICATION_DIR := $(ROOT_DIR)/verification/block
 TOOL_VERIFICATION_DIR := $(ROOT_DIR)/verification/tools
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
 BUILD_DIR = $(ROOT_DIR)/build
-CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
+CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl ## Path to caliptra-rtl repository
+DOCS ?= $(THIRD_PARTY_DIR)/caliptra-rtl
+
 
 VERILATOR_MAKE_FLAGS = OPT_FAST="-Os"
-GENERIC_UVM_DIR ?= $(ROOT_DIR)/uvm-1.2
-VERILATOR_UVM_DIR ?= $(ROOT_DIR)/verilator-uvm-1.2
+GENERIC_UVM_DIR ?= $(ROOT_DIR)/uvm-1.2 ## Path to UVM installation directory
+VERILATOR_UVM_DIR ?= $(ROOT_DIR)/verilator-uvm-1.2 ## Path to UVM installation directory with Verilator patches
 
 ifeq (, $(shell which qrun))
 else
@@ -32,7 +34,7 @@ DSIM = $(shell which dsim)
 DSIM_HOME = $(abspath $(dir $(shell which dsim))../)
 endif
 
-UVM_VSEQ_TEST ?= i2c_host_stress_all_vseq
+UVM_VSEQ_TEST ?= i2c_host_stress_all_vseq ## UVM Virtual test sequence to be run
 
 export CALIPTRA_ROOT
 
@@ -51,8 +53,8 @@ endif
 #
 # I3C configuration
 #
-CFG_FILE ?= i3c_core_configs.yaml
-CFG_NAME ?= ahb
+CFG_FILE ?= i3c_core_configs.yaml ## Path YAML configuration file used to configure the I3C RTL
+CFG_NAME ?= ahb ## Valid configuration name from the YAML configuration file
 CFG_GEN = $(ROOT_DIR)/tools/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files
@@ -77,28 +79,28 @@ config-print: ## Print configuration name, filename and RDL arguments
 lint: lint-rtl lint-tests ## Run RTL and tests lint
 
 lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
-	cd $(VERIFICATION_DIR) && nox -R -s test_lint
+	cd $(VERIFICATION_DIR) && python -m nox -R -s test_lint
 
 lint-rtl: ## Run lint on RTL source code
 	$(SHELL) tools/verible-scripts/run.sh
 
 lint-tests: ## Run lint on tests source code
-	cd $(VERIFICATION_DIR) && nox -R -s lint
+	cd $(VERIFICATION_DIR) && python -m nox -R -s lint
 
 #
 # RTL tests
 #
 test: config ## Run single module test (use `TEST=<test_name>` flag)
-	cd $(VERIFICATION_DIR) && nox -R -s $(TEST)_verify
+	cd $(VERIFICATION_DIR) && python -m nox -R -s $(TEST)_verify
 
 tests: config ## Run all RTL tests
-	cd $(VERIFICATION_DIR) && nox -R -k "verify"
+	cd $(VERIFICATION_DIR) && python -m nox -R -k "verify"
 
 #
 # Tool tests
 #
 tool-tests: ## Run all tool tests
-	cd $(TOOL_VERIFICATION_DIR) && nox -k "verify"
+	cd $(TOOL_VERIFICATION_DIR) && python -m nox -k "verify"
 
 #
 # Utilities
@@ -315,7 +317,9 @@ verilator-uvm-verilator: verilator-uvm-verilator-build ## Run I3C uvm agent test
 	./obj_dir/Vi3c_monitor_test_from_csv
 
 clean: ## Clean all generated sources
-	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,*.log,*.xml,*.vcd}
+	$(RM) -rf $(VERIFICATION_DIR)/**/{sim_build,obj_dir,__pycache__,*.log,*.xml,*.vcd}
+	$(RM) -rf $(VERIFICATION_DIR)/__pycache__
+	$(RM) -rf $(VERIFICATION_DIR)/.nox
 	$(RM) -f $(VERIFICATION_DIR)/**/*sim*
 	$(RM) -f *.log *.rpt
 	$(RM) -rf $(BUILD_DIR)
@@ -330,11 +334,16 @@ clean: ## Clean all generated sources
 		uvm-verilator verilator-uvm-verilator
 
 .DEFAULT_GOAL := help
-HELP_COLUMN_SPAN = 25
-HELP_FORMAT_STRING = "\033[36m%-$(HELP_COLUMN_SPAN)s\033[0m %s\n"
+HELP_COLUMN_SPAN_NARROW = 25
+HELP_COLUMN_SPAN_WIDE = 51
+HELP_FORMAT_STRING_NARROW = "\033[36m%-$(HELP_COLUMN_SPAN_NARROW)s\033[0m %s\n"
+HELP_FORMAT_STRING_WIDE = "\033[36m%-$(HELP_COLUMN_SPAN_WIDE)s\033[0m %s\n"
 help: ## Show this help message
 	@echo List of available targets:
-	@grep -hE '^[^#[:blank:]]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf $(HELP_FORMAT_STRING), $$1, $$2}'
+	@grep -hE '^[^#[:blank:]]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf $(HELP_FORMAT_STRING_NARROW), $$1, $$2}'
+	@echo
+	@echo List of overridable parameters:
+	@grep -hE '^[[:print:]]*\?=[[:print:]]*##[[:print:]]*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = "##"};{printf $(HELP_FORMAT_STRING_WIDE), $$1, $$2}'
 	@echo
 	@echo List of available optional parameters:
 	@echo -e "\033[36mTEST\033[0m        Name of the test run by 'make test' (default: None)"
