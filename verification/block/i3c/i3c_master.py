@@ -1,1 +1,0 @@
-../../../third_party/cocotbext-i3c/cocotbext/i3c/i3c_master.py
