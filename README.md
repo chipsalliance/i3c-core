@@ -23,17 +23,15 @@ This repository depends on:
 ### System requirements
 
 This repository is currently tested on Debian 12 and Ubuntu 22.04. In order to use all features, you need to install:
-* RISC-V toolchain
-* Verilator
-* LCOV
-* Verible
-* Icarus Verilog
-
-Dockerfile will be provided with this repository, detailing how to prepare the OS environment.
+* [RISC-V toolchain == 12.1.0](https://github.com/chipsalliance/caliptra-tools/releases/download/gcc-v12.1.0/riscv64-unknown-elf.gcc-12.1.0.tar.gz)
+* [Verilator >= 5.012](https://github.com/verilator/verilator?tab=readme-ov-file#installation--documentation)
+* [LCOV == v1.16](https://github.com/linux-test-project/lcov)
+* [Verible == v0.0-3624-gd256d779](https://github.com/chipsalliance/verible?tab=readme-ov-file#installation-1)
+* [Icarus Verilog >= 12.0](https://github.com/steveicarus/iverilog.git)
 
 ### Python
 
-Python 3.11 is recommended for this project. For BASH users, a bootstrap script is provided:
+Python 3.11.0 is recommended for this project. For BASH users, a bootstrap script is provided:
 
 ```{bash}
 bash install.sh
@@ -48,96 +46,25 @@ source ~/.bashrc
 
 Activate script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt`.
 
-## Running simulations
+## Verification
 
-### Cocotb/Verilator
+This core is verified by 2 approaches:
+* rapid tests written in cocotb
+* UVM test suite
 
-Once setup is completed, the simulations can be launched with:
+To check if the environment is properly configured, run tests:
 
 ```{bash}
 make tests
 ```
 
-### UVM
+More details can be found in [`verification README`](./verification/README.md).
 
-TBD
+## Tools
 
-## Debugging simulations
-
-TBD
-
-## Configuration
-
-The I3C Core is configured with a single node of the YAML configuration file (e.g. [default in i3c_core_config](i3c_core_configs.yaml)).
-
-Legal parameters are defined in the [i3c_core_config schema](tools/i3c_config/i3c_core_config.schema.json).
-
-A sample I3C core configuration node will look similarly to:
-```yaml
-axi:
-  CmdFifoDepth: 64
-  RxFifoDepth: 64
-  TxFifoDepth: 64
-  RespFifoDepth: 64
-  IbiFifoDepth: 64
-  IbiFifoExtSize: False
-  DatDepth: 32
-  DctDepth: 32
-  FrontendBusInterface: "AXI"
-  FrontendBusAddrWidth: 32
-  FrontendBusDataWidth: 64
-```
-
-### Usage
-
-The I3C configuration is generated with
-
-```bash
-make generate CFG_NAME=<name> CFG_FILE=<path/to/.yaml>
-```
-
-Where the
-* `CFG_NAME` is a name of the target yaml configuration (`axi` in an example above) - if not specified it's set to `default`.
-* `CFG_FILE` contains a collection of supported configurations - by default it's `i3c_core_configs.yaml`
-
-### Extending the configuration
-
-#### Schema
-
-In order to add a configuration parameter it first needs to be defined in the [schema](tools/i3c_config/i3c_core_config.schema.json).
-
-Each node contains is specified by:
-* **description** that explains the parameter usage / purpose,
-* **type** which should be one of: *integer, string, boolean, number* or in more complex cases (that require some additional handling in the config generation): *object, array*
-* **type-dependent validation**:
-    * For **number / integer** this could be **minimum, maximum, exclusiveMinimum, exclusiveMaximum**
-    * For **strings** it could be e.g. **pattern**
-    * **anyOf, allOf, oneOf** that allows to specify a subset of valid values for the parameter to be validated against, similarly **not** to specify illegal value subset
-* **default** that defines a default value for the parameter in case it's not explicitly set in the configuration
-
-A property name can be appended to the `required` field in the schema to enforce the property to be specified in each configuration node.
-
-When in doubt please refer to the [JSON Schema Specification](https://json-schema.org/learn/glossary)
-
-#### I3C configuration tool
-
-If a parameter is of a basic type such as *integer, string, boolean, number* it ought to be handled by the [i3c_core_config.py](tools/i3c_config/i3c_core_config.py) tool automatically.
-
-The `I3CCoreConfig` class is set based on the I3C Schema and specified configuration.
-The parameter validation is performed using the [jsonschema](https://pypi.org/project/jsonschema/) tool.
-
-In order to handle more complex parameter types (*object, array*) or to perform a parameter transformation the `output` function of `CmdLineOpts` needs to be modified to produce the command line options properly and the `I3CCoreConfig` for the proper `defines.svh` generation.
-
-See [I3CCoreConfig class](tools/i3c_config/common.py) for parameter transformation (e.g. `FrontendBusInterface` -> `I3C_USE_AHB` / `I3C_USE_AXI`) and the parameter case change (`PascalCase` -> `UPPER_SNAKE_CASE`) reference.
-
-#### Tests
-
-The configuration tests utilize pytest and fixtures.
-All configurations in [test_configs.yaml](verification/tools/i3c_config/test_configs.yaml) will be executed.
-The test cases are divided into:
-* `invalid` - Illegal configurations with name prefixed with `invalid_`
-* `edge` - Configuration legal edge cases prefixed with `edge_` - checking the maximal / minimal allowed values
-* `valid` - all other configurations contained within the `test_configs` file
-* `happy_path` - utilizing the default configuration from the [i3c_core_configs.yaml](i3c_core_configs.yaml)
-
-In order to extend the test cases add a properly prefixed configuration node to the [test_configs.yaml](verification/tools/i3c_config/test_configs.yaml) or extend the test cases in [test_configs.py](verification/tools/i3c_config/test_configs.py).
+Tools developed for this project are located in `tools` directory. You can find more detailed information in README of each tool:
+- [`i3c_config`](./tools/i3c_config/README.md) - manage configuration and produce header files
+- [`pyenv`](./tools/pyenv/README.md) - enable usage of pyenv in BASH
+- [`reg_gen`](./tools/reg_gen/README.md) - scripts to generate SystemVerilog description from the SystemRDL files
+- [`timing`](./tools/timing/README.md) - helper script to estimate timings on the bus
+- [`verible-scripts`](./tools/verible-scripts/README.md) - scripts to manage configuration and runs of Verible formatter and linter

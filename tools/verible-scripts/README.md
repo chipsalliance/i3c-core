@@ -1,19 +1,8 @@
 # Verible scripts
 
-Two scripts which simplify usage of [Verible linting and formatting tools](https://github.com/chipsalliance/verible/tree/master/verilog/tools) are provided:
-* `verible.py` - finds all files with Verilog/SystemVerilog extensions and executes linter or formatter on them
-* `stats_lint.py` - processes logs from the lint stage and creates a report. The report contains statistics of found linting errors, syntax errors and execution commands.
+[verible.py](verible.py) is a python wrapper for executing [formatter]((https://github.com/chipsalliance/verible/blob/master/verilog/tools/formatter/README.md)) and [linter]((https://github.com/chipsalliance/verible/blob/master/verilog/tools/lint/README.md)) from the Verible project.
 
-# Usage
+[stats_lint.py](stats_lint.py) is a python script to process log file created from the linting process.
 
-BASH script `run.sh` facilitates usage of the Python scripts and is a recommended way of launching them. Run BASH script which calls the `verible.py` script and the `stats_lint.py` script. Logs are captured in `exec_lint.log` and `exec_format.log`. Linting report is saved in `lint.rpt`.
+[run.sh](run.sh) is a BASH script, which defines usage of the Verible tools in this project. This script is meant to be run from the root directory of this project via `make lint-rtl`.
 
-```bash
-bash run.sh
-```
-
-## Optional commands
-
-By default, Verible scripts are configured to apply fixes in-place, so `verible.py` script can be used with flag `--restore_git` to git restore all Verilog/SystemVerilog files.
-
-If you want to only print a list of Verilog/SystemVerilog files in the project, run `verible.py` script with the flag `--only_discover`.
