@@ -1,6 +1,7 @@
 configs/snapshots
 work
 obj_dir
+sw
 *.vcd
 *.csv
 *.log
