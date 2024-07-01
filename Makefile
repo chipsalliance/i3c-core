@@ -6,12 +6,10 @@ ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 I3C_ROOT_DIR := $(ROOT_DIR)
 export I3C_ROOT_DIR
 SRC_DIR := $(ROOT_DIR)/src
-SW_DIR := $(ROOT_DIR)/sw
 VERIFICATION_DIR := $(ROOT_DIR)/verification/block
 TOOL_VERIFICATION_DIR := $(ROOT_DIR)/verification/tools
 THIRD_PARTY_DIR = $(ROOT_DIR)/third_party
 BUILD_DIR = $(ROOT_DIR)/build
-SW_BUILD_DIR = $(BUILD_DIR)/sw
 CALIPTRA_ROOT ?= $(THIRD_PARTY_DIR)/caliptra-rtl
 
 VERILATOR_MAKE_FLAGS = OPT_FAST="-Os"
@@ -48,7 +46,6 @@ endif
 ifdef DEBUG
 VCS_DEBUG = -debug_access
 VERILATOR_DEBUG = --trace --trace-structs
-CALIPTRA_DEBUG = debug=1
 endif
 
 #
@@ -102,15 +99,6 @@ tests: config ## Run all RTL tests
 #
 tool-tests: ## Run all tool tests
 	cd $(TOOL_VERIFICATION_DIR) && nox -k "verify"
-
-#
-# Software tests
-#
-$(SW_BUILD_DIR):
-	mkdir -p $(SW_BUILD_DIR)
-
-sw-caliptra-test: config | $(SW_BUILD_DIR) ## Generate I3CCSR.h and run Caliptra I3C software test
-	TESTNAME=smoke_test_i3c $(MAKE) -C $(SW_BUILD_DIR) -f $(CALIPTRA_ROOT)/tools/scripts/Makefile $(CALIPTRA_DEBUG) verilator
 
 #
 # Utilities
