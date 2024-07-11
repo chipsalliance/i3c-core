@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nox-utils"
+version = "0.1.0"
+dependencies = [
+  "nox",
+]
+requires-python = ">=3.11"
+
+authors = [
+  {name = "Michal Czyz", email = "mczyz@antmicro.com"},
+  {name = "Antmicro", email = "contact@antmicro.com"}
+]
+
+description = "Utilities for running tests with nox"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+
+keywords = ["nox", "cocotb", "tools", "utilities"]
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python"
+]
