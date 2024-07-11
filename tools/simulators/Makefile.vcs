@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# TODO: Confirm that this Makefile works
+
+ifeq (, $(shell which vcs))
+$(warning WARNING: SIMULATOR: VCS is not in PATH.)
+endif
+
+UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv
+UVM_TESTNAME     ?= i3c_sequence_test
+UVM_VSEQ_TEST    ?= direct_vseq
+
+# TODO: Check if all are needed
+# We should address errors by RTL fixes
+EXTRA_BUILD_ARGS ?= +warn=SV-NFIVC +warn=noUII-L +warn=noLCA_FEATURES_ENABLED +warn=noBNA \
+	-assert svaext \
+	-xlrm uniq_prior_final \
+	-CFLAGS --std=c99 -CFLAGS -fno-extended-identifiers -CFLAGS --std=c++11 \
+	-LDFLAGS -Wl,--no-as-needed -debug_region=cell+lib -debug_access+f \
+	+define+VCS \
+	-error=IPDW -error=UPF_ISPND -error=IGPA -error=PCSRMIO -error=AOUP \
+	-error=ELW_UNBOUND -error=IUWI -error=INAV -error=SV-ISC -error=OSVF-NPVIUFPI \
+	-error=DPIMI -error=IPDASP -error=CM-HIER-FNF -error=CWUC -error=MATN \
+	-error=STASKW_NDTAZ1 -error=TMPO -error=SV-OHCM -error=ENUMASSIGN -error=TEIF \
+	-deraceclockdata -assert novpi+dbgopt
+
+EXTRA_RUN_ARGS ?=
+
+VCS = vcs
+VCS_WORKDIR = vcs_work
+
+BUILD_ARGS = -sverilog -full64 -licqueue -ntb_opts uvm-1.2 -timescale=1ns/1ps -lca
+RUN_ARGS = -licqueue -ucli -assert nopostproc
+
+vcs-build:
+	$(VCS) $(BUILD_ARGS) -o $(VCS_WORKDIR) \
+	-f $(UVM_TB_FILES) $(EXTRA_BUILD_ARGS)
+
+vcs: vcs-build
+	./vcs_run/vcs_test -l vcs.log $(RUN_ARGS) \
+	+UVM_TESTNAME=$(UVM_TESTNAME) +UVM_TEST_SEQ=$(UVM_TEST_SEQ) $(EXTRA_RUN_ARGS)

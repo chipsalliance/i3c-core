@@ -22,7 +22,7 @@ VERILATOR_UVM_DIR   := $(UVM_TOOL_DIR)/verilator/ ## Path: UVM installation dire
 CALIPTRA_ROOT       ?= $(THIRD_PARTY_DIR)/caliptra-rtl ## Path: caliptra-rtl repository
 # TODO: Connect to version selection in tools/simulators/
 UVM_DIR             ?= $(VERILATOR_UVM_DIR)/ ## Select UVM version
-SIMULATOR           ?= dsim ## Supported: verilator, dsim. TBD: questa, vcs
+SIMULATOR           ?= verilator ## Supported: verilator, dsim, questa, vcs
 
 NUM_PROC            := $$(($$(nproc)-1))
 # Environment variables

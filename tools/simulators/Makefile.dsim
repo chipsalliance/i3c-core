@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0
+
+ifeq (, $(shell which dsim))
+$(warning WARNING: SIMULATOR: dsim is not in PATH.)
+endif
+
+UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv
+UVM_TESTNAME     ?= i3c_sequence_test
+UVM_VSEQ_TEST    ?= direct_vseq
+EXTRA_BUILD_ARGS ?=
+EXTRA_RUN_ARGS   ?=
+
+IMAGE          = i3c
+DSIM           = dsim
+DSIM_WORKDIR   = dsim_work
+DSIM_METRICS   = dsim_metrics.db
+DSIM_DEBUG_RUN = -waves sim.vcd
+
+BUILD_ARGS = -sv +acc+b -uvm 1.2 -timescale 1ns/1ps -all-class-spec -all-pkgs -j $(NUM_PROC)
+RUN_ARGS   = +acc+rwb -uvm 1.2 -waves dump.vcd
+
+dsim-build:
+	$(DSIM) -genimage $(IMAGE) -work $(DSIM_WORKDIR) $(BUILD_ARGS) \
+	-f $(UVM_TB_FILES)  $(EXTRA_BUILD_ARGS)
+
+dsim: dsim-build
+	$(DSIM) -image $(IMAGE) -work $(DSIM_WORKDIR) $(RUN_ARGS) \
+	-cov-db $(DSIM_WORKDIR)/$(DSIM_METRICS) \
+	+UVM_TESTNAME=$(UVM_TESTNAME) \
+	+UVM_TEST_SEQ=$(UVM_VSEQ_TEST) \
+	$(EXTRA_RUN_ARGS)

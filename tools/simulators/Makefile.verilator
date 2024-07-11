@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0
+
+ifeq (, $(shell which verilator))
+$(warning WARNING: SIMULATOR: verilator is not in PATH.)
+endif
+
+UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv
+UVM_TESTNAME     ?= i3c_sequence_test
+UVM_VSEQ_TEST    ?= direct_vseq
+EXTRA_BUILD_ARGS ?= OPT_FAST="-Os"
+EXTRA_RUN_ARGS   ?=
+
+VERILATOR = verilator
+
+BUILD_ARGS = --cc --main --timing --timescale 1ns/1ps --trace
+RUN_ARGS =
+
+ifdef DEBUG
+DEBUG_OPTS = --trace --trace-structs
+endif
+
+verilator-build:
+	$(VERILATOR) $(BUILD_ARGS) \
+			  +incdir+$(UVM_DIR)/src \
+			  $(UVM_DIR)/src/uvm.sv \
+			  -f $(UVM_TB_FILES)
+	$(MAKE) -j -e -C obj_dir/ -f Vi3c_monitor_test_from_csv.mk $(EXTRA_BUILD_ARGS)
+
+# VM_PARALLEL_BUILDS=1
+# --top-module i3c_monitor_test_from_csv
+
+verilator: verilator-build
+	./obj_dir/Vtb_top

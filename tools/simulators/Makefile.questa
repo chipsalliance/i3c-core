@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# TODO: Confirm that this Makefile works
+ifeq (, $(shell which qrun))
+$(warning WARNING: SIMULATOR: Questa is not in PATH.)
+endif
+
+QUESTA_ROOT      := $(abspath $(shell which qrun)/../../)
+UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
+                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv
+UVM_TESTNAME     ?= i3c_sequence_test
+UVM_VSEQ_TEST    ?= direct_vseq
+EXTRA_BUILD_ARGS ?=
+EXTRA_RUN_ARGS   ?=
+
+QUESTA           = qrun
+QUESTA_WORKDIR   = questa_work
+
+BUILD_ARGS = -optimize +define+VW_QSTA -sv -timescale 1ns/1ps -uvm \
+			 +incdir+$(QUESTA_ROOT)/verilog_src/uvm-1.2/src/ \
+			 -uvmhome $(QUESTA_ROOT)/verilog_src/uvm-1.2
+RUN_ARGS   = +cdc_instrumentation_enabled=1 +UVM_NO_RELNOTES \
+			 +UVM_VERBOSITY=UVM_LOW -suppress vsim-8323 -64
+
+# If need to use external uvm
+# -uvmexthome $(QUESTA_ROOT)/verilog_src/questa_uvm_pkg-1.2
+
+questa-build:
+	$(QUESTA) $(BUILD_ARGS) \
+	-outdir $(QUESTA_WORKDIR) \
+	-mfcu -f $(UVM_TB_FILES) \
+	-voptargs="+acc=nr" $(EXTRA_BUILD_ARGS)
+
+questa: questa-build
+	$(QUESTA) -simulate  \
+	-outdir $(QUESTA_WORKDIR) \
+	+UVM_TESTNAME=$(UVM_TESTNAME) \
+	+UVM_TEST_SEQ=$(UVM_TEST_SEQ) \
+	-log $(QUESTA_WORKDIR)/run.log \
+	$(EXTRA_RUN_ARGS)
