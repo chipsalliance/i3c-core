@@ -12,6 +12,7 @@ cocotb-test==0.2.5
 cocotbext-axi==0.1.24
 -e git+https://github.com/alexforencich/cocotbext-i2c@3b32eedc15302f1299a23bb35aa669fffad2ca22#egg=cocotbext_i2c
 -e ${I3C_ROOT_DIR}/third_party/cocotbext-i3c
+-e ${I3C_ROOT_DIR}/tools/nox_utils
 colorama==0.4.6
 colorlog==6.8.2
 comm==0.2.2
@@ -70,7 +71,7 @@ python-constraint==1.4.0
 python-dateutil==2.9.0.post0
 python-markdown-math==0.8
 pyuvm==2.9.1
-PyYAML==6.0.1
+pyyaml==6.0.1
 pyzmq==26.0.3
 referencing==0.35.1
 rpds-py==0.18.1
