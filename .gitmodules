@@ -1,6 +1,6 @@
 [submodule "third_party/caliptra-rtl"]
 	path = third_party/caliptra-rtl
-	url = ../caliptra-rtl
+	url = https://github.com/antmicro/caliptra-rtl.git 
 [submodule "third_party/cocotbext-i3c"]
 	path = third_party/cocotbext-i3c
 	url = https://github.com/antmicro/cocotbext-i3c.git
