@@ -5,7 +5,7 @@ import logging
 import cocotb
 from bus2csr import dword2int
 from cocotb.triggers import ClockCycles
-from cocotbext_i3c.i3c_master import I3cMaster
+from cocotbext_i3c.i3c_controller import I3cController
 from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
 from interface import I3CTopTestInterface
 
@@ -15,7 +15,7 @@ async def test_i3c_target(dut):
 
     cocotb.log.setLevel(logging.DEBUG)
 
-    i3c_master = I3cMaster(
+    i3c_controller = I3cController(
         sda_i=None,
         sda_o=dut.i3c_sda_i,
         scl_i=None,
@@ -31,7 +31,7 @@ async def test_i3c_target(dut):
     # Send Private Write on I3C
     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
     for test_vec in test_data:
-        await i3c_master.i3c_write(0x5A, test_vec)
+        await i3c_controller.i3c_write(0x5A, test_vec)
         await ClockCycles(dut.hclk, 10)
 
     # Wait for an interrupt
