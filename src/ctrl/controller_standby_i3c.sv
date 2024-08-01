@@ -58,7 +58,7 @@ module controller_standby_i3c
   assign enable = core_config.i3c_standby_en;
 
 
-  logic [1:0] transfer_type_i;
+  logic [1:0] transfer_type;
   logic rx_byte_valid;
   logic [7:0] rx_byte;
   logic rx_byte_ready;
@@ -66,7 +66,8 @@ module controller_standby_i3c
   logic [7:0] tx_byte;
   logic tx_byte_ready;
 
-
+  logic i3c_bus_start_det;
+  logic i3c_bus_stop_det;
 
   flow_standby_i3c xflow_standby_i3c (
       .clk_i(clk_i),
@@ -80,13 +81,13 @@ module controller_standby_i3c
 
       .tx_queue_full_i  (tti_tx_queue_full_i),
       .tx_queue_empty_i (tti_tx_queue_empty_i),
-      .tx_queue_rvalid_i(tti_tx_queue_wvalid_o),
-      .tx_queue_rready_o(tti_tx_queue_wready_i),
-      .tx_queue_rdata_i (tti_tx_queue_wdata_o),
+      .tx_queue_rvalid_i(tti_tx_queue_rvalid_i),
+      .tx_queue_rready_o(tti_tx_queue_rready_o),
+      .tx_queue_rdata_i (tti_tx_queue_rdata_i),
 
       .transfer_start_i(i3c_bus_start_det),  // Repeated start is not filtered from this signal
       .transfer_stop_i(i3c_bus_stop_det),
-      .transfer_type_i(transfer_type_i),
+      .transfer_type_i(transfer_type),
       .rx_byte_valid_i(rx_byte_valid),
       .rx_byte_i(rx_byte),
       .rx_byte_ready_o(rx_byte_ready),
@@ -94,9 +95,6 @@ module controller_standby_i3c
       .tx_byte_o(tx_byte),
       .tx_byte_ready_i(tx_byte_ready)
   );
-
-  logic i3c_bus_start_det;
-  logic i3c_bus_stop_detect;
   logic i3c_bus_arbitration_lost_i;
   logic i3c_bus_timeout_i;
   logic i3c_target_idle_o;
@@ -127,6 +125,7 @@ module controller_standby_i3c
 
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
+  logic bus_addr_valid;
   logic is_sta_addr_match;
   logic is_dyn_addr_match;
   logic is_i3c_rsvd_addr_match;
@@ -150,7 +149,7 @@ module controller_standby_i3c
       .sda_i(ctrl_sda_i),
       .sda_o(ctrl_sda_o),
       .bus_start_det_i(i3c_bus_start_det),
-      .bus_stop_detect_i(i3c_bus_stop_detect),
+      .bus_stop_detect_i(i3c_bus_stop_det),
       .bus_arbitration_lost_i(i3c_bus_arbitration_lost_i),
       .bus_timeout_i(i3c_bus_timeout_i),
       .target_idle_o(i3c_target_idle_o),
@@ -161,6 +160,7 @@ module controller_standby_i3c
       .rx_fifo_wvalid_o(rx_byte_valid),
       .rx_fifo_wdata_o(rx_byte),
       .rx_fifo_wready_i(rx_byte_ready),
+      .transfer_type_o(transfer_type),
       .t_r_i(i3c_t_r_i),
       .tsu_dat_i(i3c_tsu_dat_i),
       .thd_dat_i(i3c_thd_dat_i),

@@ -64,11 +64,14 @@ module configuration
   // 01 - i3c controller
   // 10 - i2c target
   // 11 - i3c target
+  // TODO: Fix latch
+  // verilator lint_off LATCH
   always_comb begin
     if (core_config.i2c_active_en) core_config.phy_mux_select = 2'b00;
     if (core_config.i3c_active_en) core_config.phy_mux_select = 2'b01;
     if (core_config.i2c_standby_en) core_config.phy_mux_select = 2'b10;
     if (core_config.i3c_standby_en) core_config.phy_mux_select = 2'b11;
   end
+  // verilator lint_on LATCH
 
 endmodule

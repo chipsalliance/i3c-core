@@ -364,6 +364,8 @@ module i3c_target_fsm
   end
 
   // Outputs for each state
+  // TODO: Fix latch
+  // verilator lint_off LATCH
   always_comb begin : state_outputs
     target_idle_o = 1'b1;
     sda_d = 1'b1;
@@ -582,8 +584,11 @@ module i3c_target_fsm
       event_tx_arbitration_lost_o = rw_bit_q;
     end
   end
+  // verilator lint_on LATCH
 
   // Conditional state transition
+  // TODO: Fix latch
+  // verilator lint_off LATCH
   always_comb begin : state_functions
     state_d = state_q;
     load_tcount = 1'b0;
@@ -838,6 +843,7 @@ module i3c_target_fsm
       state_d = WaitForStop;
     end
   end
+  // verilator lint_on LATCH
 
   // Synchronous state transition
   always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
