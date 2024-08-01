@@ -126,11 +126,12 @@ def main():
 
     # Generate the C header
     exporter = CHeaderExporter()
+    i3c_root_dir = os.environ.get("I3C_ROOT_DIR")
     try:
-        os.mkdir("sw")
+        os.mkdir(os.path.join(i3c_root_dir, "sw"))
     except FileExistsError:
         pass
-    output_file = os.path.join("sw/I3CCSR.h")
+    output_file = os.path.join(i3c_root_dir, "sw", "I3CCSR.h")
     exporter.export(root, path=output_file, reuse_typedefs=not args.style_hier)
     logging.info(f"Created: c-header file {output_file}")
 
