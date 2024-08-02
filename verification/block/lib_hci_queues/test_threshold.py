@@ -9,7 +9,8 @@ from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge
 from hci import (
     DATA_BUFFER_THLD_CTRL,
     QUEUE_THLD_CTRL,
-    TTI_QUEUE_THRESHOLD_CONTROL,
+    TTI_DATA_BUFFER_THLD_CTRL,
+    TTI_QUEUE_THLD_CTRL,
     HCIBaseTestInterface,
 )
 from hci_queues import HCIQueuesTestInterface
@@ -36,49 +37,68 @@ class QueueThldHandler:
             },
             "resp": {"ready": 8},
             "cmd": {"ready": 0},
-            "tti_rx": {"ready": 16},
-            "tti_tx": {"ready": 24},
-            "tti_rx_desc": {"ready": 0},
-            "tti_tx_desc": {"ready": 8},
+            "ibi": {"ready": 24},
+            "tti_rx": {
+                "start": 24,
+                "ready": 8,
+            },
+            "tti_tx": {
+                "start": 16,
+                "ready": 0,
+            },
+            "tti_rx_desc": {"ready": 8},
+            "tti_tx_desc": {"ready": 0},
+            "tti_ibi": {"ready": 24},
         }
-        self.name = name
         self.thld_ready_field_off = offset[name]["ready"]
 
         if name in ["tti_tx", "tti_rx"]:
-            self.thld_reg_addr = TTI_QUEUE_THRESHOLD_CONTROL
+            self.thld_start_field_off = offset[name]["start"]
+            self.thld_reg_addr = TTI_DATA_BUFFER_THLD_CTRL
             self.thld_reg_field_size = 3
-        elif name in ["tti_tx_desc", "tti_rx_desc"]:
-            self.thld_reg_addr = TTI_QUEUE_THRESHOLD_CONTROL
+        elif name in ["tti_tx_desc", "tti_rx_desc", "tti_ibi"]:
+            self.thld_reg_addr = TTI_QUEUE_THLD_CTRL
             self.thld_reg_field_size = 8
         elif name in ["rx", "tx"]:
             self.thld_start_field_off = offset[name]["start"]
             self.thld_reg_addr = DATA_BUFFER_THLD_CTRL
             self.thld_reg_field_size = 3
-        elif name in ["resp", "cmd"]:
+        elif name in ["resp", "cmd", "ibi"]:
             self.thld_reg_addr = QUEUE_THLD_CTRL
             self.thld_reg_field_size = 8
         else:
             raise ValueError(
                 f"Unsupported Queue name '{name}', should be one of: {list(offset.keys())}"
             )
+        self.name = name.removeprefix("tti_")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
+    async def adjust_thld_to_boundary(self, interface, new_thld):
         """
         If the requested threshold exceeds the maximum possible value for the threshold,
         set it to the maximum possible threshold value.
         """
         raise NotImplementedError
 
-    async def enqueue(self, tb):
+    async def enqueue(self, interface):
+        """
+        Insert single data word into queue.
+        """
         raise NotImplementedError
 
-    async def dequeue(self, tb):
+    async def dequeue(self, interface):
+        """
+        Pop single data word from queue.
+        """
         raise NotImplementedError
 
-    async def read_until_empty(self, tb):
-        while tb.get_empty(self.name) != 1:
-            await self.dequeue(tb)
-            await RisingEdge(tb.clk)
+    async def read_until_empty(self, interface):
+        """
+        Pop data from the queue until it's empty.
+        """
+        interface.log.debug("Empty the queue")
+        while interface.get_empty(self.name) != 1:
+            await self.dequeue(interface)
+            await RisingEdge(interface.clk)
 
     def should_limit_ready_thld(self):
         """
@@ -94,28 +114,34 @@ class QueueThldHandler:
 
         return new_thld_reg_value
 
-    async def set_new_start_thld(self, tb, new_thld):
+    async def set_new_start_thld(self, interface, new_thld):
+        interface.log.debug(f"Setting start threshold value to {new_thld}")
         new_thld_reg_value = await self.get_new_thld_reg_value(
-            tb.read_csr, self.thld_start_field_off, new_thld
+            interface.read_csr, self.thld_start_field_off, new_thld
         )
-        await tb.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
+        await interface.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
 
-    async def set_new_ready_thld(self, tb, new_thld):
+    async def set_new_ready_thld(self, interface, new_thld):
+        interface.log.debug(f"Setting ready threshold value to {new_thld}")
         new_thld_reg_value = await self.get_new_thld_reg_value(
-            tb.read_csr, self.thld_ready_field_off, new_thld
+            interface.read_csr, self.thld_ready_field_off, new_thld
         )
-        await tb.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
+        await interface.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
 
     async def get_curr_thld(self, read_handle, field_off):
         thld_field_mask = 2**self.thld_reg_field_size - 1
         reg_value = await read_handle(self.thld_reg_addr, 4)
         return (dword2int(reg_value) >> field_off) & thld_field_mask
 
-    async def get_curr_start_thld(self, tb):
-        return await self.get_curr_thld(tb.read_csr, self.thld_start_field_off)
+    async def get_curr_start_thld(self, interface):
+        value = await self.get_curr_thld(interface.read_csr, self.thld_start_field_off)
+        interface.log.debug(f"Start threshold value read from the registers is {value}")
+        return value
 
-    async def get_curr_ready_thld(self, tb):
-        return await self.get_curr_thld(tb.read_csr, self.thld_ready_field_off)
+    async def get_curr_ready_thld(self, interface):
+        value = await self.get_curr_thld(interface.read_csr, self.thld_ready_field_off)
+        interface.log.debug(f"Ready threshold value read from the registers is {value}")
+        return value
 
     def get_thld_in_entries(self, thld):
         return thld
@@ -125,15 +151,15 @@ class CmdQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("cmd")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, qsize - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_command_desc()
+    async def enqueue(self, interface):
+        await interface.put_command_desc()
 
-    async def dequeue(self, tb):
-        await tb.get_command_desc()
+    async def dequeue(self, interface):
+        await interface.get_command_desc()
 
     def should_limit_ready_thld(self):
         return True
@@ -143,15 +169,15 @@ class TxQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("tx")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, clog2(qsize) - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_tx_data()
+    async def enqueue(self, interface):
+        await interface.put_tx_data()
 
-    async def dequeue(self, tb):
-        await tb.get_tx_data()
+    async def dequeue(self, interface):
+        await interface.get_tx_data()
 
     def get_thld_in_entries(self, thld):
         return 2 ** (thld + 1)
@@ -164,15 +190,15 @@ class RxQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("rx")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, clog2(qsize) - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_rx_data()
+    async def enqueue(self, interface):
+        await interface.put_rx_data()
 
-    async def dequeue(self, tb):
-        await tb.get_rx_data()
+    async def dequeue(self, interface):
+        await interface.get_rx_data()
 
     def get_thld_in_entries(self, thld):
         return 2 ** (thld + 1)
@@ -185,33 +211,51 @@ class RespQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("resp")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, qsize - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_response_desc()
+    async def enqueue(self, interface):
+        await interface.put_response_desc()
 
-    async def dequeue(self, tb):
-        await tb.get_response_desc()
+    async def dequeue(self, interface):
+        await interface.get_response_desc()
 
     def should_limit_ready_thld(self):
         return True
+
+
+class IbiQueueThldHandler(QueueThldHandler):
+    def __init__(self):
+        super().__init__("ibi")
+
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
+        return min(new_thld, qsize - 1)
+
+    async def enqueue(self, interface):
+        await interface.put_ibi_data()
+
+    async def dequeue(self, interface):
+        await interface.get_ibi_data()
+
+    def should_limit_ready_thld(self):
+        return False
 
 
 class TTITxDescQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("tti_tx_desc")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, qsize - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_tx_desc()
+    async def enqueue(self, interface):
+        await interface.put_tx_desc()
 
-    async def dequeue(self, tb):
-        await tb.get_tx_desc()
+    async def dequeue(self, interface):
+        await interface.get_tx_desc()
 
     def should_limit_ready_thld(self):
         return True
@@ -221,15 +265,15 @@ class TTITxQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("tti_tx")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, clog2(qsize) - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_tx_data()
+    async def enqueue(self, interface):
+        await interface.put_tx_data()
 
-    async def dequeue(self, tb):
-        await tb.get_tx_data()
+    async def dequeue(self, interface):
+        await interface.get_tx_data()
 
     def get_thld_in_entries(self, thld):
         return 2 ** (thld + 1)
@@ -242,15 +286,15 @@ class TTIRxQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("tti_rx")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, clog2(qsize) - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_rx_data()
+    async def enqueue(self, interface):
+        await interface.put_rx_data()
 
-    async def dequeue(self, tb):
-        await tb.get_rx_data()
+    async def dequeue(self, interface):
+        await interface.get_rx_data()
 
     def get_thld_in_entries(self, thld):
         return 2 ** (thld + 1)
@@ -263,18 +307,36 @@ class TTIRxDescQueueThldHandler(QueueThldHandler):
     def __init__(self):
         super().__init__("tti_rx_desc")
 
-    async def adjust_thld_to_boundary(self, tb, new_thld):
-        qsize = await tb.read_queue_size(self.name)
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
         return min(new_thld, qsize - 1)
 
-    async def enqueue(self, tb):
-        await tb.put_rx_desc()
+    async def enqueue(self, interface):
+        await interface.put_rx_desc()
 
-    async def dequeue(self, tb):
-        await tb.get_rx_desc()
+    async def dequeue(self, interface):
+        await interface.get_rx_desc()
 
     def should_limit_ready_thld(self):
         return True
+
+
+class TtiIbiQueueThldHandler(QueueThldHandler):
+    def __init__(self):
+        super().__init__("tti_ibi")
+
+    async def adjust_thld_to_boundary(self, interface, new_thld):
+        qsize = await interface.read_queue_size(self.name)
+        return min(new_thld, qsize - 1)
+
+    async def enqueue(self, interface):
+        await interface.put_ibi_data()
+
+    async def dequeue(self, interface):
+        await interface.get_ibi_data()
+
+    def should_limit_ready_thld(self):
+        return False
 
 
 async def setup_sim(dut, type):
@@ -327,7 +389,6 @@ async def should_setup_ready_threshold(interface: HCIBaseTestInterface, q: Queue
     Verifies a appropriate value has been written to the CSR.
     Verifies the `_thld_` signal drives the correct value.
     """
-
     ready_thld = randint(1, 2**q.thld_reg_field_size - 1)
     expected_ready_thld = (
         await q.adjust_thld_to_boundary(interface, ready_thld)
@@ -386,6 +447,12 @@ async def run_resp_setup_threshold_test(dut: SimHandleBase):
 
 
 @cocotb.test()
+async def run_ibi_setup_threshold_test(dut: SimHandleBase):
+    interface = await setup_sim(dut, "hci")
+    await should_setup_ready_threshold(interface, IbiQueueThldHandler())
+
+
+@cocotb.test()
 async def run_tti_tx_desc_setup_threshold_test(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTITxDescQueueThldHandler())
@@ -411,6 +478,12 @@ async def run_tti_tx_setup_threshold_test(dut: SimHandleBase):
 async def run_tti_rx_desc_setup_threshold_test(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTIRxDescQueueThldHandler())
+
+
+@cocotb.test()
+async def run_tti_ibi_setup_threshold_test(dut: SimHandleBase):
+    interface = await setup_sim(dut, "tti")
+    await should_setup_ready_threshold(interface, TtiIbiQueueThldHandler())
 
 
 async def should_raise_start_thld_trig_receiver(
@@ -448,6 +521,7 @@ async def should_raise_start_thld_trig_receiver(
     # Fill queue with random data just below the threshold level
     start_thld_cnt = q.get_thld_in_entries(start_thld)
     qsize = await interface.read_queue_size(q.name)
+    interface.log.debug(f"Writing {qsize - start_thld_cnt + 1} data words to the queue")
     for _ in range(qsize - start_thld_cnt + 1):
         await q.enqueue(interface)
 
@@ -484,6 +558,7 @@ async def should_raise_ready_thld_trig_receiver(
         (
             RespQueueThldHandler,
             RxQueueThldHandler,
+            IbiQueueThldHandler,
             TTIRxDescQueueThldHandler,
             TTIRxQueueThldHandler,
         ),
@@ -538,6 +613,12 @@ async def run_rx_should_raise_thld_trig_test(dut: SimHandleBase):
 
 
 @cocotb.test()
+async def run_ibi_should_raise_thld_trig_test(dut: SimHandleBase):
+    interface = await setup_sim(dut, "hci")
+    await should_raise_ready_thld_trig_receiver(interface, IbiQueueThldHandler())
+
+
+@cocotb.test()
 async def run_tti_rx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_receiver(interface, TTIRxDescQueueThldHandler())
@@ -547,7 +628,7 @@ async def run_tti_rx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
 async def run_tti_rx_should_raise_thld_trig_test(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
-    # await should_raise_start_thld_trig_receiver(interface, TTIRxQueueThldHandler())
+    await should_raise_start_thld_trig_receiver(interface, TTIRxQueueThldHandler())
     await should_raise_ready_thld_trig_receiver(interface, TTIRxQueueThldHandler())
 
 
@@ -613,7 +694,13 @@ async def should_raise_ready_thld_trig_transmitter(
     """
     if not isinstance(
         q,
-        (CmdQueueThldHandler, TxQueueThldHandler, TTITxDescQueueThldHandler, TTITxQueueThldHandler),
+        (
+            CmdQueueThldHandler,
+            TxQueueThldHandler,
+            TTITxDescQueueThldHandler,
+            TTITxQueueThldHandler,
+            TtiIbiQueueThldHandler,
+        ),
     ):
         raise ValueError("This test supports write queues only.")
 
@@ -684,5 +771,11 @@ async def run_tti_tx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
 async def run_tti_tx_should_raise_thld_trig_test(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
-    # await should_raise_start_thld_trig_transmitter(interface, TTITxQueueThldHandler())
+    await should_raise_start_thld_trig_transmitter(interface, TTITxQueueThldHandler())
     await should_raise_ready_thld_trig_transmitter(interface, TTITxQueueThldHandler())
+
+
+@cocotb.test()
+async def run_tti_ibi_should_raise_thld_trig_test(dut: SimHandleBase):
+    interface = await setup_sim(dut, "tti")
+    await should_raise_ready_thld_trig_transmitter(interface, TtiIbiQueueThldHandler())

@@ -7,7 +7,7 @@ from hci import HCIBaseTestInterface
 
 class I3CTopTestInterface(HCIBaseTestInterface):
     def __init__(self, dut: SimHandleBase) -> None:
-        super().__init__(dut)
+        super().__init__(dut, "hci")
 
     async def setup(self):
         await self._setup(AHBTestInterface)

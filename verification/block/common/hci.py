@@ -25,27 +25,28 @@ HCI_VERSION_v1_2_VALUE = 0x120
 
 # Base registers
 HCI_VERSION = 0x0
-HC_CONTROL = 0x4 * 1
-CONTROLLER_DEVICE_ADDR = 0x4 * 2
-HC_CAPABILITIES = 0x4 * 3
-RESET_CONTROL = 0x4 * 4
-DAT_SECTION_OFFSET = 0x4 * 12
-DCT_SECTION_OFFSET = 0x4 * 13
-PIO_SECTION_OFFSET = 0x4 * 15
-INT_CTRL_CMDS_EN = 0x4 * 19
+HC_CONTROL = 0x4
+CONTROLLER_DEVICE_ADDR = 0x8
+HC_CAPABILITIES = 0xC
+RESET_CONTROL = 0x10
+DAT_SECTION_OFFSET = 0x30
+DCT_SECTION_OFFSET = 0x34
+PIO_SECTION_OFFSET = 0x3C
+INT_CTRL_CMDS_EN = 0x4C
 
 # PIO registers
-CMD_PORT = PIO_ADDR
-RESP_PORT = PIO_ADDR + 0x04 * 1
-RX_PORT = PIO_ADDR + 0x04 * 2
-TX_PORT = PIO_ADDR + 0x04 * 2
-QUEUE_THLD_CTRL = PIO_ADDR + 0x04 * 4
-DATA_BUFFER_THLD_CTRL = PIO_ADDR + 0x04 * 5
-QUEUE_SIZE = PIO_ADDR + 0x04 * 6
-ALT_QUEUE_SIZE = PIO_ADDR + 0x04 * 7
-PIO_INTR_STATUS_ENABLE = PIO_ADDR + 0x4 * 9
-PIO_INTR_SIGNAL_ENABLE = PIO_ADDR + 0x4 * 10
-PIO_CONTROL = PIO_ADDR + 0x4 * 12
+CMD_PORT = PIO_ADDR + 0x0
+RESP_PORT = PIO_ADDR + 0x4
+RX_PORT = PIO_ADDR + 0x8
+TX_PORT = PIO_ADDR + 0x8
+IBI_PORT = PIO_ADDR + 0xC
+QUEUE_THLD_CTRL = PIO_ADDR + 0x10
+DATA_BUFFER_THLD_CTRL = PIO_ADDR + 0x14
+QUEUE_SIZE = PIO_ADDR + 0x18
+ALT_QUEUE_SIZE = PIO_ADDR + 0x1C
+PIO_INTR_STATUS_ENABLE = PIO_ADDR + 0x24
+PIO_INTR_SIGNAL_ENABLE = PIO_ADDR + 0x28
+PIO_CONTROL = PIO_ADDR + 0x30
 
 # Reset values
 HC_CONTROL_RESET = 0x1 << 6
@@ -59,18 +60,22 @@ QUEUE_SIZE_RESET = 0x5 << 24 | 0x5 << 16 | 0x40 << 8 | 0x40
 
 # TTI Registers
 TTI_ADDR = EC_ADDR + 0xC0
-EXTCAP_HEADER = TTI_ADDR + 0x4 * 0
-TTI_CONTROL = TTI_ADDR + 0x4 * 1
-TTI_STATUS = TTI_ADDR + 0x4 * 2
-TTI_INTERRUPT_STATUS = TTI_ADDR + 0x4 * 3
-TTI_INTERRUPT_ENABLE = TTI_ADDR + 0x4 * 4
-TTI_INTERRUPT_FORCE = TTI_ADDR + 0x4 * 5
-TTI_RX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x4 * 6
-TTI_RX_DATA_PORT = TTI_ADDR + 0x4 * 7
-TTI_TX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x4 * 8
-TTI_TX_DATA_PORT = TTI_ADDR + 0x4 * 9
-TTI_QUEUE_SIZE = TTI_ADDR + 0x4 * 10
-TTI_QUEUE_THRESHOLD_CONTROL = TTI_ADDR + 0x4 * 11
+EXTCAP_HEADER = TTI_ADDR + 0x0
+TTI_CONTROL = TTI_ADDR + 0x4
+TTI_STATUS = TTI_ADDR + 0x8
+TTI_RESET_CONTROL = TTI_ADDR + 0xC
+TTI_INTERRUPT_STATUS = TTI_ADDR + 0x10
+TTI_INTERRUPT_ENABLE = TTI_ADDR + 0x14
+TTI_INTERRUPT_FORCE = TTI_ADDR + 0x18
+TTI_RX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x1C
+TTI_RX_DATA_PORT = TTI_ADDR + 0x20
+TTI_TX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x24
+TTI_TX_DATA_PORT = TTI_ADDR + 0x28
+TTI_IBI_PORT = TTI_ADDR + 0x2C
+TTI_QUEUE_SIZE = TTI_ADDR + 0x30
+TTI_IBI_QUEUE_SIZE = TTI_ADDR + 0x34
+TTI_QUEUE_THLD_CTRL = TTI_ADDR + 0x38
+TTI_DATA_BUFFER_THLD_CTRL = TTI_ADDR + 0x3C
 
 
 @dataclass
@@ -215,8 +220,16 @@ class ResponseDescriptor:
 
 
 class HCIBaseTestInterface:
-    def __init__(self, dut: SimHandleBase) -> None:
+    supported_queues = ["cmd", "tx", "tx_desc", "resp", "rx", "rx_desc", "ibi"]
+
+    def __init__(self, dut: SimHandleBase, if_name: str) -> None:
+        assert if_name in ["hci", "tti"]
         self.dut = dut
+        self.if_name = if_name
+        self.log = dut._log
+
+        # Uncomment to enable debug logging
+        # self.log.setLevel("DEBUG")
 
     async def _setup(self, busIfType: FrontBusTestInterface):
         self.busIf = busIfType(self.dut)
@@ -238,18 +251,19 @@ class HCIBaseTestInterface:
         await RisingEdge(self.clk)
 
     def get_empty(self, queue: str):
-        return getattr(self.dut, f"{queue}_queue_empty_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_queue_empty_o").value
 
     def get_full(self, queue: str):
-        return getattr(self.dut, f"{queue}_queue_full_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_queue_full_o").value
 
     def get_thld(self, queue: str, type: str):
         assert type in ["start", "ready"]
-        return getattr(self.dut, f"{queue}_queue_{type}_thld_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_queue_{type}_thld_o").value
 
     def get_thld_status(self, queue: str, type: str):
         assert type in ["start", "ready"]
-        return getattr(self.dut, f"{queue}_queue_{type}_thld_trig_o").value
+        assert queue in self.supported_queues
+        return getattr(self.dut, f"{self.if_name}_{queue}_queue_{type}_thld_trig_o").value
 
     # Helper functions to fetch / put data to either side
     # of the queues
@@ -280,11 +294,14 @@ class HCIBaseTestInterface:
         if isinstance(entry, dat_entry):
             entry = entry.to_int()
         elif not isinstance(entry, int):
-            self.dut._log.error("DAT entry must be either `integer` or `dat_entry` type")
+            self.log.error("DAT entry must be either `integer` or `dat_entry` type")
 
-        self.dut._log.debug(f"Writing {hex(entry)} to DAT entry {index}")
+        self.log.debug(f"Writing {hex(entry)} to DAT entry {index}")
         await self.write_csr(DAT_ADDR + index * 8, int2dword(entry & 0xFFFFFFFF), 4)
         await self.write_csr(DAT_ADDR + index * 8 + 4, int2dword((entry >> 32) & 0xFFFFFFFF), 4)
+
+    async def get_ibi_data(self) -> int:
+        return dword2int(await self.read_csr(IBI_PORT, 4))
 
 
 class TxFifo:

@@ -14,15 +14,15 @@ module i2c_target_fsm_harness
 
     input target_enable_i,  // enable target functionality
 
-    input                            tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
-    output logic                     tx_fifo_rready_o,  // pop entry from tx_fifo
-    input        [TX_FIFO_WIDTH-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
+    input                          tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
+    output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
+    input        [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
 
     output logic acq_fifo_wvalid_o,  // high if there is valid data in acq_fifo
-    output logic [ACQ_FIFO_WIDTH-1:0] acq_fifo_wdata_o,  // data to write to acq_fifo from target
+    output logic [AcqFifoWidth-1:0] acq_fifo_wdata_o,  // data to write to acq_fifo from target
     input [AcqFifoDepthWidth-1:0] acq_fifo_depth_i,  // fill level of acq_fifo
     output logic acq_fifo_wready_o,  // local version of ready
-    input [ACQ_FIFO_WIDTH-1:0] acq_fifo_rdata_i,  // only used for assertion
+    input [AcqFifoWidth-1:0] acq_fifo_rdata_i,  // only used for assertion
 
     output logic target_idle_o,  // indicates the target is idle
 

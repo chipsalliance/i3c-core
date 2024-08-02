@@ -117,3 +117,30 @@ async def run_clear_on_nonempty_tx_queue(dut: SimHandleBase):
     received_tx = await tb.get_tx_data()
 
     assert received_tx == tx, f"Expected: {hex(tx)} data from TX fifo, got: {hex(received_tx)}"
+
+
+@cocotb.test()
+async def run_clear_on_nonempty_ibi_queue(dut: SimHandleBase):
+    """
+    Issue IBI queue clear through RESET_CONTROL and verify the newly enqueued
+    data will be returned on the read
+    """
+    tb = HCIQueuesTestInterface(dut)
+    await tb.setup()
+
+    for _ in range(10):
+        await tb.put_ibi_data(randint(0, 4294967295))
+
+    await tb.write_csr(RESET_CONTROL, int2dword(1 << 5), 4)
+    # Respond queue reset bit should be cleared after successful soft reset
+    while dword2int(await tb.read_csr(RESET_CONTROL, 4)):
+        pass
+
+    # Enqueue a new command & ensure no other command was in the FIFO
+    ibi = 0xC0FFEE
+    await tb.put_ibi_data(ibi)
+    received_ibi = await tb.get_ibi_data()
+
+    assert (
+        received_ibi == ibi
+    ), f"Expected: {hex(ibi)} data from IBI Queue, got: {hex(received_ibi)}"
