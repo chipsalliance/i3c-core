@@ -46,7 +46,7 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
 
     # Helper functions to fetch / put data to either side
     # of the queues
-    async def put_response_desc(self, resp: int = None, timeout: int = 2, units: str = "ms"):
+    async def put_response_desc(self, resp: int = None, timeout: int = 20, units: str = "us"):
         if not resp:
             resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
         self.dut.resp_queue_wdata_i.value = resp
@@ -56,21 +56,21 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         await expect_with_timeout(self.dut.resp_queue_wready_o, True, self.clk, timeout, units)
         self.dut.resp_queue_wvalid_i.value = 0
 
-    async def get_command_desc(self, timeout: int = 2, units: str = "ms") -> int:
+    async def get_command_desc(self, timeout: int = 20, units: str = "us") -> int:
         self.dut.cmd_queue_rready_i.value = 1
         await RisingEdge(self.clk)
         await expect_with_timeout(self.dut.cmd_queue_rvalid_o, True, self.clk, timeout, units)
         self.dut.cmd_queue_rready_i.value = 0
         return self.dut.cmd_queue_rdata_o.value.integer
 
-    async def get_tx_data(self, timeout: int = 2, units: str = "ms") -> int:
+    async def get_tx_data(self, timeout: int = 20, units: str = "us") -> int:
         self.dut.tx_queue_rready_i.value = 1
         await RisingEdge(self.clk)
         await expect_with_timeout(self.dut.tx_queue_rvalid_o, True, self.clk, timeout, units)
         self.dut.tx_queue_rready_i.value = 0
         return self.dut.tx_queue_rdata_o.value.integer
 
-    async def put_rx_data(self, rx_data: int = None, timeout: int = 2, units: str = "ms"):
+    async def put_rx_data(self, rx_data: int = None, timeout: int = 20, units: str = "us"):
         if not rx_data:
             rx_data = randint(0, 2**32 - 1)
         self.dut.rx_queue_wdata_i.value = rx_data
