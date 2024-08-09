@@ -98,11 +98,17 @@ test-uvm: config ## Run single I3C UVM test with nox (use 'TEST=<i3c_driver|i3c_
 tests-uvm: config ## Run all I3C UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_verify_uvm"
 
+i3c-verify-test-uvm: config ## Run single TEST I3C UVM verify test with nox
+	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_verify_uvm(coverage=None, uvm_vseq_test='$(TEST)', simulator='$(SIMULATOR)')"
+
 tests-uvm-debug: config ## Run debugging I3C UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -t "uvm_debug_tests"
 
-tests-i3c-uvm: config ## Run all i3c-core UVM tests with nox
+tests-i3c-core-uvm: config ## Run all i3c-core UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm"
+
+i3c-core-verify-test-uvm: config ## Run single TEST i3c-core UVM verify test with nox
+	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm(coverage=None, uvm_vseq_test='$(TEST)', simulator='$(SIMULATOR)')"
 
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && python -m nox -k "verify"
