@@ -83,8 +83,8 @@ def verify_uvm(
 )
 @nox.parametrize("coverage", coverageTypes)
 def i3c_verify_uvm(session, simulator, uvm_vseq_test, coverage):
-    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv"
+    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/i3c_sim.scr \
+                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/tb_sequencer.sv"
     verify_uvm(
         session,
         tb_files=tb_files,
@@ -102,17 +102,17 @@ def i3c_verify_uvm(session, simulator, uvm_vseq_test, coverage):
     "extra_make_args",
     [
         [
-            "+CSV_FILE_PATH=${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/digital.csv"
+            "+CSV_FILE_PATH=${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/digital.csv"
         ],
         [
-            "+CSV_FILE_PATH=${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/digital_with_ibi.csv"
+            "+CSV_FILE_PATH=${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/digital_with_ibi.csv"
         ],
     ],
 )
 @nox.parametrize("coverage", coverageTypes)
 def i3c_monitor(session, simulator, extra_make_args, coverage):
-    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/tb_monitor.sv"
+    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/i3c_sim.scr \
+                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/tb_monitor.sv"
     verify_uvm(
         session,
         tb_files=tb_files,
@@ -128,8 +128,8 @@ def i3c_monitor(session, simulator, extra_make_args, coverage):
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize("coverage", coverageTypes)
 def i3c_driver(session, simulator, coverage):
-    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_test/tb_driver.sv"
+    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/i3c_sim.scr \
+                ${I3C_ROOT_DIR}/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/tb_driver.sv"
     verify_uvm(
         session,
         tb_files=tb_files,
@@ -143,13 +143,13 @@ def i3c_driver(session, simulator, coverage):
 @nox.session(tags=["i3c_core_uvm_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
-    "uvm_vseq_test",
+    "uvm_i3c_core_vseq_test",
     [
         "",
     ],
 )
 @nox.parametrize("coverage", coverageTypes)
-def i3c_core_verify_uvm(session, simulator, uvm_vseq_test, coverage):
+def i3c_core_verify_uvm(session, simulator, uvm_i3c_core_vseq_test, coverage):
     tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/i3c_core_sim.scr \
                 ${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/tb_i3c_core.sv"
     verify_uvm(

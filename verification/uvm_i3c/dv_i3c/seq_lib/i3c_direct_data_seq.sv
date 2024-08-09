@@ -112,7 +112,9 @@ class i3c_direct_data_seq extends uvm_sequence#(i3c_seq_item, i3c_seq_item);
     super.pre_start();
     cfg = p_sequencer.cfg;
     transfer = new();
+    rsp = new();
     this.randomize();
+    stop = 0;
   endtask
 
   virtual task body();

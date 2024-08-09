@@ -46,7 +46,10 @@ class i3c_broadcast_followed_by_data_with_rstart_seq extends i3c_direct_data_seq
         for (; curr_trans < num_trans; curr_trans++) begin
           host_direct_phase();
           `uvm_info(get_full_name(), $sformatf("\nHost recived:\n%s", rsp.sprint()), UVM_LOW)
-          if (transfer.end_with_rstart == 0) break;
+          if (transfer.end_with_rstart == 0) begin
+            curr_trans++;
+            break;
+          end
         end
       end else begin
         req.end_with_rstart = 0;

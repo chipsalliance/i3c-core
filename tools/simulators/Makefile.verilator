@@ -4,8 +4,8 @@ ifeq (, $(shell which verilator))
 $(warning WARNING: SIMULATOR: verilator is not in PATH.)
 endif
 
-UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/i3c_sim.scr \
-                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_test/tb_sequencer.sv
+UVM_TB_FILES     ?= $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/i3c_sim.scr \
+                    $(I3C_ROOT_DIR)/verification/uvm_i3c/dv_i3c/i3c_agent_unit_tests/tb_sequencer.sv
 UVM_TESTNAME     ?= i3c_sequence_test
 UVM_VSEQ_TEST    ?= direct_vseq
 EXTRA_BUILD_ARGS ?= OPT_FAST="-Os"
