@@ -29,19 +29,28 @@ This repository is currently tested on Debian 12 and Ubuntu 22.04. In order to u
 * [Verible == v0.0-3624-gd256d779](https://github.com/chipsalliance/verible?tab=readme-ov-file#installation-1)
 * [Icarus Verilog >= 12.0](https://github.com/steveicarus/iverilog.git)
 
+### Submodules
+
+Make sure submodules are checked out. Use the `--recursive` flag when cloning, or run
+
+```{bash}
+git submodule update --init --recursive
+```
+
+if you already cloned the repository.
+
 ### Python
 
-Python 3.11.0 is recommended for this project. For BASH users, a bootstrap script is provided:
+Python 3.11.0 is recommended for this project. A bootstrap script is provided:
 
 ```{bash}
 bash install.sh
 ```
 
-This script installs pyenv tool. Then, you can activate the environment:
+This script installs `pyenv`. Then, you can activate the environment:
 
 ```{bash}
-source ~/.bashrc
-. ./activate.sh
+. activate.sh
 ```
 
 Activate script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt`.
