@@ -18,6 +18,8 @@ $(I3C_ROOT_DIR)/src/libs/axi/axi_if.sv
 $(I3C_ROOT_DIR)/src/libs/axi/axi_sub_arb.sv
 $(I3C_ROOT_DIR)/src/libs/axi/axi_sub_rd.sv
 $(I3C_ROOT_DIR)/src/libs/axi/axi_sub.sv
+$(I3C_ROOT_DIR)/src/libs/axi/axi_addr.v
+$(I3C_ROOT_DIR)/src/libs/axi/skidbuffer.v
 $(I3C_ROOT_DIR)/src/libs/axi/axi_sub_wr.sv
 $(I3C_ROOT_DIR)/src/libs/mem/prim_ram_1p_pkg.sv
 $(I3C_ROOT_DIR)/src/libs/mem/prim_generic_ram_1p.sv

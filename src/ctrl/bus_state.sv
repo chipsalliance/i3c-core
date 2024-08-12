@@ -8,7 +8,7 @@ module bus_state
     input logic rst_ni,
     input logic sda_i,  // Monitor bus SDA
     input logic scl_i,  // Monitor bus SCL
-    output state_t bus_state,  // States: Idle, Free, Available, Busy
+    output logic[3:0] bus_state,  // States: Idle, Free, Available, Busy
     output logic det_bus_start,  // Detect Start Condition
     output logic det_bus_stop  // Detect Stop Condition
 );
@@ -44,6 +44,7 @@ module bus_state
   logic [31:0] cnt_tavail;
   logic [31:0] cnt_tcas;
   logic [31:0] cnt_tbuf;
+  state_t bus_state_next;
 
   // TODO: this does not consider the hot-join mechanism
   // TODO: this assumes that the device will wakeup when SCL/SDA are HIGH
