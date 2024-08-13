@@ -143,8 +143,8 @@ module i3c_wrapper
 `ifdef I3C_USE_AXI
   initial begin : axi_data_user_w_check
     if (AXI_USER_WIDTH != AXI_DATA_WIDTH) begin
-      $fatal(0, "AXI_USER_WIDTH (%0d) != AXI_DATA_WIDTH (%0d): Current AXI doesn't support",
-             param_name, received, expected, "different USER and DATA widths. (instance %m).");
+      $fatal(0, {"AXI_USER_WIDTH (%0d) != AXI_DATA_WIDTH (%0d): Current AXI doesn't support ",
+                 "different USER and DATA widths. (instance %m)."}, AXI_USER_WIDTH, AXI_DATA_WIDTH);
       `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AXI_ID_WIDTH, `AXI_ID_WIDTH)
     end
   end
@@ -170,6 +170,7 @@ module i3c_wrapper
       .clk_i,
       .rst_ni,
 
+`ifdef I3C_USE_AHB
       .haddr_i,
       .hburst_i,
       .hprot_i,
@@ -183,6 +184,47 @@ module i3c_wrapper
       .hresp_o,
       .hsel_i,
       .hready_i,
+`elsif I3C_USE_AXI
+      // AXI Read Channels
+      .araddr_i(araddr_i),
+      .arburst_i(arburst_i),
+      .arsize_i(arsize_i),
+      .arlen_i(arlen_i),
+      .aruser_i(aruser_i),
+      .arid_i(arid_i),
+      .arlock_i(arlock_i),
+      .arvalid_i(arvalid_i),
+      .arready_o(arready_o),
+
+      .rdata_o(rdata_o),
+      .rresp_o(rresp_o),
+      .rid_o(rid_o),
+      .rlast_o(rlast_o),
+      .rvalid_o(rvalid_o),
+      .rready_i(rready_i),
+
+      // AXI Write Channels
+      .awaddr_i(awaddr_i),
+      .awburst_i(awburst_i),
+      .awsize_i(awsize_i),
+      .awlen_i(awlen_i),
+      .awuser_i(awuser_i),
+      .awid_i(awid_i),
+      .awlock_i(awlock_i),
+      .awvalid_i(awvalid_i),
+      .awready_o(awready_o),
+
+      .wdata_i (wdata_i),
+      .wstrb_i (wstrb_i),
+      .wlast_i (wlast_i),
+      .wvalid_i(wvalid_i),
+      .wready_o(wready_o),
+
+      .bresp_o(bresp_o),
+      .bid_o(bid_o),
+      .bvalid_o(bvalid_o),
+      .bready_i(bready_i),
+`endif
 
       .i3c_scl_i,
       .i3c_scl_o,
