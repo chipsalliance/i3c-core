@@ -8,7 +8,7 @@ module bus_state
     input logic rst_ni,
     input logic sda_i,  // Monitor bus SDA
     input logic scl_i,  // Monitor bus SCL
-    output logic[3:0] bus_state,  // States: Idle, Free, Available, Busy
+    output logic [3:0] bus_state,  // States: Idle, Free, Available, Busy
     output logic det_bus_start,  // Detect Start Condition
     output logic det_bus_stop  // Detect Stop Condition
 );

@@ -40,11 +40,11 @@ module dxt
   // Device Address Table
   logic dat_read_valid;
   logic dat_write_valid;
-  logic [$clog2(`DAT_DEPTH):0] dat_addr;
+  logic [$clog2(`DAT_DEPTH)-1:0] dat_addr;
   logic [63:0] dat_wdata;
   logic [63:0] dat_wmask;
   logic [63:0] dat_rdata;
-  logic [$clog2(`DAT_DEPTH):0] dat_index_sw;
+  logic [$clog2(`DAT_DEPTH)-1:0] dat_index_sw;
   logic dat_word_index_sw;
 
   logic dat_rd_ack;
@@ -123,11 +123,11 @@ module dxt
   // Device Context Table
   logic dct_read_valid;
   logic dct_write_valid;
-  logic [$clog2(`DCT_DEPTH):0] dct_addr;
+  logic [$clog2(`DCT_DEPTH)-1:0] dct_addr;
   logic [127:0] dct_wdata;
   logic [127:0] dct_wmask;
   logic [127:0] dct_rdata;
-  logic [$clog2(`DCT_DEPTH):0] dct_index_sw;
+  logic [$clog2(`DCT_DEPTH)-1:0] dct_index_sw;
   logic [1:0] dct_word_index_sw;
 
   logic dct_rd_ack;

@@ -98,11 +98,6 @@ module hci_queues_wrapper
     input logic tti_tx_queue_rready_i,
     output logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_o
 );
-  // HCI queues' depth widths
-  localparam int unsigned CmdFifoDepthW = $clog2(`CMD_FIFO_DEPTH + 1);
-  localparam int unsigned RxFifoDepthW = $clog2(`RX_FIFO_DEPTH + 1);
-  localparam int unsigned TxFifoDepthW = $clog2(`TX_FIFO_DEPTH + 1);
-  localparam int unsigned RespFifoDepthW = $clog2(`RESP_FIFO_DEPTH + 1);
 
   // I3C SW CSR IF
   logic s_cpuif_req;

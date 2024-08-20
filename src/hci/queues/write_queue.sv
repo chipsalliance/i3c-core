@@ -1,10 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module write_queue #(
+/*
+  Read queue provides write access from software and read access from hardware. The queue provides
+  start and ready threshold triggers with configurale activation levels.
+
+  TODO: Ensure that configurations with both `THLD_IS_POW` and `LIMIT_READY_THLD` parameters
+        enabled or disabled work correctly.
+*/
+
+module write_queue
+  import I3CCSR_pkg::*;
+#(
     parameter int unsigned DEPTH = 64,
     parameter int unsigned DATA_WIDTH = 32,
     parameter int unsigned THLD_WIDTH = 3,
-    parameter int unsigned THLD_IS_POW = 0,
+    parameter bit THLD_IS_POW = 1,  // Calculate maximum ready threshold value as
+                                             // `2^(ready_thld_i+1)`
+    parameter bit LIMIT_READY_THLD = 0,  // Set ready threshold value to `DEPTH-1` if it
+                                                  // exceeds the queue size
     localparam int unsigned FifoDepthWidth = $clog2(DEPTH + 1)
 ) (
     input logic clk_i,
@@ -12,7 +25,8 @@ module write_queue #(
 
     // Direct FIFO read control
     output logic full_o,
-    output logic below_thld_o,
+    output logic start_thld_trig_o,
+    output logic ready_thld_trig_o,
     output logic empty_o,
     output logic rvalid_o,
     input logic rready_i,
@@ -21,11 +35,12 @@ module write_queue #(
     // CSR access control
     input logic req_i,
     output logic ack_o,
-    input logic [DATA_WIDTH-1:0] data_i,
+    input logic [I3CCSR_DATA_WIDTH-1:0] data_i,
 
     // Threshold value
-    input  logic [THLD_WIDTH-1:0] thld_i,
-    output logic [THLD_WIDTH-1:0] thld_o,
+    input  logic [THLD_WIDTH-1:0] start_thld_i,
+    input  logic [THLD_WIDTH-1:0] ready_thld_i,
+    output logic [THLD_WIDTH-1:0] ready_thld_o,
 
     // CSR reset control
     input  logic reg_rst_i,
@@ -43,7 +58,15 @@ module write_queue #(
   logic fifo_rready;
   logic [DATA_WIDTH-1:0] fifo_rdata;
   logic fifo_full;
+
   logic [FifoDepthWidth-1:0] empty_entries;
+
+  initial begin
+    if (THLD_IS_POW == LIMIT_READY_THLD) begin
+      $warning("Configuration with both `THLD_IS_POW` and `LIMIT_READY_THLD` enabled or disabled",
+               "is not tested and might result in unexpected behavior.");
+    end
+  end
 
   assign rst = ~rst_ni | reg_rst_i;
 
@@ -52,29 +75,47 @@ module write_queue #(
 
   always_comb begin : trigger_threshold
     empty_o = ~|fifo_depth;
+    empty_entries = FifoDepthWidth'(DEPTH) - fifo_depth;
 
     if (THLD_IS_POW == 0) begin
-      empty_entries = DEPTH - fifo_depth;
-      below_thld_o  = thld_o && (empty_entries >= thld_o);
+      start_thld_trig_o = |start_thld_i && (fifo_depth >= FifoDepthWidth'(start_thld_i));
+      ready_thld_trig_o = |ready_thld_o && (empty_entries >= FifoDepthWidth'(ready_thld_o));
     end else begin
-      empty_entries = DEPTH - fifo_depth;
-      below_thld_o  = thld_o && (empty_entries >= (1 << (thld_o + 1)));
+      start_thld_trig_o = |start_thld_i &&
+                          (fifo_depth >= (1 << (FifoDepthWidth'(start_thld_i) + 1)));
+      ready_thld_trig_o = |ready_thld_o &&
+                          (empty_entries >= (1 << (FifoDepthWidth'(ready_thld_o) + 1)));
     end
   end : trigger_threshold
 
-  always_comb begin : populate_thld
-    if (THLD_IS_POW == 0) begin
-      // Specified threshold for the CMD queue in 'QUEUE_THLD_CTRL'
-      // must be less or equal (<=) than CMD_FIFO_DEPTH.
-      thld_o = thld_i > DEPTH ? DEPTH : thld_i;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : populate_thld
+    if (!rst_ni) begin
+      ready_thld_o <= '0;
     end else begin
-      // Threshold for TX queue is 2^(thld+1) where 'thld' is specified
-      // in the 'DATA_BUFFER_THLD_CTRL' CSR.
-      // Threshold must be less or equal (<=) than TX_FIFO_DEPTH.
-      if ((1 << (thld_i + 1)) > DEPTH) begin
-        thld_o = $clog2(DEPTH) - 1;
+      if (LIMIT_READY_THLD) begin
+        if (THLD_IS_POW) begin
+          // Specified `2^(ready_thld_o+1)` can't be higher than `DEPTH - 1`
+          // For configurations with a threshold width more narrow than the queue depth width
+          // the expression might become a constant comparison
+          // verilator lint_off UNSIGNED
+          if ((1 << (ready_thld_i + 1)) >= THLD_WIDTH'(DEPTH)) begin
+            // verilator lint_on UNSIGNED
+            ready_thld_o <= THLD_WIDTH'($clog2(DEPTH) - 1);
+          end else begin
+            ready_thld_o <= ready_thld_i;
+          end
+        end else begin
+          // Specified `ready_thld_o` can't be higher than `DEPTH - 1`
+          // For configurations with a threshold width more narrow than the queue depth width
+          // the expression might become a constant comparison
+          // verilator lint_off UNSIGNED
+          ready_thld_o <= (ready_thld_i >= THLD_WIDTH'(DEPTH))
+                          ? THLD_WIDTH'(DEPTH) - 1
+                          : ready_thld_i;
+          // verilator lint_on UNSIGNED
+        end
       end else begin
-        thld_o = thld_i;
+        ready_thld_o <= ready_thld_i;
       end
     end
   end : populate_thld
@@ -87,7 +128,6 @@ module write_queue #(
     end
   end : csr_rst_control
 
-  // TODO: Move access logic from hci.sv
   if (DATA_WIDTH == 64) begin : gen_qword_to_fifo
     logic dword_index;  // Index of currently processed DWORD
     logic start_valid;  // Start of FIFO valid signal assertion
@@ -146,6 +186,8 @@ module write_queue #(
     end : port_to_fifo
   end
 
+  logic unused_err;
+
   caliptra_prim_fifo_sync #(
       .Width(DATA_WIDTH),
       .Pass (1'b0),
@@ -162,7 +204,7 @@ module write_queue #(
       .rready_i,
       .rdata_o,
       .full_o,
-      .err_o()
+      .err_o(unused_err)
   );
 
 endmodule

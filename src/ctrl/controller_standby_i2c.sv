@@ -19,8 +19,8 @@ module controller_standby_i2c
 
     // TTI: RX Descriptor
     input logic tti_rx_desc_queue_full_i,
-    input logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_thld_i,
-    input logic tti_rx_desc_queue_above_thld_i,
+    input logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_i,
+    input logic tti_rx_desc_queue_ready_thld_trig_i,
     input logic tti_rx_desc_queue_empty_i,
     output logic tti_rx_desc_queue_wvalid_o,
     input logic tti_rx_desc_queue_wready_i,
@@ -28,8 +28,8 @@ module controller_standby_i2c
 
     // TTI: TX Descriptor
     input logic tti_tx_desc_queue_full_i,
-    input logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_thld_i,
-    input logic tti_tx_desc_queue_below_thld_i,
+    input logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_i,
+    input logic tti_tx_desc_queue_ready_thld_trig_i,
     input logic tti_tx_desc_queue_empty_i,
     input logic tti_tx_desc_queue_rvalid_i,
     output logic tti_tx_desc_queue_rready_o,
@@ -37,8 +37,10 @@ module controller_standby_i2c
 
     // TTI: RX Data
     input logic tti_rx_queue_full_i,
-    input logic [TtiRxThldWidth-1:0] tti_rx_queue_thld_i,
-    input logic tti_rx_queue_above_thld_i,
+    input logic [TtiRxThldWidth-1:0] tti_rx_queue_start_thld_i,
+    input logic tti_rx_queue_start_thld_trig_i,
+    input logic [TtiRxThldWidth-1:0] tti_rx_queue_ready_thld_i,
+    input logic tti_rx_queue_ready_thld_trig_i,
     input logic tti_rx_queue_empty_i,
     output logic tti_rx_queue_wvalid_o,
     input logic tti_rx_queue_wready_i,
@@ -46,8 +48,10 @@ module controller_standby_i2c
 
     // TTI: TX Data
     input logic tti_tx_queue_full_i,
-    input logic [TtiTxThldWidth-1:0] tti_tx_queue_thld_i,
-    input logic tti_tx_queue_below_thld_i,
+    input logic [TtiTxThldWidth-1:0] tti_tx_queue_start_thld_i,
+    input logic tti_tx_queue_start_thld_trig_i,
+    input logic [TtiTxThldWidth-1:0] tti_tx_queue_ready_thld_i,
+    input logic tti_tx_queue_ready_thld_trig_i,
     input logic tti_tx_queue_empty_i,
     input logic tti_tx_queue_rvalid_i,
     output logic tti_tx_queue_rready_o,
