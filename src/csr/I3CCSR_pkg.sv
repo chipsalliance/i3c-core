@@ -173,6 +173,21 @@ package I3CCSR_pkg;
     } I3CCSR__PIOControl__IBI_PORT__in_t;
 
     typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__in_t;
+
+    typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__in_t;
+
+    typedef struct packed{
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__in_t CMD_EMPTY_BUF_THLD;
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__in_t RESP_BUF_THLD;
+    } I3CCSR__PIOControl__QUEUE_THLD_CTRL__in_t;
+
+    typedef struct packed{
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__TX_THLD_STAT__in_t;
 
@@ -215,6 +230,7 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__RESPONSE_PORT__in_t RESPONSE_PORT;
         I3CCSR__PIOControl__XFER_DATA_PORT__in_t XFER_DATA_PORT;
         I3CCSR__PIOControl__IBI_PORT__in_t IBI_PORT;
+        I3CCSR__PIOControl__QUEUE_THLD_CTRL__in_t QUEUE_THLD_CTRL;
         I3CCSR__PIOControl__PIO_INTR_STATUS__in_t PIO_INTR_STATUS;
     } I3CCSR__PIOControl__in_t;
 
@@ -960,6 +976,21 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__TX_DATA_PORT__in_t;
 
     typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__RX_DESC_THLD__in_t;
+
+    typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__TX_DESC_THLD__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__RX_DESC_THLD__in_t RX_DESC_THLD;
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__TX_DESC_THLD__in_t TX_DESC_THLD;
+    } I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__in_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__TTI__CONTROL__in_t CONTROL;
         I3CCSR__I3C_EC__TTI__STATUS__in_t STATUS;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__in_t INTERRUPT_STATUS;
@@ -969,6 +1000,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__RX_DATA_PORT__in_t RX_DATA_PORT;
         I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT__in_t TX_DESC_QUEUE_PORT;
         I3CCSR__I3C_EC__TTI__TX_DATA_PORT__in_t TX_DATA_PORT;
+        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__in_t QUEUE_THRESHOLD_CONTROL;
     } I3CCSR__I3C_EC__TTI__in_t;
 
     typedef struct packed{
@@ -1499,10 +1531,12 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [7:0] value;
+        logic swmod;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__out_t;
 
     typedef struct packed{
         logic [7:0] value;
+        logic swmod;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__out_t;
 
     typedef struct packed{
@@ -2405,10 +2439,12 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [7:0] value;
+        logic swmod;
     } I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__RX_DESC_THLD__out_t;
 
     typedef struct packed{
         logic [7:0] value;
+        logic swmod;
     } I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL__TX_DESC_THLD__out_t;
 
     typedef struct packed{

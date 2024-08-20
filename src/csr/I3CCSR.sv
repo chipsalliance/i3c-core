@@ -3307,6 +3307,9 @@ module I3CCSR (
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
+        end else if(hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we) begin // HW Write - we
+            next_c = hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next;
+            load_next_c = '1;
         end
         field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = next_c;
         field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next = load_next_c;
@@ -3319,6 +3322,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod = decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr;
     // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD
     always_comb begin
         automatic logic [7:0] next_c;
@@ -3327,6 +3331,9 @@ module I3CCSR (
         load_next_c = '0;
         if(decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            load_next_c = '1;
+        end else if(hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we) begin // HW Write - we
+            next_c = hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next;
             load_next_c = '1;
         end
         field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = next_c;
@@ -3340,6 +3347,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
+    assign hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod = decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && decoded_req_is_wr;
     // Field: I3CCSR.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE
     always_comb begin
         automatic logic [7:0] next_c;
@@ -6619,6 +6627,9 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next;
+            load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next = next_c;
         field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.load_next = load_next_c;
@@ -6631,6 +6642,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value;
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr;
     // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD
     always_comb begin
         automatic logic [7:0] next_c;
@@ -6639,6 +6651,9 @@ module I3CCSR (
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next = next_c;
@@ -6652,6 +6667,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value;
+    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr;
     // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD
     always_comb begin
         automatic logic [7:0] next_c;

@@ -1199,9 +1199,9 @@ package registers_uvm;
 
         virtual function void build();
             this.CMD_EMPTY_BUF_THLD = new("CMD_EMPTY_BUF_THLD");
-            this.CMD_EMPTY_BUF_THLD.configure(this, 8, 0, "RW", 0, 'h1, 1, 1, 0);
+            this.CMD_EMPTY_BUF_THLD.configure(this, 8, 0, "RW", 1, 'h1, 1, 1, 0);
             this.RESP_BUF_THLD = new("RESP_BUF_THLD");
-            this.RESP_BUF_THLD.configure(this, 8, 8, "RW", 0, 'h1, 1, 1, 0);
+            this.RESP_BUF_THLD.configure(this, 8, 8, "RW", 1, 'h1, 1, 1, 0);
             this.IBI_DATA_SEGMENT_SIZE = new("IBI_DATA_SEGMENT_SIZE");
             this.IBI_DATA_SEGMENT_SIZE.configure(this, 8, 16, "RW", 0, 'h1, 1, 1, 0);
             this.IBI_STATUS_THLD = new("IBI_STATUS_THLD");
@@ -3976,9 +3976,9 @@ package registers_uvm;
 
         virtual function void build();
             this.RX_DESC_THLD = new("RX_DESC_THLD");
-            this.RX_DESC_THLD.configure(this, 8, 0, "RW", 0, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD.configure(this, 8, 0, "RW", 1, 'h0, 1, 1, 0);
             this.TX_DESC_THLD = new("TX_DESC_THLD");
-            this.TX_DESC_THLD.configure(this, 8, 8, "RW", 0, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD.configure(this, 8, 8, "RW", 1, 'h0, 1, 1, 0);
             this.RX_DATA_THLD = new("RX_DATA_THLD");
             this.RX_DATA_THLD.configure(this, 8, 16, "RW", 0, 'h0, 1, 1, 0);
             this.TX_DATA_THLD = new("TX_DATA_THLD");

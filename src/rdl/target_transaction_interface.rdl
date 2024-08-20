@@ -178,15 +178,19 @@ regfile TargetTransactionInterfaceRegisters #(
             name = "TX_DESC_THLD";
             desc = "";
             sw = rw;
-            hw = r;
+            hw = rw;
             reset = 8'h00;
+            swmod = true;
+            we = true;
         } TX_DESC_THLD[15:8];
         field {
             name = "RX_DESC_THLD";
             desc = "";
             sw = rw;
-            hw = r;
+            hw = rw;
             reset = 8'h00;
+            swmod = true;
+            we = true;
         } RX_DESC_THLD[7:0];
     } QUEUE_THRESHOLD_CONTROL;
 

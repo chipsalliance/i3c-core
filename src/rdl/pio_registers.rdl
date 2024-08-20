@@ -68,15 +68,19 @@ regfile PIORegs #(
             name = "RESP_BUF_THLD";
             desc = "Triggers RESP_READY_STAT interrupt when RESP queue has N or more entries. Accepted values are 1:255";
             sw = rw;
-            hw = r;
+            hw = rw;
             reset = 8'h1;
+            swmod = true;
+            we = true;
         } RESP_BUF_THLD[15:8];
         field {
             name = "CMD_EMPTY_BUF_THLD";
             desc = "Triggers CMD_QUEUE_READY_STAT interrupt when CMD queue has N or more free entries. Accepted values are 1:255";
             sw = rw;
-            hw = r;
+            hw = rw;
             reset = 8'h1;
+            swmod = true;
+            we = true;
         } CMD_EMPTY_BUF_THLD[7:0];
     } QUEUE_THLD_CTRL @ 0x10;
     reg {
