@@ -3,7 +3,6 @@
 module i3c_controller_fsm
   import controller_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
 (
     input logic clk_i,
     input logic rst_ni,

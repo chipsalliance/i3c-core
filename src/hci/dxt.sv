@@ -4,21 +4,24 @@
 module dxt
   import I3CCSR_pkg::*;
   import i3c_pkg::*;
-(
+#(
+    parameter int unsigned DatAw = 8,
+    parameter int unsigned DctAw = 8
+) (
     input logic clk_i,  // clock
     input logic rst_ni, // active low reset
 
     // DAT <-> Controller interface
-    input  logic                          dat_read_valid_hw_i,
-    input  logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_i,
-    output logic [                  63:0] dat_rdata_hw_o,
+    input  logic             dat_read_valid_hw_i,
+    input  logic [DatAw-1:0] dat_index_hw_i,
+    output logic [     63:0] dat_rdata_hw_o,
 
     // DCT <-> Controller interface
-    input  logic                          dct_write_valid_hw_i,
-    input  logic                          dct_read_valid_hw_i,
-    input  logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_i,
-    input  logic [                 127:0] dct_wdata_hw_i,
-    output logic [                 127:0] dct_rdata_hw_o,
+    input  logic             dct_write_valid_hw_i,
+    input  logic             dct_read_valid_hw_i,
+    input  logic [DctAw-1:0] dct_index_hw_i,
+    input  logic [    127:0] dct_wdata_hw_i,
+    output logic [    127:0] dct_rdata_hw_o,
 
     // DAT CSR interface
     input  I3CCSR__DAT__out_t csr_dat_hwif_i,
@@ -40,18 +43,18 @@ module dxt
   // Device Address Table
   logic dat_read_valid;
   logic dat_write_valid;
-  logic [$clog2(`DAT_DEPTH)-1:0] dat_addr;
+  logic [DatAw-1:0] dat_addr;
   logic [63:0] dat_wdata;
   logic [63:0] dat_wmask;
   logic [63:0] dat_rdata;
-  logic [$clog2(`DAT_DEPTH)-1:0] dat_index_sw;
+  logic [DatAw-1:0] dat_index_sw;
   logic dat_word_index_sw;
 
   logic dat_rd_ack;
   logic dat_wr_ack;
 
   // Two 32-bit words per 64-bit word so retrieve index by shifting 3 bits
-  assign dat_index_sw = csr_dat_hwif_i.addr[$clog2(`DAT_DEPTH)+2:3];
+  assign dat_index_sw = csr_dat_hwif_i.addr[DatAw+2:3];
   // Second bit indicates which 32-bit word is requested by software
   assign dat_word_index_sw = csr_dat_hwif_i.addr[2];
 
@@ -123,18 +126,18 @@ module dxt
   // Device Context Table
   logic dct_read_valid;
   logic dct_write_valid;
-  logic [$clog2(`DCT_DEPTH)-1:0] dct_addr;
+  logic [DctAw-1:0] dct_addr;
   logic [127:0] dct_wdata;
   logic [127:0] dct_wmask;
   logic [127:0] dct_rdata;
-  logic [$clog2(`DCT_DEPTH)-1:0] dct_index_sw;
+  logic [DctAw-1:0] dct_index_sw;
   logic [1:0] dct_word_index_sw;
 
   logic dct_rd_ack;
   logic dct_wr_ack;
 
   // Four 32-bit words per 128-bit word so retrieve index by shifting 4 bits
-  assign dct_index_sw = csr_dct_hwif_i.addr[$clog2(`DCT_DEPTH)+3:4];
+  assign dct_index_sw = csr_dct_hwif_i.addr[DctAw+3:4];
   // Second and third bits indicate which 32-bit word is requested by software
   assign dct_word_index_sw = csr_dct_hwif_i.addr[3:2];
 

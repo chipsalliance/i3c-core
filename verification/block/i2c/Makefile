@@ -30,7 +30,6 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/libs/mem/prim_ram_1p_adv.sv \
     $(SRCDIR)/libs/mem/prim_ram_1p.sv \
     $(SRCDIR)/csr/I3CCSR_pkg.sv \
-    $(SRCDIR)/hci/hci_pkg.sv \
     $(SRCDIR)/ctrl/controller_pkg.sv \
     $(SRCDIR)/i3c_pkg.sv \
     $(SRCDIR)/phy/i3c_io.sv \

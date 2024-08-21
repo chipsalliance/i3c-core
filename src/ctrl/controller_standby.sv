@@ -3,8 +3,17 @@
 module controller_standby
   import controller_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
-(
+#(
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input logic clk_i,
     input logic rst_ni,
     input i3c_config_t core_config,
@@ -95,7 +104,16 @@ module controller_standby
     tti_tx_queue_rready_o = sel_i2c_i3c ? i3c_tti_tx_queue_rready_o : i2c_tti_tx_queue_rready_o;
   end
 
-  controller_standby_i2c xcontroller_standby_i2c (
+  controller_standby_i2c #(
+      .TtiRxDescDataWidth,
+      .TtiTxDescDataWidth,
+      .TtiRxDataWidth,
+      .TtiTxDataWidth,
+      .TtiRxDescThldWidth,
+      .TtiTxDescThldWidth,
+      .TtiRxThldWidth,
+      .TtiTxThldWidth
+  ) xcontroller_standby_i2c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .core_config(core_config),
@@ -138,7 +156,16 @@ module controller_standby
   );
 
 
-  controller_standby_i3c xcontroller_standby_i3c (
+  controller_standby_i3c #(
+      .TtiRxDescDataWidth,
+      .TtiTxDescDataWidth,
+      .TtiRxDataWidth,
+      .TtiTxDataWidth,
+      .TtiRxDescThldWidth,
+      .TtiTxDescThldWidth,
+      .TtiRxThldWidth,
+      .TtiTxThldWidth
+  ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .core_config(core_config),

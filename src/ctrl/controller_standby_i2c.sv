@@ -3,8 +3,17 @@
 module controller_standby_i2c
   import controller_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
-(
+#(
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input logic clk_i,
     input logic rst_ni,
     input i3c_config_t core_config,

@@ -2,58 +2,85 @@
 
 module hci_queues_wrapper
   import i3c_pkg::*;
-  import hci_pkg::*;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
 #(
-    parameter int unsigned AXI_ADDR_WIDTH = 12,
-    parameter int unsigned AXI_DATA_WIDTH = 32,
-    parameter unsigned AXI_USER_WIDTH = 32,
-    parameter unsigned AXI_ID_WIDTH = 2
+    localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
+    localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
+
+    parameter int unsigned AxiAddrWidth = 12,
+    parameter int unsigned AxiDataWidth = 32,
+    parameter int unsigned AxiUserWidth = 32,
+    parameter int unsigned AxiIdWidth   = 2,
+
+    parameter int unsigned RespFifoDepth = 64,
+    parameter int unsigned CmdFifoDepth  = 64,
+    parameter int unsigned RxFifoDepth   = 64,
+    parameter int unsigned TxFifoDepth   = 64,
+
+    parameter int unsigned HciRespDataWidth = 32,
+    parameter int unsigned HciCmdDataWidth  = 64,
+    parameter int unsigned HciRxDataWidth   = 32,
+    parameter int unsigned HciTxDataWidth   = 32,
+
+    parameter int unsigned HciRespThldWidth = 8,
+    parameter int unsigned HciCmdThldWidth  = 8,
+    parameter int unsigned HciRxThldWidth   = 3,
+    parameter int unsigned HciTxThldWidth   = 3,
+
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
 ) (
     input aclk,  // clock
     input areset_n,  // active low reset
 
     // AXI4 Interface
     // AXI Read Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] araddr,
-    input        [               1:0] arburst,
-    input  logic [               2:0] arsize,
-    input        [               7:0] arlen,
-    input        [AXI_USER_WIDTH-1:0] aruser,
-    input  logic [  AXI_ID_WIDTH-1:0] arid,
-    input  logic                      arlock,
-    input  logic                      arvalid,
-    output logic                      arready,
+    input  logic [AxiAddrWidth-1:0] araddr,
+    input        [             1:0] arburst,
+    input  logic [             2:0] arsize,
+    input        [             7:0] arlen,
+    input        [AxiUserWidth-1:0] aruser,
+    input  logic [  AxiIdWidth-1:0] arid,
+    input  logic                    arlock,
+    input  logic                    arvalid,
+    output logic                    arready,
 
-    output logic [AXI_DATA_WIDTH-1:0] rdata,
-    output logic [               1:0] rresp,
-    output logic [  AXI_ID_WIDTH-1:0] rid,
-    output logic                      rlast,
-    output logic                      rvalid,
-    input  logic                      rready,
+    output logic [AxiDataWidth-1:0] rdata,
+    output logic [             1:0] rresp,
+    output logic [  AxiIdWidth-1:0] rid,
+    output logic                    rlast,
+    output logic                    rvalid,
+    input  logic                    rready,
 
     // AXI Write Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] awaddr,
-    input        [               1:0] awburst,
-    input  logic [               2:0] awsize,
-    input        [               7:0] awlen,
-    input        [AXI_USER_WIDTH-1:0] awuser,
-    input  logic [  AXI_ID_WIDTH-1:0] awid,
-    input  logic                      awlock,
-    input  logic                      awvalid,
-    output logic                      awready,
+    input  logic [AxiAddrWidth-1:0] awaddr,
+    input        [             1:0] awburst,
+    input  logic [             2:0] awsize,
+    input        [             7:0] awlen,
+    input        [AxiUserWidth-1:0] awuser,
+    input  logic [  AxiIdWidth-1:0] awid,
+    input  logic                    awlock,
+    input  logic                    awvalid,
+    output logic                    awready,
 
-    input  logic [AXI_DATA_WIDTH-1:0] wdata,
-    input  logic [               3:0] wstrb,
-    input  logic                      wlast,
-    input  logic                      wvalid,
-    output logic                      wready,
+    input  logic [AxiDataWidth-1:0] wdata,
+    input  logic [             3:0] wstrb,
+    input  logic                    wlast,
+    input  logic                    wvalid,
+    output logic                    wready,
 
-    output logic [             1:0] bresp,
-    output logic [AXI_ID_WIDTH-1:0] bid,
-    output logic                    bvalid,
-    input  logic                    bready,
+    output logic [           1:0] bresp,
+    output logic [AxiIdWidth-1:0] bid,
+    output logic                  bvalid,
+    input  logic                  bready,
 
     // HCI queues (FSM side)
     // Response queue
@@ -137,31 +164,26 @@ module hci_queues_wrapper
     input logic tti_tx_queue_rready_i,
     output logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_o
 );
-  // HCI queues' depth widths
-  localparam int unsigned CmdFifoDepthW = $clog2(`CMD_FIFO_DEPTH + 1);
-  localparam int unsigned RxFifoDepthW = $clog2(`RX_FIFO_DEPTH + 1);
-  localparam int unsigned TxFifoDepthW = $clog2(`TX_FIFO_DEPTH + 1);
-  localparam int unsigned RespFifoDepthW = $clog2(`RESP_FIFO_DEPTH + 1);
 
   // I3C SW CSR IF
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
-  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
+  logic [CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_biten;
   logic s_cpuif_req_stall_wr;
   logic s_cpuif_req_stall_rd;
   logic s_cpuif_rd_ack;
   logic s_cpuif_rd_err;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
+  logic [CsrDataWidth-1:0] s_cpuif_rd_data;
   logic s_cpuif_wr_ack;
   logic s_cpuif_wr_err;
 
   axi_adapter #(
-      .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-      .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
-      .AXI_USER_WIDTH(AXI_USER_WIDTH),
-      .AXI_ID_WIDTH  (AXI_ID_WIDTH)
+      .AxiDataWidth,
+      .AxiAddrWidth,
+      .AxiUserWidth,
+      .AxiIdWidth
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -226,7 +248,28 @@ module hci_queues_wrapper
   dct_mem_sink_t unused_dct_mem_sink;
   i3c_config_t unused_core_config;
 
-  hci hci (
+  hci #(
+      .RespFifoDepth,
+      .CmdFifoDepth,
+      .RxFifoDepth,
+      .TxFifoDepth,
+      .HciRespDataWidth,
+      .HciCmdDataWidth,
+      .HciRxDataWidth,
+      .HciTxDataWidth,
+      .HciRespThldWidth,
+      .HciCmdThldWidth,
+      .HciRxThldWidth,
+      .HciTxThldWidth,
+      .TtiRxDescDataWidth,
+      .TtiTxDescDataWidth,
+      .TtiRxDataWidth,
+      .TtiTxDataWidth,
+      .TtiRxDescThldWidth,
+      .TtiTxDescThldWidth,
+      .TtiRxThldWidth,
+      .TtiTxThldWidth
+  ) hci (
       .clk_i(aclk),
       .rst_ni(areset_n),
       .s_cpuif_req(s_cpuif_req),

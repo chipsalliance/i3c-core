@@ -8,8 +8,30 @@
 module controller
   import controller_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
-(
+#(
+    parameter int unsigned DatAw = i3c_pkg::DatAw,
+    parameter int unsigned DctAw = i3c_pkg::DctAw,
+
+    parameter int unsigned HciRespDataWidth = 32,
+    parameter int unsigned HciCmdDataWidth  = 64,
+    parameter int unsigned HciRxDataWidth   = 32,
+    parameter int unsigned HciTxDataWidth   = 32,
+
+    parameter int unsigned HciRespThldWidth = 8,
+    parameter int unsigned HciCmdThldWidth  = 8,
+    parameter int unsigned HciRxThldWidth   = 3,
+    parameter int unsigned HciTxThldWidth   = 3,
+
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input  logic clk_i,
     input  logic rst_ni,
     // Interface to SDA/SCL
@@ -99,16 +121,16 @@ module controller
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
 
     // DAT <-> Controller interface
-    output logic                          dat_read_valid_hw_o,
-    output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
-    input  logic [                  63:0] dat_rdata_hw_i,
+    output logic             dat_read_valid_hw_o,
+    output logic [DatAw-1:0] dat_index_hw_o,
+    input  logic [     63:0] dat_rdata_hw_i,
 
     // DCT <-> Controller interface
-    output logic                          dct_write_valid_hw_o,
-    output logic                          dct_read_valid_hw_o,
-    output logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_o,
-    output logic [                 127:0] dct_wdata_hw_o,
-    input  logic [                 127:0] dct_rdata_hw_i,
+    output logic             dct_write_valid_hw_o,
+    output logic             dct_read_valid_hw_o,
+    output logic [DctAw-1:0] dct_index_hw_o,
+    output logic [    127:0] dct_wdata_hw_o,
+    input  logic [    127:0] dct_rdata_hw_i,
 
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o,

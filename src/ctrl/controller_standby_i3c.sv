@@ -3,8 +3,17 @@
 module controller_standby_i3c
   import controller_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
-(
+#(
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input logic clk_i,
     input logic rst_ni,
     input i3c_config_t core_config,
@@ -105,9 +114,9 @@ module controller_standby_i3c
   logic i3c_target_transmitting_o;
   logic i3c_tx_fifo_rvalid_i;
   logic i3c_tx_fifo_rready_o;
-  logic [TX_FIFO_WIDTH-1:0] i3c_tx_fifo_rdata_i;
+  logic [TtiTxDataWidth-1:0] i3c_tx_fifo_rdata_i;
   logic i3c_rx_fifo_wvalid_o;
-  logic [RX_FIFO_WIDTH-1:0] i3c_rx_fifo_wdata_o;
+  logic [TtiRxDataWidth-1:0] i3c_rx_fifo_wdata_o;
   logic i3c_rx_fifo_wready_i;
   logic [12:0] i3c_t_r_i;
   logic [12:0] i3c_tsu_dat_i;

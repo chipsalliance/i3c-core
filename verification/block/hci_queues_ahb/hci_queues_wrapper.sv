@@ -2,10 +2,37 @@
 
 module hci_queues_wrapper
   import i3c_pkg::*;
-  import hci_pkg::*;
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
-(
+#(
+    localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
+    localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
+
+    parameter int unsigned RespFifoDepth = 64,
+    parameter int unsigned CmdFifoDepth  = 64,
+    parameter int unsigned RxFifoDepth   = 64,
+    parameter int unsigned TxFifoDepth   = 64,
+
+    parameter int unsigned HciRespDataWidth = 32,
+    parameter int unsigned HciCmdDataWidth  = 64,
+    parameter int unsigned HciRxDataWidth   = 32,
+    parameter int unsigned HciTxDataWidth   = 32,
+
+    parameter int unsigned HciRespThldWidth = 8,
+    parameter int unsigned HciCmdThldWidth  = 8,
+    parameter int unsigned HciRxThldWidth   = 3,
+    parameter int unsigned HciTxThldWidth   = 3,
+
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input hclk,  // clock
     input hreset_n,  // active low reset
 
@@ -110,14 +137,14 @@ module hci_queues_wrapper
   // I3C SW CSR IF
   logic s_cpuif_req;
   logic s_cpuif_req_is_wr;
-  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
+  logic [CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_biten;
   logic s_cpuif_req_stall_wr;
   logic s_cpuif_req_stall_rd;
   logic s_cpuif_rd_ack;
   logic s_cpuif_rd_err;
-  logic [I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
+  logic [CsrDataWidth-1:0] s_cpuif_rd_data;
   logic s_cpuif_wr_ack;
   logic s_cpuif_wr_err;
 
@@ -160,7 +187,28 @@ module hci_queues_wrapper
   dct_mem_sink_t unused_dct_mem_sink;
   i3c_config_t unused_core_config;
 
-  hci hci (
+  hci #(
+      .RespFifoDepth,
+      .CmdFifoDepth,
+      .RxFifoDepth,
+      .TxFifoDepth,
+      .HciRespDataWidth,
+      .HciCmdDataWidth,
+      .HciRxDataWidth,
+      .HciTxDataWidth,
+      .HciRespThldWidth,
+      .HciCmdThldWidth,
+      .HciRxThldWidth,
+      .HciTxThldWidth,
+      .TtiRxDescDataWidth,
+      .TtiTxDescDataWidth,
+      .TtiRxDataWidth,
+      .TtiTxDataWidth,
+      .TtiRxDescThldWidth,
+      .TtiTxDescThldWidth,
+      .TtiRxThldWidth,
+      .TtiTxThldWidth
+  ) hci (
       .clk_i(hclk),
       .rst_ni(hreset_n),
       .s_cpuif_req(s_cpuif_req),

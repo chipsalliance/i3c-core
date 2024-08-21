@@ -26,7 +26,6 @@ $(I3C_ROOT_DIR)/src/libs/mem/prim_generic_ram_1p.sv
 $(I3C_ROOT_DIR)/src/libs/mem/prim_ram_1p_adv.sv
 $(I3C_ROOT_DIR)/src/libs/mem/prim_ram_1p.sv
 $(I3C_ROOT_DIR)/src/csr/I3CCSR_pkg.sv
-$(I3C_ROOT_DIR)/src/hci/hci_pkg.sv
 $(I3C_ROOT_DIR)/src/ctrl/controller_pkg.sv
 $(I3C_ROOT_DIR)/src/i3c_pkg.sv
 $(I3C_ROOT_DIR)/src/phy/i3c_io.sv

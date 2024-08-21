@@ -2,38 +2,67 @@
 
 // I3C Host Controller Interface
 module hci
-  import I3CCSR_pkg::*;
   import i3c_pkg::*;
-  import hci_pkg::*;
-(
+#(
+    parameter int unsigned DatAw = 8,
+    parameter int unsigned DctAw = 8,
+
+    parameter int unsigned CsrDataWidth = 32,
+    parameter int unsigned CsrAddrWidth = 12,
+
+    parameter int unsigned RespFifoDepth = 64,
+    parameter int unsigned CmdFifoDepth  = 64,
+    parameter int unsigned RxFifoDepth   = 64,
+    parameter int unsigned TxFifoDepth   = 64,
+
+    parameter int unsigned HciRespDataWidth = 32,
+    parameter int unsigned HciCmdDataWidth  = 64,
+    parameter int unsigned HciRxDataWidth   = 32,
+    parameter int unsigned HciTxDataWidth   = 32,
+
+    parameter int unsigned HciRespThldWidth = 8,
+    parameter int unsigned HciCmdThldWidth  = 8,
+    parameter int unsigned HciRxThldWidth   = 3,
+    parameter int unsigned HciTxThldWidth   = 3,
+
+    parameter int unsigned TtiRxDescDataWidth = 32,
+    parameter int unsigned TtiTxDescDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 32,
+    parameter int unsigned TtiTxDataWidth = 32,
+
+    parameter int unsigned TtiRxDescThldWidth = 8,
+    parameter int unsigned TtiTxDescThldWidth = 8,
+    parameter int unsigned TtiRxThldWidth = 3,
+    parameter int unsigned TtiTxThldWidth = 3
+) (
     input clk_i,  // clock
     input rst_ni, // active low reset
 
     // I3C SW CSR access interface
-    input  logic                             s_cpuif_req,
-    input  logic                             s_cpuif_req_is_wr,
-    input  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr,
-    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data,
-    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten,
-    output logic                             s_cpuif_req_stall_wr,
-    output logic                             s_cpuif_req_stall_rd,
-    output logic                             s_cpuif_rd_ack,
-    output logic                             s_cpuif_rd_err,
-    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data,
-    output logic                             s_cpuif_wr_ack,
-    output logic                             s_cpuif_wr_err,
+    input  logic                    s_cpuif_req,
+    input  logic                    s_cpuif_req_is_wr,
+    input  logic [CsrAddrWidth-1:0] s_cpuif_addr,
+    input  logic [CsrDataWidth-1:0] s_cpuif_wr_data,
+    input  logic [CsrDataWidth-1:0] s_cpuif_wr_biten,
+    output logic                    s_cpuif_req_stall_wr,
+    output logic                    s_cpuif_req_stall_rd,
+    output logic                    s_cpuif_rd_ack,
+    output logic                    s_cpuif_rd_err,
+    output logic [CsrDataWidth-1:0] s_cpuif_rd_data,
+    output logic                    s_cpuif_wr_ack,
+    output logic                    s_cpuif_wr_err,
 
     // DAT <-> Controller interface
-    input  logic                          dat_read_valid_hw_i,
-    input  logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_i,
-    output logic [                  63:0] dat_rdata_hw_o,
+    input  logic             dat_read_valid_hw_i,
+    input  logic [DatAw-1:0] dat_index_hw_i,
+    output logic [     63:0] dat_rdata_hw_o,
 
     // DCT <-> Controller interface
-    input  logic                          dct_write_valid_hw_i,
-    input  logic                          dct_read_valid_hw_i,
-    input  logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_i,
-    input  logic [                 127:0] dct_wdata_hw_i,
-    output logic [                 127:0] dct_rdata_hw_o,
+    input  logic             dct_write_valid_hw_i,
+    input  logic             dct_read_valid_hw_i,
+    input  logic [DctAw-1:0] dct_index_hw_i,
+    input  logic [    127:0] dct_wdata_hw_i,
+    output logic [    127:0] dct_rdata_hw_o,
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
@@ -50,7 +79,7 @@ module hci
     output logic hci_resp_empty_o,
     input logic hci_resp_wvalid_i,
     output logic hci_resp_wready_o,
-    input logic [I3CCSR_DATA_WIDTH-1:0] hci_resp_wdata_i,
+    input logic [CsrDataWidth-1:0] hci_resp_wdata_i,
 
     // Command queue
     output logic hci_cmd_full_o,
@@ -70,7 +99,7 @@ module hci
     output logic hci_rx_empty_o,
     input logic hci_rx_wvalid_i,
     output logic hci_rx_wready_o,
-    input logic [I3CCSR_DATA_WIDTH-1:0] hci_rx_wdata_i,
+    input logic [CsrDataWidth-1:0] hci_rx_wdata_i,
 
     // TX queue
     output logic hci_tx_full_o,
@@ -91,7 +120,7 @@ module hci
     output logic tti_rx_desc_queue_empty_o,
     input logic tti_rx_desc_queue_wvalid_i,
     output logic tti_rx_desc_queue_wready_o,
-    input logic [I3CCSR_DATA_WIDTH-1:0] tti_rx_desc_queue_wdata_i,
+    input logic [CsrDataWidth-1:0] tti_rx_desc_queue_wdata_i,
 
     // TX descriptors queue
     output logic tti_tx_desc_queue_full_o,
@@ -111,7 +140,7 @@ module hci
     output logic tti_rx_queue_empty_o,
     input logic tti_rx_queue_wvalid_i,
     output logic tti_rx_queue_wready_o,
-    input logic [I3CCSR_DATA_WIDTH-1:0] tti_rx_queue_wdata_i,
+    input logic [CsrDataWidth-1:0] tti_rx_queue_wdata_i,
 
     // TX queue
     output logic tti_tx_queue_full_o,
@@ -128,19 +157,19 @@ module hci
     output i3c_config_t core_config
 );
 
-  I3CCSR__in_t  hwif_in;
-  I3CCSR__out_t hwif_out;
+  I3CCSR_pkg::I3CCSR__in_t  hwif_in;
+  I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
 
   // DAT CSR interface
-  I3CCSR__DAT__out_t dat_o;
-  I3CCSR__DAT__in_t dat_i;
+  I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;
+  I3CCSR_pkg::I3CCSR__DAT__in_t dat_i;
 
   // DCT CSR interface
-  I3CCSR__DCT__out_t dct_o;
-  I3CCSR__DCT__in_t dct_i;
+  I3CCSR_pkg::I3CCSR__DCT__out_t dct_o;
+  I3CCSR_pkg::I3CCSR__DCT__in_t dct_i;
 
   // Reset control
   logic cmd_reset_ctrl_we;
@@ -164,7 +193,7 @@ module hci
   // HCI queue port control
   logic cmd_req;  // Read DWORD from the COMMAND_PORT request
   logic cmd_wr_ack;  // Feedback to the COMMAND_PORT; command has been fetched
-  logic [I3CCSR_DATA_WIDTH-1:0] cmd_wr_data;  // DWORD collected from the COMMAND_PORT
+  logic [CsrDataWidth-1:0] cmd_wr_data;  // DWORD collected from the COMMAND_PORT
 
   logic xfer_req;  // RX / TX data write / read request
   logic xfer_req_is_wr;  // TX iff true, otherwise RX
@@ -175,7 +204,7 @@ module hci
 
   logic tx_req;  // Read TX data from the TX_PORT request
   logic tx_wr_ack;  // Feedback to the XFER_DATA_PORT; data has been read from TX port
-  logic [I3CCSR_DATA_WIDTH-1:0] tx_wr_data;  // TX data to be put in tx_fifo
+  logic [CsrDataWidth-1:0] tx_wr_data;  // TX data to be put in tx_fifo
 
   logic resp_req;  // Write response to the RESPONSE_PORT request
   logic resp_rd_ack;  // resp_req is fulfilled; RESPONSE_PORT drives valid data
@@ -305,7 +334,10 @@ module hci
       .hwif_out(hwif_out)
   );
 
-  dxt dxt (
+  dxt #(
+      .DatAw,
+      .DctAw
+  ) dxt (
       .clk_i,  // clock
       .rst_ni,  // active low reset
 
@@ -335,20 +367,20 @@ module hci
   logic unused_rx_desc_start_thld_trig, unused_tx_desc_start_thld_trig;
 
   queues #(
-      .RX_DESC_FIFO_DEPTH(`RESP_FIFO_DEPTH),
-      .TX_DESC_FIFO_DEPTH(`CMD_FIFO_DEPTH),
-      .RX_FIFO_DEPTH(`RX_FIFO_DEPTH),
-      .TX_FIFO_DEPTH(`TX_FIFO_DEPTH),
+      .TxDescFifoDepth(CmdFifoDepth),
+      .RxDescFifoDepth(RespFifoDepth),
+      .TxFifoDepth(TxFifoDepth),
+      .RxFifoDepth(RxFifoDepth),
 
-      .RX_DESC_FIFO_DATA_WIDTH(HciRespDataWidth),
-      .TX_DESC_FIFO_DATA_WIDTH(HciCmdDataWidth),
-      .RX_FIFO_DATA_WIDTH(HciRxDataWidth),
-      .TX_FIFO_DATA_WIDTH(HciTxDataWidth),
+      .TxDescFifoDataWidth(HciCmdDataWidth),
+      .RxDescFifoDataWidth(HciRespDataWidth),
+      .TxFifoDataWidth(HciTxDataWidth),
+      .RxFifoDataWidth(HciRxDataWidth),
 
-      .RX_DESC_THLD_WIDTH(HciRespThldWidth),
-      .TX_DESC_THLD_WIDTH(HciCmdThldWidth),
-      .RX_THLD_WIDTH(HciRxThldWidth),
-      .TX_THLD_WIDTH(HciTxThldWidth)
+      .TxDescFifoThldWidth(HciCmdThldWidth),
+      .RxDescFifoThldWidth(HciRespThldWidth),
+      .TxFifoThldWidth(HciTxThldWidth),
+      .RxFifoThldWidth(HciRxThldWidth)
   ) hci_queues (
       .clk_i,
       .rst_ni,
@@ -429,7 +461,24 @@ module hci
       .core_config
   );
 
-  tti tti (
+  tti #(
+      .CsrDataWidth,
+
+      .TxDescFifoDepth(RespFifoDepth),
+      .RxDescFifoDepth(CmdFifoDepth),
+      .TxFifoDepth(RxFifoDepth),
+      .RxFifoDepth(TxFifoDepth),
+
+      .RxDescDataWidth(TtiRxDescDataWidth),
+      .TxDescDataWidth(TtiTxDescDataWidth),
+      .RxDataWidth(TtiRxDataWidth),
+      .TxDataWidth(TtiTxDataWidth),
+
+      .RxDescThldWidth(TtiRxDescThldWidth),
+      .TxDescThldWidth(TtiTxDescThldWidth),
+      .RxThldWidth(TtiRxThldWidth),
+      .TxThldWidth(TtiTxThldWidth)
+  ) tti (
       .clk_i,
       .rst_ni,
 

@@ -23,7 +23,6 @@ VERILOG_SOURCES  = \
     $(SRCDIR)/csr/I3CCSR.sv \
     $(SRCDIR)/hci/ahb_if.sv \
     $(SRCDIR)/hci/dxt.sv \
-    $(SRCDIR)/hci/hci_pkg.sv \
     $(SRCDIR)/hci/configuration.sv \
     $(SRCDIR)/hci/queues/write_queue.sv \
     $(SRCDIR)/hci/queues/read_queue.sv \

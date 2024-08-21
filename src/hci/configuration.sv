@@ -2,16 +2,12 @@
 
 `timescale 1ns / 1ps
 
-module configuration
-  import I3CCSR_pkg::*;
-  import i3c_pkg::*;
-  import hci_pkg::*;
-(
+module configuration (
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    input  I3CCSR__out_t hwif_out,
-    output i3c_config_t  core_config
+    input I3CCSR_pkg::I3CCSR__out_t hwif_out,
+    output i3c_pkg::i3c_config_t core_config
 );
 
   // If we want to do R/W from/to CSRs:
