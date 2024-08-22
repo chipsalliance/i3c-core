@@ -16,13 +16,13 @@ UVM_VERIF_DIR       := $(VERIFICATION_DIR)/uvm_i3c/
 
 TOOL_DIR            := $(I3C_ROOT_DIR)/tools/
 UVM_TOOL_DIR        := $(TOOL_DIR)/uvm/
-GENERIC_UVM_DIR     := $(UVM_TOOL_DIR)/generic/ ## Path: UVM installation directory
-VERILATOR_UVM_DIR   := $(UVM_TOOL_DIR)/verilator/ ## Path: UVM installation directory with Verilator patches
+GENERIC_UVM_DIR     := $(UVM_TOOL_DIR)/generic/## Path: UVM installation directory
+VERILATOR_UVM_DIR   := $(UVM_TOOL_DIR)/verilator/## Path: UVM installation directory with Verilator patches
 
-CALIPTRA_ROOT       ?= $(THIRD_PARTY_DIR)/caliptra-rtl ## Path: caliptra-rtl repository
+CALIPTRA_ROOT       ?= $(THIRD_PARTY_DIR)/caliptra-rtl## Path: caliptra-rtl repository
 # TODO: Connect to version selection in tools/simulators/
-UVM_DIR             ?= $(VERILATOR_UVM_DIR)/ ## Select UVM version
-SIMULATOR           ?= verilator ## Supported: verilator, dsim, questa, vcs
+UVM_DIR             ?= $(VERILATOR_UVM_DIR)/## Select UVM version
+SIMULATOR           ?= verilator## Supported: verilator, dsim, questa, vcs
 
 NUM_PROC            := $$(($$(nproc)-1))
 # Environment variables
