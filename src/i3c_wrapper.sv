@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 `include "i3c_defines.svh"
 
-module i3c_wrapper
-  import i3c_pkg::*;
-#(
+module i3c_wrapper #(
 `ifdef I3C_USE_AHB
-    parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
-    parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
+    parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
+    parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
 `elsif I3C_USE_AXI
-    parameter unsigned AXI_DATA_WIDTH = `AXI_DATA_WIDTH,
-    parameter unsigned AXI_ADDR_WIDTH = `AXI_ADDR_WIDTH,
-    parameter unsigned AXI_USER_WIDTH = `AXI_USER_WIDTH,
-    parameter unsigned AXI_ID_WIDTH = `AXI_ID_WIDTH
+    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
+    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
+    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
+    parameter int unsigned AxiIdWidth   = `AXI_ID_WIDTH,
 `endif
+    parameter int unsigned DatAw = i3c_pkg::DatAw,
+    parameter int unsigned DctAw = i3c_pkg::DctAw,
+
+    parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
+    parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -20,73 +23,73 @@ module i3c_wrapper
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
     // Byte address of the transfer
-    input  logic [  AHB_ADDR_WIDTH-1:0] haddr_i,
+    input  logic [  AhbAddrWidth-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
-    input  logic [                 2:0] hburst_i,     // Unhandled
+    input  logic [               2:0] hburst_i,     // Unhandled
     // Protection control; provides information on the access type
-    input  logic [                 3:0] hprot_i,      // Unhandled
+    input  logic [               3:0] hprot_i,      // Unhandled
     // Indicates the size of the transfer
-    input  logic [                 2:0] hsize_i,
+    input  logic [               2:0] hsize_i,
     // Indicates the transfer type
-    input  logic [                 1:0] htrans_i,
+    input  logic [               1:0] htrans_i,
     // Data for the write operation
-    input  logic [  AHB_DATA_WIDTH-1:0] hwdata_i,
+    input  logic [  AhbDataWidth-1:0] hwdata_i,
     // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb_i,     // Unhandled
+    input  logic [AhbDataWidth/8-1:0] hwstrb_i,     // Unhandled
     // Indicates write operation when asserted
-    input  logic                        hwrite_i,
+    input  logic                      hwrite_i,
     // Read data
-    output logic [  AHB_DATA_WIDTH-1:0] hrdata_o,
+    output logic [  AhbDataWidth-1:0] hrdata_o,
     // Asserted indicates a finished transfer; Can be driven low to extend a transfer
-    output logic                        hreadyout_o,
+    output logic                      hreadyout_o,
     // Transfer response, high when error occurred
-    output logic                        hresp_o,
+    output logic                      hresp_o,
     // Indicates the subordinate is selected for the transfer
-    input  logic                        hsel_i,
+    input  logic                      hsel_i,
     // Indicates all subordinates have finished transfers
-    input  logic                        hready_i,
+    input  logic                      hready_i,
 
 `elsif I3C_USE_AXI
     // AXI4 Interface
     // AXI Read Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] araddr_i,
-    input  logic [               1:0] arburst_i,
-    input  logic [               2:0] arsize_i,
-    input  logic [               7:0] arlen_i,
-    input  logic [AXI_USER_WIDTH-1:0] aruser_i,
-    input  logic [  AXI_ID_WIDTH-1:0] arid_i,
-    input  logic                      arlock_i,
-    input  logic                      arvalid_i,
-    output logic                      arready_o,
+    input  logic [AxiAddrWidth-1:0] araddr_i,
+    input  logic [             1:0] arburst_i,
+    input  logic [             2:0] arsize_i,
+    input  logic [             7:0] arlen_i,
+    input  logic [AxiUserWidth-1:0] aruser_i,
+    input  logic [  AxiIdWidth-1:0] arid_i,
+    input  logic                    arlock_i,
+    input  logic                    arvalid_i,
+    output logic                    arready_o,
 
-    output logic [AXI_DATA_WIDTH-1:0] rdata_o,
-    output logic [               1:0] rresp_o,
-    output logic [  AXI_ID_WIDTH-1:0] rid_o,
-    output logic                      rlast_o,
-    output logic                      rvalid_o,
-    input  logic                      rready_i,
+    output logic [AxiDataWidth-1:0] rdata_o,
+    output logic [             1:0] rresp_o,
+    output logic [  AxiIdWidth-1:0] rid_o,
+    output logic                    rlast_o,
+    output logic                    rvalid_o,
+    input  logic                    rready_i,
 
     // AXI Write Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] awaddr_i,
-    input  logic [               1:0] awburst_i,
-    input  logic [               2:0] awsize_i,
-    input  logic [               7:0] awlen_i,
-    input  logic [AXI_USER_WIDTH-1:0] awuser_i,
-    input  logic [  AXI_ID_WIDTH-1:0] awid_i,
-    input  logic                      awlock_i,
-    input  logic                      awvalid_i,
-    output logic                      awready_o,
+    input  logic [AxiAddrWidth-1:0] awaddr_i,
+    input  logic [             1:0] awburst_i,
+    input  logic [             2:0] awsize_i,
+    input  logic [             7:0] awlen_i,
+    input  logic [AxiUserWidth-1:0] awuser_i,
+    input  logic [  AxiIdWidth-1:0] awid_i,
+    input  logic                    awlock_i,
+    input  logic                    awvalid_i,
+    output logic                    awready_o,
 
-    input  logic [AXI_DATA_WIDTH-1:0] wdata_i,
-    input  logic [               7:0] wstrb_i,
-    input  logic                      wlast_i,
-    input  logic                      wvalid_i,
-    output logic                      wready_o,
+    input  logic [AxiDataWidth-1:0] wdata_i,
+    input  logic [             7:0] wstrb_i,
+    input  logic                    wlast_i,
+    input  logic                    wvalid_i,
+    output logic                    wready_o,
 
-    output logic [             1:0] bresp_o,
-    output logic [AXI_ID_WIDTH-1:0] bid_o,
-    output logic                    bvalid_o,
-    input  logic                    bready_i,
+    output logic [           1:0] bresp_o,
+    output logic [AxiIdWidth-1:0] bid_o,
+    output logic                  bvalid_o,
+    input  logic                  bready_i,
 
 `endif
 
@@ -118,34 +121,34 @@ module i3c_wrapper
   // Check widths match the I3C configuration
   initial begin : clptra_vs_i3c_config_param_check
 `ifdef I3C_USE_AHB
-    if (AHB_ADDR_WIDTH != `AHB_ADDR_WIDTH) begin : clptra_ahb_addr_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AHB address width", AHB_ADDR_WIDTH, `AHB_ADDR_WIDTH)
+    if (AhbAddrWidth != `AHB_ADDR_WIDTH) begin : clptra_ahb_addr_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AHB address width", AhbAddrWidth, `AHB_ADDR_WIDTH)
     end
-    if (AHB_DATA_WIDTH != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AHB data width", AHB_DATA_WIDTH, `AHB_DATA_WIDTH)
+    if (AhbDataWidth != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AHB data width", AhbDataWidth, `AHB_DATA_WIDTH)
     end
 `elsif I3C_USE_AXI
-    if (AXI_ADDR_WIDTH != `AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AXI_ADDR_WIDTH, `AXI_ADDR_WIDTH)
+    if (AxiAddrWidth != ``AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AxiAddrWidth, ``AXI_ADDR_WIDTH)
     end
-    if (AXI_DATA_WIDTH != `AXI_DATA_WIDTH) begin : clptra_axi_data_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI data width", AXI_DATA_WIDTH, `AXI_DATA_WIDTH)
+    if (AxiDataWidth != `AXI_DATA_WIDTH) begin : clptra_axi_data_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI data width", AxiDataWidth, `AXI_DATA_WIDTH)
     end
-    if (AXI_USER_WIDTH != `AXI_USER_WIDTH) begin : clptra_axi_user_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI user width", AXI_USER_WIDTH, `AXI_USER_WIDTH)
+    if (AxiUserWidth != `AXI_USER_WIDTH) begin : clptra_axi_user_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI user width", AxiUserWidth, `AXI_USER_WIDTH)
     end
-    if (AXI_ID_WIDTH != `AXI_ID_WIDTH) begin : clptra_axi_id_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AXI_ID_WIDTH, `AXI_ID_WIDTH)
+    if (AxiIdWidth != `AxiIdWidth) begin : clptra_axi_id_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AxiIdWidth)
     end
 `endif
   end
 
 `ifdef I3C_USE_AXI
   initial begin : axi_data_user_w_check
-    if (AXI_USER_WIDTH != AXI_DATA_WIDTH) begin
-      $fatal(0, {"AXI_USER_WIDTH (%0d) != AXI_DATA_WIDTH (%0d): Current AXI doesn't support ",
-                 "different USER and DATA widths. (instance %m)."}, AXI_USER_WIDTH, AXI_DATA_WIDTH);
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AXI_ID_WIDTH, `AXI_ID_WIDTH)
+    if (AxiUserWidth != AxiDataWidth) begin
+      $fatal(0, {"AxiUserWidth (%0d) != AxiDataWidth (%0d): Current AXI doesn't support ",
+                 "different USER and DATA widths. (instance %m)."}, AxiUserWidth, AxiDataWidth);
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AxiIdWidth)
     end
   end
 `endif
@@ -154,18 +157,20 @@ module i3c_wrapper
   logic i3c_sda_io;
 
   // DAT memory export interface
-  dat_mem_src_t dat_mem_src;
-  dat_mem_sink_t dat_mem_sink;
+  i3c_pkg::dat_mem_src_t dat_mem_src;
+  i3c_pkg::dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  dct_mem_src_t dct_mem_src;
-  dct_mem_sink_t dct_mem_sink;
+  i3c_pkg::dct_mem_src_t dct_mem_src;
+  i3c_pkg::dct_mem_sink_t dct_mem_sink;
 
   i3c #(
 `ifdef I3C_USE_AHB
-      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
+      .AhbDataWidth,
+      .AhbAddrWidth,
 `endif
+      .CsrDataWidth,
+      .CsrAddrWidth
   ) i3c (
       .clk_i,
       .rst_ni,

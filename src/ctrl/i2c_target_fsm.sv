@@ -20,15 +20,15 @@ module i2c_target_fsm
 
     input target_enable_i,  // enable target functionality
 
-    input                            tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
-    output logic                     tx_fifo_rready_o,  // pop entry from tx_fifo
-    input        [TX_FIFO_WIDTH-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
+    input                          tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
+    output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
+    input        [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
 
     output logic acq_fifo_wvalid_o,  // high if there is valid data in acq_fifo
-    output logic [ACQ_FIFO_WIDTH-1:0] acq_fifo_wdata_o,  // data to write to acq_fifo from target
+    output logic [AcqFifoWidth-1:0] acq_fifo_wdata_o,  // data to write to acq_fifo from target
     input [AcqFifoDepthWidth-1:0] acq_fifo_depth_i,  // fill level of acq_fifo
     output logic acq_fifo_wready_o,  // local version of ready
-    input [ACQ_FIFO_WIDTH-1:0] acq_fifo_rdata_i,  // only used for assertion
+    input [AcqFifoWidth-1:0] acq_fifo_rdata_i,  // only used for assertion
 
     output logic target_idle_o,  // indicates the target is idle
 
@@ -351,7 +351,7 @@ module i2c_target_fsm
   end
 
   // Reverse the bit order since data should be sent out MSB first
-  logic [TX_FIFO_WIDTH-1:0] tx_fifo_rdata;
+  logic [TxFifoWidth-1:0] tx_fifo_rdata;
   assign tx_fifo_rdata = {<<1{tx_fifo_rdata_i}};
 
   // The usage of target_idle_o directly confuses xcelium and leads the
@@ -373,7 +373,7 @@ module i2c_target_fsm
     scl_d = 1'b1;
     tx_fifo_rready_o = 1'b0;
     acq_fifo_wvalid_o = 1'b0;
-    acq_fifo_wdata_o = ACQ_FIFO_WIDTH'(0);
+    acq_fifo_wdata_o = AcqFifoWidth'(0);
     event_cmd_complete_o = 1'b0;
     event_target_nack_o = 1'b0;
     rw_bit = rw_bit_q;
@@ -575,7 +575,7 @@ module i2c_target_fsm
         scl_d = 1'b1;
         tx_fifo_rready_o = 1'b0;
         acq_fifo_wvalid_o = 1'b0;
-        acq_fifo_wdata_o = ACQ_FIFO_WIDTH'(0);
+        acq_fifo_wdata_o = AcqFifoWidth'(0);
         event_cmd_complete_o = 1'b0;
         event_target_nack_o = 1'b0;
         actively_stretching = 1'b0;

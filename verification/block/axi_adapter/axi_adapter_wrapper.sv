@@ -9,73 +9,76 @@ module axi_adapter_wrapper
   import I3CCSR_pkg::I3CCSR__out_t;
   import i3c_pkg::*;
 #(
-    parameter int unsigned AXI_ADDR_WIDTH = 12,
-    parameter int unsigned AXI_DATA_WIDTH = 32,
-    parameter unsigned AXI_USER_WIDTH = 32,
-    parameter unsigned AXI_ID_WIDTH = 2
+    localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
+    localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
+
+    parameter int unsigned AxiAddrWidth = 12,
+    parameter int unsigned AxiDataWidth = 32,
+    parameter int unsigned AxiUserWidth = 32,
+    parameter int unsigned AxiIdWidth   = 2
 ) (
     input aclk,  // clock
     input areset_n,  // active low reset
 
     // AXI Read Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] araddr,
-    input  logic [               1:0] arburst,
-    input  logic [               2:0] arsize,
-    input  logic [               7:0] arlen,
-    input  logic [AXI_USER_WIDTH-1:0] aruser,
-    input  logic [  AXI_ID_WIDTH-1:0] arid,
-    input  logic                      arlock,
-    input  logic                      arvalid,
-    output logic                      arready,
+    input  logic [AxiAddrWidth-1:0] araddr,
+    input  logic [             1:0] arburst,
+    input  logic [             2:0] arsize,
+    input  logic [             7:0] arlen,
+    input  logic [AxiUserWidth-1:0] aruser,
+    input  logic [  AxiIdWidth-1:0] arid,
+    input  logic                    arlock,
+    input  logic                    arvalid,
+    output logic                    arready,
 
-    output logic [AXI_DATA_WIDTH-1:0] rdata,
-    output logic [               1:0] rresp,
-    output logic [  AXI_ID_WIDTH-1:0] rid,
-    output logic                      rlast,
-    output logic                      rvalid,
-    input  logic                      rready,
+    output logic [AxiDataWidth-1:0] rdata,
+    output logic [             1:0] rresp,
+    output logic [  AxiIdWidth-1:0] rid,
+    output logic                    rlast,
+    output logic                    rvalid,
+    input  logic                    rready,
 
     // AXI Write Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] awaddr,
-    input  logic [               1:0] awburst,
-    input  logic [               2:0] awsize,
-    input  logic [               7:0] awlen,
-    input  logic [AXI_USER_WIDTH-1:0] awuser,
-    input  logic [  AXI_ID_WIDTH-1:0] awid,
-    input  logic                      awlock,
-    input  logic                      awvalid,
-    output logic                      awready,
+    input  logic [AxiAddrWidth-1:0] awaddr,
+    input  logic [             1:0] awburst,
+    input  logic [             2:0] awsize,
+    input  logic [             7:0] awlen,
+    input  logic [AxiUserWidth-1:0] awuser,
+    input  logic [  AxiIdWidth-1:0] awid,
+    input  logic                    awlock,
+    input  logic                    awvalid,
+    output logic                    awready,
 
-    input  logic [AXI_DATA_WIDTH-1:0] wdata,
-    input  logic [               3:0] wstrb,
-    input  logic                      wlast,
-    input  logic                      wvalid,
-    output logic                      wready,
+    input  logic [AxiDataWidth-1:0] wdata,
+    input  logic [             3:0] wstrb,
+    input  logic                    wlast,
+    input  logic                    wvalid,
+    output logic                    wready,
 
-    output logic [             1:0] bresp,
-    output logic [AXI_ID_WIDTH-1:0] bid,
-    output logic                    bvalid,
-    input  logic                    bready
+    output logic [           1:0] bresp,
+    output logic [AxiIdWidth-1:0] bid,
+    output logic                  bvalid,
+    input  logic                  bready
 );
   // I3C SW CSR access interface
-  logic                             s_cpuif_req;
-  logic                             s_cpuif_req_is_wr;
-  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
-  logic                             s_cpuif_req_stall_wr;
-  logic                             s_cpuif_req_stall_rd;
-  logic                             s_cpuif_rd_ack;
-  logic                             s_cpuif_rd_err;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
-  logic                             s_cpuif_wr_ack;
-  logic                             s_cpuif_wr_err;
+  logic                    s_cpuif_req;
+  logic                    s_cpuif_req_is_wr;
+  logic [CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_biten;
+  logic                    s_cpuif_req_stall_wr;
+  logic                    s_cpuif_req_stall_rd;
+  logic                    s_cpuif_rd_ack;
+  logic                    s_cpuif_rd_err;
+  logic [CsrDataWidth-1:0] s_cpuif_rd_data;
+  logic                    s_cpuif_wr_ack;
+  logic                    s_cpuif_wr_err;
 
   axi_adapter #(
-      .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-      .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
-      .AXI_USER_WIDTH(AXI_USER_WIDTH),
-      .AXI_ID_WIDTH  (AXI_ID_WIDTH)
+      .AxiDataWidth,
+      .AxiAddrWidth,
+      .AxiUserWidth,
+      .AxiIdWidth
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),

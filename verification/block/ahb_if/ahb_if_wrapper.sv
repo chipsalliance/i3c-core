@@ -7,43 +7,45 @@ module ahb_if_wrapper
   import I3CCSR_pkg::I3CCSR__in_t;
   import I3CCSR_pkg::I3CCSR__out_t;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = 64,
-    parameter int unsigned AHB_ADDR_WIDTH = 32
+    localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
+    localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
+    parameter  int unsigned AhbDataWidth = 64,
+    parameter  int unsigned AhbAddrWidth = 32
 ) (
     // AHB-Lite interface
-    input  logic                        hclk,
-    input  logic                        hreset_n,
-    input  logic [  AHB_ADDR_WIDTH-1:0] haddr,
-    input  logic [                 2:0] hburst,
-    input  logic [                 3:0] hprot,
-    input  logic [                 2:0] hsize,
-    input  logic [                 1:0] htrans,
-    input  logic [  AHB_DATA_WIDTH-1:0] hwdata,
-    input  logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
-    input  logic                        hwrite,
-    output logic [  AHB_DATA_WIDTH-1:0] hrdata,
-    output logic                        hreadyout,
-    output logic                        hresp,
-    input  logic                        hsel,
-    input  logic                        hready
+    input  logic                      hclk,
+    input  logic                      hreset_n,
+    input  logic [  AhbAddrWidth-1:0] haddr,
+    input  logic [               2:0] hburst,
+    input  logic [               3:0] hprot,
+    input  logic [               2:0] hsize,
+    input  logic [               1:0] htrans,
+    input  logic [  AhbDataWidth-1:0] hwdata,
+    input  logic [AhbDataWidth/8-1:0] hwstrb,
+    input  logic                      hwrite,
+    output logic [  AhbDataWidth-1:0] hrdata,
+    output logic                      hreadyout,
+    output logic                      hresp,
+    input  logic                      hsel,
+    input  logic                      hready
 );
   // I3C SW CSR access interface
-  logic                             s_cpuif_req;
-  logic                             s_cpuif_req_is_wr;
-  logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten;
-  logic                             s_cpuif_req_stall_wr;
-  logic                             s_cpuif_req_stall_rd;
-  logic                             s_cpuif_rd_ack;
-  logic                             s_cpuif_rd_err;
-  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data;
-  logic                             s_cpuif_wr_ack;
-  logic                             s_cpuif_wr_err;
+  logic                    s_cpuif_req;
+  logic                    s_cpuif_req_is_wr;
+  logic [CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_biten;
+  logic                    s_cpuif_req_stall_wr;
+  logic                    s_cpuif_req_stall_rd;
+  logic                    s_cpuif_rd_ack;
+  logic                    s_cpuif_rd_err;
+  logic [CsrDataWidth-1:0] s_cpuif_rd_data;
+  logic                    s_cpuif_wr_ack;
+  logic                    s_cpuif_wr_err;
 
   ahb_if #(
-      .AHB_DATA_WIDTH(AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH(AHB_ADDR_WIDTH)
+      .AhbDataWidth,
+      .AhbAddrWidth
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),

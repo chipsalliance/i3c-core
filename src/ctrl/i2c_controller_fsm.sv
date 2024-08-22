@@ -32,8 +32,8 @@ module i2c_controller_fsm
     input unhandled_unexp_nak_i,
     input unhandled_nak_timeout_i,  // NACK handler timeout event not cleared
 
-    output logic                     rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
-    output logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o,   // byte in rx_fifo read from target
+    output logic                   rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
+    output logic [RxFifoWidth-1:0] rx_fifo_wdata_o,   // byte in rx_fifo read from target
 
     output logic host_idle_o,  // indicates the host is idle
 
@@ -394,7 +394,7 @@ module i2c_controller_fsm
     scl_d = 1'b1;
     fmt_fifo_rready_o = 1'b0;
     rx_fifo_wvalid_o = 1'b0;
-    rx_fifo_wdata_o = RX_FIFO_WIDTH'(0);
+    rx_fifo_wdata_o = RxFifoWidth'(0);
     event_nak_o = 1'b0;
     event_scl_interference_o = 1'b0;
     event_sda_unstable_o = 1'b0;
@@ -581,7 +581,7 @@ module i2c_controller_fsm
         scl_d = 1'b1;
         fmt_fifo_rready_o = 1'b0;
         rx_fifo_wvalid_o = 1'b0;
-        rx_fifo_wdata_o = RX_FIFO_WIDTH'(0);
+        rx_fifo_wdata_o = RxFifoWidth'(0);
         event_nak_o = 1'b0;
         event_scl_interference_o = 1'b0;
         event_sda_unstable_o = 1'b0;

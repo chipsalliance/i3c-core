@@ -85,8 +85,8 @@ module flow_active
     output logic unhandled_nak_timeout_o,
 
     // RX FIFO queue from I2C Controller
-    input logic                     rx_fifo_wvalid_i,
-    input logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_i,
+    input logic                   rx_fifo_wvalid_i,
+    input logic [RxFifoWidth-1:0] rx_fifo_wdata_i,
 
     // I3C FSM control & status
     input  logic i3c_fsm_en_i,

@@ -4,21 +4,20 @@
   Read queue provides write access from software and read access from hardware. The queue provides
   start and ready threshold triggers with configurale activation levels.
 
-  TODO: Ensure that configurations with both `THLD_IS_POW` and `LIMIT_READY_THLD` parameters
+  TODO: Ensure that configurations with both `ThldIsPow` and `LimitReadyThld` parameters
         enabled or disabled work correctly.
 */
 
-module write_queue
-  import I3CCSR_pkg::*;
-#(
-    parameter int unsigned DEPTH = 64,
-    parameter int unsigned DATA_WIDTH = 32,
-    parameter int unsigned THLD_WIDTH = 3,
-    parameter bit THLD_IS_POW = 1,  // Calculate maximum ready threshold value as
-                                             // `2^(ready_thld_i+1)`
-    parameter bit LIMIT_READY_THLD = 0,  // Set ready threshold value to `DEPTH-1` if it
-                                                  // exceeds the queue size
-    localparam int unsigned FifoDepthWidth = $clog2(DEPTH + 1)
+module write_queue #(
+    parameter int unsigned CsrDataWidth = 32,
+    parameter int unsigned Depth = 64,
+    parameter int unsigned DataWidth = 32,
+    parameter int unsigned ThldWidth = 3,
+    parameter bit ThldIsPow = 1,  // Calculate maximum ready threshold value as
+                                  // `2^(ready_thld_i+1)`
+    parameter bit LimitReadyThld = 0,  // Set ready threshold value to `Depth-1` if it
+                                       // exceeds the queue size
+    localparam int unsigned FifoDepthWidth = $clog2(Depth + 1)
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -30,17 +29,17 @@ module write_queue
     output logic empty_o,
     output logic rvalid_o,
     input logic rready_i,
-    output logic [DATA_WIDTH-1:0] rdata_o,
+    output logic [DataWidth-1:0] rdata_o,
 
     // CSR access control
     input logic req_i,
     output logic ack_o,
-    input logic [I3CCSR_DATA_WIDTH-1:0] data_i,
+    input logic [CsrDataWidth-1:0] data_i,
 
     // Threshold value
-    input  logic [THLD_WIDTH-1:0] start_thld_i,
-    input  logic [THLD_WIDTH-1:0] ready_thld_i,
-    output logic [THLD_WIDTH-1:0] ready_thld_o,
+    input  logic [ThldWidth-1:0] start_thld_i,
+    input  logic [ThldWidth-1:0] ready_thld_i,
+    output logic [ThldWidth-1:0] ready_thld_o,
 
     // CSR reset control
     input  logic reg_rst_i,
@@ -52,18 +51,18 @@ module write_queue
   logic fifo_clr;
   logic fifo_wvalid;
   logic fifo_wready;
-  logic [DATA_WIDTH-1:0] fifo_wdata;
+  logic [DataWidth-1:0] fifo_wdata;
   logic [FifoDepthWidth-1:0] fifo_depth;
   logic fifo_rvalid;
   logic fifo_rready;
-  logic [DATA_WIDTH-1:0] fifo_rdata;
+  logic [DataWidth-1:0] fifo_rdata;
   logic fifo_full;
 
   logic [FifoDepthWidth-1:0] empty_entries;
 
   initial begin
-    if (THLD_IS_POW == LIMIT_READY_THLD) begin
-      $warning("Configuration with both `THLD_IS_POW` and `LIMIT_READY_THLD` enabled or disabled",
+    if (ThldIsPow == LimitReadyThld) begin
+      $warning("Configuration with both `ThldIsPow` and `LimitReadyThld` enabled or disabled",
                "is not tested and might result in unexpected behavior.");
     end
   end
@@ -75,9 +74,9 @@ module write_queue
 
   always_comb begin : trigger_threshold
     empty_o = ~|fifo_depth;
-    empty_entries = FifoDepthWidth'(DEPTH) - fifo_depth;
+    empty_entries = FifoDepthWidth'(Depth) - fifo_depth;
 
-    if (THLD_IS_POW == 0) begin
+    if (ThldIsPow == 0) begin
       start_thld_trig_o = |start_thld_i && (fifo_depth >= FifoDepthWidth'(start_thld_i));
       ready_thld_trig_o = |ready_thld_o && (empty_entries >= FifoDepthWidth'(ready_thld_o));
     end else begin
@@ -92,25 +91,25 @@ module write_queue
     if (!rst_ni) begin
       ready_thld_o <= '0;
     end else begin
-      if (LIMIT_READY_THLD) begin
-        if (THLD_IS_POW) begin
-          // Specified `2^(ready_thld_o+1)` can't be higher than `DEPTH - 1`
+      if (LimitReadyThld) begin
+        if (ThldIsPow) begin
+          // Specified `2^(ready_thld_o+1)` can't be higher than `Depth - 1`
           // For configurations with a threshold width more narrow than the queue depth width
           // the expression might become a constant comparison
           // verilator lint_off UNSIGNED
-          if ((1 << (ready_thld_i + 1)) >= THLD_WIDTH'(DEPTH)) begin
+          if ((1 << (ready_thld_i + 1)) >= ThldWidth'(Depth)) begin
             // verilator lint_on UNSIGNED
-            ready_thld_o <= THLD_WIDTH'($clog2(DEPTH) - 1);
+            ready_thld_o <= ThldWidth'($clog2(Depth) - 1);
           end else begin
             ready_thld_o <= ready_thld_i;
           end
         end else begin
-          // Specified `ready_thld_o` can't be higher than `DEPTH - 1`
+          // Specified `ready_thld_o` can't be higher than `Depth - 1`
           // For configurations with a threshold width more narrow than the queue depth width
           // the expression might become a constant comparison
           // verilator lint_off UNSIGNED
-          ready_thld_o <= (ready_thld_i >= THLD_WIDTH'(DEPTH))
-                          ? THLD_WIDTH'(DEPTH) - 1
+          ready_thld_o <= (ready_thld_i >= ThldWidth'(Depth))
+                          ? ThldWidth'(Depth) - 1
                           : ready_thld_i;
           // verilator lint_on UNSIGNED
         end
@@ -128,7 +127,7 @@ module write_queue
     end
   end : csr_rst_control
 
-  if (DATA_WIDTH == 64) begin : gen_qword_to_fifo
+  if (DataWidth == 64) begin : gen_qword_to_fifo
     logic dword_index;  // Index of currently processed DWORD
     logic start_valid;  // Start of FIFO valid signal assertion
     assign start_valid = req_i & dword_index;
@@ -163,7 +162,7 @@ module write_queue
         end
       end : push_cmds_to_fifo
     end : port_to_fifo
-  end else if (DATA_WIDTH == 32) begin : gen_dword_to_fifo
+  end else if (DataWidth == 32) begin : gen_dword_to_fifo
     always_ff @(posedge clk_i or negedge rst_ni) begin : port_to_fifo
       if (!rst_ni) begin : port_to_fifo_rst
         fifo_wvalid <= '0;
@@ -189,9 +188,9 @@ module write_queue
   logic unused_err;
 
   caliptra_prim_fifo_sync #(
-      .Width(DATA_WIDTH),
+      .Width(DataWidth),
       .Pass (1'b0),
-      .Depth(DEPTH)
+      .Depth(Depth)
   ) fifo (
       .clk_i,
       .rst_ni,

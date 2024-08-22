@@ -1,77 +1,87 @@
 // SPDX-License-Identifier: Apache-2.0
 
-module axi_adapter
-  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
-  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
-#(
-    parameter unsigned AXI_DATA_WIDTH = 64,
-    parameter unsigned AXI_ADDR_WIDTH = 32,
-    parameter unsigned AXI_USER_WIDTH = 32,
-    parameter unsigned AXI_ID_WIDTH   = 2
+module axi_adapter #(
+    localparam int unsigned CsrAddrWidth = 12,
+    localparam int unsigned CsrDataWidth = 32,
+
+    parameter int unsigned AxiDataWidth = 64,
+    parameter int unsigned AxiAddrWidth = 32,
+    parameter int unsigned AxiUserWidth = 32,
+    parameter int unsigned AxiIdWidth   = 2
 ) (
     input logic clk_i,
     input logic rst_ni,
 
     // AXI Read Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] araddr_i,
-    input  logic [               1:0] arburst_i,
-    input  logic [               2:0] arsize_i,
-    input  logic [               7:0] arlen_i,
-    input  logic [AXI_USER_WIDTH-1:0] aruser_i,
-    input  logic [  AXI_ID_WIDTH-1:0] arid_i,
-    input  logic                      arlock_i,
-    input  logic                      arvalid_i,
-    output logic                      arready_o,
+    input  logic [AxiAddrWidth-1:0] araddr_i,
+    input  logic [             1:0] arburst_i,
+    input  logic [             2:0] arsize_i,
+    input  logic [             7:0] arlen_i,
+    input  logic [AxiUserWidth-1:0] aruser_i,
+    input  logic [  AxiIdWidth-1:0] arid_i,
+    input  logic                    arlock_i,
+    input  logic                    arvalid_i,
+    output logic                    arready_o,
 
-    output logic [AXI_DATA_WIDTH-1:0] rdata_o,
-    output logic [               1:0] rresp_o,
-    output logic [  AXI_ID_WIDTH-1:0] rid_o,
-    output logic                      rlast_o,
-    output logic                      rvalid_o,
-    input  logic                      rready_i,
+    output logic [AxiDataWidth-1:0] rdata_o,
+    output logic [             1:0] rresp_o,
+    output logic [  AxiIdWidth-1:0] rid_o,
+    output logic                    rlast_o,
+    output logic                    rvalid_o,
+    input  logic                    rready_i,
 
     // AXI Write Channels
-    input  logic [AXI_ADDR_WIDTH-1:0] awaddr_i,
-    input  logic [               1:0] awburst_i,
-    input  logic [               2:0] awsize_i,
-    input  logic [               7:0] awlen_i,
-    input  logic [AXI_USER_WIDTH-1:0] awuser_i,
-    input  logic [  AXI_ID_WIDTH-1:0] awid_i,
-    input  logic                      awlock_i,
-    input  logic                      awvalid_i,
-    output logic                      awready_o,
+    input  logic [AxiAddrWidth-1:0] awaddr_i,
+    input  logic [             1:0] awburst_i,
+    input  logic [             2:0] awsize_i,
+    input  logic [             7:0] awlen_i,
+    input  logic [AxiUserWidth-1:0] awuser_i,
+    input  logic [  AxiIdWidth-1:0] awid_i,
+    input  logic                    awlock_i,
+    input  logic                    awvalid_i,
+    output logic                    awready_o,
 
-    input  logic [AXI_DATA_WIDTH-1:0] wdata_i,
-    input  logic [               7:0] wstrb_i,
-    input  logic                      wlast_i,
-    input  logic                      wvalid_i,
-    output logic                      wready_o,
+    input  logic [AxiDataWidth-1:0] wdata_i,
+    input  logic [             7:0] wstrb_i,
+    input  logic                    wlast_i,
+    input  logic                    wvalid_i,
+    output logic                    wready_o,
 
-    output logic [             1:0] bresp_o,
-    output logic [AXI_ID_WIDTH-1:0] bid_o,
-    output logic                    bvalid_o,
-    input  logic                    bready_i,
+    output logic [           1:0] bresp_o,
+    output logic [AxiIdWidth-1:0] bid_o,
+    output logic                  bvalid_o,
+    input  logic                  bready_i,
 
     // I3C SW CSR access interface
-    output logic                             s_cpuif_req,
-    output logic                             s_cpuif_req_is_wr,
-    output logic [I3CCSR_MIN_ADDR_WIDTH-1:0] s_cpuif_addr,
-    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_data,
-    output logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_wr_biten,
-    input  logic                             s_cpuif_req_stall_wr,
-    input  logic                             s_cpuif_req_stall_rd,
-    input  logic                             s_cpuif_rd_ack,
-    input  logic                             s_cpuif_rd_err,
-    input  logic [    I3CCSR_DATA_WIDTH-1:0] s_cpuif_rd_data,
-    input  logic                             s_cpuif_wr_ack,
-    input  logic                             s_cpuif_wr_err
+    output logic                    s_cpuif_req,
+    output logic                    s_cpuif_req_is_wr,
+    output logic [CsrAddrWidth-1:0] s_cpuif_addr,
+    output logic [CsrDataWidth-1:0] s_cpuif_wr_data,
+    output logic [CsrDataWidth-1:0] s_cpuif_wr_biten,
+    input  logic                    s_cpuif_req_stall_wr,
+    input  logic                    s_cpuif_req_stall_rd,
+    input  logic                    s_cpuif_rd_ack,
+    input  logic                    s_cpuif_rd_err,
+    input  logic [CsrDataWidth-1:0] s_cpuif_rd_data,
+    input  logic                    s_cpuif_wr_ack,
+    input  logic                    s_cpuif_wr_err
 );
+  // Check configuration
+  initial begin : axi_param_check
+    if (AxiAddrWidth < CsrAddrWidth) begin : ahb_addr_w_oob
+      $warning("WARNING: AxiAddrWidth is lower than CsrAddrWidth (instance %m)");
+    end
+    if (!(AxiDataWidth inside {32, 64})) begin : axi_data_w_oob
+      $error("ERROR: AxiDataWidth is required to be one of {32, 64} (instance %m)");
+      $finish;
+    end
+  end
 
   axi_if #(
-      .AW(I3CCSR_MIN_ADDR_WIDTH),
-      .DW(I3CCSR_DATA_WIDTH),
-      .UW(AXI_DATA_WIDTH),
-      .IW(AXI_ID_WIDTH)
+      .AW(CsrAddrWidth),
+      .DW(CsrDataWidth),
+      .UW(AxiDataWidth),
+      .IW(AxiIdWidth)
   ) axi ();
 
   // AXI Read Channels
@@ -114,19 +124,19 @@ module axi_adapter
   logic cpuif_req_stall;
   logic i3c_req_err, i3c_req_write;
   logic i3c_req_last;
-  logic [I3CCSR_DATA_WIDTH-1:0] i3c_req_wdata;
-  logic [AXI_DATA_WIDTH/8-1:0] i3c_req_wstrb;
-  logic [AXI_ADDR_WIDTH-1:0] i3c_req_addr;
-  logic [I3CCSR_DATA_WIDTH-1:0] i3c_req_rdata;
-  logic [AXI_ID_WIDTH-1:0] i3c_req_id;
-  logic [I3CCSR_DATA_WIDTH-1:0] i3c_req_user;
+  logic [CsrDataWidth-1:0] i3c_req_wdata;
+  logic [AxiDataWidth/8-1:0] i3c_req_wstrb;
+  logic [AxiAddrWidth-1:0] i3c_req_addr;
+  logic [CsrDataWidth-1:0] i3c_req_rdata;
+  logic [AxiIdWidth-1:0] i3c_req_id;
+  logic [CsrDataWidth-1:0] i3c_req_user;
 
   // Instantiate AXI subordinate to component interface module
   axi_sub #(
-      .AW(I3CCSR_MIN_ADDR_WIDTH),
-      .DW(I3CCSR_DATA_WIDTH),
-      .UW(AXI_DATA_WIDTH),
-      .IW(AXI_ID_WIDTH)
+      .AW(CsrAddrWidth),
+      .DW(CsrDataWidth),
+      .UW(AxiDataWidth),
+      .IW(AxiIdWidth)
   ) axi_sif_i3c (
       .clk  (clk_i),
       .rst_n(rst_ni),
@@ -150,7 +160,7 @@ module axi_adapter
   );
 
   genvar i;
-  for (i = 0; i < AXI_DATA_WIDTH / 8; i = i + 1) begin : g_replicate_strb_bits
+  for (i = 0; i < AxiDataWidth / 8; i = i + 1) begin : g_replicate_strb_bits
     always_comb begin
       s_cpuif_wr_biten[i*8+:8] = i3c_req_wstrb[i] ? 8'hFF : 8'h00;
     end
@@ -165,7 +175,7 @@ module axi_adapter
 
     s_cpuif_req = i3c_req_dv & ~i3c_req_hld_ext;
     s_cpuif_req_is_wr = i3c_req_write;
-    s_cpuif_addr = i3c_req_addr[I3CCSR_MIN_ADDR_WIDTH-1:0];
+    s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
     s_cpuif_wr_data = i3c_req_wdata;
     i3c_req_err = s_cpuif_rd_err | s_cpuif_wr_err;
     i3c_req_rdata = s_cpuif_rd_data;

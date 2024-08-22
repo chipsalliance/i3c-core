@@ -11,13 +11,13 @@ module flow_standby_i2c
 
     // I2C controller side
     input logic acq_fifo_wvalid_i,
-    input logic [ACQ_FIFO_WIDTH-1:0] acq_fifo_wdata_i,
+    input logic [AcqFifoWidth-1:0] acq_fifo_wdata_i,
     output logic [$clog2(AcqFifoDepth)-1:0] acq_fifo_depth_o,
     input logic acq_fifo_wready_i,
 
     output logic tx_fifo_rvalid_o,
     input logic tx_fifo_rready_i,
-    output logic [TX_FIFO_WIDTH-1:0] tx_fifo_rdata_o,
+    output logic [TxFifoWidth-1:0] tx_fifo_rdata_o,
 
     // TTI
     // TODO: refactor fifo to queue
@@ -74,42 +74,42 @@ module flow_standby_i2c
   // FSM STATE
   state_t state_d, state_q;
   // Buffer for holding elements returned by I2C target FSM
-  logic             [ACQ_FIFO_WIDTH-1:0] fifo_buf                [AcqFifoDepth];
+  logic             [AcqFifoWidth-1:0] fifo_buf                [AcqFifoDepth];
   // Are we currently mid-transfer?
-  logic                                  transfer_active;
+  logic                                transfer_active;
   // Number of data bytes held in `fifo_buf`
-  logic             [               1:0] byte_count;
+  logic             [             1:0] byte_count;
   // Total number of bytes processed in transaction
-  logic             [              15:0] transaction_byte_count;
+  logic             [            15:0] transaction_byte_count;
   // Read transaction length
-  logic             [              15:0] read_transaction_length;
+  logic             [            15:0] read_transaction_length;
 
   // Input combo
 
   // Identifier of the type of the pending I2C target flow message
-  i2c_acq_byte_id_e                      acq_fifo_wdata_byte_id;
+  i2c_acq_byte_id_e                    acq_fifo_wdata_byte_id;
 
   // Control signals for internal register FF inputs
-  logic                                  push_byte;
-  logic                                  reset_byte_count;
-  logic                                  activate_transfer;
-  logic                                  deactivate_transfer;
-  logic                                  start_detected;
-  logic                                  stop_detected;
-  logic                                  data_detected;
-  logic                                  nack_detected;
-  logic                                  restart_detected;
-  logic                                  is_start_read;
-  logic                                  xfer_read;
-  logic                                  pop_command_from_tti;
-  logic                                  pop_data_from_tti;
+  logic                                push_byte;
+  logic                                reset_byte_count;
+  logic                                activate_transfer;
+  logic                                deactivate_transfer;
+  logic                                start_detected;
+  logic                                stop_detected;
+  logic                                data_detected;
+  logic                                nack_detected;
+  logic                                restart_detected;
+  logic                                is_start_read;
+  logic                                xfer_read;
+  logic                                pop_command_from_tti;
+  logic                                pop_data_from_tti;
 
   assign tti_rx_fifo_wdata_o = {
     fifo_buf[3][7:0], fifo_buf[2][7:0], fifo_buf[1][7:0], fifo_buf[0][7:0]
   };
   assign byte_count = transaction_byte_count[1:0];
 
-  assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[ACQ_FIFO_WIDTH-1:8]);
+  assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
   assign start_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStart);
   assign stop_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStop);
   assign data_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqData);

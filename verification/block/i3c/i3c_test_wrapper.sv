@@ -3,22 +3,22 @@
 module i3c_test_wrapper
   import i3c_pkg::*;
 #(
-    parameter int unsigned AHB_DATA_WIDTH = `AHB_DATA_WIDTH,
-    parameter int unsigned AHB_ADDR_WIDTH = `AHB_ADDR_WIDTH
+    parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
+    parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH
 ) (
     input hclk,  // clock
     input hreset_n,  // active low reset
 
     // AHB-Lite interface
-    input logic [AHB_ADDR_WIDTH-1:0] haddr,
+    input logic [AhbAddrWidth-1:0] haddr,
     input logic [2:0] hburst,
     input logic [3:0] hprot,
     input logic [2:0] hsize,
     input logic [1:0] htrans,
-    input logic [AHB_DATA_WIDTH-1:0] hwdata,
-    input logic [AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input logic [AhbDataWidth-1:0] hwdata,
+    input logic [AhbDataWidth/8-1:0] hwstrb,
     input logic hwrite,
-    output logic [AHB_DATA_WIDTH-1:0] hrdata,
+    output logic [AhbDataWidth-1:0] hrdata,
     output logic hreadyout,
     output logic hresp,
     input logic hsel,
@@ -39,8 +39,8 @@ module i3c_test_wrapper
 );
 
   i3c_wrapper #(
-      .AHB_DATA_WIDTH,
-      .AHB_ADDR_WIDTH
+      .AhbDataWidth,
+      .AhbAddrWidth
   ) i3c (
       .clk_i (hclk),
       .rst_ni(hreset_n),

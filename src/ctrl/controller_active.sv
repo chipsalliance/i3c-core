@@ -97,7 +97,7 @@ module controller_active
   logic unhandled_unexp_nak;
   logic unhandled_nak_timeout;
   logic rx_fifo_wvalid;
-  logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata;
+  logic [RxFifoWidth-1:0] rx_fifo_wdata;
 
   // TODO: Connect I2C Controller SDA/SCL to I3C Flow FSM
 

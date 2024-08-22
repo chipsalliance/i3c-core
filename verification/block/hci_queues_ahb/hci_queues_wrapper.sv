@@ -149,8 +149,8 @@ module hci_queues_wrapper
   logic s_cpuif_wr_err;
 
   ahb_if #(
-      .AHB_DATA_WIDTH(`AHB_DATA_WIDTH),
-      .AHB_ADDR_WIDTH(`AHB_ADDR_WIDTH)
+      .AhbDataWidth(`AHB_DATA_WIDTH),
+      .AhbAddrWidth(`AHB_ADDR_WIDTH)
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),

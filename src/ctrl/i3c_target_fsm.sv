@@ -67,14 +67,14 @@ module i3c_target_fsm
     output logic target_transmitting_o,  // Target is transmitting SDA (disambiguates high sda_o)
 
     // TX FIFO used for Target Read
-    input                            tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
-    output logic                     tx_fifo_rready_o,  // pop entry from tx_fifo
-    input        [TX_FIFO_WIDTH-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
+    input                          tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
+    output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
+    input        [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
 
     // RX FIFO used for Target Write
-    output logic                     rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
-    output logic [RX_FIFO_WIDTH-1:0] rx_fifo_wdata_o,   // data to write to rx_fifo from target
-    input  logic                     rx_fifo_wready_i,
+    output logic                   rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
+    output logic [RxFifoWidth-1:0] rx_fifo_wdata_o,   // data to write to rx_fifo from target
+    input  logic                   rx_fifo_wready_i,
 
     output logic [ 1:0] transfer_type_o,
     // Timings
@@ -333,7 +333,7 @@ module i3c_target_fsm
   end
 
   // Reverse the bit order since data should be sent out MSB first
-  logic [TX_FIFO_WIDTH-1:0] tx_fifo_rdata;
+  logic [TxFifoWidth-1:0] tx_fifo_rdata;
   assign tx_fifo_rdata = {<<1{tx_fifo_rdata_i}};
 
   // The usage of target_idle_o directly confuses xcelium and leads the
@@ -373,7 +373,7 @@ module i3c_target_fsm
     target_transmitting_o = 1'b0;
     tx_fifo_rready_o = 1'b0;
     rx_fifo_wvalid_o = 1'b0;
-    rx_fifo_wdata_o = ACQ_FIFO_WIDTH'(0);
+    rx_fifo_wdata_o = AcqFifoWidth'(0);
     event_cmd_complete_o = 1'b0;
     rw_bit = rw_bit_q;
     expect_stop = 1'b0;
@@ -555,7 +555,7 @@ module i3c_target_fsm
         target_transmitting_o = 1'b0;
         tx_fifo_rready_o = 1'b0;
         rx_fifo_wvalid_o = 1'b0;
-        rx_fifo_wdata_o = ACQ_FIFO_WIDTH'(0);
+        rx_fifo_wdata_o = AcqFifoWidth'(0);
         event_cmd_complete_o = 1'b0;
         xact_for_us_d = 1'b0;
         nack_transaction_d = 1'b0;

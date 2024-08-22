@@ -70,11 +70,11 @@ module controller_standby_i2c
   logic enable;
   assign enable = core_config.i2c_standby_en;
 
-  logic [TX_FIFO_WIDTH-1:0] tx_fifo_data_int;
+  logic [TxFifoWidth-1:0] tx_fifo_data_int;
   logic tx_fifo_valid_int;
   logic tx_fifo_ready_int;
 
-  logic [ACQ_FIFO_WIDTH-1:0] acq_fifo_data_int;
+  logic [AcqFifoWidth-1:0] acq_fifo_data_int;
   logic acq_fifo_depth_int;
   logic acq_fifo_ready_int;
   logic acq_fifo_valid_int;
