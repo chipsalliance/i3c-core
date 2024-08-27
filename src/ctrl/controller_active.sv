@@ -8,11 +8,13 @@ module controller_active
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
     parameter int unsigned HciTxDataWidth   = 32,
+    parameter int unsigned HciIbiDataWidth  = 32,
 
     parameter int unsigned HciRespThldWidth = 8,
     parameter int unsigned HciCmdThldWidth  = 8,
     parameter int unsigned HciRxThldWidth   = 3,
-    parameter int unsigned HciTxThldWidth   = 3
+    parameter int unsigned HciTxThldWidth   = 3,
+    parameter int unsigned HciIbiThldWidth  = 8
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -62,6 +64,15 @@ module controller_active
     output logic resp_queue_wvalid_o,
     input logic resp_queue_wready_i,
     output logic [HciRespDataWidth-1:0] resp_queue_wdata_o,
+
+    // In-band Interrupt queue
+    input logic ibi_queue_full_i,
+    input logic [HciIbiThldWidth-1:0] ibi_queue_thld_i,
+    input logic ibi_queue_above_thld_i,
+    input logic ibi_queue_empty_i,
+    output logic ibi_queue_wvalid_o,
+    input logic ibi_queue_wready_i,
+    output logic [HciIbiDataWidth-1:0] ibi_queue_wdata_o,
 
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,
@@ -136,6 +147,13 @@ module controller_active
       .resp_queue_wvalid_o,
       .resp_queue_wready_i,
       .resp_queue_wdata_o,
+      .ibi_queue_full_i,
+      .ibi_queue_thld_i,
+      .ibi_queue_above_thld_i,
+      .ibi_queue_empty_i,
+      .ibi_queue_wvalid_o,
+      .ibi_queue_wready_i,
+      .ibi_queue_wdata_o,
       .dat_read_valid_hw_o,
       .dat_index_hw_o,
       .dat_rdata_hw_i,

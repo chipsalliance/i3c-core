@@ -9,7 +9,7 @@ module i3c_wrapper #(
     parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
     parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
     parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
-    parameter int unsigned AxiIdWidth   = `AXI_ID_WIDTH,
+    parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
 `endif
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
@@ -128,8 +128,8 @@ module i3c_wrapper #(
       `REPORT_INCOMPATIBLE_PARAM("AHB data width", AhbDataWidth, `AHB_DATA_WIDTH)
     end
 `elsif I3C_USE_AXI
-    if (AxiAddrWidth != ``AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AxiAddrWidth, ``AXI_ADDR_WIDTH)
+    if (AxiAddrWidth != `AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AxiAddrWidth, `AXI_ADDR_WIDTH)
     end
     if (AxiDataWidth != `AXI_DATA_WIDTH) begin : clptra_axi_data_w_check
       `REPORT_INCOMPATIBLE_PARAM("AXI data width", AxiDataWidth, `AXI_DATA_WIDTH)

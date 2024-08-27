@@ -27,44 +27,44 @@ module controller_standby_i2c
     // Target Transaction Interface
 
     // TTI: RX Descriptor
-    input logic tti_rx_desc_queue_full_i,
-    input logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_i,
-    input logic tti_rx_desc_queue_ready_thld_trig_i,
-    input logic tti_rx_desc_queue_empty_i,
-    output logic tti_rx_desc_queue_wvalid_o,
-    input logic tti_rx_desc_queue_wready_i,
-    output logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata_o,
+    input logic rx_desc_queue_full_i,
+    input logic [TtiRxDescThldWidth-1:0] rx_desc_queue_ready_thld_i,
+    input logic rx_desc_queue_ready_thld_trig_i,
+    input logic rx_desc_queue_empty_i,
+    output logic rx_desc_queue_wvalid_o,
+    input logic rx_desc_queue_wready_i,
+    output logic [TtiRxDescDataWidth-1:0] rx_desc_queue_wdata_o,
 
     // TTI: TX Descriptor
-    input logic tti_tx_desc_queue_full_i,
-    input logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_i,
-    input logic tti_tx_desc_queue_ready_thld_trig_i,
-    input logic tti_tx_desc_queue_empty_i,
-    input logic tti_tx_desc_queue_rvalid_i,
-    output logic tti_tx_desc_queue_rready_o,
-    input logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata_i,
+    input logic tx_desc_queue_full_i,
+    input logic [TtiTxDescThldWidth-1:0] tx_desc_queue_ready_thld_i,
+    input logic tx_desc_queue_ready_thld_trig_i,
+    input logic tx_desc_queue_empty_i,
+    input logic tx_desc_queue_rvalid_i,
+    output logic tx_desc_queue_rready_o,
+    input logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
 
     // TTI: RX Data
-    input logic tti_rx_queue_full_i,
-    input logic [TtiRxThldWidth-1:0] tti_rx_queue_start_thld_i,
-    input logic tti_rx_queue_start_thld_trig_i,
-    input logic [TtiRxThldWidth-1:0] tti_rx_queue_ready_thld_i,
-    input logic tti_rx_queue_ready_thld_trig_i,
-    input logic tti_rx_queue_empty_i,
-    output logic tti_rx_queue_wvalid_o,
-    input logic tti_rx_queue_wready_i,
-    output logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_o,
+    input logic rx_queue_full_i,
+    input logic [TtiRxThldWidth-1:0] rx_queue_start_thld_i,
+    input logic rx_queue_start_thld_trig_i,
+    input logic [TtiRxThldWidth-1:0] rx_queue_ready_thld_i,
+    input logic rx_queue_ready_thld_trig_i,
+    input logic rx_queue_empty_i,
+    output logic rx_queue_wvalid_o,
+    input logic rx_queue_wready_i,
+    output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
 
     // TTI: TX Data
-    input logic tti_tx_queue_full_i,
-    input logic [TtiTxThldWidth-1:0] tti_tx_queue_start_thld_i,
-    input logic tti_tx_queue_start_thld_trig_i,
-    input logic [TtiTxThldWidth-1:0] tti_tx_queue_ready_thld_i,
-    input logic tti_tx_queue_ready_thld_trig_i,
-    input logic tti_tx_queue_empty_i,
-    input logic tti_tx_queue_rvalid_i,
-    output logic tti_tx_queue_rready_o,
-    input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i
+    input logic tx_queue_full_i,
+    input logic [TtiTxThldWidth-1:0] tx_queue_start_thld_i,
+    input logic tx_queue_start_thld_trig_i,
+    input logic [TtiTxThldWidth-1:0] tx_queue_ready_thld_i,
+    input logic tx_queue_ready_thld_trig_i,
+    input logic tx_queue_empty_i,
+    input logic tx_queue_rvalid_i,
+    output logic tx_queue_rready_o,
+    input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i
 );
 
   logic enable;
@@ -97,21 +97,21 @@ module controller_standby_i2c
       .acq_fifo_depth_o (acq_fifo_depth_int),
 
       // TTI FIFOs
-      .tti_cmd_fifo_rdata_i (tti_tx_desc_queue_rdata_i),
-      .tti_cmd_fifo_rvalid_i(tti_tx_desc_queue_rvalid_i),
-      .tti_cmd_fifo_rready_o(tti_tx_desc_queue_rready_o),
+      .cmd_fifo_rdata_i (tx_desc_queue_rdata_i),
+      .cmd_fifo_rvalid_i(tx_desc_queue_rvalid_i),
+      .cmd_fifo_rready_o(tx_desc_queue_rready_o),
 
-      .tti_response_fifo_wdata_o (tti_rx_desc_queue_wdata_o),
-      .tti_response_fifo_wvalid_o(tti_rx_desc_queue_wvalid_o),
-      .tti_response_fifo_wready_i(tti_rx_desc_queue_wready_i),
+      .response_fifo_wdata_o (rx_desc_queue_wdata_o),
+      .response_fifo_wvalid_o(rx_desc_queue_wvalid_o),
+      .response_fifo_wready_i(rx_desc_queue_wready_i),
 
-      .tti_tx_fifo_rdata_i (tti_tx_queue_rdata_i),
-      .tti_tx_fifo_rvalid_i(tti_tx_queue_rvalid_i),
-      .tti_tx_fifo_rready_o(tti_tx_queue_rready_o),
+      .tx_fifo_rdata_i (tx_queue_rdata_i),
+      .tx_fifo_rvalid_i(tx_queue_rvalid_i),
+      .tx_fifo_rready_o(tx_queue_rready_o),
 
-      .tti_rx_fifo_wdata_o (tti_rx_queue_wdata_o),
-      .tti_rx_fifo_wvalid_o(tti_rx_queue_wvalid_o),
-      .tti_rx_fifo_wready_i(tti_rx_queue_wready_i),
+      .rx_fifo_wdata_o (rx_queue_wdata_o),
+      .rx_fifo_wvalid_o(rx_queue_wvalid_o),
+      .rx_fifo_wready_i(rx_queue_wready_i),
 
       // Other
       .err_o(err)

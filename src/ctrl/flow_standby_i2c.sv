@@ -21,40 +21,40 @@ module flow_standby_i2c
 
     // TTI
     // TODO: refactor fifo to queue
-    //input logic [TtiCmdThldWidth-1:0] tti_cmd_fifo_thld_i,
-    //input logic tti_cmd_fifo_full_i,
-    //input logic tti_cmd_fifo_apch_thld_i,
-    //input logic tti_cmd_fifo_empty_i,
-    input i3c_tti_command_desc_t tti_cmd_fifo_rdata_i,
-    input logic tti_cmd_fifo_rvalid_i,
-    output logic tti_cmd_fifo_rready_o,
+    //input logic [TtiCmdThldWidth-1:0] cmd_fifo_thld_i,
+    //input logic cmd_fifo_full_i,
+    //input logic cmd_fifo_apch_thld_i,
+    //input logic cmd_fifo_empty_i,
+    input i3c_tti_command_desc_t cmd_fifo_rdata_i,
+    input logic cmd_fifo_rvalid_i,
+    output logic cmd_fifo_rready_o,
 
     // FIFO
-    //input logic [TtiCmdThldWidth-1:0] tti_response_fifo_thld_i,
-    //input logic tti_response_fifo_full_i,
-    //input logic tti_response_fifo_apch_thld_i,
-    //input logic tti_response_fifo_empty_i,
-    output i3c_tti_response_desc_t tti_response_fifo_wdata_o,
-    output logic tti_response_fifo_wvalid_o,
-    input logic tti_response_fifo_wready_i,
+    //input logic [TtiCmdThldWidth-1:0] response_fifo_thld_i,
+    //input logic response_fifo_full_i,
+    //input logic response_fifo_apch_thld_i,
+    //input logic response_fifo_empty_i,
+    output i3c_response_desc_t response_fifo_wdata_o,
+    output logic response_fifo_wvalid_o,
+    input logic response_fifo_wready_i,
 
     // TX FIFO
-    //input logic [TtiTxThldWidth-1:0] tti_tx_fifo_thld_i,
-    //input logic tti_tx_fifo_full_i,
-    //input logic tti_tx_fifo_apch_thld_i,
-    //input logic tti_tx_fifo_empty_i,
-    input logic [31:0] tti_tx_fifo_rdata_i,
-    input logic tti_tx_fifo_rvalid_i,
-    output logic tti_tx_fifo_rready_o,
+    //input logic [TtiTxThldWidth-1:0] tx_fifo_thld_i,
+    //input logic tx_fifo_full_i,
+    //input logic tx_fifo_apch_thld_i,
+    //input logic tx_fifo_empty_i,
+    input logic [31:0] tx_fifo_rdata_i,
+    input logic tx_fifo_rvalid_i,
+    output logic tx_fifo_rready_o,
 
     // RX FIFO
     //input logic [TtiRxThldWidth-1:0] resp_fifo_thld_i,
     //input logic resp_fifo_full_i,
     //input logic resp_fifo_apch_thld_i,
     //input logic resp_fifo_empty_i,
-    output logic [31:0] tti_rx_fifo_wdata_o,
-    output logic tti_rx_fifo_wvalid_o,
-    input logic tti_rx_fifo_wready_i,
+    output logic [31:0] rx_fifo_wdata_o,
+    output logic rx_fifo_wvalid_o,
+    input logic rx_fifo_wready_i,
 
     output logic err_o
 );
@@ -104,9 +104,7 @@ module flow_standby_i2c
   logic                                pop_command_from_tti;
   logic                                pop_data_from_tti;
 
-  assign tti_rx_fifo_wdata_o = {
-    fifo_buf[3][7:0], fifo_buf[2][7:0], fifo_buf[1][7:0], fifo_buf[0][7:0]
-  };
+  assign rx_fifo_wdata_o = {fifo_buf[3][7:0], fifo_buf[2][7:0], fifo_buf[1][7:0], fifo_buf[0][7:0]};
   assign byte_count = transaction_byte_count[1:0];
 
   assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
@@ -144,10 +142,10 @@ module flow_standby_i2c
         // Read transfer
         if (pop_data_from_tti) begin
           // TODO(verilator) fails to consftify loop variable for AstSelExtract
-          fifo_buf[0] <= {AcqData, tti_tx_fifo_rdata_i[7:0]};
-          fifo_buf[1] <= {AcqData, tti_tx_fifo_rdata_i[15:8]};
-          fifo_buf[2] <= {AcqData, tti_tx_fifo_rdata_i[23:16]};
-          fifo_buf[3] <= {AcqData, tti_tx_fifo_rdata_i[31:24]};
+          fifo_buf[0] <= {AcqData, tx_fifo_rdata_i[7:0]};
+          fifo_buf[1] <= {AcqData, tx_fifo_rdata_i[15:8]};
+          fifo_buf[2] <= {AcqData, tx_fifo_rdata_i[23:16]};
+          fifo_buf[3] <= {AcqData, tx_fifo_rdata_i[31:24]};
         end
       end
     end
@@ -173,15 +171,15 @@ module flow_standby_i2c
   end : update_transfer_active
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : update_resp_data_length
-    if (!rst_ni) tti_response_fifo_wdata_o.data_length <= 0;
-    else if (deactivate_transfer) tti_response_fifo_wdata_o.data_length <= transaction_byte_count;
+    if (!rst_ni) response_fifo_wdata_o.data_length <= 0;
+    else if (deactivate_transfer) response_fifo_wdata_o.data_length <= transaction_byte_count;
   end : update_resp_data_length
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : get_command_from_tti
     if (!rst_ni) begin
       read_transaction_length <= 0;
     end else begin
-      if (pop_command_from_tti) read_transaction_length <= tti_cmd_fifo_rdata_i.data_length;
+      if (pop_command_from_tti) read_transaction_length <= cmd_fifo_rdata_i.data_length;
     end
   end : get_command_from_tti
 
@@ -189,15 +187,15 @@ module flow_standby_i2c
 
   always_comb begin : state_outputs
     err_o = 0;
-    tti_rx_fifo_wvalid_o = 0;
+    rx_fifo_wvalid_o = 0;
     push_byte = 0;
     reset_byte_count = 0;
     activate_transfer = 0;
     deactivate_transfer = 0;
-    tti_response_fifo_wvalid_o = 0;
+    response_fifo_wvalid_o = 0;
     xfer_read = 0;
-    tti_cmd_fifo_rready_o = 0;
-    tti_tx_fifo_rready_o = 0;
+    cmd_fifo_rready_o = 0;
+    tx_fifo_rready_o = 0;
     tx_fifo_rvalid_o = 0;
     pop_command_from_tti = 0;
     pop_data_from_tti = 0;
@@ -213,21 +211,21 @@ module flow_standby_i2c
         err_o = 1;
       end
       PushDWordToTTIQueue: begin
-        tti_rx_fifo_wvalid_o = 1;
+        rx_fifo_wvalid_o = 1;
       end
       PushResponseToTTIQueue: begin
-        tti_response_fifo_wvalid_o = 1;
+        response_fifo_wvalid_o = 1;
       end
       PopCommandFromTTIQueue: begin
-        tti_cmd_fifo_rready_o = 1;
-        tti_tx_fifo_rready_o = 1;
-        pop_command_from_tti = tti_cmd_fifo_rvalid_i;
-        pop_data_from_tti = tti_tx_fifo_rvalid_i;
+        cmd_fifo_rready_o = 1;
+        tx_fifo_rready_o = 1;
+        pop_command_from_tti = cmd_fifo_rvalid_i;
+        pop_data_from_tti = tx_fifo_rvalid_i;
         xfer_read = 1;
       end
       PopDWordFromTTIQueue: begin
-        tti_tx_fifo_rready_o = 1;
-        pop_data_from_tti = tti_tx_fifo_rvalid_i;
+        tx_fifo_rready_o = 1;
+        pop_data_from_tti = tx_fifo_rvalid_i;
         xfer_read = 1;
       end
       SendByte: begin
@@ -267,7 +265,7 @@ module flow_standby_i2c
         else if (acq_fifo_wvalid_i) state_d = ReportError;
       end
       PushDWordToTTIQueue:
-      if (tti_rx_fifo_wready_i) state_d = transfer_active ? ReceiveByte : PushResponseToTTIQueue;
+      if (rx_fifo_wready_i) state_d = transfer_active ? ReceiveByte : PushResponseToTTIQueue;
       else
       // We can't wait any longer if there's a new byte, because we might be full
       // TODO: We need to handle stop/restart that was received in `ReceiveByte`,
@@ -277,21 +275,21 @@ module flow_standby_i2c
       else state_d = acq_fifo_wvalid_i ? ReportError : PushDWordToTTIQueue;
       PushResponseToTTIQueue: begin
         state_d = PushResponseToTTIQueue;
-        if (tti_response_fifo_wready_i) state_d = AwaitStart;
+        if (response_fifo_wready_i) state_d = AwaitStart;
         // We can't wait any longer if there's a new byte, because we might be full
         else if (acq_fifo_wvalid_i) state_d = ReportError;
       end
       PopCommandFromTTIQueue: begin
         state_d = PopCommandFromTTIQueue;
-        if (tti_cmd_fifo_rvalid_i) begin
-          if (tti_cmd_fifo_rdata_i.data_length == 0) state_d = ReportError;
-          else state_d = tti_tx_fifo_rvalid_i ? SendByte : PopDWordFromTTIQueue;
+        if (cmd_fifo_rvalid_i) begin
+          if (cmd_fifo_rdata_i.data_length == 0) state_d = ReportError;
+          else state_d = tx_fifo_rvalid_i ? SendByte : PopDWordFromTTIQueue;
         end
         if (nack_detected) state_d = ReportError;
       end
       PopDWordFromTTIQueue: begin
         state_d = PopDWordFromTTIQueue;
-        if (tti_tx_fifo_rvalid_i) state_d = SendByte;
+        if (tx_fifo_rvalid_i) state_d = SendByte;
         if (nack_detected) state_d = ReportError;
       end
       SendByte: begin
