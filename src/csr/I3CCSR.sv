@@ -173,6 +173,7 @@ module I3CCSR (
                 logic EXTCAP_HEADER;
                 logic CONTROL;
                 logic STATUS;
+                logic RESET_CONTROL;
                 logic INTERRUPT_STATUS;
                 logic INTERRUPT_ENABLE;
                 logic INTERRUPT_FORCE;
@@ -180,8 +181,11 @@ module I3CCSR (
                 logic RX_DATA_PORT;
                 logic TX_DESC_QUEUE_PORT;
                 logic TX_DATA_PORT;
+                logic IBI_PORT;
                 logic QUEUE_SIZE;
-                logic QUEUE_THRESHOLD_CONTROL;
+                logic IBI_QUEUE_SIZE;
+                logic QUEUE_THLD_CTRL;
+                logic DATA_BUFFER_THLD_CTRL;
             } TTI;
             struct packed{
                 logic EXTCAP_HEADER;
@@ -313,19 +317,24 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1c0);
         decoded_reg_strb.I3C_EC.TTI.CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1c4);
         decoded_reg_strb.I3C_EC.TTI.STATUS = cpuif_req_masked & (cpuif_addr == 12'h1c8);
-        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1cc);
-        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1d0);
-        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1d4);
-        decoded_reg_strb.I3C_EC.TTI.RX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1d8);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1d8) & !cpuif_req_is_wr;
-        decoded_reg_strb.I3C_EC.TTI.RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1dc);
+        decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1cc);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1d0);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1d4);
+        decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1d8);
+        decoded_reg_strb.I3C_EC.TTI.RX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1dc);
         is_external |= cpuif_req_masked & (cpuif_addr == 12'h1dc) & !cpuif_req_is_wr;
-        decoded_reg_strb.I3C_EC.TTI.TX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e0);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e0) & cpuif_req_is_wr;
-        decoded_reg_strb.I3C_EC.TTI.TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e4);
+        decoded_reg_strb.I3C_EC.TTI.RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e0);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e0) & !cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.TX_DESC_QUEUE_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e4);
         is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e4) & cpuif_req_is_wr;
-        decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1e8);
-        decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1ec);
+        decoded_reg_strb.I3C_EC.TTI.TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h1e8);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1e8) & cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.IBI_PORT = cpuif_req_masked & (cpuif_addr == 12'h1ec);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h1ec) & cpuif_req_is_wr;
+        decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1f0);
+        decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_SIZE = cpuif_req_masked & (cpuif_addr == 12'h1f4);
+        decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h1f8);
+        decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h1fc);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h200);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h204);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h208);
@@ -1255,27 +1264,121 @@ module I3CCSR (
                 } STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic next;
                         logic load_next;
-                    } PLACEHOLDER;
+                    } SOFT_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DATA_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DATA_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } IBI_QUEUE_RST;
+                } RESET_CONTROL;
+                struct packed{
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_TIMEOUT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_TIMEOUT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DATA_THLD_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DATA_THLD_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_THLD_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_THLD_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } IBI_THLD_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TRANSFER_ABORT_STAT;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TRANSFER_ERR_STAT;
                 } INTERRUPT_STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic next;
                         logic load_next;
-                    } PLACEHOLDER;
+                    } TX_DATA_THLD_STAT_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DATA_THLD_STAT_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_THLD_STAT_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_THLD_STAT_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } IBI_THLD_STAT_EN;
                 } INTERRUPT_ENABLE;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic next;
                         logic load_next;
-                    } PLACEHOLDER;
+                    } TX_DATA_THLD_FORCE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DATA_THLD_FORCE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_THLD_FORCE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } RX_DESC_THLD_FORCE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } IBI_THLD_FORCE;
                 } INTERRUPT_FORCE;
                 struct packed{
-                    struct packed{
-                        logic [7:0] next;
-                        logic load_next;
-                    } RX_DESC_THLD;
                     struct packed{
                         logic [7:0] next;
                         logic load_next;
@@ -1283,12 +1386,30 @@ module I3CCSR (
                     struct packed{
                         logic [7:0] next;
                         logic load_next;
-                    } RX_DATA_THLD;
+                    } RX_DESC_THLD;
                     struct packed{
                         logic [7:0] next;
                         logic load_next;
+                    } IBI_THLD;
+                } QUEUE_THLD_CTRL;
+                struct packed{
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
                     } TX_DATA_THLD;
-                } QUEUE_THRESHOLD_CONTROL;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } RX_DATA_THLD;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } TX_START_THLD;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } RX_START_THLD;
+                } DATA_BUFFER_THLD_CTRL;
             } TTI;
             struct packed{
                 struct packed{
@@ -2134,33 +2255,118 @@ module I3CCSR (
                 } STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
+                        logic value;
+                    } SOFT_RST;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_RST;
+                    struct packed{
+                        logic value;
+                    } RX_DESC_RST;
+                    struct packed{
+                        logic value;
+                    } TX_DATA_RST;
+                    struct packed{
+                        logic value;
+                    } RX_DATA_RST;
+                    struct packed{
+                        logic value;
+                    } IBI_QUEUE_RST;
+                } RESET_CONTROL;
+                struct packed{
+                    struct packed{
+                        logic value;
+                    } RX_DESC_STAT;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_STAT;
+                    struct packed{
+                        logic value;
+                    } RX_DESC_TIMEOUT;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_TIMEOUT;
+                    struct packed{
+                        logic value;
+                    } TX_DATA_THLD_STAT;
+                    struct packed{
+                        logic value;
+                    } RX_DATA_THLD_STAT;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_THLD_STAT;
+                    struct packed{
+                        logic value;
+                    } RX_DESC_THLD_STAT;
+                    struct packed{
+                        logic value;
+                    } IBI_THLD_STAT;
+                    struct packed{
+                        logic value;
+                    } TRANSFER_ABORT_STAT;
+                    struct packed{
+                        logic value;
+                    } TRANSFER_ERR_STAT;
                 } INTERRUPT_STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
+                        logic value;
+                    } TX_DATA_THLD_STAT_EN;
+                    struct packed{
+                        logic value;
+                    } RX_DATA_THLD_STAT_EN;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_THLD_STAT_EN;
+                    struct packed{
+                        logic value;
+                    } RX_DESC_THLD_STAT_EN;
+                    struct packed{
+                        logic value;
+                    } IBI_THLD_STAT_EN;
                 } INTERRUPT_ENABLE;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
+                        logic value;
+                    } TX_DATA_THLD_FORCE;
+                    struct packed{
+                        logic value;
+                    } RX_DATA_THLD_FORCE;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_THLD_FORCE;
+                    struct packed{
+                        logic value;
+                    } RX_DESC_THLD_FORCE;
+                    struct packed{
+                        logic value;
+                    } IBI_THLD_FORCE;
                 } INTERRUPT_FORCE;
                 struct packed{
-                    struct packed{
-                        logic [7:0] value;
-                    } RX_DESC_THLD;
                     struct packed{
                         logic [7:0] value;
                     } TX_DESC_THLD;
                     struct packed{
                         logic [7:0] value;
-                    } RX_DATA_THLD;
+                    } RX_DESC_THLD;
                     struct packed{
                         logic [7:0] value;
+                    } IBI_THLD;
+                } QUEUE_THLD_CTRL;
+                struct packed{
+                    struct packed{
+                        logic [2:0] value;
                     } TX_DATA_THLD;
-                } QUEUE_THRESHOLD_CONTROL;
+                    struct packed{
+                        logic [2:0] value;
+                    } RX_DATA_THLD;
+                    struct packed{
+                        logic [2:0] value;
+                    } TX_START_THLD;
+                    struct packed{
+                        logic [2:0] value;
+                    } RX_START_THLD;
+                } DATA_BUFFER_THLD_CTRL;
             } TTI;
             struct packed{
                 struct packed{
@@ -6530,78 +6736,639 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.SOFT_RST
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value & ~(decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value & ~(decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value & ~(decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value & ~(decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value & ~(decoded_wr_data[25:25] & decoded_wr_biten[25:25]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value & ~(decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end else begin // HW Write
-            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next;
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.next;
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
+            load_next_c = '1;
+        end else begin // HW Write
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value;
 
     assign hwif_out.I3C_EC.TTI.RX_DESC_QUEUE_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.RX_DESC_QUEUE_PORT : '0;
     assign hwif_out.I3C_EC.TTI.RX_DESC_QUEUE_PORT.req_is_wr = decoded_req_is_wr;
@@ -6618,98 +7385,175 @@ module I3CCSR (
     assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.req_is_wr = decoded_req_is_wr;
     assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.wr_data = decoded_wr_data;
     assign hwif_out.I3C_EC.TTI.TX_DATA_PORT.wr_biten = decoded_wr_biten;
-    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD
+
+    assign hwif_out.I3C_EC.TTI.IBI_PORT.req = decoded_req_is_wr ? decoded_reg_strb.I3C_EC.TTI.IBI_PORT : '0;
+    assign hwif_out.I3C_EC.TTI.IBI_PORT.req_is_wr = decoded_req_is_wr;
+    assign hwif_out.I3C_EC.TTI.IBI_PORT.wr_data = decoded_wr_data;
+    assign hwif_out.I3C_EC.TTI.IBI_PORT.wr_biten = decoded_wr_biten;
+    assign hwif_out.I3C_EC.TTI.QUEUE_SIZE.RX_DESC_BUFFER_SIZE.value = 8'h5;
+    assign hwif_out.I3C_EC.TTI.QUEUE_SIZE.TX_DESC_BUFFER_SIZE.value = 8'h5;
+    assign hwif_out.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value = 8'h5;
+    assign hwif_out.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value = 8'h5;
+    assign hwif_out.I3C_EC.TTI.IBI_QUEUE_SIZE.IBI_QUEUE_SIZE.value = 8'h5;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next;
+        end else if(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next = next_c;
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value <= 8'h1;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value;
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr;
-    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value;
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next;
+        end else if(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next = next_c;
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value <= 8'h1;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value;
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr;
-    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value;
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr;
+    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD
     always_comb begin
         automatic logic [7:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.next = next_c;
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.next;
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value <= 8'h1;
+        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value;
-    // Field: I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value;
+    assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.swmod = decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && decoded_req_is_wr;
+    // Field: I3CCSR.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD
     always_comb begin
-        automatic logic [7:0] next_c;
+        automatic logic [2:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value;
+        next_c = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value & ~decoded_wr_biten[31:24]) | (decoded_wr_data[31:24] & decoded_wr_biten[31:24]);
+        if(decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value & ~decoded_wr_biten[2:0]) | (decoded_wr_data[2:0] & decoded_wr_biten[2:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.next = next_c;
-        field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.load_next = load_next_c;
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.next;
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value <= 3'h1;
+        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value;
+    assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value <= 3'h1;
+        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value & ~decoded_wr_biten[18:16]) | (decoded_wr_data[18:16] & decoded_wr_biten[18:16]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= 3'h1;
+        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+    // Field: I3CCSR.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value & ~decoded_wr_biten[26:24]) | (decoded_wr_data[26:24] & decoded_wr_biten[26:24]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next = next_c;
+        field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= 3'h1;
+        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
+            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
     assign hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_ID.value = 8'hc1;
     assign hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_LENGTH.value = 16'h0;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER
@@ -7284,6 +8128,7 @@ module I3CCSR (
         wr_ack |= hwif_in.PIOControl.XFER_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack;
+        wr_ack |= hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack;
         wr_ack |= hwif_in.DAT.wr_ack;
         wr_ack |= hwif_in.DCT.wr_ack;
         external_wr_ack = wr_ack;
@@ -7318,7 +8163,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [111-1:0][31:0] readback_array;
+    logic [114-1:0][31:0] readback_array;
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -7617,52 +8462,92 @@ module I3CCSR (
     assign readback_array[74][31:24] = '0;
     assign readback_array[75][31:0] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.PLACEHOLDER.value : '0;
     assign readback_array[76][31:0] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[77][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[78][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.PLACEHOLDER.value : '0;
-    assign readback_array[79][31:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.PLACEHOLDER.value : '0;
-    assign readback_array[80] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
-    assign readback_array[81] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
-    assign readback_array[82][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[82][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[82][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[82][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[83][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DESC_THLD.value : '0;
-    assign readback_array[83][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DESC_THLD.value : '0;
-    assign readback_array[83][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.RX_DATA_THLD.value : '0;
-    assign readback_array[83][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL.TX_DATA_THLD.value : '0;
-    assign readback_array[84][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
-    assign readback_array[84][23:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
-    assign readback_array[84][31:24] = '0;
-    assign readback_array[85][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
-    assign readback_array[86][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[87][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value : '0;
-    assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value : '0;
-    assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
-    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
-    assign readback_array[91][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value : '0;
-    assign readback_array[92][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value : '0;
-    assign readback_array[93][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
-    assign readback_array[94][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
-    assign readback_array[95][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value : '0;
-    assign readback_array[96][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value : '0;
-    assign readback_array[97][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value : '0;
-    assign readback_array[98][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value : '0;
-    assign readback_array[99][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value : '0;
-    assign readback_array[100][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value : '0;
-    assign readback_array[101][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value : '0;
-    assign readback_array[102][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value : '0;
-    assign readback_array[103][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value : '0;
-    assign readback_array[104][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value : '0;
-    assign readback_array[105][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value : '0;
-    assign readback_array[106][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value : '0;
-    assign readback_array[107][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
-    assign readback_array[107][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
-    assign readback_array[107][31:24] = '0;
-    assign readback_array[108][3:0] = '0;
-    assign readback_array[108][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
-    assign readback_array[108][31:6] = '0;
-    assign readback_array[109] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
-    assign readback_array[110] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
+    assign readback_array[77][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;
+    assign readback_array[77][1:1] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value : '0;
+    assign readback_array[77][2:2] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value : '0;
+    assign readback_array[77][3:3] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value : '0;
+    assign readback_array[77][4:4] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value : '0;
+    assign readback_array[77][5:5] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value : '0;
+    assign readback_array[77][31:6] = '0;
+    assign readback_array[78][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value : '0;
+    assign readback_array[78][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value : '0;
+    assign readback_array[78][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value : '0;
+    assign readback_array[78][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value : '0;
+    assign readback_array[78][7:4] = '0;
+    assign readback_array[78][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value : '0;
+    assign readback_array[78][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value : '0;
+    assign readback_array[78][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value : '0;
+    assign readback_array[78][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value : '0;
+    assign readback_array[78][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value : '0;
+    assign readback_array[78][24:13] = '0;
+    assign readback_array[78][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
+    assign readback_array[78][30:26] = '0;
+    assign readback_array[78][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value : '0;
+    assign readback_array[79][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value : '0;
+    assign readback_array[79][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value : '0;
+    assign readback_array[79][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value : '0;
+    assign readback_array[79][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value : '0;
+    assign readback_array[79][4:4] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value : '0;
+    assign readback_array[79][31:5] = '0;
+    assign readback_array[80][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value : '0;
+    assign readback_array[80][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value : '0;
+    assign readback_array[80][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value : '0;
+    assign readback_array[80][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value : '0;
+    assign readback_array[80][4:4] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value : '0;
+    assign readback_array[80][31:5] = '0;
+    assign readback_array[81] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
+    assign readback_array[82] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
+    assign readback_array[83][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[83][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[83][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[83][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[84][7:0] = (decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[84][31:8] = '0;
+    assign readback_array[85][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value : '0;
+    assign readback_array[85][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value : '0;
+    assign readback_array[85][23:16] = '0;
+    assign readback_array[85][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value : '0;
+    assign readback_array[86][2:0] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value : '0;
+    assign readback_array[86][7:3] = '0;
+    assign readback_array[86][10:8] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value : '0;
+    assign readback_array[86][15:11] = '0;
+    assign readback_array[86][18:16] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value : '0;
+    assign readback_array[86][23:19] = '0;
+    assign readback_array[86][26:24] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value : '0;
+    assign readback_array[86][31:27] = '0;
+    assign readback_array[87][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
+    assign readback_array[87][23:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h0 : '0;
+    assign readback_array[87][31:24] = '0;
+    assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
+    assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value : '0;
+    assign readback_array[91][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value : '0;
+    assign readback_array[92][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
+    assign readback_array[93][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
+    assign readback_array[94][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0.PLACEHOLDER.value : '0;
+    assign readback_array[95][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1.PLACEHOLDER.value : '0;
+    assign readback_array[96][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
+    assign readback_array[97][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
+    assign readback_array[98][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4.PLACEHOLDER.value : '0;
+    assign readback_array[99][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5.PLACEHOLDER.value : '0;
+    assign readback_array[100][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6.PLACEHOLDER.value : '0;
+    assign readback_array[101][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7.PLACEHOLDER.value : '0;
+    assign readback_array[102][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8.PLACEHOLDER.value : '0;
+    assign readback_array[103][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9.PLACEHOLDER.value : '0;
+    assign readback_array[104][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10.PLACEHOLDER.value : '0;
+    assign readback_array[105][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11.PLACEHOLDER.value : '0;
+    assign readback_array[106][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12.PLACEHOLDER.value : '0;
+    assign readback_array[107][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13.PLACEHOLDER.value : '0;
+    assign readback_array[108][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14.PLACEHOLDER.value : '0;
+    assign readback_array[109][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15.PLACEHOLDER.value : '0;
+    assign readback_array[110][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
+    assign readback_array[110][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
+    assign readback_array[110][31:24] = '0;
+    assign readback_array[111][3:0] = '0;
+    assign readback_array[111][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
+    assign readback_array[111][31:6] = '0;
+    assign readback_array[112] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
+    assign readback_array[113] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
 
     // Reduce the array
     always_comb begin
@@ -7670,7 +8555,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<111; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<114; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

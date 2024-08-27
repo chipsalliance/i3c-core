@@ -49,7 +49,7 @@ regfile PIORegs #(
         } IBI_DATA;
     } IBI_PORT @ 0xC;
     reg {
-        name = "IBI queue threshold control";
+        name = "The Queue Threshold Control register for the Command Queue, the Response Queue, and the IBI Queue";
         field {
             name = "IBI_STATUS_THLD";
             desc = "Triggers IBI_STATUS_THLD_STAT interrupt when IBI queue has N or more entries. Accepted values are 1:255";

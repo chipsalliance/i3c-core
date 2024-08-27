@@ -677,21 +677,21 @@ other values - not supported.</p>
 - Base Offset: 0x80
 - Size: 0x34
 
-|Offset|      Identifier      |             Name            |
-|------|----------------------|-----------------------------|
-| 0x00 |     COMMAND_PORT     |      Command issue port     |
-| 0x04 |     RESPONSE_PORT    |    Command response port    |
-| 0x08 |    XFER_DATA_PORT    |       Data access port      |
-| 0x0C |       IBI_PORT       |  IBI descriptor access port |
-| 0x10 |    QUEUE_THLD_CTRL   | IBI queue threshold control |
-| 0x14 | DATA_BUFFER_THLD_CTRL|RX/TX queue threshold control|
-| 0x18 |      QUEUE_SIZE      |         Queue sizes         |
-| 0x1C |    ALT_QUEUE_SIZE    |    Alternate queue sizes    |
-| 0x20 |    PIO_INTR_STATUS   |     PIO interrupt status    |
-| 0x24 |PIO_INTR_STATUS_ENABLE|              —              |
-| 0x28 |PIO_INTR_SIGNAL_ENABLE|   Interrupt Signal Enable   |
-| 0x2C |    PIO_INTR_FORCE    |  PIO force interrupt status |
-| 0x30 |      PIO_CONTROL     |         PIO control         |
+|Offset|      Identifier      |                                               Name                                              |
+|------|----------------------|-------------------------------------------------------------------------------------------------|
+| 0x00 |     COMMAND_PORT     |                                        Command issue port                                       |
+| 0x04 |     RESPONSE_PORT    |                                      Command response port                                      |
+| 0x08 |    XFER_DATA_PORT    |                                         Data access port                                        |
+| 0x0C |       IBI_PORT       |                                    IBI descriptor access port                                   |
+| 0x10 |    QUEUE_THLD_CTRL   |The Queue Threshold Control register for the Command Queue, the Response Queue, and the IBI Queue|
+| 0x14 | DATA_BUFFER_THLD_CTRL|                                  RX/TX queue threshold control                                  |
+| 0x18 |      QUEUE_SIZE      |                                           Queue sizes                                           |
+| 0x1C |    ALT_QUEUE_SIZE    |                                      Alternate queue sizes                                      |
+| 0x20 |    PIO_INTR_STATUS   |                                       PIO interrupt status                                      |
+| 0x24 |PIO_INTR_STATUS_ENABLE|                                                —                                                |
+| 0x28 |PIO_INTR_SIGNAL_ENABLE|                                     Interrupt Signal Enable                                     |
+| 0x2C |    PIO_INTR_FORCE    |                                    PIO force interrupt status                                   |
+| 0x30 |      PIO_CONTROL     |                                           PIO control                                           |
 
 ### COMMAND_PORT register
 
@@ -2074,22 +2074,26 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x1C0
 - Base Offset: 0xC0
-- Size: 0x30
+- Size: 0x40
 
-|Offset|       Identifier      |            Name            |
-|------|-----------------------|----------------------------|
-| 0x00 |     EXTCAP_HEADER     |              —             |
-| 0x04 |        CONTROL        |         TTI Control        |
-| 0x08 |         STATUS        |         TTI Status         |
-| 0x0C |    INTERRUPT_STATUS   |    TTI Interrupt Status    |
-| 0x10 |    INTERRUPT_ENABLE   |    TTI Interrupt Enable    |
-| 0x14 |    INTERRUPT_FORCE    |     TTI Interrupt Force    |
-| 0x18 |   RX_DESC_QUEUE_PORT  |TTI RX Descriptor Queue Port|
-| 0x1C |      RX_DATA_PORT     |      TTI RX Data Port      |
-| 0x20 |   TX_DESC_QUEUE_PORT  |TTI TX Descriptor Queue Port|
-| 0x24 |      TX_DATA_PORT     |      TTI TX Data Port      |
-| 0x28 |       QUEUE_SIZE      |       TTI Queue Size       |
-| 0x2C |QUEUE_THRESHOLD_CONTROL| TTI Queue Threshold Control|
+|Offset|      Identifier     |              Name             |
+|------|---------------------|-------------------------------|
+| 0x00 |    EXTCAP_HEADER    |               —               |
+| 0x04 |       CONTROL       |          TTI Control          |
+| 0x08 |        STATUS       |           TTI Status          |
+| 0x0C |    RESET_CONTROL    |    TTI Queue Reset Control    |
+| 0x10 |   INTERRUPT_STATUS  |      TTI Interrupt Status     |
+| 0x14 |   INTERRUPT_ENABLE  |      TTI Interrupt Enable     |
+| 0x18 |   INTERRUPT_FORCE   |      TTI Interrupt Force      |
+| 0x1C |  RX_DESC_QUEUE_PORT |  TTI RX Descriptor Queue Port |
+| 0x20 |     RX_DATA_PORT    |        TTI RX Data Port       |
+| 0x24 |  TX_DESC_QUEUE_PORT |  TTI TX Descriptor Queue Port |
+| 0x28 |     TX_DATA_PORT    |        TTI TX Data Port       |
+| 0x2C |       IBI_PORT      |       TTI IBI Data Port       |
+| 0x30 |      QUEUE_SIZE     |         TTI Queue Size        |
+| 0x34 |    IBI_QUEUE_SIZE   |       TTI IBI Queue Size      |
+| 0x38 |   QUEUE_THLD_CTRL   |  TTI Queue Threshold Control  |
+| 0x3C |DATA_BUFFER_THLD_CTRL|TTI IBI Queue Threshold Control|
 
 ### EXTCAP_HEADER register
 
@@ -2142,58 +2146,189 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-### INTERRUPT_STATUS register
+### RESET_CONTROL register
 
 - Absolute Address: 0x1CC
 - Base Offset: 0xC
 - Size: 0x4
 
-<p>Interrupt Status</p>
+<p>Queue Reset Control</p>
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|  Identifier |Access|Reset|     Name    |
+|----|-------------|------|-----|-------------|
+|  0 |   SOFT_RST  |  rw  | 0x0 |   SOFT_RST  |
+|  1 | TX_DESC_RST |  rw  | 0x0 | TX_DESC_RST |
+|  2 | RX_DESC_RST |  rw  | 0x0 | RX_DESC_RST |
+|  3 | TX_DATA_RST |  rw  | 0x0 | TX_DATA_RST |
+|  4 | RX_DATA_RST |  rw  | 0x0 | RX_DATA_RST |
+|  5 |IBI_QUEUE_RST|  rw  | 0x0 |IBI_QUEUE_RST|
 
-#### PLACEHOLDER field
+#### SOFT_RST field
 
+<p>Target Core Software Reset</p>
 
+#### TX_DESC_RST field
 
-### INTERRUPT_ENABLE register
+<p>TTI TX Descriptor Queue Buffer Software Reset</p>
+
+#### RX_DESC_RST field
+
+<p>TTI RX Descriptor Queue Buffer Software Reset</p>
+
+#### TX_DATA_RST field
+
+<p>TTI TX Data Queue Buffer Software Reset</p>
+
+#### RX_DATA_RST field
+
+<p>TTI RX Data Queue Buffer Software Reset</p>
+
+#### IBI_QUEUE_RST field
+
+<p>TTI IBI Queue Buffer Software Reset</p>
+
+### INTERRUPT_STATUS register
 
 - Absolute Address: 0x1D0
 - Base Offset: 0x10
 - Size: 0x4
 
-<p>Interrupt Enable</p>
+<p>Interrupt Status</p>
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|     Identifier    |  Access |Reset|        Name       |
+|----|-------------------|---------|-----|-------------------|
+|  0 |    RX_DESC_STAT   |rw, woclr| 0x0 |    RX_DESC_STAT   |
+|  1 |    TX_DESC_STAT   |rw, woclr| 0x0 |    TX_DESC_STAT   |
+|  2 |  RX_DESC_TIMEOUT  |rw, woclr| 0x0 |  RX_DESC_TIMEOUT  |
+|  3 |  TX_DESC_TIMEOUT  |rw, woclr| 0x0 |  TX_DESC_TIMEOUT  |
+|  8 | TX_DATA_THLD_STAT |    r    | 0x0 | TX_DATA_THLD_STAT |
+|  9 | RX_DATA_THLD_STAT |    r    | 0x0 | RX_DATA_THLD_STAT |
+| 10 | TX_DESC_THLD_STAT |    r    | 0x0 | TX_DESC_THLD_STAT |
+| 11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
+| 12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
+| 25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
+| 31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 
-#### PLACEHOLDER field
+#### RX_DESC_STAT field
 
+<p>There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue</p>
 
+#### TX_DESC_STAT field
 
-### INTERRUPT_FORCE register
+<p>There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p>
+
+#### RX_DESC_TIMEOUT field
+
+<p>Pending Read was NACK’ed, because the <code>RX_DESC_STAT</code> event was not handled in time</p>
+
+#### TX_DESC_TIMEOUT field
+
+<p>Pending Write was NACK’ed, because the <code>TX_DESC_STAT</code> event was not handled in time</p>
+
+#### TX_DATA_THLD_STAT field
+
+<p>TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code>TTI_TX_DATA_THLD</code></p>
+
+#### RX_DATA_THLD_STAT field
+
+<p>TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code>TTI_RX_DATA_THLD</code></p>
+
+#### TX_DESC_THLD_STAT field
+
+<p>TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code>TTI_TX_DESC_THLD</code></p>
+
+#### RX_DESC_THLD_STAT field
+
+<p>TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code>TTI_RX_DESC_THLD</code></p>
+
+#### IBI_THLD_STAT field
+
+<p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code>TTI_IBI_THLD</code></p>
+
+#### TRANSFER_ABORT_STAT field
+
+<p>Bus aborted transaction</p>
+
+#### TRANSFER_ERR_STAT field
+
+<p>Bus error occurred</p>
+
+### INTERRUPT_ENABLE register
 
 - Absolute Address: 0x1D4
 - Base Offset: 0x14
 - Size: 0x4
 
-<p>Interrupt Force</p>
+<p>Interrupt Enable</p>
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|     Identifier     |Access|Reset|        Name        |
+|----|--------------------|------|-----|--------------------|
+|  0 |TX_DATA_THLD_STAT_EN|  rw  | 0x0 |TX_DATA_THLD_STAT_EN|
+|  1 |RX_DATA_THLD_STAT_EN|  rw  | 0x0 |RX_DATA_THLD_STAT_EN|
+|  2 |TX_DESC_THLD_STAT_EN|  rw  | 0x0 |TX_DESC_THLD_STAT_EN|
+|  3 |RX_DESC_THLD_STAT_EN|  rw  | 0x0 |RX_DESC_THLD_STAT_EN|
+|  4 |  IBI_THLD_STAT_EN  |  rw  | 0x0 |  IBI_THLD_STAT_EN  |
 
-#### PLACEHOLDER field
+#### TX_DATA_THLD_STAT_EN field
 
+<p>Enables the corresponding interrupt bit <code>TTI_TX_DATA_THLD_STAT</code></p>
 
+#### RX_DATA_THLD_STAT_EN field
 
-### RX_DESC_QUEUE_PORT register
+<p>Enables the corresponding interrupt bit <code>TTI_RX_DATA_THLD_STAT</code></p>
+
+#### TX_DESC_THLD_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TTI_TX_DESC_THLD_STAT</code></p>
+
+#### RX_DESC_THLD_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TTI_RX_DESC_THLD_STAT</code></p>
+
+#### IBI_THLD_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TTI_IBI_THLD_STAT</code></p>
+
+### INTERRUPT_FORCE register
 
 - Absolute Address: 0x1D8
 - Base Offset: 0x18
+- Size: 0x4
+
+<p>Interrupt Force</p>
+
+|Bits|    Identifier    |Access|Reset|       Name       |
+|----|------------------|------|-----|------------------|
+|  0 |TX_DATA_THLD_FORCE|  rw  | 0x0 |TX_DATA_THLD_FORCE|
+|  1 |RX_DATA_THLD_FORCE|  rw  | 0x0 |RX_DATA_THLD_FORCE|
+|  2 |TX_DESC_THLD_FORCE|  rw  | 0x0 |TX_DESC_THLD_FORCE|
+|  3 |RX_DESC_THLD_FORCE|  rw  | 0x0 |RX_DESC_THLD_FORCE|
+|  4 |  IBI_THLD_FORCE  |  rw  | 0x0 |  IBI_THLD_FORCE  |
+
+#### TX_DATA_THLD_FORCE field
+
+<p>Forces the corresponding interrupt bit <code>TTI_TX_DATA_THLD_STAT</code> to be set to <code>1</code></p>
+
+#### RX_DATA_THLD_FORCE field
+
+<p>Forces the corresponding interrupt bit <code>TTI_RX_DATA_THLD_STAT</code> to be set to <code>1</code></p>
+
+#### TX_DESC_THLD_FORCE field
+
+<p>Forces the corresponding interrupt bit <code>TTI_TX_DESC_THLD_STAT</code> to be set to <code>1</code></p>
+
+#### RX_DESC_THLD_FORCE field
+
+<p>Forces the corresponding interrupt bit <code>TTI_RX_DESC_THLD_STAT</code> to be set to <code>1</code></p>
+
+#### IBI_THLD_FORCE field
+
+<p>Forces the corresponding interrupt bit <code>TTI_IBI_THLD_STAT</code> to be set to 1</p>
+
+### RX_DESC_QUEUE_PORT register
+
+- Absolute Address: 0x1DC
+- Base Offset: 0x1C
 - Size: 0x4
 
 <p>RX Descriptor Queue Port</p>
@@ -2208,8 +2343,8 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### RX_DATA_PORT register
 
-- Absolute Address: 0x1DC
-- Base Offset: 0x1C
+- Absolute Address: 0x1E0
+- Base Offset: 0x20
 - Size: 0x4
 
 <p>RX Data Port</p>
@@ -2224,8 +2359,8 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TX_DESC_QUEUE_PORT register
 
-- Absolute Address: 0x1E0
-- Base Offset: 0x20
+- Absolute Address: 0x1E4
+- Base Offset: 0x24
 - Size: 0x4
 
 <p>TX Descriptor Queue Port</p>
@@ -2240,8 +2375,8 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 ### TX_DATA_PORT register
 
-- Absolute Address: 0x1E4
-- Base Offset: 0x24
+- Absolute Address: 0x1E8
+- Base Offset: 0x28
 - Size: 0x4
 
 <p>TX Data Port</p>
@@ -2254,10 +2389,26 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 <p>TX Data</p>
 
+### IBI_PORT register
+
+- Absolute Address: 0x1EC
+- Base Offset: 0x2C
+- Size: 0x4
+
+<p>IBI Data Port</p>
+
+|Bits|Identifier|Access|Reset|  Name  |
+|----|----------|------|-----|--------|
+|31:0| IBI_DATA |   w  | 0x0 |IBI_DATA|
+
+#### IBI_DATA field
+
+<p>IBI Data</p>
+
 ### QUEUE_SIZE register
 
-- Absolute Address: 0x1E8
-- Base Offset: 0x28
+- Absolute Address: 0x1F0
+- Base Offset: 0x30
 - Size: 0x4
 
 <p>Queue Size</p>
@@ -2271,50 +2422,92 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### RX_DESC_BUFFER_SIZE field
 
-
+<p>RX Descriptor Buffer Size in DWORDs calculated as <code>2^(N+1)</code></p>
 
 #### TX_DESC_BUFFER_SIZE field
 
-
+<p>TX Descriptor Buffer Size in DWORDs calculated as <code>2^(N+1)</code></p>
 
 #### RX_DATA_BUFFER_SIZE field
 
-
+<p>Receive Data Buffer Size in DWORDs calculated as <code>2^(N+1)</code></p>
 
 #### TX_DATA_BUFFER_SIZE field
 
+<p>Transmit Data Buffer Size in DWORDs calculated as <code>2^(N+1)</code></p>
 
+### IBI_QUEUE_SIZE register
 
-### QUEUE_THRESHOLD_CONTROL register
+- Absolute Address: 0x1F4
+- Base Offset: 0x34
+- Size: 0x4
 
-- Absolute Address: 0x1EC
-- Base Offset: 0x2C
+<p>IBI Queue Size</p>
+
+|Bits|  Identifier  |Access|Reset|     Name     |
+|----|--------------|------|-----|--------------|
+| 7:0|IBI_QUEUE_SIZE|   r  | 0x5 |IBI_QUEUE_SIZE|
+
+#### IBI_QUEUE_SIZE field
+
+<p>IBI Queue Size in DWORDs calculated as <code>2^(N+1)</code></p>
+
+### QUEUE_THLD_CTRL register
+
+- Absolute Address: 0x1F8
+- Base Offset: 0x38
 - Size: 0x4
 
 <p>Queue Threshold Control</p>
 
 | Bits| Identifier |Access|Reset|    Name    |
 |-----|------------|------|-----|------------|
-| 7:0 |RX_DESC_THLD|  rw  | 0x0 |RX_DESC_THLD|
-| 15:8|TX_DESC_THLD|  rw  | 0x0 |TX_DESC_THLD|
-|23:16|RX_DATA_THLD|  rw  | 0x0 |RX_DATA_THLD|
-|31:24|TX_DATA_THLD|  rw  | 0x0 |TX_DATA_THLD|
-
-#### RX_DESC_THLD field
-
-
+| 7:0 |TX_DESC_THLD|  rw  | 0x1 |TX_DESC_THLD|
+| 15:8|RX_DESC_THLD|  rw  | 0x1 |RX_DESC_THLD|
+|31:24|  IBI_THLD  |  rw  | 0x1 |  IBI_THLD  |
 
 #### TX_DESC_THLD field
 
+<p>Controls the minimum number of empty TTI TX Descriptor Queue entries needed to trigger the TTI TX Descriptor interrupt.</p>
 
+#### RX_DESC_THLD field
 
-#### RX_DATA_THLD field
+<p>Controls the minimum number of TTI RX Descriptor Queue entries needed to trigger the TTI RX Descriptor interrupt.</p>
 
+#### IBI_THLD field
 
+<p>Controls the minimum number of IBI Queue entries needed to trigger the IBI threshold interrupt.</p>
+
+### DATA_BUFFER_THLD_CTRL register
+
+- Absolute Address: 0x1FC
+- Base Offset: 0x3C
+- Size: 0x4
+
+<p>IBI Queue Threshold Control</p>
+
+| Bits|  Identifier |Access|Reset|    Name    |
+|-----|-------------|------|-----|------------|
+| 2:0 | TX_DATA_THLD|  rw  | 0x1 |TX_DATA_THLD|
+| 10:8| RX_DATA_THLD|  rw  | 0x1 |RX_DATA_THLD|
+|18:16|TX_START_THLD|  rw  | 0x1 |TX_DATA_THLD|
+|26:24|RX_START_THLD|  rw  | 0x1 |RX_DATA_THLD|
 
 #### TX_DATA_THLD field
 
+<p>Minimum number of available TTI TX Data queue entries, in DWORDs, that will trigger the TTI TX Data interrupt. Interrupt triggers when <code>2^(N+1)</code> TX Buffer DWORD entries are available.</p>
 
+#### RX_DATA_THLD field
+
+<p>Minimum number of TTI RX Data queue entries of data received, in DWORDs, that will trigger the TTI RX Data interrupt. Interrupt triggers when <code>2^(N+1)</code> RX Buffer DWORD entries are received during the Read transfer.</p>
+
+#### TX_START_THLD field
+
+<p>Minimum number of available TTI TX Data queue entries, in DWORDs, that will trigger the TTI TX Data interrupt. Interrupt triggers when <code>2^(N+1)</code> TX Buffer DWORD entries are available.</p>
+
+#### RX_START_THLD field
+
+<p>Minimum number of TTI RX Data queue entries of data received, in DWORDs, that will trigger the TTI RX Data interrupt. Interrupt triggers when <code>2^(N+1)</code> RX Buffer DWORD entries are received during the Read transfer.</p>
 
 ## SoCMgmtIf register file
 

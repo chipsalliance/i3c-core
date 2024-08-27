@@ -1927,6 +1927,36 @@
 
     endgroup
 
+    /*----------------------- I3CCSR__I3C_EC__TTI__RESET_CONTROL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins [2-1:0]value = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__TTI__RESET_CONTROL_fld_cg with function sample(
+    input bit [1-1:0] SOFT_RST,
+    input bit [1-1:0] TX_DESC_RST,
+    input bit [1-1:0] RX_DESC_RST,
+    input bit [1-1:0] TX_DATA_RST,
+    input bit [1-1:0] RX_DATA_RST,
+    input bit [1-1:0] IBI_QUEUE_RST
+    );
+        option.per_instance = 1;
+        SOFT_RST_cp : coverpoint SOFT_RST;
+        TX_DESC_RST_cp : coverpoint TX_DESC_RST;
+        RX_DESC_RST_cp : coverpoint RX_DESC_RST;
+        TX_DATA_RST_cp : coverpoint TX_DATA_RST;
+        RX_DATA_RST_cp : coverpoint RX_DATA_RST;
+        IBI_QUEUE_RST_cp : coverpoint IBI_QUEUE_RST;
+
+    endgroup
+
     /*----------------------- I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS COVERGROUPS -----------------------*/
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
@@ -1940,10 +1970,30 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] RX_DESC_STAT,
+    input bit [1-1:0] TX_DESC_STAT,
+    input bit [1-1:0] RX_DESC_TIMEOUT,
+    input bit [1-1:0] TX_DESC_TIMEOUT,
+    input bit [1-1:0] TX_DATA_THLD_STAT,
+    input bit [1-1:0] RX_DATA_THLD_STAT,
+    input bit [1-1:0] TX_DESC_THLD_STAT,
+    input bit [1-1:0] RX_DESC_THLD_STAT,
+    input bit [1-1:0] IBI_THLD_STAT,
+    input bit [1-1:0] TRANSFER_ABORT_STAT,
+    input bit [1-1:0] TRANSFER_ERR_STAT
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        RX_DESC_STAT_cp : coverpoint RX_DESC_STAT;
+        TX_DESC_STAT_cp : coverpoint TX_DESC_STAT;
+        RX_DESC_TIMEOUT_cp : coverpoint RX_DESC_TIMEOUT;
+        TX_DESC_TIMEOUT_cp : coverpoint TX_DESC_TIMEOUT;
+        TX_DATA_THLD_STAT_cp : coverpoint TX_DATA_THLD_STAT;
+        RX_DATA_THLD_STAT_cp : coverpoint RX_DATA_THLD_STAT;
+        TX_DESC_THLD_STAT_cp : coverpoint TX_DESC_THLD_STAT;
+        RX_DESC_THLD_STAT_cp : coverpoint RX_DESC_THLD_STAT;
+        IBI_THLD_STAT_cp : coverpoint IBI_THLD_STAT;
+        TRANSFER_ABORT_STAT_cp : coverpoint TRANSFER_ABORT_STAT;
+        TRANSFER_ERR_STAT_cp : coverpoint TRANSFER_ERR_STAT;
 
     endgroup
 
@@ -1960,10 +2010,18 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] TX_DATA_THLD_STAT_EN,
+    input bit [1-1:0] RX_DATA_THLD_STAT_EN,
+    input bit [1-1:0] TX_DESC_THLD_STAT_EN,
+    input bit [1-1:0] RX_DESC_THLD_STAT_EN,
+    input bit [1-1:0] IBI_THLD_STAT_EN
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        TX_DATA_THLD_STAT_EN_cp : coverpoint TX_DATA_THLD_STAT_EN;
+        RX_DATA_THLD_STAT_EN_cp : coverpoint RX_DATA_THLD_STAT_EN;
+        TX_DESC_THLD_STAT_EN_cp : coverpoint TX_DESC_THLD_STAT_EN;
+        RX_DESC_THLD_STAT_EN_cp : coverpoint RX_DESC_THLD_STAT_EN;
+        IBI_THLD_STAT_EN_cp : coverpoint IBI_THLD_STAT_EN;
 
     endgroup
 
@@ -1980,10 +2038,18 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] TX_DATA_THLD_FORCE,
+    input bit [1-1:0] RX_DATA_THLD_FORCE,
+    input bit [1-1:0] TX_DESC_THLD_FORCE,
+    input bit [1-1:0] RX_DESC_THLD_FORCE,
+    input bit [1-1:0] IBI_THLD_FORCE
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        TX_DATA_THLD_FORCE_cp : coverpoint TX_DATA_THLD_FORCE;
+        RX_DATA_THLD_FORCE_cp : coverpoint RX_DATA_THLD_FORCE;
+        TX_DESC_THLD_FORCE_cp : coverpoint TX_DESC_THLD_FORCE;
+        RX_DESC_THLD_FORCE_cp : coverpoint RX_DESC_THLD_FORCE;
+        IBI_THLD_FORCE_cp : coverpoint IBI_THLD_FORCE;
 
     endgroup
 
@@ -2067,6 +2133,26 @@
 
     endgroup
 
+    /*----------------------- I3CCSR__I3C_EC__TTI__IBI_PORT COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__TTI__IBI_PORT_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins [2-1:0]value = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__TTI__IBI_PORT_fld_cg with function sample(
+    input bit [32-1:0] IBI_DATA
+    );
+        option.per_instance = 1;
+        IBI_DATA_cp : coverpoint IBI_DATA;
+
+    endgroup
+
     /*----------------------- I3CCSR__I3C_EC__TTI__QUEUE_SIZE COVERGROUPS -----------------------*/
     covergroup I3CCSR__I3C_EC__TTI__QUEUE_SIZE_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
@@ -2093,8 +2179,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins [2-1:0]value = {0,1};
@@ -2105,17 +2191,61 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_fld_cg with function sample(
-    input bit [8-1:0] RX_DESC_THLD,
-    input bit [8-1:0] TX_DESC_THLD,
-    input bit [8-1:0] RX_DATA_THLD,
-    input bit [8-1:0] TX_DATA_THLD
+    covergroup I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE_fld_cg with function sample(
+    input bit [8-1:0] IBI_QUEUE_SIZE
     );
         option.per_instance = 1;
-        RX_DESC_THLD_cp : coverpoint RX_DESC_THLD;
+        IBI_QUEUE_SIZE_cp : coverpoint IBI_QUEUE_SIZE;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins [2-1:0]value = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_fld_cg with function sample(
+    input bit [8-1:0] TX_DESC_THLD,
+    input bit [8-1:0] RX_DESC_THLD,
+    input bit [8-1:0] IBI_THLD
+    );
+        option.per_instance = 1;
         TX_DESC_THLD_cp : coverpoint TX_DESC_THLD;
-        RX_DATA_THLD_cp : coverpoint RX_DATA_THLD;
+        RX_DESC_THLD_cp : coverpoint RX_DESC_THLD;
+        IBI_THLD_cp : coverpoint IBI_THLD;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins [2-1:0]value = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_fld_cg with function sample(
+    input bit [3-1:0] TX_DATA_THLD,
+    input bit [3-1:0] RX_DATA_THLD,
+    input bit [3-1:0] TX_START_THLD,
+    input bit [3-1:0] RX_START_THLD
+    );
+        option.per_instance = 1;
         TX_DATA_THLD_cp : coverpoint TX_DATA_THLD;
+        RX_DATA_THLD_cp : coverpoint RX_DATA_THLD;
+        TX_START_THLD_cp : coverpoint TX_START_THLD;
+        RX_START_THLD_cp : coverpoint RX_START_THLD;
 
     endgroup
 

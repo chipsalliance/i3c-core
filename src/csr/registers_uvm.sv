@@ -3694,15 +3694,90 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__TTI__STATUS
 
+    // Reg - I3CCSR.I3C_EC.TTI.RESET_CONTROL
+    class I3CCSR__I3C_EC__TTI__RESET_CONTROL extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]SOFT_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]TX_DESC_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]RX_DESC_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]TX_DATA_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]RX_DATA_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg [1-1:0]IBI_QUEUE_RST_bit_cg;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_fld_cg fld_cg;
+        rand uvm_reg_field SOFT_RST;
+        rand uvm_reg_field TX_DESC_RST;
+        rand uvm_reg_field RX_DESC_RST;
+        rand uvm_reg_field TX_DATA_RST;
+        rand uvm_reg_field RX_DATA_RST;
+        rand uvm_reg_field IBI_QUEUE_RST;
+
+        function new(string name = "I3CCSR__I3C_EC__TTI__RESET_CONTROL");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.SOFT_RST = new("SOFT_RST");
+            this.SOFT_RST.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_RST = new("TX_DESC_RST");
+            this.TX_DESC_RST.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_RST = new("RX_DESC_RST");
+            this.RX_DESC_RST.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_RST = new("TX_DATA_RST");
+            this.TX_DATA_RST.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_RST = new("RX_DATA_RST");
+            this.RX_DATA_RST.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_QUEUE_RST = new("IBI_QUEUE_RST");
+            this.IBI_QUEUE_RST.configure(this, 1, 5, "RW", 1, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(SOFT_RST_bit_cg[bt]) SOFT_RST_bit_cg[bt] = new();
+                foreach(TX_DESC_RST_bit_cg[bt]) TX_DESC_RST_bit_cg[bt] = new();
+                foreach(RX_DESC_RST_bit_cg[bt]) RX_DESC_RST_bit_cg[bt] = new();
+                foreach(TX_DATA_RST_bit_cg[bt]) TX_DATA_RST_bit_cg[bt] = new();
+                foreach(RX_DATA_RST_bit_cg[bt]) RX_DATA_RST_bit_cg[bt] = new();
+                foreach(IBI_QUEUE_RST_bit_cg[bt]) IBI_QUEUE_RST_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__TTI__RESET_CONTROL
+
     // Reg - I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS
     class I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]RX_DESC_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TX_DESC_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]RX_DESC_TIMEOUT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TX_DESC_TIMEOUT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TX_DATA_THLD_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]RX_DATA_THLD_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TX_DESC_THLD_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]RX_DESC_THLD_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]IBI_THLD_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TRANSFER_ABORT_STAT_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg [1-1:0]TRANSFER_ERR_STAT_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field RX_DESC_STAT;
+        rand uvm_reg_field TX_DESC_STAT;
+        rand uvm_reg_field RX_DESC_TIMEOUT;
+        rand uvm_reg_field TX_DESC_TIMEOUT;
+        rand uvm_reg_field TX_DATA_THLD_STAT;
+        rand uvm_reg_field RX_DATA_THLD_STAT;
+        rand uvm_reg_field TX_DESC_THLD_STAT;
+        rand uvm_reg_field RX_DESC_THLD_STAT;
+        rand uvm_reg_field IBI_THLD_STAT;
+        rand uvm_reg_field TRANSFER_ABORT_STAT;
+        rand uvm_reg_field TRANSFER_ERR_STAT;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3714,10 +3789,40 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_STAT = new("RX_DESC_STAT");
+            this.RX_DESC_STAT.configure(this, 1, 0, "W1C", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_STAT = new("TX_DESC_STAT");
+            this.TX_DESC_STAT.configure(this, 1, 1, "W1C", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_TIMEOUT = new("RX_DESC_TIMEOUT");
+            this.RX_DESC_TIMEOUT.configure(this, 1, 2, "W1C", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_TIMEOUT = new("TX_DESC_TIMEOUT");
+            this.TX_DESC_TIMEOUT.configure(this, 1, 3, "W1C", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_THLD_STAT = new("TX_DATA_THLD_STAT");
+            this.TX_DATA_THLD_STAT.configure(this, 1, 8, "RO", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_THLD_STAT = new("RX_DATA_THLD_STAT");
+            this.RX_DATA_THLD_STAT.configure(this, 1, 9, "RO", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD_STAT = new("TX_DESC_THLD_STAT");
+            this.TX_DESC_THLD_STAT.configure(this, 1, 10, "RO", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD_STAT = new("RX_DESC_THLD_STAT");
+            this.RX_DESC_THLD_STAT.configure(this, 1, 11, "RO", 1, 'h0, 1, 1, 0);
+            this.IBI_THLD_STAT = new("IBI_THLD_STAT");
+            this.IBI_THLD_STAT.configure(this, 1, 12, "RO", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ABORT_STAT = new("TRANSFER_ABORT_STAT");
+            this.TRANSFER_ABORT_STAT.configure(this, 1, 25, "W1C", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ERR_STAT = new("TRANSFER_ERR_STAT");
+            this.TRANSFER_ERR_STAT.configure(this, 1, 31, "W1C", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(RX_DESC_STAT_bit_cg[bt]) RX_DESC_STAT_bit_cg[bt] = new();
+                foreach(TX_DESC_STAT_bit_cg[bt]) TX_DESC_STAT_bit_cg[bt] = new();
+                foreach(RX_DESC_TIMEOUT_bit_cg[bt]) RX_DESC_TIMEOUT_bit_cg[bt] = new();
+                foreach(TX_DESC_TIMEOUT_bit_cg[bt]) TX_DESC_TIMEOUT_bit_cg[bt] = new();
+                foreach(TX_DATA_THLD_STAT_bit_cg[bt]) TX_DATA_THLD_STAT_bit_cg[bt] = new();
+                foreach(RX_DATA_THLD_STAT_bit_cg[bt]) RX_DATA_THLD_STAT_bit_cg[bt] = new();
+                foreach(TX_DESC_THLD_STAT_bit_cg[bt]) TX_DESC_THLD_STAT_bit_cg[bt] = new();
+                foreach(RX_DESC_THLD_STAT_bit_cg[bt]) RX_DESC_THLD_STAT_bit_cg[bt] = new();
+                foreach(IBI_THLD_STAT_bit_cg[bt]) IBI_THLD_STAT_bit_cg[bt] = new();
+                foreach(TRANSFER_ABORT_STAT_bit_cg[bt]) TRANSFER_ABORT_STAT_bit_cg[bt] = new();
+                foreach(TRANSFER_ERR_STAT_bit_cg[bt]) TRANSFER_ERR_STAT_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3730,9 +3835,17 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [1-1:0]TX_DATA_THLD_STAT_EN_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [1-1:0]RX_DATA_THLD_STAT_EN_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [1-1:0]TX_DESC_THLD_STAT_EN_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [1-1:0]RX_DESC_THLD_STAT_EN_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg [1-1:0]IBI_THLD_STAT_EN_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field TX_DATA_THLD_STAT_EN;
+        rand uvm_reg_field RX_DATA_THLD_STAT_EN;
+        rand uvm_reg_field TX_DESC_THLD_STAT_EN;
+        rand uvm_reg_field RX_DESC_THLD_STAT_EN;
+        rand uvm_reg_field IBI_THLD_STAT_EN;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3744,10 +3857,22 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_THLD_STAT_EN = new("TX_DATA_THLD_STAT_EN");
+            this.TX_DATA_THLD_STAT_EN.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_THLD_STAT_EN = new("RX_DATA_THLD_STAT_EN");
+            this.RX_DATA_THLD_STAT_EN.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD_STAT_EN = new("TX_DESC_THLD_STAT_EN");
+            this.TX_DESC_THLD_STAT_EN.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD_STAT_EN = new("RX_DESC_THLD_STAT_EN");
+            this.RX_DESC_THLD_STAT_EN.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_THLD_STAT_EN = new("IBI_THLD_STAT_EN");
+            this.IBI_THLD_STAT_EN.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(TX_DATA_THLD_STAT_EN_bit_cg[bt]) TX_DATA_THLD_STAT_EN_bit_cg[bt] = new();
+                foreach(RX_DATA_THLD_STAT_EN_bit_cg[bt]) RX_DATA_THLD_STAT_EN_bit_cg[bt] = new();
+                foreach(TX_DESC_THLD_STAT_EN_bit_cg[bt]) TX_DESC_THLD_STAT_EN_bit_cg[bt] = new();
+                foreach(RX_DESC_THLD_STAT_EN_bit_cg[bt]) RX_DESC_THLD_STAT_EN_bit_cg[bt] = new();
+                foreach(IBI_THLD_STAT_EN_bit_cg[bt]) IBI_THLD_STAT_EN_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3760,9 +3885,17 @@ package registers_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [1-1:0]TX_DATA_THLD_FORCE_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [1-1:0]RX_DATA_THLD_FORCE_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [1-1:0]TX_DESC_THLD_FORCE_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [1-1:0]RX_DESC_THLD_FORCE_bit_cg;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg [1-1:0]IBI_THLD_FORCE_bit_cg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field TX_DATA_THLD_FORCE;
+        rand uvm_reg_field RX_DATA_THLD_FORCE;
+        rand uvm_reg_field TX_DESC_THLD_FORCE;
+        rand uvm_reg_field RX_DESC_THLD_FORCE;
+        rand uvm_reg_field IBI_THLD_FORCE;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3774,10 +3907,22 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_THLD_FORCE = new("TX_DATA_THLD_FORCE");
+            this.TX_DATA_THLD_FORCE.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_THLD_FORCE = new("RX_DATA_THLD_FORCE");
+            this.RX_DATA_THLD_FORCE.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD_FORCE = new("TX_DESC_THLD_FORCE");
+            this.TX_DESC_THLD_FORCE.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD_FORCE = new("RX_DESC_THLD_FORCE");
+            this.RX_DESC_THLD_FORCE.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_THLD_FORCE = new("IBI_THLD_FORCE");
+            this.IBI_THLD_FORCE.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(TX_DATA_THLD_FORCE_bit_cg[bt]) TX_DATA_THLD_FORCE_bit_cg[bt] = new();
+                foreach(RX_DATA_THLD_FORCE_bit_cg[bt]) RX_DATA_THLD_FORCE_bit_cg[bt] = new();
+                foreach(TX_DESC_THLD_FORCE_bit_cg[bt]) TX_DESC_THLD_FORCE_bit_cg[bt] = new();
+                foreach(RX_DESC_THLD_FORCE_bit_cg[bt]) RX_DESC_THLD_FORCE_bit_cg[bt] = new();
+                foreach(IBI_THLD_FORCE_bit_cg[bt]) IBI_THLD_FORCE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3904,6 +4049,36 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__TTI__TX_DATA_PORT
 
+    // Reg - I3CCSR.I3C_EC.TTI.IBI_PORT
+    class I3CCSR__I3C_EC__TTI__IBI_PORT extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__TTI__IBI_PORT_bit_cg [32-1:0]IBI_DATA_bit_cg;
+        I3CCSR__I3C_EC__TTI__IBI_PORT_fld_cg fld_cg;
+        rand uvm_reg_field IBI_DATA;
+
+        function new(string name = "I3CCSR__I3C_EC__TTI__IBI_PORT");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.IBI_DATA = new("IBI_DATA");
+            this.IBI_DATA.configure(this, 32, 0, "WO", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(IBI_DATA_bit_cg[bt]) IBI_DATA_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__TTI__IBI_PORT
+
     // Reg - I3CCSR.I3C_EC.TTI.QUEUE_SIZE
     class I3CCSR__I3C_EC__TTI__QUEUE_SIZE extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -3949,23 +4124,17 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__TTI__QUEUE_SIZE
 
-    // Reg - I3CCSR.I3C_EC.TTI.QUEUE_THRESHOLD_CONTROL
-    class I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.TTI.IBI_QUEUE_SIZE
+    class I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]RX_DESC_THLD_bit_cg;
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]TX_DESC_THLD_bit_cg;
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]RX_DATA_THLD_bit_cg;
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_bit_cg [8-1:0]TX_DATA_THLD_bit_cg;
-        I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL_fld_cg fld_cg;
-        rand uvm_reg_field RX_DESC_THLD;
-        rand uvm_reg_field TX_DESC_THLD;
-        rand uvm_reg_field RX_DATA_THLD;
-        rand uvm_reg_field TX_DATA_THLD;
+        I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE_bit_cg [8-1:0]IBI_QUEUE_SIZE_bit_cg;
+        I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE_fld_cg fld_cg;
+        rand uvm_reg_field IBI_QUEUE_SIZE;
 
-        function new(string name = "I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL");
+        function new(string name = "I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3975,30 +4144,107 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.RX_DESC_THLD = new("RX_DESC_THLD");
-            this.RX_DESC_THLD.configure(this, 8, 0, "RW", 1, 'h0, 1, 1, 0);
-            this.TX_DESC_THLD = new("TX_DESC_THLD");
-            this.TX_DESC_THLD.configure(this, 8, 8, "RW", 1, 'h0, 1, 1, 0);
-            this.RX_DATA_THLD = new("RX_DATA_THLD");
-            this.RX_DATA_THLD.configure(this, 8, 16, "RW", 0, 'h0, 1, 1, 0);
-            this.TX_DATA_THLD = new("TX_DATA_THLD");
-            this.TX_DATA_THLD.configure(this, 8, 24, "RW", 0, 'h0, 1, 1, 0);
+            this.IBI_QUEUE_SIZE = new("IBI_QUEUE_SIZE");
+            this.IBI_QUEUE_SIZE.configure(this, 8, 0, "RO", 0, 'h5, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(RX_DESC_THLD_bit_cg[bt]) RX_DESC_THLD_bit_cg[bt] = new();
-                foreach(TX_DESC_THLD_bit_cg[bt]) TX_DESC_THLD_bit_cg[bt] = new();
-                foreach(RX_DATA_THLD_bit_cg[bt]) RX_DATA_THLD_bit_cg[bt] = new();
-                foreach(TX_DATA_THLD_bit_cg[bt]) TX_DATA_THLD_bit_cg[bt] = new();
+                foreach(IBI_QUEUE_SIZE_bit_cg[bt]) IBI_QUEUE_SIZE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL
+    endclass : I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE
+
+    // Reg - I3CCSR.I3C_EC.TTI.QUEUE_THLD_CTRL
+    class I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_bit_cg [8-1:0]TX_DESC_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_bit_cg [8-1:0]RX_DESC_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_bit_cg [8-1:0]IBI_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL_fld_cg fld_cg;
+        rand uvm_reg_field TX_DESC_THLD;
+        rand uvm_reg_field RX_DESC_THLD;
+        rand uvm_reg_field IBI_THLD;
+
+        function new(string name = "I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.TX_DESC_THLD = new("TX_DESC_THLD");
+            this.TX_DESC_THLD.configure(this, 8, 0, "RW", 1, 'h1, 1, 1, 0);
+            this.RX_DESC_THLD = new("RX_DESC_THLD");
+            this.RX_DESC_THLD.configure(this, 8, 8, "RW", 1, 'h1, 1, 1, 0);
+            this.IBI_THLD = new("IBI_THLD");
+            this.IBI_THLD.configure(this, 8, 24, "RW", 1, 'h1, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(TX_DESC_THLD_bit_cg[bt]) TX_DESC_THLD_bit_cg[bt] = new();
+                foreach(RX_DESC_THLD_bit_cg[bt]) RX_DESC_THLD_bit_cg[bt] = new();
+                foreach(IBI_THLD_bit_cg[bt]) IBI_THLD_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL
+
+    // Reg - I3CCSR.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL
+    class I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]TX_DATA_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]RX_DATA_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]TX_START_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_bit_cg [3-1:0]RX_START_THLD_bit_cg;
+        I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL_fld_cg fld_cg;
+        rand uvm_reg_field TX_DATA_THLD;
+        rand uvm_reg_field RX_DATA_THLD;
+        rand uvm_reg_field TX_START_THLD;
+        rand uvm_reg_field RX_START_THLD;
+
+        function new(string name = "I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.TX_DATA_THLD = new("TX_DATA_THLD");
+            this.TX_DATA_THLD.configure(this, 3, 0, "RW", 0, 'h1, 1, 1, 0);
+            this.RX_DATA_THLD = new("RX_DATA_THLD");
+            this.RX_DATA_THLD.configure(this, 3, 8, "RW", 0, 'h1, 1, 1, 0);
+            this.TX_START_THLD = new("TX_START_THLD");
+            this.TX_START_THLD.configure(this, 3, 16, "RW", 0, 'h1, 1, 1, 0);
+            this.RX_START_THLD = new("RX_START_THLD");
+            this.RX_START_THLD.configure(this, 3, 24, "RW", 0, 'h1, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(TX_DATA_THLD_bit_cg[bt]) TX_DATA_THLD_bit_cg[bt] = new();
+                foreach(RX_DATA_THLD_bit_cg[bt]) RX_DATA_THLD_bit_cg[bt] = new();
+                foreach(TX_START_THLD_bit_cg[bt]) TX_START_THLD_bit_cg[bt] = new();
+                foreach(RX_START_THLD_bit_cg[bt]) RX_START_THLD_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL
 
     // Regfile - I3CCSR.I3C_EC.TTI
     class I3CCSR__I3C_EC__TTI extends uvm_reg_block;
         rand I3CCSR__I3C_EC__TTI__EXTCAP_HEADER EXTCAP_HEADER;
         rand I3CCSR__I3C_EC__TTI__CONTROL CONTROL;
         rand I3CCSR__I3C_EC__TTI__STATUS STATUS;
+        rand I3CCSR__I3C_EC__TTI__RESET_CONTROL RESET_CONTROL;
         rand I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS INTERRUPT_STATUS;
         rand I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE INTERRUPT_ENABLE;
         rand I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE INTERRUPT_FORCE;
@@ -4006,8 +4252,11 @@ package registers_uvm;
         rand I3CCSR__I3C_EC__TTI__RX_DATA_PORT RX_DATA_PORT;
         rand I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT TX_DESC_QUEUE_PORT;
         rand I3CCSR__I3C_EC__TTI__TX_DATA_PORT TX_DATA_PORT;
+        rand I3CCSR__I3C_EC__TTI__IBI_PORT IBI_PORT;
         rand I3CCSR__I3C_EC__TTI__QUEUE_SIZE QUEUE_SIZE;
-        rand I3CCSR__I3C_EC__TTI__QUEUE_THRESHOLD_CONTROL QUEUE_THRESHOLD_CONTROL;
+        rand I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE IBI_QUEUE_SIZE;
+        rand I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL QUEUE_THLD_CTRL;
+        rand I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL DATA_BUFFER_THLD_CTRL;
 
         function new(string name = "I3CCSR__I3C_EC__TTI");
             super.new(name);
@@ -4030,51 +4279,71 @@ package registers_uvm;
 
             this.STATUS.build();
             this.default_map.add_reg(this.STATUS, 'h8);
+            this.RESET_CONTROL = new("RESET_CONTROL");
+            this.RESET_CONTROL.configure(this);
+
+            this.RESET_CONTROL.build();
+            this.default_map.add_reg(this.RESET_CONTROL, 'hc);
             this.INTERRUPT_STATUS = new("INTERRUPT_STATUS");
             this.INTERRUPT_STATUS.configure(this);
 
             this.INTERRUPT_STATUS.build();
-            this.default_map.add_reg(this.INTERRUPT_STATUS, 'hc);
+            this.default_map.add_reg(this.INTERRUPT_STATUS, 'h10);
             this.INTERRUPT_ENABLE = new("INTERRUPT_ENABLE");
             this.INTERRUPT_ENABLE.configure(this);
 
             this.INTERRUPT_ENABLE.build();
-            this.default_map.add_reg(this.INTERRUPT_ENABLE, 'h10);
+            this.default_map.add_reg(this.INTERRUPT_ENABLE, 'h14);
             this.INTERRUPT_FORCE = new("INTERRUPT_FORCE");
             this.INTERRUPT_FORCE.configure(this);
 
             this.INTERRUPT_FORCE.build();
-            this.default_map.add_reg(this.INTERRUPT_FORCE, 'h14);
+            this.default_map.add_reg(this.INTERRUPT_FORCE, 'h18);
             this.RX_DESC_QUEUE_PORT = new("RX_DESC_QUEUE_PORT");
             this.RX_DESC_QUEUE_PORT.configure(this);
 
             this.RX_DESC_QUEUE_PORT.build();
-            this.default_map.add_reg(this.RX_DESC_QUEUE_PORT, 'h18);
+            this.default_map.add_reg(this.RX_DESC_QUEUE_PORT, 'h1c);
             this.RX_DATA_PORT = new("RX_DATA_PORT");
             this.RX_DATA_PORT.configure(this);
 
             this.RX_DATA_PORT.build();
-            this.default_map.add_reg(this.RX_DATA_PORT, 'h1c);
+            this.default_map.add_reg(this.RX_DATA_PORT, 'h20);
             this.TX_DESC_QUEUE_PORT = new("TX_DESC_QUEUE_PORT");
             this.TX_DESC_QUEUE_PORT.configure(this);
 
             this.TX_DESC_QUEUE_PORT.build();
-            this.default_map.add_reg(this.TX_DESC_QUEUE_PORT, 'h20);
+            this.default_map.add_reg(this.TX_DESC_QUEUE_PORT, 'h24);
             this.TX_DATA_PORT = new("TX_DATA_PORT");
             this.TX_DATA_PORT.configure(this);
 
             this.TX_DATA_PORT.build();
-            this.default_map.add_reg(this.TX_DATA_PORT, 'h24);
+            this.default_map.add_reg(this.TX_DATA_PORT, 'h28);
+            this.IBI_PORT = new("IBI_PORT");
+            this.IBI_PORT.configure(this);
+
+            this.IBI_PORT.build();
+            this.default_map.add_reg(this.IBI_PORT, 'h2c);
             this.QUEUE_SIZE = new("QUEUE_SIZE");
             this.QUEUE_SIZE.configure(this);
 
             this.QUEUE_SIZE.build();
-            this.default_map.add_reg(this.QUEUE_SIZE, 'h28);
-            this.QUEUE_THRESHOLD_CONTROL = new("QUEUE_THRESHOLD_CONTROL");
-            this.QUEUE_THRESHOLD_CONTROL.configure(this);
+            this.default_map.add_reg(this.QUEUE_SIZE, 'h30);
+            this.IBI_QUEUE_SIZE = new("IBI_QUEUE_SIZE");
+            this.IBI_QUEUE_SIZE.configure(this);
 
-            this.QUEUE_THRESHOLD_CONTROL.build();
-            this.default_map.add_reg(this.QUEUE_THRESHOLD_CONTROL, 'h2c);
+            this.IBI_QUEUE_SIZE.build();
+            this.default_map.add_reg(this.IBI_QUEUE_SIZE, 'h34);
+            this.QUEUE_THLD_CTRL = new("QUEUE_THLD_CTRL");
+            this.QUEUE_THLD_CTRL.configure(this);
+
+            this.QUEUE_THLD_CTRL.build();
+            this.default_map.add_reg(this.QUEUE_THLD_CTRL, 'h38);
+            this.DATA_BUFFER_THLD_CTRL = new("DATA_BUFFER_THLD_CTRL");
+            this.DATA_BUFFER_THLD_CTRL.configure(this);
+
+            this.DATA_BUFFER_THLD_CTRL.build();
+            this.default_map.add_reg(this.DATA_BUFFER_THLD_CTRL, 'h3c);
         endfunction : build
     endclass : I3CCSR__I3C_EC__TTI
 
