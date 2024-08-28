@@ -19,7 +19,7 @@ import re
 import sys
 
 
-def scrub_line_by_line(fname):
+def postprocess_sv(fname):
 
     # Open file
     rhandle = open(fname, "r+")
@@ -94,4 +94,4 @@ if __name__ == "__main__":
         print(f"file name to modify is {fname}")
 
     # Convert Unpacked Arrays/structs to Packed
-    scrub_line_by_line(fname)
+    postprocess_sv(fname)

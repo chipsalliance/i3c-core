@@ -18,6 +18,7 @@
 import argparse
 import logging
 import os
+from pathlib import Path
 from typing import Any, List, Optional, Union
 
 from peakrdl_cheader import utils
@@ -33,7 +34,7 @@ from peakrdl_regblock.cpuif.passthrough import PassthroughCpuif
 from peakrdl_regblock.udps import ALL_UDPS
 from peakrdl_uvm import UVMExporter
 from rdl_exporter import CocotbExporter
-from rdl_post_process import scrub_line_by_line
+from rdl_post_process import postprocess_sv
 from systemrdl import RDLCompiler
 from systemrdl.node import (
     AddressableNode,
@@ -44,6 +45,8 @@ from systemrdl.node import (
     RootNode,
 )
 from systemrdl.walker import RDLWalker, WalkerAction
+
+REGISTERS_PREFIX = "I3CCSR"
 
 
 class CustomHeaderGenerator(HeaderGenerator):
@@ -139,16 +142,16 @@ def setup_logger(level=logging.INFO, filename="log.log"):
     )
 
 
-def get_template_path(repo_root, name):
-    return os.path.join(repo_root, "tools/templates/rdl/" + name)
-
-
-def get_file_path(input_file, suffix):
-    return os.path.splitext(os.path.basename(input_file))[0] + suffix
-
-
 def main():
     setup_logger(level=logging.INFO, filename="reg_gen.log")
+
+    repo_root = os.environ.get("CALIPTRA_ROOT")
+    if repo_root is None:
+        raise ValueError("Caliptra root is not defined as environment variable. Aborting.")
+
+    def get_template_path(name):
+        return os.path.join(repo_root, Path("tools/templates/rdl") / name)
+
     parser = argparse.ArgumentParser(description="Reg gen")
     parser.add_argument(
         "--style-hier",
@@ -161,6 +164,19 @@ def main():
     )
     parser.add_argument("--output-dir", default="./src/csr/script/", help="output directory")
     parser.add_argument("-P", action="append", help="SystemRDL parameters", metavar="key=value")
+    parser.add_argument(
+        "--ral-template", default=get_template_path("uvm"), help="Template for generating UVM RAL"
+    )
+    parser.add_argument(
+        "--cov-template",
+        default=get_template_path("cov"),
+        help="Template for generating RAL coverage groups",
+    )
+    parser.add_argument(
+        "--smp-template",
+        default=get_template_path("smp"),
+        help="Template for implementing sample functions for RAL coverage",
+    )
     args = parser.parse_args()
 
     # Parse Parameters
@@ -176,10 +192,6 @@ def main():
             raise ValueError(
                 f"SystemRDL Parameters should be a space separated list. Expected: -P param_1=1 -P param2=2. Got: {p}"
             )
-
-    repo_root = os.environ.get("CALIPTRA_ROOT")
-    if repo_root is None:
-        raise ValueError("Caliptra root is not defined as environment variable. Aborting.")
 
     # Compile
     rdlc = RDLCompiler()
@@ -201,10 +213,9 @@ def main():
     logging.info(f"Created: SystemVerilog files in {args.output_dir}")
 
     # Export UVM register model
-    template_path_uvm = get_template_path(repo_root, "uvm")
-    file_path_uvm = get_file_path(args.input_file, "_uvm.sv")
+    file_path_uvm = REGISTERS_PREFIX + "_uvm.sv"
     output_file = os.path.join(args.output_dir, file_path_uvm)
-    exporter = UVMExporter(user_template_dir=template_path_uvm)
+    exporter = UVMExporter(user_template_dir=args.ral_template)
     exporter.export(
         root,
         output_file,
@@ -214,10 +225,9 @@ def main():
 
     # The below lines are used to generate a baseline/starting point for the include files "<reg_name>_covergroups.svh" and "<reg_name>_sample.svh"
     # The generated files need to be hand-edited to provide the desired functionality.
-    uvm_collateral = {"cov": "_covergroups.svh", "smp": "_sample.svh"}
-    for collateral_type in uvm_collateral.keys():
-        file_path = get_file_path(args.input_file, uvm_collateral[collateral_type])
-        template_path = get_template_path(repo_root, collateral_type)
+    def export_uvm_collateral(template_path, collateral_suffix):
+        file_path = REGISTERS_PREFIX + collateral_suffix
+        print(f"reg_gen: UVM collateral template path: {template_path}")
         output_file = os.path.join(args.output_dir, file_path)
         exporter = UVMExporter(user_template_dir=template_path)
         exporter.export(
@@ -225,7 +235,10 @@ def main():
             output_file,
             reuse_class_definitions=not args.style_hier,
         )
-        logging.info(f"Created: {collateral_type} file {output_file}")
+        logging.info(f"Created file {output_file}")
+
+    export_uvm_collateral(args.cov_template, "_covergroups.svh")
+    export_uvm_collateral(args.smp_template, "_sample.svh")
 
     # Generate the C header
     exporter = CustomCHeaderExporter()
@@ -240,12 +253,12 @@ def main():
 
     # Generate the C header
     exporter = CHeaderExporter()
-    i3c_root_dir = os.environ.get("I3C_ROOT_DIR")
+    i3c_root_dir = Path(os.environ.get("I3C_ROOT_DIR"))
     try:
-        os.mkdir(os.path.join(i3c_root_dir, "sw"))
+        os.mkdir(i3c_root_dir / "sw")
     except FileExistsError:
         pass
-    output_file = os.path.join(i3c_root_dir, "sw", "I3CCSR.h")
+    output_file = i3c_root_dir / "sw" / (REGISTERS_PREFIX + ".h")
     exporter.export(root, path=output_file, reuse_typedefs=not args.style_hier)
     logging.info(f"Created: c-header file {output_file}")
 
@@ -258,13 +271,12 @@ def main():
     # Export Markdown documentation
     exporter = MarkdownExporter()
     output_file = os.path.join("src/rdl/docs/README.md")
-    exporter.export(root, output_file, rename="I3CCSR")
+    exporter.export(root, output_file, rename=REGISTERS_PREFIX)
     logging.info(f"Created: Markdown file {output_file}")
 
     # Fix SystemVerilog files
-    for file in os.listdir(args.output_dir):
-        if os.path.isfile(os.path.join(args.output_dir, file)):
-            scrub_line_by_line(os.path.join(args.output_dir, file))
+    postprocess_sv(Path(args.output_dir) / (REGISTERS_PREFIX + ".sv"))
+    postprocess_sv(Path(args.output_dir) / (REGISTERS_PREFIX + "_pkg.sv"))
 
     # Export Cocotb dictionary
     exporter = CocotbExporter()
