@@ -1,0 +1,45 @@
+name: Documentation build
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: "noninteractive"
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt -qqy update && sudo apt -qqy --no-install-recommends install \
+            python3 python3-pip
+
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Build Docs
+        run: |
+          pushd docs
+            pip3 install -r requirements.txt
+            TZ=UTC make html
+          popd
+          ls -lah docs/build
+
+      - name: Pack artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: ./docs/build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./docs/build/html
