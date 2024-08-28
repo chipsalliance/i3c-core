@@ -10,7 +10,9 @@ SRC_DIR             := $(I3C_ROOT_DIR)/src/
 VERIFICATION_DIR    := $(I3C_ROOT_DIR)/verification/
 THIRD_PARTY_DIR     := $(I3C_ROOT_DIR)/third_party/
 
-BLOCK_VERIF_DIR     := $(VERIFICATION_DIR)/block/
+COCOTB_VERIF_DIR    := $(VERIFICATION_DIR)/cocotb
+BLOCK_VERIF_DIR     := $(COCOTB_VERIF_DIR)/block
+TOP_VERIF_DIR       := $(COCOTB_VERIF_DIR)/top
 TOOL_VERIF_DIR      := $(VERIFICATION_DIR)/tools/
 UVM_VERIF_DIR       := $(VERIFICATION_DIR)/uvm_i3c/
 
@@ -43,8 +45,8 @@ endif
 #
 # I3C configuration
 #
-CFG_FILE            ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml ## Path: YAML file holding configuration of the I3C RTL
-CFG_NAME            ?= ahb ## Valid configuration name from the YAML configuration file
+CFG_FILE            ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
+CFG_NAME            ?= ahb## Valid configuration name from the YAML configuration file
 CFG_GEN              = $(TOOL_DIR)/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files
@@ -69,26 +71,33 @@ config-print: ## Print configuration name, filename and RDL arguments
 lint: lint-rtl lint-tests ## Run RTL and tests lint
 
 lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
-	cd $(BLOCK_VERIF_DIR) && python -m nox -R -s test_lint
+	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s test_lint
 
 lint-rtl: ## Run lint on RTL source code
 	$(SHELL) $(TOOL_DIR)/verible-scripts/run.sh
 
 lint-tests: ## Run lint on tests source code
-	cd $(BLOCK_VERIF_DIR) && python -m nox -R -s lint
+	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s lint
 
 #
 # Tests
 #
 test: config ## Run single module test (use `TEST=<test_name>` flag)
-	cd $(BLOCK_VERIF_DIR) && python -m nox -R -s $(TEST)_verify
+	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s $(TEST)_verify
 
-tests: config ## Run all verification/block/* RTL tests without coverage
-	cd $(BLOCK_VERIF_DIR) && python -m nox -R -k "verify"
+tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
+	$(MAKE) config CFG_NAME=axi
+	cd $(COCOTB_VERIF_DIR) && python -m nox -R -t "axi"
+
+tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
+	$(MAKE) config CFG_NAME=ahb
+	cd $(COCOTB_VERIF_DIR) && python -m nox -R -t "ahb"
+
+tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
 # TODO: Enable full coverage flow
 tests-coverage: ## Run all verification/block/* RTL tests with coverage
-	cd $(BLOCK_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 python -m nox -R -k "verify"
+	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 python -m nox -R -k "verify"
 
 test-i3c-vip-uvm: config ## Run single I3C VIP UVM test with nox (use 'TEST=<i3c_driver|i3c_monitor>' flag)
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s $(TEST)
@@ -108,8 +117,6 @@ tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && python -m nox -k "verify"
 
-dolla:
-	@echo $$(($$(nproc)-1))
 #
 # Utilities
 #
@@ -125,7 +132,7 @@ install-uvm:
 clean: ## Clean all generated sources
 	rm -rf $(I3C_ROOT_DIR)/{dsim.env,dsim_work,sw,*.log,*.rpt,*.vcd}
 	rm -rf $(GENERIC_UVM_DIR) $(VERILATOR_UVM_DIR)
-	rm -rf {$(VERIFICATION_DIR),$(BLOCK_VERIF_DIR),$(UVM_VERIF_DIR)}/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.json,*.log,*.vcd,*.xml}
+	rm -rf {$(VERIFICATION_DIR),$(COCOTB_VERIF_DIR),$(BLOCK_VERIF_DIR),$(TOP_VERIF_DIR),$(UVM_VERIF_DIR)}/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.json,*.log,*.vcd,*.xml}
 	rm -rf $(TOOL_DIR)/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.log,*.vcd,*.xml}
 
 .PHONY: lint lint-check lint-rtl lint-tests \

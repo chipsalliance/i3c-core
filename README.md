@@ -11,9 +11,9 @@ A login with MIPI Alliance account is required to access the document on [MIPI w
 
 This repository provides:
 * [SystemVerilog description of the hardware](src)
-* [Software tests](sw)
-* [Cocotb/Verilator verification](verification/block)
-* [UVM tests](verification)
+* [Cocotb/Verilator verification](verification/cocotb)
+* [UVM tests](verification/uvm_i3c)
+* [tools](tools)
 
 This repository depends on:
 * [Caliptra RTL](https://github.com/chipsalliance/caliptra-rtl)

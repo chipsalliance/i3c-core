@@ -1,8 +1,12 @@
 # Verification
 
-In this project, `nox` is used to manage the cocotb test suite.
+The I3C Core is verified with rapid cocotb tests and the UVM test suite, located in `cocotb` and `uvm_i3c` directories, respectively.
 
-## Block
+## Cocotb
+
+Tests are split into directories:
+* `top` - top level, full I3C tests
+* `block` - module level, unit tests, subsystems
 
 Once setup is completed, then simulations can be launched with:
 
@@ -25,7 +29,7 @@ export CALIPTRA_ROOT=$(pwd)/third_party/caliptra-rtl
 export I3C_ROOT_DIR=$(pwd)
 ```
 
-enter `verification/block` directory and run
+enter `verification/cocotb/block` directory and run
 
 ```{bash}
 make -C ./<block_name> clean all MODULE=<test_name>
@@ -49,4 +53,4 @@ in the I3C core root folder.
 
 ## Tools
 
-TBD
+In directory `tools`, a noxfile is provided to test [the I3C Core Configuration Tool](../tools/i3c_config/i3c_core_config.py).

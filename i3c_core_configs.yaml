@@ -24,8 +24,8 @@ axi:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 32
-  DctDepth: 32
+  DatDepth: 128
+  DctDepth: 128
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 32

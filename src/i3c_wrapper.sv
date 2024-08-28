@@ -140,8 +140,8 @@ module i3c_wrapper #(
     if (AxiUserWidth != `AXI_USER_WIDTH) begin : clptra_axi_user_w_check
       `REPORT_INCOMPATIBLE_PARAM("AXI user width", AxiUserWidth, `AXI_USER_WIDTH)
     end
-    if (AxiIdWidth != `AxiIdWidth) begin : clptra_axi_id_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AxiIdWidth)
+    if (AxiIdWidth != `AXI_ID_WIDTH) begin : clptra_axi_id_w_check
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AXI_ID_WIDTH)
     end
 `endif
   end
@@ -151,7 +151,7 @@ module i3c_wrapper #(
     if (AxiUserWidth != AxiDataWidth) begin
       $fatal(0, {"AxiUserWidth (%0d) != AxiDataWidth (%0d): Current AXI doesn't support ",
                  "different USER and DATA widths. (instance %m)."}, AxiUserWidth, AxiDataWidth);
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AxiIdWidth)
+      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AXI_ID_WIDTH)
     end
   end
 `endif
