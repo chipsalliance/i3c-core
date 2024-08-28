@@ -26,6 +26,7 @@ from peakrdl_regblock import RegblockExporter
 from peakrdl_regblock.cpuif.passthrough import PassthroughCpuif
 from peakrdl_regblock.udps import ALL_UDPS
 from peakrdl_uvm import UVMExporter
+from rdl_exporter import CocotbExporter
 from rdl_post_process import scrub_line_by_line
 from systemrdl import RDLCompiler
 
@@ -151,6 +152,12 @@ def main():
     for file in os.listdir(args.output_dir):
         if os.path.isfile(os.path.join(args.output_dir, file)):
             scrub_line_by_line(os.path.join(args.output_dir, file))
+
+    # Export Cocotb dictionary
+    exporter = CocotbExporter()
+    output_file = os.path.join("verification/common/reg_map.py")
+    exporter.export(root, path=output_file)
+    logging.info(f"Created: Python dictionary file {output_file}")
 
 
 if __name__ == "__main__":
