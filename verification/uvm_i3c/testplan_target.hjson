@@ -1,0 +1,363 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+    testpoints: [
+        {
+            name: target_broadcast_RSTDAA
+            desc: '''
+                Verify the I3C core behavior to the Reset Dynamic Address Assignment
+                in broadcast format. If I3C code has I3C address setup and
+                controller sends RSTDAA, I3C core shall clear I3C address
+                register and switch to I2C mode if I2C address available, or
+                wait for ENTDAA to receive a new I3C address.
+
+                - Initialize I3C core in the target mode without dynamic address
+                - Use I3C controller agent to send SETAASA
+                - Use I3C controller agent to send broadcast RSTDAA
+                - Access and compare expected dynamic address with actual
+                    address register using RAL model
+                '''
+            stage: ""
+            tests: ["target_broadcast_RSTDAA"]
+        }
+        {
+            name: target_direct_RSTDAA
+            desc: '''
+                Verify the I3C core behavior to the Reset Dynamic Address Assignment
+                in direct mode. I3C core shall NACK this command.
+
+                - Initialize I3C core in the target mode without dynamic address
+                - Use I3C controller agent to send SETAASA
+                - Use I3C controller agent to send direct RSTDAA
+                - Check I3C agent's monitor output for NACK to this command
+                '''
+            stage: ""
+            tests: ["target_direct_RSTDAA"]
+        }
+        {
+            name: target_DISEC
+            desc: '''
+                Verify the I3C core behavior to the Disable Events Command
+                in broadcast format. I3C core shall receive payload
+                and disable all IBIs that had their bitfield set.
+                This testpoint should check both direct and broadcast CCCs.
+
+                - Initialize I3C core in the target mode
+                - Enable all IBIs in I3C core IBI register
+                - Use I3C controller agent to send broadcast DISEC
+                - Access and compare expected enabled events command register
+                    using RAL model
+                '''
+            stage: ""
+            tests: ["target_broadcast_DISEC",
+                    "target_direct_DISEC"]
+        }
+        {
+            name: target_ENEC
+            desc: '''
+                Verify the I3C core behavior to the Enable Events Command
+                in broadcast format. I3C core shall receive payload
+                and enable all IBIs that had their bitfield set.
+                This testpoint should check both direct and broadcast CCCs.
+
+                - Initialize I3C core in the target mode
+                - Clear I3C core IBI register
+                - Use I3C controller agent to send broadcast ENEC
+                - Access and compare expected enabled events command register
+                    using RAL model
+                '''
+            stage: ""
+            tests: ["target_broadcast_ENEC",
+                    "target_direct_ENEC"]
+        }
+        {
+            name: target_SETMWL/SETMRL
+            desc: '''
+                Verify the I3C core behavior to the Set Max Write/Read Length.
+                I3C core, after receiving SETMWL/SETMRL CCC, shall gather
+                2 payload bytes and use the to update
+                its max write/read length register value.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send SETMWL/SETMRL
+                - Access and compare expected values in the max write length
+                    register using RAL model
+                '''
+            stage: ""
+            tests: ["target_broadcast_SETMWL",
+                    "target_broadcast_SETMRL",
+                    "target_direct_SETMWL",
+                    "target_direct_SETMRL"]
+        }
+        {
+            name: target_GETMWL/GETMRL
+            desc: '''
+                Verify the I3C core behavior to the Get Max Write/Read Length
+                I3C core, after receiving CCC for GETMWL/GETMRL,
+                shall monitor following transfers addresses and
+                only send its max write/read length register value when
+                transfer address matched that of I3C core.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETMWL/GETMRL
+                - Compare return value with set value and
+                    I3C core max supported write length
+                '''
+            stage: ""
+            tests: ["target_GETMWL", "target_GETMRL"]
+        }
+        {
+            name: target_RSTACT
+            desc: '''
+                Verify the I3C core behavior to the Target Reset Action.
+                I3C core, after receiving RSTACT,
+                shall update its reset action register with received data.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send broadcast RSTACT
+                - Access and compare expected values in the reset action
+                    registers using RAL model
+                '''
+            stage: ""
+            tests: ["target_broadcast_RSTACT",
+                    "target_direct_write_RSTACT"]
+        }
+        {
+            name: target_direct_read_RSTACT
+            desc: '''
+                Verify the I3C core behavior to the Target Reset Action in
+                broadcast format. I3C core, after receiving direct RSTACT with
+                read flag set, shall send its reset action register or return
+                time to reset only when transfer address matched that of the
+                I3C core.
+                For more information refer to MIPI I3C Basic Specification
+                Table 53.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send broadcast RSTACT
+                - Use I3C controller agent to send direct RSTACT read
+                - Compare I3C returned data with last I3C set value and reset action
+                    register
+                '''
+            stage: ""
+            tests: ["target_direct_write_RSTACT"]
+        }
+        {
+            name: target_SETNEWDA
+            desc: '''
+                Verify the I3C core behavior to the Set New Dynamic Address
+                command. When I3C core receives SETNEWDA, it shall monitor
+                following transfers and update its I3C address with transfer
+                data byte when transfer address matches that of I3C core.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send SETNEWDA that will change
+                    I3C core address
+                - Access and compare expected value in the dynamic address
+                    register using RAL model
+                '''
+            stage: ""
+            tests: ["target_SETNEWDA"]
+        }
+        {
+            name: target_GETPID/GETBCR/GETDCR
+            desc: '''
+                Verify the I3C core behavior to the Get Provisioned ID,
+                Get Bus Characteristics or Get Device Characteristics command.
+                I3C core, after receiving GETPID/GETBCR/GETDCR CCC from controller,
+                shall monitor following transfers and send its PID/BCR/DCR
+                register value when the transfer address matches that of I3C core.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETPID/GETBCR/GETDCR
+                - Access PID register and compare its value with value
+                    return by I3C agent's monitor
+                '''
+            stage: ""
+            tests: ["target_GETPID", "target_GETBCR", "target_GETDCR"]
+        }
+        {
+            name: "target_GETSTATUS"
+            desc: '''
+                Verify the I3C core behavior to the Get Device Status command
+                without defining a byte. I3C core, after receiving GETSTATUS
+                CCC from controller without defining byte, shall monitor
+                following transfers and send its status register when
+                transfer address matches that of the I3C core.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETSTATUS
+                - Access I3C core target status registers and compare values
+                    with values return by I3C agent's monitor
+                '''
+            stage: ""
+            tests: ["target_GETSTATUS"]
+        }
+        {
+            name: "target_defined_GETSTATUS"
+            desc: '''
+                Verify the I3C core behavior to the Get Device Status command
+                with a defining byte set to 0x00. I3C core, after receiving GETSTATUS
+                CCC from controller with defining byte 0x00, shall behave
+                the same as when no defining byte is sent.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETSTATUS with defining
+                    byte set to 0x00
+                - Use I3C controller agent to send GETSTATUS without defining
+                    byte
+                - Compare values return by both CCCs
+                '''
+            stage: ""
+            tests: ["target_defined_GETSTATUS"]
+        }
+        {
+            name: "target_GETCAPS"
+            desc: '''
+                Verify the I3C core behavior to the Get Optional Feature
+                Capabilities command. I3C core, after receiving GETCAPS CCC
+                from controller, shall monitor following transactions and
+                send its capabilities register contents when transfer address
+                matches that of the I3C core.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETCAPS
+                - Access I3C core target capabilities registers and compare
+                    values with values return by I3C agents' monitor
+                '''
+            stage: ""
+            tests: ["target_GETCAPS"]
+        }
+        {
+            name: "target_defined_GETCAPS"
+            desc: '''
+                Verify the I3C core behavior to the Get Optional Feature
+                Capabilities command with defining byte set to 0x0.
+                I3C core, after receiving GETCAPS CCC from controller with
+                defining byte 0x00, shall behave the same as when no defining
+                byte is sent.
+
+                - Initialize I3C core in the target mode
+                - Use I3C controller agent to send GETCAPS with defining
+                    byte set to 0x00
+                - Use I3C controller agent to send GETCAPS without defining
+                    byte
+                - Compare values return by both CCCs
+                '''
+            stage: ""
+            tests: ["target_defined_GETCAPS"]
+        }
+        {
+            name: i2c_target_direct_access
+            desc: '''
+                Verify the I3C core behavior to a bus frame with
+                single legacy I2C transaction.
+
+                - Initialize I3C core in the target mode
+                - Send single legacy I2C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_target_direct_access"]
+        }
+        {
+            name: i2c_target_direct_access_with_rstart
+            desc: '''
+                Verify the I3C core behavior to bus frame with multiple legacy I2C transactions.
+
+                - Initialize I3C core in the target mode
+                - Send multiple legacy I2C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_target_direct_access_with_rstart"]
+        }
+        {
+            name: i2c_target_access
+            desc: '''
+                Verify the I3C core behavior in the target mode to a bus frame
+                that begins with I3C broadcast followed by a single legacy I2C
+                transaction.
+
+                - Initialize I3C core in the target mode
+                - Start bus frame with I3C broadcast
+                - Send single legacy I2C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_target_access"]
+        }
+        {
+            name: i2c_target_access_with_rstart
+            desc: '''
+                Verify the I3C core behavior in the target mode to a bus frame
+                that begins with I3C broadcast followed by multiple legacy I2C
+                transactions.
+
+                - Initialize I3C core in the target mode
+                - Start bus frame with I3C broadcast
+                - Send multiple legacy I2C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_target_access_with_rstart"]
+        }
+        {
+            name: i3c_target_direct_access
+            desc: '''
+                Verify the I3C core behavior to a bus frame with single I3C
+                transaction.
+
+                - Initialize I3C core in the target mode
+                - Send single I3C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_target_direct_access"]
+        }
+        {
+            name: i3c_target_direct_access_with_rstart
+            desc: '''
+                Verify the I3C core behavior to a bus frame with multiple
+                I3C transactions.
+
+                - Initialize I3C core in the target mode
+                - Send multiple I3C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_target_direct_access_with_rstart"]
+        }
+        {
+            name: i3c_target_access
+            desc: '''
+                Verify the I3C core behavior in the target mode to a bus frame
+                that begins with I3C broadcast followed by a single I3C
+                transaction.
+
+                - Initialize I3C core in the target mode
+                - Start bus frame with I3C broadcast
+                - Send single I3C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_target_access"]
+        }
+        {
+            name: i3c_target_access_with_rstart
+            desc: '''
+                Verify the I3C core behavior in the target mode to a bus frame
+                that begins with I3C broadcast followed by multiple I3C
+                transactions.
+
+                - Initialize I3C core in the target mode
+                - Start bus frame with I3C broadcast
+                - Send multiple I3C transaction to the I3C core
+                - Compare data received in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_target_access_with_rstart"]
+        }
+    ]
+}
+
+
