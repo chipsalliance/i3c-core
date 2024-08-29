@@ -1,0 +1,140 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+    testpoints: [
+        {
+            name: csr_hw_reset
+            desc: '''
+                  Verify the reset values as indicated in the RDL specification.
+                  This testpoint should use UVM RAL model to track register state.
+
+                  - Get and shuffle the list of CSRs to remove the effect of ordering
+                  - Write all CSRs with a random value
+                  - Apply reset to the DUT as well as the RAL model
+                  - Read each CSR and compare it against the reset value
+                  - It is mandatory to replicate this test for any reset that affects
+                    all or subset of the CSRs
+                  '''
+            stage: ""
+            tests:["csr_hw_reset"]
+        }
+        {
+            name: csr_rw
+            desc: '''
+                  Verify accessibility of CSRs as indicated in the RDL specification.
+
+                  - Get and shuffle the list of CSRs to remove the effect of ordering
+                  - Loop through each CSR to write it with a random value
+                  - Read the CSR back and check for correctness
+                  '''
+            stage: ""
+            tests:["csr_rw"]
+        }
+        {
+            name: "csr_rw1c"
+            desc: '''
+                  Verify behaviour of the W1C CSRs as defined by RDL specification.
+
+                  - Get and shuffle the list of W1C CSRs to remove the effect of ordering
+                  - Loop through each CSR and trigger condition to set W1C registers high
+                  - Loop through each CSR to write it with a random value
+                  - Read the CSR back and check for correctness
+                  '''
+            stage: ""
+            tests: ["csr_rw1c"]
+        }
+        {
+            name: csr_bit_aliasing
+            desc: '''
+                  Verify no aliasing within individual bits of a CSR.
+
+                  - Get and shuffle the list of CSRs to remove the effect of ordering
+                  - Loop through each CSR to write it with a random value
+                  - Check each register:
+                    - Flip single bit in the CSR
+                    - Read the CSR back and check for correctness
+                    - Repeat for each bit in the register
+                  - This verifies that writing a specific bit within the CSR did not
+                    affect and of the other bits
+                  '''
+            stage: ""
+            tests: ["csr_bit_aliasing"]
+        }
+        {
+            name: csr_aliasing
+            desc: '''
+                  Verify no aliasing within CSR bank space.
+
+                  - Get and shuffle the list of CSRs to remove the effect of ordering
+                  - Loop through each CSR to write it with legal value
+                  - Pick random register and write new random legal value not equal to
+                    any previous random value written to registers
+                  - Check that all registers apart from modified one read back old value
+                  - Check modified CSR for correctness
+                  - This verifies that writing a specific CSR did not
+                    affect and of the other CSRs
+                  '''
+            stage: ""
+            tests: ["csr_aliasing"]
+        }
+        {
+            name: mem_walk
+            desc: '''
+                  Verify accessibility of all memories memories defined by I3C core.
+                  Check that memories respect their access policies and
+                  correctly map addresses to memory entries.
+
+                  - Run the standard UVM mem walk sequence on all memories in the RAL model
+                  '''
+            stage: ""
+            tests: ["mem_walk"]
+        }
+        {
+            name: mem_unaligned_access
+            desc: '''
+                  Verify unaligned accessibility of all memories memories defined by
+                  RDL specification. Check that memories correctly handle
+                  AXI data mask and data granularity. AXI allows for unaligned addresses,
+                  but data and data mask must be aligned, so writing 0xDEADBEEF at 0x21
+                  must be handled as 2 writes with first write at 0x21 address
+                  with 0x00DEADBE data, and second write at 0x24 address with 0xEF data.
+
+                  - Setup memory contents using full bus width with aligned addresses
+                  - Do unaligned reads and writes into the core memories using
+                    AXI granularity
+                  - Verify memory contents
+                  - Test multiple back to back memory accesses
+                  '''
+            stage: ""
+            tests: ["mem_unaligned_access"]
+        }
+        {
+            name: mem_partial_access
+            desc: '''
+                  Verify partial accessibility of all memories memories defined by
+                  the I3C core. Check that memories correctly handle
+                  AXI data mask and data granularity.
+
+                  - Memories are 32-bit/64-bit wide words.
+                  - Setup memory contents using full bus width
+                  - Do partial reads and writes into the core memories using
+                    AXI granularity
+                  - Verify memory contents
+                  - Test multiple back to back memory accesses
+                  '''
+            stage: ""
+            tests: ["mem_partial_access"]
+        }
+        {
+            name: csr_rw_with_random_reset
+            desc: '''
+                  Verify random reset during CSR/memory access.
+
+                  - Randomly access CSRs and memories
+                  - Issue reset signal after random number of cycles
+                  - Verify that CSRs are reset to default value
+                  '''
+            stage: ""
+            tests: ["csr_rw_with_random_reset"]
+        }
+    ]
+}
