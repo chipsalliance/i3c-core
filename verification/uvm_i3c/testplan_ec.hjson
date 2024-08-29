@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+    testpoints: [
+        {
+            name: extended_capability_list
+            desc: '''
+                  Discover extended capability list through HCI provided
+                  mechanism.
+
+                  - If EXT_CAPS_SECTION_OFFSET non zero, it should be possible
+                  to access all extended capabilities registers starting at
+                  EXT_CAPS_SECTION_OFFSET offset and following EXTCAP_HEADER
+                  - Extended capabilities list ends when EXTCAP_HEADER CAP_ID
+                  is 0x00, other wise next entry is CAP_LENGTH from current
+                  register
+                  - Extended capabilities list cannot have multiple entries
+                  with the same CAP_ID
+                  '''
+            stage: ""
+            tests: ["ec_list_discovery"]
+        }
+    ]
+}
