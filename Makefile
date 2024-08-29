@@ -90,25 +90,20 @@ tests: config ## Run all verification/block/* RTL tests without coverage
 tests-coverage: ## Run all verification/block/* RTL tests with coverage
 	cd $(BLOCK_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 python -m nox -R -k "verify"
 
-test-uvm-$(SIMULATOR): config $(SIMULATOR) ## Run I3C UVM test with SIMULATOR
-
-test-uvm: config ## Run single I3C UVM test with nox (use 'TEST=<i3c_driver|i3c_monitor>' flag)
+test-i3c-vip-uvm: config ## Run single I3C VIP UVM test with nox (use 'TEST=<i3c_driver|i3c_monitor>' flag)
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s $(TEST)
 
-tests-uvm: config ## Run all I3C UVM tests with nox
+tests-i3c-vip-uvm: config ## Run all I3C VIP UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_verify_uvm"
 
-i3c-verify-test-uvm: config ## Run single TEST I3C UVM verify test with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_verify_uvm(coverage=None, uvm_vseq_test='$(TEST)', simulator='$(SIMULATOR)')"
-
-tests-uvm-debug: config ## Run debugging I3C UVM tests with nox
+tests-i3c-vip-uvm-debug: config ## Run debugging I3C VIP UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -t "uvm_debug_tests"
 
-tests-i3c-core-uvm: config ## Run all i3c-core UVM tests with nox
+tests-uvm: config ## Run all I3C Core UVM tests with nox
 	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm"
 
-i3c-core-verify-test-uvm: config ## Run single TEST i3c-core UVM verify test with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm(coverage=None, uvm_vseq_test='$(TEST)', simulator='$(SIMULATOR)')"
+tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
+	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_uvm_debug_tests"
 
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && python -m nox -k "verify"

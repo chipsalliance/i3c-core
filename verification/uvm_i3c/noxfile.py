@@ -66,7 +66,7 @@ def verify_uvm(
         raise Exception("SimFailure: UVM failed. See test logs for more information.")
 
 
-@nox.session(tags=["uvm_tests"])
+@nox.session(tags=["i3c_vip_uvm_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
     "uvm_vseq_test",
@@ -96,7 +96,7 @@ def i3c_verify_uvm(session, simulator, uvm_vseq_test, coverage):
     )
 
 
-@nox.session(tags=["uvm_debug_tests"])
+@nox.session(tags=["i3c_vip_uvm_debug_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
     "extra_make_args",
@@ -124,7 +124,7 @@ def i3c_monitor(session, simulator, extra_make_args, coverage):
     )
 
 
-@nox.session(tags=["uvm_debug_tests"])
+@nox.session(tags=["i3c_vip_uvm_debug_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize("coverage", coverageTypes)
 def i3c_driver(session, simulator, coverage):
@@ -156,7 +156,24 @@ def i3c_core_verify_uvm(session, simulator, uvm_i3c_core_vseq_test, coverage):
         session,
         tb_files=tb_files,
         uvm_testname="i3c_core_test",
-        uvm_vseq_test=uvm_vseq_test,
+        uvm_vseq_test=uvm_i3c_core_vseq_test,
+        simulator=simulator,
+        extra_make_args=[],
+        coverage=coverage,
+    )
+
+
+@nox.session(tags=["i3c_core_uvm_debug_tests"])
+@nox.parametrize("simulator", [SIMULATOR])
+@nox.parametrize("coverage", coverageTypes)
+def i3c_driver(session, simulator, coverage):
+    tb_files = "${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/i3c_core_sim.scr \
+                ${I3C_ROOT_DIR}/verification/uvm_i3c/i3c_core/tb_i3c_core.sv"
+    verify_uvm(
+        session,
+        tb_files=tb_files,
+        uvm_testname="",
+        uvm_vseq_test="",
         simulator=simulator,
         extra_make_args=[],
         coverage=coverage,
