@@ -1,0 +1,227 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+    testpoints: [
+        {
+            name: hc_bus_enable
+            desc: '''
+                  Verify core behavior to the bus_enable bit.
+
+                  - When bit is cleared, core should not execute commands
+                  in the command queue
+                  - When bit is set, core should fetch commands from
+                  the command queue and execute them normally
+                  - When SW clears BUS_ENABLE bit while a command is in
+                  progress, core should keep executing commands until
+                  command with `TOC` filed is set
+                  - Core should return to IDLE state after processing
+                  command with `TOC` set
+                  '''
+            stage: ""
+            tests: ["hc_bus_enable"]
+        }
+        {
+            name: hc_resume
+            desc: '''
+                  Verify core behavior to the bus error detection.
+
+                  - Core should process commands while this value is 0
+                  - After detecting transaction error on I3C bus, core
+                  should set this bit and stop processing command queue
+                  - Writing 1 should clear this bit and resume command
+                  processing
+                  '''
+            stage: ""
+            tests: ["hc_resume"]
+        }
+        {
+            name: hc_abort
+            desc: '''
+                  Verify I3C core behavior on SW HC_ABORT request.
+
+                  - Core should abort ongoing transaction on the nearest
+                  opportunity and refrain from executing any other
+                  scheduled command
+                  - Core should enter abort state
+                  - Core should set all other abort registers, as HC_CONTROL
+                  acts as global abort request
+                  - Response queue entry for aborted command should have
+                  ERR_STATUS field set to 0x8
+                  - If interrupts are enabled, ABORT should trigger
+                  TRANSFER_ABORT_STAT
+                  - ABORT should trigger HC_SEQ_CANCEL_STAT when last command
+                  had `TOC` unset
+                  '''
+            stage: ""
+            tests: ["hc_abort"]
+        }
+        {
+            name: hc_halt_on_timeout
+            desc: '''
+                  Verify I3C core behavior to the sequence timeout.
+
+                  - Core should raise HC_WARN_CMD_SEQ_STALL_STAT when command
+                  queue is empty and last command had `TOC` unset
+                  - When HC_HALT_ON_CMD_SEQ_TIMEOUT is set core should raise,
+                  HC_ERR_CMD_SEQ_TIMEOUT_STAT after prolonged stall condition
+                  - When HC_HALT_ON_CMD_SEQ_TIMEOUT is set prolonged stall
+                  should trigger HALT state, which is read through HC_RESUME field
+                  - Response to the last command should have its ERR_STATUS
+                  field set to 0x8
+
+                  '''
+            stage: ""
+            tests: ["hc_halt_on_timeout"]
+        }
+        {
+            name: hc_hot_join
+            desc: '''
+                  Verify I3C core behavior to the hot join IBI request.
+
+                  - I3C core should NACK request and send broadcast CCC that
+                  disables Hot-Join IBIs when HOT_JOIN_CTRL is set
+                  - I3C core should ACK request and proceed to assign dynamic
+                  address if the HOT_JOIN_CTRL is unset
+                  '''
+            stage: ""
+            tests: ["hc_hot_join"]
+        }
+        {
+            name: soft_reset
+            desc: '''
+                  Verify I3C core behavior to the reset register.
+
+                  - Writing 1 to the SOFT_RST field should trigger I3C core
+                  reset to the same state as would system level reset
+                  - CSRs should be in default states
+                  '''
+            stage: ""
+            tests: ["soft_rst"]
+        }
+        {
+            name: queue_reset
+            desc: '''
+                  Verify I3C core behavior to the reset register.
+
+                  - Writing 1 to any of queue reset fields should cause
+                  queue to flush
+                  - This operation shouldn't trigger threshold interrupts
+                  '''
+            stage: ""
+            tests: ["cmd_queue_rst", "resp_queue_rst",
+                    "tx_fifo_rst", "rx_queue_rst", "ibi_queue_rst"]
+        }
+        {
+            name: notify_interrupt_rejected
+            desc: '''
+                  Verify I3C core configurable behavior to the rejected
+                  interrupt.
+
+                  - I3C core should enqueue IBI Status Descriptor in the IBI
+                    Data queue on the rejected IBI when correct bit in the
+                    IBI_NOTIFY_CTRL is selected
+                  '''
+            stage: ""
+            tests: ["notify_hj_rejected", "notify_crr_rejected",
+                    "notify_ibi_rejected"]
+        }
+        {
+            name: ibi_splitting
+            desc: '''
+                  Verify I3C core behavior to the IBI_DATA_SEGMENT_SIZE field.
+
+                  - I3C core should create new IBI status descriptor every
+                  4*IBI_DATA_SEGMENT_SIZE bytes
+                  - I3C core should mark if status descriptor is a last
+                  descriptor for this IBI or if more descriptors are to follow
+                  '''
+            stage: ""
+            tests: ["ibi_data_split"]
+        }
+        {
+            name: ibi_data_abort
+            desc: '''
+                  Verify I3C core behavior to the IBI data abort.
+
+                  - I3C core should enable IBI monitoring only when
+                  IBI_DATA_ABORT_MON is set
+                  - I3C core must be able to cancel ongoing IBI if this
+                  register is updated with current IBI's IBI_ID and STATUS_TYPE
+                  after N chucks, where N is provided in the AFTER_N_CHUNKS field
+                  '''
+            stage: ""
+            tests: ["ibi_data_abort"]
+        }
+        {
+            name: pio_queue_intr
+            desc: '''
+                  Verify I3C core behavior to the PIO queue threshold settings.
+
+                  - I3C core should trigger interrupt when queue has threshold
+                  free entries or has at least threshold entires
+                  '''
+            stage: ""
+            tests: ["cmd_empty_intr", "resp_fill_intr", "ibi_status_intr",
+                    "tx_empty_intr", "rx_fill_intr"]
+        }
+        {
+            name: pio_control
+            desc: '''
+                  Verify I3C core behavior to PIO control registers.
+
+                  - Setting ABORT should abort ongoing transaction on the nearest
+                  opportunity and refrain from executing any other
+                  scheduled command
+                  - Disabling ENABLE should disable Sw accesses to
+                  the PIO queue registers for reading and writing
+                  - Disabling RS should stop CMD queue execution, already
+                  started command should be completed normally
+                  '''
+            stage: ""
+            tests: ["pio_abort", "pio_enable", "pio_rs"]
+        }
+        {
+            name: status_monitoring
+            desc: '''
+                  Verify I3C core status monitoring enabling/disabling using
+                  CSRs.
+
+                  - Disable status fields shouldn't change when trigger
+                  condition is true
+                  - Enabling status monitoring, while I3C core is in the set
+                  condition, should update status register
+                  '''
+            stage: ""
+            tests: ["hc_internal_err_stat_en", "hc_seq_cancel_stat_en",
+                    "hc_warn_cmd_seq_stall_stat_en",
+                    "hc_err_cmd_seq_timeout_stat_en",
+                    "sched_cmd_missed_tick_stat_en",
+                    "tx_thld_stat_en", "rx_thld_stat_en",
+                    "ibi_status_thld_stat_en",
+                    "cmd_queue_ready_stat_en",
+                    "resp_ready_stat_en",
+                    "transfer_abort_stat_en", "transfer_err_stat_en"]
+        }
+        {
+            name: interrupt_enable
+            desc: '''
+                  Verify I3C core status interrupt enabling/disabling using
+                  CSRs.
+
+                  - Disable interrupts shouldn't trigger external interrupt
+                  when status field is set
+                  - Enabling interrupt signal, while status register is set,
+                  should trigger external interrupt
+                  '''
+            stage: ""
+            tests: ["hc_internal_err_signal_en", "hc_seq_cancel_signal_en",
+                    "hc_warn_cmd_seq_stall_signal_en",
+                    "hc_err_cmd_seq_timeout_signal_en",
+                    "sched_cmd_missed_tick_signal_en",
+                    "tx_thld_signal_en", "rx_thld_signal_en",
+                    "ibi_status_thld_signal_en",
+                    "cmd_queue_ready_signal_en",
+                    "resp_ready_signal_en",
+                    "transfer_abort_signal_en", "transfer_err_signal_en"]
+        }
+    ]
+}
