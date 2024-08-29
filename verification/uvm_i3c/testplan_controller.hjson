@@ -1,0 +1,149 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+        {
+            name: controller_ENTDAA
+            desc: '''
+                  Verify the I3C core Enter Dynamic Address Assignment
+                  and dynamic address assignment sequence behavior.
+
+                  - Initialize I3C core in the controller mode
+                  - Start ENTDAA sequence through I3C core registers
+                  - Use I3C target agent to respond to ENTDAA command
+                  - Compare data send in AXI transaction with I3C agent's monitor
+                  - Access and compare DAA related registers using RAL model
+                '''
+            stage: ""
+            tests: ["controller_ENTDAA"]
+        }
+        {
+            name: controller_CCC
+            desc: '''
+                  Verify the I3C core behavior CCC send.
+
+                  - Initialize I3C core in the controller mode
+                  - Randomly select a CCC sequence pair for controller and target,
+                      set of available paris should not contain ENTDAA as it's
+                      handled separately
+                  - Perform in parallel controller and target CCC sequences
+                  - Compare data send in AXI transaction with I3C agent's monitor
+                '''
+            stage: ""
+            tests: ["controller_CCC"]
+        }
+        {
+            name: i2c_controller_direct_access
+            desc: '''
+                  Verify I2C/I3C command handling that results in
+                  a bus frame with a single legacy I2C transaction.
+
+                  - Initialize I3C core in the controller mode
+                  - Disable I3C broadcast to R/W transactions
+                  - Send single transaction to an I2C device.
+                  - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_controller_direct_access"]
+        }
+        {
+            name: i2c_controller_direct_access_with_rstart
+            desc: '''
+                  Verify I2C/I3C command handling that results in
+                  a bus frame with multiple legacy I2C transactions.
+
+                  - Initialize I3C core in the controller mode
+                  - Disable I3C broadcast to R/W transactions
+                  - Send multiple transaction to I2C devices
+                  - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_controller_direct_access_with_rstart"]
+        }
+        {
+            name: i2c_controller_access
+            desc: '''
+                  Verify I2C/I3C command handling that results in
+                  a bus frame that begins with I3C broadcast followed
+                  by a single legacy I2C transaction.
+
+                  - Initialize I3C core in the controller mode
+                  - Send single transaction to an I2C device.
+                  - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_controller_access"]
+        }
+        {
+            name: i2c_controller_access_with_rstart
+            desc: '''
+                  Verify I2C/I3C command handling that results in
+                  a bus frame that begins with I3C broadcast followed by
+                  multiple legacy I2C transactions.
+
+                  - Initialize I3C core in the controller mode
+                  - Launch concurrently:
+                  - Send multiple transaction to I2C devices
+                  - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i2c_controller_access_with_rstart"]
+        }
+        {
+            name: i3c_controller_direct_access
+            desc: '''
+                Verify I2C/I3C command handling that results in
+                a bus frame with single I3C transaction.
+
+                - Initialize I3C core in the controller mode
+                - Disable I3C broadcast to R/W transactions
+                - Send single transaction to an I3C device.
+                - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_controller_direct_access"]
+        }
+        {
+            name: i3c_controller_direct_access_with_rstart
+            desc: '''
+                Verify I2C/I3C command handling that results in
+                a bus frame with multiple I3C transactions
+
+                - Initialize I3C core in the controller mode
+                - Disable I3C broadcast to R/W transactions
+                - Send multiple transaction to I3C devices
+                - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_controller_direct_access_with_rstart"]
+        }
+        {
+            name: i3c_controller_access
+            desc: '''
+                Verify I2C/I3C command handling that results in
+                a bus frame that begins with I3C broadcast followed by
+                a single I3C transaction.
+
+                - Initialize I3C core in the controller mode
+                - Send single transaction to an I3C device.
+                - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_controller_access"]
+        }
+        {
+            name: i3c_controller_access_with_rstart
+            desc: '''
+                Verify I2C/I3C command handling that results in
+                a bus frame that begins with I3C broadcast followed
+                by multiple I3C transactions.
+
+                - Initialize I3C core in the controller mode
+                - Send multiple transaction to I3C devices
+                - Compare data send in AXI transaction with I3C monitor
+                '''
+            stage: ""
+            tests: ["i3c_controller_access_with_rstart"]
+        }
+    ]
+}
+
+
