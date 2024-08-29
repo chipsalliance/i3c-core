@@ -1,0 +1,724 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+    testpoints: [
+        {
+            name: secondary_controller_enable
+            desc: '''
+                  Verify I3C core secondary controller behavior.
+                  This behavior is controller by the `STBY_CR_ENABLE_INIT`
+                  filed in `STBY_CR_CONTROL` register.
+
+                  - If DISABLED mode is selected, I3C core assumes that it is
+                  the only I3C controller on the bus, it NACKs controller
+                  role requests
+                  - If ACM_INIT mode is selected, I3C core performs bus
+                  initialization, after successful initialization it
+                  broadcasts DEFTGTS, on controller role requests acceptance
+                  I3C core performs handoff procedure and switches to
+                  a standby mode
+                  - If SCM_RUNNING mode is selected, I3C core starts in the
+                  standby mode, waits for primary controller to initialize
+                  dynamic address
+                  - If SCM_HOT_JOIN mode is selected, I3C core issues
+                  Hot-Join IBI that will assign dynamic address to the I3C core,
+                  and switches to standby mode
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_disabled",
+                "secondary_controller_enabled_as_active",
+                "secondary_controller_enabled_as_secondary",
+                "secondary_controller_enabled_as_hot_join"
+            ]
+        }
+        {
+            name: secondary_controller_hot_join_request
+            desc: '''
+                  Verify I3C core Hot-Join request monitoring.
+
+                  - I3C core waits for Hot-Join condition
+                  - I3C core sends Hot-Join IBI when bus in the correct state
+                  - I3C core sets `HJ_REQ_STATUS` field in the `STBY_CR_STATUS`
+                  register when Hot-Join IBI was send
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_enter_bus_hot_join"
+            ]
+        }
+        {
+            name: secondary_controller_full_reset_capable
+            desc: '''
+                  Verify I3C core full system reset capability.
+                  HCI specification allows I3C secondary controller to
+                  enable/disable reset action 0x02. behavior is controlled by
+                  the `RSTACT_DEFBYTE_02` field of the
+                  `STBY_CR_CONTROL register`. Reset action byte is stored in
+                  the `RST_ACTION` field of the
+                  `STBY_CR_CCC_CONFIG_RSTACT_PARAMS` register.
+
+                  - I3C core acknowledges RSTACT CCC with defining byte
+                  set to 0x02 when this field is 1 and NACks if bit is set to 0
+                  - If 0x02 action is enabled, I3C core updates `RST_ACTION`
+                  - If 0x02 action is disabled, I3C core ignores this CCC
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_full_reset_capable"
+            ]
+        }
+        {
+            name: secondary_controller_reset_action
+            desc: '''
+                  Verify I3C core target reset pattern detection and reset flow.
+
+                  - Receiving START condition clears `RST_ACTION` field in the
+                  `STBY_CR_CCC_CONFIG_RSTACT_PARAMS` register
+                  - Receiving RSTACT followed by target reset pattern
+                  triggers `STBY_CR_OP_RSTACT_STAT` condition
+                  - If `RESET_DYNAMIC_ADDR` field is set and RSTACT defining
+                  byte is 0x1 or 0x2, I3C core resets its
+                  `DYNAMIC_ADDR`, `DYNAMIC_ADDR_VALID` fields and clears
+                  `ACR_FSM_OP_SELECT` field to revoke controller role switch
+                  - Receiving target reset pattern while in deepest sleep
+                  wakes up I3C core
+                  - Receiving target reset pattern without RSTACT primes
+                  I3C core to perform full chip reset, if pattern is followed by:
+                    * RSTACT/GETSTATUS CCC I3C core disarms full chip reset
+                    * another target reset pattern causes I3C core to send
+                    full chip reset signal
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_reset_action"
+            ]
+        }
+        {
+            name: secondary_controller_state_modified
+            desc: '''
+                  Verify I3C core response to any CCC commands that are handled
+                  automatically and modify I3C core state, excluding dynamic
+                  address changes.
+
+                  - If received CCC command is handled automatically,
+                  I3C core triggers `CCC_PARAM_MODIFIED_STAT` condition
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_modify_state"
+            ]
+        }
+        {
+            name: secondary_controller_unhandled_direct_CCC
+            desc: '''
+                  Verify response to any direct CCC commands that isn't
+                  automatically handled by I3C core.
+
+                  - If received CCC command isn't handled automatically,
+                  I3C core NACKs direct CCC and triggers
+                  `CCC_UNHANDLED_NACK_STAT` condition
+                  - If i3C core has target interface enabled, it forwards
+                  CCC information to the interface
+                  - If i3C core has target interface disabled, any information
+                  about CCC is dropped
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_unhandled_direct_ccc",
+                "secondary_controller_unhandled_direct_ccc_with_target_interface"
+            ]
+        }
+        {
+            name: secondary_controller_unhandled_broadcast_CCC
+            desc: '''
+                  Verify response to any broadcast CCC commands that isn't
+                  automatically handled by I3C core.
+
+                  - If received CCC command isn't handled automatically,
+                  I3C core NACKs CCC
+                  - If i3C core has target interface enabled, it forwards
+                  CCC information to the interface
+                  - If i3C core has target interface disabled, any information
+                  about CCC is dropped
+                  - If CCC is RSTDAA and I3C core cannot process request,
+                  I3C core triggers `CCC_FATAL_RSTDAA_ERR_STAT` condition
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_unhandled_broadcast_ccc",
+                "secondary_controller_unhandled_broadcast_ccc_with_target_interface",
+                "secondary_controller_unhandled_RSTDAA_broadcast"
+            ]
+        }
+        {
+            name: secondary_controller_static_address_assignment
+            desc: '''
+                  Verify I3C core static address assignment.
+
+                  - `STATIC_ADDR` and `STATIC_ADDR_VALID` fields in the
+                  `STBY_CR_DEVICE_ADDR` register can only be modified while
+                  I3C core secondary controller logic is disabled
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_static_address_assignment"
+            ]
+        }
+        {
+            name: secondary_controller_register_mirroring
+            desc: '''
+                  Verify I3C core secondary controller register mirroring.
+
+                  - I3C core mirrors `DYNAMIC_ADDR_VALID` and `DYNAMIC_ADDR`
+                  fields from `CONTROLLER_DEVICE_ADDR` in the
+                  `STBY_CR_DEVICE_ADDR` register
+                  - I3C core mirrors the `AC_CURRENT_OWN` filed from
+                  `PRESENT_STATE` register in the `STBY_CR_STATUS` register
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_register_mirroring"
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_lockout
+            desc: '''
+                  Verify dynamic address `CONTROLLER_DEVICE_ADDR` register
+                  lockout when in standby controller mode.
+
+                  - I3C core allows for R/W operations to the
+                  `CONTROLLER_DEVICE_ADDR` register while standby
+                  controller logic is in disabled/ACM_INIT modes
+                  - I3C core lockouts `CONTROLLER_DEVICE_ADDR` write accesses
+                  while standby controller logic is in the
+                  SCM_RUNNING/SCM_HOT_JOIN modes
+                  '''
+            stage: ""
+            tests: [
+                secondary_controller_register_lockout
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_assignment_SETAASA_only
+            desc: '''
+                  Verify I3C core dynamic assignment selection and behavior.
+                  Field `DAA_SETAASA_ENABLE` selects if SETAASA CCC method is
+                  enabled. This field may be writable depending on the
+                  `STBY_CR_CAPABILITIES` register.
+
+                  - Enable/Disable SETAASA CCC handling
+                  - I3C core reacts to the SETAASA only if
+                  `DYNAMIC_ADDR_VALID` field is unset
+                  - Check that I3C core correctly responds to the CCC:
+                    - If SETAASA is enabled and `STATIC_ADDR_VALID` is set,
+                    I3C core copies the `STATIC_ADDR` field from the
+                    `STBY_CR_DEVICE_ADDR` register to the `DYNAMIC_ADDR` field
+                    in the `CONTROLLER_DEVICE_ADDR` register and sets
+                    `DYNAMIC_ADDR_VALID` field in the `CONTROLLER_DEVICE_ADDR`
+                    register
+                    - If SETAASA is disabled or `STATIC_ADDR_VALID` is unset,
+                    I3C core ignores SETAASA CCC
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_setaasa",
+                "secondary_controller_multiple_setaasa",
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_assignment_SETDASA_only
+            desc: '''
+                  Verify I3C core dynamic assignment selection and behavior.
+                  Field `DAA_SETDASA_ENABLE` selects if SETDASA method is
+                  enabled. This field may be writable depending on the
+                  `STBY_CR_CAPABILITIES` register.
+
+                  - Enable/Disable SETDASA CCC handling
+                  - I3C core reacts to the SETDASA direct CCC only if
+                  `DYNAMIC_ADDR_VALID` field is unset
+                  - Check that I3C core correctly responds to the CCC:
+                    - If SETDASA is enabled and `STATIC_ADDR_VALID` is set,
+                    I3C core starts capturing following direct CCCs
+                    - If following direct CCC target address equals
+                    I3C core's `STATIC_ADDR` or 0x01 (point-to-point),
+                    I3C core takes new dynamic address from the following data
+                    byte, stores it in the `DYNAMIC_ADDR` field in the
+                    `CONTROLLER_DEVICE_ADDR` register and sets `DYNAMIC_ADDR_VALID`
+                    field in the `CONTROLLER_DEVICE_ADDR` register
+                    - If SETDASA is disabled or `STATIC_ADDR_VALID` is unset,
+                    I3C core ignores SETDASA CCC and following direct CCCs
+                    - If following direct CCC target address doesn't match
+                    I3C core static address or point-to-point, I3C core
+                    ignores this direct CCC
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_setdasa_point_to_point",
+                "secondary_controller_setdasa_multiple_devices_first_direct_CCC",
+                "secondary_controller_setdasa_multiple_devices_later_direct_CCC",
+                "secondary_controller_setdasa_multiple_direct_CCC",
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_assignment_ENTDAA_only
+            desc: '''
+                  Verify I3C core dynamic assignment selection and behavior.
+                  Field `DAA_ENTDAA_ENABLE` selects if ENTDAA method is enabled.
+                  This field may be writable depending on the
+                  `STBY_CR_CAPABILITIES` register.
+
+                  - Enable/Disable ENTDAA CCC handling
+                  - I3C core reacts to the ENTDAA CCC only if
+                  `DYNAMIC_ADDR_VALID` field is unset
+                  - Check that I3C core correctly responds to the CCC:
+                    - If ENTDAA is enabled, I3C core enters DAA mode
+                    - I3C core ACKs all 0x7E broadcasts as long as
+                    `DYNAMIC_ADDR_VALID` field is unset
+                    - I3C core participates in every arbitration as long as
+                    `DYNAMIC_ADDR_VALID` field is unset
+                    - On successful arbitration I3C core reads dynamic address
+                    with parity bit
+                    - I3C core NACKs dynamic address if parity is incorrect
+                    - If dynamic address is correct, I3C core stores it
+                    in the `DYNAMIC_ADDR` field in the `CONTROLLER_DEVICE_ADDR`
+                    register and sets `DYNAMIC_ADDR_VALID`
+                    - If ENTDAA is disabled, I3C ignores CCC and waits
+                    for the STOP condition to accept new commands
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_entdaa_no_collisions",
+                "secondary_controller_entdaa_with_collisions"
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_assignment_multiple_CCCs
+            desc: '''
+                  Verify I3C core dynamic assignment selection and behavior.
+                  Fields: `DAA_ENTDAA_ENABLE`, `DAA_SETDASA_ENABLE`,
+                  `DAA_SETAASA_ENABLE` select which methods are enabled.
+                  Some/all bits may be writable, this depends on the
+                  `STBY_CR_CAPABILITIES` register. At least one method must
+                  be enabled.
+
+                  - Select any valid subset of supported methods
+                  - Randomize SETDASA, SETAASA, ENTDAA CCCs order to make sure
+                  that ordering of CCCs doesn't matter
+                  - Check that I3C core correctly responds to the selected
+                  methods:
+                    - I3C core performs first enabled CCC and assigns
+                    dynamic address according to that CCC
+                    - I3C core ignores any CCCs that are disabled
+                    - I3C core ignores any CCCs after dynamic address
+                    was assigned
+                  - I3C core during ENTDAA detects bus collisions and wait for
+                  next assignment iteration
+                  - I3C core correctly detects SETDASA address and discards
+                  ones not address to itself
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_multiple_dynamic_address_assignment_methods"
+            ]
+        }
+        {
+            name: secondary_controller_dynamic_address_change
+            desc: '''
+                  Verify I3C core dynamic address change triggers interrupt.
+
+                  - Receiving any correct CCC that affects I3C core
+                  dynamic address, or dynamic address valid state triggers
+                  `STBY_CR_DYN_ADDR_STAT` condition
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_address_set",
+                "secondary_controller_address_reset",
+                "secondary_controller_address_change"
+            ]
+        }
+        {
+            name: secondary_controller_target_enable
+            desc: '''
+                  Verify I3C core target mode enable with `TARGET_XACT_ENABLE`.
+                  Bit may be writable when field `TARGET_XACT_SUPPORT` in the
+                  `STBY_CR_CAPABILITIES` register is set.
+
+                  - I3C core acknowledges I3C/I3C read/write operations
+                  when this bit is enabled.
+                  - I3C core doesn't acknowledge I3C/I2C read/write
+                  transactions when this bit is disabled.
+                  - This bit can only be modifiable when DISABLED secondary
+                  controller mode is active
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_target_interface_enable"
+            ]
+        }
+        {
+            name: secondary_controller_target_write
+            desc: '''
+                  Verify I3C core target write sets `PENDING_RX_NACK` field
+                  in the `STBY_CR_CONTROL` register when `TARGET_XACT_ENABLE`
+                  is set.
+
+                  - I3C core sets this field on direct write transaction
+                  - SW clears this field, once data has be processed
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_target_interface_enable"
+            ]
+        }
+        {
+            name: secondary_controller_broadcast_CCC
+            desc: '''
+                  Verify I3C core DEFTGTS or DEFGRPA handling. I3C core
+                  handles it in the same way as IBIs are handled in the active
+                  controller mode, with a slight change to the `STATUS_TYPE`
+                  field, as it is set to all 1's.
+
+                  * In PIO mode, core creates entries in the
+                  `IBI_PORT`'s queue. Filling queue to the `IBI_STATUS_THLD`
+                  level triggers `IBI_STATUS_THLD_STAT` condition.
+
+                  * In DMA mode I3C core uses Ring Bundle selected
+                  by the `BCAST_CCC_IBI_RING` field in the `STBY_CR_CONTROL`
+                  register. i3C core triggers `IBI_READY_STAT` condition
+                  after transaction ends.
+
+                  - I3C core acknowledges DEFTGTS/DEFGRPA CCC
+                  - If I3C core is in:
+                    * PIO mode, data sent by active controller must be stored
+                    in the IBI queue with proper descriptors
+                    * DMA mode, data sent by active controller must be stored
+                    in the selected ring bundle
+                  - I3C core sets the `HANDOFF_DELAY_NACK` field in
+                  the `STBY_CR_CONTROL` register
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_broadcast_CCC_PIO_mode",
+                "secondary_controller_broadcast_CCC_DMA_mode"
+            ]
+        }
+        {
+            name: secondary_controller_automatic_controller_role_request
+            desc: '''
+                  Verify I3C core controller request feature. Writing 1 to the
+                  `CR_REQUEST_SEND` field in the `STBY_CR_CONTROL` should
+                  trigger controller request procedure. This field is can be
+                  used only if the `SIMPLE_CRR_SUPPORT`is set in the
+                  `STBY_CR_CAPABILITIES` register.
+
+                  - First write 1 to the `CR_REQUEST_SEND` should start
+                  procedure
+                  - While the `SIMPLE_CRR_STATUS` filed in the `STBY_CR_STATUS`
+                  register has value 1, any subsequent writes have no effect
+                  - If I3C core doesn't support simple CRR, I3C core should
+                  ignore this request and keep current state
+                  - If I3c core support simple CRR, `SIMPLE_CRR_STATUS` field
+                  in the `STBY_CR_STATUS` register should be updated to the
+                  ending state (3'b001)
+                  - I3C core should wait for Bus Available Condition before
+                  starting CRR IBI
+                  - Active controller can perform 3 actions:
+                    * NACK incoming request, which updates `SIMPLE_CRR_STATUS`
+                    to Nacked with possible retry (3'b010)
+                    * NACK incoming request and follow it by DISEC with DISCR set,
+                    which updates `SIMPLE_CRR_STATUS` to nacked with controller
+                    role request disabled (3'b011)
+                    * ACK incoming request, which updates `SIMPLE_CRR_STATUS` to
+                    active controller will transfer ownership (b'b100)
+                  - Changing `SIMPLE_CRR_STATUS` to any of this values: 3'b010,
+                  3'b011, or 3'b100 should trigger `CRR_RESPONSE_STAT` field
+                  in the `STBY_CR_INTR_STATUS` register
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_controller_request_not_supported",
+                "secondary_controller_controller_request_pending",
+                "secondary_controller_controller_request_nack",
+                "secondary_controller_controller_request_nack_and_disable",
+                "secondary_controller_controller_request_ack"
+            ]
+        }
+        {
+            name: secondary_controller_handoff_deep_sleep
+            desc: '''
+                  Verify I3C core return form deep sleep feature. Writing 1 to
+                  the `HANDOFF_DEEP_SLEEP` field in the `STBY_CR_CONTROL`
+                  register should be sticky and cleared only after
+                  DEFTGTS/DEFGRPA is sent. This field should be visible
+                  reported to the active controller through GETSTATUS CCC with
+                  defining byte set to 0x91.
+
+                  - Writing 1 to `HANDOFF_DEEP_SLEEP` should setup it bit
+                  - Writing 0 when active shouldn't clear state
+                  - Register should be cleared on:
+                    * I3C core reset,
+                    * receiving DEFTGTS CCC from the active controller,
+                    * switching from standby to active role
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_controller_handoff_deep_sleep"
+            ]
+        }
+        {
+            name: secondary_controller_handoff
+            desc: '''
+                  Verify I3C core behavior to the active role handoff.
+
+                  - I3C core enters transition state when it is in
+                  the Active state and `ACR_FSM_OP_SELECT` goes from 1'b1 to
+                  1'b0
+                  - Sending special command descriptor that initiate role
+                  switch while not in transition state results in
+                  `NOT_SUPPORTED` error code in the response descriptor
+                  - Receiving any command descriptor not equal to internal
+                  command 0x7 while in transition state results in
+                  I3C core exiting transition state and response descriptor
+                  with `HC_TERMINATED` error code
+                  - During switch from active to standby controller modes
+                  I3C core should monitor I3C device response to the GETACCCR
+                  - If device NACKs or returns incorrect address/parity bit
+                  I3C core:
+                    * ends transaction with RSTART
+                    * triggers `ACR_HANDOFF_ERR_FAIL_STAT` condition
+                    * populates response descriptor with correct error code
+                  - After handoff procedure I3C core monitors I3C bus in
+                  order to detect if new controller asserts itself
+                  - If new active controller doesn't perform any action it the
+                  first max(100us, CRHDLY), I3C core pulls SDA low
+                  - If new active controller doesn't respond to the SDA
+                  in the first max(100u, CHRDLY), I3C core pulls
+                  SCL low and triggers CE3 detected condition
+                  - On filed handoff I3C core drives 0x7E as there may be an
+                  active IBI
+                  - If no IBI is detected I3C core can emit STOP condition
+                  - Detecting bus error results in I3C core remaining an active
+                  controller
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_handoff_successful",
+                "secondary_controller_handoff_successful_after_ibi",
+                "secondary_controller_handoff_nacked",
+                "secondary_controller_handoff_address_parity_error",
+                "secondary_controller_handoff_timeout",
+            ]
+        }
+        {
+            name: secondary_controller_handoff_with_prime_accept_getacccr
+            desc: '''
+                  Verify I3C core automatic standby controller to active
+                  controller priming. When `PRIME_ACCEPT_GETACCCR` field in
+                  the `STBY_CR_CONTROL` register is set during successful active
+                  controller handoff,
+                  secondary controller logic should automatically accept GETACCCR
+                  command if I3C core is in ready state:
+                  * `STBY_CR_ENABLE_INIT` isn't disabled
+                  * `BUS_ENABLE` field is set
+                  * `DYNAMIC_ADDR_VALID` field is set
+                  * `ACR_FSM_OP_SELECT` field is set
+                  * both `HANDOFF_DELAY_NACK` and `PENDING_RX_NACK` are clear.
+
+                  - Start I3C core in active controller role
+                  - Enable `PRIME_ACCEPT_GETACCCR`
+                  - Performing successful active role handoff should:
+                    * switch I3C core to the standby mode,
+                    * trigger `ACR_HANDOFF_OK_PRIMED_STAT` condition,
+                    * set `ACR_FSM_OP_SELECT` field to 1'b1
+                  - I3C core is ready to receive GETACCCR CCC command
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_prime_GETACCCR"
+            ]
+        }
+        {
+            name: secondary_controller_handoff_with_prime_failure
+            desc: '''
+                  Verify I3C core automatic standby controller to active
+                  controller priming behavior to the failed handoff.
+
+                  - Start I3C core in active controller role
+                  - Performing unsuccessful active role handoff due to CE3 error
+                  (timeout) should result in:
+                    * trigger `ACR_HANDOFF_OK_PRIMED_STAT` condition followed by
+                    `ACR_HANDOFF_ERR_M3_STAT` condition
+                    * I3C core should remain in the active mode,
+                    * `ACR_FSM_OP_SELECT` field should be left unchanged
+                    * GETACCCR acceptance logic should be disarmed
+                  - Performing unsuccessful active role handoff due to bus error
+                  should result in:
+                    * trigger `ACR_HANDOFF_ERR_FAIL_STAT` condition
+                    * I3C core should remain in the active mode,
+                    * `ACR_FSM_OP_SELECT` field should be left unchanged
+                    * GETACCCR acceptance logic should be disarmed
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_handoff_with_prime_nacked"
+                "secondary_controller_handoff_with_prime_address_parity_error"
+                "secondary_controller_handoff_with_prime_timeout"
+            ]
+        }
+        {
+            name: secondary_controller_getacccr_accepted
+            desc: '''
+                  Verify GETACCCR accept behavior.
+
+                  - I3C core enables GETACCR accept logic either by:
+                  priming it during controller handoff, or by changing
+                  `ACR_FSM_OP_SELECT` from 1'b0 to 1'b1 when in standby mode
+                  - I3C core ACKs GETACCR address to it
+                  - I3C core sends its dynamic address and parity bit to the
+                  active controller
+                  - active controller performs STOP condition to acknowledge
+                  bus ownership change
+                  - I3C core triggers `STBY_CR_ACCEPT_OK_STAT` condition on
+                  acceptance
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_getacccr_accepted"
+            ]
+        }
+        {
+            name: secondary_controller_getacccr_not_ready
+            desc: '''
+                  Verify GETACCCR not accept behavior.
+
+                  - I3C core NACKs GETACCR address to it if it's not primed or
+                  O3C core is:
+                    * not initialized, `STBY_CR_ENABLE_INIT` is disabled
+                    * bus controller logic isn't configured, `BUS_ENABLE` is unset
+                    * missing dynamic address
+                    * no longer interested in becoming active controller,
+                    `ACR_FSM_OP_SELECT` is set to 1'b0
+                    * still processing DEFTGTS or DEFGRPA CCCs
+                    * still processing private write operation
+                  - I3C core triggers `STBY_CR_ACCEPT_NACKED_STAT` condition on
+                  non-acceptance
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_getacccr_not_primed"
+                "secondary_controller_getacccr_not_ready"
+            ]
+        }
+        {
+            name: secondary_controller_getacccr_bus_error
+            desc: '''
+                  Verify GETACCCR error behavior. Answer to the GETACCCR may
+                  be mangled by the external environment resulting in receiving
+                  incorrect response by the currently active controller. It this
+                  situation active controller will send RSTART to prevent I3C
+                  core from becoming active controller.
+
+                  - I3C core is primed to receive GETACCCR and ACKs it
+                  - I3C core sends its dynamic address and parity bit to the
+                  active controller
+                  - active controller performs RSTART condition to inform
+                  I3C core about detected error
+                  - I3C core triggers `STBY_CR_ACCEPT_ERR_STAT` condition on
+                  detected error
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_getacccr_bus_error"
+            ]
+        }
+        {
+            name: secondary_controller_interrupt_masking_and_forcing
+            desc: '''
+                  Verify i3C core correctly masks interrupts and force
+                  interrupts.
+
+                  - Writing to the `STBY_CR_INTR_FORCE` register fields triggers
+                  appropriate status change
+                  - Enabling/disabling bits in the`STBY_CR_INTR_SIGNAL_ENABLE`
+                  enables/disables correct interrupt sources
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_interrupt_masking_and_forcing"
+            ]
+        }
+        {
+            name: secondary_controller_GETCAPS_CRCAPS
+            desc: '''
+                  Verify i3C core correctly handles GETCAPS CCC with defining
+                  byte set to CRCAPS.
+
+                  - I3C core responds to the GETCAPS CCC CRCAPS with 2 bytes
+                  - Bytes are equal to the lower 16 bits of the
+                  `STBY_CR_CCC_CONFIG_GETCAPS`
+                  - Changes to the `STBY_CR_CCC_CONFIG_GETCAPS` are reflected
+                  in the future GETCAPS CCC CRCAPS CCCs
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_interrupt_masking_and_forcing"
+            ]
+        }
+        {
+            name: secondary_controller_BCR_DCR_PID_lockout
+            desc: '''
+                  Verify I3C core register lockout when secondary controller
+                  logic is active.
+
+                  - I3C core allows for the modifications to the
+                  `STBY_CR_DEVICE_CHAR`, `STBY_CR_DEVICE_PID_LO` registers
+                  while `STBY_CR_ENABLE_INIT` is disabled
+                  - I3C core rejects modifications to the
+                  `STBY_CR_DEVICE_CHAR`, `STBY_CR_DEVICE_PID_LO` registers
+                  while `STBY_CR_ENABLE_INIT` is in any active state
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_BCR_lockout"
+                "secondary_controller_DCR_lockout"
+                "secondary_controller_PID_lockout"
+            ]
+        }
+        {
+            name: secondary_controller_GETBCR_GETDCR_GETPID
+            desc: '''
+                  Verify I3C core `STBY_CR_DEVICE_CHAR` and `STBY_CR_DEVICE_CHAR`
+                  register update visibility through GETBCR/GETDCR/GETPID.
+
+                  - Setup I3C core with initial BCR,DCR and PID values
+                  - I3C core responds to the CCCs with current register values
+                  - Change values stored in the I3C core `STBY_CR_DEVICE_CHAR`
+                  and `STBY_CR_DEVICE_CHAR` registers
+                  - I3C core responds to the CCCs with current register values
+                  '''
+            stage: ""
+            tests: [
+                "secondary_controller_GETBCR"
+                "secondary_controller_GETDCR"
+                "secondary_controller_GETPID"
+            ]
+        }
+        {
+            name: "secondary_controller_defined_GETSTATUS"
+            desc: '''
+                  Verify I3C core response to the GETSTATUS CCC
+                  with defining byte set to 0x91.
+
+                  - I3C core returns current state of the
+                  `HANDOFF_DELAY_NACK` and `HANDOFF_DEEP_SLEEP` fields
+                  - Change state of the registers
+                  - I3C core returns new state of this fields
+                '''
+            stage: ""
+            tests: [
+                "secondary_controller_defined_GETSTATUS"
+            ]
+        }
+    ]
+}
