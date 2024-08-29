@@ -21,15 +21,14 @@ async def _write_csr(tb, register, value):
     await tb.write_csr(register, data, 4)
 
 
-async def _rmw_csr(tb, register, data):
+async def _write_csr_field(tb, reg_addr, field, data):
     """
     Read -> modify -> write CSR
-
-    TODO: Only can set bytes, enable clearing bytes
     """
-    value = await _read_csr(tb, tb.register_map[register])
-    value = value | data
-    await _write_csr(tb, tb.register_map[register], value)
+    value = await _read_csr(tb, reg_addr)
+    value = value & ~field.mask
+    value = value | (data << field.low)
+    await _write_csr(tb, reg_addr, value)
 
 
 @dataclass
@@ -74,9 +73,9 @@ async def boot_init(tb: I3CTopTestInterface):
     # Write configuration to the device
 
     # Timing configuration
-    await _rmw_csr(tb, "T_R_REG", 2)
-    await _rmw_csr(tb, "T_HD_DAT_REG", 10)
-    await _rmw_csr(tb, "T_SU_DAT_REG", 10)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr, 2)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG.base_addr, 10)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG.base_addr, 10)
 
     await setup_hci_thresholds(tb)
 
@@ -86,29 +85,29 @@ async def boot_init(tb: I3CTopTestInterface):
 
 async def check_version(tb):
     """Check HCI version"""
-    hci_version = await _read_csr(tb, tb.register_map["HCI_VERSION"])
+    hci_version = await _read_csr(tb, tb.reg_map.I3CBASE.HCI_VERSION.base_addr)
     assert hci_version == 0x120
 
 
 async def get_dxt_offsets(tb):
     """Check DAT/DCT offsets"""
-    dat_offset = await _read_csr(tb, tb.register_map["DAT_SECTION_OFFSET"])
+    dat_offset = await _read_csr(tb, tb.reg_map.I3CBASE.DAT_SECTION_OFFSET.base_addr)
     assert (dat_offset & mask(12)) == 0x400
-    dct_offset = await _read_csr(tb, tb.register_map["DCT_SECTION_OFFSET"])
+    dct_offset = await _read_csr(tb, tb.reg_map.I3CBASE.DCT_SECTION_OFFSET.base_addr)
     assert (dct_offset & mask(12)) == 0x800
     return dat_offset, dct_offset
 
 
 async def get_pio_offset(tb):
     """Check PIO offset"""
-    offset = await _read_csr(tb, tb.register_map["PIO_SECTION_OFFSET"])
+    offset = await _read_csr(tb, tb.reg_map.I3CBASE.PIO_SECTION_OFFSET.base_addr)
     assert (offset & mask(16)) == 0x80
     return offset
 
 
 async def get_ring_offset(tb):
     """Check ring offset"""
-    offset = await _read_csr(tb, tb.register_map["RING_HEADERS_SECTION_OFFSET"])
+    offset = await _read_csr(tb, tb.reg_map.I3CBASE.RING_HEADERS_SECTION_OFFSET.base_addr)
     assert (offset & mask(16)) == 0x0
     return offset
 
@@ -118,7 +117,7 @@ async def eval_hc_capabilities(tb):
 
     TODO: Check supported config
     """
-    hc_caps = await _read_csr(tb, tb.register_map["HC_CAPABILITIES"])
+    hc_caps = await _read_csr(tb, tb.reg_map.I3CBASE.HC_CAPABILITIES.base_addr)
     return hc_caps
 
 
@@ -129,7 +128,7 @@ async def discover_ec(tb):
     If this test fails, first check if IDs of ECs in RDL
     are defined in the same order as in the expected_cap_ids variable.
     """
-    base_offset = await _read_csr(tb, tb.register_map["EXT_CAPS_SECTION_OFFSET"])
+    base_offset = await _read_csr(tb, tb.reg_map.I3CBASE.EXT_CAPS_SECTION_OFFSET.base_addr)
     assert (base_offset & mask(16)) == 0x100
 
     expected_cap_ids = [0xC0, 0x12, 0xC4, 0xC1, 0x02]
@@ -211,13 +210,28 @@ async def umbrella_stby_init(tb):
     """
 
     # Boot in standby mode
-    await _rmw_csr(tb, "STBY_CR_CONTROL", 2 << 30)
+    await _write_csr_field(
+        tb,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT,
+        2,
+    )
 
     # Enable Target Interface
-    await _rmw_csr(tb, "STBY_CR_CONTROL", 1 << 12)
+    await _write_csr_field(
+        tb,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.TARGET_XACT_ENABLE,
+        1,
+    )
 
     # Enable bus
-    await _rmw_csr(tb, "HC_CONTROL", 1 << 31)
+    await _write_csr_field(
+        tb,
+        tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
+        tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
+        1,
+    )
 
 
 async def tti_init(tb):

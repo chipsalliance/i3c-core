@@ -1,10 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import os
-
 from bus2csr import get_frontend_bus_if
 from cocotb_helpers import reset_n
-from dissect.cstruct import cstruct
+from reg_map import reg_map
 
 import cocotb
 from cocotb.clock import Clock
@@ -17,7 +15,7 @@ class I3CTopTestInterface:
     def __init__(self, dut: SimHandleBase) -> None:
         self.dut = dut
         self.bus_if_cls = get_frontend_bus_if()
-        self.register_map = self.get_regs_map()
+        self.reg_map = reg_map
 
         self.busIf = self.bus_if_cls(dut)
         self.clk = self.busIf.clk
@@ -32,22 +30,3 @@ class I3CTopTestInterface:
 
         await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)
-
-    def get_regs_map(self):
-        """
-        Load
-            #define REG value
-        into a dictionary
-        """
-        i3c_root_dir = os.environ.get("I3C_ROOT_DIR")
-        reg_f = i3c_root_dir + "/sw/I3CCSR_registers.h"
-        text = []
-        with open(reg_f) as f:
-            for line in f:
-                if line.startswith("#define"):
-                    text.append(line)
-
-        defs_str = "".join(text)
-        c = cstruct()
-        c.load(defs_str)
-        return c.consts

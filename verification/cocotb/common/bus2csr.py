@@ -13,6 +13,7 @@ from cocotb_AHB.interconnect.SimInterconnect import SimInterconnect
 
 # AXI
 from cocotbext.axi import AxiBus, AxiMaster
+from reg_map import reg_map
 
 # Cocotb
 import cocotb
@@ -70,6 +71,7 @@ class FrontBusTestInterface:
         self.dut = dut
         self.clk = clk
         self.rst_n = rst_n
+        self.reg_map = reg_map
 
     async def register_test_interfaces(self):
         await cocotb.start(setup_dut(self.clk, self.rst_n, (2, "ns")))

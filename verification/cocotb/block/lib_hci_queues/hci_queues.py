@@ -3,13 +3,7 @@
 from random import randint
 
 from bus2csr import bytes2int, get_frontend_bus_if
-from hci import (
-    ALT_QUEUE_SIZE,
-    QUEUE_SIZE,
-    ErrorStatus,
-    HCIBaseTestInterface,
-    ResponseDescriptor,
-)
+from hci import ErrorStatus, HCIBaseTestInterface, ResponseDescriptor
 from utils import expect_with_timeout, mask_bits
 
 from cocotb.handle import SimHandleBase
@@ -33,13 +27,15 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
     async def read_queue_size(self, queue: str):
         # Queue size offsets in appropriate registers
         off = {"rx": 16, "tx": 24, "cmd": 0, "resp": 0, "ibi": 8}
-        queue_size = bytes2int(await self.read_csr(QUEUE_SIZE, 4))
+        queue_size = bytes2int(await self.read_csr(self.reg_map.PIOCONTROL.QUEUE_SIZE.base_addr, 4))
         if queue in ["rx", "tx"]:
             return 2 ** (((queue_size >> off[queue]) & 0x7) + 1)
         if queue in ["cmd", "ibi"]:
             return (queue_size >> off[queue]) & mask_bits(8)
         # Size of the response queue
-        alt_queue_size = bytes2int(await self.read_csr(ALT_QUEUE_SIZE, 4))
+        alt_queue_size = bytes2int(
+            await self.read_csr(self.reg_map.PIOCONTROL.ALT_QUEUE_SIZE.base_addr, 4)
+        )
         cr_size = queue_size & mask_bits(8)
         alt_resp_size = alt_queue_size & mask_bits(8)
         alt_resp_en = (alt_queue_size >> 24) & 0x1

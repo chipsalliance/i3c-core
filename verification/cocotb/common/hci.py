@@ -7,6 +7,7 @@ from random import randint
 from typing import Any, Callable, Iterable
 
 from bus2csr import FrontBusTestInterface, dword2int, int2dword
+from reg_map import reg_map
 from utils import SequenceFailed
 
 import cocotb
@@ -24,31 +25,6 @@ DCT_ADDR = 0x800
 # Default register values
 HCI_VERSION_v1_2_VALUE = 0x120
 
-# Base registers
-HCI_VERSION = 0x0
-HC_CONTROL = 0x4
-CONTROLLER_DEVICE_ADDR = 0x8
-HC_CAPABILITIES = 0xC
-RESET_CONTROL = 0x10
-DAT_SECTION_OFFSET = 0x30
-DCT_SECTION_OFFSET = 0x34
-PIO_SECTION_OFFSET = 0x3C
-INT_CTRL_CMDS_EN = 0x4C
-
-# PIO registers
-CMD_PORT = PIO_ADDR + 0x0
-RESP_PORT = PIO_ADDR + 0x4
-RX_PORT = PIO_ADDR + 0x8
-TX_PORT = PIO_ADDR + 0x8
-IBI_PORT = PIO_ADDR + 0xC
-QUEUE_THLD_CTRL = PIO_ADDR + 0x10
-DATA_BUFFER_THLD_CTRL = PIO_ADDR + 0x14
-QUEUE_SIZE = PIO_ADDR + 0x18
-ALT_QUEUE_SIZE = PIO_ADDR + 0x1C
-PIO_INTR_STATUS_ENABLE = PIO_ADDR + 0x24
-PIO_INTR_SIGNAL_ENABLE = PIO_ADDR + 0x28
-PIO_CONTROL = PIO_ADDR + 0x30
-
 # Reset values
 HC_CONTROL_RESET = 0x1 << 6
 DAT_SECTION_OFFSET_RESET = 0x7F << 12 | DAT_ADDR
@@ -57,26 +33,6 @@ INT_CTRL_CMDS_EN_RESET = 0x35 << 1 | 0x1
 QUEUE_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
 DATA_BUFFER_THLD_CTRL_RESET = 0x1 << 24 | 0x1 << 16 | 0x1 << 8 | 0x1
 QUEUE_SIZE_RESET = 0x5 << 24 | 0x5 << 16 | 0x40 << 8 | 0x40
-
-
-# TTI Registers
-TTI_ADDR = EC_ADDR + 0xC0
-EXTCAP_HEADER = TTI_ADDR + 0x0
-TTI_CONTROL = TTI_ADDR + 0x4
-TTI_STATUS = TTI_ADDR + 0x8
-TTI_RESET_CONTROL = TTI_ADDR + 0xC
-TTI_INTERRUPT_STATUS = TTI_ADDR + 0x10
-TTI_INTERRUPT_ENABLE = TTI_ADDR + 0x14
-TTI_INTERRUPT_FORCE = TTI_ADDR + 0x18
-TTI_RX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x1C
-TTI_RX_DATA_PORT = TTI_ADDR + 0x20
-TTI_TX_DESCRIPTOR_QUEUE_PORT = TTI_ADDR + 0x24
-TTI_TX_DATA_PORT = TTI_ADDR + 0x28
-TTI_IBI_PORT = TTI_ADDR + 0x2C
-TTI_QUEUE_SIZE = TTI_ADDR + 0x30
-TTI_IBI_QUEUE_SIZE = TTI_ADDR + 0x34
-TTI_QUEUE_THLD_CTRL = TTI_ADDR + 0x38
-TTI_DATA_BUFFER_THLD_CTRL = TTI_ADDR + 0x3C
 
 
 @dataclass
@@ -228,6 +184,7 @@ class HCIBaseTestInterface:
         self.dut = dut
         self.if_name = if_name
         self.log = dut._log
+        self.reg_map = reg_map
 
         # Uncomment to enable debug logging
         # self.log.setLevel("DEBUG")
@@ -269,7 +226,7 @@ class HCIBaseTestInterface:
     # Helper functions to fetch / put data to either side
     # of the queues
     async def get_response_desc(self) -> int:
-        return dword2int(await self.read_csr(RESP_PORT, 4))
+        return dword2int(await self.read_csr(self.reg_map.PIOCONTROL.RESPONSE_PORT.base_addr, 4))
 
     async def put_command_desc(self, desc: int = None) -> None:
         # If descriptor is not passed, utilize the default
@@ -280,16 +237,16 @@ class HCIBaseTestInterface:
         cmd1 = int2dword((desc >> 32) & 0xFFFFFFFF)
 
         # Command is expected to be sent over 2 transfers
-        await self.write_csr(CMD_PORT, cmd0, 4)
-        await self.write_csr(CMD_PORT, cmd1, 4)
+        await self.write_csr(self.reg_map.PIOCONTROL.COMMAND_PORT.base_addr, cmd0, 4)
+        await self.write_csr(self.reg_map.PIOCONTROL.COMMAND_PORT.base_addr, cmd1, 4)
 
     async def put_tx_data(self, tx_data: int = None):
         if not tx_data:
             tx_data = randint(0, 2**32 - 1)
-        await self.write_csr(TX_PORT, int2dword(tx_data), 4)
+        await self.write_csr(self.reg_map.PIOCONTROL.TX_DATA_PORT.base_addr, int2dword(tx_data), 4)
 
     async def get_rx_data(self) -> int:
-        return dword2int(await self.read_csr(RX_PORT, 4))
+        return dword2int(await self.read_csr(self.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr, 4))
 
     async def write_dat_entry(self, index, entry):
         if isinstance(entry, dat_entry):
@@ -302,7 +259,7 @@ class HCIBaseTestInterface:
         await self.write_csr(DAT_ADDR + index * 8 + 4, int2dword((entry >> 32) & 0xFFFFFFFF), 4)
 
     async def get_ibi_data(self) -> int:
-        return dword2int(await self.read_csr(IBI_PORT, 4))
+        return dword2int(await self.read_csr(self.reg_map.PIOCONTROL.IBI_PORT.base_addr, 4))
 
 
 class TxFifo:

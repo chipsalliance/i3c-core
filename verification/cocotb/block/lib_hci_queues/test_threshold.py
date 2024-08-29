@@ -3,14 +3,9 @@
 from random import randint
 
 from bus2csr import dword2int, int2dword
-from hci import (
-    DATA_BUFFER_THLD_CTRL,
-    QUEUE_THLD_CTRL,
-    TTI_DATA_BUFFER_THLD_CTRL,
-    TTI_QUEUE_THLD_CTRL,
-    HCIBaseTestInterface,
-)
+from hci import HCIBaseTestInterface
 from hci_queues import HCIQueuesTestInterface
+from reg_map import reg_map
 from tti_queues import TTIQueuesTestInterface
 from utils import clog2
 
@@ -55,17 +50,17 @@ class QueueThldHandler:
 
         if name in ["tti_tx", "tti_rx"]:
             self.thld_start_field_off = offset[name]["start"]
-            self.thld_reg_addr = TTI_DATA_BUFFER_THLD_CTRL
+            self.thld_reg_addr = reg_map.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.base_addr
             self.thld_reg_field_size = 3
         elif name in ["tti_tx_desc", "tti_rx_desc", "tti_ibi"]:
-            self.thld_reg_addr = TTI_QUEUE_THLD_CTRL
+            self.thld_reg_addr = reg_map.I3C_EC.TTI.QUEUE_THLD_CTRL.base_addr
             self.thld_reg_field_size = 8
         elif name in ["rx", "tx"]:
             self.thld_start_field_off = offset[name]["start"]
-            self.thld_reg_addr = DATA_BUFFER_THLD_CTRL
+            self.thld_reg_addr = reg_map.PIOCONTROL.DATA_BUFFER_THLD_CTRL.base_addr
             self.thld_reg_field_size = 3
         elif name in ["resp", "cmd", "ibi"]:
-            self.thld_reg_addr = QUEUE_THLD_CTRL
+            self.thld_reg_addr = reg_map.PIOCONTROL.QUEUE_THLD_CTRL.base_addr
             self.thld_reg_field_size = 8
         else:
             raise ValueError(

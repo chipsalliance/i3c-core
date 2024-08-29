@@ -3,15 +3,7 @@
 from random import randint
 
 from bus2csr import bytes2int, dword2int, get_frontend_bus_if, int2dword
-from hci import (
-    TTI_IBI_PORT,
-    TTI_QUEUE_SIZE,
-    TTI_RX_DATA_PORT,
-    TTI_RX_DESCRIPTOR_QUEUE_PORT,
-    TTI_TX_DATA_PORT,
-    TTI_TX_DESCRIPTOR_QUEUE_PORT,
-    HCIBaseTestInterface,
-)
+from hci import HCIBaseTestInterface
 from utils import expect_with_timeout
 
 from cocotb.handle import SimHandleBase
@@ -38,7 +30,7 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         off = {"rx_desc": 0, "tx_desc": 8, "rx": 16, "tx": 24, "ibi": 0}
         assert queue in off.keys()
 
-        queue_size = bytes2int(await self.read_csr(TTI_QUEUE_SIZE, 4))
+        queue_size = bytes2int(await self.read_csr(self.reg_map.I3C_EC.TTI.QUEUE_SIZE.base_addr, 4))
         return 2 ** (((queue_size >> off[queue]) & 0x7) + 1)
 
     # Helper functions to fetch / put data to either side
@@ -56,7 +48,9 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.tti_rx_desc_queue_wvalid_i.value = 0
 
     async def get_rx_desc(self) -> int:
-        return dword2int(await self.read_csr(TTI_RX_DESCRIPTOR_QUEUE_PORT, 4))
+        return dword2int(
+            await self.read_csr(self.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
+        )
 
     async def get_tx_desc(self, timeout: int = 20, units: str = "us") -> int:
         self.dut.tti_tx_desc_queue_rready_i.value = 1
@@ -70,7 +64,9 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
     async def put_tx_desc(self, data: int = None) -> None:
         if not data:
             data = randint(1, 2**32 - 1)
-        await self.write_csr(TTI_TX_DESCRIPTOR_QUEUE_PORT, int2dword(data), 4)
+        await self.write_csr(
+            self.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data), 4
+        )
 
     async def get_tx_data(self, timeout: int = 20, units: str = "us") -> int:
         self.dut.tti_tx_queue_rready_i.value = 1
@@ -82,7 +78,7 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
     async def put_tx_data(self, data: int = None):
         if not data:
             data = randint(1, 2**32 - 1)
-        await self.write_csr(TTI_TX_DATA_PORT, int2dword(data), 4)
+        await self.write_csr(self.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(data), 4)
 
     async def put_rx_data(self, data: int = None, timeout: int = 20, units: str = "us"):
         if not data:
@@ -95,9 +91,9 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.tti_rx_queue_wvalid_i.value = 0
 
     async def get_rx_data(self) -> int:
-        return dword2int(await self.read_csr(TTI_RX_DATA_PORT, 4))
+        return dword2int(await self.read_csr(self.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
 
     async def put_ibi_data(self, ibi_data: int = None):
         if not ibi_data:
             ibi_data = randint(1, 2**32 - 1)
-        await self.write_csr(TTI_IBI_PORT, int2dword(ibi_data), 4)
+        await self.write_csr(self.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(ibi_data), 4)
