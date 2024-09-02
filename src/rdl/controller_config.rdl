@@ -27,6 +27,7 @@ regfile ControllerConfigRegisters{
             desc = "";
             sw = r;
             hw = rw;
+            we = true;
             reset = 2'h1;
             } OPERATION_MODE[5:4];
     } CONTROLLER_CONFIG ;

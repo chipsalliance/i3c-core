@@ -6,19 +6,19 @@ regfile BaseRegs #(
     bit Ext_offset = 16'h0,
     boolean DMA_support = false,
     bit Data_endianness = 1'b0,
-    boolean AUTOCMD_separated_reporting_dyanmic = false,
+    boolean AUTOCMD_separated_reporting_dynamic = false,
     bit AUTOCMD_separated_reporting_support = 1'b0,
-    boolean DEV_ctx_SG_suport = false,
+    boolean DEV_ctx_SG_support = false,
     boolean DEV_IBI_SG_support = false,
     boolean DEV_CR_SG_support = false,
     bit CMD_size = 2'b0,
     boolean Scheduled_commands_support = false,
-    boolean IBI_creadit_count_support = false,
+    boolean IBI_credit_count_support = false,
     boolean IBI_data_abort_support = false,
     boolean HDR_TS_support = false,
     boolean HDR_DDR_support = false,
     boolean Handoff_support = false,
-    boolean IBI_auto_command_suport = false,
+    boolean IBI_auto_command_support = false,
     boolean Combo_command_support = false,
     bit DAT_entry_size = 4'h0,
     bit DAT_table_size = 7'h0,
@@ -51,8 +51,11 @@ regfile BaseRegs #(
         field {
             name = "RESUME";
             desc = "Host Controller Resume:
-                0 - Controller is running,
-                1 - Controller is suspended.
+
+                0 - Controller is running
+
+                1 - Controller is suspended
+
                 Write 1 to resume Controller operations.";
             sw = rw;
             hw = rw;
@@ -77,8 +80,10 @@ regfile BaseRegs #(
         field {
             name = "HOT_JOIN_CTRL";
             desc = "Hot-Join ACK/NACK Control:
-                0 - ACK Hot-Join request,
-                1 - NACK Hot-Join request and send Broadcast CCC to disable Hot-Join.";
+
+                0 - ACK Hot-Join request
+
+                1 - NACK Hot-Join request and send Broadcast CCC to disable Hot-Join";
             sw = rw;
             hw = r;
             reset = 1'b0;
@@ -86,8 +91,10 @@ regfile BaseRegs #(
         field {
             name = "I2C_DEV_PRESENT";
             desc = "I2C Device Present on Bus:
-                0 - pure I3C bus,
-                1 - legacy I2C devices on the bus.";
+
+                0 - pure I3C bus
+
+                1 - legacy I2C devices on the bus";
             sw = rw;
             hw = r;
             reset = 1'b0;
@@ -95,8 +102,10 @@ regfile BaseRegs #(
         field {
             name = "MODE_SELECTOR";
             desc = "DMA/PIO Mode Selector:
-                0 - DMA,
-                1 - PIO.";
+
+                0 - DMA
+
+                1 - PIO";
             sw = DMA_support ? rw : r;
             hw = DMA_support ? r : na;
             reset = 1'b1;
@@ -104,7 +113,9 @@ regfile BaseRegs #(
         field {
             name = "DATA_BYTE_ORDER_MODE";
             desc = "Data Byte Ordering Mode:
+
                 0 - Little Endian
+
                 1 - Big Endian";
             sw = r;
             hw = na;
@@ -113,17 +124,21 @@ regfile BaseRegs #(
         field {
             name = "AUTOCMD_DATA_RPT";
             desc = "Auto-Command Data Report:
-                0 - coalesced reporting,
-                1 - separated reporting.";
-            sw = AUTOCMD_separated_reporting_dyanmic ? rw : r;
-            hw = AUTOCMD_separated_reporting_dyanmic ? r : na;
+
+                0 - coalesced reporting
+
+                1 - separated reporting";
+            sw = AUTOCMD_separated_reporting_dynamic ? rw : r;
+            hw = AUTOCMD_separated_reporting_dynamic ? r : na;
             reset = AUTOCMD_separated_reporting_support;
         } AUTOCMD_DATA_RPT[3:3];
         field {
             name = "IBA_INCLUDE";
             desc = "Include I3C Broadcast Address:
-                0 - skips I3C Broadcast Address for private transfers,
-                1 - includes I3C Broadcast Address for private transfers.";
+
+                0 - skips I3C Broadcast Address for private transfers
+
+                1 - includes I3C Broadcast Address for private transfers";
             sw = rw;
             hw = r;
             reset = 1'b0;
@@ -134,7 +149,9 @@ regfile BaseRegs #(
         field {
             name = "DYNAMIC_ADDR_VALID";
             desc = "Dynamic Address is Valid:
-                0 - dynamic address is invalid,
+
+                0 - dynamic address is invalid
+
                 1 - dynamic address is valid";
             sw = rw;
             hw = rw;
@@ -155,17 +172,21 @@ regfile BaseRegs #(
         field {
             name = "SG_CAPABILITY_DC_EN";
             desc = "Device context memory:
-                0 - must be physically continuous,
-                1 - controller supports scatter-gather.";
+
+                0 - must be physically continuous
+
+                1 - controller supports scatter-gather";
             sw = r;
             hw = na;
-            reset = DEV_ctx_SG_suport;
+            reset = DEV_ctx_SG_support;
         } SG_CAPABILITY_DC_EN[30:30];
         field {
             name = "SG_CAPABILITY_IBI_EN";
             desc = "DMA only: IBI status and IBI Data rings memory:
-                0 - must be physically continuous,
-                1 - controller supports scatter-gather.";
+
+                0 - must be physically continuous
+
+                1 - controller supports scatter-gather";
             sw = r;
             hw = na;
             reset = DEV_IBI_SG_support && DMA_support;
@@ -173,8 +194,10 @@ regfile BaseRegs #(
         field {
             name = "SG_CAPABILITY_CR_EN";
             desc = "DMA only: Command and Response rings memory:
-                0 - must be physically continuous,
-                1 - controller supports scatter-gather.";
+
+                0 - must be physically continuous
+
+                1 - controller supports scatter-gather";
             sw = r;
             hw = na;
             reset = DEV_CR_SG_support && DMA_support;
@@ -182,7 +205,9 @@ regfile BaseRegs #(
         field {
             name = "CMD_SIZE";
             desc = "Size and structure of the Command Descriptor:
+
                 2'b0: 2 DWORDs,
+
                 all other reserved.";
             sw = r;
             hw = na;
@@ -191,8 +216,10 @@ regfile BaseRegs #(
         field {
             name = "SCHEDULED_COMMANDS_EN";
             desc = "Controller command scheduling:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw =  r;
             hw = na;
             reset = Scheduled_commands_support;
@@ -200,17 +227,21 @@ regfile BaseRegs #(
         field {
             name = "IBI_CREDIT_COUNT_EN";
             desc = "Controller IBI credit count:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na;
-            reset = IBI_creadit_count_support;
+            reset = IBI_credit_count_support;
         } IBI_CREDIT_COUNT_EN[12:12];
         field {
             name = "IBI_DATA_ABORT_EN";
             desc = "Controller IBI data abort:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na;
             reset = IBI_data_abort_support;
@@ -218,8 +249,10 @@ regfile BaseRegs #(
         field {
             name = "CMD_CCC_DEFBYTE";
             desc = "CCC with defining byte:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na ;
             reset = 1'b1;
@@ -227,8 +260,10 @@ regfile BaseRegs #(
         field {
             name = "HDR_TS_EN";
             desc = "HDR-Ternary transfers:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na ;
             reset = HDR_TS_support;
@@ -236,8 +271,10 @@ regfile BaseRegs #(
         field {
             name = "HDR_DDR_EN";
             desc = "HDR-DDR transfers:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na ;
             reset = HDR_DDR_support;
@@ -245,8 +282,10 @@ regfile BaseRegs #(
         field {
             name = "STANDBY_CR_CAP";
             desc = "Switching from active to standby mode:
-                0 - not supported, this controller is always active on I3C,
-                1- supported, this controller can hand off I3C to secondary controller.";
+
+                0 - not supported, this controller is always active on I3C
+
+                1- supported, this controller can hand off I3C to secondary controller";
             sw = r;
             hw = na;
             reset = Handoff_support;
@@ -254,17 +293,21 @@ regfile BaseRegs #(
         field {
             name = "AUTO_COMMAND";
             desc = "Automatic read command on IBI:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na;
-            reset = IBI_auto_command_suport;
+            reset = IBI_auto_command_support;
         } AUTO_COMMAND[3:3];
         field {
             name = "COMBO_COMMAND";
             desc = "Controller combined command:
-                0 - not supported,
-                1 - supported.";
+
+                0 - not supported
+
+                1 - supported";
             sw = r;
             hw = na;
             reset = Combo_command_support;
@@ -326,8 +369,10 @@ regfile BaseRegs #(
         field {
             name = "AC_CURRENT_OWN";
             desc = "Controller I3C state:
-                0 - not bus owner,
-                1 - bus owner.";
+
+                0 - not bus owner
+
+                1 - bus owner";
             sw = r;
             hw = w;
             reset = 1'b1;
@@ -531,7 +576,9 @@ regfile BaseRegs #(
         field {
             name = "ENTRY_SIZE";
             desc = "Individual DCT entry size.
+
                 0 - 4 DWORDs,
+
                 1:15 - Reserved.";
             sw = r;
             hw = na;
@@ -602,7 +649,9 @@ regfile BaseRegs #(
         field {
             name = "ICC_SUPPORT";
             desc = "Internal Control Commands:
+
                 1 - some or all internals commands sub-commands are supported,
+
                 0 - illegal.";
             sw = r;
             hw = na;
@@ -614,7 +663,9 @@ regfile BaseRegs #(
         field {
             name = "NOTIFY_IBI_REJECTED";
             desc = "Notify about rejected IBI:
+
                 0 - do not enqueue rejected IBI,
+
                 1 = enqueue rejected IBI on IBI queue/ring.";
             sw = rw;
             hw = r;
@@ -623,7 +674,9 @@ regfile BaseRegs #(
         field {
             name = "NOTIFY_CRR_REJECTED";
             desc = "Notify about rejected controller role request:
+
                 0 - do not enqueue rejected CRR,
+
                 1 = enqueue rejected CRR on IBI queue/ring.";
             sw = rw;
             hw = r;
@@ -632,7 +685,9 @@ regfile BaseRegs #(
         field {
             name = "NOTIFY_HJ_REJECTED";
             desc = "Notify about rejected hot-join:
+
                 0 - do not enqueue rejected HJ,
+
                 1 = enqueue rejected HJ on IBI queue/ring.";
             sw = rw;
             hw = r;
@@ -652,8 +707,11 @@ regfile BaseRegs #(
         field {
             name = "MATCH_STATUS_TYPE";
             desc = "Define which IBI should be aborted:
+
                 3'b000 - Regular IBI,
+
                 3'b100 - Autocmd IBI,
+
                 other values - not supported.";
             sw = rw;
             hw = r;
@@ -662,7 +720,9 @@ regfile BaseRegs #(
         field {
             name = "AFTER_N_CHUNKS";
             desc = "Number of data chunks to be allowed before forced termination:
+
                 0 - immediate,
+
                 1:3 - delay by 1-3 data chunks.";
             sw = rw;
             hw = r;
@@ -671,7 +731,9 @@ regfile BaseRegs #(
         field {
             name = "MATCH_IBI_ID";
             desc = "IBI target address:
+
                 [15:9] - device address,
+
                 [8] - must always be set to 1'b1";
             sw = rw;
             hw = r;
@@ -700,18 +762,20 @@ regfile BaseRegs #(
         field {
             name = "BLP";
             desc = "Buffer vs list pointer in device context:
+
                 0 - continuous physical memory region,
+
                 1 - pointer to SG descriptor list.";
-            sw = DEV_ctx_SG_suport ? rw : r;
-            hw = DEV_ctx_SG_suport ? r : na;
+            sw = DEV_ctx_SG_support ? rw : r;
+            hw = DEV_ctx_SG_support ? r : na;
             reset = 1'b0;
         } BLP[31:31];
         // We don't support SG, so it always reads 0
         field {
             name = "LIST_SIZE";
             desc = "Number of SG entries.";
-            sw = DEV_ctx_SG_suport ? rw : r;
-            hw = DEV_ctx_SG_suport ? r : na;
+            sw = DEV_ctx_SG_support ? rw : r;
+            hw = DEV_ctx_SG_support ? r : na;
             reset = 16'h0;
         } LIST_SIZE[15:0];
     } DEV_CTX_SG @ 0x68;

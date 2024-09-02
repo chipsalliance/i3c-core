@@ -25,4 +25,25 @@ regfile ECRegisters #(
     ) TTI;
     SoCManagementInterfaceRegisters SoCMgmtIf;
     ControllerConfigRegisters CtrlCfg;
+    reg {
+        desc = "Register after the last EC must advertise ID == 0.
+        Termination register is added to guarantee that the discovery mechanism
+        reaches termination value.
+        ";
+        regwidth = 32;
+        field {
+            name = "CAP_LENGTH";
+            desc = "Capability Structure Length in DWORDs";
+            sw = r;
+            hw = r;
+            reset = 16'h0001;
+        } CAP_LENGTH[23:8];
+        field {
+            name = "CAP_ID";
+            desc = "Extended Capability ID";
+            sw = r;
+            hw = r;
+            reset = 8'h00;
+        } CAP_ID[7:0];
+    } TERMINATION_EXTCAP_HEADER;
 };

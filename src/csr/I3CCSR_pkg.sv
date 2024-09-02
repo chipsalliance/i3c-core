@@ -236,6 +236,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -244,6 +245,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -252,6 +254,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -260,6 +263,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -268,6 +272,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -276,6 +281,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -284,6 +290,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -292,6 +299,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -300,6 +308,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -308,6 +317,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -316,6 +326,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -324,6 +335,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -332,6 +344,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -340,6 +353,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -348,6 +362,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -356,6 +371,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -364,6 +380,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -372,6 +389,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -380,6 +398,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -388,6 +407,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -396,6 +416,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -404,6 +425,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -412,6 +434,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -420,6 +443,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -428,6 +452,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -436,6 +461,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -489,38 +515,48 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__CR_REQUEST_SEND__in_t;
 
     typedef struct packed{
         logic [2:0] next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__BAST_CCC_IBI_RING__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t;
 
     typedef struct packed{
         logic [1:0] next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__in_t;
 
     typedef struct packed{
@@ -911,6 +947,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__CONTROL__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -919,6 +956,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__STATUS__PLACEHOLDER__in_t;
 
     typedef struct packed{
@@ -1145,208 +1183,8 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__in_t;
 
     typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__PLACEHOLDER__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__PLACEHOLDER__in_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__in_t SOC_MGMT_CONTROL;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__in_t SOC_MGMT_STATUS;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__in_t SOC_MGMT_RSVD_0;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__in_t SOC_MGMT_RSVD_1;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__in_t SOC_MGMT_RSVD_2;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__in_t SOC_MGMT_RSVD_3;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__in_t SOC_MGMT_FEATURE_0;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__in_t SOC_MGMT_FEATURE_1;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__in_t SOC_MGMT_FEATURE_2;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__in_t SOC_MGMT_FEATURE_3;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__in_t SOC_MGMT_FEATURE_4;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__in_t SOC_MGMT_FEATURE_5;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__in_t SOC_MGMT_FEATURE_6;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__in_t SOC_MGMT_FEATURE_7;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__in_t SOC_MGMT_FEATURE_8;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__in_t SOC_MGMT_FEATURE_9;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__in_t SOC_MGMT_FEATURE_10;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__in_t SOC_MGMT_FEATURE_11;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__in_t SOC_MGMT_FEATURE_12;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__in_t SOC_MGMT_FEATURE_13;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__in_t SOC_MGMT_FEATURE_14;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__in_t SOC_MGMT_FEATURE_15;
-    } I3CCSR__I3C_EC__SoCMgmtIf__in_t;
-
-    typedef struct packed{
         logic [1:0] next;
+        logic we;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__in_t;
 
     typedef struct packed{
@@ -1361,7 +1199,6 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__in_t SecFwRecoveryIf;
         I3CCSR__I3C_EC__StdbyCtrlMode__in_t StdbyCtrlMode;
         I3CCSR__I3C_EC__TTI__in_t TTI;
-        I3CCSR__I3C_EC__SoCMgmtIf__in_t SoCMgmtIf;
         I3CCSR__I3C_EC__CtrlCfg__in_t CtrlCfg;
     } I3CCSR__I3C_EC__in_t;
 
@@ -2868,20 +2705,65 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__PLACEHOLDER__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__INPUT_ENABLE__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__SCHMITT_EN__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__PLACEHOLDER__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__KEEPER_EN__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_DIR__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_EN__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__IO_INVERSION__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__OD_EN__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__VIRTUAL_OD_EN__out_t;
+
+    typedef struct packed{
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PAD_TYPE__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__INPUT_ENABLE__out_t INPUT_ENABLE;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__SCHMITT_EN__out_t SCHMITT_EN;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__KEEPER_EN__out_t KEEPER_EN;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_DIR__out_t PULL_DIR;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_EN__out_t PULL_EN;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__IO_INVERSION__out_t IO_INVERSION;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__OD_EN__out_t OD_EN;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__VIRTUAL_OD_EN__out_t VIRTUAL_OD_EN;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PAD_TYPE__out_t PAD_TYPE;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__out_t;
+
+    typedef struct packed{
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_SLEW_RATE__out_t;
+
+    typedef struct packed{
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_STRENGTH__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_SLEW_RATE__out_t DRIVE_SLEW_RATE;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_STRENGTH__out_t DRIVE_STRENGTH;
+    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__out_t;
 
     typedef struct packed{
         logic [31:0] value;
@@ -2900,100 +2782,100 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__T_R__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__T_R__out_t T_R;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__T_F__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__T_F__out_t T_F;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__T_SU_DAT__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__T_SU_DAT__out_t T_SU_DAT;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__T_HD_DAT__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__T_HD_DAT__out_t T_HD_DAT;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__T_HIGH__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__T_HIGH__out_t T_HIGH;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__T_LOW__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__T_LOW__out_t T_LOW;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__T_HD_STA__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__T_HD_STA__out_t T_HD_STA;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__T_SU_STA__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__T_SU_STA__out_t T_SU_STA;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__PLACEHOLDER__out_t;
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__out_t;
-
-    typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__PLACEHOLDER__out_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t T_SU_STO;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t;
 
     typedef struct packed{
         logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__PLACEHOLDER__out_t;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__T_FREE__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__T_FREE__out_t T_FREE;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t;
 
     typedef struct packed{
         logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__PLACEHOLDER__out_t;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__T_AVAL__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__T_AVAL__out_t T_AVAL;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__out_t;
+
+    typedef struct packed{
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__T_IDLE__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__T_IDLE__out_t T_IDLE;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__out_t;
 
     typedef struct packed{
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__out_t EXTCAP_HEADER;
@@ -3003,22 +2885,22 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__out_t SOC_MGMT_RSVD_1;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__out_t SOC_MGMT_RSVD_2;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__out_t SOC_MGMT_RSVD_3;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0__out_t SOC_MGMT_FEATURE_0;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1__out_t SOC_MGMT_FEATURE_1;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__out_t SOC_PAD_CONF;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__out_t SOC_PAD_ATTR;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__out_t SOC_MGMT_FEATURE_2;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__out_t SOC_MGMT_FEATURE_3;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4__out_t SOC_MGMT_FEATURE_4;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5__out_t SOC_MGMT_FEATURE_5;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6__out_t SOC_MGMT_FEATURE_6;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7__out_t SOC_MGMT_FEATURE_7;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8__out_t SOC_MGMT_FEATURE_8;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9__out_t SOC_MGMT_FEATURE_9;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10__out_t SOC_MGMT_FEATURE_10;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11__out_t SOC_MGMT_FEATURE_11;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12__out_t SOC_MGMT_FEATURE_12;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13__out_t SOC_MGMT_FEATURE_13;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14__out_t SOC_MGMT_FEATURE_14;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15__out_t SOC_MGMT_FEATURE_15;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__out_t T_R_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__out_t T_F_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__out_t T_SU_DAT_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__out_t T_HD_DAT_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__out_t T_HIGH_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__out_t T_LOW_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__out_t T_HD_STA_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__out_t T_SU_STA_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t T_SU_STO_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t T_FREE_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__out_t T_AVAL_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__out_t T_IDLE_REG;
     } I3CCSR__I3C_EC__SoCMgmtIf__out_t;
 
     typedef struct packed{
@@ -3048,11 +2930,25 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__CtrlCfg__out_t;
 
     typedef struct packed{
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_ID__out_t;
+
+    typedef struct packed{
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_LENGTH__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
+    } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__out_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__SecFwRecoveryIf__out_t SecFwRecoveryIf;
         I3CCSR__I3C_EC__StdbyCtrlMode__out_t StdbyCtrlMode;
         I3CCSR__I3C_EC__TTI__out_t TTI;
         I3CCSR__I3C_EC__SoCMgmtIf__out_t SoCMgmtIf;
         I3CCSR__I3C_EC__CtrlCfg__out_t CtrlCfg;
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__out_t TERMINATION_EXTCAP_HEADER;
     } I3CCSR__I3C_EC__out_t;
 
     typedef struct packed{

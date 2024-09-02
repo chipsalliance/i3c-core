@@ -685,7 +685,7 @@ package registers_uvm;
 
         virtual function void build();
             this.SECTION_OFFSET = new("SECTION_OFFSET");
-            this.SECTION_OFFSET.configure(this, 16, 0, "RO", 0, 'h0, 1, 1, 0);
+            this.SECTION_OFFSET.configure(this, 16, 0, "RO", 0, 'h100, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(SECTION_OFFSET_bit_cg[bt]) SECTION_OFFSET_bit_cg[bt] = new();
             end
@@ -1742,7 +1742,7 @@ package registers_uvm;
             this.CAP_ID = new("CAP_ID");
             this.CAP_ID.configure(this, 8, 0, "RO", 0, 'hc0, 1, 1, 0);
             this.CAP_LENGTH = new("CAP_LENGTH");
-            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
+            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h20, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
                 foreach(CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
@@ -2731,7 +2731,7 @@ package registers_uvm;
             this.CAP_ID = new("CAP_ID");
             this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h12, 1, 1, 0);
             this.CAP_LENGTH = new("CAP_LENGTH");
-            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
+            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h10, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
                 foreach(CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
@@ -2794,7 +2794,7 @@ package registers_uvm;
             this.PRIME_ACCEPT_GETACCCR = new("PRIME_ACCEPT_GETACCCR");
             this.PRIME_ACCEPT_GETACCCR.configure(this, 1, 3, "RW", 1, 'h0, 0, 1, 0);
             this.HANDOFF_DEEP_SLEEP = new("HANDOFF_DEEP_SLEEP");
-            this.HANDOFF_DEEP_SLEEP.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
+            this.HANDOFF_DEEP_SLEEP.configure(this, 1, 4, "WS", 1, 'h0, 1, 1, 0);
             this.CR_REQUEST_SEND = new("CR_REQUEST_SEND");
             this.CR_REQUEST_SEND.configure(this, 1, 5, "RW", 1, 'h0, 1, 1, 0);
             this.BAST_CCC_IBI_RING = new("BAST_CCC_IBI_RING");
@@ -2907,13 +2907,13 @@ package registers_uvm;
             this.SIMPLE_CRR_SUPPORT = new("SIMPLE_CRR_SUPPORT");
             this.SIMPLE_CRR_SUPPORT.configure(this, 1, 5, "RW", 1, 'h0, 0, 1, 0);
             this.TARGET_XACT_SUPPORT = new("TARGET_XACT_SUPPORT");
-            this.TARGET_XACT_SUPPORT.configure(this, 1, 12, "RW", 1, 'h0, 0, 1, 0);
+            this.TARGET_XACT_SUPPORT.configure(this, 1, 12, "RW", 1, 'h1, 1, 1, 0);
             this.DAA_SETAASA_SUPPORT = new("DAA_SETAASA_SUPPORT");
-            this.DAA_SETAASA_SUPPORT.configure(this, 1, 13, "RW", 1, 'h0, 0, 1, 0);
+            this.DAA_SETAASA_SUPPORT.configure(this, 1, 13, "RW", 1, 'h1, 1, 1, 0);
             this.DAA_SETDASA_SUPPORT = new("DAA_SETDASA_SUPPORT");
-            this.DAA_SETDASA_SUPPORT.configure(this, 1, 14, "RW", 1, 'h0, 0, 1, 0);
+            this.DAA_SETDASA_SUPPORT.configure(this, 1, 14, "RW", 1, 'h1, 1, 1, 0);
             this.DAA_ENTDAA_SUPPORT = new("DAA_ENTDAA_SUPPORT");
-            this.DAA_ENTDAA_SUPPORT.configure(this, 1, 15, "RW", 1, 'h0, 0, 1, 0);
+            this.DAA_ENTDAA_SUPPORT.configure(this, 1, 15, "RW", 1, 'h1, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(SIMPLE_CRR_SUPPORT_bit_cg[bt]) SIMPLE_CRR_SUPPORT_bit_cg[bt] = new();
                 foreach(TARGET_XACT_SUPPORT_bit_cg[bt]) TARGET_XACT_SUPPORT_bit_cg[bt] = new();
@@ -3624,7 +3624,7 @@ package registers_uvm;
             this.CAP_ID = new("CAP_ID");
             this.CAP_ID.configure(this, 8, 0, "RO", 0, 'hc4, 1, 1, 0);
             this.CAP_LENGTH = new("CAP_LENGTH");
-            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
+            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h10, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
                 foreach(CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
@@ -4372,7 +4372,7 @@ package registers_uvm;
             this.CAP_ID = new("CAP_ID");
             this.CAP_ID.configure(this, 8, 0, "RO", 0, 'hc1, 1, 1, 0);
             this.CAP_LENGTH = new("CAP_LENGTH");
-            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h0, 1, 1, 0);
+            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h18, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
                 foreach(CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
@@ -4403,7 +4403,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4433,7 +4433,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4463,7 +4463,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4493,7 +4493,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4523,7 +4523,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4553,7 +4553,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4562,17 +4562,33 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_0
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_PAD_CONF
+    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]INPUT_ENABLE_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]SCHMITT_EN_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]KEEPER_EN_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]PULL_DIR_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]PULL_EN_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]IO_INVERSION_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]OD_EN_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [1-1:0]VIRTUAL_OD_EN_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_bit_cg [8-1:0]PAD_TYPE_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF_fld_cg fld_cg;
+        rand uvm_reg_field INPUT_ENABLE;
+        rand uvm_reg_field SCHMITT_EN;
+        rand uvm_reg_field KEEPER_EN;
+        rand uvm_reg_field PULL_DIR;
+        rand uvm_reg_field PULL_EN;
+        rand uvm_reg_field IO_INVERSION;
+        rand uvm_reg_field OD_EN;
+        rand uvm_reg_field VIRTUAL_OD_EN;
+        rand uvm_reg_field PAD_TYPE;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4582,27 +4598,53 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.INPUT_ENABLE = new("INPUT_ENABLE");
+            this.INPUT_ENABLE.configure(this, 1, 0, "RW", 0, 'h1, 1, 1, 0);
+            this.SCHMITT_EN = new("SCHMITT_EN");
+            this.SCHMITT_EN.configure(this, 1, 1, "RW", 0, 'h0, 1, 1, 0);
+            this.KEEPER_EN = new("KEEPER_EN");
+            this.KEEPER_EN.configure(this, 1, 2, "RW", 0, 'h0, 1, 1, 0);
+            this.PULL_DIR = new("PULL_DIR");
+            this.PULL_DIR.configure(this, 1, 3, "RW", 0, 'h0, 1, 1, 0);
+            this.PULL_EN = new("PULL_EN");
+            this.PULL_EN.configure(this, 1, 4, "RW", 0, 'h0, 1, 1, 0);
+            this.IO_INVERSION = new("IO_INVERSION");
+            this.IO_INVERSION.configure(this, 1, 5, "RW", 0, 'h0, 1, 1, 0);
+            this.OD_EN = new("OD_EN");
+            this.OD_EN.configure(this, 1, 6, "RW", 0, 'h0, 1, 1, 0);
+            this.VIRTUAL_OD_EN = new("VIRTUAL_OD_EN");
+            this.VIRTUAL_OD_EN.configure(this, 1, 7, "RW", 0, 'h0, 1, 1, 0);
+            this.PAD_TYPE = new("PAD_TYPE");
+            this.PAD_TYPE.configure(this, 8, 24, "RW", 0, 'h1, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(INPUT_ENABLE_bit_cg[bt]) INPUT_ENABLE_bit_cg[bt] = new();
+                foreach(SCHMITT_EN_bit_cg[bt]) SCHMITT_EN_bit_cg[bt] = new();
+                foreach(KEEPER_EN_bit_cg[bt]) KEEPER_EN_bit_cg[bt] = new();
+                foreach(PULL_DIR_bit_cg[bt]) PULL_DIR_bit_cg[bt] = new();
+                foreach(PULL_EN_bit_cg[bt]) PULL_EN_bit_cg[bt] = new();
+                foreach(IO_INVERSION_bit_cg[bt]) IO_INVERSION_bit_cg[bt] = new();
+                foreach(OD_EN_bit_cg[bt]) OD_EN_bit_cg[bt] = new();
+                foreach(VIRTUAL_OD_EN_bit_cg[bt]) VIRTUAL_OD_EN_bit_cg[bt] = new();
+                foreach(PAD_TYPE_bit_cg[bt]) PAD_TYPE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_1
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR
+    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR_bit_cg [8-1:0]DRIVE_SLEW_RATE_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR_bit_cg [8-1:0]DRIVE_STRENGTH_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR_fld_cg fld_cg;
+        rand uvm_reg_field DRIVE_SLEW_RATE;
+        rand uvm_reg_field DRIVE_STRENGTH;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4612,15 +4654,18 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.DRIVE_SLEW_RATE = new("DRIVE_SLEW_RATE");
+            this.DRIVE_SLEW_RATE.configure(this, 8, 8, "RW", 0, 'hf, 1, 1, 0);
+            this.DRIVE_STRENGTH = new("DRIVE_STRENGTH");
+            this.DRIVE_STRENGTH.configure(this, 8, 24, "RW", 0, 'hf, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(DRIVE_SLEW_RATE_bit_cg[bt]) DRIVE_SLEW_RATE_bit_cg[bt] = new();
+                foreach(DRIVE_STRENGTH_bit_cg[bt]) DRIVE_STRENGTH_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR
 
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2
     class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2 extends uvm_reg;
@@ -4643,7 +4688,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4673,7 +4718,7 @@ package registers_uvm;
 
         virtual function void build();
             this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.PLACEHOLDER.configure(this, 32, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
             end
@@ -4682,17 +4727,17 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_4
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_R_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG_bit_cg [20-1:0]T_R_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_R;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4702,27 +4747,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_R = new("T_R");
+            this.T_R.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_R_bit_cg[bt]) T_R_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_5
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_F_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG_bit_cg [20-1:0]T_F_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_F;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4732,27 +4777,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_F = new("T_F");
+            this.T_F.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_F_bit_cg[bt]) T_F_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_6
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_DAT_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG_bit_cg [20-1:0]T_SU_DAT_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_DAT;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4762,27 +4807,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_SU_DAT = new("T_SU_DAT");
+            this.T_SU_DAT.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_SU_DAT_bit_cg[bt]) T_SU_DAT_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_7
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_DAT_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG_bit_cg [20-1:0]T_HD_DAT_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HD_DAT;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4792,27 +4837,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_HD_DAT = new("T_HD_DAT");
+            this.T_HD_DAT.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_HD_DAT_bit_cg[bt]) T_HD_DAT_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_8
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HIGH_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG_bit_cg [20-1:0]T_HIGH_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HIGH;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4822,27 +4867,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_HIGH = new("T_HIGH");
+            this.T_HIGH.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_HIGH_bit_cg[bt]) T_HIGH_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_9
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG_bit_cg [20-1:0]T_LOW_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_LOW;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4852,27 +4897,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_LOW = new("T_LOW");
+            this.T_LOW.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_LOW_bit_cg[bt]) T_LOW_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_10
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG_bit_cg [20-1:0]T_HD_STA_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HD_STA;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4882,27 +4927,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_HD_STA = new("T_HD_STA");
+            this.T_HD_STA.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_HD_STA_bit_cg[bt]) T_HD_STA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_11
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STA_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG_bit_cg [20-1:0]T_SU_STA_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_STA;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4912,27 +4957,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_SU_STA = new("T_SU_STA");
+            this.T_SU_STA.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_SU_STA_bit_cg[bt]) T_SU_STA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_12
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STO_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG_bit_cg [20-1:0]T_SU_STO_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_STO;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4942,27 +4987,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_SU_STO = new("T_SU_STO");
+            this.T_SU_STO.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_SU_STO_bit_cg[bt]) T_SU_STO_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_13
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_FREE_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG_bit_cg [32-1:0]T_FREE_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_FREE;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -4972,27 +5017,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_FREE = new("T_FREE");
+            this.T_FREE.configure(this, 32, 0, "RW", 0, 'hc, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_FREE_bit_cg[bt]) T_FREE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_14
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_AVAL_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG_bit_cg [32-1:0]T_AVAL_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_AVAL;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -5002,27 +5047,27 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_AVAL = new("T_AVAL");
+            this.T_AVAL.configure(this, 32, 0, "RW", 0, 'h12c, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_AVAL_bit_cg[bt]) T_AVAL_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG
 
-    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_15
-    class I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_IDLE_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15_bit_cg [32-1:0]PLACEHOLDER_bit_cg;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG_bit_cg [32-1:0]T_IDLE_bit_cg;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_IDLE;
 
-        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15");
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -5032,15 +5077,15 @@ package registers_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.T_IDLE = new("T_IDLE");
+            this.T_IDLE.configure(this, 32, 0, "RW", 0, 'hea60, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(T_IDLE_bit_cg[bt]) T_IDLE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG
 
     // Regfile - I3CCSR.I3C_EC.SoCMgmtIf
     class I3CCSR__I3C_EC__SoCMgmtIf extends uvm_reg_block;
@@ -5051,22 +5096,22 @@ package registers_uvm;
         rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1 SOC_MGMT_RSVD_1;
         rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2 SOC_MGMT_RSVD_2;
         rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3 SOC_MGMT_RSVD_3;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_0 SOC_MGMT_FEATURE_0;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_1 SOC_MGMT_FEATURE_1;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF SOC_PAD_CONF;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR SOC_PAD_ATTR;
         rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2 SOC_MGMT_FEATURE_2;
         rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3 SOC_MGMT_FEATURE_3;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_4 SOC_MGMT_FEATURE_4;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_5 SOC_MGMT_FEATURE_5;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_6 SOC_MGMT_FEATURE_6;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_7 SOC_MGMT_FEATURE_7;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_8 SOC_MGMT_FEATURE_8;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_9 SOC_MGMT_FEATURE_9;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_10 SOC_MGMT_FEATURE_10;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_11 SOC_MGMT_FEATURE_11;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_12 SOC_MGMT_FEATURE_12;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_13 SOC_MGMT_FEATURE_13;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_14 SOC_MGMT_FEATURE_14;
-        rand I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_15 SOC_MGMT_FEATURE_15;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG T_R_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG T_F_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG T_SU_DAT_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG T_HD_DAT_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG T_HIGH_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG T_LOW_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG T_HD_STA_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG T_SU_STA_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG T_SU_STO_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG T_FREE_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG T_AVAL_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG T_IDLE_REG;
 
         function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf");
             super.new(name);
@@ -5109,16 +5154,16 @@ package registers_uvm;
 
             this.SOC_MGMT_RSVD_3.build();
             this.default_map.add_reg(this.SOC_MGMT_RSVD_3, 'h18);
-            this.SOC_MGMT_FEATURE_0 = new("SOC_MGMT_FEATURE_0");
-            this.SOC_MGMT_FEATURE_0.configure(this);
+            this.SOC_PAD_CONF = new("SOC_PAD_CONF");
+            this.SOC_PAD_CONF.configure(this);
 
-            this.SOC_MGMT_FEATURE_0.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_0, 'h1c);
-            this.SOC_MGMT_FEATURE_1 = new("SOC_MGMT_FEATURE_1");
-            this.SOC_MGMT_FEATURE_1.configure(this);
+            this.SOC_PAD_CONF.build();
+            this.default_map.add_reg(this.SOC_PAD_CONF, 'h1c);
+            this.SOC_PAD_ATTR = new("SOC_PAD_ATTR");
+            this.SOC_PAD_ATTR.configure(this);
 
-            this.SOC_MGMT_FEATURE_1.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_1, 'h20);
+            this.SOC_PAD_ATTR.build();
+            this.default_map.add_reg(this.SOC_PAD_ATTR, 'h20);
             this.SOC_MGMT_FEATURE_2 = new("SOC_MGMT_FEATURE_2");
             this.SOC_MGMT_FEATURE_2.configure(this);
 
@@ -5129,66 +5174,66 @@ package registers_uvm;
 
             this.SOC_MGMT_FEATURE_3.build();
             this.default_map.add_reg(this.SOC_MGMT_FEATURE_3, 'h28);
-            this.SOC_MGMT_FEATURE_4 = new("SOC_MGMT_FEATURE_4");
-            this.SOC_MGMT_FEATURE_4.configure(this);
+            this.T_R_REG = new("T_R_REG");
+            this.T_R_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_4.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_4, 'h2c);
-            this.SOC_MGMT_FEATURE_5 = new("SOC_MGMT_FEATURE_5");
-            this.SOC_MGMT_FEATURE_5.configure(this);
+            this.T_R_REG.build();
+            this.default_map.add_reg(this.T_R_REG, 'h2c);
+            this.T_F_REG = new("T_F_REG");
+            this.T_F_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_5.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_5, 'h30);
-            this.SOC_MGMT_FEATURE_6 = new("SOC_MGMT_FEATURE_6");
-            this.SOC_MGMT_FEATURE_6.configure(this);
+            this.T_F_REG.build();
+            this.default_map.add_reg(this.T_F_REG, 'h30);
+            this.T_SU_DAT_REG = new("T_SU_DAT_REG");
+            this.T_SU_DAT_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_6.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_6, 'h34);
-            this.SOC_MGMT_FEATURE_7 = new("SOC_MGMT_FEATURE_7");
-            this.SOC_MGMT_FEATURE_7.configure(this);
+            this.T_SU_DAT_REG.build();
+            this.default_map.add_reg(this.T_SU_DAT_REG, 'h34);
+            this.T_HD_DAT_REG = new("T_HD_DAT_REG");
+            this.T_HD_DAT_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_7.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_7, 'h38);
-            this.SOC_MGMT_FEATURE_8 = new("SOC_MGMT_FEATURE_8");
-            this.SOC_MGMT_FEATURE_8.configure(this);
+            this.T_HD_DAT_REG.build();
+            this.default_map.add_reg(this.T_HD_DAT_REG, 'h38);
+            this.T_HIGH_REG = new("T_HIGH_REG");
+            this.T_HIGH_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_8.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_8, 'h3c);
-            this.SOC_MGMT_FEATURE_9 = new("SOC_MGMT_FEATURE_9");
-            this.SOC_MGMT_FEATURE_9.configure(this);
+            this.T_HIGH_REG.build();
+            this.default_map.add_reg(this.T_HIGH_REG, 'h3c);
+            this.T_LOW_REG = new("T_LOW_REG");
+            this.T_LOW_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_9.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_9, 'h40);
-            this.SOC_MGMT_FEATURE_10 = new("SOC_MGMT_FEATURE_10");
-            this.SOC_MGMT_FEATURE_10.configure(this);
+            this.T_LOW_REG.build();
+            this.default_map.add_reg(this.T_LOW_REG, 'h40);
+            this.T_HD_STA_REG = new("T_HD_STA_REG");
+            this.T_HD_STA_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_10.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_10, 'h44);
-            this.SOC_MGMT_FEATURE_11 = new("SOC_MGMT_FEATURE_11");
-            this.SOC_MGMT_FEATURE_11.configure(this);
+            this.T_HD_STA_REG.build();
+            this.default_map.add_reg(this.T_HD_STA_REG, 'h44);
+            this.T_SU_STA_REG = new("T_SU_STA_REG");
+            this.T_SU_STA_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_11.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_11, 'h48);
-            this.SOC_MGMT_FEATURE_12 = new("SOC_MGMT_FEATURE_12");
-            this.SOC_MGMT_FEATURE_12.configure(this);
+            this.T_SU_STA_REG.build();
+            this.default_map.add_reg(this.T_SU_STA_REG, 'h48);
+            this.T_SU_STO_REG = new("T_SU_STO_REG");
+            this.T_SU_STO_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_12.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_12, 'h4c);
-            this.SOC_MGMT_FEATURE_13 = new("SOC_MGMT_FEATURE_13");
-            this.SOC_MGMT_FEATURE_13.configure(this);
+            this.T_SU_STO_REG.build();
+            this.default_map.add_reg(this.T_SU_STO_REG, 'h4c);
+            this.T_FREE_REG = new("T_FREE_REG");
+            this.T_FREE_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_13.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_13, 'h50);
-            this.SOC_MGMT_FEATURE_14 = new("SOC_MGMT_FEATURE_14");
-            this.SOC_MGMT_FEATURE_14.configure(this);
+            this.T_FREE_REG.build();
+            this.default_map.add_reg(this.T_FREE_REG, 'h50);
+            this.T_AVAL_REG = new("T_AVAL_REG");
+            this.T_AVAL_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_14.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_14, 'h54);
-            this.SOC_MGMT_FEATURE_15 = new("SOC_MGMT_FEATURE_15");
-            this.SOC_MGMT_FEATURE_15.configure(this);
+            this.T_AVAL_REG.build();
+            this.default_map.add_reg(this.T_AVAL_REG, 'h54);
+            this.T_IDLE_REG = new("T_IDLE_REG");
+            this.T_IDLE_REG.configure(this);
 
-            this.SOC_MGMT_FEATURE_15.build();
-            this.default_map.add_reg(this.SOC_MGMT_FEATURE_15, 'h58);
+            this.T_IDLE_REG.build();
+            this.default_map.add_reg(this.T_IDLE_REG, 'h58);
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf
 
@@ -5281,6 +5326,41 @@ package registers_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__CtrlCfg
 
+    // Reg - I3CCSR.I3C_EC.TERMINATION_EXTCAP_HEADER
+    class I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER_bit_cg [8-1:0]CAP_ID_bit_cg;
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER_bit_cg [16-1:0]CAP_LENGTH_bit_cg;
+        I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER_fld_cg fld_cg;
+        rand uvm_reg_field CAP_ID;
+        rand uvm_reg_field CAP_LENGTH;
+
+        function new(string name = "I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.CAP_ID = new("CAP_ID");
+            this.CAP_ID.configure(this, 8, 0, "RO", 0, 'h0, 1, 1, 0);
+            this.CAP_LENGTH = new("CAP_LENGTH");
+            this.CAP_LENGTH.configure(this, 16, 8, "RO", 0, 'h1, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(CAP_ID_bit_cg[bt]) CAP_ID_bit_cg[bt] = new();
+                foreach(CAP_LENGTH_bit_cg[bt]) CAP_LENGTH_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER
+
     // Regfile - I3CCSR.I3C_EC
     class I3CCSR__I3C_EC extends uvm_reg_block;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf SecFwRecoveryIf;
@@ -5288,6 +5368,7 @@ package registers_uvm;
         rand I3CCSR__I3C_EC__TTI TTI;
         rand I3CCSR__I3C_EC__SoCMgmtIf SoCMgmtIf;
         rand I3CCSR__I3C_EC__CtrlCfg CtrlCfg;
+        rand I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER TERMINATION_EXTCAP_HEADER;
 
         function new(string name = "I3CCSR__I3C_EC");
             super.new(name);
@@ -5315,6 +5396,11 @@ package registers_uvm;
             this.CtrlCfg.configure(this);
             this.CtrlCfg.build();
             this.default_map.add_submap(this.CtrlCfg.default_map, 'h160);
+            this.TERMINATION_EXTCAP_HEADER = new("TERMINATION_EXTCAP_HEADER");
+            this.TERMINATION_EXTCAP_HEADER.configure(this);
+
+            this.TERMINATION_EXTCAP_HEADER.build();
+            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h168);
         endfunction : build
     endclass : I3CCSR__I3C_EC
 

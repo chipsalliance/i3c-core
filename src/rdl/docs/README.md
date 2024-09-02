@@ -79,39 +79,39 @@ Don't override. Generated from: I3CCSR
 
 #### IBA_INCLUDE field
 
-<p>Include I3C Broadcast Address:
-0 - skips I3C Broadcast Address for private transfers,
-1 - includes I3C Broadcast Address for private transfers.</p>
+<p>Include I3C Broadcast Address:</p>
+<p>0 - skips I3C Broadcast Address for private transfers</p>
+<p>1 - includes I3C Broadcast Address for private transfers</p>
 
 #### AUTOCMD_DATA_RPT field
 
-<p>Auto-Command Data Report:
-0 - coalesced reporting,
-1 - separated reporting.</p>
+<p>Auto-Command Data Report:</p>
+<p>0 - coalesced reporting</p>
+<p>1 - separated reporting</p>
 
 #### DATA_BYTE_ORDER_MODE field
 
-<p>Data Byte Ordering Mode:
-0 - Little Endian
-1 - Big Endian</p>
+<p>Data Byte Ordering Mode:</p>
+<p>0 - Little Endian</p>
+<p>1 - Big Endian</p>
 
 #### MODE_SELECTOR field
 
-<p>DMA/PIO Mode Selector:
-0 - DMA,
-1 - PIO.</p>
+<p>DMA/PIO Mode Selector:</p>
+<p>0 - DMA</p>
+<p>1 - PIO</p>
 
 #### I2C_DEV_PRESENT field
 
-<p>I2C Device Present on Bus:
-0 - pure I3C bus,
-1 - legacy I2C devices on the bus.</p>
+<p>I2C Device Present on Bus:</p>
+<p>0 - pure I3C bus</p>
+<p>1 - legacy I2C devices on the bus</p>
 
 #### HOT_JOIN_CTRL field
 
-<p>Hot-Join ACK/NACK Control:
-0 - ACK Hot-Join request,
-1 - NACK Hot-Join request and send Broadcast CCC to disable Hot-Join.</p>
+<p>Hot-Join ACK/NACK Control:</p>
+<p>0 - ACK Hot-Join request</p>
+<p>1 - NACK Hot-Join request and send Broadcast CCC to disable Hot-Join</p>
 
 #### HALT_ON_CMD_SEQ_TIMEOUT field
 
@@ -123,10 +123,10 @@ Don't override. Generated from: I3CCSR
 
 #### RESUME field
 
-<p>Host Controller Resume:
-0 - Controller is running,
-1 - Controller is suspended.
-Write 1 to resume Controller operations.</p>
+<p>Host Controller Resume:</p>
+<p>0 - Controller is running</p>
+<p>1 - Controller is suspended</p>
+<p>Write 1 to resume Controller operations.</p>
 
 #### BUS_ENABLE field
 
@@ -149,9 +149,9 @@ Write 1 to resume Controller operations.</p>
 
 #### DYNAMIC_ADDR_VALID field
 
-<p>Dynamic Address is Valid:
-0 - dynamic address is invalid,
-1 - dynamic address is valid</p>
+<p>Dynamic Address is Valid:</p>
+<p>0 - dynamic address is invalid</p>
+<p>1 - dynamic address is valid</p>
 
 ### HC_CAPABILITIES register
 
@@ -177,81 +177,81 @@ Write 1 to resume Controller operations.</p>
 
 #### COMBO_COMMAND field
 
-<p>Controller combined command:
-0 - not supported,
-1 - supported.</p>
+<p>Controller combined command:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### AUTO_COMMAND field
 
-<p>Automatic read command on IBI:
-0 - not supported,
-1 - supported.</p>
+<p>Automatic read command on IBI:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### STANDBY_CR_CAP field
 
-<p>Switching from active to standby mode:
-0 - not supported, this controller is always active on I3C,
-1- supported, this controller can hand off I3C to secondary controller.</p>
+<p>Switching from active to standby mode:</p>
+<p>0 - not supported, this controller is always active on I3C</p>
+<p>1- supported, this controller can hand off I3C to secondary controller</p>
 
 #### HDR_DDR_EN field
 
-<p>HDR-DDR transfers:
-0 - not supported,
-1 - supported.</p>
+<p>HDR-DDR transfers:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### HDR_TS_EN field
 
-<p>HDR-Ternary transfers:
-0 - not supported,
-1 - supported.</p>
+<p>HDR-Ternary transfers:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### CMD_CCC_DEFBYTE field
 
-<p>CCC with defining byte:
-0 - not supported,
-1 - supported.</p>
+<p>CCC with defining byte:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### IBI_DATA_ABORT_EN field
 
-<p>Controller IBI data abort:
-0 - not supported,
-1 - supported.</p>
+<p>Controller IBI data abort:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### IBI_CREDIT_COUNT_EN field
 
-<p>Controller IBI credit count:
-0 - not supported,
-1 - supported.</p>
+<p>Controller IBI credit count:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### SCHEDULED_COMMANDS_EN field
 
-<p>Controller command scheduling:
-0 - not supported,
-1 - supported.</p>
+<p>Controller command scheduling:</p>
+<p>0 - not supported</p>
+<p>1 - supported</p>
 
 #### CMD_SIZE field
 
-<p>Size and structure of the Command Descriptor:
-2'b0: 2 DWORDs,
-all other reserved.</p>
+<p>Size and structure of the Command Descriptor:</p>
+<p>2'b0: 2 DWORDs,</p>
+<p>all other reserved.</p>
 
 #### SG_CAPABILITY_CR_EN field
 
-<p>DMA only: Command and Response rings memory:
-0 - must be physically continuous,
-1 - controller supports scatter-gather.</p>
+<p>DMA only: Command and Response rings memory:</p>
+<p>0 - must be physically continuous</p>
+<p>1 - controller supports scatter-gather</p>
 
 #### SG_CAPABILITY_IBI_EN field
 
-<p>DMA only: IBI status and IBI Data rings memory:
-0 - must be physically continuous,
-1 - controller supports scatter-gather.</p>
+<p>DMA only: IBI status and IBI Data rings memory:</p>
+<p>0 - must be physically continuous</p>
+<p>1 - controller supports scatter-gather</p>
 
 #### SG_CAPABILITY_DC_EN field
 
-<p>Device context memory:
-0 - must be physically continuous,
-1 - controller supports scatter-gather.</p>
+<p>Device context memory:</p>
+<p>0 - must be physically continuous</p>
+<p>1 - controller supports scatter-gather</p>
 
 ### RESET_CONTROL register
 
@@ -304,9 +304,9 @@ all other reserved.</p>
 
 #### AC_CURRENT_OWN field
 
-<p>Controller I3C state:
-0 - not bus owner,
-1 - bus owner.</p>
+<p>Controller I3C state:</p>
+<p>0 - not bus owner</p>
+<p>1 - bus owner</p>
 
 ### INTR_STATUS register
 
@@ -497,9 +497,9 @@ all other reserved.</p>
 
 #### ENTRY_SIZE field
 
-<p>Individual DCT entry size.
-0 - 4 DWORDs,
-1:15 - Reserved.</p>
+<p>Individual DCT entry size.</p>
+<p>0 - 4 DWORDs,</p>
+<p>1:15 - Reserved.</p>
 
 ### RING_HEADERS_SECTION_OFFSET register
 
@@ -537,7 +537,7 @@ all other reserved.</p>
 
 |Bits|  Identifier  |Access|Reset|     Name     |
 |----|--------------|------|-----|--------------|
-|15:0|SECTION_OFFSET|   r  | 0x0 |SECTION_OFFSET|
+|15:0|SECTION_OFFSET|   r  |0x100|SECTION_OFFSET|
 
 #### SECTION_OFFSET field
 
@@ -556,9 +556,9 @@ all other reserved.</p>
 
 #### ICC_SUPPORT field
 
-<p>Internal Control Commands:
-1 - some or all internals commands sub-commands are supported,
-0 - illegal.</p>
+<p>Internal Control Commands:</p>
+<p>1 - some or all internals commands sub-commands are supported,</p>
+<p>0 - illegal.</p>
 
 #### MIPI_CMDS_SUPPORTED field
 
@@ -578,21 +578,21 @@ all other reserved.</p>
 
 #### NOTIFY_HJ_REJECTED field
 
-<p>Notify about rejected hot-join:
-0 - do not enqueue rejected HJ,
-1 = enqueue rejected HJ on IBI queue/ring.</p>
+<p>Notify about rejected hot-join:</p>
+<p>0 - do not enqueue rejected HJ,</p>
+<p>1 = enqueue rejected HJ on IBI queue/ring.</p>
 
 #### NOTIFY_CRR_REJECTED field
 
-<p>Notify about rejected controller role request:
-0 - do not enqueue rejected CRR,
-1 = enqueue rejected CRR on IBI queue/ring.</p>
+<p>Notify about rejected controller role request:</p>
+<p>0 - do not enqueue rejected CRR,</p>
+<p>1 = enqueue rejected CRR on IBI queue/ring.</p>
 
 #### NOTIFY_IBI_REJECTED field
 
-<p>Notify about rejected IBI:
-0 - do not enqueue rejected IBI,
-1 = enqueue rejected IBI on IBI queue/ring.</p>
+<p>Notify about rejected IBI:</p>
+<p>0 - do not enqueue rejected IBI,</p>
+<p>1 = enqueue rejected IBI on IBI queue/ring.</p>
 
 ### IBI_DATA_ABORT_CTRL register
 
@@ -609,22 +609,22 @@ all other reserved.</p>
 
 #### MATCH_IBI_ID field
 
-<p>IBI target address:
-[15:9] - device address,
-[8] - must always be set to 1'b1</p>
+<p>IBI target address:</p>
+<p>[15:9] - device address,</p>
+<p>[8] - must always be set to 1'b1</p>
 
 #### AFTER_N_CHUNKS field
 
-<p>Number of data chunks to be allowed before forced termination:
-0 - immediate,
-1:3 - delay by 1-3 data chunks.</p>
+<p>Number of data chunks to be allowed before forced termination:</p>
+<p>0 - immediate,</p>
+<p>1:3 - delay by 1-3 data chunks.</p>
 
 #### MATCH_STATUS_TYPE field
 
-<p>Define which IBI should be aborted:
-3'b000 - Regular IBI,
-3'b100 - Autocmd IBI,
-other values - not supported.</p>
+<p>Define which IBI should be aborted:</p>
+<p>3'b000 - Regular IBI,</p>
+<p>3'b100 - Autocmd IBI,</p>
+<p>other values - not supported.</p>
 
 #### IBI_DATA_ABORT_MON field
 
@@ -667,9 +667,9 @@ other values - not supported.</p>
 
 #### BLP field
 
-<p>Buffer vs list pointer in device context:
-0 - continuous physical memory region,
-1 - pointer to SG descriptor list.</p>
+<p>Buffer vs list pointer in device context:</p>
+<p>0 - continuous physical memory region,</p>
+<p>1 - pointer to SG descriptor list.</p>
 
 ## PIOControl register file
 
@@ -1057,15 +1057,16 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x100
 - Base Offset: 0x100
-- Size: 0x168
+- Size: 0x16C
 
-|Offset|   Identifier  |               Name               |
-|------|---------------|----------------------------------|
-| 0x000|SecFwRecoveryIf|Secure Firmware Recovery Interface|
-| 0x080| StdbyCtrlMode |      Standby Controller Mode     |
-| 0x0C0|      TTI      |   Target Transaction Interface   |
-| 0x100|   SoCMgmtIf   |     SoC Management Interface     |
-| 0x160|    CtrlCfg    |         Controller Config        |
+|Offset|        Identifier       |               Name               |
+|------|-------------------------|----------------------------------|
+| 0x000|     SecFwRecoveryIf     |Secure Firmware Recovery Interface|
+| 0x080|      StdbyCtrlMode      |      Standby Controller Mode     |
+| 0x0C0|           TTI           |   Target Transaction Interface   |
+| 0x100|        SoCMgmtIf        |     SoC Management Interface     |
+| 0x160|         CtrlCfg         |         Controller Config        |
+| 0x168|TERMINATION_EXTCAP_HEADER|                 —                |
 
 ## SecFwRecoveryIf register file
 
@@ -1112,7 +1113,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
 | 7:0|  CAP_ID  |   r  | 0xC0|  CAP_ID  |
-|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+|23:8|CAP_LENGTH|   r  | 0x20|CAP_LENGTH|
 
 #### CAP_ID field
 
@@ -1520,7 +1521,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
 | 7:0|  CAP_ID  |   r  | 0x12|  CAP_ID  |
-|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+|23:8|CAP_LENGTH|   r  | 0x10|CAP_LENGTH|
 
 #### CAP_ID field
 
@@ -1538,21 +1539,21 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-| Bits|      Identifier     |Access|Reset|                       Name                       |
-|-----|---------------------|------|-----|--------------------------------------------------|
-|  0  |   PENDING_RX_NACK   |  rw  |  —  |                  Pending RX NACK                 |
-|  1  |  HANDOFF_DELAY_NACK |  rw  |  —  |                Handoff Delay NACK                |
-|  2  |  ACR_FSM_OP_SELECT  |  rw  |  —  |             Active Controller Select             |
-|  3  |PRIME_ACCEPT_GETACCCR|  rw  |  —  |          Prime to Accept Controller Role         |
-|  4  |  HANDOFF_DEEP_SLEEP |  rw  | 0x0 |                Handoff Deep Sleep                |
-|  5  |   CR_REQUEST_SEND   |  rw  | 0x0 |           Send Controller Role Request           |
-| 10:8|  BAST_CCC_IBI_RING  |  rw  | 0x0 |Ring Bundle IBI Selector for Broadcast CCC Capture|
-|  12 |  TARGET_XACT_ENABLE |  rw  | 0x0 |   Target Transaction Interface Servicing Enable  |
-|  13 |  DAA_SETAASA_ENABLE |  rw  | 0x0 |       Dynamic Address Method Enable SETAASA      |
-|  14 |  DAA_SETDASA_ENABLE |  rw  | 0x0 |       Dynamic Address Method Enable SETDASA      |
-|  15 |  DAA_ENTDAA_ENABLE  |  rw  | 0x0 |       Dynamic Address Method Enable ENTDAA       |
-|  20 |  RSTACT_DEFBYTE_02  |  rw  | 0x0 |            RSTACT Support DefByte 0x02           |
-|31:30| STBY_CR_ENABLE_INIT |  rw  | 0x0 |    Host Controller Secondary Controller Enable   |
+| Bits|      Identifier     | Access |Reset|                       Name                       |
+|-----|---------------------|--------|-----|--------------------------------------------------|
+|  0  |   PENDING_RX_NACK   |   rw   |  —  |                  Pending RX NACK                 |
+|  1  |  HANDOFF_DELAY_NACK |   rw   |  —  |                Handoff Delay NACK                |
+|  2  |  ACR_FSM_OP_SELECT  |   rw   |  —  |             Active Controller Select             |
+|  3  |PRIME_ACCEPT_GETACCCR|   rw   |  —  |          Prime to Accept Controller Role         |
+|  4  |  HANDOFF_DEEP_SLEEP |rw, wset| 0x0 |                Handoff Deep Sleep                |
+|  5  |   CR_REQUEST_SEND   |   rw   | 0x0 |           Send Controller Role Request           |
+| 10:8|  BAST_CCC_IBI_RING  |   rw   | 0x0 |Ring Bundle IBI Selector for Broadcast CCC Capture|
+|  12 |  TARGET_XACT_ENABLE |   rw   | 0x0 |   Target Transaction Interface Servicing Enable  |
+|  13 |  DAA_SETAASA_ENABLE |   rw   | 0x0 |       Dynamic Address Method Enable SETAASA      |
+|  14 |  DAA_SETDASA_ENABLE |   rw   | 0x0 |       Dynamic Address Method Enable SETDASA      |
+|  15 |  DAA_ENTDAA_ENABLE  |   rw   | 0x0 |       Dynamic Address Method Enable ENTDAA       |
+|  20 |  RSTACT_DEFBYTE_02  |   rw   | 0x0 |            RSTACT Support DefByte 0x02           |
+|31:30| STBY_CR_ENABLE_INIT |   rw   | 0x0 |    Host Controller Secondary Controller Enable   |
 
 #### PENDING_RX_NACK field
 
@@ -1572,39 +1573,64 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### HANDOFF_DEEP_SLEEP field
 
-
+<p>If this field has a value of 1'b1, then the Secondary Controller Logic shall
+report a return from Deep Sleep state to the Active Controller.
+Writing 1'b1 to this bit is sticky. This field shall automatically clear to 1'b0
+after accepting the Controller Role and transitioning to Active Controller mode.</p>
 
 #### CR_REQUEST_SEND field
 
-
+<p>Write of 1'b1 to this field shall instruct the Secondary Controller Logic
+to attempt to send a Controller Role Request to the I3C Bus.</p>
 
 #### BAST_CCC_IBI_RING field
 
-
+<p>Indicates which Ring Bundle will be used to capture Broadcast CCC data sent by the Active Controller.
+The Ring Bundle must be configured and enabled, and its IBI Ring Pair must also be initialized and ready to receive data.</p>
 
 #### TARGET_XACT_ENABLE field
 
-
+<p>Indicates whether Read-Type/Write-Type transaction servicing is enabled, via
+an I3C Target Transaction Interface to software (Section 6.17.3).</p>
+<p>1'b0: DISABLED: not available</p>
+<p>1'b1: ENABLED: available for software</p>
 
 #### DAA_SETAASA_ENABLE field
 
-
+<p>Indicates SETAASA method is enabled.</p>
+<p>1'b0: DISABLED: will not respond</p>
+<p>1'b1: ENABLED: will respond</p>
 
 #### DAA_SETDASA_ENABLE field
 
-
+<p>Indicates SETDASA method is enabled.</p>
+<p>1'b0: DISABLED: will not respond</p>
+<p>1'b1: ENABLED: will respond</p>
 
 #### DAA_ENTDAA_ENABLE field
 
-
+<p>Indicates ENTDAA method is enabled.</p>
+<p>1'b0: DISABLED: will not respond</p>
+<p>1'b1: ENABLED: will respond</p>
 
 #### RSTACT_DEFBYTE_02 field
 
-
+<p>Controls whether I3C Secondary Controller Logic supports RSTACT CCC with
+Defining Byte 0x02.</p>
+<p>1'b0: NOT_SUPPORTED: Do not ACK Defining Byte 0x02</p>
+<p>1'b1: HANDLE_INTR: Support Defining Byte 0x02</p>
 
 #### STBY_CR_ENABLE_INIT field
 
-
+<p>Enables or disables the Secondary Controller:</p>
+<p>2'b00 - DISABLED: Secondary Controller is disabled.</p>
+<p>2'b01 - ACM_INIT: Secondary Controller is enabled,
+but Host Controller initializes in Active Controller mode.</p>
+<p>2'b10 - SCM_RUNNING: Secondary Controller operation is enabled,
+Host Controller initializes in Standby Controller mode.</p>
+<p>2'b11 - SCM_HOT_JOIN: Secondary Controller operation is enabled,
+Host Controller conditionally becomes a Hot-Joining Device
+to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 ### STBY_CR_DEVICE_ADDR register
 
@@ -1623,19 +1649,23 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### STATIC_ADDR field
 
-
+<p>This field contains the Host Controller Device’s Static Address.</p>
 
 #### STATIC_ADDR_VALID field
 
-
+<p>Indicates whether or not the value in the STATIC_ADDR field is valid.</p>
+<p>1'b0: The Static Address field is not valid</p>
+<p>1'b1: The Static Address field is valid</p>
 
 #### DYNAMIC_ADDR field
 
-
+<p>Contains the Host Controller Device’s Dynamic Address.</p>
 
 #### DYNAMIC_ADDR_VALID field
 
-
+<p>Indicates whether or not the value in the DYNAMIC_ADDR field is valid.
+1'b0: DYNAMIC_ADDR field is not valid
+1'b1: DYNAMIC_ADDR field is valid</p>
 
 ### STBY_CR_CAPABILITIES register
 
@@ -1648,10 +1678,10 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |Bits|     Identifier    |Access|Reset|        Name       |
 |----|-------------------|------|-----|-------------------|
 |  5 | SIMPLE_CRR_SUPPORT|  rw  |  —  | SIMPLE_CRR_SUPPORT|
-| 12 |TARGET_XACT_SUPPORT|  rw  |  —  |TARGET_XACT_SUPPORT|
-| 13 |DAA_SETAASA_SUPPORT|  rw  |  —  |DAA_SETAASA_SUPPORT|
-| 14 |DAA_SETDASA_SUPPORT|  rw  |  —  |DAA_SETDASA_SUPPORT|
-| 15 | DAA_ENTDAA_SUPPORT|  rw  |  —  | DAA_ENTDAA_SUPPORT|
+| 12 |TARGET_XACT_SUPPORT|  rw  | 0x1 |TARGET_XACT_SUPPORT|
+| 13 |DAA_SETAASA_SUPPORT|  rw  | 0x1 |DAA_SETAASA_SUPPORT|
+| 14 |DAA_SETDASA_SUPPORT|  rw  | 0x1 |DAA_SETDASA_SUPPORT|
+| 15 | DAA_ENTDAA_SUPPORT|  rw  | 0x1 | DAA_ENTDAA_SUPPORT|
 
 #### SIMPLE_CRR_SUPPORT field
 
@@ -1659,19 +1689,27 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### TARGET_XACT_SUPPORT field
 
-
+<p>Defines whether an I3C Target Transaction Interface is supported.</p>
+<p>1'b0: DISABLED: Not supported</p>
+<p>1'b1: ENABLED: Supported via vendor-defined Extended Capability structure</p>
 
 #### DAA_SETAASA_SUPPORT field
 
-
+<p>Defines whether Dynamic Address Assignment with SETAASA CCC (using Static Address) is supported.</p>
+<p>1'b0: DISABLED: Not supported</p>
+<p>1'b1: ENABLED: Supported</p>
 
 #### DAA_SETDASA_SUPPORT field
 
-
+<p>Defines whether Dynamic Address Assignment with SETDASA CCC (using Static Address) is supported.</p>
+<p>1'b0: DISABLED: Not supported</p>
+<p>1'b1: ENABLED: Supported</p>
 
 #### DAA_ENTDAA_SUPPORT field
 
-
+<p>Defines whether Dynamic Address Assignment with ENTDAA CCC is supported.</p>
+<p>1'b0: DISABLED: Not supported</p>
+<p>1'b1: ENABLED: Supported</p>
 
 ### __rsvd_0 register
 
@@ -2104,7 +2142,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
 | 7:0|  CAP_ID  |   r  | 0xC4|  CAP_ID  |
-|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+|23:8|CAP_LENGTH|   r  | 0x10|CAP_LENGTH|
 
 #### CAP_ID field
 
@@ -2515,31 +2553,31 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x100
 - Size: 0x5C
 
-|Offset|     Identifier    |         Name         |
-|------|-------------------|----------------------|
-| 0x00 |   EXTCAP_HEADER   |           —          |
-| 0x04 |  SOC_MGMT_CONTROL |SoC Management Control|
-| 0x08 |  SOC_MGMT_STATUS  | SoC Management Status|
-| 0x0C |  SOC_MGMT_RSVD_0  |                      |
-| 0x10 |  SOC_MGMT_RSVD_1  |                      |
-| 0x14 |  SOC_MGMT_RSVD_2  |                      |
-| 0x18 |  SOC_MGMT_RSVD_3  |                      |
-| 0x1C | SOC_MGMT_FEATURE_0|                      |
-| 0x20 | SOC_MGMT_FEATURE_1|                      |
-| 0x24 | SOC_MGMT_FEATURE_2|                      |
-| 0x28 | SOC_MGMT_FEATURE_3|                      |
-| 0x2C | SOC_MGMT_FEATURE_4|                      |
-| 0x30 | SOC_MGMT_FEATURE_5|                      |
-| 0x34 | SOC_MGMT_FEATURE_6|                      |
-| 0x38 | SOC_MGMT_FEATURE_7|                      |
-| 0x3C | SOC_MGMT_FEATURE_8|                      |
-| 0x40 | SOC_MGMT_FEATURE_9|                      |
-| 0x44 |SOC_MGMT_FEATURE_10|                      |
-| 0x48 |SOC_MGMT_FEATURE_11|                      |
-| 0x4C |SOC_MGMT_FEATURE_12|                      |
-| 0x50 |SOC_MGMT_FEATURE_13|                      |
-| 0x54 |SOC_MGMT_FEATURE_14|                      |
-| 0x58 |SOC_MGMT_FEATURE_15|                      |
+|Offset|    Identifier    |                  Name                  |
+|------|------------------|----------------------------------------|
+| 0x00 |   EXTCAP_HEADER  |                    —                   |
+| 0x04 | SOC_MGMT_CONTROL |         SoC Management Control         |
+| 0x08 |  SOC_MGMT_STATUS |          SoC Management Status         |
+| 0x0C |  SOC_MGMT_RSVD_0 |                                        |
+| 0x10 |  SOC_MGMT_RSVD_1 |                                        |
+| 0x14 |  SOC_MGMT_RSVD_2 |                                        |
+| 0x18 |  SOC_MGMT_RSVD_3 |                                        |
+| 0x1C |   SOC_PAD_CONF   |     I3C Pad Configuration Register     |
+| 0x20 |   SOC_PAD_ATTR   |I3C Pad Attribute Configuration Register|
+| 0x24 |SOC_MGMT_FEATURE_2|                                        |
+| 0x28 |SOC_MGMT_FEATURE_3|                                        |
+| 0x2C |      T_R_REG     |                                        |
+| 0x30 |      T_F_REG     |                                        |
+| 0x34 |   T_SU_DAT_REG   |                                        |
+| 0x38 |   T_HD_DAT_REG   |                                        |
+| 0x3C |    T_HIGH_REG    |                                        |
+| 0x40 |     T_LOW_REG    |                                        |
+| 0x44 |   T_HD_STA_REG   |                                        |
+| 0x48 |   T_SU_STA_REG   |                                        |
+| 0x4C |   T_SU_STO_REG   |                                        |
+| 0x50 |    T_FREE_REG    |                                        |
+| 0x54 |    T_AVAL_REG    |                                        |
+| 0x58 |    T_IDLE_REG    |                                        |
 
 ### EXTCAP_HEADER register
 
@@ -2550,7 +2588,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |Bits|Identifier|Access|Reset|   Name   |
 |----|----------|------|-----|----------|
 | 7:0|  CAP_ID  |   r  | 0xC1|  CAP_ID  |
-|23:8|CAP_LENGTH|   r  | 0x0 |CAP_LENGTH|
+|23:8|CAP_LENGTH|   r  | 0x18|CAP_LENGTH|
 
 #### CAP_ID field
 
@@ -2644,33 +2682,102 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-### SOC_MGMT_FEATURE_0 register
+### SOC_PAD_CONF register
 
 - Absolute Address: 0x21C
 - Base Offset: 0x1C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|  Identifier |Access|Reset|           Name          |
+|-----|-------------|------|-----|-------------------------|
+|  0  | INPUT_ENABLE|  rw  | 0x1 |       Enable Input      |
+|  1  |  SCHMITT_EN |  rw  | 0x0 |  Schmitt Trigger Enable |
+|  2  |  KEEPER_EN  |  rw  | 0x0 |    High-Keeper Enable   |
+|  3  |   PULL_DIR  |  rw  | 0x0 |      Pull Direction     |
+|  4  |   PULL_EN   |  rw  | 0x0 |       Pull Enable       |
+|  5  | IO_INVERSION|  rw  | 0x0 |       IO INVERSION      |
+|  6  |    OD_EN    |  rw  | 0x0 |    Open-Drain Enable    |
+|  7  |VIRTUAL_OD_EN|  rw  | 0x0 |Virtual Open Drain Enable|
+|31:24|   PAD_TYPE  |  rw  | 0x1 |         Pad type        |
 
-#### PLACEHOLDER field
+#### INPUT_ENABLE field
 
+<p>Enable input:</p>
+<p>0 - enabled</p>
+<p>1 - disabled</p>
 
+#### SCHMITT_EN field
 
-### SOC_MGMT_FEATURE_1 register
+<p>Enable the Schmitt Trigger:</p>
+<p>0 - disabled</p>
+<p>1 - enabled</p>
+
+#### KEEPER_EN field
+
+<p>Enable the High-Keeper:</p>
+<p>0 - disabled</p>
+<p>1 - enabled</p>
+
+#### PULL_DIR field
+
+<p>Direction of the pull:</p>
+<p>0 - Pull down</p>
+<p>1 - Pull up</p>
+
+#### PULL_EN field
+
+<p>Enable Pull:</p>
+<p>0 - disabled</p>
+<p>1 - enabled</p>
+
+#### IO_INVERSION field
+
+<p>Invert I/O signal:</p>
+<p>0 - signals pass-through</p>
+<p>1 - signals are inverted</p>
+
+#### OD_EN field
+
+<p>Enable Open-Drain:</p>
+<p>0 - disabled</p>
+<p>1 - enabled</p>
+
+#### VIRTUAL_OD_EN field
+
+<p>Enable virtual open drain:</p>
+<p>0 - disabled</p>
+<p>1 - enabled</p>
+
+#### PAD_TYPE field
+
+<p>Select pad type</p>
+<p>0 - Bidirectional</p>
+<p>1 - Open-drain</p>
+<p>2 - Input-only</p>
+<p>3 - Analog input</p>
+
+### SOC_PAD_ATTR register
 
 - Absolute Address: 0x220
 - Base Offset: 0x20
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|   Identifier  |Access|Reset|      Name      |
+|-----|---------------|------|-----|----------------|
+| 15:8|DRIVE_SLEW_RATE|  rw  | 0xF |Driver Slew Rate|
+|31:24| DRIVE_STRENGTH|  rw  | 0xF | Driver Strength|
 
-#### PLACEHOLDER field
+#### DRIVE_SLEW_RATE field
 
+<p>Select driver slew rate</p>
+<p>'0 - lowest</p>
+<p>'1 - highest</p>
 
+#### DRIVE_STRENGTH field
+
+<p>Select driver strength</p>
+<p>'0 - lowest</p>
+<p>'1 - highest</p>
 
 ### SOC_MGMT_FEATURE_2 register
 
@@ -2684,7 +2791,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### PLACEHOLDER field
 
-
+<p>Reserved for: I/O ring and pad configuration</p>
 
 ### SOC_MGMT_FEATURE_3 register
 
@@ -2698,173 +2805,173 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 #### PLACEHOLDER field
 
+<p>Reserved for: I/O ring and pad configuration</p>
 
-
-### SOC_MGMT_FEATURE_4 register
+### T_R_REG register
 
 - Absolute Address: 0x22C
 - Base Offset: 0x2C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0|    T_R   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_R field
 
+<p>Rise time of both SDA and SCL in clock units</p>
 
-
-### SOC_MGMT_FEATURE_5 register
+### T_F_REG register
 
 - Absolute Address: 0x230
 - Base Offset: 0x30
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0|    T_F   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_F field
 
+<p>Fall time of both SDA and SCL in clock units</p>
 
-
-### SOC_MGMT_FEATURE_6 register
+### T_SU_DAT_REG register
 
 - Absolute Address: 0x234
 - Base Offset: 0x34
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_SU_DAT |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_SU_DAT field
 
+<p>Data setup time in clock units</p>
 
-
-### SOC_MGMT_FEATURE_7 register
+### T_HD_DAT_REG register
 
 - Absolute Address: 0x238
 - Base Offset: 0x38
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_HD_DAT |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_HD_DAT field
 
+<p>Data hold time in clock units</p>
 
-
-### SOC_MGMT_FEATURE_8 register
+### T_HIGH_REG register
 
 - Absolute Address: 0x23C
 - Base Offset: 0x3C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|                 Name                |
+|----|----------|------|-----|-------------------------------------|
+|19:0|  T_HIGH  |  rw  | 0x0 |High period of the SCL in clock units|
 
-#### PLACEHOLDER field
+#### T_HIGH field
 
 
 
-### SOC_MGMT_FEATURE_9 register
+### T_LOW_REG register
 
 - Absolute Address: 0x240
 - Base Offset: 0x40
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0|   T_LOW  |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_LOW field
 
+<p>Low period of the SCL in clock units</p>
 
-
-### SOC_MGMT_FEATURE_10 register
+### T_HD_STA_REG register
 
 - Absolute Address: 0x244
 - Base Offset: 0x44
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_HD_STA |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_HD_STA field
 
+<p>Hold time for (repeated) START in clock units</p>
 
-
-### SOC_MGMT_FEATURE_11 register
+### T_SU_STA_REG register
 
 - Absolute Address: 0x248
 - Base Offset: 0x48
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_SU_STA |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_SU_STA field
 
+<p>Setup time for repeated START in clock units</p>
 
-
-### SOC_MGMT_FEATURE_12 register
+### T_SU_STO_REG register
 
 - Absolute Address: 0x24C
 - Base Offset: 0x4C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_SU_STO |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### T_SU_STO field
 
+<p>Setup time for STOP in clock units</p>
 
-
-### SOC_MGMT_FEATURE_13 register
+### T_FREE_REG register
 
 - Absolute Address: 0x250
 - Base Offset: 0x50
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|  T_FREE  |  rw  | 0xC |    |
 
-#### PLACEHOLDER field
+#### T_FREE field
 
 
 
-### SOC_MGMT_FEATURE_14 register
+### T_AVAL_REG register
 
 - Absolute Address: 0x254
 - Base Offset: 0x54
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|  T_AVAL  |  rw  |0x12C|    |
 
-#### PLACEHOLDER field
+#### T_AVAL field
 
 
 
-### SOC_MGMT_FEATURE_15 register
+### T_IDLE_REG register
 
 - Absolute Address: 0x258
 - Base Offset: 0x58
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access| Reset|Name|
+|----|----------|------|------|----|
+|31:0|  T_IDLE  |  rw  |0xEA60|    |
 
-#### PLACEHOLDER field
+#### T_IDLE field
 
 
 
@@ -2911,6 +3018,29 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 #### OPERATION_MODE field
 
 
+
+### TERMINATION_EXTCAP_HEADER register
+
+- Absolute Address: 0x268
+- Base Offset: 0x168
+- Size: 0x4
+
+<p>Register after the last EC must advertise ID == 0.
+Termination register is added to guarantee that the discovery mechanism
+reaches termination value.</p>
+
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+| 7:0|  CAP_ID  |   r  | 0x0 |  CAP_ID  |
+|23:8|CAP_LENGTH|   r  | 0x1 |CAP_LENGTH|
+
+#### CAP_ID field
+
+<p>Extended Capability ID</p>
+
+#### CAP_LENGTH field
+
+<p>Capability Structure Length in DWORDs</p>
 
 ## DAT memory
 
