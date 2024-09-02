@@ -81,9 +81,11 @@ def log_generic_timings(mode, sys_freq):
     logging.info(f"counter_high_low = {EN(counter_high_low)}")
 
 
-# TODO: Finish i3c settings
 def get_i3c_firmware_settings():
-    pass
+    freq = 1e9
+    width_timing_csr(freq)
+    timing_registers_reset()
+    bus_condition_timing_register(freq)
 
 
 # TODO: From discrete settings calculate physical values on bus to validate them (min,max)
@@ -171,6 +173,84 @@ def get_i3c_stop_timings(spec, sys_clk=100e6):
     return t
 
 
+def width_timing_csr(freq=1e9):
+    """
+    Need to determine max needed width of CSRs, which control timings (setup, data, hold, etc.)
+
+    Assumptions:
+        - maximum desired clock speed will be 1 GHz
+        - longest time, which we want to be able to measure is 1ms
+            - bus_idle is currently the longest time measured and equal to 200us
+            - multiple by 5 to provide error margin
+
+    Timing registers will increment with each clock cycle, so timer resolution is equal to the clock period (1ns).
+    There are (longest_time/period) = (1ms / 1ns) = 1e6 ticks before timer reaches its max value.
+    CSR must be therefore at least clog2(1e6) = ceil(19.9) = 20 bits wide.
+    """
+    period = f2T(freq)
+    t_longest = 1e-3
+    max_value = math.ceil(t_longest / period)
+    logging.info(f"Maximum value stored in register = {max_value}")
+    bit_width = max_value.bit_length()
+    logging.info(
+        f"[NORMATIVE]::: Registers for timing configuration should be at least {bit_width} bits wide."
+    )
+    assert bit_width <= 32
+
+
+def timing_registers_reset():
+    """
+    TODO: Calculate values (partially calculated in previous functions - consolidate data)
+    """
+    T_R_REG = 0
+    T_F_REG = 0
+    TSU_DAT_REG = 0
+    THD_DAT_REG = 0
+    T_HIGH_REG = 0
+    T_LOW_REG = 0
+    T_HD_STA_REG = 0
+    T_SU_STA_REG = 0
+    T_SU_STO_REG = 0
+
+    logging.info(f"[NORMATIVE]::: Register T_R_REG should have reset value      : {T_R_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_F_REG should have reset value      : {T_F_REG}")
+    logging.info(f"[NORMATIVE]::: Register TSU_DAT_REG should have reset value  : {TSU_DAT_REG}")
+    logging.info(f"[NORMATIVE]::: Register THD_DAT_REG should have reset value  : {THD_DAT_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_HIGH_REG should have reset value   : {T_HIGH_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_LOW_REG should have reset value    : {T_LOW_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_HD_STA_REG should have reset value : {T_HD_STA_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_SU_STA_REG should have reset value : {T_SU_STA_REG}")
+    logging.info(f"[NORMATIVE]::: Register T_SU_STO_REG should have reset value : {T_SU_STO_REG}")
+
+
+def bus_condition_timing_register(freq=3e8):
+    """
+    Bus Condition Timing
+
+    1. If clock speed changes, then registers must be udpated
+    2. If bus configuration (pure, mixed) changes, then registers must be updated
+    """
+    t_free = [38.4e-9, 0.5e-6, 1.3e-6]  # pure, mixed fm+, mixed
+    t_aval = 1e-6
+    t_idle = 200e-6
+
+    period = f2T(freq)
+
+    T_FREE = norm_ceil(t_free[0], period)
+    T_IDLE = norm_ceil(t_aval, period)
+    T_AVAL = norm_ceil(t_idle, period)
+
+    logging.info(
+        f"[NORMATIVE]::: Register T_FREE should have reset value : {T_FREE} or {hex(T_FREE)}"
+    )
+    logging.info(
+        f"[NORMATIVE]::: Register T_IDLE should have reset value : {T_IDLE} or {hex(T_IDLE)}"
+    )
+    logging.info(
+        f"[NORMATIVE]::: Register T_AVAL should have reset value : {T_AVAL} or {hex(T_AVAL)}"
+    )
+
+
 def main():
     setup_logger()
     # Expected system frequency
@@ -200,6 +280,8 @@ def main():
 
     logging.info("\033[92mI3C :: STOP TIMINGS\033[0m")
     get_i3c_stop_timings(spec=None, sys_clk=sys_freq)
+
+    get_i3c_firmware_settings()
 
 
 if __name__ == "__main__":
