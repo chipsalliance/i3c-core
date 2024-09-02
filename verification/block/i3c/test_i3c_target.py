@@ -3,10 +3,12 @@
 import logging
 
 import cocotb
+from boot import boot
 from bus2csr import dword2int
 from cocotb.triggers import ClockCycles
 from cocotbext_i3c.i3c_controller import I3cController
-from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
+
+# from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
 from interface import I3CTopTestInterface
 
 
@@ -28,6 +30,9 @@ async def test_i3c_target(dut):
     await tb.setup()
     await ClockCycles(dut.hclk, 20)
 
+    # Configure the top level
+    await boot(tb)
+
     # Send Private Write on I3C
     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
     for test_vec in test_data:
@@ -42,7 +47,7 @@ async def test_i3c_target(dut):
     while wait_irq:
         timeout += 1
         await ClockCycles(dut.hclk, 10)
-        irq = dword2int(await tb.read_csr(TTI_INTERRUPT_STATUS, 4))
+        irq = dword2int(await tb.read_csr(tb.register_map["INTERRUPT_STATUS"], 4))
         if irq:
             wait_irq = False
             dut._log.debug(":::Interrupt was raised:::")
@@ -53,6 +58,6 @@ async def test_i3c_target(dut):
     # Read data
     test_data_lin = test_data[0] + test_data[1]
     for i in range(len(test_data_lin)):
-        r_data = dword2int(await tb.read_csr(TTI_RX_DATA_PORT, 4))
+        r_data = dword2int(await tb.read_csr(tb.register_map["RX_DATA_PORT"], 4))
         dut._log.debug(f"Comparing input {test_data_lin[i]} and CSR value {r_data}")
         assert test_data_lin[i] == r_data

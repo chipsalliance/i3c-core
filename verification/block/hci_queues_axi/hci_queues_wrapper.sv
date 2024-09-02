@@ -276,7 +276,17 @@ module hci_queues_wrapper
   logic [127:0] unused_dct_rdata_hw;
   dat_mem_sink_t unused_dat_mem_sink;
   dct_mem_sink_t unused_dct_mem_sink;
-  i3c_config_t unused_core_config;
+  logic unused_phy_en_o;
+  logic [1:0] unused_phy_mux_select_o;
+  logic unused_i2c_active_en_o;
+  logic unused_i2c_standby_en_o;
+  logic unused_i3c_active_en_o;
+  logic unused_i3c_standby_en_o;
+  logic [19:0] unused_t_hd_dat_o;
+  logic [19:0] unused_t_r_o;
+  logic [19:0] unused_t_bus_free_o;
+  logic [19:0] unused_t_bus_idle_o;
+  logic [19:0] unused_t_bus_available_o;
 
   hci #(
       .HciRespFifoDepth,
@@ -440,6 +450,16 @@ module hci_queues_wrapper
       .dct_mem_src_i ('0),
       .dct_mem_sink_o(unused_dct_mem_sink),
 
-      .core_config(unused_core_config)
+      .phy_en_o(unused_phy_en_o),
+      .phy_mux_select_o(unused_phy_mux_select_o),
+      .i2c_active_en_o(unused_i2c_active_en_o),
+      .i2c_standby_en_o(unused_i2c_standby_en_o),
+      .i3c_active_en_o(unused_i3c_active_en_o),
+      .i3c_standby_en_o(unused_i3c_standby_en_o),
+      .t_hd_dat_o(unused_t_hd_dat_o),
+      .t_r_o(unused_t_r_o),
+      .t_bus_free_o(unused_t_bus_free_o),
+      .t_bus_idle_o(unused_t_bus_idle_o),
+      .t_bus_available_o(unused_t_bus_available_o)
   );
 endmodule

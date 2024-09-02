@@ -203,6 +203,32 @@ def i3c_phy_verify(session, blockName, testName, coverage):
 
 
 @nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["ctrl_bus_timers"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_bus_timers",
+    ],
+)
+@nox.parametrize("coverage", coverageTypes)
+def ctrl_bus_timers_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
+@nox.parametrize("blockName", ["ctrl_bus_monitor"])
+@nox.parametrize(
+    "testName",
+    [
+        "test_bus_monitor",
+    ],
+)
+@nox.parametrize("coverage", coverageTypes)
+def ctrl_bus_monitor_verify(session, blockName, testName, coverage):
+    verify_block(session, blockName, testName, coverage)
+
+
+@nox.session(tags=["tests"])
 @nox.parametrize("blockName", ["i3c_phy"])
 @nox.parametrize(
     "simulator",
