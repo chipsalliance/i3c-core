@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cocotb-helpers"
+version = "0.1.0"
+dependencies = [
+  "cocotb",
+]
+requires-python = ">=3.11"
+
+authors = [
+  {name = "Antmicro", email = "contact@antmicro.com"}
+]
+
+description = "Utilities for running tests with cocotb"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+
+keywords = ["cocotb", "tools", "utilities"]
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python"
+]
