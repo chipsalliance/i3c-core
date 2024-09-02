@@ -16,7 +16,6 @@ module controller_standby
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input i3c_config_t core_config,
 
     // Interface to SDA/SCL
     input  logic ctrl_scl_i[2],
@@ -64,20 +63,24 @@ module controller_standby
     input logic tx_queue_empty_i,
     input logic tx_queue_rvalid_i,
     output logic tx_queue_rready_o,
-    input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i
+    input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
+
+    // Configuration
+    input logic phy_en_i,
+    input logic [1:0] phy_mux_select_i,
+    input logic i2c_active_en_i,
+    input logic i2c_standby_en_i,
+    input logic i3c_active_en_i,
+    input logic i3c_standby_en_i,
+    input logic [19:0] t_hd_dat_i,
+    input logic [19:0] t_r_i,
+    input logic [19:0] t_bus_free_i,
+    input logic [19:0] t_bus_idle_i,
+    input logic [19:0] t_bus_available_i
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
-  always_comb begin
-    if (core_config.i2c_standby_en) begin
-      sel_i2c_i3c = '0;
-    end else if (core_config.i3c_standby_en) begin
-      sel_i2c_i3c = '1;
-    end else begin
-      sel_i2c_i3c = '1;
-    end
-    // TODO: Assert that i3c_standby_en and i2c_standby_en are never high at the same time
-  end
+  assign sel_i2c_i3c = i3c_active_en_i | i3c_standby_en_i;
 
   logic i3c_rx_desc_queue_wvalid_o;
   logic i2c_rx_desc_queue_wvalid_o;
@@ -113,7 +116,6 @@ module controller_standby
   ) xcontroller_standby_i2c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[0]),
       .ctrl_sda_i(ctrl_sda_i[0]),
       .ctrl_scl_o(ctrl_scl_o[0]),
@@ -149,7 +151,18 @@ module controller_standby
       .tx_queue_empty_i(tx_queue_empty_i),
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_rready_o(i2c_tx_queue_rready_o),
-      .tx_queue_rdata_i(tx_queue_rdata_i)
+      .tx_queue_rdata_i(tx_queue_rdata_i),
+      .phy_en_i(phy_en_i),
+      .phy_mux_select_i(phy_mux_select_i),
+      .i2c_active_en_i(i2c_active_en_i),
+      .i2c_standby_en_i(i2c_standby_en_i),
+      .i3c_active_en_i(i3c_active_en_i),
+      .i3c_standby_en_i(i3c_standby_en_i),
+      .t_hd_dat_i(t_hd_dat_i),
+      .t_r_i(t_r_i),
+      .t_bus_free_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i)
   );
 
 
@@ -165,7 +178,6 @@ module controller_standby
   ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[1]),
       .ctrl_sda_i(ctrl_sda_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
@@ -201,7 +213,18 @@ module controller_standby
       .tx_queue_empty_i(tx_queue_empty_i),
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_rready_o(i3c_tx_queue_rready_o),
-      .tx_queue_rdata_i(tx_queue_rdata_i)
+      .tx_queue_rdata_i(tx_queue_rdata_i),
+      .phy_en_i(phy_en_i),
+      .phy_mux_select_i(phy_mux_select_i),
+      .i2c_active_en_i(i2c_active_en_i),
+      .i2c_standby_en_i(i2c_standby_en_i),
+      .i3c_active_en_i(i3c_active_en_i),
+      .i3c_standby_en_i(i3c_standby_en_i),
+      .t_hd_dat_i(t_hd_dat_i),
+      .t_r_i(t_r_i),
+      .t_bus_free_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i)
   );
 
 endmodule

@@ -16,7 +16,6 @@ module controller_standby_i3c
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input i3c_config_t core_config,
 
     // Interface to SDA/SCL
     input  logic ctrl_scl_i,
@@ -64,12 +63,21 @@ module controller_standby_i3c
     input logic tx_queue_empty_i,
     input logic tx_queue_rvalid_i,
     output logic tx_queue_rready_o,
-    input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i
+    input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
+
+    // Configuration
+    input logic phy_en_i,
+    input logic [1:0] phy_mux_select_i,
+    input logic i2c_active_en_i,
+    input logic i2c_standby_en_i,
+    input logic i3c_active_en_i,
+    input logic i3c_standby_en_i,
+    input logic [19:0] t_hd_dat_i,
+    input logic [19:0] t_r_i,
+    input logic [19:0] t_bus_free_i,
+    input logic [19:0] t_bus_idle_i,
+    input logic [19:0] t_bus_available_i
 );
-
-  logic enable;
-  assign enable = core_config.i3c_standby_en;
-
 
   logic [1:0] transfer_type;
   logic rx_byte_valid;
@@ -79,13 +87,13 @@ module controller_standby_i3c
   logic [7:0] tx_byte;
   logic tx_byte_ready;
 
-  logic i3c_bus_start_det;
-  logic i3c_bus_stop_det;
+  logic start_detect;
+  logic stop_detect;
 
   flow_standby_i3c xflow_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .enable_i(enable),
+      .enable_i(i3c_standby_en_i),
       .rx_queue_full_i(rx_queue_full_i),
       .rx_queue_empty_i(rx_queue_empty_i),
       .rx_queue_wvalid_o(rx_queue_wvalid_o),
@@ -98,8 +106,8 @@ module controller_standby_i3c
       .tx_queue_rready_o(tx_queue_rready_o),
       .tx_queue_rdata_i (tx_queue_rdata_i),
 
-      .transfer_start_i(i3c_bus_start_det),  // Repeated start is not filtered from this signal
-      .transfer_stop_i(i3c_bus_stop_det),
+      .transfer_start_i(start_detect),  // Repeated start is not filtered from this signal
+      .transfer_stop_i(stop_detect),
       .transfer_type_i(transfer_type),
       .rx_byte_valid_i(rx_byte_valid),
       .rx_byte_i(rx_byte),
@@ -108,6 +116,7 @@ module controller_standby_i3c
       .tx_byte_o(tx_byte),
       .tx_byte_ready_i(tx_byte_ready)
   );
+
   logic i3c_bus_arbitration_lost_i;
   logic i3c_bus_timeout_i;
   logic i3c_target_idle_o;
@@ -118,9 +127,7 @@ module controller_standby_i3c
   logic i3c_rx_fifo_wvalid_o;
   logic [TtiRxDataWidth-1:0] i3c_rx_fifo_wdata_o;
   logic i3c_rx_fifo_wready_i;
-  logic [12:0] i3c_t_r_i;
-  logic [12:0] i3c_tsu_dat_i;
-  logic [12:0] i3c_thd_dat_i;
+
   logic i3c_event_target_nack_o;
   logic i3c_event_cmd_complete_o;
   logic i3c_event_unexp_stop_o;
@@ -130,11 +137,6 @@ module controller_standby_i3c
 
   assign ctrl_scl_o = '1;
   assign ctrl_sda_o = '1;
-
-  // TODO: Assign timings from CSRs
-  assign i3c_t_r_i = 13'd10;
-  assign i3c_tsu_dat_i = 13'd10;
-  assign i3c_thd_dat_i = 13'd10;
 
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
@@ -153,16 +155,21 @@ module controller_standby_i3c
   assign stby_cr_device_pid_lo_reg = '0;
   // end: Target FSM <--> DAA
 
+  logic bus_busy;
+  logic bus_free;
+  logic bus_idle;
+  logic bus_available;
+
   i3c_target_fsm xi3c_target_fsm (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .target_enable_i(enable),
+      .target_enable_i(i3c_standby_en_i),
       .scl_i(ctrl_scl_i),
       .scl_o(ctrl_scl_o),
       .sda_i(ctrl_sda_i),
       .sda_o(ctrl_sda_o),
-      .bus_start_det_i(i3c_bus_start_det),
-      .bus_stop_detect_i(i3c_bus_stop_det),
+      .bus_start_det_i(start_detect),
+      .bus_stop_detect_i(stop_detect),
       .bus_arbitration_lost_i(i3c_bus_arbitration_lost_i),
       .bus_timeout_i(i3c_bus_timeout_i),
       .target_idle_o(i3c_target_idle_o),
@@ -174,9 +181,9 @@ module controller_standby_i3c
       .rx_fifo_wdata_o(rx_byte),
       .rx_fifo_wready_i(rx_byte_ready),
       .transfer_type_o(transfer_type),
-      .t_r_i(i3c_t_r_i),
-      .tsu_dat_i(i3c_tsu_dat_i),
-      .thd_dat_i(i3c_thd_dat_i),
+      .t_r_i(t_r_i),
+      .tsu_dat_i(t_su_dat_i),
+      .thd_dat_i(t_hd_dat_i),
       .is_sta_addr_match(is_sta_addr_match),
       .is_dyn_addr_match(is_dyn_addr_match),
       .bus_addr(bus_addr),
@@ -191,48 +198,32 @@ module controller_standby_i3c
       .event_read_cmd_received_o(i3c_event_read_cmd_received_o)
   );
 
-  logic        target_idle_i;
-  logic [12:0] thd_dat_i;
-  logic [12:0] t_buf_i;
-  logic [29:0] bus_active_timeout_i;
-  logic        bus_active_timeout_en_i;
-  logic [19:0] bus_inactive_timeout_i;
 
-  logic        bus_free_o;
-  logic        start_detect_o;
-  logic        stop_detect_o;
-  logic        event_bus_active_timeout_o;
-  logic        event_host_timeout_o;
-
-  // TODO: Should be dynamic (relative to clock)
-  // Static configuration of bus monitor
-  // These assume 500MHz clk
-  // These are tuned, not calculated
-  assign thd_dat_i = 13'd10;
-  assign t_buf_i = 13'd500;
-  assign bus_active_timeout_i = 30'd2500000;
-  assign bus_active_timeout_en_i = 1'b1;
-  assign bus_inactive_timeout_i = 20'd5000;
 
   bus_monitor xbus_monitor (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .enable_i(i3c_standby_en_i),
       .scl_i(ctrl_scl_i),
       .sda_i(ctrl_sda_i),
-      .controller_enable_i('0),
-      .multi_controller_enable_i('0),
-      .target_enable_i(enable),
-      .target_idle_i(target_idle_i),
-      .thd_dat_i(thd_dat_i),
-      .t_buf_i(t_buf_i),
-      .bus_active_timeout_i(bus_active_timeout_i),
-      .bus_active_timeout_en_i(bus_active_timeout_en_i),
-      .bus_inactive_timeout_i(bus_inactive_timeout_i),
-      .bus_free_o(bus_free_o),
-      .start_detect_o(i3c_bus_start_det),
-      .stop_detect_o(i3c_bus_stop_det),
-      .event_bus_active_timeout_o(event_bus_active_timeout_o),
-      .event_host_timeout_o(event_host_timeout_o)
+      .t_hd_dat_i(thd_dat_i),  // 10
+      .t_r_i(t_r_i),  // 2
+      .start_detect_o(start_detect),
+      .stop_detect_o(stop_detect)
+  );
+
+  bus_timers xbus_timers (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .enable_i(i3c_standby_en_i),
+      .restart_counter_i(stop_detect),
+      .t_bus_free_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i),
+      .bus_busy_o(bus_busy),
+      .bus_free_o(bus_free),
+      .bus_idle_o(bus_idle),
+      .bus_available_o(bus_available)
   );
 
   daa xdaa (

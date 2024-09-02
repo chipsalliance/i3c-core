@@ -92,7 +92,19 @@ module controller_active
 
     // Errors and Interrupts
     output i3c_err_t err,
-    output i3c_irq_t irq
+    output i3c_irq_t irq,
+    input logic phy_en_i,
+    input logic [1:0] phy_mux_select_i,
+    input logic i2c_active_en_i,
+    input logic i2c_standby_en_i,
+    input logic i3c_active_en_i,
+    input logic i3c_standby_en_i,
+    input logic [19:0] t_hd_dat_i,
+    input logic [19:0] t_r_i,
+    input logic [19:0] t_bus_free_i,
+    input logic [19:0] t_bus_idle_i,
+    input logic [19:0] t_bus_available_i
+
 );
 
   logic host_enable;

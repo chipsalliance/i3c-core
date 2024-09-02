@@ -151,13 +151,24 @@ module controller
     // Errors and Interrupts
     output i3c_err_t err,
     output i3c_irq_t irq,
-    input i3c_config_t core_config
+
+    // Configuration
+    input logic phy_en_i,
+    input logic [1:0] phy_mux_select_i,
+    input logic i2c_active_en_i,
+    input logic i2c_standby_en_i,
+    input logic i3c_active_en_i,
+    input logic i3c_standby_en_i,
+    input logic [19:0] t_hd_dat_i,
+    input logic [19:0] t_r_i,
+    input logic [19:0] t_bus_free_i,
+    input logic [19:0] t_bus_idle_i,
+    input logic [19:0] t_bus_available_i
 );
 
   controller_active xcontroller_active (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[0:1]),
       .ctrl_sda_i(ctrl_sda_i[0:1]),
       .ctrl_scl_o(ctrl_scl_o[0:1]),
@@ -212,13 +223,23 @@ module controller
       .i3c_fsm_en_i(i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
       .err(err),
-      .irq(irq)
+      .irq(irq),
+      .phy_en_i(phy_en_i),
+      .phy_mux_select_i(phy_mux_select_i),
+      .i2c_active_en_i(i2c_active_en_i),
+      .i2c_standby_en_i(i2c_standby_en_i),
+      .i3c_active_en_i(i3c_active_en_i),
+      .i3c_standby_en_i(i3c_standby_en_i),
+      .t_hd_dat_i(t_hd_dat_i),
+      .t_r_i(t_r_i),
+      .t_bus_free_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i)
   );
 
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .core_config(core_config),
       .ctrl_scl_i(ctrl_scl_i[2:3]),
       .ctrl_sda_i(ctrl_sda_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
@@ -254,7 +275,18 @@ module controller
       .tx_queue_empty_i(tti_tx_queue_empty_i),
       .tx_queue_rvalid_i(tti_tx_queue_rvalid_i),
       .tx_queue_rready_o(tti_tx_queue_rready_o),
-      .tx_queue_rdata_i(tti_tx_queue_rdata_i)
+      .tx_queue_rdata_i(tti_tx_queue_rdata_i),
+      .phy_en_i(phy_en_i),
+      .phy_mux_select_i(phy_mux_select_i),
+      .i2c_active_en_i(i2c_active_en_i),
+      .i2c_standby_en_i(i2c_standby_en_i),
+      .i3c_active_en_i(i3c_active_en_i),
+      .i3c_standby_en_i(i3c_standby_en_i),
+      .t_hd_dat_i(t_hd_dat_i),
+      .t_r_i(t_r_i),
+      .t_bus_free_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i)
   );
 
 endmodule

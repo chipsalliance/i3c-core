@@ -390,19 +390,23 @@ module i3c
   );
 `endif
 
-  // TODO: Move configuration to hci.configuration
-  // Array to mux SCL/SDA to 4 waveforms
-  // Phy select:
-  // 00 - i2c controller
-  // 01 - i3c controller
-  // 10 - i2c target
-  // 11 - i3c target
   logic phy2ctrl_scl[4];
   logic phy2ctrl_sda[4];
   logic ctrl2phy_scl[4];
   logic ctrl2phy_sda[4];
 
-  i3c_config_t core_config;
+  // Configuration
+  logic phy_en;
+  logic [1:0] phy_mux_select;
+  logic i2c_active_en;
+  logic i2c_standby_en;
+  logic i3c_active_en;
+  logic i3c_standby_en;
+  logic [19:0] t_hd_dat;
+  logic [19:0] t_r;
+  logic [19:0] t_bus_free;
+  logic [19:0] t_bus_idle;
+  logic [19:0] t_bus_available;
 
   controller #(
       .DatAw,
@@ -512,7 +516,17 @@ module i3c
 
       .err(),  // TODO: Handle errors
       .irq(),  // TODO: Handle interrupts
-      .core_config(core_config)
+      .phy_en_i(phy_en_i),
+      .phy_mux_select_i(phy_mux_select),
+      .i2c_active_en_i(i2c_active_en),
+      .i2c_standby_en_i(i2c_standby_en),
+      .i3c_active_en_i(i3c_active_en),
+      .i3c_standby_en_i(i3c_standby_en),
+      .t_hd_dat_i(t_hd_dat),
+      .t_r_i(t_r),
+      .t_bus_free_i(t_bus_free),
+      .t_bus_idle_i(t_bus_idle),
+      .t_bus_available_i(t_bus_available)
   );
 
   hci #(
@@ -673,7 +687,17 @@ module i3c
       .tti_ibi_queue_rready_i(tti_ibi_queue_rready),
       .tti_ibi_queue_rdata_o(tti_ibi_queue_rdata),
 
-      .core_config(core_config)
+      .phy_en_o(phy_en),
+      .phy_mux_select_o(phy_mux_select),
+      .i2c_active_en_o(i2c_active_en),
+      .i2c_standby_en_o(i2c_standby_en),
+      .i3c_active_en_o(i3c_active_en),
+      .i3c_standby_en_o(i3c_standby_en),
+      .t_hd_dat_o(t_hd_dat),
+      .t_r_o(t_r),
+      .t_bus_free_o(t_bus_free),
+      .t_bus_idle_o(t_bus_idle),
+      .t_bus_available_o(t_bus_available)
   );
 
   // I3C muxed PHY
@@ -681,7 +705,7 @@ module i3c
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .select_i(core_config.phy_mux_select),
+      .select_i(phy_mux_select),
 
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),

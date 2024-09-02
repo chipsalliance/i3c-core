@@ -31,10 +31,6 @@ module i3c_phy (
   logic scl_en_int;
   logic sda_en_int;
 
-  // Bus errors
-  logic bus_sda_err;
-  logic bus_scl_err;
-
   wire scl_en_sync, sda_en_sync;
 
   assign scl_en_o = scl_en_sync;

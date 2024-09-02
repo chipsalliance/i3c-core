@@ -184,7 +184,17 @@ module hci
     output logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_o,
 
     // Controller configuration
-    output i3c_config_t core_config
+    output logic phy_en_o,
+    output logic [1:0] phy_mux_select_o,
+    output logic i2c_active_en_o,
+    output logic i2c_standby_en_o,
+    output logic i3c_active_en_o,
+    output logic i3c_standby_en_o,
+    output logic [19:0] t_hd_dat_o,
+    output logic [19:0] t_r_o,
+    output logic [19:0] t_bus_free_o,
+    output logic [19:0] t_bus_idle_o,
+    output logic [19:0] t_bus_available_o
 );
   I3CCSR_pkg::I3CCSR__in_t  hwif_in;
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
@@ -320,6 +330,7 @@ module hci
     hwif_in.DCT = dct_i;
     dat_o = hwif_out.DAT;
     dct_o = hwif_out.DCT;
+
   end : wire_hwif
 
   // TTI
@@ -490,7 +501,17 @@ module hci
       .clk_i,
       .rst_ni,
       .hwif_out,
-      .core_config
+      .phy_en_o,
+      .phy_mux_select_o,
+      .i2c_active_en_o,
+      .i2c_standby_en_o,
+      .i3c_active_en_o,
+      .i3c_standby_en_o,
+      .t_hd_dat_o,
+      .t_r_o,
+      .t_bus_free_o,
+      .t_bus_idle_o,
+      .t_bus_available_o
   );
 
   tti #(

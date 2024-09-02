@@ -7,31 +7,44 @@ module configuration (
     input rst_ni, // active low reset
 
     input I3CCSR_pkg::I3CCSR__out_t hwif_out,
-    output i3c_pkg::i3c_config_t core_config
+
+    output logic phy_en_o,
+    output logic [1:0] phy_mux_select_o,
+    output logic i2c_active_en_o,
+    output logic i2c_standby_en_o,
+    output logic i3c_active_en_o,
+    output logic i3c_standby_en_o,
+
+    // Bus monitor
+    output logic [19:0] t_hd_dat_o,
+    output logic [19:0] t_r_o,
+
+    // Bus timers
+    output logic [19:0] t_bus_free_o,
+    output logic [19:0] t_bus_idle_o,
+    output logic [19:0] t_bus_available_o
 );
 
-  // If we want to do R/W from/to CSRs:
-  // resprst = hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
-  // hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
-
-  // Define Mode of operation
-  // Sources:
+  // Mode of operation
+  // 00 - DISABLED
+  // 01 - ACM_INIT
+  // 10 - SCM_RUNNING
+  // 11 - SCM_HOT_JOIN
   logic [1:0] stby_cr_enable_init;
   assign stby_cr_enable_init =
     hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
 
+  assign i3c_active_en_o = (stby_cr_enable_init == 2'b01) | (stby_cr_enable_init == 2'b11);
+  assign i3c_standby_en_o = stby_cr_enable_init == 2'b10;
+
+  // Bus Configuration
   logic i2c_dev_present;
   assign i2c_dev_present = hwif_out.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
 
-  // This disables TTI for software
+  // Disables the TTI
   logic target_xact_enable;
   assign target_xact_enable =
     hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
-
-  // Note, this field is a capability, not a mode selector, do not use to make decisions
-  // assign operation_mode = hwif_out.I3C_EC.StandbyControllerModeRegisters.CONTROLLER_CONFIG.OPERATION_MODE.value;
-
-  // Output: what mode are we in?
 
   // Define state: running, idle, waiting, halted, etc.
   logic bus_enable;
@@ -50,24 +63,29 @@ module configuration (
   assign pio_rs = hwif_out.PIOControl.PIO_CONTROL.RS.value;
 
   // TODO: Assert that these 4 are not 1 at the same time
-  assign core_config.i2c_active_en = 1'b0;
-  assign core_config.i3c_active_en = 1'b0;
-  assign core_config.i2c_standby_en = 1'b0;
-  assign core_config.i3c_standby_en = 1'b1;
+  assign i2c_active_en_o = 1'b0;
+  assign i2c_standby_en_o = 1'b0;
+
+  // Configuration : PHY
+  assign phy_en_o = bus_enable;
 
   // Phy select:
-  // 00 - i2c controller
-  // 01 - i3c controller
-  // 10 - i2c target
-  // 11 - i3c target
-  // TODO: Fix latch
-  // verilator lint_off LATCH
-  always_comb begin
-    if (core_config.i2c_active_en) core_config.phy_mux_select = 2'b00;
-    if (core_config.i3c_active_en) core_config.phy_mux_select = 2'b01;
-    if (core_config.i2c_standby_en) core_config.phy_mux_select = 2'b10;
-    if (core_config.i3c_standby_en) core_config.phy_mux_select = 2'b11;
-  end
-  // verilator lint_on LATCH
+  // 00 - i2c active controller
+  // 01 - i3c active controller
+  // 10 - i2c standby controller (target)
+  // 11 - i3c standby controller (target)
+  assign phy_mux_select_o[0] = i3c_active_en_o | i3c_standby_en_o;
+  assign phy_mux_select_o[1] = i2c_standby_en_o | i3c_standby_en_o;
+
+  // Configuration: bus_monitor
+  assign t_hd_dat_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value);
+  assign t_r_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
+
+  // Configuration: bus_timers
+  // 20 bits is enough to measure 1ms for clock speed 1GHz.
+  // See width_timing_csr function in tools/timing.py
+  assign t_bus_free_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value);
+  assign t_bus_idle_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value);
+  assign t_bus_available_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value);
 
 endmodule

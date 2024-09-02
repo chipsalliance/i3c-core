@@ -157,11 +157,11 @@ module i3c_wrapper #(
 `endif
 
   // DAT memory export interface
-  i3c_pkg::dat_mem_src_t dat_mem_src;
+  i3c_pkg::dat_mem_src_t  dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  i3c_pkg::dct_mem_src_t dct_mem_src;
+  i3c_pkg::dct_mem_src_t  dct_mem_src;
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
 
   i3c #(
