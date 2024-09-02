@@ -29,6 +29,7 @@ normal_operation
 :maxdepth: 2
 
 ext_cap
+recovery_flow
 ```
 
 ```{toctree}
