@@ -1,5 +1,6 @@
 antlr4-python3-runtime==4.13.1
 argcomplete==3.4.0
+asn1crypto==1.5.1
 asttokens==2.4.1
 attrs==23.2.0
 black==24.4.2
@@ -13,16 +14,48 @@ cocotbext-axi==0.1.24
 -e git+https://github.com/alexforencich/cocotbext-i2c@3b32eedc15302f1299a23bb35aa669fffad2ca22#egg=cocotbext_i2c
 -e ${I3C_ROOT_DIR}/third_party/cocotbext-i3c
 -e ${I3C_ROOT_DIR}/tools/nox_utils
+-e ${I3C_ROOT_DIR}/tools/cocotb_helpers
 colorama==0.4.6
 colorlog==6.8.2
 comm==0.2.2
 debugpy==1.8.1
 decorator==5.1.1
+defusedxml==0.7.1
+dissect==3.15
+dissect.archive==1.2
+dissect.btrfs==1.4
+dissect.cim==3.10
+dissect.clfs==1.9
+dissect.cstruct==4.0
+dissect.esedb==3.14
+dissect.etl==3.10
+dissect.eventlog==3.9
+dissect.evidence==3.10
+dissect.executable==1.7
+dissect.extfs==3.11
+dissect.fat==3.10
+dissect.ffs==3.9
+dissect.hypervisor==3.14
+dissect.jffs==1.3
+dissect.ntfs==3.11
+dissect.ole==3.9
+dissect.regf==3.11
+dissect.shellitem==3.9
+dissect.sql==3.10
+dissect.squashfs==1.6
+dissect.target==3.18
+dissect.thumbcache==1.9
+dissect.util==3.17
+dissect.vmfs==3.9
+dissect.volume==3.11
+dissect.xfs==3.10
 distlib==0.3.8
 engineering-notation==0.10.0
 executing==2.0.1
 filelock==3.15.4
 find_libpython==0.4.0
+flow.record==3.15
+fusepy==3.0.1
 git-me-the-url==2.1.0
 gitdb==4.0.11
 GitPython==3.1.43
@@ -38,6 +71,7 @@ jupyter_core==5.7.2
 Markdown==3.6
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.7
+msgpack==1.0.8
 mypy-extensions==1.0.0
 nest-asyncio==1.6.0
 nox==2023.4.22
@@ -61,7 +95,9 @@ psutil==6.0.0
 ptyprocess==0.7.0
 pure-eval==0.2.2
 py-markdown-table==0.3.3
+pycryptodome==3.20.0
 Pygments==2.18.0
+pyslang==6.0
 pytest==8.1.1
 pytest-html==4.1.1
 pytest-md==0.2.0
@@ -75,12 +111,16 @@ pyyaml==6.0.1
 pyzmq==26.0.3
 referencing==0.35.1
 rpds-py==0.18.1
+ruamel.yaml==0.18.6
+ruamel.yaml.clib==0.2.8
 six==1.16.0
 smmap==5.0.1
 stack-data==0.6.3
+structlog==24.4.0
 systemrdl-compiler==1.27.3
 tornado==6.4.1
 traitlets==5.14.3
 typing_extensions==4.12.2
 virtualenv==20.26.3
 wcwidth==0.2.13
+zstandard==0.23.0

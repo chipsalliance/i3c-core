@@ -18,8 +18,14 @@
 import argparse
 import logging
 import os
+from typing import Any, List, Optional, Union
 
+from peakrdl_cheader import utils
+from peakrdl_cheader.design_scanner import DesignScanner
+from peakrdl_cheader.design_state import DesignState
 from peakrdl_cheader.exporter import CHeaderExporter
+from peakrdl_cheader.header_generator import HeaderGenerator
+from peakrdl_cheader.testcase_generator import TestcaseGenerator
 from peakrdl_html import HTMLExporter
 from peakrdl_markdown import MarkdownExporter
 from peakrdl_regblock import RegblockExporter
@@ -29,6 +35,102 @@ from peakrdl_uvm import UVMExporter
 from rdl_exporter import CocotbExporter
 from rdl_post_process import scrub_line_by_line
 from systemrdl import RDLCompiler
+from systemrdl.node import (
+    AddressableNode,
+    AddrmapNode,
+    MemNode,
+    RegfileNode,
+    RegNode,
+    RootNode,
+)
+from systemrdl.walker import RDLWalker, WalkerAction
+
+
+class CustomHeaderGenerator(HeaderGenerator):
+    def run(self, path: str, top_nodes: List[AddrmapNode]) -> None:
+        with open(path, "w", encoding="utf-8") as f:
+            self.f = f
+
+            # Generate definitions
+            for node in top_nodes:
+                self.root_node = node
+                RDLWalker().walk(node, self)
+
+            # Write direct instance definitions
+            if self.ds.instantiate:
+                f.write("\n// Instances\n")
+                for node in top_nodes:
+                    addr = node.raw_absolute_address + self.ds.inst_offset
+                    type_name = utils.get_struct_name(self.ds, node, node)
+                    if node.is_array:
+                        if len(node.array_dimensions) > 1:
+                            node.env.msg.fatal(
+                                f"C header generator does not support instance defines for multi-dimensional arrays: {node.inst_name}{node.array_dimensions}",
+                                node.inst.inst_src_ref,
+                            )
+                        f.write(f"#define {node.inst_name} ((volatile {type_name} *){addr:#x}UL)\n")
+                    else:
+                        f.write(
+                            f"#define {node.inst_name} (*(volatile {type_name} *){addr:#x}UL)\n"
+                        )
+            f.write("\n")
+
+    def enter_Reg(self, node: RegNode) -> Optional[WalkerAction]:
+        """
+        If there are 2 registers with the same name in the design, the output file will
+        contain 2 #define with ambiguous names. Then, use prefix.
+        """
+        prefix = self.get_node_prefix(node).upper()
+
+        if prefix in self.defined_namespace:
+            return WalkerAction.SkipDescendants
+        self.defined_namespace.add(prefix)
+
+        # prefix = {prefix}_
+        prefix = ""
+
+        if not node.is_array:
+            self.write(f"#define {prefix}{node.inst_name} {node.absolute_address:#x}\n")
+
+        # No need to traverse fields
+        return WalkerAction.SkipDescendants
+
+    def exit_Mem(self, node: MemNode) -> None:
+        pass
+
+    def write_block(self, node: AddressableNode) -> None:
+        pass
+
+
+class CustomCHeaderExporter:
+    def export(self, node: Union[RootNode, AddrmapNode], path: str, **kwargs: Any) -> None:
+        # If it is the root node, skip to top addrmap
+        if isinstance(node, RootNode):
+            top_node = node.top
+        else:
+            top_node = node
+
+        ds = DesignState(top_node, kwargs)
+
+        # Check for stray kwargs
+        if kwargs:
+            raise TypeError(f"got an unexpected keyword argument '{list(kwargs.keys())[0]}'")
+
+        # Validate and collect info for export
+        DesignScanner(ds).run()
+
+        top_nodes = []
+        if ds.explode_top:
+            for child in top_node.children():
+                if isinstance(child, (AddrmapNode, MemNode, RegfileNode)):
+                    top_nodes.append(child)
+        else:
+            top_nodes.append(top_node)
+
+        # Write output
+        CustomHeaderGenerator(ds).run(path, top_nodes)
+        if ds.testcase:
+            TestcaseGenerator(ds).run(path, top_nodes)
 
 
 def setup_logger(level=logging.INFO, filename="log.log"):
@@ -124,6 +226,17 @@ def main():
             reuse_class_definitions=not args.style_hier,
         )
         logging.info(f"Created: {collateral_type} file {output_file}")
+
+    # Generate the C header
+    exporter = CustomCHeaderExporter()
+    i3c_root_dir = os.environ.get("I3C_ROOT_DIR")
+    try:
+        os.mkdir(os.path.join(i3c_root_dir, "sw"))
+    except FileExistsError:
+        pass
+    output_file = os.path.join(i3c_root_dir, "sw", "I3CCSR_registers.h")
+    exporter.export(root, path=output_file, reuse_typedefs=not args.style_hier)
+    logging.info(f"Created: c-header file {output_file}")
 
     # Generate the C header
     exporter = CHeaderExporter()
