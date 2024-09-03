@@ -1,0 +1,2055 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>Specification for I3C Vendor-Specific Extended Capabilities - I3C Core - documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            I3C Core - documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Specification for I3C Vendor-Specific Extended Capabilities
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <div class="md-header__button">
+        <a href="i3c-core--documentation.pdf" title="PDF - i3c-core--documentation.pdf">
+          <div class="md-icon">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zm192 0v128h128L256 0zM64 224h24c30.9 0 56 25.1 56 56s-25.1 56-56 56h-8v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24h-8v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48h-24c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16v-64c0-8.8-7.2-16-16-16h-8v96zm96-128h48c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16z"/></svg>
+          </div>
+        </a>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    I3C Core - documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Hardware Design and Verification</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Hardware Design and Verification" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Hardware Design and Verification</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="top.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dv.html" class="md-nav__link">
+        <span class="md-ellipsis">Design verification</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ci_queues.html" class="md-nav__link">
+        <span class="md-ellipsis">Controller Interface Queues</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timings.html" class="md-nav__link">
+        <span class="md-ellipsis">Electrical and timing specifications</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">Programmer&#39;s Reference Manual</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Programmer&#39;s Reference Manual" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Programmer&#39;s Reference Manual</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="initialization.html" class="md-nav__link">
+        <span class="md-ellipsis">Boot and Initialization</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="normal_operation.html" class="md-nav__link">
+        <span class="md-ellipsis">Normal operation</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">Extended Capabilities and Recovery Flow</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Extended Capabilities and Recovery Flow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Extended Capabilities and Recovery Flow</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Specification for I3C Vendor-<wbr>Specific Extended Capabilities</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">Specification for I3C Vendor-<wbr>Specific Extended Capabilities</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">Security</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extended-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">Extended Capabilities</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extended Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standby-controller-mode-id-0x12" class="md-nav__link">
+    <span class="md-ellipsis">Standby Controller Mode <wbr>(ID=0x12)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vendor-specific-extended-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">Vendor-<wbr>specific Extended Capabilities</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vendor-specific Extended Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#controller-config-id-0x02" class="md-nav__link">
+    <span class="md-ellipsis">Controller Config <wbr>(ID=0x02)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secure-firmware-recovery-interface-id-0xc0" class="md-nav__link">
+    <span class="md-ellipsis">Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc-management-interface-id-0xc1" class="md-nav__link">
+    <span class="md-ellipsis">So<wbr>C Management Interface <wbr>(ID=0x<wbr>C1)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-transaction-interface-id-0xc4" class="md-nav__link">
+    <span class="md-ellipsis">Target Transaction Interface <wbr>(ID=0x<wbr>C4)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target Transaction Interface (ID=0xC4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation-and-design-choices-informative" class="md-nav__link">
+    <span class="md-ellipsis">Motivation and design choices <wbr>(informative)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot" class="md-nav__link">
+    <span class="md-ellipsis">Boot</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">Initialization</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operation" class="md-nav__link">
+    <span class="md-ellipsis">Operation</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bus-read-transaction" class="md-nav__link">
+    <span class="md-ellipsis">Bus Read Transaction</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bus-write-transaction" class="md-nav__link">
+    <span class="md-ellipsis">Bus Write Transaction</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-band-interrupts" class="md-nav__link">
+    <span class="md-ellipsis">In-<wbr>Band Interrupts</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-interface" class="md-nav__link">
+    <span class="md-ellipsis">Register Interface</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Register Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tti-control-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>CONTROL Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-status-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>STATUS Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-reset-control-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>RESET_<wbr>CONTROL Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-interrupt-status-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>INTERRUPT_<wbr>STATUS Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-interrupt-enable-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>INTERRUPT_<wbr>ENABLE Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-interrupt-force-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>INTERRUPT_<wbr>FORCE Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-rx-desc-queue-port-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>RX_<wbr>DESC_<wbr>QUEUE_<wbr>PORT Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-rx-data-port-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>RX_<wbr>DATA_<wbr>PORT Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-tx-desc-queue-port-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>TX_<wbr>DESC_<wbr>QUEUE_<wbr>PORT Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-tx-data-port-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>TX_<wbr>DATA_<wbr>PORT Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-queue-size-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>QUEUE_<wbr>SIZE Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-ibi-queue-size-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>IBI_<wbr>QUEUE_<wbr>SIZE Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-queue-thld-control-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>QUEUE_<wbr>THLD_<wbr>CONTROL Register</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-data-buffer-thld-control-register" class="md-nav__link">
+    <span class="md-ellipsis">TTI_<wbr>DATA_<wbr>BUFFER_<wbr>THLD_<wbr>CONTROL Register</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-transaction-interface-tx-descriptor" class="md-nav__link">
+    <span class="md-ellipsis">Target Transaction Interface TX Descriptor</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-transaction-interface-rx-descriptor" class="md-nav__link">
+    <span class="md-ellipsis">Target Transaction Interface RX Descriptor</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tti-queues" class="md-nav__link">
+    <span class="md-ellipsis">TTI Queues</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">Errors</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ideas-for-the-future-informative" class="md-nav__link">
+    <span class="md-ellipsis">Ideas for the future <wbr>(informative)</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          <span class="md-ellipsis">Integrating the I3C Core</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Integrating the I3C Core" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Integrating the I3C Core</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="config.html" class="md-nav__link">
+        <span class="md-ellipsis">Configuring the I3C Core</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="integration.html" class="md-nav__link">
+        <span class="md-ellipsis">Integration with Caliptra Subsystem</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="specification-for-i3c-vendor-specific-extended-capabilities">Specification for I3C Vendor-Specific Extended Capabilities<a class="headerlink" href="#specification-for-i3c-vendor-specific-extended-capabilities" title="Link to this heading">¶</a></h1>
+<p>This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
+<h2 id="security">Security<a class="headerlink" href="#security" title="Link to this heading">¶</a></h2>
+<p>The original HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
+This mechanism is unacceptable for the Recovery Mode as memory offsets must be known at synthesis time.
+Implementation based on this specification shall provide a list of known memory offsets for each of the Extended Capabilities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In order to increase security of the solution, the offsets are provided, so software may choose to skip the discovery mechanism. This specification is compliant with the original specification, so the mechanism of discovery can still be used, if needed.</p>
+</div>
+<h2 id="extended-capabilities">Extended Capabilities<a class="headerlink" href="#extended-capabilities" title="Link to this heading">¶</a></h2>
+<h3 id="standby-controller-mode-id-0x12">Standby Controller Mode (ID=0x12)<a class="headerlink" href="#standby-controller-mode-id-0x12" title="Link to this heading">¶</a></h3>
+<p>The Standby Controller Mode follows the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>:</p>
+<ul class="simple">
+<li><p>Chapter 6 Theory of Operation</p>
+<ul>
+<li><p>Section 6.17 Standby Controller Mode</p></li>
+</ul>
+</li>
+<li><p>Chapter 7 Register Interface</p>
+<ul>
+<li><p>Section 7.7.11 Standby Controller Mode</p></li>
+</ul>
+</li>
+</ul>
+<h2 id="vendor-specific-extended-capabilities">Vendor-specific Extended Capabilities<a class="headerlink" href="#vendor-specific-extended-capabilities" title="Link to this heading">¶</a></h2>
+<p>This specification provides definitions and descriptions of the following Capabilities:</p>
+<ul class="simple">
+<li><p>Controller Config</p></li>
+<li><p>Standby Controller Mode</p></li>
+<li><p>Secure Firmware Recovery Interface</p></li>
+<li><p>Target Transaction Interface</p></li>
+<li><p>SoC Management Interface</p></li>
+</ul>
+<table class="docutils data align-default" id="tab-capabilities-registers">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">Extended capabilities registers</span><a class="headerlink" href="#tab-capabilities-registers" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 60.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Extended Capability</strong></p></td>
+<td><p><strong>ID</strong></p></td>
+<td><p><strong>Memory Offset</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Controller Config</p></td>
+<td><p>0x02</p></td>
+<td><p>Implementer</p></td>
+</tr>
+<tr class="row-odd"><td><p>Standby Controller Mode</p></td>
+<td><p>0x12</p></td>
+<td><p>Implementer</p></td>
+</tr>
+<tr class="row-even"><td><p>Secure Firmware Recovery Interface</p></td>
+<td><p>0xC0</p></td>
+<td><p>Implementer</p></td>
+</tr>
+<tr class="row-odd"><td><p>SoC Management Interface</p></td>
+<td><p>0xC1</p></td>
+<td><p>Implementer</p></td>
+</tr>
+<tr class="row-even"><td><p>Target Transaction Interface</p></td>
+<td><p>0xC4</p></td>
+<td><p>Implementer</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="controller-config-id-0x02">Controller Config (ID=0x02)<a class="headerlink" href="#controller-config-id-0x02" title="Link to this heading">¶</a></h3>
+<p>The Controller Config Capability follows section 7.7.3 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
+<h3 id="secure-firmware-recovery-interface-id-0xc0">Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
+<p>This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and I3C Target Recovery Specification</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code>.
+The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
+<table class="docutils data align-default" id="tab-secure-firmware-recovery-interface">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Secure Firmware Recovery Interface</span><a class="headerlink" href="#tab-secure-firmware-recovery-interface" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Register Name</strong></p></td>
+<td><p><strong>Role</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>EXTCAP_HEADER</p></td>
+<td><p>Information about the Extended Capability</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROT_CAP_0</p></td>
+<td><p>Device Capabilities Information</p></td>
+</tr>
+<tr class="row-even"><td><p>PROT_CAP_1</p></td>
+<td><p>Device Capabilities Information</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROT_CAP_2</p></td>
+<td><p>Device Capabilities Information</p></td>
+</tr>
+<tr class="row-even"><td><p>PROT_CAP_3</p></td>
+<td><p>Device Capabilities Information</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEVICE_ID_0</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-even"><td><p>DEVICE_ID_1</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEVICE_ID_2</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-even"><td><p>DEVICE_ID_3</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEVICE_ID_4</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-even"><td><p>DEVICE_ID_5</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEVICE_ID_6</p></td>
+<td><p>Device identity information</p></td>
+</tr>
+<tr class="row-even"><td><p>DEVICE_STATUS_0</p></td>
+<td><p>Device status information</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEVICE_STATUS_1</p></td>
+<td><p>Device status information</p></td>
+</tr>
+<tr class="row-even"><td><p>DEVICE_RESET</p></td>
+<td><p>Device reset and control</p></td>
+</tr>
+<tr class="row-odd"><td><p>RECOVERY_CTRL</p></td>
+<td><p>Recovery control and image activation</p></td>
+</tr>
+<tr class="row-even"><td><p>RECOVERY_STATUS</p></td>
+<td><p>Recovery status information</p></td>
+</tr>
+<tr class="row-odd"><td><p>HW_STATUS</p></td>
+<td><p>Hardware status including temperature</p></td>
+</tr>
+<tr class="row-even"><td><p>INDIRECT_FIFO_CTRL_0</p></td>
+<td><p>Indirect memory window control</p></td>
+</tr>
+<tr class="row-odd"><td><p>INDIRECT_FIFO_CTRL_1</p></td>
+<td><p>Indirect memory window control</p></td>
+</tr>
+<tr class="row-even"><td><p>INDIRECT_FIFO_STATUS_0</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-odd"><td><p>INDIRECT_FIFO_STATUS_1</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-even"><td><p>INDIRECT_FIFO_STATUS_2</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-odd"><td><p>INDIRECT_FIFO_STATUS_3</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-even"><td><p>INDIRECT_FIFO_STATUS_4</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-odd"><td><p>INDIRECT_FIFO_STATUS_5</p></td>
+<td><p>Indirect memory window status</p></td>
+</tr>
+<tr class="row-even"><td><p>INDIRECT_FIFO_DATA</p></td>
+<td><p>Indirect memory window for pushing recovery image</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="soc-management-interface-id-0xc1">SoC Management Interface (ID=0xC1)<a class="headerlink" href="#soc-management-interface-id-0xc1" title="Link to this heading">¶</a></h3>
+<p>The SoC Management Interface is provided to enable additional configuration capabilities to the system integrator, e.g. programmability of PHY Devices.</p>
+<p>Features may include programmability of:</p>
+<ul class="simple">
+<li><p>High Keeper strength and enable</p></li>
+<li><p>Push-pull driver strength</p>
+<ul>
+<li><p>Slew rate control</p></li>
+</ul>
+</li>
+<li><p>Open-drain driver strength</p>
+<ul>
+<li><p>Slew rate control</p></li>
+</ul>
+</li>
+<li><p>Calibration of the on-chip resistor</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_SECTION_OFFSET</span></code>.
+The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
+<table class="docutils data align-default" id="tab-soc-management-interface">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">SoC Management Interface</span><a class="headerlink" href="#tab-soc-management-interface" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Register Name</strong></p></td>
+<td><p><strong>Role</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_EXTCAP_HEADER</p></td>
+<td><p>Information about the Extended Capability</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOC_MGMT_CONTROL</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_STATUS</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOC_MGMT_RSVD_0</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_RSVD_1</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOC_MGMT_RSVD_2</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_RSVD_3</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOC_MGMT_FEATURE_0</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_FEATURE_1</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOC_MGMT_FEATURE_2</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_FEATURE_3</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>TBD</p></td>
+</tr>
+<tr class="row-even"><td><p>SOC_MGMT_FEATURE_15</p></td>
+<td><p>TBD</p></td>
+</tr>
+</tbody>
+</table>
+<p>Details of the operation are implementation specific.
+It is permissible to implement all registers as generic RW registers.</p>
+<h3 id="target-transaction-interface-id-0xc4">Target Transaction Interface (ID=0xC4)<a class="headerlink" href="#target-transaction-interface-id-0xc4" title="Link to this heading">¶</a></h3>
+<p>The Target Transaction Interface (TTI) provides additional registers and queues to enable data flow for Devices configured in the Target Mode.
+This specfication is meant for Standby Controllers, which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the <code class="docutils literal notranslate"><span class="pre">Target_XACT_SUPPORT</span></code> field of the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CAPABILITIES</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The term “TX” is used to denote instances in which the software performs a write to respond to an I3C Bus Read transaction.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The term “RX” is used to denote instances in which the software performs a read to respond to an I3C Bus Write transaction</p>
+</div>
+<h4 id="motivation-and-design-choices-informative">Motivation and design choices (informative)<a class="headerlink" href="#motivation-and-design-choices-informative" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Width of the interface</p>
+<ul>
+<li><p>This TTI will be integrated in an SoC with 64b AXI as the System Bus</p></li>
+<li><p>CSRs in the I3C HCI specifciation are 32b wide, so it makes sense to use the same width</p></li>
+<li><p>Each System Bus read could potentially hold 2 CSRs</p>
+<ul>
+<li><p>[Recommended] Do not use the upper half of the word</p></li>
+<li><p>[Optimized] Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)</p></li>
+</ul>
+</li>
+<li><p>TTI Queues will also be 32b wide for the same reason</p></li>
+</ul>
+</li>
+<li><p>Communication scenarios with I3C Devices</p>
+<ul>
+<li><p>When valid I3C frame appears and bit RnW is set to Read, then Device has a timing constraint on providing valid data</p>
+<ul>
+<li><p>Typically, this is not a problem for simple sensors, which can prepopulate data</p></li>
+<li><p>Problem for a SoC</p>
+<ul>
+<li><p>Unknown response latency over System Bus</p></li>
+<li><p>Unknown ISR processing latency</p></li>
+</ul>
+</li>
+<li><p>I2C solves this issue by using Clock Stretching by Target</p>
+<ul>
+<li><p>Prohibited by I3C Basic Specification</p></li>
+</ul>
+</li>
+<li><p>I3C allows Controller to stretch Clock (Section 5.1.2.5, I3C Basic)</p>
+<ul>
+<li><p>Does not alleviate Target side timing issues</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>There are 2 designs, which are considered here to increase robustness</p>
+<ul>
+<li><p>Write-first approach: Before each Read from this Device, a Write is issued to inform Target to prepare the payload</p>
+<ul>
+<li><p>Timing issue may still appear, but the timing budget is larger by a factor of (transfer length / bit length)</p></li>
+</ul>
+</li>
+<li><p>Write-first Expect-IBI: Reads are only performed based on an IBI with Pending Read Notification (Section 5.1.6.2.2, I3C Basic).
+Reads occur only when the Target Device has valid data, completely solves the timing issue, assuming that data length does not exceed buffer length.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="boot">Boot<a class="headerlink" href="#boot" title="Link to this heading">¶</a></h4>
+<p>The Target Device boots with bus operation disabled as per description of field <code class="docutils literal notranslate"><span class="pre">STBY_CR_ENABLE_INT</span></code> in the register <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> (section 7.7.11.1)</p>
+<h4 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h4>
+<p>Software is responsible for setting bit <code class="docutils literal notranslate"><span class="pre">TARGET_XACT_ENABLE</span></code> in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register.</p>
+<h4 id="operation">Operation<a class="headerlink" href="#operation" title="Link to this heading">¶</a></h4>
+<p>TTI is used to handle generic Read-Type and Write-Type transactions sent by the Active Controller on the I3C bus.
+In this mode, software is responsible for servicing TX and RX queues based on the interrupt signals.</p>
+<p>There are 5 queues to communicate between the bus and the register interface:</p>
+<ul class="simple">
+<li><p>TX Descriptor queue, which holds information about the write transfer</p></li>
+<li><p>TX Data queue to buffer data, which is written from the Target Device to the bus</p></li>
+<li><p>RX Descriptor queue, which holds information about the read transfer</p></li>
+<li><p>RX Data queue to buffer data, which is read from the bus by the Target Device</p></li>
+<li><p>IBI queue to buffer data, which will be written to the Bus as an In-Band Interrupt</p></li>
+</ul>
+<h5 id="bus-read-transaction">Bus Read Transaction<a class="headerlink" href="#bus-read-transaction" title="Link to this heading">¶</a></h5>
+<p>After the Bus Read Transaction is acknowledged by the Target Device, it performs a write to the Interrupt Register to inform software of a pending read transaction.
+Software writes the response data to the TX queue and the TX descriptor to the TTI TX Descriptor queue.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Writing a large chunk of data into the TX queue and then writing the TX Descriptor can be too slow.
+It is permissible to write 32b data to the TX queue, then writing the TX descriptor, then filling the queue with the rest of the data.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If 2 consecutive long writes (252B) to the TX buffer occur, then:</p>
+<ul class="simple">
+<li><p>The Target Device should raise an interrupt</p></li>
+<li><p>The Target Device should generate status error that write to the buffer failed</p></li>
+<li><p>How do you clean up the data that was written? Mechanism can break in unknown state</p>
+<ul>
+<li><p>Current state of FIFO is only accessible via Debug EC</p></li>
+</ul>
+</li>
+<li><p>Issuing soft reset can break the pending transaction</p>
+<ul>
+<li><p>Software should be notified when pending transaction is done</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<h5 id="bus-write-transaction">Bus Write Transaction<a class="headerlink" href="#bus-write-transaction" title="Link to this heading">¶</a></h5>
+<p>The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the R/W bit is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>.
+The Target Device writes incoming bytes to the TTI RX Data Queue.
+After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.</p>
+<p>If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
+The Active Controller can attempt mitigating such situation by reading Target queue size from <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending big chunk of data.</p>
+<h5 id="in-band-interrupts">In-Band Interrupts<a class="headerlink" href="#in-band-interrupts" title="Link to this heading">¶</a></h5>
+<p>The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.
+The IBI Status Descriptor should be compliant with section “8.6 IBI Status Descriptor” of the MIPI I3C HCI specification v1.2.
+If the IBI requires more data to be sent than allowed in a single chunk, it should be split into multiple IBI transfers with <code class="docutils literal notranslate"><span class="pre">LAST_STATUS</span></code> IBI Descriptor field set to <code class="docutils literal notranslate"><span class="pre">0</span></code> unless it is the last one.</p>
+<h4 id="register-interface">Register Interface<a class="headerlink" href="#register-interface" title="Link to this heading">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">TTI_EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">TTI_SECTION_OFFSET</span></code>.
+The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
+<table class="docutils data align-default" id="tab-tti-register-interface">
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">TTI Register Interface</span><a class="headerlink" href="#tab-tti-register-interface" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Register Name</p></td>
+<td><p>Role</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_EXTCAP_HEADER</p></td>
+<td><p>Information about the Extended Capability</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_CONTROL</p></td>
+<td><p>Software control, mode, operation</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_STATUS</p></td>
+<td><p>Report status</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_INTERRUPT_STATUS</p></td>
+<td><p>Status of outstanding TTI interrupts</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_INTERRUPT_ENABLE</p></td>
+<td><p>Control register for outstanding TTI interrupts</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_INTERRUPT_FORCE</p></td>
+<td><p>Force trigger of outstanding TTI interrupts for debugging purposes</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_RX_DESC_QUEUE_PORT</p></td>
+<td><p>Access port to TTI RX Descriptor Queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_RX_DATA_PORT</p></td>
+<td><p>Access port to TTI RX Data Queue</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_TX_DESC_QUEUE_PORT</p></td>
+<td><p>Access port to TTI TX Descriptor Queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_TX_DATA_PORT</p></td>
+<td><p>Access port to TTI TX Data Queue</p></td>
+</tr>
+<tr class="row-even"><td><p>TTI_QUEUE_SIZE</p></td>
+<td><p>Information about TTI RX Descriptor, TTI RX Data, TTI TX Descriptor, TTI TX Data queue sizes</p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI_QUEUE_THLD_CONTROL</p></td>
+<td><p>Control register for trigger threshold level of TTI Queues interrupts</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-control-register">TTI_CONTROL Register<a class="headerlink" href="#tti-control-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-control-register">
+<caption><span class="caption-number">Table 8 </span><span class="caption-text"><em>TTI_CONTROL Register</em></span><a class="headerlink" href="#tab-tti-control-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-status-register">TTI_STATUS Register<a class="headerlink" href="#tti-status-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-status-register">
+<caption><span class="caption-number">Table 9 </span><span class="caption-text"><em>TTI_STATUS Register</em></span><a class="headerlink" href="#tab-tti-status-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-reset-control-register">TTI_RESET_CONTROL Register<a class="headerlink" href="#tti-reset-control-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-reset-control-register">
+<caption><span class="caption-number">Table 10 </span><span class="caption-text"><em>TTI_RESET_CONTROL Register</em></span><a class="headerlink" href="#tab-tti-reset-control-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [5]</p></td>
+<td><p>IBI_QUEUE_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI IBI Queue Buffer Software Reset</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [4]</p></td>
+<td><p>RX_DATA_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI RX Data Queue Buffer Software Reset</p></td>
+</tr>
+<tr class="row-even"><td><p>1 [3]</p></td>
+<td><p>TX_DATA_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI TX Data Queue Buffer Software Reset</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [2]</p></td>
+<td><p>RX_DESC_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI RX Descriptor Queue Buffer Software Reset</p></td>
+</tr>
+<tr class="row-even"><td><p>1 [1]</p></td>
+<td><p>TX_DESC_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI TX Descriptor Queue Buffer Software Reset</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [0]</p></td>
+<td><p>SOFT_RST</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Target Core Software Reset</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-interrupt-status-register">TTI_INTERRUPT_STATUS Register<a class="headerlink" href="#tti-interrupt-status-register" title="Link to this heading">¶</a></h5>
+<p>The status fields are either R/W1C (write 1 to clear), or else are cleared based on queue operations.</p>
+<table class="docutils data align-default" id="tab-tti-interrupt-status-register">
+<caption><span class="caption-number">Table 11 </span><span class="caption-text"><em>TTI_INTERRUPT_STATUS Register</em></span><a class="headerlink" href="#tab-tti-interrupt-status-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [31]</p></td>
+<td><p>TRANSFER_ERR_STAT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>Bus error occurred</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [25]</p></td>
+<td><p>TRANSFER_ABORT_STAT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>Bus aborted transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>1 [12]</p></td>
+<td><p>IBI_THLD_STAT</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [11]</p></td>
+<td><p>RX_DESC_THLD_STAT</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [10]</p></td>
+<td><p>TX_DESC_THLD_STAT</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [9]</p></td>
+<td><p>RX_DATA_THLD_STAT</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [8]</p></td>
+<td><p>TX_DATA_THLD_STAT</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [3]</p></td>
+<td><p>TX_DESC_TIMEOUT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>Pending Write was NACK’ed, because the <code class="docutils literal notranslate"><span class="pre">TX_DESC_STAT</span></code> event was not handled in time</p></td>
+</tr>
+<tr class="row-even"><td><p>1 [2]</p></td>
+<td><p>RX_DESC_TIMEOUT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>Pending Read was NACK’ed, because the <code class="docutils literal notranslate"><span class="pre">RX_DESC_STAT</span></code> event was not handled in time</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [1]</p></td>
+<td><p>TX_DESC_STAT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p></td>
+</tr>
+<tr class="row-even"><td><p>1 [0]</p></td>
+<td><p>RX_DESC_STAT</p></td>
+<td><p>R/W1C</p></td>
+<td><p>0x0</p></td>
+<td><p>There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-interrupt-enable-register">TTI_INTERRUPT_ENABLE Register<a class="headerlink" href="#tti-interrupt-enable-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-interrupt-enable-register">
+<caption><span class="caption-number">Table 12 </span><span class="caption-text"><em>TTI_INTERRUPT_ENABLE Register</em></span><a class="headerlink" href="#tab-tti-interrupt-enable-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [4]</p></td>
+<td><p>IBI_THLD_STAT_EN</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Enables the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD_STAT</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [3]</p></td>
+<td><p>RX_DESC_THLD_STAT_EN</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Enables the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD_STAT</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [2]</p></td>
+<td><p>TX_DESC_THLD_STAT_EN</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Enables the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD_STAT</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [1]</p></td>
+<td><p>RX_DATA_THLD_STAT_EN</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Enables the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD_STAT</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [0]</p></td>
+<td><p>TX_DATA_THLD_STAT_EN</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Enables the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD_STAT</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-interrupt-force-register">TTI_INTERRUPT_FORCE Register<a class="headerlink" href="#tti-interrupt-force-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-interrupt-force-register">
+<caption><span class="caption-number">Table 13 </span><span class="caption-text"><em>TTI_INTERRUPT_FORCE Register</em></span><a class="headerlink" href="#tab-tti-interrupt-force-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [4]</p></td>
+<td><p>IBI_THLD_FORCE</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Forces the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD_STAT</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [3]</p></td>
+<td><p>RX_DESC_THLD_FORCE</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Forces the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD_STAT</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [2]</p></td>
+<td><p>TX_DESC_THLD_FORCE</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Forces the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD_STAT</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1 [1]</p></td>
+<td><p>RX_DATA_THLD_FORCE</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Forces the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD_STAT</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>1 [0]</p></td>
+<td><p>TX_DATA_THLD_FORCE</p></td>
+<td><p>R/W</p></td>
+<td><p>0x0</p></td>
+<td><p>Forces the corresponding interrupt bit <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD_STAT</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-rx-desc-queue-port-register">TTI_RX_DESC_QUEUE_PORT Register<a class="headerlink" href="#tti-rx-desc-queue-port-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-rx-descriptor-queue-port-register">
+<caption><span class="caption-number">Table 14 </span><span class="caption-text"><em>TTI_RX_DESC_QUEUE_PORT Register</em></span><a class="headerlink" href="#tab-tti-rx-descriptor-queue-port-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>32 [31:0]</p></td>
+<td><p>RX_DESC</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>RX Descriptor</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-rx-data-port-register">TTI_RX_DATA_PORT Register<a class="headerlink" href="#tti-rx-data-port-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-rx-data-port-register">
+<caption><span class="caption-number">Table 15 </span><span class="caption-text"><em>TTI_RX_DATA_PORT Register</em></span><a class="headerlink" href="#tab-tti-rx-data-port-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>32 [31:0]</p></td>
+<td><p>RX_DATA</p></td>
+<td><p>R</p></td>
+<td><p>0x0</p></td>
+<td><p>Data Read from the TTI RX Data Buffer</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-tx-desc-queue-port-register">TTI_TX_DESC_QUEUE_PORT Register<a class="headerlink" href="#tti-tx-desc-queue-port-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-tx-descriptor-queue-port-register">
+<caption><span class="caption-number">Table 16 </span><span class="caption-text"><em>TTI_TX_DESC_QUEUE_PORT Register</em></span><a class="headerlink" href="#tab-tti-tx-descriptor-queue-port-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>32 [31:0]</p></td>
+<td><p>TX_DESC</p></td>
+<td><p>W</p></td>
+<td><p>0x0</p></td>
+<td><p>TX Descriptor</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-tx-data-port-register">TTI_TX_DATA_PORT Register<a class="headerlink" href="#tti-tx-data-port-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-tx-data-port-register">
+<caption><span class="caption-number">Table 17 </span><span class="caption-text"><em>TTI_TX_DATA_PORT Register</em></span><a class="headerlink" href="#tab-tti-tx-data-port-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>32 [31:0]</p></td>
+<td><p>TX_DATA</p></td>
+<td><p>W</p></td>
+<td><p>0x0</p></td>
+<td><p>Data Write to the TTI TX Data Buffer</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-queue-size-register">TTI_QUEUE_SIZE Register<a class="headerlink" href="#tti-queue-size-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-queue-size-register">
+<caption><span class="caption-number">Table 18 </span><span class="caption-text"><em>TTI_QUEUE_SIZE Register</em></span><a class="headerlink" href="#tab-queue-size-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>8 [31:24]</p></td>
+<td><p>TX_DATA_BUFFER_SIZE</p></td>
+<td><p>R</p></td>
+<td><p>IMPL</p></td>
+<td><p>Transmit Data Buffer Size in DWORDs:</p>
+<ul>
+<li><p>0x0: 2</p></li>
+<li><p>0x1: 4</p></li>
+<li><p>0x2: 8</p></li>
+<li><p>0x3: 16</p></li>
+<li><p>0x4: 32</p></li>
+<li><p>0x5: 64</p></li>
+<li><p>0x6: 128</p></li>
+<li><p>0x7: 256</p></li>
+<li><p>0x8-0xF:</p>
+<p>Reserved for future use</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>8 [23:16]</p></td>
+<td><p>RX_DATA_BUFFER_SIZE</p></td>
+<td><p>R</p></td>
+<td><p>IMPL</p></td>
+<td><p>Receive Data Buffer Size in DWORDs:</p>
+<ul>
+<li><p>0x0: 2</p></li>
+<li><p>0x1: 4</p></li>
+<li><p>0x2: 8</p></li>
+<li><p>0x3: 16</p></li>
+<li><p>0x4: 32</p></li>
+<li><p>0x5: 64</p></li>
+<li><p>0x6: 128</p></li>
+<li><p>0x7: 256</p></li>
+<li><p>0x8-0xF:</p>
+<p>Reserved for future use</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>8 [15:8]</p></td>
+<td><p>TX_DESC_BUFFER_SIZE</p></td>
+<td><p>R</p></td>
+<td><p>IMPL</p></td>
+<td><p>TX Descriptor Buffer Size in DWORDs:</p>
+<ul>
+<li><p>0x0: 2</p></li>
+<li><p>0x1: 4</p></li>
+<li><p>0x2: 8</p></li>
+<li><p>0x3: 16</p></li>
+<li><p>0x4: 32</p></li>
+<li><p>0x5: 64</p></li>
+<li><p>0x6: 128</p></li>
+<li><p>0x7: 256</p></li>
+<li><p>0x8-0xF:</p>
+<p>Reserved for future use</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>8 [7:0]</p></td>
+<td><p>RX_DESC_BUFFER_SIZE</p></td>
+<td><p>R</p></td>
+<td><p>IMPL</p></td>
+<td><p>RX Descriptor Buffer Size in DWORDs:</p>
+<ul>
+<li><p>0x0: 2</p></li>
+<li><p>0x1: 4</p></li>
+<li><p>0x2: 8</p></li>
+<li><p>0x3: 16</p></li>
+<li><p>0x4: 32</p></li>
+<li><p>0x5: 64</p></li>
+<li><p>0x6: 128</p></li>
+<li><p>0x7: 256</p></li>
+<li><p>0x8-0xF:</p>
+<p>Reserved for future use</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-ibi-queue-size-register">TTI_IBI_QUEUE_SIZE Register<a class="headerlink" href="#tti-ibi-queue-size-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-ibi-queue-size-register">
+<caption><span class="caption-number">Table 19 </span><span class="caption-text"><em>TTI_IBI_QUEUE_SIZE Register</em></span><a class="headerlink" href="#tab-ibi-queue-size-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>8 [7:0]</p></td>
+<td><p>IBI_QUEUE_SIZE</p></td>
+<td><p>R</p></td>
+<td><p>IMPL</p></td>
+<td><p>IBI Queue Size in DWORDs:</p>
+<ul class="simple">
+<li><p>0x0: 2 DWORDS</p></li>
+<li><p>0x1: 4 DWORDs</p></li>
+<li><p>0x2: 8 DWORDs</p></li>
+<li><p>0x3: 16 DWORDs</p></li>
+<li><p>0x4: 32 DWORDs</p></li>
+<li><p>0x5: 64 DWORDs</p></li>
+<li><p>0x6: 128 DWORDs</p></li>
+<li><p>0x7: 256 DWORDs</p></li>
+<li><p>0x8-0xF: Reserved for future use</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-queue-thld-control-register">TTI_QUEUE_THLD_CONTROL Register<a class="headerlink" href="#tti-queue-thld-control-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-queue-threshold-control-register">
+<caption><span class="caption-number">Table 20 </span><span class="caption-text"><em>TTI_QUEUE_THLD_CONTROL Register</em></span><a class="headerlink" href="#tab-tti-queue-threshold-control-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>8 [31:24]</p></td>
+<td><p>IBI_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Controls the minimum number of IBI Queue entries needed to trigger the IBI threshold interrupt.</p></td>
+</tr>
+<tr class="row-odd"><td><p>8 [23:16]</p></td>
+<td><p>RESERVED</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>8 [15:8]</p></td>
+<td><p>RX_DESC_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Controls the minimum number of TTI RX Descriptor Queue entries needed to trigger the TTI RX Descriptor interrupt.</p></td>
+</tr>
+<tr class="row-odd"><td><p>8 [7:0]</p></td>
+<td><p>TX_DESC_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Controls the minimum number of empty TTI TX Descriptor Queue entries needed to trigger the TTI TX Descriptor interrupt.</p></td>
+</tr>
+</tbody>
+</table>
+<h5 id="tti-data-buffer-thld-control-register">TTI_DATA_BUFFER_THLD_CONTROL Register<a class="headerlink" href="#tti-data-buffer-thld-control-register" title="Link to this heading">¶</a></h5>
+<table class="docutils data align-default" id="tab-tti-ibi-queue-threshold-control-register">
+<caption><span class="caption-number">Table 21 </span><span class="caption-text"><em>TTI_IBI_QUEUE_THLD_CONTROL Register</em></span><a class="headerlink" href="#tab-tti-ibi-queue-threshold-control-register" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>3 [26:24]</p></td>
+<td><p>RX_START_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Minimum number of available TTI RX Data queue entries, in DWORDs, that will initiate the TTI RX Data transfer.
+Transfer starts when there are at least 2<sup>N+1</sup> RX Buffer DWORD entries available.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3 [18:16]</p></td>
+<td><p>TX_START_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Minimum number of TTI TX Data queue entries, in DWORDs, that will initiate the TTI TX transfer.
+Transfer starts when there are at least 2<sup>N+1</sup> TX Buffer DWORDs to be written.</p></td>
+</tr>
+<tr class="row-even"><td><p>3 [10:8]</p></td>
+<td><p>RX_DATA_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Minimum number of TTI RX Data queue entries of data received, in DWORDs, that will trigger the TTI RX Data interrupt.
+Interrupt triggers when 2<sup>N+1</sup> RX Buffer DWORD entries are received during the Read transfer.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3 [2:0]</p></td>
+<td><p>TX_DATA_THLD</p></td>
+<td><p>R/W</p></td>
+<td><p>0x1</p></td>
+<td><p>Minimum number of available TTI TX Data queue entries, in DWORDs, that will trigger the TTI TX Data interrupt.
+Interrupt triggers when 2<sup>N+1</sup> TX Buffer DWORD entries are available.</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="target-transaction-interface-tx-descriptor">Target Transaction Interface TX Descriptor<a class="headerlink" href="#target-transaction-interface-tx-descriptor" title="Link to this heading">¶</a></h4>
+<table class="docutils data align-default" id="tab-tti-target-transaction-interface-tx-descriptor">
+<caption><span class="caption-number">Table 22 </span><span class="caption-text"><em>Target Transaction Interface TX Descriptor</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-tx-descriptor" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>16 [31:16]</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="target-transaction-interface-rx-descriptor">Target Transaction Interface RX Descriptor<a class="headerlink" href="#target-transaction-interface-rx-descriptor" title="Link to this heading">¶</a></h4>
+<table class="docutils data align-default" id="tab-tti-target-transaction-interface-rx-descriptor">
+<caption><span class="caption-number">Table 23 </span><span class="caption-text"><em>Target Transaction Interface RX Descriptor</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-rx-descriptor" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 13.0%" />
+<col style="width: 9.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
+<td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Memory Access</strong></p></td>
+<td><p><strong>Reset Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>16 [31:16]</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+<td><p>TBD</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="tti-queues">TTI Queues<a class="headerlink" href="#tti-queues" title="Link to this heading">¶</a></h4>
+<p>TTI TX Descriptor, TTI TX Data, TTI RX Descriptor, TTI RX Data and TTI IBI queues should be implemented as FIFO queues of 32 bit (1 DWORD) width.
+Depth shall be parametrizable and register <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code>’s reset value should be set accordingly.
+In order to prevent overflow/underrun scenarios, a programmable threshold signal is provided.
+Software-issued reset of the queues contents is also possible.</p>
+<h4 id="errors">Errors<a class="headerlink" href="#errors" title="Link to this heading">¶</a></h4>
+<ol class="arabic simple">
+<li><p>[Generic Read] Device didn’t have data in time to respond to the controller</p>
+<ol class="arabic simple">
+<li><p>Action taken by hardware</p>
+<ol class="arabic simple">
+<li><p>NACK the next byte of data</p></li>
+<li><p>Report Error in the Error Register</p></li>
+<li><p>Raise <code class="docutils literal notranslate"><span class="pre">ERR_IRQ</span></code></p></li>
+</ol>
+</li>
+<li><p>Action taken by software</p>
+<ol class="arabic simple">
+<li><p>Prepare an IBI with Pending Read Notification</p></li>
+<li><p>If MCTP, then use <code class="docutils literal notranslate"><span class="pre">5’h0E</span></code> Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)</p></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>[Generic Write] Device was overrun</p>
+<ol class="arabic simple">
+<li><p>Prevention mechanisms</p>
+<ol class="arabic simple">
+<li><p>Active Controller should use <code class="docutils literal notranslate"><span class="pre">SETMWL</span></code>, <code class="docutils literal notranslate"><span class="pre">SETMRL</span></code> based on realistically set <code class="docutils literal notranslate"><span class="pre">GETMWL</span></code>, <code class="docutils literal notranslate"><span class="pre">GETMRL</span></code> values</p></li>
+</ol>
+</li>
+<li><p>Action taken by hardware</p>
+<ol class="arabic simple">
+<li><p>NACK the next byte of data</p></li>
+<li><p>Report Error in the Error Register</p></li>
+<li><p>Raise <code class="docutils literal notranslate"><span class="pre">ERR_IRQ</span></code></p></li>
+</ol>
+</li>
+<li><p>Action taken by software</p>
+<ol class="arabic simple">
+<li><p>Prepare an IBI with Error Type Notification</p>
+<ol class="arabic simple">
+<li><p>Can use <code class="docutils literal notranslate"><span class="pre">5’h0D</span></code> Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="ideas-for-the-future-informative">Ideas for the future (informative)<a class="headerlink" href="#ideas-for-the-future-informative" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Add Debug EC</p></li>
+<li><p>Virtual TTI</p>
+<ul>
+<li><p>Consider reusing existing CSRs from Active Controller in this way?</p></li>
+</ul>
+</li>
+<li><p><a class="reference external" href="https://www.dmtf.org/sites/default/files/standards/documents/DSP0233_1.0.0WIP.pdf">MCTP Binding</a></p></li>
+</ul>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      2024-09-03
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="normal_operation.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Normal operation" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Normal operation
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="config.html" class="md-footer__link md-footer__link--next" aria-label="Next: Configuring the I3C Core" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Configuring the I3C Core
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        Copyright &#169; Antmicro, 2024.
+        
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/antmicro" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/antmicro" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
+    
+  </body>
+</html>

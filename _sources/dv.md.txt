@@ -1,0 +1,8 @@
+# Design verification
+
+This chapter presents available models and tools, which are used for I3C verification.
+The core is verified with [the Cocotb/Verilator + unit tests](../../verification/block) and [the UVM test suite](../../verification/uvm_i3c/).
+
+## Verification plan
+
+The verification plan is [here](../../verification/uvm_i3c/testplan.hjson).

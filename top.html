@@ -1,0 +1,1014 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>I3C Controller - I3C Core - documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            I3C Core - documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              I3C Controller
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <div class="md-header__button">
+        <a href="i3c-core--documentation.pdf" title="PDF - i3c-core--documentation.pdf">
+          <div class="md-icon">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zm192 0v128h128L256 0zM64 224h24c30.9 0 56 25.1 56 56s-25.1 56-56 56h-8v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24h-8v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48h-24c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16v-64c0-8.8-7.2-16-16-16h-8v96zm96-128h48c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16z"/></svg>
+          </div>
+        </a>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    I3C Core - documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Hardware Design and Verification</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Hardware Design and Verification" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Hardware Design and Verification</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">I3C Controller</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">I3C Controller</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#top" class="md-nav__link">
+    <span class="md-ellipsis">Top</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-interface-ci" class="md-nav__link">
+    <span class="md-ellipsis">Controller Interface <wbr>(CI)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Controller Interface (CI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queues" class="md-nav__link">
+    <span class="md-ellipsis">Queues</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dat-dct" class="md-nav__link">
+    <span class="md-ellipsis">DAT &amp; DCT</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAT &amp; DCT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device-address-table-dat" class="md-nav__link">
+    <span class="md-ellipsis">Device Address Table <wbr>(DAT)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-characteristic-table-dct" class="md-nav__link">
+    <span class="md-ellipsis">Device Characteristic Table <wbr>(DCT)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csr" class="md-nav__link">
+    <span class="md-ellipsis">CSR</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axi-communication" class="md-nav__link">
+    <span class="md-ellipsis">AXI communication</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ahb-communication" class="md-nav__link">
+    <span class="md-ellipsis">AHB communication</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#id2" class="md-nav__link">
+    <span class="md-ellipsis">I3C Controller</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I3C Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bus-arbitration-5-1-2-2-1" class="md-nav__link">
+    <span class="md-ellipsis">Bus arbitration <wbr>(5.<wbr>1.<wbr>2.<wbr>2.<wbr>1)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-phy-layer" class="md-nav__link">
+    <span class="md-ellipsis">Common PHY Layer</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common PHY Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sda-and-scl-lines-5-1-3-1" class="md-nav__link">
+    <span class="md-ellipsis">SDA and SCL lines <wbr>(5.<wbr>1.<wbr>3.<wbr>1)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clock-synchronization-5-1-7" class="md-nav__link">
+    <span class="md-ellipsis">Clock synchronization <wbr>(5.<wbr>1.<wbr>7)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mixed-i2c-and-i3c-bus-5-1-1-2-3" class="md-nav__link">
+    <span class="md-ellipsis">Mixed I2C and I3C Bus <wbr>(5.<wbr>1.<wbr>1.<wbr>2.<wbr>3)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-i2c-mode" class="md-nav__link">
+    <span class="md-ellipsis">Legacy I2C Mode</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dv.html" class="md-nav__link">
+        <span class="md-ellipsis">Design verification</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ci_queues.html" class="md-nav__link">
+        <span class="md-ellipsis">Controller Interface Queues</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timings.html" class="md-nav__link">
+        <span class="md-ellipsis">Electrical and timing specifications</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">Programmer&#39;s Reference Manual</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Programmer&#39;s Reference Manual" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Programmer&#39;s Reference Manual</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="initialization.html" class="md-nav__link">
+        <span class="md-ellipsis">Boot and Initialization</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="normal_operation.html" class="md-nav__link">
+        <span class="md-ellipsis">Normal operation</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">Extended Capabilities and Recovery Flow</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Extended Capabilities and Recovery Flow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Extended Capabilities and Recovery Flow</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ext_cap.html" class="md-nav__link">
+        <span class="md-ellipsis">Specification for I3C Vendor-<wbr>Specific Extended Capabilities</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          <span class="md-ellipsis">Integrating the I3C Core</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Integrating the I3C Core" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Integrating the I3C Core</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="config.html" class="md-nav__link">
+        <span class="md-ellipsis">Configuring the I3C Core</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="integration.html" class="md-nav__link">
+        <span class="md-ellipsis">Integration with Caliptra Subsystem</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="i3c-controller">I3C Controller<a class="headerlink" href="#i3c-controller" title="Link to this heading">¶</a></h1>
+<p>This chapter provides a top-level description of the developed I3C Basic Core, explanation of the theory of operation with relevant diagrams and an overview of the hierarchy and submodules.</p>
+<h2 id="top">Top<a class="headerlink" href="#top" title="Link to this heading">¶</a></h2>
+<p>The I3C Core comprises:</p>
+<ul class="simple">
+<li><p>Controller Interface module</p></li>
+<li><p>Controller logic</p></li>
+<li><p>PHY logic</p></li>
+</ul>
+<figure class="align-default" id="top-level">
+<img alt="" src="_images/top.png" />
+<figcaption>
+<p><span class="caption-number">Figure 1 </span><span class="caption-text"><span class="caption-text">
+Top level view</span><a class="headerlink" href="#top-level" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<figure class="align-default" id="top-level-detail">
+<img alt="" src="_images/top_detail.png" />
+<figcaption>
+<p><span class="caption-number">Figure 2 </span><span class="caption-text"><span class="caption-text">
+Top level view (detailed)</span><a class="headerlink" href="#top-level-detail" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h2 id="controller-interface-ci">Controller Interface (CI)<a class="headerlink" href="#controller-interface-ci" title="Link to this heading">¶</a></h2>
+<p>CI defines the CSR layout and how the host should interact with them to trigger desired I3C functions.
+The I3C core uses the PIO mode meaning that all interaction between it and the host happens through CSRs (as opposed to DMA mode where there’s a separate path for the core to access memory).</p>
+<figure class="align-default" id="hci">
+<img alt="" src="_images/hci.png" />
+<figcaption>
+<p><span class="caption-number">Figure 3 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the Controller Interface</span><a class="headerlink" href="#hci" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>CI defines several CSR regions:</p>
+<ul class="simple">
+<li><p>Controller Capabilities and Operation registers</p></li>
+<li><p>PIO access registers</p></li>
+<li><p>DAT table</p></li>
+<li><p>DCT table</p></li>
+<li><p>Linked list of Extended Capabilities</p></li>
+</ul>
+<p>The Device Address Table (DAT) stores per-device entries containing their addresses.
+When issuing a transaction, a command contains an index to this table.</p>
+<p>The Device Characteristic Table (DCT) is read-only (for software) and gets populated by the controller core during I3C bus initialization.</p>
+<p>The PIO CSR region contains registers used to access Command, Read, Write and Response Queue.
+See section “7.5 PIO Mode Registers (PIO_BASE +)” of the HCI specification.</p>
+<h3 id="queues">Queues<a class="headerlink" href="#queues" title="Link to this heading">¶</a></h3>
+<p>CI queues facilitate communication between software-issued requests and the I3C controller logic.
+Each request is issued through appropriate ports of PIO Control register file.
+The data is then collected from those ports and enqueued on appropriate queues.
+CI then issues enqueued commands to the I3C controller logic and fetches transaction responses (if present).</p>
+<p>The queues are divided accordingly to their purpose:</p>
+<ul class="simple">
+<li><p>Command queue</p>
+<ul>
+<li><p>64-bit wide</p></li>
+<li><p>Enqueues to-be-issued command descriptors</p></li>
+</ul>
+</li>
+<li><p>RX - Read queue</p>
+<ul>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues data to be read by the host controller</p></li>
+</ul>
+</li>
+<li><p>TX - Write queue</p>
+<ul>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues data written by the host controller</p></li>
+</ul>
+</li>
+<li><p>Response queue</p>
+<ul>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues response descriptors of previously issued and completed commands</p></li>
+</ul>
+</li>
+</ul>
+<p>Both command and response descriptors are addressed with the index to the DAT table entry (as opposed to being directly-addressed).</p>
+<p>Command descriptors are fixed to 64-bit (2-DWORD).
+Response descriptors are fixed to 32-bit (1-DWORD).</p>
+<p>For the details see <a class="reference internal" href="ci_queues.html#controller-interface-queues"><span class="std std-ref">Controller Interface Queues</span></a> section.</p>
+<h3 id="dat-dct">DAT &amp; DCT<a class="headerlink" href="#dat-dct" title="Link to this heading">¶</a></h3>
+<p>To increase flexibility of the design, both DAT and DCT tables are instantiated as memories external from the I3C Core.
+Access paths to these memories are routed through the Controller Interface module directly to the underlying DAT/DCT access logic.
+Such approach ensures very convenient way of replacing memory models for specific target architecture.</p>
+<figure class="align-default" id="id1">
+<img alt="" src="_images/dat_dct.png" />
+<figcaption>
+<p><span class="caption-number">Figure 4 </span><span class="caption-text"><span class="caption-text">
+Block diagram of DAT and DCT connections</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h4 id="device-address-table-dat">Device Address Table (DAT)<a class="headerlink" href="#device-address-table-dat" title="Link to this heading">¶</a></h4>
+<p>The Controller should perform initial I3C Bus enumeration after initialization.
+During this process, software driver should assign static address for each device that is prior known on the bus.
+Additionally, for every Dynamic Addressing capable Device, dynamic address shall be set for each valid DAT entry, as part of the Dynamic Address Assignment process.
+Once the DAT is set up, devices can be assigned dynamic addresses in following ways:</p>
+<ul class="simple">
+<li><p><strong>SETDASA</strong> (direct) and <strong>SETAASA</strong> (broadcast) to assign dynamic address based on static address,</p></li>
+<li><p><strong>ENTDAA</strong> to enter dynamic address assignment procedure.</p></li>
+</ul>
+<p>After bus initialization, the DAT is not affected by physically removing the device from the bus and can be updated by sending <strong>SETNEWDA</strong> (set new dynamic address) CCC or <strong>SETGRPA</strong> (set group address) CCC.</p>
+<p>Dynamically addressed I3C targets with their DAT entries can be reset by sending <strong>RSTDAA</strong> command on the bus.
+Assigned groups of addresses can be cleared by sending <strong>RSTGRPA</strong>.</p>
+<p>In case the I3C Controller enters standby mode by passing the active controller role to another device, there is no requirement (on hardware) to keep the DAT table up-to-date.
+However, when the I3C Controller transitions back to the Active Controller role, it should receive <strong>DEFTGTS</strong> CCC that provides states of all targets present on the bus.
+The software driver should then update the DAT table.</p>
+<p>Since the DAT memory is writable from software, it must support single 32-bit word masked access so that the software can write data without overwriting whole table entry.</p>
+<h4 id="device-characteristic-table-dct">Device Characteristic Table (DCT)<a class="headerlink" href="#device-characteristic-table-dct" title="Link to this heading">¶</a></h4>
+<p>During dynamic address assignment, each target device on the bus must report its BCR, DCR and PID which are then saved in the Device Characteristic Table.
+The only I3C command that modifies content of the DCT is <strong>ENTDAA</strong>.
+From the software point of view, DCT memory is read only and should never be written to.</p>
+<h3 id="csr">CSR<a class="headerlink" href="#csr" title="Link to this heading">¶</a></h3>
+<p>CSRs are implemented from <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/rdl">SystemRDL description</a> and implementation uses <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/csr">generated SV files</a>.</p>
+<h3 id="axi-communication">AXI communication<a class="headerlink" href="#axi-communication" title="Link to this heading">¶</a></h3>
+<p>This layer provides an AXI frontend to integrate the I3C controller with the designated system.
+The implementation is derived from the Caliptra’s implementation of the AXI subordinate, which is being developed on <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/tree/cwhitehead-msft-gen2-axi-modules">branch</a>.</p>
+<h3 id="ahb-communication">AHB communication<a class="headerlink" href="#ahb-communication" title="Link to this heading">¶</a></h3>
+<p>This layer provides an AHB-compliant frontend to integrate the I3C controller with the designated system.
+It intermediates between AHB-issued CSR access commands and controller’s internal access protocol with the use of <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/9c815c335a92901b27458271a885b2128e51e687/src/libs/rtl/ahb_to_reg_adapter.sv#L24">ahb_to_reg_adapter</a>.</p>
+<p>The AHB-Lite implementation bases on AMBA 3 AHB-Lite Protocol Specification IHI0033A.</p>
+<p>As of now, only non-sequential transfer mode is supported.</p>
+<p>The AHB-Lite interface is compliant with the Caliptra system and by default is parameterized with <code class="docutils literal notranslate"><span class="pre">ADDR_WIDTH=32</span></code>, <code class="docutils literal notranslate"><span class="pre">DATA_WIDTH=64</span></code>.</p>
+<p>AHB-Lite interface allows for the following parameters to be configured:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AHB_DATA_WIDTH</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AHB_ADDR_WIDTH</span></code></p></li>
+</ul>
+<p>Because the size of the CSRs is fixed to 32-bits, only the lowest 32-bits of <code class="docutils literal notranslate"><span class="pre">haddress</span></code> and <code class="docutils literal notranslate"><span class="pre">hwdata</span></code> channels will be accounted for.</p>
+<h2 id="id2">I3C Controller<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Main part of the system.</p>
+<figure class="align-default" id="i3c-ctrl">
+<img alt="" src="_images/i3c_ctrl.png" />
+<figcaption>
+<p><span class="caption-number">Figure 5 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the I3C Controller</span><a class="headerlink" href="#i3c-ctrl" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>When the I3C Core acts as an Active Controller, it follows the flow presented on <a class="reference internal" href="#i3c-flow-fsm"><span class="std std-numref">Figure 6</span></a>.</p>
+<figure class="align-default" id="i3c-flow-fsm">
+<img alt="" src="_images/i3c_flow_fsm.png" />
+<figcaption>
+<p><span class="caption-number">Figure 6 </span><span class="caption-text"><span class="caption-text">
+FSM: Active Controller</span><a class="headerlink" href="#i3c-flow-fsm" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="bus-arbitration-5-1-2-2-1">Bus arbitration (5.1.2.2.1)<a class="headerlink" href="#bus-arbitration-5-1-2-2-1" title="Link to this heading">¶</a></h3>
+<p>In an I3C (or multi-master I2C) system, it is possible that multiple devices connected to the bus will try to take over the bus control at the same time.
+Arbitration process must occur to resolve access.
+All devices that are concurrently transmitting an address follow the same rule:</p>
+<ol class="arabic">
+<li><p>If the current bit to transmit is a 0, then the Device shall drive SDA Low after the falling edge of SCL and hold Low until the next falling edge of SCL.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other Devices may also be driving SDA Low, but that is acceptable.</p>
+</div>
+</li>
+<li><p>If the current bit to transmit is a 1, then the Device shall not drive SDA, but rather shall High-Z SDA on the falling edge of SCL.</p>
+<ul class="simple">
+<li><p>Additionally, the Device shall monitor the SDA on the rising edge of SCL to determine whether another Device has driven SDA Low.</p></li>
+<li><p>If another Device has driven the SDA Low, then the Device has “<em>lost</em>” the Arbitration and shall not further participate in this Address Header.
+That is, the Device shall not transmit any more bits, but may wait for a future START (but not a Repeated START).</p></li>
+</ul>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Section 5.1.2.2.2 of the I3C specification describes possible arbitration enhancements.</p>
+</div>
+<h2 id="common-phy-layer">Common PHY Layer<a class="headerlink" href="#common-phy-layer" title="Link to this heading">¶</a></h2>
+<p>The PHY is responsible for controlling external bus signals (SDA, SCL) and synchronizing them with an internal clock. It should also support bus arbitration.
+The <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/index.html">I2C Core</a> from the Opentitan project can be used as a reference design for basic features of the PHY.</p>
+<figure class="align-default" id="i3c-phy">
+<img alt="" src="_images/i3c_phy.png" />
+<figcaption>
+<p><span class="caption-number">Figure 7 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the I3C PHY Layer</span><a class="headerlink" href="#i3c-phy" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="sda-and-scl-lines-5-1-3-1">SDA and SCL lines (5.1.3.1)<a class="headerlink" href="#sda-and-scl-lines-5-1-3-1" title="Link to this heading">¶</a></h3>
+<p>Both I2C and I3C datasheets specify that SDA and SCL lines should be bidirectional, connected to an active Open Drain class Pull-Up.
+Bus lines should be HIGH unless any device ties them to the GROUND.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In addition to the active Open Drain class Pull-Up, a High-Keeper is also required on the Bus.
+The High-Keeper on the Bus shall be strong enough to prevent system leakage from pulling SDA, and sometimes SCL, Low.
+The High-Keeper on the Bus shall also be weak enough that a Target with the minimum I<sub>OL</sub> PHY is able to pull SDA, SCL, or both Low within the Minimum t<sub>DIG_L</sub> period.</p>
+<p>The High-Keeper should be implemented during physical design.
+PHY driver strength modelling will not be performed in this project.
+Base Controller will be delivered without the High-Keeper, however, it may become a configuration option later on.</p>
+</div>
+<p>Each bus line must be capable of switching between 4 logic states:</p>
+<ol class="arabic simple">
+<li><p>No Pull-Up (High-Z)</p></li>
+<li><p>High-Keeper Pull-Up</p></li>
+<li><p>Open Drain Pull-Up</p></li>
+<li><p>Assert LOW</p></li>
+</ol>
+<p>The Opentitan I2C Core implements a <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/doc/theory_of_operation.html#virtual-open-drain">Virtual Open Drain</a> functionality which seems like a good solution for implementing the desired behavior on FPGA devices while at the same time keeping it easy to use in silicon chips. Each bus line consists of 3 lines:</p>
+<ol class="arabic simple">
+<li><p>Signal input (<code class="docutils literal notranslate"><span class="pre">scl_i</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_i</span></code>) - external input from the bus lines.</p></li>
+<li><p>Signal output (<code class="docutils literal notranslate"><span class="pre">scl_o</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_o</span></code>) - internal signal, it is tied to the GROUND.</p></li>
+<li><p>Signal output enable (<code class="docutils literal notranslate"><span class="pre">scl_en_o</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_en_o</span></code>) - internal signal enable, controlled by the core FSM.</p></li>
+</ol>
+<p>This interface makes it easy to construct tri-state buffers.
+The controller will never assert external bus lines HIGH since it is assumed that these lines are pulled up to V<sub>dd</sub> externally.
+Switching from output to input is enough to achieve signals asserted HIGH.</p>
+<p>Verilator does not natively support <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> states and their handling is explained in the <a class="reference external" href="https://verilator.org/guide/latest/languages.html?highlight=tristate#tri-inout">official documentation</a>.
+Cocotb requires a wrapper to interact properly with an <code class="docutils literal notranslate"><span class="pre">inout</span></code> which is described in <a class="reference external" href="https://github.com/cocotb/cocotb/discussions/3506">Cocotb discussion #3506</a>.
+Considering these limitations, PHY is being tested functionally using Cocotb and tri-state logic.
+Additionally, there is a RTL testbench run in Verilator and Icarus simulators that checks whether High-Z is set properly on I3C bus lines when the controller request high bus state.</p>
+<h3 id="clock-synchronization-5-1-7">Clock synchronization (5.1.7)<a class="headerlink" href="#clock-synchronization-5-1-7" title="Link to this heading">¶</a></h3>
+<p>While Legacy I2C protocol requires clock synchronization between each master and bus, I3C does not need such mechanism due to the handoff procedure.
+If currently active Controller wants to pass Controller privileges to another device, it should run the handoff procedure and then it shall issue a <code class="docutils literal notranslate"><span class="pre">GETACCR</span></code> command followed by a STOP condition, if the handoff was successful.
+After such operation, an active Controller shall release control of the SCL line, therefore releasing control of the I3C Bus to the selected Secondary Controller.</p>
+<p>However, signals read from the I3C bus clock domain must be synchronized to the system clock domain before they are used internally.
+As a reference, OpenTitan uses a 24MHz system clock to oversample data through <a class="reference external" href="https://github.com/lowRISC/opentitan/blob/master/hw/ip/i2c/rtl/i2c_core.sv#L390-L409">two flip flops</a>.</p>
+<h3 id="mixed-i2c-and-i3c-bus-5-1-1-2-3">Mixed I2C and I3C Bus (5.1.1.2.3)<a class="headerlink" href="#mixed-i2c-and-i3c-bus-5-1-1-2-3" title="Link to this heading">¶</a></h3>
+<p>This project aims to create an I3C Primary Controller which means that we want to support all possible configurations specified by the I3C Bus specification:</p>
+<ol class="arabic simple">
+<li><p><strong>Pure Bus</strong>: Only I3C Devices are present on the Bus.</p></li>
+<li><p><strong>Mixed Fast Bus</strong>: Both I3C Devices and Legacy I2C Devices are present on the Bus, such that the
+Legacy I2C Devices are restricted to ones that are generally permissible (i.e., Target-only, and no
+Target clock stretching), and that have a true I2C 50 ns Spike Filter on SCL. (I.e., I2C Devices that do not ‘see’ the SCL line as High when the High duration is less than 50 ns, across all temperatures and processes.)</p></li>
+<li><p><strong>Mixed Slow/Limited Bus</strong>: Both I3C Devices and Legacy I2C Devices are present on the Bus, such that the Legacy I2C Devices are restricted to ones that are generally permissible (i.e., Target-only, and no Target clock stretching), but that do not have a true I2C 50 ns Spike Filter on SCL.</p></li>
+</ol>
+<p>While Mixed Fast Bus configuration can operate on both I2C and I3C protocols simultaneously (with certain speed limitations), Mixed Slow/Limited Bus is based on downgrading whole bus performance to the Legacy I2C protocol.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Mixed Fast Bus scenario relies on the fact that Legacy I2C Devices are expected to support Legacy Virtual Register (LVR) through their <strong>software drivers</strong>.</p>
+</div>
+<h2 id="legacy-i2c-mode">Legacy I2C Mode<a class="headerlink" href="#legacy-i2c-mode" title="Link to this heading">¶</a></h2>
+<p>This project reuses <a class="reference external" href="https://github.com/lowRISC/opentitan/tree/master/hw/ip/i2c">the I2C module</a> developed as part of <a class="reference external" href="https://opentitan.org/">the OpenTitan Project</a>. Original documentation can be <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/index.html">found here</a>.</p>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      2024-09-03
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="introduction.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Introduction
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="dv.html" class="md-footer__link md-footer__link--next" aria-label="Next: Design verification" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Design verification
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        Copyright &#169; Antmicro, 2024.
+        
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/antmicro" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/antmicro" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
+    
+  </body>
+</html>

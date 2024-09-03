@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# =====================================
+# * SUPPORTED I3C CORE CONFIGURATIONS *
+# =====================================
+
+ahb:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  DatDepth: 128
+  DctDepth: 128
+  FrontendBusInterface: "AHB"
+  FrontendBusAddrWidth: 12
+  FrontendBusDataWidth: 64
+
+axi:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  DatDepth: 128
+  DctDepth: 128
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 12
+  FrontendBusDataWidth: 32
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 2
