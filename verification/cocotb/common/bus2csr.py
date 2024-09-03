@@ -71,6 +71,7 @@ class FrontBusTestInterface:
         self.clk = clk
         self.rst_n = rst_n
 
+
     async def register_test_interfaces(self):
         await cocotb.start(setup_dut(self.clk, self.rst_n, (2, "ns")))
 
@@ -157,6 +158,7 @@ class AXITestInterface(FrontBusTestInterface):
 
     def __init__(self, dut: SimHandleBase, data_width=32):
         super().__init__(dut, dut.aclk, dut.areset_n, data_width)
+
         # Initialize AXI bus
         axi_bus = AxiBus.from_entity(self.dut)
         self.axi_m = AxiMaster(axi_bus, self.clk, self.rst_n, reset_active_level=False)

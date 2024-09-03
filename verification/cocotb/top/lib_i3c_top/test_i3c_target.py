@@ -5,6 +5,7 @@ import logging
 from boot import boot_init
 from bus2csr import dword2int
 from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_target import I3CTarget
 
 # from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
 from interface import I3CTopTestInterface
@@ -19,17 +20,25 @@ async def test_i3c_target(dut):
     cocotb.log.setLevel(logging.DEBUG)
 
     i3c_controller = I3cController(
-        sda_i=None,
-        sda_o=dut.i3c_sda_i,
-        scl_i=None,
-        scl_o=dut.i3c_scl_i,
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_ctrl_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_ctrl_i,
+        debug_state_o=None,
+        speed=12.5e6,
+    )
+
+    i3c_target = I3CTarget(
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_target_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
         speed=12.5e6,
     )
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-    await ClockCycles(tb.clk, 20)
 
     # Configure the top level
     await boot_init(tb)

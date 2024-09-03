@@ -1,24 +1,34 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-
-from bus2csr import get_frontend_bus_if
+import cocotb
+from cocotb.triggers import ClockCycles
+from cocotb_helpers import reset_n
+from bus2csr import get_frontend_bus_if, AXITestInterface, AHBTestInterface
 from dissect.cstruct import cstruct
-from hci import HCIBaseTestInterface
-
 from cocotb.handle import SimHandleBase
+from cocotb.clock import Clock
 
+class I3CTopTestInterface:
 
-class I3CTopTestInterface(HCIBaseTestInterface):
     def __init__(self, dut: SimHandleBase) -> None:
-        super().__init__(dut, "hci")
+        self.dut = dut
+        self.bus_if_cls = get_frontend_bus_if()
         self.register_map = self.get_regs_map()
 
-    async def setup(self):
-        await self._setup(get_frontend_bus_if())
+        self.busIf = self.bus_if_cls(dut)
+        self.clk = self.busIf.clk
+        self.rst_n = self.busIf.rst_n
+        self.read_csr = self.busIf.read_csr
+        self.write_csr = self.busIf.write_csr
 
-    async def reset(self):
-        await self._reset()
+
+    async def setup(self):
+        clock = Clock(self.clk, 2, units="ns")
+        cocotb.start_soon(clock.start())
+
+        await ClockCycles(self.clk, 20)
+        await reset_n(self.clk, self.rst_n, cycles=5)
 
     def get_regs_map(self):
         """

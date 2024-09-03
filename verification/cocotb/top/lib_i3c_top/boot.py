@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from bus2csr import bytes2int, int2bytes
 from interface import I3CTopTestInterface
-
+from cocotb.triggers import ClockCycles
 import cocotb
 
 

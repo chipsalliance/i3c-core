@@ -198,16 +198,14 @@ module controller_standby_i3c
       .event_read_cmd_received_o(i3c_event_read_cmd_received_o)
   );
 
-
-
   bus_monitor xbus_monitor (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .enable_i(i3c_standby_en_i),
       .scl_i(ctrl_scl_i),
       .sda_i(ctrl_sda_i),
-      .t_hd_dat_i(thd_dat_i),  // 10
-      .t_r_i(t_r_i),  // 2
+      .t_hd_dat_i(t_hd_dat_i),
+      .t_r_i(t_r_i),
       .start_detect_o(start_detect),
       .stop_detect_o(stop_detect)
   );
