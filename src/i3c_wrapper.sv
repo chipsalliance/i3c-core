@@ -166,11 +166,11 @@ module i3c_wrapper #(
 
   i3c #(
 `ifdef I3C_USE_AHB
-      .AhbDataWidth,
-      .AhbAddrWidth,
+      .AhbDataWidth(AhbDataWidth),
+      .AhbAddrWidth(AhbAddrWidth),
 `endif
-      .CsrDataWidth,
-      .CsrAddrWidth
+      .CsrDataWidth(CsrDataWidth),
+      .CsrAddrWidth(CsrAddrWidth)
   ) i3c (
       .clk_i,
       .rst_ni,

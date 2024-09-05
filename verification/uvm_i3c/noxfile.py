@@ -41,8 +41,8 @@ def verify_uvm(
     session.install("-r", pipRequirementsPath)
     root_dir = setup_root_dir()
 
-    make_target = f"test-uvm-{simulator}"
-    args = ["make", "-C", root_dir, make_target, f"TB_FILES={tb_files}"]
+    make_targets = ["config", simulator]
+    args = ["make", "-C", root_dir, *make_targets, f"UVM_TB_FILES={tb_files}"]
 
     if uvm_testname != "":
         args.append(f"UVM_TESTNAME={uvm_testname}")

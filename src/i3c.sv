@@ -409,8 +409,8 @@ module i3c
   logic [19:0] t_bus_available;
 
   controller #(
-      .DatAw,
-      .DctAw
+      .DatAw(DatAw),
+      .DctAw(DctAw)
   ) xcontroller (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -530,34 +530,34 @@ module i3c
   );
 
   hci #(
-      .CsrAddrWidth,
-      .CsrDataWidth,
-      .HciRespFifoDepth,
-      .HciCmdFifoDepth,
-      .HciRxFifoDepth,
-      .HciTxFifoDepth,
-      .HciIbiFifoDepth,
-      .HciRespDataWidth,
-      .HciCmdDataWidth,
-      .HciRxDataWidth,
-      .HciTxDataWidth,
-      .HciRespThldWidth,
-      .HciCmdThldWidth,
-      .HciRxThldWidth,
-      .HciTxThldWidth,
-      .TtiRespFifoDepth,
-      .TtiCmdFifoDepth,
-      .TtiRxFifoDepth,
-      .TtiTxFifoDepth,
-      .TtiIbiFifoDepth,
-      .TtiRxDescDataWidth,
-      .TtiTxDescDataWidth,
-      .TtiRxDataWidth,
-      .TtiTxDataWidth,
-      .TtiRxDescThldWidth,
-      .TtiTxDescThldWidth,
-      .TtiRxThldWidth,
-      .TtiTxThldWidth
+      .CsrAddrWidth(CsrAddrWidth),
+      .CsrDataWidth(CsrDataWidth),
+      .HciRespFifoDepth(HciRespFifoDepth),
+      .HciCmdFifoDepth(HciCmdFifoDepth),
+      .HciRxFifoDepth(HciRxFifoDepth),
+      .HciTxFifoDepth(HciTxFifoDepth),
+      .HciIbiFifoDepth(HciIbiFifoDepth),
+      .HciRespDataWidth(HciRespDataWidth),
+      .HciCmdDataWidth(HciCmdDataWidth),
+      .HciRxDataWidth(HciRxDataWidth),
+      .HciTxDataWidth(HciTxDataWidth),
+      .HciRespThldWidth(HciRespThldWidth),
+      .HciCmdThldWidth(HciCmdThldWidth),
+      .HciRxThldWidth(HciRxThldWidth),
+      .HciTxThldWidth(HciTxThldWidth),
+      .TtiRespFifoDepth(TtiRespFifoDepth),
+      .TtiCmdFifoDepth(TtiCmdFifoDepth),
+      .TtiRxFifoDepth(TtiRxFifoDepth),
+      .TtiTxFifoDepth(TtiTxFifoDepth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth),
+      .TtiRxDescDataWidth(TtiRxDescDataWidth),
+      .TtiTxDescDataWidth(TtiTxDescDataWidth),
+      .TtiRxDataWidth(TtiRxDataWidth),
+      .TtiTxDataWidth(TtiTxDataWidth),
+      .TtiRxDescThldWidth(TtiRxDescThldWidth),
+      .TtiTxDescThldWidth(TtiTxDescThldWidth),
+      .TtiRxThldWidth(TtiRxThldWidth),
+      .TtiTxThldWidth(TtiTxThldWidth)
   ) xhci (
       .clk_i,
       .rst_ni,

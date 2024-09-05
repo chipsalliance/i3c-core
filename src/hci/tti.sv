@@ -196,7 +196,7 @@ module tti
       unused_tx_reg_rst_data;
 
   queues #(
-      .CsrDataWidth,
+      .CsrDataWidth(CsrDataWidth),
 
       .TxDescFifoDepth(TxDescFifoDepth),
       .RxDescFifoDepth(RxDescFifoDepth),
@@ -303,7 +303,7 @@ module tti
   end
 
   write_queue #(
-      .CsrDataWidth,
+      .CsrDataWidth(CsrDataWidth),
       .Depth(IbiFifoDepth),
       .DataWidth(IbiDataWidth),
       .ThldWidth(IbiThldWidth),

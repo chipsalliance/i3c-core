@@ -122,7 +122,7 @@ module queues #(
   );
 
   write_queue #(
-      .CsrDataWidth,
+      .CsrDataWidth(CsrDataWidth),
       .Depth(TxDescFifoDepth),
       .DataWidth(TxDescFifoDataWidth),
       .ThldWidth(TxDescFifoThldWidth),
@@ -177,7 +177,7 @@ module queues #(
   );
 
   write_queue #(
-      .CsrDataWidth,
+      .CsrDataWidth(CsrDataWidth),
       .Depth(TxFifoDepth),
       .DataWidth(TxFifoDataWidth),
       .ThldWidth(TxFifoThldWidth),

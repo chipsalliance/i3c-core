@@ -105,14 +105,14 @@ module controller_standby
   end
 
   controller_standby_i2c #(
-      .TtiRxDescDataWidth,
-      .TtiTxDescDataWidth,
-      .TtiRxDataWidth,
-      .TtiTxDataWidth,
-      .TtiRxDescThldWidth,
-      .TtiTxDescThldWidth,
-      .TtiRxThldWidth,
-      .TtiTxThldWidth
+      .TtiRxDescDataWidth(TtiRxDescDataWidth),
+      .TtiTxDescDataWidth(TtiTxDescDataWidth),
+      .TtiRxDataWidth(TtiRxDataWidth),
+      .TtiTxDataWidth(TtiTxDataWidth),
+      .TtiRxDescThldWidth(TtiRxDescThldWidth),
+      .TtiTxDescThldWidth(TtiTxDescThldWidth),
+      .TtiRxThldWidth(TtiRxThldWidth),
+      .TtiTxThldWidth(TtiTxThldWidth)
   ) xcontroller_standby_i2c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -167,14 +167,14 @@ module controller_standby
 
 
   controller_standby_i3c #(
-      .TtiRxDescDataWidth,
-      .TtiTxDescDataWidth,
-      .TtiRxDataWidth,
-      .TtiTxDataWidth,
-      .TtiRxDescThldWidth,
-      .TtiTxDescThldWidth,
-      .TtiRxThldWidth,
-      .TtiTxThldWidth
+      .TtiRxDescDataWidth(TtiRxDescDataWidth),
+      .TtiTxDescDataWidth(TtiTxDescDataWidth),
+      .TtiRxDataWidth(TtiRxDataWidth),
+      .TtiTxDataWidth(TtiTxDataWidth),
+      .TtiRxDescThldWidth(TtiRxDescThldWidth),
+      .TtiTxDescThldWidth(TtiTxDescThldWidth),
+      .TtiRxThldWidth(TtiRxThldWidth),
+      .TtiTxThldWidth(TtiTxThldWidth)
   ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),

@@ -378,8 +378,8 @@ module hci
   );
 
   dxt #(
-      .DatAw,
-      .DctAw
+      .DatAw(DatAw),
+      .DctAw(DctAw)
   ) dxt (
       .clk_i,  // clock
       .rst_ni,  // active low reset
@@ -515,7 +515,7 @@ module hci
   );
 
   tti #(
-      .CsrDataWidth,
+      .CsrDataWidth(CsrDataWidth),
 
       .TxDescFifoDepth(TtiRespFifoDepth),
       .RxDescFifoDepth(TtiCmdFifoDepth),
