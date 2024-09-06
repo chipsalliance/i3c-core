@@ -532,6 +532,8 @@ module i3c
   hci #(
       .CsrAddrWidth(CsrAddrWidth),
       .CsrDataWidth(CsrDataWidth),
+      .DatAw(DatAw),
+      .DctAw(DctAw),
       .HciRespFifoDepth(HciRespFifoDepth),
       .HciCmdFifoDepth(HciCmdFifoDepth),
       .HciRxFifoDepth(HciRxFifoDepth),

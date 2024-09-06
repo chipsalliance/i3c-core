@@ -4,8 +4,8 @@
 module hci
   import i3c_pkg::*;
 #(
-    parameter int unsigned DatAw = 8,
-    parameter int unsigned DctAw = 8,
+    parameter int unsigned DatAw = 7,
+    parameter int unsigned DctAw = 7,
 
     parameter int unsigned CsrDataWidth = 32,
     parameter int unsigned CsrAddrWidth = 12,

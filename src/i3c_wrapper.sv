@@ -156,6 +156,17 @@ module i3c_wrapper #(
   end
 `endif
 
+  initial begin : dxt_w_check
+    if (DatAw != i3c_pkg::DatAw) begin
+      $warning({"I3C is configured with DatAw=%0d but got DatAw=%0d in `i3c_wrapper`.",
+                "Consider reconfiguring the I3C core."}, i3c_pkg::DatAw, DatAw);
+    end
+    if (DctAw != i3c_pkg::DctAw) begin
+      $warning({"I3C is configured with DctAw=%0d but got DctAw=%0d in `i3c_wrapper`.",
+                "Consider reconfiguring the I3C core."}, i3c_pkg::DctAw, DctAw);
+    end
+  end
+
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t  dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
@@ -170,7 +181,9 @@ module i3c_wrapper #(
       .AhbAddrWidth(AhbAddrWidth),
 `endif
       .CsrDataWidth(CsrDataWidth),
-      .CsrAddrWidth(CsrAddrWidth)
+      .CsrAddrWidth(CsrAddrWidth),
+      .DatAw(DatAw),
+      .DctAw(DctAw)
   ) i3c (
       .clk_i,
       .rst_ni,
