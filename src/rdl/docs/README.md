@@ -681,7 +681,8 @@ Don't override. Generated from: I3CCSR
 |------|----------------------|-------------------------------------------------------------------------------------------------|
 | 0x00 |     COMMAND_PORT     |                                        Command issue port                                       |
 | 0x04 |     RESPONSE_PORT    |                                      Command response port                                      |
-| 0x08 |    XFER_DATA_PORT    |                                         Data access port                                        |
+| 0x08 |     TX_DATA_PORT     |                                   Transferred data access port                                  |
+| 0x08 |     RX_DATA_PORT     |                                    Received data access port                                    |
 | 0x0C |       IBI_PORT       |                                    IBI descriptor access port                                   |
 | 0x10 |    QUEUE_THLD_CTRL   |The Queue Threshold Control register for the Command Queue, the Response Queue, and the IBI Queue|
 | 0x14 | DATA_BUFFER_THLD_CTRL|                                  RX/TX queue threshold control                                  |
@@ -713,7 +714,7 @@ Don't override. Generated from: I3CCSR
 |----|-------------|------|-----|-------------------|
 |31:0|RESPONSE_DATA|   r  |  —  |RESPONSE_QUEUE_PORT|
 
-### XFER_DATA_PORT register
+### TX_DATA_PORT register
 
 - Absolute Address: 0x88
 - Base Offset: 0x8
@@ -722,6 +723,15 @@ Don't override. Generated from: I3CCSR
 |Bits|Identifier|Access|Reset|  Name |
 |----|----------|------|-----|-------|
 |31:0|  TX_DATA |   w  |  —  |TX_DATA|
+
+### RX_DATA_PORT register
+
+- Absolute Address: 0x88
+- Base Offset: 0x8
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|  Name |
+|----|----------|------|-----|-------|
 |31:0|  RX_DATA |   r  |  —  |RX_DATA|
 
 ### IBI_PORT register

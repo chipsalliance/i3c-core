@@ -585,8 +585,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__PIOCONTROL__XFER_DATA_PORT COVERGROUPS -----------------------*/
-    covergroup I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__PIOCONTROL__TX_DATA_PORT COVERGROUPS -----------------------*/
+    covergroup I3CCSR__PIOControl__TX_DATA_PORT_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -597,12 +597,30 @@
         }
 
     endgroup
-    covergroup I3CCSR__PIOControl__XFER_DATA_PORT_fld_cg with function sample(
-    input bit [32-1:0] TX_DATA,
-    input bit [32-1:0] RX_DATA
+    covergroup I3CCSR__PIOControl__TX_DATA_PORT_fld_cg with function sample(
+    input bit [32-1:0] TX_DATA
     );
         option.per_instance = 1;
         TX_DATA_cp : coverpoint TX_DATA;
+
+    endgroup
+
+    /*----------------------- I3CCSR__PIOCONTROL__RX_DATA_PORT COVERGROUPS -----------------------*/
+    covergroup I3CCSR__PIOControl__RX_DATA_PORT_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__PIOControl__RX_DATA_PORT_fld_cg with function sample(
+    input bit [32-1:0] RX_DATA
+    );
+        option.per_instance = 1;
         RX_DATA_cp : coverpoint RX_DATA;
 
     endgroup

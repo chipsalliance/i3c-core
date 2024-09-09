@@ -152,15 +152,18 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__RESPONSE_PORT__fields__in_t rd_data;
     } I3CCSR__PIOControl__RESPONSE_PORT__in_t;
 
+    typedef struct packed{
+        logic wr_ack;
+    } I3CCSR__PIOControl__TX_DATA_PORT__in_t;
+
     typedef struct packed {
         logic [31:0] RX_DATA;
-    } I3CCSR__PIOControl__XFER_DATA_PORT__fields__in_t;
+    } I3CCSR__PIOControl__RX_DATA_PORT__fields__in_t;
 
     typedef struct packed{
         logic rd_ack;
-        I3CCSR__PIOControl__XFER_DATA_PORT__fields__in_t rd_data;
-        logic wr_ack;
-    } I3CCSR__PIOControl__XFER_DATA_PORT__in_t;
+        I3CCSR__PIOControl__RX_DATA_PORT__fields__in_t rd_data;
+    } I3CCSR__PIOControl__RX_DATA_PORT__in_t;
 
     typedef struct packed {
         logic IBI_DATA;
@@ -228,7 +231,8 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__PIOControl__COMMAND_PORT__in_t COMMAND_PORT;
         I3CCSR__PIOControl__RESPONSE_PORT__in_t RESPONSE_PORT;
-        I3CCSR__PIOControl__XFER_DATA_PORT__in_t XFER_DATA_PORT;
+        I3CCSR__PIOControl__TX_DATA_PORT__in_t TX_DATA_PORT;
+        I3CCSR__PIOControl__RX_DATA_PORT__in_t RX_DATA_PORT;
         I3CCSR__PIOControl__IBI_PORT__in_t IBI_PORT;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__in_t QUEUE_THLD_CTRL;
         I3CCSR__PIOControl__PIO_INTR_STATUS__in_t PIO_INTR_STATUS;
@@ -1493,14 +1497,19 @@ package I3CCSR_pkg;
 
     typedef struct packed {
         logic [31:0] TX_DATA;
-    } I3CCSR__PIOControl__XFER_DATA_PORT__fields__out_t;
+    } I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t;
 
     typedef struct packed{
         logic req;
         logic req_is_wr;
-        I3CCSR__PIOControl__XFER_DATA_PORT__fields__out_t wr_data;
-        I3CCSR__PIOControl__XFER_DATA_PORT__fields__out_t wr_biten;
-    } I3CCSR__PIOControl__XFER_DATA_PORT__out_t;
+        I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t wr_data;
+        I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t wr_biten;
+    } I3CCSR__PIOControl__TX_DATA_PORT__out_t;
+
+    typedef struct packed{
+        logic req;
+        logic req_is_wr;
+    } I3CCSR__PIOControl__RX_DATA_PORT__out_t;
 
     typedef struct packed{
         logic req;
@@ -1618,7 +1627,8 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__PIOControl__COMMAND_PORT__out_t COMMAND_PORT;
         I3CCSR__PIOControl__RESPONSE_PORT__out_t RESPONSE_PORT;
-        I3CCSR__PIOControl__XFER_DATA_PORT__out_t XFER_DATA_PORT;
+        I3CCSR__PIOControl__TX_DATA_PORT__out_t TX_DATA_PORT;
+        I3CCSR__PIOControl__RX_DATA_PORT__out_t RX_DATA_PORT;
         I3CCSR__PIOControl__IBI_PORT__out_t IBI_PORT;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__out_t QUEUE_THLD_CTRL;
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__out_t DATA_BUFFER_THLD_CTRL;

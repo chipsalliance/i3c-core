@@ -109,7 +109,8 @@ module I3CCSR (
         struct packed{
             logic COMMAND_PORT;
             logic RESPONSE_PORT;
-            logic XFER_DATA_PORT;
+            logic TX_DATA_PORT;
+            logic RX_DATA_PORT;
             logic IBI_PORT;
             logic QUEUE_THLD_CTRL;
             logic DATA_BUFFER_THLD_CTRL;
@@ -259,8 +260,10 @@ module I3CCSR (
         is_external |= cpuif_req_masked & (cpuif_addr == 12'h80) & cpuif_req_is_wr;
         decoded_reg_strb.PIOControl.RESPONSE_PORT = cpuif_req_masked & (cpuif_addr == 12'h84);
         is_external |= cpuif_req_masked & (cpuif_addr == 12'h84) & !cpuif_req_is_wr;
-        decoded_reg_strb.PIOControl.XFER_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h88);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h88);
+        decoded_reg_strb.PIOControl.TX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h88);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h88) & cpuif_req_is_wr;
+        decoded_reg_strb.PIOControl.RX_DATA_PORT = cpuif_req_masked & (cpuif_addr == 12'h88);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h88) & !cpuif_req_is_wr;
         decoded_reg_strb.PIOControl.IBI_PORT = cpuif_req_masked & (cpuif_addr == 12'h8c);
         is_external |= cpuif_req_masked & (cpuif_addr == 12'h8c) & !cpuif_req_is_wr;
         decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL = cpuif_req_masked & (cpuif_addr == 12'h90);
@@ -3562,10 +3565,13 @@ module I3CCSR (
     assign hwif_out.PIOControl.RESPONSE_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.PIOControl.RESPONSE_PORT : '0;
     assign hwif_out.PIOControl.RESPONSE_PORT.req_is_wr = decoded_req_is_wr;
 
-    assign hwif_out.PIOControl.XFER_DATA_PORT.req = decoded_reg_strb.PIOControl.XFER_DATA_PORT;
-    assign hwif_out.PIOControl.XFER_DATA_PORT.req_is_wr = decoded_req_is_wr;
-    assign hwif_out.PIOControl.XFER_DATA_PORT.wr_data = decoded_wr_data;
-    assign hwif_out.PIOControl.XFER_DATA_PORT.wr_biten = decoded_wr_biten;
+    assign hwif_out.PIOControl.TX_DATA_PORT.req = decoded_req_is_wr ? decoded_reg_strb.PIOControl.TX_DATA_PORT : '0;
+    assign hwif_out.PIOControl.TX_DATA_PORT.req_is_wr = decoded_req_is_wr;
+    assign hwif_out.PIOControl.TX_DATA_PORT.wr_data = decoded_wr_data;
+    assign hwif_out.PIOControl.TX_DATA_PORT.wr_biten = decoded_wr_biten;
+
+    assign hwif_out.PIOControl.RX_DATA_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.PIOControl.RX_DATA_PORT : '0;
+    assign hwif_out.PIOControl.RX_DATA_PORT.req_is_wr = decoded_req_is_wr;
 
     assign hwif_out.PIOControl.IBI_PORT.req = !decoded_req_is_wr ? decoded_reg_strb.PIOControl.IBI_PORT : '0;
     assign hwif_out.PIOControl.IBI_PORT.req_is_wr = decoded_req_is_wr;
@@ -8322,7 +8328,7 @@ module I3CCSR (
         automatic logic wr_ack;
         wr_ack = '0;
         wr_ack |= hwif_in.PIOControl.COMMAND_PORT.wr_ack;
-        wr_ack |= hwif_in.PIOControl.XFER_DATA_PORT.wr_ack;
+        wr_ack |= hwif_in.PIOControl.TX_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack;
@@ -8342,7 +8348,7 @@ module I3CCSR (
         automatic logic rd_ack;
         rd_ack = '0;
         rd_ack |= hwif_in.PIOControl.RESPONSE_PORT.rd_ack;
-        rd_ack |= hwif_in.PIOControl.XFER_DATA_PORT.rd_ack;
+        rd_ack |= hwif_in.PIOControl.RX_DATA_PORT.rd_ack;
         rd_ack |= hwif_in.PIOControl.IBI_PORT.rd_ack;
         rd_ack |= hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack;
         rd_ack |= hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack;
@@ -8467,7 +8473,7 @@ module I3CCSR (
     assign readback_array[19][30:16] = '0;
     assign readback_array[19][31:31] = (decoded_reg_strb.I3CBase.DEV_CTX_SG && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[20] = hwif_in.PIOControl.RESPONSE_PORT.rd_ack ? hwif_in.PIOControl.RESPONSE_PORT.rd_data : '0;
-    assign readback_array[21] = hwif_in.PIOControl.XFER_DATA_PORT.rd_ack ? hwif_in.PIOControl.XFER_DATA_PORT.rd_data : '0;
+    assign readback_array[21] = hwif_in.PIOControl.RX_DATA_PORT.rd_ack ? hwif_in.PIOControl.RX_DATA_PORT.rd_data : '0;
     assign readback_array[22] = hwif_in.PIOControl.IBI_PORT.rd_ack ? hwif_in.PIOControl.IBI_PORT.rd_data : '0;
     assign readback_array[23][7:0] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value : '0;
     assign readback_array[23][15:8] = (decoded_reg_strb.PIOControl.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value : '0;

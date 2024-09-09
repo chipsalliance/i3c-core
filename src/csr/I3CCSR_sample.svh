@@ -700,8 +700,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__PIOCONTROL__XFER_DATA_PORT SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__PIOControl__XFER_DATA_PORT::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__PIOCONTROL__TX_DATA_PORT SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__PIOControl__TX_DATA_PORT::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -710,20 +710,43 @@
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(TX_DATA_bit_cg[bt]) this.TX_DATA_bit_cg[bt].sample(data[0 + bt]);
-            foreach(RX_DATA_bit_cg[bt]) this.RX_DATA_bit_cg[bt].sample(data[0 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*TX_DATA*/  ,  data[31:0]/*RX_DATA*/   );
+            this.fld_cg.sample( data[31:0]/*TX_DATA*/   );
         end
     endfunction
 
-    function void I3CCSR__PIOControl__XFER_DATA_PORT::sample_values();
+    function void I3CCSR__PIOControl__TX_DATA_PORT::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(TX_DATA_bit_cg[bt]) this.TX_DATA_bit_cg[bt].sample(TX_DATA.get_mirrored_value() >> bt);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( TX_DATA.get_mirrored_value()   );
+        end
+    endfunction
+
+    /*----------------------- I3CCSR__PIOCONTROL__RX_DATA_PORT SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__PIOControl__RX_DATA_PORT::sample(uvm_reg_data_t  data,
+                                                   uvm_reg_data_t  byte_en,
+                                                   bit             is_read,
+                                                   uvm_reg_map     map);
+        m_current = get();
+        m_data    = data;
+        m_is_read = is_read;
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(RX_DATA_bit_cg[bt]) this.RX_DATA_bit_cg[bt].sample(data[0 + bt]);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( data[31:0]/*RX_DATA*/   );
+        end
+    endfunction
+
+    function void I3CCSR__PIOControl__RX_DATA_PORT::sample_values();
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(RX_DATA_bit_cg[bt]) this.RX_DATA_bit_cg[bt].sample(RX_DATA.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( TX_DATA.get_mirrored_value()  ,  RX_DATA.get_mirrored_value()   );
+            this.fld_cg.sample( RX_DATA.get_mirrored_value()   );
         end
     endfunction
 

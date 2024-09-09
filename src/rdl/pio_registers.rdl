@@ -28,18 +28,21 @@ regfile PIORegs #(
         } RESPONSE_DATA[31:0];
     } RESPONSE_PORT @ 0x4;
     external reg {
-        name = "Data access port";
+        name = "Transferred data access port";
         field {
             name = "TX_DATA";
             sw = w;
             hw = r;
         } TX_DATA[31:0];
+    } TX_DATA_PORT @ 0x8;
+    external reg {
+        name = "Received data access port";
         field {
             name = "RX_DATA";
             sw = r;
             hw = w;
         } RX_DATA[31:0];
-    } XFER_DATA_PORT @ 0x8;
+    } RX_DATA_PORT @ 0x8;
     external reg {
         name = "IBI descriptor access port";
         field {

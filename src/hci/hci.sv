@@ -238,11 +238,11 @@ module hci
   logic xfer_req_is_wr;  // TX iff true, otherwise RX
 
   logic rx_req;  // Write RX data to the RX_PORT request
-  logic rx_rd_ack;  // XFER_DATA_PORT drives valid RX data
+  logic rx_rd_ack;  // RX_DATA_PORT drives valid RX data
   logic [HciRxDataWidth-1:0] rx_rd_data;  // RX data read from the rx_fifo to be put to RX port
 
   logic tx_req;  // Read TX data from the TX_PORT request
-  logic tx_wr_ack;  // Feedback to the XFER_DATA_PORT; data has been read from TX port
+  logic tx_wr_ack;  // Feedback to the TX_DATA_PORT; data has been read from TX port
   logic [CsrDataWidth-1:0] tx_wr_data;  // TX data to be put in tx_fifo
 
   logic resp_req;  // Write response to the RESPONSE_PORT request
@@ -301,8 +301,9 @@ module hci
     // HCI queue port handling
 
     // HCI PIOControl ports requests
-    xfer_req = hwif_out.PIOControl.XFER_DATA_PORT.req;
-    xfer_req_is_wr = hwif_out.PIOControl.XFER_DATA_PORT.req_is_wr;
+    xfer_req = hwif_out.PIOControl.RX_DATA_PORT.req | hwif_out.PIOControl.TX_DATA_PORT.req;
+    xfer_req_is_wr = hwif_out.PIOControl.RX_DATA_PORT.req_is_wr
+      | hwif_out.PIOControl.TX_DATA_PORT.req_is_wr;
 
     cmd_req = hwif_out.PIOControl.COMMAND_PORT.req & hwif_out.PIOControl.COMMAND_PORT.req_is_wr;
     rx_req = xfer_req && !xfer_req_is_wr;
@@ -314,12 +315,12 @@ module hci
     cmd_wr_data = hwif_out.PIOControl.COMMAND_PORT.wr_data;
 
     // Writing data to the rx port
-    hwif_in.PIOControl.XFER_DATA_PORT.rd_ack = rx_rd_ack;
-    hwif_in.PIOControl.XFER_DATA_PORT.rd_data = rx_rd_data;
+    hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
+    hwif_in.PIOControl.RX_DATA_PORT.rd_data = rx_rd_data;
 
     // Reading data from the tx port
-    hwif_in.PIOControl.XFER_DATA_PORT.wr_ack = tx_wr_ack;
-    tx_wr_data = hwif_out.PIOControl.XFER_DATA_PORT.wr_data;
+    hwif_in.PIOControl.TX_DATA_PORT.wr_ack = tx_wr_ack;
+    tx_wr_data = hwif_out.PIOControl.TX_DATA_PORT.wr_data;
 
     // Writing response to the resp port
     hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;

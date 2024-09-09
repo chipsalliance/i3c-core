@@ -1107,19 +1107,17 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__PIOControl__RESPONSE_PORT
 
-    // Reg - I3CCSR.PIOControl.XFER_DATA_PORT
-    class I3CCSR__PIOControl__XFER_DATA_PORT extends uvm_reg;
+    // Reg - I3CCSR.PIOControl.TX_DATA_PORT
+    class I3CCSR__PIOControl__TX_DATA_PORT extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg TX_DATA_bit_cg[32];
-        I3CCSR__PIOControl__XFER_DATA_PORT_bit_cg RX_DATA_bit_cg[32];
-        I3CCSR__PIOControl__XFER_DATA_PORT_fld_cg fld_cg;
+        I3CCSR__PIOControl__TX_DATA_PORT_bit_cg TX_DATA_bit_cg[32];
+        I3CCSR__PIOControl__TX_DATA_PORT_fld_cg fld_cg;
         rand uvm_reg_field TX_DATA;
-        rand uvm_reg_field RX_DATA;
 
-        function new(string name = "I3CCSR__PIOControl__XFER_DATA_PORT");
+        function new(string name = "I3CCSR__PIOControl__TX_DATA_PORT");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -1131,16 +1129,43 @@ package I3CCSR_uvm;
         virtual function void build();
             this.TX_DATA = new("TX_DATA");
             this.TX_DATA.configure(this, 32, 0, "WO", 0, 'h0, 0, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(TX_DATA_bit_cg[bt]) TX_DATA_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__PIOControl__TX_DATA_PORT
+
+    // Reg - I3CCSR.PIOControl.RX_DATA_PORT
+    class I3CCSR__PIOControl__RX_DATA_PORT extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__PIOControl__RX_DATA_PORT_bit_cg RX_DATA_bit_cg[32];
+        I3CCSR__PIOControl__RX_DATA_PORT_fld_cg fld_cg;
+        rand uvm_reg_field RX_DATA;
+
+        function new(string name = "I3CCSR__PIOControl__RX_DATA_PORT");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
             this.RX_DATA = new("RX_DATA");
             this.RX_DATA.configure(this, 32, 0, "RO", 1, 'h0, 0, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(TX_DATA_bit_cg[bt]) TX_DATA_bit_cg[bt] = new();
                 foreach(RX_DATA_bit_cg[bt]) RX_DATA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__PIOControl__XFER_DATA_PORT
+    endclass : I3CCSR__PIOControl__RX_DATA_PORT
 
     // Reg - I3CCSR.PIOControl.IBI_PORT
     class I3CCSR__PIOControl__IBI_PORT extends uvm_reg;
@@ -1631,7 +1656,8 @@ package I3CCSR_uvm;
     class I3CCSR__PIOControl extends uvm_reg_block;
         rand I3CCSR__PIOControl__COMMAND_PORT COMMAND_PORT;
         rand I3CCSR__PIOControl__RESPONSE_PORT RESPONSE_PORT;
-        rand I3CCSR__PIOControl__XFER_DATA_PORT XFER_DATA_PORT;
+        rand I3CCSR__PIOControl__TX_DATA_PORT TX_DATA_PORT;
+        rand I3CCSR__PIOControl__RX_DATA_PORT RX_DATA_PORT;
         rand I3CCSR__PIOControl__IBI_PORT IBI_PORT;
         rand I3CCSR__PIOControl__QUEUE_THLD_CTRL QUEUE_THLD_CTRL;
         rand I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL DATA_BUFFER_THLD_CTRL;
@@ -1659,11 +1685,16 @@ package I3CCSR_uvm;
 
             this.RESPONSE_PORT.build();
             this.default_map.add_reg(this.RESPONSE_PORT, 'h4);
-            this.XFER_DATA_PORT = new("XFER_DATA_PORT");
-            this.XFER_DATA_PORT.configure(this);
+            this.TX_DATA_PORT = new("TX_DATA_PORT");
+            this.TX_DATA_PORT.configure(this);
 
-            this.XFER_DATA_PORT.build();
-            this.default_map.add_reg(this.XFER_DATA_PORT, 'h8);
+            this.TX_DATA_PORT.build();
+            this.default_map.add_reg(this.TX_DATA_PORT, 'h8);
+            this.RX_DATA_PORT = new("RX_DATA_PORT");
+            this.RX_DATA_PORT.configure(this);
+
+            this.RX_DATA_PORT.build();
+            this.default_map.add_reg(this.RX_DATA_PORT, 'h8);
             this.IBI_PORT = new("IBI_PORT");
             this.IBI_PORT.configure(this);
 
