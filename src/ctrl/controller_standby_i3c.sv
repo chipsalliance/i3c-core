@@ -121,12 +121,6 @@ module controller_standby_i3c
   logic i3c_bus_timeout_i;
   logic i3c_target_idle_o;
   logic i3c_target_transmitting_o;
-  logic i3c_tx_fifo_rvalid_i;
-  logic i3c_tx_fifo_rready_o;
-  logic [TtiTxDataWidth-1:0] i3c_tx_fifo_rdata_i;
-  logic i3c_rx_fifo_wvalid_o;
-  logic [TtiRxDataWidth-1:0] i3c_rx_fifo_wdata_o;
-  logic i3c_rx_fifo_wready_i;
 
   logic i3c_event_target_nack_o;
   logic i3c_event_cmd_complete_o;

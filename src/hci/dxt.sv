@@ -46,7 +46,6 @@ module dxt
   logic [DatAw-1:0] dat_addr;
   logic [63:0] dat_wdata;
   logic [63:0] dat_wmask;
-  logic [63:0] dat_rdata;
   logic [DatAw-1:0] dat_index_sw;
   logic dat_word_index_sw;
 
@@ -129,7 +128,6 @@ module dxt
   logic [DctAw-1:0] dct_addr;
   logic [127:0] dct_wdata;
   logic [127:0] dct_wmask;
-  logic [127:0] dct_rdata;
   logic [DctAw-1:0] dct_index_sw;
   logic [1:0] dct_word_index_sw;
 

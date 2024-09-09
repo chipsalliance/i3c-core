@@ -124,7 +124,7 @@ module i3c_target_fsm
 
   logic [7:0] input_byte;  // register for reads from host
   logic       input_byte_clr;  // clear input_byte contents
-  logic       nack_timeout;
+  // logic       nack_timeout;
   logic       expect_stop;
 
   // Target bit counter variables

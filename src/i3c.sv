@@ -177,12 +177,6 @@ module i3c
 
     // TODO: Add interrupts
 );
-  // IOs between PHY and I3C bus
-  logic                          scl_o;
-  logic                          scl_en_o;
-
-  logic                          sda_o;
-  logic                          sda_en_o;
 
   // I3C SW CSR IF
   logic                          s_cpuif_req;

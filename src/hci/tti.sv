@@ -116,7 +116,6 @@ module tti
   logic [TxDescDataWidth-1:0] tx_desc_queue_wr_data;
 
   logic rx_queue_req;
-  logic [RxDataWidth-1:0] rx_queue_rd_data;
 
   logic tx_queue_req;
   logic tx_queue_req_is_wr;
@@ -183,17 +182,7 @@ module tti
     tx_queue_rst = hwif_out_i.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value;
   end : wire_hwif_rst
 
-  logic
-      unused_rx_desc_start_thld_trig,
-      unused_rx_desc_reg_rst_we,
-      unused_rx_desc_reg_rst_data,
-      unused_tx_desc_start_thld_trig,
-      unused_tx_desc_reg_rst_we,
-      unused_tx_desc_reg_rst_data,
-      unused_rx_reg_rst_we,
-      unused_rx_reg_rst_data,
-      unused_tx_reg_rst_we,
-      unused_tx_reg_rst_data;
+  logic unused_rx_desc_start_thld_trig, unused_tx_desc_start_thld_trig;
 
   queues #(
       .CsrDataWidth(CsrDataWidth),
@@ -286,7 +275,6 @@ module tti
   );
 
   // In-band Interrupt queue
-  logic unused_ibi_start_thld_trig;
   logic [IbiThldWidth-1:0] ibi_queue_ready_thld;
   logic ibi_queue_rst;
   logic ibi_queue_req;

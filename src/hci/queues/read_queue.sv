@@ -48,14 +48,10 @@ module read_queue #(
 
   logic rst;
   logic fifo_clr;
-  logic fifo_wvalid;
-  logic fifo_wready;
-  logic [DataWidth-1:0] fifo_wdata;
   logic [FifoDepthWidth-1:0] fifo_depth;
   logic fifo_rvalid;
   logic fifo_rready;
   logic [DataWidth-1:0] fifo_rdata;
-  logic fifo_full;
 
   logic [FifoDepthWidth-1:0] empty_entries;
 
