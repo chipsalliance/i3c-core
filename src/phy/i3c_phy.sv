@@ -2,6 +2,9 @@
 
 `timescale 1ns / 1ps
 
+/*
+    This module provides synchronization of {sda,scl} signals to the system clock.
+*/
 module i3c_phy (
     input logic clk_i,
     input logic rst_ni,

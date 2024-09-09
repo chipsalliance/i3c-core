@@ -2,6 +2,24 @@
 
 `include "i3c_defines.svh"
 
+/*
+    This module is the top level view of the I3C Controller without the I3C bus I/O integration.
+
+    The interfaces of this module are:
+      - configurable frontend bus: either AXI or AHB
+      - I3C bus connections
+      - DCT/DAT Memory interfaces
+      - interrupts
+
+    The I3C bus connections are modeled by 3 pins:
+      - i3c_{scl|sda}_i: Input from the bus
+      - i3c_{scl|sda}_o: Output to the bus
+      - i3c_{scl|sda}_en_o: Tri-state buffer enable
+
+    The benefits of modelling the tristate bus this way are:
+      - enables verification with Verilator, which is a 2-state simulator ('z' and 'x' are not handled)
+      - simplifies development of FPGA designs (FPGA fabric does not implement tri-state buffers; typically, they are only available as chip I/O)
+*/
 module i3c
   import i3c_pkg::*;
   import controller_pkg::*;
@@ -157,7 +175,7 @@ module i3c
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o
 
-    // TODO: Check if anything missing; Interrupts?
+    // TODO: Add interrupts
 );
   // IOs between PHY and I3C bus
   logic                          scl_o;

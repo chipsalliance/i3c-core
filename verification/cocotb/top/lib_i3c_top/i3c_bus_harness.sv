@@ -23,8 +23,4 @@ module i3c_bus_harness #(
   assign sda_o = &sda_i;
   assign scl_o = &scl_i;
 
-  wire test;
-
-  assign test = &sda_i;
-
 endmodule

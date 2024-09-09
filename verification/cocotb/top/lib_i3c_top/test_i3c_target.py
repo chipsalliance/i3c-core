@@ -6,8 +6,6 @@ from boot import boot_init
 from bus2csr import dword2int
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
-
-# from hci import TTI_INTERRUPT_STATUS, TTI_RX_DATA_PORT
 from interface import I3CTopTestInterface
 
 import cocotb
@@ -28,7 +26,7 @@ async def test_i3c_target(dut):
         speed=12.5e6,
     )
 
-    i3c_target = I3CTarget(
+    i3c_target = I3CTarget(  # noqa
         sda_i=dut.bus_sda,
         sda_o=dut.sda_sim_target_i,
         scl_i=dut.bus_scl,

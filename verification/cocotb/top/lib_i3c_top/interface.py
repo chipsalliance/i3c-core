@@ -1,13 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import cocotb
-from cocotb.triggers import ClockCycles
+
+from bus2csr import get_frontend_bus_if
 from cocotb_helpers import reset_n
-from bus2csr import get_frontend_bus_if, AXITestInterface, AHBTestInterface
 from dissect.cstruct import cstruct
-from cocotb.handle import SimHandleBase
+
+import cocotb
 from cocotb.clock import Clock
+from cocotb.handle import SimHandleBase
+from cocotb.triggers import ClockCycles
+
 
 class I3CTopTestInterface:
 
@@ -22,8 +25,8 @@ class I3CTopTestInterface:
         self.read_csr = self.busIf.read_csr
         self.write_csr = self.busIf.write_csr
 
-
     async def setup(self):
+        await self.busIf.register_test_interfaces()
         clock = Clock(self.clk, 2, units="ns")
         cocotb.start_soon(clock.start())
 

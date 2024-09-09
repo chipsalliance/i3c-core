@@ -21,33 +21,19 @@ module i3c_test_wrapper #(
     input logic hclk,
     input logic hreset_n,
     // AHB-Lite interface
-    // Byte address of the transfer
     input  logic [  AhbAddrWidth-1:0] haddr,
-    // Indicates the number of bursts in a transfer
-    input  logic [               2:0] hburst,     // Unhandled
-    // Protection control; provides information on the access type
-    input  logic [               3:0] hprot,      // Unhandled
-    // Indicates the size of the transfer
+    input  logic [               2:0] hburst,
+    input  logic [               3:0] hprot,
     input  logic [               2:0] hsize,
-    // Indicates the transfer type
     input  logic [               1:0] htrans,
-    // Data for the write operation
     input  logic [  AhbDataWidth-1:0] hwdata,
-    // Write strobes; Deasserted when write data lanes do not contain valid data
-    input  logic [AhbDataWidth/8-1:0] hwstrb,     // Unhandled
-    // Indicates write operation when asserted
+    input  logic [AhbDataWidth/8-1:0] hwstrb,
     input  logic                      hwrite,
-    // Read data
     output logic [  AhbDataWidth-1:0] hrdata,
-    // Asserted indicates a finished transfer; Can be driven low to extend a transfer
     output logic                      hreadyout,
-    // Transfer response, high when error occurred
     output logic                      hresp,
-    // Indicates the subordinate is selected for the transfer
     input  logic                      hsel,
-    // Indicates all subordinates have finished transfers
     input  logic                      hready,
-
 `elsif I3C_USE_AXI
     input logic aclk,
     input logic areset_n,
@@ -92,52 +78,20 @@ module i3c_test_wrapper #(
     output logic                  bvalid,
     input  logic                  bready,
 `endif
-
+    // I3C Target Simulation model
     input logic sda_sim_target_i,
     input logic scl_sim_target_i,
     input wire [4:0] debug_state_controller_i,
 
+    // I3C Target Controller model
     input logic sda_sim_ctrl_i,
     input logic scl_sim_ctrl_i,
     input wire [4:0] debug_state_target_i,
     input wire [3:0] debug_detected_header_i,
 
-    // "bus" sda/scl
+    // I3C Bus signals
     output logic bus_sda,
     output logic bus_scl
-
-);
-
-localparam int unsigned NumDevices = 3;
-
-wire [NumDevices-1:0] sda_i;
-wire [NumDevices-1:0] scl_i;
-
-assign sda_i[0] = sda_sim_ctrl_i;
-assign scl_i[0] = scl_sim_ctrl_i;
-
-assign sda_i[1] = sda_sim_target_i;
-assign scl_i[1] = scl_sim_target_i;
-
-wire not_sda;
-wire not_scl;
-
-assign sda_i[2] = ~not_sda;
-assign scl_i[2] = ~not_scl;
-
-wire not_bus_sda, not_bus_scl;
-
-assign not_bus_sda = ~bus_sda;
-assign not_bus_scl = ~bus_scl;
-
-
-i3c_bus_harness #(
-    .NumDevices(NumDevices)
-) xi3_bus_harness (
-    .sda_i(sda_i),
-    .scl_i(scl_i),
-    .sda_o(bus_sda),
-    .scl_o(bus_scl)
 );
 
 logic clk_i;
@@ -150,6 +104,37 @@ assign rst_ni = hreset_n;
 assign clk_i = aclk;
 assign rst_ni = areset_n;
 `endif
+
+localparam int unsigned NumDevices = 3; // 2 Targets, 1 Controller
+
+logic [NumDevices-1:0] sda_i;
+logic [NumDevices-1:0] scl_i;
+
+assign sda_i[0] = sda_sim_ctrl_i;
+assign scl_i[0] = scl_sim_ctrl_i;
+assign sda_i[1] = sda_sim_target_i;
+assign scl_i[1] = scl_sim_target_i;
+
+// The {SDA,SCL} signals
+logic not_sda;
+logic not_scl;
+assign sda_i[2] = ~not_sda;
+assign scl_i[2] = ~not_scl;
+
+i3c_bus_harness #(
+    .NumDevices(NumDevices)
+) xi3_bus_harness (
+    .sda_i(sda_i),
+    .scl_i(scl_i),
+    .sda_o(bus_sda),
+    .scl_o(bus_scl)
+);
+
+logic i3c_scl_en_o_unused;
+logic i3c_sda_en_o_unused;
+logic i3c_fsm_idle_o_unused;
+logic i3c_scl_io_unused;
+logic i3c_sda_io_unused;
 
 i3c_wrapper xi3c_wrapper (
     .clk_i,
@@ -208,22 +193,20 @@ i3c_wrapper xi3c_wrapper (
     .bvalid_o(bvalid),
     .bready_i(bready),
 `endif
-
     // I3C bus IO
-    .i3c_scl_i(bus_scl),    // serial clock input from i3c bus
-    .i3c_scl_o(not_scl),    // serial clock output to i3c bus
-    .i3c_scl_en_o(/*nc*/), // serial clock output to i3c bus
+    .i3c_scl_i(bus_scl),
+    .i3c_scl_o(not_scl),
+    .i3c_scl_en_o(i3c_scl_en_o_unused),
 
-    .i3c_sda_i(bus_sda),    // serial data input from i3c bus
-    .i3c_sda_o(not_sda),    // serial data output to i3c bus
-    .i3c_sda_en_o(/*nc*/), // serial data output to i3c bus
+    .i3c_sda_i(bus_sda),
+    .i3c_sda_o(not_sda),
+    .i3c_sda_en_o(i3c_sda_en_o_unused),
 
     .i3c_fsm_en_i('0), // only used in i2c mode
-    .i3c_fsm_idle_o(/*nc*/),
+    .i3c_fsm_idle_o(i3c_fsm_idle_o_unused),
 
-    .i3c_scl_io(/*nc*/),
-    .i3c_sda_io(/*nc*/)
+    .i3c_scl_io(i3c_scl_io_unused),
+    .i3c_sda_io(i3c_sda_io_unused)
 );
-
 
 endmodule
