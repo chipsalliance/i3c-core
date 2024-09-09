@@ -4,6 +4,9 @@ module controller_standby_i2c
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
+    parameter int AcqFifoDepth = 64,
+    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1),
+
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiRxDataWidth = 32,
@@ -87,13 +90,15 @@ module controller_standby_i2c
   logic tx_fifo_ready_int;
 
   logic [AcqFifoWidth-1:0] acq_fifo_data_int;
-  logic acq_fifo_depth_int;
+  logic [AcqFifoDepthWidth-1:0] acq_fifo_depth_int;
   logic acq_fifo_ready_int;
   logic acq_fifo_valid_int;
   logic err;
 
 
-  flow_standby_i2c xflow_standby_i2c (
+  flow_standby_i2c #(
+      .AcqFifoDepth(AcqFifoDepth)
+  ) xflow_standby_i2c (
       // Clock, reset
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -130,7 +135,9 @@ module controller_standby_i2c
   );
 
 
-  i2c_target_fsm xi2c_target_fsm (
+  i2c_target_fsm #(
+      .AcqFifoDepth(AcqFifoDepth)
+  ) xi2c_target_fsm (
       // Clock, reset
       .clk_i,
       .rst_ni,

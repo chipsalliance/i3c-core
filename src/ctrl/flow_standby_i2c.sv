@@ -4,7 +4,8 @@ module flow_standby_i2c
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
-    parameter int AcqFifoDepth = 7
+    parameter int AcqFifoDepth = 64,
+    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -12,7 +13,7 @@ module flow_standby_i2c
     // I2C controller side
     input logic acq_fifo_wvalid_i,
     input logic [AcqFifoWidth-1:0] acq_fifo_wdata_i,
-    output logic [$clog2(AcqFifoDepth)-1:0] acq_fifo_depth_o,
+    output logic [AcqFifoDepthWidth-1:0] acq_fifo_depth_o,
     input logic acq_fifo_wready_i,
 
     output logic tx_fifo_rvalid_o,
@@ -118,6 +119,7 @@ module flow_standby_i2c
       acq_fifo_wdata_byte_id == AcqRestart ||
       acq_fifo_wdata_byte_id == AcqNackStart );
 
+  // TODO: Bug: Set proper ACQ FIFO depth
   assign acq_fifo_depth_o =
     xfer_read ? 0 : {state_d == PushDWordToTTIQueue, transaction_byte_count[1:0]};
 

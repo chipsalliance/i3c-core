@@ -8,7 +8,7 @@ module i2c_target_fsm
   import controller_pkg::*;
 #(
     parameter int AcqFifoDepth = 64,
-    parameter int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
+    localparam int AcqFifoDepthWidth = $clog2(AcqFifoDepth + 1)
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
