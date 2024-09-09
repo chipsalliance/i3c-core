@@ -22,16 +22,15 @@ COMMON_SOURCES  = \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop.sv \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop_2sync.sv
 
-COMMON_INCLUDES = \
-    -I$(CALIPTRA_ROOT)/src/libs/rtl \
-    -I$(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
-    -I$(I3C_ROOT)/src \
-    -I$(I3C_ROOT)/src/libs/axi
+VERILOG_INCLUDE_DIRS= \
+    $(CALIPTRA_ROOT)/src/libs/rtl \
+    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
+    $(I3C_ROOT)/src \
+    $(I3C_ROOT)/src/libs/axi
 
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
-
 
 # Coverage reporting
 COVERAGE_TYPE ?=
@@ -60,18 +59,9 @@ endif
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 10ps
 
-ifneq ($(CFGDIR),)
-EXTRA_ARGS += -I$(CFGDIR)
-endif
-
-EXTRA_ARGS += $(COMMON_INCLUDES) -DSIM=$(SIM)
-
 # Build directory
 ifneq ($(COVERAGE_TYPE),)
     SIM_BUILD := sim-build-$(COVERAGE_TYPE)
 endif
 
-# Do not import cocotb configuration if it's a RTL testbench
-ifeq (,$(filter icarus-test verilator-test,$(MAKECMDGOALS)))
-    include $(shell cocotb-config --makefiles)/Makefile.sim
-endif
+include $(shell cocotb-config --makefiles)/Makefile.sim

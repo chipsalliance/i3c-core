@@ -26,6 +26,7 @@ module controller_standby_i2c
     input  logic ctrl_sda_i,
     output logic ctrl_scl_o,
     output logic ctrl_sda_o,
+    output logic phy_sel_od_pp_o,
 
     // Target Transaction Interface
 
@@ -178,5 +179,7 @@ module controller_standby_i2c
       .event_host_timeout_o()
   );
 
+  // TODO: Temporarily set here to always use OD. Verify this connection
+  assign phy_sel_od_pp_o = 1'b0;
 
 endmodule

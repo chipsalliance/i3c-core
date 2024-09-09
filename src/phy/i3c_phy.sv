@@ -3,7 +3,7 @@
 `timescale 1ns / 1ps
 
 /*
-    This module provides synchronization of {sda,scl} signals to the system clock.
+    This module provides double flip-flop synchronization to the system clock.
 */
 module i3c_phy (
     input logic clk_i,
@@ -12,82 +12,75 @@ module i3c_phy (
     // I3C bus IO
     input  logic scl_i,
     output logic scl_o,
-    output logic scl_en_o,
 
     input  logic sda_i,
     output logic sda_o,
-    output logic sda_en_o,
 
     // I3C controller IO
     input logic ctrl_scl_i,
     input logic ctrl_sda_i,
 
     output logic ctrl_scl_o,
-    output logic ctrl_sda_o
+    output logic ctrl_sda_o,
+
+    // Open-Drain / Push-Pull control
+    input  logic sel_od_pp_i,
+    output logic sel_od_pp_o
 );
-
-  // Synchronized bus lines
-  logic scl_sync;
-  logic sda_sync;
-
-  // Synchronized controller lines
-  logic scl_en_int;
-  logic sda_en_int;
-
-  wire scl_en_sync, sda_en_sync;
-
-  assign scl_en_o = scl_en_sync;
-  assign sda_en_o = sda_en_sync;
-
-  // Assert bus lines LOW and control them via enable signals to reproduce
-  // Open Drain as a tri-state in FPGA
-  assign scl_o = 1'b0;
-  assign sda_o = 1'b0;
-
-  assign scl_en_int = ~ctrl_scl_i;
-  assign sda_en_int = ~ctrl_sda_i;
-
-  assign ctrl_scl_o = scl_en_sync ? 1'b0 : scl_sync;
-  assign ctrl_sda_o = sda_en_sync ? 1'b0 : sda_sync;
 
   // Synchronize SCL to system clock
   caliptra_prim_flop_2sync #(
-      .Width(1)
+      .Width(1),
+      .ResetValue(1)
   ) scl_synchronizer (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .d_i(scl_i),
-      .q_o(scl_sync)
+      .q_o(ctrl_scl_o)
   );
 
   // Synchronize SDA to system clock
   caliptra_prim_flop_2sync #(
-      .Width(1)
+      .Width(1),
+      .ResetValue(1)
   ) sda_synchronizer (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .d_i(sda_i),
-      .q_o(sda_sync)
+      .q_o(ctrl_sda_o)
   );
 
-  // Synchronize SCL enable
+  // Delay controller SDA
   caliptra_prim_flop_2sync #(
-      .Width(1)
-  ) scl_en_int_synchronizer (
+      .Width(1),
+      .ResetValue(1)
+  ) ctrl_sda_synchronizer (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i(scl_en_int),
-      .q_o(scl_en_sync)
+      .d_i(ctrl_sda_i),
+      .q_o(sda_o)
   );
 
-  // Synchronize SDA enable
+  // Delay controller SCL
   caliptra_prim_flop_2sync #(
-      .Width(1)
-  ) sda_en_int_synchronizer (
+      .Width(1),
+      .ResetValue(1)
+  ) ctrl_scl_synchronizer (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .d_i(sda_en_int),
-      .q_o(sda_en_sync)
+      .d_i(ctrl_scl_i),
+      .q_o(scl_o)
+  );
+
+  // Delay driver select
+  caliptra_prim_flop_2sync #(
+      .Width(1),
+      .ResetValue(0)
+  ) sel_od_pp_synchronizer (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .d_i(sel_od_pp_i),
+      .q_o(sel_od_pp_o)
   );
 
 endmodule

@@ -11,25 +11,16 @@ SRC_DIR := $(abspath $(TEST_DIR)../../../../../src)
 TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
-TOPLEVEL     = i3c_phy
-
-SIMFILE = $(TEST_DIR)/i3cPHYsim_$(SIM)
+TOPLEVEL     = i3c_phy_io_wrapper
 
 VERILOG_SOURCES  = \
-    $(SRC_DIR)/phy/i3c_phy.sv
-
-RTL_TB_SOURCES = \
-    $(SRC_DIR)/phy/i3c_io.sv \
-	$(TEST_DIR)/i3c_phy_tb.sv
+	$(SRC_DIR)/phy/buf_od.sv \
+	$(SRC_DIR)/phy/buf_pp.sv \
+	$(SRC_DIR)/phy/bufs.sv \
+	$(SRC_DIR)/phy/i3c_io.sv \
+	$(SRC_DIR)/phy/i3c_phy.sv \
+	$(TEST_DIR)/i3c_phy_io_wrapper.sv
 
 include $(TEST_DIR)/../block_common.mk
-
-icarus-test:
-	iverilog -g2012 -o $(SIMFILE) $(EXTRA_ARGS) $(VERILOG_SOURCES) $(RTL_TB_SOURCES)
-	$(SIMFILE)
-
-verilator-test:
-	verilator -cc --timing --binary -o $(SIMFILE) $(EXTRA_ARGS) $(VERILOG_SOURCES) $(RTL_TB_SOURCES)
-	$(SIMFILE)
 
 .PHONY: iverilog-test verilator-test

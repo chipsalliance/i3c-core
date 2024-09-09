@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 `include "i3c_defines.svh"
 
+
+`define VERILATOR
+/*
+    This module is used only for simulation with Verilator
+*/
+
 module i3c_test_wrapper #(
 `ifdef I3C_USE_AHB
     parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
@@ -115,12 +121,6 @@ assign scl_i[0] = scl_sim_ctrl_i;
 assign sda_i[1] = sda_sim_target_i;
 assign scl_i[1] = scl_sim_target_i;
 
-// The {SDA,SCL} signals
-logic not_sda;
-logic not_scl;
-assign sda_i[2] = ~not_sda;
-assign scl_i[2] = ~not_scl;
-
 i3c_bus_harness #(
     .NumDevices(NumDevices)
 ) xi3_bus_harness (
@@ -130,11 +130,7 @@ i3c_bus_harness #(
     .scl_o(bus_scl)
 );
 
-logic i3c_scl_en_o_unused;
-logic i3c_sda_en_o_unused;
-logic i3c_fsm_idle_o_unused;
-logic i3c_scl_io_unused;
-logic i3c_sda_io_unused;
+logic sel_od_pp;
 
 i3c_wrapper xi3c_wrapper (
     .clk_i,
@@ -193,20 +189,14 @@ i3c_wrapper xi3c_wrapper (
     .bvalid_o(bvalid),
     .bready_i(bready),
 `endif
-    // I3C bus IO
-    .i3c_scl_i(bus_scl),
-    .i3c_scl_o(not_scl),
-    .i3c_scl_en_o(i3c_scl_en_o_unused),
 
-    .i3c_sda_i(bus_sda),
-    .i3c_sda_o(not_sda),
-    .i3c_sda_en_o(i3c_sda_en_o_unused),
+    .scl_i(bus_scl),
+    .sda_i(bus_sda),
+    .scl_o(scl_i[2]),
+    .sda_o(sda_i[2]),
+    .sel_od_pp_o(sel_od_pp)
 
-    .i3c_fsm_en_i('0), // only used in i2c mode
-    .i3c_fsm_idle_o(i3c_fsm_idle_o_unused),
 
-    .i3c_scl_io(i3c_scl_io_unused),
-    .i3c_sda_io(i3c_sda_io_unused)
 );
 
 endmodule

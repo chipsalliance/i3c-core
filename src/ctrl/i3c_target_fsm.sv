@@ -52,10 +52,11 @@ module i3c_target_fsm
 
     input target_enable_i,  // enable target functionality
 
-    input        scl_i,  // serial clock input from i2c bus
-    output logic scl_o,  // serial clock output to i2c bus
-    input        sda_i,  // serial data input from i2c bus
-    output logic sda_o,  // serial data output to i2c bus
+    input        scl_i,       // serial clock input from i2c bus
+    output logic scl_o,       // serial clock output to i2c bus
+    input        sda_i,       // serial data input from i2c bus
+    output logic sda_o,       // serial data output to i2c bus
+    output logic sel_od_pp_o, // select open-drain or push-pull driver
 
     // TODO: Bus monitor detection
     input logic bus_start_det_i,
@@ -116,7 +117,7 @@ module i3c_target_fsm
 
   // Target specific variables
   logic restart_det_d, restart_det_q;
-  assign restart_det_q = '0; // TODO: Handle
+  assign restart_det_q = '0;  // TODO: Handle
 
   logic       xact_for_us_q;  // Target was addressed in this transaction
   logic       xact_for_us_d;  //     - We only record Stop if the Target was addressed.
@@ -868,6 +869,9 @@ module i3c_target_fsm
 
   assign scl_o = scl_d;
   assign sda_o = sda_d;
+
+  // TODO: Handle driver switching based on current bit in transmission
+  assign sel_od_pp_o = 1'b0;
 
   // Assertions
   // // Make sure we never attempt to send a single cycle glitch

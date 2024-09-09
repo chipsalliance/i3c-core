@@ -18,10 +18,11 @@ module controller_standby
     input logic rst_ni,
 
     // Interface to SDA/SCL
-    input  logic ctrl_scl_i[2],
-    input  logic ctrl_sda_i[2],
+    input logic ctrl_scl_i[2],
+    input logic ctrl_sda_i[2],
     output logic ctrl_scl_o[2],
     output logic ctrl_sda_o[2],
+    output logic phy_sel_od_pp_o[2],
 
     // Target Transaction Interface
 
@@ -121,6 +122,7 @@ module controller_standby
       .ctrl_sda_i(ctrl_sda_i[0]),
       .ctrl_scl_o(ctrl_scl_o[0]),
       .ctrl_sda_o(ctrl_sda_o[0]),
+      .phy_sel_od_pp_o(phy_sel_od_pp_o[0]),
       .rx_desc_queue_full_i(rx_desc_queue_full_i),
       .rx_desc_queue_ready_thld_i(rx_desc_queue_ready_thld_i),
       .rx_desc_queue_ready_thld_trig_i(rx_desc_queue_ready_thld_trig_i),
@@ -183,6 +185,7 @@ module controller_standby
       .ctrl_sda_i(ctrl_sda_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
+      .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
       .rx_desc_queue_full_i(rx_desc_queue_full_i),
       .rx_desc_queue_ready_thld_i(rx_desc_queue_ready_thld_i),
       .rx_desc_queue_ready_thld_trig_i(rx_desc_queue_ready_thld_trig_i),

@@ -22,6 +22,7 @@ module controller_standby_i3c
     input  logic ctrl_sda_i,
     output logic ctrl_scl_o,
     output logic ctrl_sda_o,
+    output logic phy_sel_od_pp_o,
 
     // Target Transaction Interface
 
@@ -149,6 +150,7 @@ module controller_standby_i3c
   logic is_dyn_addr_match;
   logic is_i3c_rsvd_addr_match;
   logic is_any_addr_match;
+  // TODO: Connect to CSR
   logic [31:0] stby_cr_device_addr_reg;
   logic [31:0] stby_cr_device_char_reg;
   logic [31:0] stby_cr_device_pid_lo_reg;
@@ -172,6 +174,7 @@ module controller_standby_i3c
       .scl_o(ctrl_scl_o),
       .sda_i(ctrl_sda_i),
       .sda_o(ctrl_sda_o),
+      .sel_od_pp_o(phy_sel_od_pp_o),
       .bus_start_det_i(start_detect),
       .bus_stop_detect_i(stop_detect),
       .bus_arbitration_lost_i(i3c_bus_arbitration_lost_i),

@@ -93,22 +93,20 @@ module i3c_wrapper #(
 
 `endif
 
+    // I3C input and output signals are exposed for the purpose of simulation with Verilator
+`ifdef VERILATOR
+    input  logic scl_i,
+    input  logic sda_i,
+    output logic scl_o,
+    output logic sda_o,
+    output logic sel_od_pp_o,
+`else
     // I3C bus IO
-    input  logic i3c_scl_i,    // serial clock input from i3c bus
-    output logic i3c_scl_o,    // serial clock output to i3c bus
-    output logic i3c_scl_en_o, // serial clock output to i3c bus
+    inout  logic i3c_scl_io,
+    inout  logic i3c_sda_io
+`endif
 
-    input  logic i3c_sda_i,    // serial data input from i3c bus
-    output logic i3c_sda_o,    // serial data output to i3c bus
-    output logic i3c_sda_en_o, // serial data output to i3c bus
-
-    input  logic i3c_fsm_en_i,
-    output logic i3c_fsm_idle_o,
-
-    inout logic i3c_scl_io,
-    inout logic i3c_sda_io
-
-    // TODO: Check if anything missing; Interrupts?
+    // TODO: Add interrupts
 );
 
   `define REPORT_INCOMPATIBLE_PARAM(param_name, received, expected) \
@@ -168,12 +166,19 @@ module i3c_wrapper #(
   end
 
   // DAT memory export interface
-  i3c_pkg::dat_mem_src_t  dat_mem_src;
+  i3c_pkg::dat_mem_src_t dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  i3c_pkg::dct_mem_src_t  dct_mem_src;
+  i3c_pkg::dct_mem_src_t dct_mem_src;
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
+
+  logic scl_phy2io;
+  logic sda_phy2io;
+  logic scl_io2phy;
+  logic sda_io2phy;
+  logic sel_od_pp;
+
 
   i3c #(
 `ifdef I3C_USE_AHB
@@ -244,22 +249,17 @@ module i3c_wrapper #(
       .bready_i(bready_i),
 `endif
 
-      .i3c_scl_i,
-      .i3c_scl_o,
-      .i3c_scl_en_o,
-
-      .i3c_sda_i,
-      .i3c_sda_o,
-      .i3c_sda_en_o,
+      .i3c_scl_i  (scl_io2phy),
+      .i3c_scl_o  (scl_phy2io),
+      .i3c_sda_i  (sda_io2phy),
+      .i3c_sda_o  (sda_phy2io),
+      .sel_od_pp_o(sel_od_pp),
 
       .dat_mem_src_i (dat_mem_src),
       .dat_mem_sink_o(dat_mem_sink),
 
       .dct_mem_src_i (dct_mem_src),
-      .dct_mem_sink_o(dct_mem_sink),
-
-      .i3c_fsm_en_i,
-      .i3c_fsm_idle_o
+      .dct_mem_sink_o(dct_mem_sink)
   );
 
   prim_ram_1p_adv #(
@@ -298,14 +298,23 @@ module i3c_wrapper #(
       .cfg_i('0)  // Unused
   );
 
-  i3c_io phy_io (
-      .scl_io(i3c_scl_io),
-      .scl_i(i3c_scl_o),
-      .scl_en_i(i3c_scl_en_o),
-
-      .sda_io(i3c_sda_io),
-      .sda_i(i3c_sda_o),
-      .sda_en_i(i3c_sda_en_o)
+`ifdef VERILATOR
+  assign scl_io2phy = scl_i;
+  assign sda_io2phy = sda_i;
+  assign scl_o = scl_phy2io;
+  assign sda_o = sda_phy2io;
+`else
+  i3c_io xio (
+      .scl_i(scl_phy2io),
+      .sda_i(sda_phy2io),
+      .scl_o(scl_io2phy),
+      .sda_o(sda_io2phy),
+      .sel_od_pp_i(sel_od_pp),
+      .scl_io(scl_io),
+      .sda_io(sda_io)
   );
+`endif
+
+  assign sel_od_pp_o = sel_od_pp;
 
 endmodule

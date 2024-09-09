@@ -11,14 +11,15 @@
       - DCT/DAT Memory interfaces
       - interrupts
 
-    The I3C bus connections are modeled by 3 pins:
+    The I3C IO connections are modeled by pins:
       - i3c_{scl|sda}_i: Input from the bus
       - i3c_{scl|sda}_o: Output to the bus
-      - i3c_{scl|sda}_en_o: Tri-state buffer enable
+      - sel_od_pp_o: Select driver
 
-    The benefits of modelling the tristate bus this way are:
-      - enables verification with Verilator, which is a 2-state simulator ('z' and 'x' are not handled)
-      - simplifies development of FPGA designs (FPGA fabric does not implement tri-state buffers; typically, they are only available as chip I/O)
+      The sel_od_pp_o signal is synchronized with the {scl,sda} pins.
+
+    The Open-Drain and Push-Pull driver behavior is modelled in the i3c_io module
+    and instantiated in the appropriate i3c_wrapper.
 */
 module i3c
   import i3c_pkg::*;
@@ -156,13 +157,15 @@ module i3c
 `endif
 
     // I3C bus IO
-    input  logic i3c_scl_i,    // serial clock input from i3c bus
-    output logic i3c_scl_o,    // serial clock output to i3c bus
-    output logic i3c_scl_en_o, // serial clock output to i3c bus
+    // Level of the {scl,sda} pins is equal to the level on the bus.
+    // For example, to pull down the bus in OD mode, the {scl,sda} should be set to 0.
+    input  logic i3c_scl_i,  // serial clock input from i3c bus
+    output logic i3c_scl_o,  // serial clock output to i3c bus
 
-    input        i3c_sda_i,    // serial data input from i3c bus
-    output logic i3c_sda_o,    // serial data output to i3c bus
-    output logic i3c_sda_en_o, // serial data output to i3c bus
+    input  logic i3c_sda_i,  // serial data input from i3c bus
+    output logic i3c_sda_o,  // serial data output to i3c bus
+
+    output logic sel_od_pp_o, // 0 - Open Drain, 1 - Push Pull
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
@@ -170,76 +173,73 @@ module i3c
 
     // DCT memory export interface
     input  dct_mem_src_t  dct_mem_src_i,
-    output dct_mem_sink_t dct_mem_sink_o,
-
-    input  logic i3c_fsm_en_i,
-    output logic i3c_fsm_idle_o
+    output dct_mem_sink_t dct_mem_sink_o
 
     // TODO: Add interrupts
 );
 
   // I3C SW CSR IF
-  logic                          s_cpuif_req;
-  logic                          s_cpuif_req_is_wr;
-  logic [      CsrAddrWidth-1:0] s_cpuif_addr;
-  logic [      CsrDataWidth-1:0] s_cpuif_wr_data;
-  logic [      CsrDataWidth-1:0] s_cpuif_wr_biten;
-  logic                          s_cpuif_req_stall_wr;
-  logic                          s_cpuif_req_stall_rd;
-  logic                          s_cpuif_rd_ack;
-  logic                          s_cpuif_rd_err;
-  logic [      CsrDataWidth-1:0] s_cpuif_rd_data;
-  logic                          s_cpuif_wr_ack;
-  logic                          s_cpuif_wr_err;
+  logic                        s_cpuif_req;
+  logic                        s_cpuif_req_is_wr;
+  logic [    CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [    CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [    CsrDataWidth-1:0] s_cpuif_wr_biten;
+  logic                        s_cpuif_req_stall_wr;
+  logic                        s_cpuif_req_stall_rd;
+  logic                        s_cpuif_rd_ack;
+  logic                        s_cpuif_rd_err;
+  logic [    CsrDataWidth-1:0] s_cpuif_rd_data;
+  logic                        s_cpuif_wr_ack;
+  logic                        s_cpuif_wr_err;
 
   // Response queue
-  logic                          hci_resp_queue_full;
-  logic [  HciRespThldWidth-1:0] hci_resp_queue_ready_thld;
-  logic                          hci_resp_queue_ready_thld_trig;
-  logic                          hci_resp_queue_empty;
-  logic                          hci_resp_queue_wvalid;
-  logic                          hci_resp_queue_wready;
-  logic [  HciRespDataWidth-1:0] hci_resp_queue_wdata;
+  logic                        hci_resp_queue_full;
+  logic [HciRespThldWidth-1:0] hci_resp_queue_ready_thld;
+  logic                        hci_resp_queue_ready_thld_trig;
+  logic                        hci_resp_queue_empty;
+  logic                        hci_resp_queue_wvalid;
+  logic                        hci_resp_queue_wready;
+  logic [HciRespDataWidth-1:0] hci_resp_queue_wdata;
 
   // Command queue
-  logic                          hci_cmd_queue_full;
-  logic [   HciCmdThldWidth-1:0] hci_cmd_queue_ready_thld;
-  logic                          hci_cmd_queue_ready_thld_trig;
-  logic                          hci_cmd_queue_empty;
-  logic                          hci_cmd_queue_rvalid;
-  logic                          hci_cmd_queue_rready;
-  logic [   HciCmdDataWidth-1:0] hci_cmd_queue_rdata;
+  logic                        hci_cmd_queue_full;
+  logic [ HciCmdThldWidth-1:0] hci_cmd_queue_ready_thld;
+  logic                        hci_cmd_queue_ready_thld_trig;
+  logic                        hci_cmd_queue_empty;
+  logic                        hci_cmd_queue_rvalid;
+  logic                        hci_cmd_queue_rready;
+  logic [ HciCmdDataWidth-1:0] hci_cmd_queue_rdata;
 
   // RX queue
-  logic                          hci_rx_queue_full;
-  logic [    HciRxThldWidth-1:0] hci_rx_queue_start_thld;
-  logic                          hci_rx_queue_start_thld_trig;
-  logic [    HciRxThldWidth-1:0] hci_rx_queue_ready_thld;
-  logic                          hci_rx_queue_ready_thld_trig;
-  logic                          hci_rx_queue_empty;
-  logic                          hci_rx_queue_wvalid;
-  logic                          hci_rx_queue_wready;
-  logic [    HciRxDataWidth-1:0] hci_rx_queue_wdata;
+  logic                        hci_rx_queue_full;
+  logic [  HciRxThldWidth-1:0] hci_rx_queue_start_thld;
+  logic                        hci_rx_queue_start_thld_trig;
+  logic [  HciRxThldWidth-1:0] hci_rx_queue_ready_thld;
+  logic                        hci_rx_queue_ready_thld_trig;
+  logic                        hci_rx_queue_empty;
+  logic                        hci_rx_queue_wvalid;
+  logic                        hci_rx_queue_wready;
+  logic [  HciRxDataWidth-1:0] hci_rx_queue_wdata;
 
   // TX queue
-  logic                          hci_tx_queue_full;
-  logic [    HciTxThldWidth-1:0] hci_tx_queue_start_thld;
-  logic                          hci_tx_queue_start_thld_trig;
-  logic [    HciTxThldWidth-1:0] hci_tx_queue_ready_thld;
-  logic                          hci_tx_queue_ready_thld_trig;
-  logic                          hci_tx_queue_empty;
-  logic                          hci_tx_queue_rvalid;
-  logic                          hci_tx_queue_rready;
-  logic [    HciTxDataWidth-1:0] hci_tx_queue_rdata;
+  logic                        hci_tx_queue_full;
+  logic [  HciTxThldWidth-1:0] hci_tx_queue_start_thld;
+  logic                        hci_tx_queue_start_thld_trig;
+  logic [  HciTxThldWidth-1:0] hci_tx_queue_ready_thld;
+  logic                        hci_tx_queue_ready_thld_trig;
+  logic                        hci_tx_queue_empty;
+  logic                        hci_tx_queue_rvalid;
+  logic                        hci_tx_queue_rready;
+  logic [  HciTxDataWidth-1:0] hci_tx_queue_rdata;
 
   // IBI queue
-  logic                          ibi_queue_full;
-  logic [   HciIbiThldWidth-1:0] ibi_queue_ready_thld;
-  logic                          ibi_queue_ready_thld_trig;
-  logic                          ibi_queue_empty;
-  logic                          ibi_queue_wvalid;
-  logic                          ibi_queue_wready;
-  logic [   HciIbiDataWidth-1:0] ibi_queue_wdata;
+  logic                        ibi_queue_full;
+  logic [ HciIbiThldWidth-1:0] ibi_queue_ready_thld;
+  logic                        ibi_queue_ready_thld_trig;
+  logic                        ibi_queue_empty;
+  logic                        ibi_queue_wvalid;
+  logic                        ibi_queue_wready;
+  logic [ HciIbiDataWidth-1:0] ibi_queue_wdata;
 
   // TODO: Handle
   assign ibi_queue_wdata  = '0;
@@ -305,6 +305,13 @@ module i3c
   logic                          tti_ibi_queue_rvalid;
   logic                          tti_ibi_queue_rready;
   logic [   TtiIbiDataWidth-1:0] tti_ibi_queue_rdata;
+
+  // TODO: Fix these signals
+  // Originally only used in active, should be removed and replaced with signal from CSR
+  logic                          i3c_fsm_en_i;
+  assign i3c_fsm_en_i = 1'b0;
+  // This signal should only be used on level of fsm/flow modules. Expose it via CSR, if needed.
+  logic i3c_fsm_idle_o;
 
 `ifdef I3C_USE_AHB
   ahb_if #(
@@ -406,10 +413,11 @@ module i3c
   );
 `endif
 
-  logic phy2ctrl_scl[4];
-  logic phy2ctrl_sda[4];
-  logic ctrl2phy_scl[4];
-  logic ctrl2phy_sda[4];
+  logic phy2ctrl_scl;
+  logic phy2ctrl_sda;
+  logic ctrl2phy_scl;
+  logic ctrl2phy_sda;
+  logic ctrl_sel_od_pp;
 
   // Configuration
   logic phy_en;
@@ -432,10 +440,11 @@ module i3c
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      .ctrl_scl_i(phy2ctrl_scl),
-      .ctrl_sda_i(phy2ctrl_sda),
-      .ctrl_scl_o(ctrl2phy_scl),
-      .ctrl_sda_o(ctrl2phy_sda),
+      .scl_i(phy2ctrl_scl),
+      .sda_i(phy2ctrl_sda),
+      .scl_o(ctrl2phy_scl),
+      .sda_o(ctrl2phy_sda),
+      .sel_od_pp_o(ctrl_sel_od_pp),
 
       // HCI Response queue
       .hci_resp_queue_empty_i(hci_resp_queue_empty),
@@ -533,7 +542,7 @@ module i3c
 
       .err(),  // TODO: Handle errors
       .irq(),  // TODO: Handle interrupts
-      .phy_en_i(phy_en_i),
+      .phy_en_i(phy_en),
       .phy_mux_select_i(phy_mux_select),
       .i2c_active_en_i(i2c_active_en),
       .i2c_standby_en_i(i2c_standby_en),
@@ -721,25 +730,20 @@ module i3c
       .t_bus_available_o(t_bus_available)
   );
 
-  // I3C muxed PHY
-  i3c_muxed_phy xi3c_muxed_phy (
-      .clk_i (clk_i),
+  // I3C PHY
+  i3c_phy xphy (
+      .clk_i(clk_i),
       .rst_ni(rst_ni),
-
-      .select_i(phy_mux_select),
-
       .scl_i(i3c_scl_i),
       .scl_o(i3c_scl_o),
-      .scl_en_o(i3c_scl_en_o),
-
       .sda_i(i3c_sda_i),
       .sda_o(i3c_sda_o),
-      .sda_en_o(i3c_sda_en_o),
-
       .ctrl_scl_i(ctrl2phy_scl),
       .ctrl_sda_i(ctrl2phy_sda),
       .ctrl_scl_o(phy2ctrl_scl),
-      .ctrl_sda_o(phy2ctrl_sda)
+      .ctrl_sda_o(phy2ctrl_sda),
+      .sel_od_pp_i(ctrl_sel_od_pp),
+      .sel_od_pp_o(sel_od_pp_o)
   );
 
 endmodule

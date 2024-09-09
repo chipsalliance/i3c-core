@@ -17,7 +17,7 @@ pip_requirements_path = "../../requirements.txt"
 coverage_types = ["all", "branch", "toggle"] if os.getenv("TEST_COVERAGE_ENABLE") else None
 
 
-def _verify(session, test_group, test_type, test_name, coverage=None):
+def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     session.install("-r", pip_requirements_path)
     test = VerificationTest(test_group, test_type, test_name, coverage)
 
@@ -34,6 +34,9 @@ def _verify(session, test_group, test_type, test_name, coverage=None):
         if coverage:
             args.append("COVERAGE_TYPE=" + coverage)
 
+        if simulator:
+            args.append("SIM=" + simulator)
+
         session.run(
             *args,
             external=True,
@@ -49,12 +52,12 @@ def _verify(session, test_group, test_type, test_name, coverage=None):
         raise Exception("SimFailure: cocotb failed. See test logs for more information.")
 
 
-def verify_block(session, test_group, test_name, coverage=None):
-    _verify(session, test_group, "block", test_name, coverage)
+def verify_block(session, test_group, test_name, coverage=None, simulator=None):
+    _verify(session, test_group, "block", test_name, coverage, simulator)
 
 
-def verify_top(session, test_group, test_name, coverage=None):
-    _verify(session, test_group, "top", test_name, coverage)
+def verify_top(session, test_group, test_name, coverage=None, simulator=None):
+    _verify(session, test_group, "top", test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb"])
@@ -143,19 +146,6 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     verify_block(session, test_group, test_name, coverage)
 
 
-@nox.session(tags=["tests", "ahb", "axi"])
-@nox.parametrize("test_group", ["i2c_phy_integration"])
-@nox.parametrize(
-    "test_name",
-    [
-        "test_mem_rw",
-    ],
-)
-@nox.parametrize("coverage", coverage_types)
-def i2c_phy_integration_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
-
-
 # TODO: fix tests
 # @nox.session(tags=["tests"])
 # @nox.parametrize("test_group", ["i2c_standby_controller"])
@@ -180,13 +170,11 @@ def i2c_phy_integration_verify(session, test_group, test_name, coverage):
 #     verify_block(session, test_group, test_name, coverage)
 
 
-# TODO: reenable i2c test after connecting configuration.sv to CSRs
 @nox.session(tags=["tests", "ahb"])
 @nox.parametrize("test_group", ["i3c_ahb"])
 @nox.parametrize(
     "test_name",
     [
-        # "test_i2c_flow",
         "test_i3c_target",
     ],
 )
@@ -206,20 +194,6 @@ def i3c_ahb_verify(session, test_group, test_name, coverage):
 @nox.parametrize("coverage", coverage_types)
 def i3c_axi_verify(session, test_group, test_name, coverage):
     verify_top(session, test_group, test_name, coverage)
-
-
-@nox.session(tags=["tests", "ahb", "axi"])
-@nox.parametrize("test_group", ["i3c_phy"])
-@nox.parametrize(
-    "test_name",
-    [
-        "test_reset",
-        "test_random_transfer",
-    ],
-)
-@nox.parametrize("coverage", coverage_types)
-def i3c_phy_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -249,17 +223,22 @@ def ctrl_bus_monitor_verify(session, test_group, test_name, coverage):
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
-@nox.parametrize("test_group", ["i3c_phy"])
+@nox.parametrize("test_group", ["i3c_phy_io"])
 @nox.parametrize(
     "simulator",
     [
         "icarus",
-        "verilator",
     ],
 )
-def i3c_phy_tb_verify(session, test_group, simulator):
-    testPath = os.path.join("block", test_group)
-    session.run("make", "-C", testPath, f"SIM={simulator}", f"{simulator}-test")
+@nox.parametrize(
+    "test_name",
+    [
+        "test_drivers",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def i3c_phy_io_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(reuse_venv=True)

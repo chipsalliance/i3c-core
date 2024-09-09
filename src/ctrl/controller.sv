@@ -36,13 +36,15 @@ module controller
     parameter int unsigned TtiTxThldWidth = 3,
     parameter int unsigned TtiIbiThldWidth = 8
 ) (
-    input  logic clk_i,
-    input  logic rst_ni,
+    input logic clk_i,
+    input logic rst_ni,
+
     // Interface to SDA/SCL
-    input  logic ctrl_scl_i[4],
-    input  logic ctrl_sda_i[4],
-    output logic ctrl_scl_o[4],
-    output logic ctrl_sda_o[4],
+    input  logic scl_i,
+    input  logic sda_i,
+    output logic scl_o,
+    output logic sda_o,
+    output logic sel_od_pp_o,
 
     // HCI queues
     // Command FIFO
@@ -167,6 +169,23 @@ module controller
     input logic [19:0] t_bus_available_i
 );
 
+  // 4:1 multiplexer for signals between PHY and controllers.
+  // Needed, because there are 4 controllers in the design (i2c/i3c + active/standby).
+  logic ctrl_scl_i[4];
+  logic ctrl_sda_i[4];
+  logic ctrl_scl_o[4];
+  logic ctrl_sda_o[4];
+  logic ctrl_sel_od_pp_i[4];
+
+  always_comb begin : mux_4_to_1
+    scl_o = ctrl_scl_o[phy_mux_select_i];
+    sda_o = ctrl_sda_o[phy_mux_select_i];
+    ctrl_scl_i[phy_mux_select_i] = scl_i;
+    ctrl_sda_i[phy_mux_select_i] = sda_i;
+    sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select_i];
+  end
+
+  // Active controller
   controller_active xcontroller_active (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -174,6 +193,7 @@ module controller
       .ctrl_sda_i(ctrl_sda_i[0:1]),
       .ctrl_scl_o(ctrl_scl_o[0:1]),
       .ctrl_sda_o(ctrl_sda_o[0:1]),
+      .phy_sel_od_pp_o(ctrl_sel_od_pp_i[0:1]),
       .cmd_queue_full_i(hci_cmd_queue_full_i),
       .cmd_queue_ready_thld_i(hci_cmd_queue_ready_thld_i),
       .cmd_queue_ready_thld_trig_i(hci_cmd_queue_ready_thld_trig_i),
@@ -238,6 +258,7 @@ module controller
       .t_bus_available_i(t_bus_available_i)
   );
 
+  // Standby (Secondary) Controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -245,6 +266,7 @@ module controller
       .ctrl_sda_i(ctrl_sda_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
       .ctrl_sda_o(ctrl_sda_o[2:3]),
+      .phy_sel_od_pp_o(ctrl_sel_od_pp_i[2:3]),
       .rx_desc_queue_full_i(tti_rx_desc_queue_full_i),
       .rx_desc_queue_ready_thld_i(tti_rx_desc_queue_ready_thld_i),
       .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_queue_ready_thld_trig_i),

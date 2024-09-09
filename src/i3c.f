@@ -28,10 +28,11 @@ ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_1p.sv
 ${I3C_ROOT_DIR}/src/csr/I3CCSR_pkg.sv
 ${I3C_ROOT_DIR}/src/ctrl/controller_pkg.sv
 ${I3C_ROOT_DIR}/src/i3c_pkg.sv
-${I3C_ROOT_DIR}/src/phy/i3c_io.sv
-${I3C_ROOT_DIR}/src/phy/i3c_muxed_phy.sv
-${I3C_ROOT_DIR}/src/phy/i3c_phy_4to1_mux.sv
+${I3C_ROOT_DIR}/src/phy/buf_od.sv
+${I3C_ROOT_DIR}/src/phy/buf_pp.sv
+${I3C_ROOT_DIR}/src/phy/bufs.sv
 ${I3C_ROOT_DIR}/src/phy/i3c_phy.sv
+${I3C_ROOT_DIR}/src/phy/i3c_io.sv
 ${I3C_ROOT_DIR}/src/csr/I3CCSR.sv
 ${I3C_ROOT_DIR}/src/hci/queues/read_queue.sv
 ${I3C_ROOT_DIR}/src/hci/queues/write_queue.sv
