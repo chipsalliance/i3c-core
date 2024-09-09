@@ -156,11 +156,24 @@ module flow_active
   i3c_resp_err_status_e resp_err_status_q, resp_err_status_d;
   logic [15:0] resp_data_length_q, resp_data_length_d;
 
+  // TODO: Set appropriately
+  always_comb begin
+    resp_err_status_q = Success;
+    fmt_flag_read_bytes_o = 1'b0;
+    fmt_flag_read_continue_o = 1'b0;
+    fmt_flag_nak_ok_o = 1'b0;
+    unhandled_unexp_nak_o = 1'b0;
+    unhandled_nak_timeout_o = 1'b0;
+  end
+
   // Assign generic Command Descriptor to command specific structures
   assign immediate_cmd_desc = cmd_desc;
   assign regular_cmd_desc = cmd_desc;
   assign combo_cmd_desc = cmd_desc;
   assign addr_cmd_desc = cmd_desc;
+
+  // Initialize descriptor's reserved field
+  assign resp_desc.__rsvd23_16 = '0;
 
   // Assign generic command fields to generic signals
   assign dev_index = cmd_desc[20:16];

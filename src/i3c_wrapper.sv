@@ -275,8 +275,8 @@ module i3c_wrapper #(
       .wdata_i(dat_mem_sink.wdata),
       .wmask_i(dat_mem_sink.wmask),
       .rdata_o(dat_mem_src.rdata),
-      .rvalid_o(),  // Unused
-      .rerror_o(),  // Unused
+      .rvalid_o(dat_mem_src.rvalid),  // Unused
+      .rerror_o(dat_mem_src.rerror),  // Unused
       .cfg_i('0)  // Unused
   );
 
@@ -293,8 +293,8 @@ module i3c_wrapper #(
       .wdata_i(dct_mem_sink.wdata),
       .wmask_i(dct_mem_sink.wmask),
       .rdata_o(dct_mem_src.rdata),
-      .rvalid_o(),  // Unused
-      .rerror_o(),  // Unused
+      .rvalid_o(dct_mem_src.rvalid),  // Unused
+      .rerror_o(dct_mem_src.rerror),  // Unused
       .cfg_i('0)  // Unused
   );
 

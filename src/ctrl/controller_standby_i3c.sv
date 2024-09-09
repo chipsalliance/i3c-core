@@ -79,6 +79,12 @@ module controller_standby_i3c
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i
 );
+  // TODO: Set TTI descriptor outputs
+  always_comb begin
+    rx_desc_queue_wvalid_o = 1'b0;
+    rx_desc_queue_wdata_o  = '0;
+    tx_desc_queue_rready_o = 1'b0;
+  end
 
   logic [1:0] transfer_type;
   logic rx_byte_valid;
@@ -122,6 +128,12 @@ module controller_standby_i3c
   logic i3c_bus_timeout_i;
   logic i3c_target_idle_o;
   logic i3c_target_transmitting_o;
+
+  // TODO: Handle
+  always_comb begin
+    i3c_bus_arbitration_lost_i = '0;
+    i3c_bus_timeout_i = '0;
+  end
 
   logic i3c_event_target_nack_o;
   logic i3c_event_cmd_complete_o;

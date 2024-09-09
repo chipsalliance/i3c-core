@@ -15,5 +15,9 @@ module i3c_controller_fsm
 );
 
   // TODO: Implement, skipped in first round
+  always_comb begin
+    ctrl_sda_o = '1;
+    ctrl_scl_o = '1;
+  end
 
 endmodule

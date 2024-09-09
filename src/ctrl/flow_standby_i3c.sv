@@ -61,6 +61,10 @@ module flow_standby_i3c
   logic [7:0] transfer_rx_byte;
   logic [7:0] transfer_tx_byte;
 
+  // TODO: Drive outputs appropriately
+  always_comb begin
+    tx_queue_rready_o = 1'b0;
+  end
 
   //  FSM
   typedef enum logic [3:0] {

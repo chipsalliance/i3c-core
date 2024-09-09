@@ -79,7 +79,7 @@ module flow_standby_i2c
   // Are we currently mid-transfer?
   logic                                transfer_active;
   // Number of data bytes held in `fifo_buf`
-  logic             [             1:0] byte_count;
+  logic             [             1:0] byte_count;  // Note: Handling only 4 entries of `fifo_buf`
   // Total number of bytes processed in transaction
   logic             [            15:0] transaction_byte_count;
   // Read transaction length
@@ -120,8 +120,9 @@ module flow_standby_i2c
       acq_fifo_wdata_byte_id == AcqNackStart );
 
   // TODO: Bug: Set proper ACQ FIFO depth
-  assign acq_fifo_depth_o =
-    xfer_read ? 0 : {state_d == PushDWordToTTIQueue, transaction_byte_count[1:0]};
+  assign acq_fifo_depth_o = xfer_read ? 0 : {{(AcqFifoDepthWidth - 3){1'b0}},
+                                             state_d == PushDWordToTTIQueue,
+                                             transaction_byte_count[1:0]};
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
     if (!rst_ni) state_q <= AwaitStart;
@@ -130,10 +131,9 @@ module flow_standby_i2c
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : accumulate_bytes_in_dword
     if (!rst_ni) begin
-      fifo_buf[0] <= 0;
-      fifo_buf[1] <= 0;
-      fifo_buf[2] <= 0;
-      fifo_buf[3] <= 0;
+      for (integer i = 0; i < AcqFifoDepth; i = i + 1) begin : gen_clear_buf
+        fifo_buf[i] <= 0;
+      end
     end else begin
       if (!xfer_read) begin
         // Write transfer

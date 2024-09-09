@@ -241,6 +241,10 @@ module i3c
   logic                          ibi_queue_wready;
   logic [   HciIbiDataWidth-1:0] ibi_queue_wdata;
 
+  // TODO: Handle
+  assign ibi_queue_wdata  = '0;
+  assign ibi_queue_wvalid = 1'b1;
+
   // DAT <-> Controller interface
   logic                          dat_read_valid_hw;
   logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw;

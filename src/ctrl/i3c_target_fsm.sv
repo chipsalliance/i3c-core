@@ -76,7 +76,7 @@ module i3c_target_fsm
     output logic [RxFifoWidth-1:0] rx_fifo_wdata_o,   // data to write to rx_fifo from target
     input  logic                   rx_fifo_wready_i,
 
-    output logic [ 1:0] transfer_type_o,
+    output logic [ 1:0] transfer_type_o,  // 00 - Write, 01- Read, 10 - CCC
     // TODO: Revisit widths of the timings; each timing is configured via 20-bit CSR field
     // Timings
     input        [12:0] t_r_i,            // rise time of both SDA and SCL in clock units
@@ -116,7 +116,7 @@ module i3c_target_fsm
 
   // Target specific variables
   logic restart_det_d, restart_det_q;
-
+  assign restart_det_q = '0; // TODO: Handle
 
   logic       xact_for_us_q;  // Target was addressed in this transaction
   logic       xact_for_us_d;  //     - We only record Stop if the Target was addressed.
@@ -134,6 +134,8 @@ module i3c_target_fsm
   logic       rw_bit;  // indicates host wants to read (1) or write (0)
   logic       host_ack;  // indicates host acknowledged transmitted byte
 
+  // TODO: Set transfer type based on the discovered state
+  assign transfer_type_o = 0;
 
   // Clock counter implementation
   typedef enum logic [1:0] {
