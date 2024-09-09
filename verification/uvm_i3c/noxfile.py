@@ -53,6 +53,7 @@ def verify_uvm(
     args += extra_make_args
     test_id = create_test_id(session.name, args)
     log_file = f"{test_id}.log"
+    print(f"Log will be written to \"{log_file}\"")
     with open(log_file, "w") as testLog:
         session.run(
             *args,
