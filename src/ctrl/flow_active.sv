@@ -365,13 +365,16 @@ module flow_active
         transfer_cnt_en = fmt_fifo_rready_i;
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
+        // TODO: Fix inferred latch 'fmt_flag_stop_after_o'
         fmt_flag_stop_after_o = 1'b0;
+        // TODO: Fix inferred latch 'resp_data_length_q'
         resp_data_length_q = '0;
         unique case (transfer_cnt)
           // TODO: Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
           // 32'd0: fmt_byte_o = {7'h7e, 1'b0};
           // Target address
+          // TODO: Fix inferred latch 'fmt_byte_o'
           32'd0: fmt_byte_o = {dat_rdata.static_address, 1'b0};
           // Byte 1
           32'd1:
@@ -428,6 +431,7 @@ module flow_active
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
+        // TODO: Fix inferred latch 'resp_queue_wvalid_o'
         resp_queue_wvalid_o = 1'b0;
         resp_desc.err_status = resp_err_status_d;
         resp_desc.tid = cmd_tid;
@@ -435,6 +439,7 @@ module flow_active
 
         if (resp_queue_wready_i) begin
           resp_queue_wvalid_o = 1'b1;
+          // TODO: Fix inferred latch 'resp_queue_wdata_o'
           resp_queue_wdata_o  = resp_desc;
         end
       end
