@@ -157,6 +157,7 @@ module i3c
 `endif
 
     // I3C bus IO
+
     // Level of the {scl,sda} pins is equal to the level on the bus.
     // For example, to pull down the bus in OD mode, the {scl,sda} should be set to 0.
     input  logic i3c_scl_i,  // serial clock input from i3c bus

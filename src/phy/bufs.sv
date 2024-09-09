@@ -5,11 +5,11 @@
 /*
   Combined model of the Open-Drain Driver and Push-Pull Driver for the I3C bus lines.
 
-  | sel_od_pp_i | phy_data_i | phy_data_io |
-  |           0 |          0 |           0 |
-  |           0 |          1 |           z |
-  |           1 |          0 |           0 |
-  |           1 |          1 |           1 |
+  | sel_driver_i | phy_data_i | phy_data_io |
+  |            0 |          0 |           z |
+  |            0 |          1 |           0 |
+  |            1 |          0 |           0 |
+  |            1 |          1 |           1 |
 */
 module bufs (
     input logic phy_data_i,
@@ -32,11 +32,11 @@ module bufs (
 
   // Model of an Open-Drain driver
   buf_od xbuf_od (
-      .drive_low(phy_data_i_z),
+      .drive_low(phy_data_i),
       .buf_od_o (buf_od_o)
   );
 
   // Mux between OD and PP
-  assign phy_data_io = sel_od_pp_i ? buf_pp_o : buf_od_o;
+  assign phy_data_io = sel_driver_i ? buf_pp_o : buf_od_o;
 
 endmodule

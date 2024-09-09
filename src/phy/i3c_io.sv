@@ -5,11 +5,12 @@
 /*
   This module provides IO definition for the I3C Core.
 
-  The I3C IO might require different models, depending on
-  the desired use case (silicon, fpga, simulation). For that
-  reason, this module is not included in the i3c module, but
-  is instantiated in the i3c_wrapper.
+  The Core provides a few IO models, which can be used for different use cases:
+   - simulation
+   - FPGA emulation
+   - silicon synthesis
 */
+
 module i3c_io (
 
     // {SCL, SDA} from the controller
@@ -28,32 +29,19 @@ module i3c_io (
     inout wire sda_io
 );
 
-  wire scl_io_int;
-  wire sda_io_int;
-
   // SCL buffers
   bufs xbufs_scl (
-      .phy_data_i (scl_i),
-      .sel_od_pp_i(sel_od_pp_i),
-      .phy_data_io(scl_io_int)
+      .phy_data_i  (scl_i),
+      .sel_driver_i(sel_od_pp_i),
+      .phy_data_io (scl_io)
   );
 
   // SDA buffers
   bufs xbufs_sda (
-      .phy_data_i (sda_i),
-      .sel_od_pp_i(sel_od_pp_i),
-      .phy_data_io(sda_io_int)
+      .phy_data_i  (sda_i),
+      .sel_driver_i(sel_od_pp_i),
+      .phy_data_io (sda_io)
   );
-
-  // Model pull-up resistor
-  // The pull-up strength should be:
-  //   - weak compared to PP buffer
-  //   - weak compared to 0 driven by the OD buffer
-  //   - strong enough to pull-up 'z' state
-  assign (weak0, weak1) scl_io_int = 1;
-  assign (weak0, weak1) sda_io_int = 1;
-  assign scl_io = scl_io_int;
-  assign sda_io = sda_io_int;
 
   // Bus state is read to provide feedback to the controller
   // Used to resolve bus arbitration and detect bus error conditions
