@@ -415,6 +415,7 @@ module i3c
   logic i3c_active_en;
   logic i3c_standby_en;
   logic [19:0] t_hd_dat;
+  logic [19:0] t_su_dat;
   logic [19:0] t_r;
   logic [19:0] t_bus_free;
   logic [19:0] t_bus_idle;
@@ -534,6 +535,7 @@ module i3c
       .i2c_standby_en_i(i2c_standby_en),
       .i3c_active_en_i(i3c_active_en),
       .i3c_standby_en_i(i3c_standby_en),
+      .t_su_dat_i(t_su_dat),
       .t_hd_dat_i(t_hd_dat),
       .t_r_i(t_r),
       .t_bus_free_i(t_bus_free),
@@ -707,6 +709,7 @@ module i3c
       .i2c_standby_en_o(i2c_standby_en),
       .i3c_active_en_o(i3c_active_en),
       .i3c_standby_en_o(i3c_standby_en),
+      .t_su_dat_o(t_su_dat),
       .t_hd_dat_o(t_hd_dat),
       .t_r_o(t_r),
       .t_bus_free_o(t_bus_free),

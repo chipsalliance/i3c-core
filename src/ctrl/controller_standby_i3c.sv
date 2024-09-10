@@ -72,6 +72,7 @@ module controller_standby_i3c
     input logic i2c_standby_en_i,
     input logic i3c_active_en_i,
     input logic i3c_standby_en_i,
+    input logic [19:0] t_su_dat_i,
     input logic [19:0] t_hd_dat_i,
     input logic [19:0] t_r_i,
     input logic [19:0] t_bus_free_i,

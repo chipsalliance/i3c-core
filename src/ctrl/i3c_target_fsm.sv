@@ -77,6 +77,7 @@ module i3c_target_fsm
     input  logic                   rx_fifo_wready_i,
 
     output logic [ 1:0] transfer_type_o,
+    // TODO: Revisit widths of the timings; each timing is configured via 20-bit CSR field
     // Timings
     input        [12:0] t_r_i,            // rise time of both SDA and SCL in clock units
     input        [12:0] tsu_dat_i,        // data setup time in clock units

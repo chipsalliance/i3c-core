@@ -16,6 +16,7 @@ module configuration (
     output logic i3c_standby_en_o,
 
     // Bus monitor
+    output logic [19:0] t_su_dat_o,
     output logic [19:0] t_hd_dat_o,
     output logic [19:0] t_r_o,
 
@@ -78,6 +79,7 @@ module configuration (
   assign phy_mux_select_o[1] = i2c_standby_en_o | i3c_standby_en_o;
 
   // Configuration: bus_monitor
+  assign t_su_dat_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value);
   assign t_hd_dat_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value);
   assign t_r_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
 
