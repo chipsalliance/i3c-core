@@ -516,6 +516,21 @@
 
             
           
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="recovery_flow.html" class="md-nav__link">
+        <span class="md-ellipsis">Recovery flow</span>
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -605,13 +620,13 @@
 <p>In this chapter we present:</p>
 <ul class="simple">
 <li><p>the SoC Management Interface</p></li>
-<li><p>implemented oversampling of the I3C signals</p></li>
-<li><p>implemented driver</p></li>
+<li><p>the implemented oversampling of the I3C signals</p></li>
+<li><p>the implemented drivers</p></li>
 </ul>
 <p>The I3C Core exposes control over the electrical and timing configurations via <a class="reference download internal" download="" href="_downloads/142b57714e11cd7ed65cca18a5fb1c1a/soc_management_interface.rdl"><span class="xref download myst">the SoC Management Interface</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Current numbers are not final and subject to change. Reserved for future.</p>
+<p>Current numbers are not final and are subject to change. Reserved for future.</p>
 </div>
 <h2 id="clock-speed-and-oversampling">Clock speed and oversampling<a class="headerlink" href="#clock-speed-and-oversampling" title="Link to this heading">¶</a></h2>
 <p>This implementation targets minimum system clock frequency of 500MHz to provide the ratio of sampling of the fastest I3C signal:</p>
@@ -626,16 +641,16 @@ At minimal frequency the sampling resolution is equal to the clock’s period of
 <li><p>SDA is captured at the last definitive moment when SCL is HIGH.</p></li>
 </ul>
 <h2 id="open-drain-vs-push-pull-configuration">Open-drain vs Push-pull configuration<a class="headerlink" href="#open-drain-vs-push-pull-configuration" title="Link to this heading">¶</a></h2>
-<p>The I3C controller uses both Open-Drain and Push-Pull drivers and different timings are used for them.
+<p>The I3C controller uses both Open-Drain and Push-Pull drivers, and different timings are used for them.
 The Open-Drain and Push-Pull drivers are both used within one I3C Frame.</p>
 <h2 id="rise-and-fall-times">Rise and fall times<a class="headerlink" href="#rise-and-fall-times" title="Link to this heading">¶</a></h2>
 <p>Driver strength can be adjusted by setting correct values in the I3C Pad Attribute Configuration Register.
-The minimum allowed rise/fall times are: <code class="docutils literal notranslate"><span class="pre">150e6*bus_period</span></code>, which is 12 ns for the 12.5 MHz bus.
-When calculating timings it is worth to include all falling edges in the LOW state.
+The minimum allowed rise/fall times are <code class="docutils literal notranslate"><span class="pre">150e6*bus_period</span></code>, which is 12 ns for the 12.5 MHz bus.
+When calculating timings, it is worth including all falling edges in the LOW state.
 Similarly, all the rising edges are part of the HIGH state.
 This is because we will flip the bit in the internal implementation at the start of t<sub>CR,CF</sub> and then the actual rise/fall time will occur naturally.</p>
 <h2 id="timing-control-registers">Timing control registers<a class="headerlink" href="#timing-control-registers" title="Link to this heading">¶</a></h2>
-<p>The SoC Management Interface defines the following registers, which can be used for timing control:</p>
+<p>The SoC Management Interface defines the following registers which can be used for timing control:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T_R_REG</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T_F_REG</span></code></p></li>
@@ -650,9 +665,9 @@ This is because we will flip the bit in the internal implementation at the start
 <li><p><code class="docutils literal notranslate"><span class="pre">T_AVAL_REG</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T_IDLE_REG</span></code></p></li>
 </ul>
-<p>Value of each of these registers expresses time delay, expressed in the I3C clock period.
-Default values are provided for the 500MHz clock.
-A python script <a class="reference download internal" download="" href="_downloads/d68f7a594a4d705093080b00c0c5d709/timing.py"><span class="xref download myst">timing.py</span></a> is provided to recalculate values for higher clock frequencies.</p>
+<p>The value of each of these registers expresses time delay, expressed in the I3C clock period.
+The default values are provided for the 500MHz clock.
+The <a class="reference download internal" download="" href="_downloads/d68f7a594a4d705093080b00c0c5d709/timing.py"><span class="xref download myst">timing.py</span></a> Python script is provided to recalculate values for higher clock frequencies.</p>
 <h3 id="rise-fall-time-register">Rise/fall Time Register<a class="headerlink" href="#rise-fall-time-register" title="Link to this heading">¶</a></h3>
 <h3 id="setup-time-register">Setup Time Register<a class="headerlink" href="#setup-time-register" title="Link to this heading">¶</a></h3>
 <h3 id="hold-time-register">Hold Time Register<a class="headerlink" href="#hold-time-register" title="Link to this heading">¶</a></h3>
@@ -665,7 +680,7 @@ A python script <a class="reference download internal" download="" href="_downlo
   <small>
     
       Last update:
-      2024-09-03
+      2024-09-10
     
   </small>
 </div>

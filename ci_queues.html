@@ -327,7 +327,7 @@
         
           <li class="md-nav__item">
   <a href="#response-queue-threshold" class="md-nav__link">
-    <span class="md-ellipsis">Response  queue threshold</span>
+    <span class="md-ellipsis">Response queue threshold</span>
   </a>
   
 </li>
@@ -488,6 +488,21 @@
 
             
           
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="recovery_flow.html" class="md-nav__link">
+        <span class="md-ellipsis">Recovery flow</span>
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -600,38 +615,38 @@
 <p>Controller Interface queues are depth-configurable with the <a class="reference internal" href="config.html#configuring-the-i3c-core"><span class="std std-ref">I3C Configuration</span></a>.</p>
 <p>Queues generate several status indicators that will be used to trigger appropriate interrupts:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">*_fifo_empty_</span></code> - no elements are enqueued in corresponding FIFO.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_fifo_empty_</span></code> - no elements are enqueued in the corresponding FIFO.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">*_fifo_full_</span></code> - <code class="docutils literal notranslate"><span class="pre">*_FIFO_DEPTH</span></code> are enqueued in the corresponding FIFO.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">*_fifo_apch_thld_</span></code> - the user-defined threshold has been reached. <!-- TODO: name will be changed --></p></li>
 </ul>
 <h2 id="queue-threshold">Queue threshold<a class="headerlink" href="#queue-threshold" title="Link to this heading">¶</a></h2>
-<p>Command and response queue thresholds are controlled via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/4028ed29254aefdbe9c805e8bfaa275e200994ba/src/rdl/pio_registers.rdl#L44">QUEUE_THLD_CTRL</a> register.
+<p>Command and response queue thresholds are controlled via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/4028ed29254aefdbe9c805e8bfaa275e200994ba/src/rdl/pio_registers.rdl#L44">QUEUE_THLD_CTRL</a> register.
 RX and TX data queue thresholds are controlled via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/4028ed29254aefdbe9c805e8bfaa275e200994ba/src/rdl/pio_registers.rdl#L75">DATA_BUFFER_THLD_CTRL</a>.</p>
 <h3 id="command-queue-threshold">Command queue threshold<a class="headerlink" href="#command-queue-threshold" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>The threshold for command queue is set by a write to the <code class="docutils literal notranslate"><span class="pre">QUEUE_THLD_CTRL</span></code> to the 8-bit <code class="docutils literal notranslate"><span class="pre">CMD_EMPTY_BUF_THLD</span></code> field.</p></li>
-<li><p>The threshold <code class="docutils literal notranslate"><span class="pre">N</span></code> of range <code class="docutils literal notranslate"><span class="pre">&lt;1,</span> <span class="pre">255&gt;</span></code> (inclusive) will cause an <code class="docutils literal notranslate"><span class="pre">CMD_QUEUE_READY_STAT</span></code> interrupt when there’s <code class="docutils literal notranslate"><span class="pre">N</span></code> or more remaining empty entries left in the command queue.</p></li>
-<li><p>If the <code class="docutils literal notranslate"><span class="pre">N</span></code> value is greater than the size of the command queue (<code class="docutils literal notranslate"><span class="pre">CMD_FIFO_DEPTH</span></code>) the full depth will be considered (the threshold will be set to <code class="docutils literal notranslate"><span class="pre">CMD_FIFO_DEPTH</span></code>).</p></li>
+<li><p>The threshold for command queue is set by a write to the 8-bit <code class="docutils literal notranslate"><span class="pre">CMD_EMPTY_BUF_THLD</span></code> field of the <code class="docutils literal notranslate"><span class="pre">QUEUE_THLD_CTRL</span></code> register.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> threshold of <code class="docutils literal notranslate"><span class="pre">&lt;1,</span> <span class="pre">255&gt;</span></code> range (inclusive) will cause an <code class="docutils literal notranslate"><span class="pre">CMD_QUEUE_READY_STAT</span></code> interrupt when there’s <code class="docutils literal notranslate"><span class="pre">N</span></code> or more remaining empty entries in the command queue.</p></li>
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">N</span></code> value is greater than the size of the command queue (<code class="docutils literal notranslate"><span class="pre">CMD_FIFO_DEPTH</span></code>), the full depth will be considered (the threshold will be set to <code class="docutils literal notranslate"><span class="pre">CMD_FIFO_DEPTH</span></code>).</p></li>
 </ul>
-<h3 id="response-queue-threshold">Response  queue threshold<a class="headerlink" href="#response-queue-threshold" title="Link to this heading">¶</a></h3>
+<h3 id="response-queue-threshold">Response queue threshold<a class="headerlink" href="#response-queue-threshold" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>The threshold for response queue is set by a write to <code class="docutils literal notranslate"><span class="pre">QUEUE_THLD_CTRL</span></code> to the 8-bit <code class="docutils literal notranslate"><span class="pre">RESP_BUF_THLD</span></code> field.</p></li>
-<li><p>The threshold <code class="docutils literal notranslate"><span class="pre">N</span></code> of range <code class="docutils literal notranslate"><span class="pre">&lt;1,</span> <span class="pre">255&gt;</span></code> (inclusive) will cause an <code class="docutils literal notranslate"><span class="pre">RESP_READY_STAT</span></code> interrupt when there’s <code class="docutils literal notranslate"><span class="pre">N</span></code> or more responses enqueued in the response queue.</p></li>
-<li><p>If the <code class="docutils literal notranslate"><span class="pre">N</span></code> value is greater or equal than the size of the response queue (<code class="docutils literal notranslate"><span class="pre">RESP_FIFO_DEPTH</span></code>) the full depth will be considered (the threshold will be set to <code class="docutils literal notranslate"><span class="pre">RESP_FIFO_DEPTH</span> <span class="pre">-</span> <span class="pre">1</span></code>)</p></li>
+<li><p>The threshold for response queue is set by a write to the 8-bit <code class="docutils literal notranslate"><span class="pre">RESP_BUF_THLD</span></code> field of the <code class="docutils literal notranslate"><span class="pre">QUEUE_THLD_CTRL</span></code> register.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> threshold of <code class="docutils literal notranslate"><span class="pre">&lt;1,</span> <span class="pre">255&gt;</span></code> range (inclusive) will cause an <code class="docutils literal notranslate"><span class="pre">RESP_READY_STAT</span></code> interrupt when there’s <code class="docutils literal notranslate"><span class="pre">N</span></code> or more responses enqueued in the response queue.</p></li>
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">N</span></code> value is greater or equal than the size of the response queue (<code class="docutils literal notranslate"><span class="pre">RESP_FIFO_DEPTH</span></code>), the full depth will be considered (the threshold will be set to <code class="docutils literal notranslate"><span class="pre">RESP_FIFO_DEPTH</span> <span class="pre">-</span> <span class="pre">1</span></code>)</p></li>
 </ul>
 <h3 id="tx-queue-threshold">TX queue threshold<a class="headerlink" href="#tx-queue-threshold" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>The threshold for the TX queue is set by a write to <code class="docutils literal notranslate"><span class="pre">DATA_BUFFER_THLD_CTRL</span></code> to the 3-bit <code class="docutils literal notranslate"><span class="pre">TX_BUF_THLD</span></code> field.</p></li>
-<li><p>The threshold <code class="docutils literal notranslate"><span class="pre">N</span></code> of range <code class="docutils literal notranslate"><span class="pre">&lt;0,</span> <span class="pre">7&gt;</span></code> (inclusive) will trigger an <code class="docutils literal notranslate"><span class="pre">TX_THLD_STAT</span></code> interrupt when <code class="docutils literal notranslate"><span class="pre">2^(N+1)</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code> to the power of <code class="docutils literal notranslate"><span class="pre">N+1</span></code>) <code class="docutils literal notranslate"><span class="pre">DWORD</span></code> empty entries are available in the TX queue.</p></li>
-<li><p>The software must provide an <code class="docutils literal notranslate"><span class="pre">N</span></code> value that corresponds to the threshold less or equal than <code class="docutils literal notranslate"><span class="pre">TX_FIFO_DEPTH</span></code>, otherwise the <code class="docutils literal notranslate"><span class="pre">clog2(TX_FIFO_DEPTH)</span> <span class="pre">-</span> <span class="pre">1</span></code> will be applied.</p></li>
+<li><p>The threshold for the TX queue is set by a write to the 3-bit <code class="docutils literal notranslate"><span class="pre">TX_BUF_THLD</span></code> field of the <code class="docutils literal notranslate"><span class="pre">DATA_BUFFER_THLD_CTRL</span></code> register.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> threshold of <code class="docutils literal notranslate"><span class="pre">&lt;0,</span> <span class="pre">7&gt;</span></code> range (inclusive) will trigger an <code class="docutils literal notranslate"><span class="pre">TX_THLD_STAT</span></code> interrupt when <code class="docutils literal notranslate"><span class="pre">2^(N+1)</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code> to the power of <code class="docutils literal notranslate"><span class="pre">N+1</span></code>) empty <code class="docutils literal notranslate"><span class="pre">DWORD</span></code> entries are available in the TX queue.</p></li>
+<li><p>The software must provide an <code class="docutils literal notranslate"><span class="pre">N</span></code> value that corresponds to the threshold less or equal than <code class="docutils literal notranslate"><span class="pre">TX_FIFO_DEPTH</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">clog2(TX_FIFO_DEPTH)</span> <span class="pre">-</span> <span class="pre">1</span></code> will be applied.</p></li>
 </ul>
 <h3 id="rx-queue-threshold">RX queue threshold<a class="headerlink" href="#rx-queue-threshold" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>The threshold for the RX queue is set by a write to <code class="docutils literal notranslate"><span class="pre">DATA_BUFFER_THLD_CTRL</span></code> to the 3-bit <code class="docutils literal notranslate"><span class="pre">RX_BUF_THLD</span></code> field.</p></li>
-<li><p>The threshold <code class="docutils literal notranslate"><span class="pre">N</span></code> of range <code class="docutils literal notranslate"><span class="pre">&lt;0,</span> <span class="pre">7&gt;</span></code> (inclusive) will trigger an <code class="docutils literal notranslate"><span class="pre">RX_THLD_STAT</span></code> interrupt when <code class="docutils literal notranslate"><span class="pre">2^(N+1)</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code> to the power of <code class="docutils literal notranslate"><span class="pre">N+1</span></code>) <code class="docutils literal notranslate"><span class="pre">DWORD</span></code> entries are enqueued in the RX queue.</p></li>
-<li><p>The software must provide an <code class="docutils literal notranslate"><span class="pre">N</span></code> value that corresponds to the threshold less than <code class="docutils literal notranslate"><span class="pre">RX_FIFO_DEPTH</span></code>, otherwise the <code class="docutils literal notranslate"><span class="pre">clog2(RX_FIFO_DEPTH)</span> <span class="pre">-</span> <span class="pre">2</span></code> will be applied.</p></li>
+<li><p>The threshold for the RX queue is set by a write to the 3-bit <code class="docutils literal notranslate"><span class="pre">RX_BUF_THLD</span></code> field of the <code class="docutils literal notranslate"><span class="pre">DATA_BUFFER_THLD_CTRL</span></code> register.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> threshold of <code class="docutils literal notranslate"><span class="pre">&lt;0,</span> <span class="pre">7&gt;</span></code> range (inclusive) will trigger an <code class="docutils literal notranslate"><span class="pre">RX_THLD_STAT</span></code> interrupt when <code class="docutils literal notranslate"><span class="pre">2^(N+1)</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code> to the power of <code class="docutils literal notranslate"><span class="pre">N+1</span></code>) <code class="docutils literal notranslate"><span class="pre">DWORD</span></code> entries are enqueued in the RX queue.</p></li>
+<li><p>The software must provide an <code class="docutils literal notranslate"><span class="pre">N</span></code> value that corresponds to the threshold less than <code class="docutils literal notranslate"><span class="pre">RX_FIFO_DEPTH</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">clog2(RX_FIFO_DEPTH)</span> <span class="pre">-</span> <span class="pre">2</span></code> will be applied.</p></li>
 </ul>
-<p>All queues utilize <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/9c815c335a92901b27458271a885b2128e51e687/src/caliptra_prim/rtl/caliptra_prim_fifo_sync.sv#L9">caliptra_prim_fifo_sync.sv</a> fifo implementation.</p>
+<p>All queues utilize the <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/9c815c335a92901b27458271a885b2128e51e687/src/caliptra_prim/rtl/caliptra_prim_fifo_sync.sv#L9">caliptra_prim_fifo_sync.sv</a> FIFO implementation.</p>
 
 
   <hr>
@@ -639,7 +654,7 @@ RX and TX data queue thresholds are controlled via <a class="reference external"
   <small>
     
       Last update:
-      2024-09-03
+      2024-09-10
     
   </small>
 </div>

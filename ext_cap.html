@@ -482,7 +482,7 @@
         
           <li class="md-nav__item">
   <a href="#secure-firmware-recovery-interface-id-0xc0" class="md-nav__link">
-    <span class="md-ellipsis">Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
+    <span class="md-ellipsis">&lt;a name=&#34;secure_<wbr>firmware_<wbr>recovery_<wbr>interface&#34;/&gt;Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
   </a>
   
 </li>
@@ -722,6 +722,21 @@
 
             
           
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="recovery_flow.html" class="md-nav__link">
+        <span class="md-ellipsis">Recovery flow</span>
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -877,7 +892,7 @@ Implementation based on this specification shall provide a list of known memory 
 </table>
 <h3 id="controller-config-id-0x02">Controller Config (ID=0x02)<a class="headerlink" href="#controller-config-id-0x02" title="Link to this heading">¶</a></h3>
 <p>The Controller Config Capability follows section 7.7.3 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
-<h3 id="secure-firmware-recovery-interface-id-0xc0">Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
+<h3 id="secure-firmware-recovery-interface-id-0xc0"><a name="secure_firmware_recovery_interface"/>Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
 <p>This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and I3C Target Recovery Specification</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code>.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
@@ -1943,7 +1958,7 @@ Software-issued reset of the queues contents is also possible.</p>
   <small>
     
       Last update:
-      2024-09-03
+      2024-09-10
     
   </small>
 </div>
@@ -1983,13 +1998,13 @@ Software-issued reset of the queues contents is also possible.</p>
       
       
         
-        <a href="config.html" class="md-footer__link md-footer__link--next" aria-label="Next: Configuring the I3C Core" rel="next">
+        <a href="recovery_flow.html" class="md-footer__link md-footer__link--next" aria-label="Next: Recovery flow" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Configuring the I3C Core
+              Recovery flow
             </div>
           </div>
           <div class="md-footer__button md-icon">

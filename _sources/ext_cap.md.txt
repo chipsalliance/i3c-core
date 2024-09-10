@@ -60,7 +60,7 @@ This specification provides definitions and descriptions of the following Capabi
 
 The Controller Config Capability follows section 7.7.3 of the [I3C HCI Specification](introduction.md#spec-i3c-hci).
 
-### Secure Firmware Recovery Interface (ID=0xC0)
+### <a name="secure_firmware_recovery_interface"/>Secure Firmware Recovery Interface (ID=0xC0)
 
 This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and I3C Target Recovery Specification
 
