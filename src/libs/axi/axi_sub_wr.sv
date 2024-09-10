@@ -45,7 +45,10 @@ module axi_sub_wr import axi_pkg::*; #(
     // Exclusive Access Signals
     output logic            [ID_NUM-1:0] ex_clr,
     input  logic            [ID_NUM-1:0] ex_active,
-    input  var axi_ex_ctx_t [ID_NUM-1:0] ex_ctx,
+    input  struct packed {
+        logic [AW-1:0] addr;
+        logic [AW-1:0] addr_mask;
+    } [ID_NUM-1:0] ex_ctx,
 
     //COMPONENT INF
     output logic          dv,
@@ -63,6 +66,17 @@ module axi_sub_wr import axi_pkg::*; #(
     // --------------------------------------- //
     // Localparams/Typedefs                    //
     // --------------------------------------- //
+
+    // Transaction context
+    typedef struct packed {
+        logic [AW-1:0] addr;
+        axi_burst_e    burst;
+        logic [2:0]    size;
+        logic [7:0]    len;
+        logic [UW-1:0] user;
+        logic [IW-1:0] id;
+        logic          lock;
+    } axi_ctx_t;
 
 
     // --------------------------------------- //
@@ -104,7 +118,7 @@ module axi_sub_wr import axi_pkg::*; #(
 
     always_comb begin
         s_axi_if_ctx.addr  = s_axi_if.awaddr ;
-        s_axi_if_ctx.burst = s_axi_if.awburst;
+        s_axi_if_ctx.burst = axi_burst_e'(s_axi_if.awburst);
         s_axi_if_ctx.size  = s_axi_if.awsize ;
         s_axi_if_ctx.len   = s_axi_if.awlen  ;
         s_axi_if_ctx.user  = s_axi_if.awuser ;
@@ -154,12 +168,11 @@ module axi_sub_wr import axi_pkg::*; #(
 
     always_comb req_matches_ex = (req_ctx.addr & ex_ctx[req_ctx.id].addr_mask) == ex_ctx[req_ctx.id].addr;
 
-    // TODO reset?
-    always_ff@(posedge clk/* or negedge rst_n*/) begin
-//        if (!rst_n) begin
-//            txn_ctx <= '{default:0};
-//        end
-        if (req_valid && req_ready) begin
+    always_ff@(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            txn_ctx <= '{default:0, burst:AXI_BURST_FIXED};
+        end
+        else if (req_valid && req_ready) begin
             txn_ctx.addr  <= req_ctx.addr;
             txn_ctx.burst <= req_ctx.burst;
             txn_ctx.size  <= req_ctx.size;
@@ -229,7 +242,7 @@ module axi_sub_wr import axi_pkg::*; #(
 
         // Match on each beat in case a burst transaction only overlaps
         // the exclusive context partially
-        always_comb txn_ex_match[ex] <= (addr_ex_algn == ex_ctx[ex].addr);
+        always_comb txn_ex_match[ex] = (addr_ex_algn == ex_ctx[ex].addr);
 
     end: EX_AXS_TRACKER
     endgenerate
@@ -335,17 +348,17 @@ module axi_sub_wr import axi_pkg::*; #(
     `CALIPTRA_ASSERT_KNOWN(AXI_SUB_X_BID    , (s_axi_if.bvalid ? s_axi_if.bid   : '0), clk, !rst_n)
 
     // Handshake rules
-    `CALIPTRA_ASSERT      (AXI_SUB_AW_HSHAKE_ERR, s_axi_if.awvalid && !s_axi_if.awready => s_axi_if.awvalid, clk, !rst_n)
-    `CALIPTRA_ASSERT      (AXI_SUB_W_HSHAKE_ERR,  s_axi_if.wvalid  && !s_axi_if.wready  => s_axi_if.wvalid,  clk, !rst_n)
-    `CALIPTRA_ASSERT      (AXI_SUB_B_HSHAKE_ERR,  s_axi_if.bvalid  && !s_axi_if.bready  => s_axi_if.bvalid,  clk, !rst_n)
+    `CALIPTRA_ASSERT      (AXI_SUB_AW_HSHAKE_ERR, (s_axi_if.awvalid && !s_axi_if.awready) |=> s_axi_if.awvalid, clk, !rst_n)
+    `CALIPTRA_ASSERT      (AXI_SUB_W_HSHAKE_ERR,  (s_axi_if.wvalid  && !s_axi_if.wready ) |=> s_axi_if.wvalid,  clk, !rst_n)
+    `CALIPTRA_ASSERT      (AXI_SUB_B_HSHAKE_ERR,  (s_axi_if.bvalid  && !s_axi_if.bready ) |=> s_axi_if.bvalid,  clk, !rst_n)
 
     // Exclusive access rules:
     //   - Must have an address that is aligned to burst byte count
     //   - Byte count must be power of 2 inside 1:128
     //   - Max burst length = 16
-    `CALIPTRA_ASSERT      (ERR_AXI_EX_UNALGN  , (s_axi_if.awvalid && s_axi_if.awlock) -> ~|s_axi_if.awaddr[$clog2((1<<s_axi_if.awsize)*(s_axi_if.awlen+1))-1:0], clk, !rst_n)
-    `CALIPTRA_ASSERT      (ERR_AXI_EX_BYTE_CNT, (s_axi_if.awvalid && s_axi_if.awlock) -> ((1<<s_axi_if.awsize)*(s_axi_if.awlen+1) inside {1,2,4,8,16,32,64,128}), clk, !rst_n)
-    `CALIPTRA_ASSERT      (ERR_AXI_EX_MAX_LEN,  (s_axi_if.awvalid && s_axi_if.awlock) -> (s_axi_if.awlen < 16), clk, !rst_n)
+    `CALIPTRA_ASSERT      (ERR_AXI_EX_UNALGN  , (s_axi_if.awvalid && s_axi_if.awlock) |-> ~|(s_axi_if.awaddr & ((1 << $clog2((1<<s_axi_if.awsize)*(s_axi_if.awlen+1)))-1)), clk, !rst_n)
+    `CALIPTRA_ASSERT      (ERR_AXI_EX_BYTE_CNT, (s_axi_if.awvalid && s_axi_if.awlock) |-> ((1<<s_axi_if.awsize)*(s_axi_if.awlen+1) inside {1,2,4,8,16,32,64,128}), clk, !rst_n)
+    `CALIPTRA_ASSERT      (ERR_AXI_EX_MAX_LEN,  (s_axi_if.awvalid && s_axi_if.awlock) |-> (s_axi_if.awlen < 16), clk, !rst_n)
 
 
     // --------------------------------------- //

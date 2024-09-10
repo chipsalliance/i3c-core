@@ -122,7 +122,7 @@ module axi_adapter #(
 
   logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
   logic cpuif_req_stall;
-  logic i3c_req_err, i3c_req_write;
+  logic i3c_req_write;
   logic i3c_req_last;
   logic [CsrDataWidth-1:0] i3c_req_wdata;
   logic [AxiDataWidth/8-1:0] i3c_req_wstrb;
@@ -156,7 +156,8 @@ module axi_adapter #(
       .rdata(i3c_req_rdata),
       .last(i3c_req_last),
       .hld(i3c_req_hld),
-      .err(i3c_req_err)
+      .rd_err(s_cpuif_rd_err),
+      .wr_err(s_cpuif_wr_err)
   );
 
   genvar i;
@@ -177,7 +178,6 @@ module axi_adapter #(
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
     s_cpuif_wr_data = i3c_req_wdata;
-    i3c_req_err = s_cpuif_rd_err | s_cpuif_wr_err;
     i3c_req_rdata = s_cpuif_rd_data;
   end
 
