@@ -132,56 +132,13 @@ module hci
     output logic hci_ibi_queue_wready_o,
     input logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_i,
 
-    // Target Transaction Interface
-    // RX descriptors queue
-    output logic tti_rx_desc_queue_full_o,
-    output logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_o,
-    output logic tti_rx_desc_queue_ready_thld_trig_o,
-    output logic tti_rx_desc_queue_empty_o,
-    input logic tti_rx_desc_queue_wvalid_i,
-    output logic tti_rx_desc_queue_wready_o,
-    input logic [CsrDataWidth-1:0] tti_rx_desc_queue_wdata_i,
+    // Target Transaction Interface CSRs
+    output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_o,
+    input  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t  hwif_tti_i,
 
-    // TX descriptors queue
-    output logic tti_tx_desc_queue_full_o,
-    output logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_o,
-    output logic tti_tx_desc_queue_ready_thld_trig_o,
-    output logic tti_tx_desc_queue_empty_o,
-    output logic tti_tx_desc_queue_rvalid_o,
-    input logic tti_tx_desc_queue_rready_i,
-    output logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata_o,
-
-    // RX queue
-    output logic tti_rx_queue_full_o,
-    output logic [TtiRxThldWidth-1:0] tti_rx_queue_start_thld_o,
-    output logic [TtiRxThldWidth-1:0] tti_rx_queue_ready_thld_o,
-    output logic tti_rx_queue_start_thld_trig_o,
-    output logic tti_rx_queue_ready_thld_trig_o,
-    output logic tti_rx_queue_empty_o,
-    input logic tti_rx_queue_wvalid_i,
-    output logic tti_rx_queue_wready_o,
-    input logic [CsrDataWidth-1:0] tti_rx_queue_wdata_i,
-
-    // TX queue
-    output logic tti_tx_queue_full_o,
-    output logic [TtiTxThldWidth-1:0] tti_tx_queue_start_thld_o,
-    output logic [TtiTxThldWidth-1:0] tti_tx_queue_ready_thld_o,
-    output logic tti_tx_queue_start_thld_trig_o,
-    output logic tti_tx_queue_ready_thld_trig_o,
-    output logic tti_tx_queue_empty_o,
-    output logic tti_tx_queue_rvalid_o,
-    input logic tti_tx_queue_rready_i,
-    output logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_o,
-
-    // In-band Interrupt queue
-    output logic tti_ibi_queue_full_o,
-    output logic [TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld_o,
-    output logic tti_ibi_queue_ready_thld_trig_o,
-    input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_wr_data_i,
-    output logic tti_ibi_queue_empty_o,
-    output logic tti_ibi_queue_rvalid_o,
-    input logic tti_ibi_queue_rready_i,
-    output logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_o,
+    // Recovery interface CSRs
+    output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_o,
+    input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_i,
 
     // Controller configuration
     output logic phy_en_o,
@@ -205,11 +162,19 @@ module hci
 
   // DAT CSR interface
   I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;
-  I3CCSR_pkg::I3CCSR__DAT__in_t dat_i;
+  I3CCSR_pkg::I3CCSR__DAT__in_t  dat_i;
 
   // DCT CSR interface
   I3CCSR_pkg::I3CCSR__DCT__out_t dct_o;
-  I3CCSR_pkg::I3CCSR__DCT__in_t dct_i;
+  I3CCSR_pkg::I3CCSR__DCT__in_t  dct_i;
+
+  // TTI CSR interface
+  assign hwif_tti_o = hwif_out.I3C_EC.TTI;
+  assign hwif_in.I3C_EC.TTI = hwif_tti_i;
+
+  // Recovery CSR interface
+  assign hwif_rec_o = hwif_out.I3C_EC.SecFwRecoveryIf;
+  assign hwif_in.I3C_EC.SecFwRecoveryIf = hwif_rec_i;
 
   // Reset control
   logic cmd_reset_ctrl_we;
@@ -515,99 +480,6 @@ module hci
       .t_bus_free_o,
       .t_bus_idle_o,
       .t_bus_available_o
-  );
-
-  tti #(
-      .CsrDataWidth(CsrDataWidth),
-
-      .TxDescFifoDepth(TtiRespFifoDepth),
-      .RxDescFifoDepth(TtiCmdFifoDepth),
-      .TxFifoDepth(TtiRxFifoDepth),
-      .RxFifoDepth(TtiTxFifoDepth),
-      .IbiFifoDepth(TtiIbiFifoDepth),
-
-      .RxDescDataWidth(TtiRxDescDataWidth),
-      .TxDescDataWidth(TtiTxDescDataWidth),
-      .RxDataWidth(TtiRxDataWidth),
-      .TxDataWidth(TtiTxDataWidth),
-      .IbiDataWidth(TtiIbiDataWidth),
-
-      .RxDescThldWidth(TtiRxDescThldWidth),
-      .TxDescThldWidth(TtiTxDescThldWidth),
-      .RxThldWidth(TtiRxThldWidth),
-      .TxThldWidth(TtiTxThldWidth),
-      .IbiThldWidth(TtiIbiThldWidth)
-  ) tti (
-      .clk_i,
-      .rst_ni,
-
-      .hwif_out_i(hwif_out),
-
-      // Command queue
-      .rx_desc_queue_full_o(tti_rx_desc_queue_full_o),
-      .rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_ready_thld_trig_o),
-      .rx_desc_queue_ready_thld_o(tti_rx_desc_queue_ready_thld_o),
-      .rx_desc_queue_ready_thld_next_i(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next),
-      .rx_desc_queue_ready_thld_we_i(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.we),
-      .rx_desc_queue_empty_o(tti_rx_desc_queue_empty_o),
-      .rx_desc_queue_wvalid_i(tti_rx_desc_queue_wvalid_i),
-      .rx_desc_queue_wready_o(tti_rx_desc_queue_wready_o),
-      .rx_desc_queue_wdata_i(tti_rx_desc_queue_wdata_i),
-      .rx_desc_queue_rd_ack_o(tti_rx_desc_queue_rd_ack),
-      .rx_desc_queue_rd_data_o(tti_rx_desc_queue_rd_data),
-      .rx_desc_queue_rst_we_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we),
-      .rx_desc_queue_rst_next_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next),
-
-      .tx_desc_queue_full_o(tti_tx_desc_queue_full_o),
-      .tx_desc_queue_ready_thld_trig_o(tti_tx_desc_queue_ready_thld_trig_o),
-      .tx_desc_queue_ready_thld_o(tti_tx_desc_queue_ready_thld_o),
-      .tx_desc_queue_ready_thld_next_i(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next),
-      .tx_desc_queue_ready_thld_we_i(hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.we),
-      .tx_desc_queue_empty_o(tti_tx_desc_queue_empty_o),
-      .tx_desc_queue_rvalid_o(tti_tx_desc_queue_rvalid_o),
-      .tx_desc_queue_rready_i(tti_tx_desc_queue_rready_i),
-      .tx_desc_queue_rdata_o(tti_tx_desc_queue_rdata_o),
-      .tx_desc_queue_wr_ack_o(tti_tx_desc_queue_wr_ack),
-      .tx_desc_queue_rst_we_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we),
-      .tx_desc_queue_rst_next_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next),
-
-      .rx_queue_full_o(tti_rx_queue_full_o),
-      .rx_queue_start_thld_o(tti_rx_queue_start_thld_o),
-      .rx_queue_start_thld_trig_o(tti_rx_queue_start_thld_trig_o),
-      .rx_queue_ready_thld_o(tti_rx_queue_ready_thld_o),
-      .rx_queue_ready_thld_trig_o(tti_rx_queue_ready_thld_trig_o),
-      .rx_queue_empty_o(tti_rx_queue_empty_o),
-      .rx_queue_wvalid_i(tti_rx_queue_wvalid_i),
-      .rx_queue_wready_o(tti_rx_queue_wready_o),
-      .rx_queue_wdata_i(tti_rx_queue_wdata_i),
-      .rx_queue_rd_ack_o(tti_rx_queue_rd_ack),
-      .rx_queue_rd_data_o(tti_rx_queue_rd_data),
-      .rx_queue_rst_we_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we),
-      .rx_queue_rst_next_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next),
-
-      .tx_queue_full_o(tti_tx_queue_full_o),
-      .tx_queue_start_thld_o(tti_tx_queue_start_thld_o),
-      .tx_queue_start_thld_trig_o(tti_tx_queue_start_thld_trig_o),
-      .tx_queue_ready_thld_o(tti_tx_queue_ready_thld_o),
-      .tx_queue_ready_thld_trig_o(tti_tx_queue_ready_thld_trig_o),
-      .tx_queue_empty_o(tti_tx_queue_empty_o),
-      .tx_queue_rvalid_o(tti_tx_queue_rvalid_o),
-      .tx_queue_rready_i(tti_tx_queue_rready_i),
-      .tx_queue_rdata_o(tti_tx_queue_rdata_o),
-      .tx_queue_wr_ack_o(tti_tx_queue_wr_ack),
-      .tx_queue_rst_we_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.we),
-      .tx_queue_rst_next_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next),
-
-      .ibi_queue_full_o(tti_ibi_queue_full_o),
-      .ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld_o),
-      .ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig_o),
-      .ibi_queue_empty_o(tti_ibi_queue_empty_o),
-      .ibi_queue_rvalid_o(tti_ibi_queue_rvalid_o),
-      .ibi_queue_rready_i(tti_ibi_queue_rready_i),
-      .ibi_queue_rdata_o(tti_ibi_queue_rdata_o),
-      .ibi_queue_wr_ack_o(tti_ibi_queue_wr_ack),
-      .ibi_queue_rst_we_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.we),
-      .ibi_queue_rst_next_o(hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next)
   );
 
   // In-band Interrupt queue

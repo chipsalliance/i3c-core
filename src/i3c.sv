@@ -556,6 +556,14 @@ module i3c
       .t_bus_available_i(t_bus_available)
   );
 
+  // HCI
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
+
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
+
+  // HCI
   hci #(
       .CsrAddrWidth(CsrAddrWidth),
       .CsrDataWidth(CsrDataWidth),
@@ -619,6 +627,9 @@ module i3c
       .dct_mem_src_i,
       .dct_mem_sink_o,
 
+      .hwif_tti_o(hwif_tti_out),
+      .hwif_tti_i(hwif_tti_inp),
+
       // HCI Response queue
       .hci_resp_full_o(hci_resp_queue_full),
       .hci_resp_ready_thld_o(hci_resp_queue_ready_thld),
@@ -667,55 +678,6 @@ module i3c
       .hci_ibi_queue_wready_o(ibi_queue_wready),
       .hci_ibi_queue_wdata_i(ibi_queue_wdata),
 
-      // TTI RX descriptors queue
-      .tti_rx_desc_queue_full_o(tti_rx_desc_queue_full),
-      .tti_rx_desc_queue_ready_thld_o(tti_rx_desc_queue_ready_thld),
-      .tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_above_thld_trig),
-      .tti_rx_desc_queue_empty_o(tti_rx_desc_queue_empty),
-      .tti_rx_desc_queue_wvalid_i(tti_rx_desc_queue_wvalid),
-      .tti_rx_desc_queue_wready_o(tti_rx_desc_queue_wready),
-      .tti_rx_desc_queue_wdata_i(tti_rx_desc_queue_wdata),
-
-      // TTI TX descriptors queue
-      .tti_tx_desc_queue_full_o(tti_tx_desc_queue_full),
-      .tti_tx_desc_queue_ready_thld_o(tti_tx_desc_queue_ready_thld),
-      .tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_queue_ready_thld_trig),
-      .tti_tx_desc_queue_empty_o(tti_tx_desc_queue_empty),
-      .tti_tx_desc_queue_rvalid_o(tti_tx_desc_queue_rvalid),
-      .tti_tx_desc_queue_rready_i(tti_tx_desc_queue_rready),
-      .tti_tx_desc_queue_rdata_o(tti_tx_desc_queue_rdata),
-
-      // TTI RX queue
-      .tti_rx_queue_full_o(tti_rx_queue_full),
-      .tti_rx_queue_start_thld_o(tti_rx_queue_start_thld),
-      .tti_rx_queue_start_thld_trig_o(tti_rx_queue_start_thld_trig),
-      .tti_rx_queue_ready_thld_o(tti_rx_queue_ready_thld),
-      .tti_rx_queue_ready_thld_trig_o(tti_rx_queue_ready_thld_trig),
-      .tti_rx_queue_empty_o(tti_rx_queue_empty),
-      .tti_rx_queue_wvalid_i(tti_rx_queue_wvalid),
-      .tti_rx_queue_wready_o(tti_rx_queue_wready),
-      .tti_rx_queue_wdata_i(tti_rx_queue_wdata),
-
-      // TTI TX queue
-      .tti_tx_queue_full_o(tti_tx_queue_full),
-      .tti_tx_queue_start_thld_o(tti_tx_queue_start_thld),
-      .tti_tx_queue_start_thld_trig_o(tti_tx_queue_start_thld_trig),
-      .tti_tx_queue_ready_thld_o(tti_tx_queue_ready_thld),
-      .tti_tx_queue_ready_thld_trig_o(tti_tx_queue_ready_thld_trig),
-      .tti_tx_queue_empty_o(tti_tx_queue_empty),
-      .tti_tx_queue_rvalid_o(tti_tx_queue_rvalid),
-      .tti_tx_queue_rready_i(tti_tx_queue_rready),
-      .tti_tx_queue_rdata_o(tti_tx_queue_rdata),
-
-      // In-band Interrupt queue
-      .tti_ibi_queue_full_o(tti_ibi_queue_full),
-      .tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld),
-      .tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
-      .tti_ibi_queue_empty_o(tti_ibi_queue_empty),
-      .tti_ibi_queue_rvalid_o(tti_ibi_queue_rvalid),
-      .tti_ibi_queue_rready_i(tti_ibi_queue_rready),
-      .tti_ibi_queue_rdata_o(tti_ibi_queue_rdata),
-
       .phy_en_o(phy_en),
       .phy_mux_select_o(phy_mux_select),
       .i2c_active_en_o(i2c_active_en),
@@ -728,6 +690,231 @@ module i3c
       .t_bus_free_o(t_bus_free),
       .t_bus_idle_o(t_bus_idle),
       .t_bus_available_o(t_bus_available)
+  );
+
+  // TTI
+
+  // TTI RX Descriptor queue
+  logic                          csr_tti_rx_desc_queue_req;
+  logic                          csr_tti_rx_desc_queue_ack;
+  logic [TtiRxDescDataWidth-1:0] csr_tti_rx_desc_queue_data;
+  logic [TtiRxDescThldWidth-1:0] csr_tti_rx_desc_queue_ready_thld;
+  logic [TtiRxDescThldWidth-1:0] csr_tti_rx_desc_queue_ready_thld;
+  logic                          csr_tti_rx_desc_queue_reg_rst;
+  logic                          csr_tti_rx_desc_queue_reg_rst_we;
+  logic                          csr_tti_rx_desc_queue_reg_rst_data;
+
+  // TTI TX Descriptor queue
+  logic                          csr_tti_tx_desc_queue_req;
+  logic                          csr_tti_tx_desc_queue_ack;
+  logic [      CsrDataWidth-1:0] csr_tti_tx_desc_queue_data;
+  logic [TtiTxDescThldWidth-1:0] csr_tti_tx_desc_queue_ready_thld;
+  logic [TtiTxDescThldWidth-1:0] csr_tti_tx_desc_queue_ready_thld;
+  logic                          csr_tti_tx_desc_queue_reg_rst;
+  logic                          csr_tti_tx_desc_queue_reg_rst_we;
+  logic                          csr_tti_tx_desc_queue_reg_rst_data;
+
+  // TTI RX data queue
+  logic                          csr_tti_rx_data_queue_req;
+  logic                          csr_tti_rx_data_queue_ack;
+  logic [TtiRxDataDataWidth-1:0] csr_tti_rx_data_queue_data;
+  logic [TtiRxDataThldWidth-1:0] csr_tti_rx_data_queue_start_thld;
+  logic [TtiRxDataThldWidth-1:0] csr_tti_rx_data_queue_ready_thld;
+  logic [TtiRxDataThldWidth-1:0] csr_tti_rx_data_queue_ready_thld;
+  logic                          csr_tti_rx_data_queue_reg_rst;
+  logic                          csr_tti_rx_data_queue_reg_rst_we;
+  logic                          csr_tti_rx_data_queue_reg_rst_data;
+
+  // TTI TX data queue
+  logic                          csr_tti_tx_data_queue_req;
+  logic                          csr_tti_tx_data_queue_ack;
+  logic [      CsrDataWidth-1:0] csr_tti_tx_data_queue_data;
+  logic [TtiTxDataThldWidth-1:0] csr_tti_tx_data_queue_start_thld;
+  logic [TtiTxDataThldWidth-1:0] csr_tti_tx_data_queue_ready_thld;
+  logic [TtiTxDataThldWidth-1:0] csr_tti_tx_data_queue_ready_thld;
+  logic                          csr_tti_tx_data_queue_reg_rst;
+  logic                          csr_tti_tx_data_queue_reg_rst_we;
+  logic                          csr_tti_tx_data_queue_reg_rst_data;
+
+  // TTI In-band Interrupt (IBI) queue
+  logic                          csr_tti_ibi_queue_req;
+  logic                          csr_tti_ibi_queue_ack;
+  logic [      CsrDataWidth-1:0] csr_tti_ibi_queue_data;
+  logic                          csr_tti_ibi_queue_reg_rst;
+  logic                          csr_tti_ibi_queue_reg_rst_we;
+  logic                          csr_tti_ibi_queue_reg_rst_data;
+
+  tti #() xtti (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+
+      .hwif_tti_i(hwif_tti_out),
+      .hwif_tti_o(hwif_tti_inp),
+
+      // TTI RX descriptors queue
+      .rx_desc_queue_req_o         (csr_tti_rx_desc_queue_req),
+      .rx_desc_queue_ack_i         (csr_tti_rx_desc_queue_ack),
+      .rx_desc_queue_data_i        (csr_tti_rx_desc_queue_data),
+      .rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_queue_ready_thld),
+      .rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_queue_ready_thld),
+      .rx_desc_queue_reg_rst_o     (csr_tti_rx_desc_queue_reg_rst),
+      .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_queue_reg_rst_we),
+      .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_queue_reg_rst_data),
+
+      // TTI TX descriptors queue
+      .tx_desc_queue_req_o         (csr_tti_tx_desc_queue_req),
+      .tx_desc_queue_ack_i         (csr_tti_tx_desc_queue_ack),
+      .tx_desc_queue_data_o        (csr_tti_tx_desc_queue_data),
+      .tx_desc_queue_ready_thld_o  (csr_tti_tx_desc_queue_ready_thld),
+      .tx_desc_queue_ready_thld_i  (csr_tti_tx_desc_queue_ready_thld),
+      .tx_desc_queue_reg_rst_o     (csr_tti_tx_desc_queue_reg_rst),
+      .tx_desc_queue_reg_rst_we_i  (csr_tti_tx_desc_queue_reg_rst_we),
+      .tx_desc_queue_reg_rst_data_i(csr_tti_tx_desc_queue_reg_rst_data),
+
+      // TTI RX queue
+      .rx_data_queue_req_o         (csr_tti_rx_data_queue_req),
+      .rx_data_queue_ack_i         (csr_tti_rx_data_queue_ack),
+      .rx_data_queue_data_i        (csr_tti_rx_data_queue_data),
+      .rx_data_queue_start_thld_o  (csr_tti_rx_data_queue_start_thld),
+      .rx_data_queue_ready_thld_o  (csr_tti_rx_data_queue_ready_thld),
+      .rx_data_queue_ready_thld_i  (csr_tti_rx_data_queue_ready_thld),
+      .rx_data_queue_reg_rst_o     (csr_tti_rx_data_queue_reg_rst),
+      .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_queue_reg_rst_we),
+      .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_queue_reg_rst_data),
+
+      // TTI TX queue
+      .rx_data_queue_req_o         (csr_tti_tx_data_queue_req),
+      .rx_data_queue_ack_i         (csr_tti_tx_data_queue_ack),
+      .rx_data_queue_data_o        (csr_tti_tx_data_queue_data),
+      .rx_data_queue_start_thld_o  (csr_tti_tx_data_queue_start_thld),
+      .rx_data_queue_ready_thld_o  (csr_tti_tx_data_queue_ready_thld),
+      .rx_data_queue_ready_thld_i  (csr_tti_tx_data_queue_ready_thld),
+      .rx_data_queue_reg_rst_o     (csr_tti_tx_data_queue_reg_rst),
+      .rx_data_queue_reg_rst_we_i  (csr_tti_tx_data_queue_reg_rst_we),
+      .rx_data_queue_reg_rst_data_i(csr_tti_tx_data_queue_reg_rst_data),
+
+      // TTI In-band Interrupt (IBI) queue
+      .ibi_queue_req_o         (csr_tti_ibi_queue_req),
+      .ibi_queue_ack_i         (csr_tti_ibi_queue_ack),
+      .ibi_queue_data_o        (csr_tti_ibi_queue_data),
+      .ibi_queue_reg_rst_o     (csr_tti_ibi_queue_reg_rst),
+      .ibi_queue_reg_rst_we_i  (csr_tti_ibi_queue_reg_rst_we),
+      .ibi_queue_reg_rst_data_i(csr_tti_ibi_queue_reg_rst_data)
+  );
+
+  // Recovery handler
+  recovery_handler #() xrecovery_handler (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+
+      // Recovery CSR interface
+      .hwif_rec_i(hwif_rec_out),
+      .hwif_rec_o(hwif_rec_inp),
+
+      // ...........................
+      // TTI CSR interface
+
+      // TTI RX descriptors queue
+      .rx_desc_queue_req_i         (csr_tti_rx_desc_queue_req),
+      .rx_desc_queue_ack_o         (csr_tti_rx_desc_queue_ack),
+      .rx_desc_queue_data_o        (csr_tti_rx_desc_queue_data),
+      .rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_queue_ready_thld),
+      .rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_queue_ready_thld),
+      .rx_desc_queue_reg_rst_i     (csr_tti_rx_desc_queue_reg_rst),
+      .rx_desc_queue_reg_rst_we_o  (csr_tti_rx_desc_queue_reg_rst_we),
+      .rx_desc_queue_reg_rst_data_o(csr_tti_rx_desc_queue_reg_rst_data),
+
+      // TTI TX descriptors queue
+      .tx_desc_queue_req_i         (csr_tti_tx_desc_queue_req),
+      .tx_desc_queue_ack_o         (csr_tti_tx_desc_queue_ack),
+      .tx_desc_queue_data_i        (csr_tti_tx_desc_queue_data),
+      .tx_desc_queue_ready_thld_i  (csr_tti_tx_desc_queue_ready_thld),
+      .tx_desc_queue_ready_thld_o  (csr_tti_tx_desc_queue_ready_thld),
+      .tx_desc_queue_reg_rst_i     (csr_tti_tx_desc_queue_reg_rst),
+      .tx_desc_queue_reg_rst_we_o  (csr_tti_tx_desc_queue_reg_rst_we),
+      .tx_desc_queue_reg_rst_data_o(csr_tti_tx_desc_queue_reg_rst_data),
+
+      // TTI RX queue
+      .rx_data_queue_req_i         (csr_tti_rx_data_queue_req),
+      .rx_data_queue_ack_o         (csr_tti_rx_data_queue_ack),
+      .rx_data_queue_data_o        (csr_tti_rx_data_queue_data),
+      .rx_data_queue_start_thld_i  (csr_tti_rx_data_queue_start_thld),
+      .rx_data_queue_ready_thld_i  (csr_tti_rx_data_queue_ready_thld),
+      .rx_data_queue_ready_thld_o  (csr_tti_rx_data_queue_ready_thld),
+      .rx_data_queue_reg_rst_i     (csr_tti_rx_data_queue_reg_rst),
+      .rx_data_queue_reg_rst_we_o  (csr_tti_rx_data_queue_reg_rst_we),
+      .rx_data_queue_reg_rst_data_o(csr_tti_rx_data_queue_reg_rst_data),
+
+      // TTI TX queue
+      .rx_data_queue_req_i         (csr_tti_tx_data_queue_req),
+      .rx_data_queue_ack_o         (csr_tti_tx_data_queue_ack),
+      .rx_data_queue_data_i        (csr_tti_tx_data_queue_data),
+      .rx_data_queue_start_thld_i  (csr_tti_tx_data_queue_start_thld),
+      .rx_data_queue_ready_thld_i  (csr_tti_tx_data_queue_ready_thld),
+      .rx_data_queue_ready_thld_o  (csr_tti_tx_data_queue_ready_thld),
+      .rx_data_queue_reg_rst_i     (csr_tti_tx_data_queue_reg_rst),
+      .rx_data_queue_reg_rst_we_o  (csr_tti_tx_data_queue_reg_rst_we),
+      .rx_data_queue_reg_rst_data_o(csr_tti_tx_data_queue_reg_rst_data),
+
+      // TTI In-band Interrupt (IBI) queue
+      .ibi_queue_req_i         (csr_tti_ibi_queue_req),
+      .ibi_queue_ack_o         (csr_tti_ibi_queue_ack),
+      .ibi_queue_data_i        (csr_tti_ibi_queue_data),
+      .ibi_queue_reg_rst_i     (csr_tti_ibi_queue_reg_rst),
+      .ibi_queue_reg_rst_we_o  (csr_tti_ibi_queue_reg_rst_we),
+      .ibi_queue_reg_rst_data_o(csr_tti_ibi_queue_reg_rst_data),
+
+      // ...........................
+      // TTI controller interface
+
+      // TTI RX descriptors queue
+      .ctl_tti_rx_desc_queue_full_o(tti_rx_desc_queue_full),
+      .ctl_tti_rx_desc_queue_empty_o(tti_rx_desc_queue_empty),
+      .ctl_tti_rx_desc_queue_wvalid_i(tti_rx_desc_queue_wvalid),
+      .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_queue_wready),
+      .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_queue_wdata),
+      .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_queue_ready_thld),
+      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_above_thld_trig),
+
+      // TTI TX descriptors queue
+      .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_queue_full),
+      .ctl_tti_tx_desc_queue_empty_o(tti_tx_desc_queue_empty),
+      .ctl_tti_tx_desc_queue_rvalid_o(tti_tx_desc_queue_rvalid),
+      .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_queue_rready),
+      .ctl_tti_tx_desc_queue_rdata_o(tti_tx_desc_queue_rdata),
+      .ctl_tti_tx_desc_queue_ready_thld_o(tti_tx_desc_queue_ready_thld),
+      .ctl_tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_queue_ready_thld_trig),
+
+      // TTI RX data queue
+      .ctl_tti_rx_queue_full_o(tti_rx_queue_full),
+      .ctl_tti_rx_queue_empty_o(tti_rx_queue_empty),
+      .ctl_tti_rx_queue_wvalid_i(tti_rx_queue_wvalid),
+      .ctl_tti_rx_queue_wready_o(tti_rx_queue_wready),
+      .ctl_tti_rx_queue_wdata_i(tti_rx_queue_wdata),
+      .ctl_tti_rx_queue_start_thld_o(tti_rx_queue_start_thld),
+      .ctl_tti_rx_queue_start_thld_trig_o(tti_rx_queue_start_thld_trig),
+      .ctl_tti_rx_queue_ready_thld_o(tti_rx_queue_ready_thld),
+      .ctl_tti_rx_queue_ready_thld_trig_o(tti_rx_queue_ready_thld_trig),
+
+      // TTI TX data queue
+      .ctl_tti_tx_queue_full_o(tti_tx_queue_full),
+      .ctl_tti_tx_queue_empty_o(tti_tx_queue_empty),
+      .ctl_tti_tx_queue_rvalid_o(tti_tx_queue_rvalid),
+      .ctl_tti_tx_queue_rready_i(tti_tx_queue_rready),
+      .ctl_tti_tx_queue_rdata_o(tti_tx_queue_rdata),
+      .ctl_tti_tx_queue_start_thld_o(tti_tx_queue_start_thld),
+      .ctl_tti_tx_queue_start_thld_trig_o(tti_tx_queue_start_thld_trig),
+      .ctl_tti_tx_queue_ready_thld_o(tti_tx_queue_ready_thld),
+      .ctl_tti_tx_queue_ready_thld_trig_o(tti_tx_queue_ready_thld_trig),
+
+      // TTI In-band Interrupt (IBI) queue
+      .ctl_tti_ibi_queue_full_o(tti_ibi_queue_full),
+      .ctl_tti_ibi_queue_empty_o(tti_ibi_queue_empty),
+      .ctl_tti_ibi_queue_rvalid_o(tti_ibi_queue_rvalid),
+      .ctl_tti_ibi_queue_rready_i(tti_ibi_queue_rready),
+      .ctl_tti_ibi_queue_rdata_o(tti_ibi_queue_rdata),
+      .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld),
+      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig)
   );
 
   // I3C PHY
