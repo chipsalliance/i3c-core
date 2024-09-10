@@ -142,9 +142,6 @@ module controller_standby_i3c
   logic i3c_event_tx_bus_timeout_o;
   logic i3c_event_read_cmd_received_o;
 
-  assign ctrl_scl_o = '1;
-  assign ctrl_sda_o = '1;
-
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
   logic bus_addr_valid;

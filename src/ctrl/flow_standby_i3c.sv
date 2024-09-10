@@ -143,13 +143,13 @@ module flow_standby_i3c
     end
   end
 
-  assign tx_byte_valid_o  = tx_byte_ready_i;  // TODO: temporarily always accept transfers
-  assign transfer_tx_byte = 8'hBC;  // TODO: temporarily hard-coded data path
+  assign tx_byte_valid_o = tx_byte_ready_i;  // TODO: temporarily always accept transfers
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_handler_tx
     if (~rst_ni) begin
       transfer_tx_byte <= '0;
     end else begin
+      transfer_tx_byte <= 8'hBC;  // TODO: temporarily hard-coded data path
       if (tx_byte_valid_o && tx_byte_ready_i) begin
         tx_byte_o <= transfer_tx_byte;
       end

@@ -869,7 +869,6 @@ module i3c_target_fsm
   assign scl_o = scl_d;
   assign sda_o = sda_d;
 
-
   // Assertions
   // // Make sure we never attempt to send a single cycle glitch
   // `ASSERT(SclOutputGlitch_A, $rose(scl_o) |-> ##1 scl_o)
