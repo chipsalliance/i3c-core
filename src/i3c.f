@@ -61,3 +61,4 @@ ${I3C_ROOT_DIR}/src/ctrl/controller_standby.sv
 ${I3C_ROOT_DIR}/src/ctrl/controller.sv
 ${I3C_ROOT_DIR}/src/i3c.sv
 ${I3C_ROOT_DIR}/src/i3c_wrapper.sv
+${I3C_ROOT_DIR}/src/recovery/recovery_handler.sv

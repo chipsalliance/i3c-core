@@ -280,7 +280,7 @@ module recovery_handler
       .rx_desc_start_thld_i('0),  // Unsupported by RX Desc Queue
       .rx_desc_ready_thld_i(tti_rx_desc_queue_ready_thld_i),
       .rx_desc_ready_thld_o(tti_rx_desc_queue_ready_thld_o),
-      .rx_desc_reg_rst_i(tti_rx_desc_queue_rst),
+      .rx_desc_reg_rst_i(tti_rx_desc_queue_reg_rst),
       .rx_desc_reg_rst_we_o(tti_rx_desc_queue_reg_rst_we),
       .rx_desc_reg_rst_data_o(tti_rx_desc_queue_reg_rst_data),
 
@@ -299,9 +299,9 @@ module recovery_handler
       .tx_desc_start_thld_i('0),  // Unsupported by TX Desc Queue
       .tx_desc_ready_thld_i(tti_tx_desc_queue_ready_thld_i),
       .tx_desc_ready_thld_o(tti_tx_desc_queue_ready_thld_o),
-      .tx_desc_reg_rst_i(tti_tx_desc_queue_rst),
-      .tx_desc_reg_rst_we_o(tti_tx_desc_queue_we),
-      .tx_desc_reg_rst_data_o(tti_tx_desc_queue_next),
+      .tx_desc_reg_rst_i(tti_tx_desc_queue_reg_rst),
+      .tx_desc_reg_rst_we_o(tti_tx_desc_queue_reg_rst_we),
+      .tx_desc_reg_rst_data_o(tti_tx_desc_queue_reg_rst_data),
 
       // RX data queue
       .rx_full_o(tti_rx_data_queue_full),
@@ -381,7 +381,7 @@ module recovery_handler
   always_comb begin
     if (recovery_enable) begin
       tti_ibi_queue_req       = 1'b0;
-      csr_tti_ibi_queue_ack_o = csr_tti_ibi_queue_req;
+      csr_tti_ibi_queue_ack_o = csr_tti_ibi_queue_req_i;
     end else begin
       tti_ibi_queue_req       = csr_tti_ibi_queue_req_i;
       csr_tti_ibi_queue_ack_o = tti_ibi_queue_ack;
@@ -488,7 +488,7 @@ module recovery_handler
 
   // Thresholds
   assign ctl_tti_rx_data_queue_start_thld_o = tti_rx_data_queue_start_thld;
-  assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld;
+  assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_i;
 
   // ......................
   // TX data queue (T2MUX)
@@ -523,7 +523,7 @@ module recovery_handler
 
   // Thresholds
   assign ctl_tti_tx_data_queue_start_thld_o = tti_tx_data_queue_start_thld;
-  assign ctl_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld;
+  assign ctl_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_i;
 
   // ....................................................
   // TTI Queues <-> CSR mux
@@ -570,9 +570,9 @@ module recovery_handler
       csr_tti_tx_desc_queue_reg_rst_we_o   = 'b0;
       csr_tti_tx_desc_queue_reg_rst_data_o = 'b0;
     end else begin
-      csr_tti_tx_desc_queue_ack_o          = tti_rx_desc_queue_ack;
-      csr_tti_tx_desc_queue_reg_rst_we_o   = tti_rx_desc_queue_reg_rst_we;
-      csr_tti_tx_desc_queue_reg_rst_data_o = tti_rx_desc_queue_reg_rst_data;
+      csr_tti_tx_desc_queue_ack_o          = tti_tx_desc_queue_ack;
+      csr_tti_tx_desc_queue_reg_rst_we_o   = tti_tx_desc_queue_reg_rst_we;
+      csr_tti_tx_desc_queue_reg_rst_data_o = tti_tx_desc_queue_reg_rst_data;
     end
   end
 
