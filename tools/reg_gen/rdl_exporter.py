@@ -18,88 +18,100 @@ from typing import Any
 
 from peakrdl.plugins.exporter import ExporterSubcommandPlugin
 from systemrdl import RDLListener, RDLWalker
-from systemrdl.node import AddrmapNode, MemNode, Node
+from systemrdl.node import AddrmapNode, MemNode, Node, RegfileNode
 
 
 class CocotbScanner(RDLListener):
-    def __init__(self):
-        self.mem_done = False
+    def __init__(self, skip_addrmap_name=False):
+        self.skip_addrmap_name = skip_addrmap_name
         self.reg_map = {}
-
-    def exit_Mem(self, node):
-        self.mem_done = False
 
     def enter_Addrmap(self, node):
         # save reference to addrmap top for relative path
         self.top_node = node
-        register_name = node.get_path("_", "_{index:d}")
         # print the base address of each address map
-        self.reg_map.update({f"{register_name.upper()}_BASE_ADDR": node.absolute_address})
+        self.reg_map.update({"base_addr": node.absolute_address})
 
     def enter_Regfile(self, node):
-        self.regfile_offset = node.address_offset
-        regfile_name = node.get_path("_", "_{index:d}")
-        self.reg_map.update({f"{regfile_name.upper()}_START": node.absolute_address})
+        self.regfile_offset = (
+            self.regfile_offset + node.address_offset
+            if isinstance(node.parent, RegfileNode)
+            else node.address_offset
+        )
+        node.regfile_name = (
+            node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
+            if self.skip_addrmap_name
+            else node.get_path("_", "_{index:d}").upper()
+        )
+        node.processed_dict = {"start_addr": node.absolute_address}
 
     def exit_Regfile(self, node):
-        self.regfile_offset = 0
+        self.regfile_offset = (
+            node.parent.address_offset if isinstance(node.parent, RegfileNode) else 0
+        )
+        if isinstance(node.parent, RegfileNode):
+            node.parent.processed_dict.update({node.regfile_name: node.processed_dict})
+        else:
+            self.reg_map.update({node.regfile_name: node.processed_dict})
+
+    def enter_Mem(self, node):
+        self.mem_offset = node.address_offset
+        self.mem_name = (
+            node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
+            if self.skip_addrmap_name
+            else node.get_path("_", "_{index:d}").upper()
+        )
+        node.processed_dict = {"start_addr": node.absolute_address}
+
+    def exit_Mem(self, node):
+        self.mem_offset = (
+            node.parent.raw_address_offset if isinstance(node.parent, RegfileNode) else 0
+        )
+        self.reg_map.update({self.mem_name: node.processed_dict})
 
     def enter_Reg(self, node):
-        if isinstance(node.parent, MemNode) and self.mem_done:
-            return
         # getting and printing the absolute address and path for reach register
-        register_name = node.get_path("_", "_{index:d}")
-        if isinstance(node.parent, MemNode):
-            register_name = node.parent.parent.inst_name + "_" + node.inst_name
-        self.reg_map.update({f"{register_name.upper()}": node.absolute_address})
+        self.reg_name = node.inst_name.upper()
+        node.parent.processed_dict.update({self.reg_name: dict()})
+        self.reg = node.parent.processed_dict[self.reg_name]
+        self.reg.update({"base_addr": node.raw_absolute_address})
         # getting and printing the relative address and path for each register (relative to the addr map it belongs to)
-        register_name = node.get_rel_path(self.top_node.parent, "^", "_", "_{index:d}")
         if isinstance(node.parent, MemNode):
-            return
-        self.reg_map.update({f"{register_name.upper()}": node.address_offset + self.regfile_offset})
-
-    def exit_Reg(self, node):
-        if isinstance(node.parent, MemNode):
-            self.mem_done = True
+            self.reg.update({"offset": node.raw_address_offset + self.mem_offset})
+        else:
+            self.reg.update({"offset": node.address_offset + self.regfile_offset})
 
     def enter_Field(self, node):
-        field_name = node.get_rel_path(self.top_node.parent, "^", "_", "_{index:d}")
+        self.reg.update({node.inst_name: dict()})
+        field = self.reg[node.inst_name]
+        # Assume default mask to cover whole 32-bit register
+        field_mask = 0xFFFFFFFF
         if isinstance(node.parent.parent, MemNode):
-            if self.mem_done:
-                return
-            field_name = (
-                node.parent.parent.parent.inst_name
-                + "_"
-                + node.parent.inst_name
-                + "_"
-                + node.inst_name
-            )
             field_mask = hex(((2 << node.high) - 1) & ~((1 << node.low) - 1))
             # For software always assume 32-bit mask and trim LSBs
             while len(field_mask) > 10:
                 field_mask = field_mask[: len(field_mask) - 8]
-            self.reg_map.update({f"{field_name.upper()}_LOW": node.low})
-            self.reg_map.update({f"{field_name.upper()}_MASK": int(field_mask, 16)})
+            field_mask = int(field_mask, 16)
         elif node.width == 1:
             field_mask = 1 << node.low
-            self.reg_map.update({f"{field_name.upper()}_LOW": node.low})
-            self.reg_map.update({f"{field_name.upper()}_MASK": field_mask})
         elif node.low != 0 or node.high != 31:
             field_mask = ((2 << node.high) - 1) & ~((1 << node.low) - 1)
-            self.reg_map.update({f"{field_name.upper()}_LOW": node.low})
-            self.reg_map.update({f"{field_name.upper()}_MASK": field_mask})
+
+        field.update({"low": node.low})
+        field.update({"mask": field_mask})
 
 
 class CocotbExporter:
     def export(self, node: Node, path: str, **kwargs: Any) -> None:
         walker = RDLWalker(unroll=True)
-        scanner = CocotbScanner()
+        scanner = CocotbScanner(True)
         walker.walk(node, scanner)
 
         with open(path, "w") as f:
-            f.write("reg_map = ")
+            f.write("from munch import Munch\n\n")
+            f.write("reg_map = Munch.fromDict(")
             f.write(json.dumps(scanner.reg_map, indent=4))
-            f.write("\n")
+            f.write(")\n")
 
 
 # TODO: Test whether the Exporter works correctly

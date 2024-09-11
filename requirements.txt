@@ -71,6 +71,7 @@ jupyter_core==5.7.2
 Markdown==3.6
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.7
+munch==4.0.0
 msgpack==1.0.8
 mypy-extensions==1.0.0
 nest-asyncio==1.6.0
