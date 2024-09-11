@@ -151,6 +151,9 @@ Block diagram of the I3C Controller
 
 When the I3C Core acts as an Active Controller, it follows the flow presented in {numref}`i3c_flow_fsm`.
 
+% The red circles marked as _TODO_ indicate unfinished parts of the state machine design.
+% They will visualize how to process I3C read and write transfers without involving legacy I2C support.
+
 :::{figure-md} i3c_flow_fsm
 ![](img/i3c_flow_fsm.png)
 

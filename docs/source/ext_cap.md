@@ -6,7 +6,7 @@ This chapter is the normative specification of the Vendor-Specific Extended Capa
 
 The original HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
 This mechanism is unacceptable for the Recovery Mode as memory offsets must be known at synthesis time.
-Implementation based on this specification shall provide a list of known memory offsets for each of the Extended Capabilities.
+Implementation based on this specification should provide a list of known memory offsets for each of the Extended Capabilities.
 
 :::{note}
 In order to increase security of the solution, the offsets are provided, so software may choose to skip the discovery mechanism. This specification is compliant with the original specification, so the mechanism of discovery can still be used, if needed.
@@ -60,11 +60,11 @@ This specification provides definitions and descriptions of the following Capabi
 
 The Controller Config Capability follows section 7.7.3 of the [I3C HCI Specification](introduction.md#spec-i3c-hci).
 
-### <a name="secure_firmware_recovery_interface"/>Secure Firmware Recovery Interface (ID=0xC0)
+### Secure Firmware Recovery Interface (ID=0xC0)
 
-This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and I3C Target Recovery Specification
+This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and the I3C Target Recovery Specification.
 
-The `EXTCAP_HEADER` is located at memory offset `SEC_FW_RECOVERY_OFFSET`.
+The `EXTCAP_HEADER` is located at the `SEC_FW_RECOVERY_OFFSET` memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 
 :::{list-table} Secure Firmware Recovery Interface
@@ -143,7 +143,7 @@ Features may include programmability of:
     * Slew rate control
 * Calibration of the on-chip resistor
 
-The `SOC_MGMT_EXTCAP_HEADER` is located at memory offset `SOC_MGMT_SECTION_OFFSET`.
+The `SOC_MGMT_EXTCAP_HEADER` is located at the `SOC_MGMT_SECTION_OFFSET` memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 
 :::{list-table} SoC Management Interface
@@ -186,7 +186,7 @@ It is permissible to implement all registers as generic RW registers.
 ### Target Transaction Interface (ID=0xC4)
 
 The Target Transaction Interface (TTI) provides additional registers and queues to enable data flow for Devices configured in the Target Mode.
-This specfication is meant for Standby Controllers, which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the `Target_XACT_SUPPORT` field of the `STBY_CR_CAPABILITIES`.
+This specification is meant for Standby Controllers which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the `Target_XACT_SUPPORT` field of `STBY_CR_CAPABILITIES`.
 
 :::{note}
 The term "TX" is used to denote instances in which the software performs a write to respond to an I3C Bus Read transaction.
@@ -200,22 +200,22 @@ The term "RX" is used to denote instances in which the software performs a read 
 
 * Width of the interface
     * This TTI will be integrated in an SoC with 64b AXI as the System Bus
-    * CSRs in the I3C HCI specifciation are 32b wide, so it makes sense to use the same width
+    * CSRs in the I3C HCI specification are 32b wide, so it makes sense to use the same width
     * Each System Bus read could potentially hold 2 CSRs
-        * [Recommended] Do not use the upper half of the word
-        * [Optimized] Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)
+        * **Recommended** Do not use the upper half of the word
+        * **Optimized** Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)
     * TTI Queues will also be 32b wide for the same reason
 * Communication scenarios with I3C Devices
-    * When valid I3C frame appears and bit RnW is set to Read, then Device has a timing constraint on providing valid data
+    * When a valid I3C frame appears and the `RnW` bit is set to Read, then Device has a timing constraint on providing valid data
         * Typically, this is not a problem for simple sensors, which can prepopulate data
         * Problem for a SoC
             * Unknown response latency over System Bus
             * Unknown ISR processing latency
         * I2C solves this issue by using Clock Stretching by Target
             * Prohibited by I3C Basic Specification
-        * I3C allows Controller to stretch Clock (Section 5.1.2.5, I3C Basic)
+        * I3C allows the Controller to stretch Clock (Section 5.1.2.5, I3C Basic)
             * Does not alleviate Target side timing issues
-    * There are 2 designs, which are considered here to increase robustness
+    * There are 2 designs which are considered here to increase robustness
         * Write-first approach: Before each Read from this Device, a Write is issued to inform Target to prepare the payload
             * Timing issue may still appear, but the timing budget is larger by a factor of (transfer length / bit length)
         * Write-first Expect-IBI: Reads are only performed based on an IBI with Pending Read Notification (Section 5.1.6.2.2, I3C Basic).
@@ -223,11 +223,11 @@ The term "RX" is used to denote instances in which the software performs a read 
 
 #### Boot
 
-The Target Device boots with bus operation disabled as per description of field `STBY_CR_ENABLE_INT` in the register `STBY_CR_CONTROL` (section 7.7.11.1)
+The Target Device boots with bus operation disabled as per description of the `STBY_CR_ENABLE_INT` field in the `STBY_CR_CONTROL` register (section 7.7.11.1)
 
 #### Initialization
 
-Software is responsible for setting bit `TARGET_XACT_ENABLE` in the `STBY_CR_CONTROL` register.
+The software is responsible for setting the `TARGET_XACT_ENABLE` bit in the `STBY_CR_CONTROL` register.
 
 #### Operation
 
@@ -237,10 +237,10 @@ In this mode, software is responsible for servicing TX and RX queues based on th
 There are 5 queues to communicate between the bus and the register interface:
 
 * TX Descriptor queue, which holds information about the write transfer
-* TX Data queue to buffer data, which is written from the Target Device to the bus
+* TX Data queue to buffer data written from the Target Device to the bus
 * RX Descriptor queue, which holds information about the read transfer
-* RX Data queue to buffer data, which is read from the bus by the Target Device
-* IBI queue to buffer data, which will be written to the Bus as an In-Band Interrupt
+* RX Data queue to buffer data read from the bus by the Target Device
+* IBI queue to buffer data which will be written to the Bus as an In-Band Interrupt
 
 ##### Bus Read Transaction
 
@@ -260,27 +260,27 @@ If 2 consecutive long writes (252B) to the TX buffer occur, then:
 * How do you clean up the data that was written? Mechanism can break in unknown state
     * Current state of FIFO is only accessible via Debug EC
 * Issuing soft reset can break the pending transaction
-    * Software should be notified when pending transaction is done
+    * Software should be notified when the pending transaction is done
 :::
 
 ##### Bus Write Transaction
 
-The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the R/W bit is set to `1`.
+The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the `R/W` bit is set to `1`.
 The Target Device writes incoming bytes to the TTI RX Data Queue.
 After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.
 
 If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
-The Active Controller can attempt mitigating such situation by reading Target queue size from `TTI_QUEUE_SIZE` register before sending big chunk of data.
+The Active Controller can attempt mitigating such a situation by reading Target queue size from the `TTI_QUEUE_SIZE` register before sending a big chunk of data.
 
 ##### In-Band Interrupts
 
 The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.
 The IBI Status Descriptor should be compliant with section "8.6 IBI Status Descriptor" of the MIPI I3C HCI specification v1.2.
-If the IBI requires more data to be sent than allowed in a single chunk, it should be split into multiple IBI transfers with `LAST_STATUS` IBI Descriptor field set to `0` unless it is the last one.
+If the IBI requires more data to be sent than it is allowed in a single chunk, it should be split into multiple IBI transfers with the `LAST_STATUS` IBI Descriptor field set to `0`, unless it is the last one.
 
 #### Register Interface
 
-The `TTI_EXTCAP_HEADER` is located at memory offset `TTI_SECTION_OFFSET`.
+The `TTI_EXTCAP_HEADER` is located at the `TTI_SECTION_OFFSET` memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 
 :::{list-table} TTI Register Interface
@@ -417,27 +417,27 @@ The status fields are either R/W1C (write 1 to clear), or else are cleared based
   - IBI_THLD_STAT
   - R
   - 0x0
-  - TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`
+  - TTI IBI Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`
 * - 1 [11]
   - RX_DESC_THLD_STAT
   - R
   - 0x0
-  - TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is >= the value defined in `TTI_RX_DESC_THLD`
+  - TTI RX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is >= the value defined in `TTI_RX_DESC_THLD`
 * - 1 [10]
   - TX_DESC_THLD_STAT
   - R
   - 0x0
-  - TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is >= the value defined in `TTI_TX_DESC_THLD`
+  - TTI TX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is >= the value defined in `TTI_TX_DESC_THLD`
 * - 1 [9]
   - RX_DATA_THLD_STAT
   - R
   - 0x0
-  - TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is >= the value defined in `TTI_RX_DATA_THLD`
+  - TTI RX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of entries in the TTI RX Data Queue is >= the value defined in `TTI_RX_DATA_THLD`
 * - 1 [8]
   - TX_DATA_THLD_STAT
   - R
   - 0x0
-  - TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is >= the value defined in `TTI_TX_DATA_THLD`
+  - TTI TX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Data Queue is >= the value defined in `TTI_TX_DATA_THLD`
 * - 1 [3]
   - TX_DESC_TIMEOUT
   - R/W1C
@@ -809,7 +809,7 @@ The status fields are either R/W1C (write 1 to clear), or else are cleared based
 #### TTI Queues
 
 TTI TX Descriptor, TTI TX Data, TTI RX Descriptor, TTI RX Data and TTI IBI queues should be implemented as FIFO queues of 32 bit (1 DWORD) width.
-Depth shall be parametrizable and register `TTI_QUEUE_SIZE`’s reset value should be set accordingly.
+Depth should be parametrizable and the `TTI_QUEUE_SIZE` register’s reset value should be set accordingly.
 In order to prevent overflow/underrun scenarios, a programmable threshold signal is provided.
 Software-issued reset of the queues contents is also possible.
 
@@ -832,11 +832,11 @@ Software-issued reset of the queues contents is also possible.
         3. Raise `ERR_IRQ`
     3. Action taken by software
         1. Prepare an IBI with Error Type Notification
-            1. Can use `5’h0D` Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)
+            1. Can use the `5’h0D` Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)
 
 ## Ideas for the future (informative)
 
 * Add Debug EC
 * Virtual TTI
-    * Consider reusing existing CSRs from Active Controller in this way?
+    * Consider reusing existing CSRs from Active Controller in this way
 * [MCTP Binding](https://www.dmtf.org/sites/default/files/standards/documents/DSP0233_1.0.0WIP.pdf)

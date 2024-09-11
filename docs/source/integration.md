@@ -21,7 +21,7 @@ It consists of:
 * SHA256 & SHA512
 * ROM
 
-All listed components are connected to AHB Lite bus that is controlled by VeeR EL2 serving the role of a manager.
+All listed components are connected to an AHB Lite bus that is controlled by VeeR EL2 acting as a manager.
 :::{figure-md} caliptra_ss
 ![](img/caliptra_ss.png)
 
@@ -30,7 +30,7 @@ Caliptra Subsystem block diagram
 
 ### Clock
 
-The I3C core will be using the gated clock `clk_cg`, provided by the Caliptra-SS core.
+The I3C core will be using the gated `clk_cg` clock, provided by the Caliptra-SS core.
 
 ### Reset
 
@@ -46,10 +46,10 @@ SystemVerilog CSR description is generated with [PeakRDL](https://github.com/Sys
 
 ## Controller Interface test
 
-In test [smoke_test_i3c.c](https://github.com/chipsalliance/caliptra-ss/tree/dev-antmicro/src/mcu/test_suites/smoke_test_i3c), the I3C Core is connected via AHB bus to the Caliptra SubSystem.
-Communication with internal registers of I3C Core is executed by using `lsu_write_32()` and `lsu_read_32()` functions from [riscv_hw_if.h](https://github.com/chipsalliance/caliptra-rtl/blob/a50f6d212c93827d9303b6b734152302c0ccd7cd/src/integration/test_suites/libs/riscv_hw_if/riscv_hw_if.h) Caliptra header.
+In test [smoke_test_i3c.c](https://github.com/chipsalliance/caliptra-ss/tree/dev-antmicro/src/mcu/test_suites/smoke_test_i3c), the I3C Core is connected via an AHB bus to the Caliptra SubSystem.
+Communication with internal registers of the I3C Core is executed by using the `lsu_write_32()` and `lsu_read_32()` functions from the [riscv_hw_if.h](https://github.com/chipsalliance/caliptra-rtl/blob/a50f6d212c93827d9303b6b734152302c0ccd7cd/src/integration/test_suites/libs/riscv_hw_if/riscv_hw_if.h) Caliptra header.
 Software is executed on the simulated [VeeR-EL2 core](https://github.com/chipsalliance/Cores-VeeR-EL2).
-The software test executes read/write operations on different configurations of registers to check whether RTL generated from RDL configuration behaves properly from the software point of view.
+The software test executes read/write operations on different configurations of registers to check whether RTL generated from the RDL configuration behaves properly from the software point of view.
 
 ## Interrupts
 
