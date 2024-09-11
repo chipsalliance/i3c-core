@@ -130,7 +130,7 @@ module recovery_handler
     // In-band Interrupt (IBI) queue
     input  logic                       csr_tti_ibi_queue_req_i,
     output logic                       csr_tti_ibi_queue_ack_o,
-    input  logic [CsrDataWidth-1:0]    csr_tti_ibi_queue_data_i,
+    input  logic [   CsrDataWidth-1:0] csr_tti_ibi_queue_data_i,
     input  logic [TtiIbiThldWidth-1:0] csr_tti_ibi_queue_ready_thld_i,
     input  logic                       csr_tti_ibi_queue_reg_rst_i,
     output logic                       csr_tti_ibi_queue_reg_rst_we_o,

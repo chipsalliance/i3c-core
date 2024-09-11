@@ -46,7 +46,7 @@ module tti
     input  logic                       rx_data_queue_ack_i,
     input  logic [RxDataDataWidth-1:0] rx_data_queue_data_i,
     output logic [RxDataThldWidth-1:0] rx_data_queue_start_thld_o,
-//    input  logic [RxDataThldWidth-1:0] rx_data_queue_start_thld_i,
+    //    input  logic [RxDataThldWidth-1:0] rx_data_queue_start_thld_i,
     output logic [RxDataThldWidth-1:0] rx_data_queue_ready_thld_o,
     input  logic [RxDataThldWidth-1:0] rx_data_queue_ready_thld_i,
     output logic                       rx_data_queue_reg_rst_o,
@@ -68,7 +68,7 @@ module tti
     input  logic                       tx_data_queue_ack_i,
     output logic [RxDataDataWidth-1:0] tx_data_queue_data_o,
     output logic [RxDataThldWidth-1:0] tx_data_queue_start_thld_o,
-//    input  logic [RxDataThldWidth-1:0] tx_data_queue_start_thld_i,
+    //    input  logic [RxDataThldWidth-1:0] tx_data_queue_start_thld_i,
     output logic [RxDataThldWidth-1:0] tx_data_queue_ready_thld_o,
     input  logic [RxDataThldWidth-1:0] tx_data_queue_ready_thld_i,
     output logic                       tx_data_queue_reg_rst_o,
@@ -85,67 +85,67 @@ module tti
     input  logic                    ibi_queue_reg_rst_data_i
 );
 
-    logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
-    logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
+  logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
+  logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
 
-    // TODO: Connect queue soft resets
+  // TODO: Connect queue soft resets
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
-      if (!rst_ni) begin
-        tx_desc_ready_thld_swmod_q <= '0;
-        tx_desc_ready_thld_we <= '0;
-        rx_desc_ready_thld_swmod_q <= '0;
-        rx_desc_ready_thld_we <= '0;
-      end else begin
-        tx_desc_ready_thld_swmod_q <= hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.swmod;
-        tx_desc_ready_thld_we <= tx_desc_ready_thld_swmod_q;
-        rx_desc_ready_thld_swmod_q <= hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.swmod;
-        rx_desc_ready_thld_we <= rx_desc_ready_thld_swmod_q;
-      end
+  always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
+    if (!rst_ni) begin
+      tx_desc_ready_thld_swmod_q <= '0;
+      tx_desc_ready_thld_we <= '0;
+      rx_desc_ready_thld_swmod_q <= '0;
+      rx_desc_ready_thld_we <= '0;
+    end else begin
+      tx_desc_ready_thld_swmod_q <= hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.swmod;
+      tx_desc_ready_thld_we <= tx_desc_ready_thld_swmod_q;
+      rx_desc_ready_thld_swmod_q <= hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.swmod;
+      rx_desc_ready_thld_we <= rx_desc_ready_thld_swmod_q;
     end
+  end
 
-    always_comb begin : wire_hwif_thld
-      hwif_tti_o.QUEUE_THLD_CTRL.TX_DESC_THLD.we = tx_desc_ready_thld_we;
-      hwif_tti_o.QUEUE_THLD_CTRL.RX_DESC_THLD.we = rx_desc_ready_thld_we;
-      hwif_tti_o.QUEUE_THLD_CTRL.TX_DESC_THLD.next = tx_desc_queue_ready_thld_i;
-      hwif_tti_o.QUEUE_THLD_CTRL.RX_DESC_THLD.next = rx_desc_queue_ready_thld_i;
-      rx_desc_queue_ready_thld_o = RxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.value);
-      tx_desc_queue_ready_thld_o = TxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.value);
-      rx_data_queue_start_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value);
-      rx_data_queue_ready_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value);
-      tx_data_queue_start_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value);
-      tx_data_queue_ready_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value);
-      ibi_queue_ready_thld_o = IbiThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.value);
-    end : wire_hwif_thld
+  always_comb begin : wire_hwif_thld
+    hwif_tti_o.QUEUE_THLD_CTRL.TX_DESC_THLD.we = tx_desc_ready_thld_we;
+    hwif_tti_o.QUEUE_THLD_CTRL.RX_DESC_THLD.we = rx_desc_ready_thld_we;
+    hwif_tti_o.QUEUE_THLD_CTRL.TX_DESC_THLD.next = tx_desc_queue_ready_thld_i;
+    hwif_tti_o.QUEUE_THLD_CTRL.RX_DESC_THLD.next = rx_desc_queue_ready_thld_i;
+    rx_desc_queue_ready_thld_o = RxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.value);
+    tx_desc_queue_ready_thld_o = TxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.value);
+    rx_data_queue_start_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value);
+    rx_data_queue_ready_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value);
+    tx_data_queue_start_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value);
+    tx_data_queue_ready_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value);
+    ibi_queue_ready_thld_o = IbiThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.value);
+  end : wire_hwif_thld
 
-    always_comb begin : wire_hwif_xfer
-      rx_desc_queue_req_o  = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
-      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack  = rx_desc_queue_ack_i;
-      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = rx_desc_queue_data_i;
+  always_comb begin : wire_hwif_xfer
+    rx_desc_queue_req_o = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
+    hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = rx_desc_queue_ack_i;
+    hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = rx_desc_queue_data_i;
 
-      tx_desc_queue_req_o  = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
-      tx_desc_queue_data_o = hwif_tti_i.TX_DESC_QUEUE_PORT.wr_data;
-      hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = tx_desc_queue_ack_i;
+    tx_desc_queue_req_o  = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
+    tx_desc_queue_data_o = hwif_tti_i.TX_DESC_QUEUE_PORT.wr_data;
+    hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = tx_desc_queue_ack_i;
 
-      rx_data_queue_req_o  = hwif_tti_i.RX_DATA_PORT.req;
-      hwif_tti_o.RX_DATA_PORT.rd_ack  = rx_data_queue_ack_i;
-      hwif_tti_o.RX_DATA_PORT.rd_data = rx_data_queue_data_i;
+    rx_data_queue_req_o = hwif_tti_i.RX_DATA_PORT.req;
+    hwif_tti_o.RX_DATA_PORT.rd_ack = rx_data_queue_ack_i;
+    hwif_tti_o.RX_DATA_PORT.rd_data = rx_data_queue_data_i;
 
-      tx_data_queue_req_o  = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
-      tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
-      hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
+    tx_data_queue_req_o = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
+    tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
+    hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
 
-      ibi_queue_req_o  = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
-      ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
-      hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
-    end : wire_hwif_xfer
+    ibi_queue_req_o = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
+    ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
+    hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
+  end : wire_hwif_xfer
 
-    always_comb begin : wire_hwif_rst
-      rx_desc_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.RX_DESC_RST.value;
-      tx_desc_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.TX_DESC_RST.value;
-      rx_data_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.RX_DATA_RST.value;
-      tx_data_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.TX_DATA_RST.value;
-      ibi_queue_reg_rst_o     = hwif_tti_i.RESET_CONTROL.IBI_QUEUE_RST.value;
-    end : wire_hwif_rst
+  always_comb begin : wire_hwif_rst
+    rx_desc_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.RX_DESC_RST.value;
+    tx_desc_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.TX_DESC_RST.value;
+    rx_data_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.RX_DATA_RST.value;
+    tx_data_queue_reg_rst_o = hwif_tti_i.RESET_CONTROL.TX_DATA_RST.value;
+    ibi_queue_reg_rst_o     = hwif_tti_i.RESET_CONTROL.IBI_QUEUE_RST.value;
+  end : wire_hwif_rst
 
 endmodule : tti
