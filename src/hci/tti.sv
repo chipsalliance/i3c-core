@@ -89,7 +89,7 @@ module tti
     logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
 
     // TODO: Connect queue soft resets
-  
+
     always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
       if (!rst_ni) begin
         tx_desc_ready_thld_swmod_q <= '0;
@@ -120,17 +120,24 @@ module tti
 
     always_comb begin : wire_hwif_xfer
       rx_desc_queue_req_o  = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack  = rx_desc_queue_ack_i;
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = rx_desc_queue_data_i;
 
       tx_desc_queue_req_o  = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
       tx_desc_queue_data_o = hwif_tti_i.TX_DESC_QUEUE_PORT.wr_data;
+      hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = tx_desc_queue_ack_i;
 
       rx_data_queue_req_o  = hwif_tti_i.RX_DATA_PORT.req;
+      hwif_tti_o.RX_DATA_PORT.rd_ack  = rx_data_queue_ack_i;
+      hwif_tti_o.RX_DATA_PORT.rd_data = rx_data_queue_data_i;
 
       tx_data_queue_req_o  = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
       tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
+      hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
 
-      ibi_queue_req_o       = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
-      ibi_queue_data_o      = hwif_tti_i.IBI_PORT.wr_data;
+      ibi_queue_req_o  = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
+      ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
+      hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
     end : wire_hwif_xfer
 
     always_comb begin : wire_hwif_rst

@@ -624,6 +624,7 @@ module recovery_handler
   end
 
   // Threshold
+  assign tti_rx_data_queue_start_thld       = csr_tti_rx_data_queue_start_thld_i;
   assign tti_rx_data_queue_ready_thld_i     = csr_tti_rx_data_queue_ready_thld_i;
   assign csr_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
@@ -657,6 +658,7 @@ module recovery_handler
   end
 
   // Threshold
+  assign tti_tx_data_queue_start_thld       = csr_tti_tx_data_queue_start_thld_i;
   assign tti_tx_data_queue_ready_thld_i     = csr_tti_tx_data_queue_ready_thld_i;
   assign csr_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_o;
 
