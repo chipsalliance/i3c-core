@@ -79,7 +79,6 @@ module recovery_handler
     output logic                       ctl_tti_ibi_queue_rvalid_o,
     input  logic                       ctl_tti_ibi_queue_rready_i,
     output logic [TtiIbiDataWidth-1:0] ctl_tti_ibi_queue_rdata_o,
-    input  logic [TtiIbiThldWidth-1:0] ctl_tti_ibi_queue_ready_thld_i,
     output logic [TtiIbiThldWidth-1:0] ctl_tti_ibi_queue_ready_thld_o,
     output logic                       ctl_tti_ibi_queue_ready_thld_trig_o,
 
@@ -129,12 +128,13 @@ module recovery_handler
     output logic                          csr_tti_tx_data_queue_reg_rst_data_o,
 
     // In-band Interrupt (IBI) queue
-    input  logic                    csr_tti_ibi_queue_req_i,
-    output logic                    csr_tti_ibi_queue_ack_o,
-    input  logic [CsrDataWidth-1:0] csr_tti_ibi_queue_data_i,
-    input  logic                    csr_tti_ibi_queue_reg_rst_i,
-    output logic                    csr_tti_ibi_queue_reg_rst_we_o,
-    output logic                    csr_tti_ibi_queue_reg_rst_data_o,
+    input  logic                       csr_tti_ibi_queue_req_i,
+    output logic                       csr_tti_ibi_queue_ack_o,
+    input  logic [CsrDataWidth-1:0]    csr_tti_ibi_queue_data_i,
+    input  logic [TtiIbiThldWidth-1:0] csr_tti_ibi_queue_ready_thld_i,
+    input  logic                       csr_tti_ibi_queue_reg_rst_i,
+    output logic                       csr_tti_ibi_queue_reg_rst_we_o,
+    output logic                       csr_tti_ibi_queue_reg_rst_data_o,
 
     // ....................................................
     // Recovery CSR interface
@@ -332,7 +332,7 @@ module recovery_handler
       .tx_req_i(tti_tx_data_queue_req),
       .tx_ack_o(tti_tx_data_queue_ack),
       .tx_data_i(tti_tx_data_queue_data),
-      .tx_start_thld_i(tti_tx_data_queue_start_thld_i),
+      .tx_start_thld_i(tti_tx_data_queue_start_thld),
       .tx_ready_thld_i(tti_tx_data_queue_ready_thld_i),
       .tx_ready_thld_o(tti_tx_data_queue_ready_thld_o),
       .tx_reg_rst_i(tti_tx_data_queue_reg_rst),
@@ -368,7 +368,7 @@ module recovery_handler
       .data_i(csr_tti_ibi_queue_data_i),
 
       .start_thld_i('0),
-      .ready_thld_i(ctl_tti_ibi_queue_ready_thld_i),
+      .ready_thld_i(csr_tti_ibi_queue_ready_thld_i),
       .ready_thld_o(ctl_tti_ibi_queue_ready_thld_o),
 
       .reg_rst_i(csr_tti_ibi_queue_reg_rst_i),
@@ -488,7 +488,7 @@ module recovery_handler
 
   // Thresholds
   assign ctl_tti_rx_data_queue_start_thld_o = tti_rx_data_queue_start_thld;
-  assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_i;
+  assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
   // ......................
   // TX data queue (T2MUX)
@@ -523,7 +523,7 @@ module recovery_handler
 
   // Thresholds
   assign ctl_tti_tx_data_queue_start_thld_o = tti_tx_data_queue_start_thld;
-  assign ctl_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_i;
+  assign ctl_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_o;
 
   // ....................................................
   // TTI Queues <-> CSR mux
@@ -558,7 +558,8 @@ module recovery_handler
   end
 
   // Threshold
-  assign tti_rx_desc_queue_ready_thld_i = csr_tti_rx_desc_queue_ready_thld_i;
+  assign tti_rx_desc_queue_ready_thld_i     = csr_tti_rx_desc_queue_ready_thld_i;
+  assign csr_tti_rx_desc_queue_ready_thld_o = tti_rx_desc_queue_ready_thld_o;
 
   // ......................
   // TX descriptor queue (T4SW)
@@ -590,7 +591,8 @@ module recovery_handler
   end
 
   // Threshold
-  assign tti_tx_desc_queue_ready_thld_i = csr_tti_tx_desc_queue_ready_thld_i;
+  assign tti_tx_desc_queue_ready_thld_i     = csr_tti_tx_desc_queue_ready_thld_i;
+  assign csr_tti_tx_desc_queue_ready_thld_o = tti_tx_desc_queue_ready_thld_o;
 
   // ......................
   // RX data queue (R4MUX)
@@ -622,7 +624,8 @@ module recovery_handler
   end
 
   // Threshold
-  assign tti_rx_data_queue_ready_thld_i = csr_tti_rx_data_queue_ready_thld_i;
+  assign tti_rx_data_queue_ready_thld_i     = csr_tti_rx_data_queue_ready_thld_i;
+  assign csr_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
   // ......................
   // TX data queue (T4MUX)
@@ -654,7 +657,8 @@ module recovery_handler
   end
 
   // Threshold
-  assign tti_tx_data_queue_ready_thld_i = csr_tti_tx_data_queue_ready_thld_i;
+  assign tti_tx_data_queue_ready_thld_i     = csr_tti_tx_data_queue_ready_thld_i;
+  assign csr_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_o;
 
   // ....................................................
   //

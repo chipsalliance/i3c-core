@@ -630,6 +630,9 @@ module i3c
       .hwif_tti_o(hwif_tti_out),
       .hwif_tti_i(hwif_tti_inp),
 
+      .hwif_rec_o(hwif_rec_out),
+      .hwif_rec_i(hwif_rec_inp),
+
       // HCI Response queue
       .hci_resp_full_o(hci_resp_queue_full),
       .hci_resp_ready_thld_o(hci_resp_queue_ready_thld),
@@ -740,6 +743,7 @@ module i3c
   logic                          csr_tti_ibi_queue_req;
   logic                          csr_tti_ibi_queue_ack;
   logic [      CsrDataWidth-1:0] csr_tti_ibi_queue_data;
+  logic [   TtiIbiThldWidth-1:0] csr_tti_ibi_queue_ready_thld;
   logic                          csr_tti_ibi_queue_reg_rst;
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
@@ -755,8 +759,8 @@ module i3c
       .rx_desc_queue_req_o         (csr_tti_rx_desc_queue_req),
       .rx_desc_queue_ack_i         (csr_tti_rx_desc_queue_ack),
       .rx_desc_queue_data_i        (csr_tti_rx_desc_queue_data),
-      .rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_queue_ready_thld_o),
-      .rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_queue_ready_thld_i),
+      .rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_queue_ready_thld_i),
+      .rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_queue_ready_thld_o),
       .rx_desc_queue_reg_rst_o     (csr_tti_rx_desc_queue_reg_rst),
       .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_queue_reg_rst_we),
       .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_queue_reg_rst_data),
@@ -765,8 +769,8 @@ module i3c
       .tx_desc_queue_req_o         (csr_tti_tx_desc_queue_req),
       .tx_desc_queue_ack_i         (csr_tti_tx_desc_queue_ack),
       .tx_desc_queue_data_o        (csr_tti_tx_desc_queue_data),
-      .tx_desc_queue_ready_thld_o  (csr_tti_tx_desc_queue_ready_thld_o),
-      .tx_desc_queue_ready_thld_i  (csr_tti_tx_desc_queue_ready_thld_i),
+      .tx_desc_queue_ready_thld_o  (csr_tti_tx_desc_queue_ready_thld_i),
+      .tx_desc_queue_ready_thld_i  (csr_tti_tx_desc_queue_ready_thld_o),
       .tx_desc_queue_reg_rst_o     (csr_tti_tx_desc_queue_reg_rst),
       .tx_desc_queue_reg_rst_we_i  (csr_tti_tx_desc_queue_reg_rst_we),
       .tx_desc_queue_reg_rst_data_i(csr_tti_tx_desc_queue_reg_rst_data),
@@ -776,8 +780,8 @@ module i3c
       .rx_data_queue_ack_i         (csr_tti_rx_data_queue_ack),
       .rx_data_queue_data_i        (csr_tti_rx_data_queue_data),
       .rx_data_queue_start_thld_o  (csr_tti_rx_data_queue_start_thld),
-      .rx_data_queue_ready_thld_o  (csr_tti_rx_data_queue_ready_thld_o),
-      .rx_data_queue_ready_thld_i  (csr_tti_rx_data_queue_ready_thld_i),
+      .rx_data_queue_ready_thld_o  (csr_tti_rx_data_queue_ready_thld_i),
+      .rx_data_queue_ready_thld_i  (csr_tti_rx_data_queue_ready_thld_o),
       .rx_data_queue_reg_rst_o     (csr_tti_rx_data_queue_reg_rst),
       .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_queue_reg_rst_we),
       .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_queue_reg_rst_data),
@@ -787,8 +791,8 @@ module i3c
       .tx_data_queue_ack_i         (csr_tti_tx_data_queue_ack),
       .tx_data_queue_data_o        (csr_tti_tx_data_queue_data),
       .tx_data_queue_start_thld_o  (csr_tti_tx_data_queue_start_thld),
-      .tx_data_queue_ready_thld_o  (csr_tti_tx_data_queue_ready_thld_o),
-      .tx_data_queue_ready_thld_i  (csr_tti_tx_data_queue_ready_thld_i),
+      .tx_data_queue_ready_thld_o  (csr_tti_tx_data_queue_ready_thld_i),
+      .tx_data_queue_ready_thld_i  (csr_tti_tx_data_queue_ready_thld_o),
       .tx_data_queue_reg_rst_o     (csr_tti_tx_data_queue_reg_rst),
       .tx_data_queue_reg_rst_we_i  (csr_tti_tx_data_queue_reg_rst_we),
       .tx_data_queue_reg_rst_data_i(csr_tti_tx_data_queue_reg_rst_data),
@@ -797,6 +801,7 @@ module i3c
       .ibi_queue_req_o         (csr_tti_ibi_queue_req),
       .ibi_queue_ack_i         (csr_tti_ibi_queue_ack),
       .ibi_queue_data_o        (csr_tti_ibi_queue_data),
+      .ibi_queue_ready_thld_o  (csr_tti_ibi_queue_ready_thld),
       .ibi_queue_reg_rst_o     (csr_tti_ibi_queue_reg_rst),
       .ibi_queue_reg_rst_we_i  (csr_tti_ibi_queue_reg_rst_we),
       .ibi_queue_reg_rst_data_i(csr_tti_ibi_queue_reg_rst_data)
@@ -860,6 +865,7 @@ module i3c
       .csr_tti_ibi_queue_req_i         (csr_tti_ibi_queue_req),
       .csr_tti_ibi_queue_ack_o         (csr_tti_ibi_queue_ack),
       .csr_tti_ibi_queue_data_i        (csr_tti_ibi_queue_data),
+      .csr_tti_ibi_queue_ready_thld_i  (csr_tti_ibi_queue_ready_thld),
       .csr_tti_ibi_queue_reg_rst_i     (csr_tti_ibi_queue_reg_rst),
       .csr_tti_ibi_queue_reg_rst_we_o  (csr_tti_ibi_queue_reg_rst_we),
       .csr_tti_ibi_queue_reg_rst_data_o(csr_tti_ibi_queue_reg_rst_data),
@@ -874,7 +880,7 @@ module i3c
       .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_queue_wready),
       .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_queue_wdata),
       .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_queue_ready_thld),
-      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_above_thld_trig),
+      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_ready_thld_trig),
 
       // TTI TX descriptors queue
       .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_queue_full),
