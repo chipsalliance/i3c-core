@@ -20,6 +20,11 @@ DSIM_DEBUG_RUN = -waves sim.vcd
 BUILD_ARGS = -sv +acc+b -uvm 1.2 -timescale 1ns/1ps -all-class-spec -all-pkgs -j $(NUM_PROC)
 RUN_ARGS   = +acc+rwb -uvm 1.2 -waves dump.vcd
 
+EXTRA_REG_GEN_ARGS := $(EXTRA_REG_GEN_ARGS) \
+	--ral-template $(I3C_ROOT_DIR)/tools/reg_gen/peakrdl_uvm_templates/dsim_caliptra/uvm \
+	--cov-template $(I3C_ROOT_DIR)/tools/reg_gen/peakrdl_uvm_templates/dsim_caliptra/cov \
+	--smp-template $(I3C_ROOT_DIR)/tools/reg_gen/peakrdl_uvm_templates/dsim_caliptra/smp
+
 dsim-build:
 	$(DSIM) -genimage $(IMAGE) -work $(DSIM_WORKDIR) $(BUILD_ARGS) \
 	-f $(UVM_TB_FILES)  $(EXTRA_BUILD_ARGS)

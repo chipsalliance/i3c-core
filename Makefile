@@ -59,7 +59,7 @@ RDL_GEN_DIR := $(SRC_DIR)/csr/
 RDL_ARGS    := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
 
 config-rdl: config-print
-	python $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS)
+	python $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
 
 config-print: ## Print configuration name, filename and RDL arguments
 	@echo Using \'$(CFG_NAME)\' I3C configuration from \'$(CFG_FILE)\'.

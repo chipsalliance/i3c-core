@@ -14,8 +14,11 @@ class {{get_class_name(node)}} extends uvm_reg;
     protected uvm_reg_data_t m_data;
     protected bit            m_is_read;
 {% for field in node.fields() %}
-    {{bit_covergroup_name(node)|indent}} {{bit_covergroup_inst(field)}}[{{field.width}}];
+{%- for bit in range(field.width) %}
+    {{bit_covergroup_name(node)|indent}} {{bit_covergroup_inst(field)}}_{{bit}};
+{%- endfor -%}
 {%- endfor %}
+
     {{fld_covergroup_name(node)|indent}} fld_cg;
     {{child_insts(node)|indent}}
     {{function_new(node)|indent}}
@@ -133,7 +136,9 @@ function void {{get_class_name(node)}}::sample(uvm_reg_data_t  data,
     m_is_read = is_read;
     if (get_coverage(UVM_CVR_REG_BITS)) begin
 {%- for field in node.fields() %}
-        foreach({{bit_covergroup_inst(field)}}[bt]) this.{{bit_covergroup_inst(field)}}[bt].sample(data[{{field.lsb}} + bt]);
+{%- for bit in range(field.width) %}
+        this.{{bit_covergroup_inst(field)}}_{{bit}}.sample(data[{{field.lsb}} + {{bit}}]);
+{%- endfor %}
 {%- endfor %}
     end
     if (get_coverage(UVM_CVR_FIELD_VALS)) begin
@@ -150,7 +155,9 @@ endfunction
 function void {{get_class_name(node)}}::sample_values();
     if (get_coverage(UVM_CVR_REG_BITS)) begin
 {%- for field in node.fields() %}
-        foreach({{bit_covergroup_inst(field)}}[bt]) this.{{bit_covergroup_inst(field)}}[bt].sample({{get_inst_name(field)}}.get_mirrored_value() >> bt);
+{%- for bit in range(field.width) %}
+        this.{{bit_covergroup_inst(field)}}_{{bit}}.sample({{get_inst_name(field)}}.get_mirrored_value() >> {{bit}});
+{%- endfor %}
 {%- endfor %}
     end
     if (get_coverage(UVM_CVR_FIELD_VALS)) begin
@@ -175,7 +182,9 @@ virtual function void build();
     {%- endfor %}
     if (has_coverage(UVM_CVR_REG_BITS)) begin
 {%- for field in node.fields() %}
-        foreach({{bit_covergroup_inst(field)}}[bt]) {{bit_covergroup_inst(field)}}[bt] = new();
+{%- for bit in range(field.width) %}
+        {{bit_covergroup_inst(field)}}_{{bit}} = new();
+{%- endfor %}
 {%- endfor %}
     end
     if (has_coverage(UVM_CVR_FIELD_VALS))
