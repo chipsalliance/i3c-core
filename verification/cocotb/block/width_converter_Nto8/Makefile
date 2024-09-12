@@ -14,6 +14,6 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = width_converter_Nto8
 
 VERILOG_SOURCES  = \
-    $(SRC_DIR)/ctrl/width_converters.sv \
+    $(SRC_DIR)/ctrl/width_converter_Nto8.sv \
 
 include $(TEST_DIR)/../block_common.mk
