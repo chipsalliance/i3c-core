@@ -264,3 +264,30 @@ def test_lint(session: nox.Session) -> None:
     # paths
     session.run("black", "--config=pyproject.toml", "--check", ".", "../../tools")
     session.run("flake8", ".", "../../tools")
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["width_converter_Nto8"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_converter",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def width_converter_Nto8_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["width_converter_8toN"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_converter",
+        "test_flush",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def width_converter_8toN_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
