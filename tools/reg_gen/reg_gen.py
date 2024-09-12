@@ -21,13 +21,13 @@ import os
 from pathlib import Path
 
 from peakrdl_cheader.exporter import CHeaderExporter
+from peakrdl_cocotb.exporter import CocotbExporter
 from peakrdl_html import HTMLExporter
 from peakrdl_markdown import MarkdownExporter
 from peakrdl_regblock import RegblockExporter
 from peakrdl_regblock.cpuif.passthrough import PassthroughCpuif
 from peakrdl_regblock.udps import ALL_UDPS
 from peakrdl_uvm import UVMExporter
-from rdl_exporter import CocotbExporter
 from rdl_post_process import postprocess_sv
 from systemrdl import RDLCompiler
 

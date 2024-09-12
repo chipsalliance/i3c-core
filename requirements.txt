@@ -14,6 +14,7 @@ cocotbext-axi==0.1.24
 -e ${I3C_ROOT_DIR}/third_party/cocotbext-i3c
 -e ${I3C_ROOT_DIR}/tools/nox_utils
 -e ${I3C_ROOT_DIR}/tools/cocotb_helpers
+${I3C_ROOT_DIR}/tools/peakrdl_cocotb
 colorama==0.4.6
 colorlog==6.8.2
 comm==0.2.2

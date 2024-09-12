@@ -12,18 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import json
-from typing import Any
-
-from peakrdl.plugins.exporter import ExporterSubcommandPlugin
-from systemrdl import RDLListener, RDLWalker
-from systemrdl.node import AddrmapNode, MemNode, Node, RegfileNode
+from systemrdl import RDLListener
+from systemrdl.node import MemNode, RegfileNode
 
 
 class CocotbScanner(RDLListener):
-    def __init__(self, skip_addrmap_name=False):
-        self.skip_addrmap_name = skip_addrmap_name
+    def __init__(self, include_addrmap_name):
+        self.include_addrmap_name = include_addrmap_name
         self.reg_map = {}
 
     def enter_Addrmap(self, node):
@@ -39,9 +34,9 @@ class CocotbScanner(RDLListener):
             else node.address_offset
         )
         node.regfile_name = (
-            node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
-            if self.skip_addrmap_name
-            else node.get_path("_", "_{index:d}").upper()
+            node.get_path("_", "_{index:d}").upper()
+            if self.include_addrmap_name
+            else node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
         )
         node.processed_dict = {"start_addr": node.absolute_address}
 
@@ -57,9 +52,9 @@ class CocotbScanner(RDLListener):
     def enter_Mem(self, node):
         self.mem_offset = node.address_offset
         self.mem_name = (
-            node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
-            if self.skip_addrmap_name
-            else node.get_path("_", "_{index:d}").upper()
+            node.get_path("_", "_{index:d}").upper()
+            if self.include_addrmap_name
+            else node.get_rel_path(node.parent, "^", "_", "_{index:d}").upper()
         )
         node.processed_dict = {"start_addr": node.absolute_address}
 
@@ -99,25 +94,3 @@ class CocotbScanner(RDLListener):
 
         field.update({"low": node.low})
         field.update({"mask": field_mask})
-
-
-class CocotbExporter:
-    def export(self, node: Node, path: str, **kwargs: Any) -> None:
-        walker = RDLWalker(unroll=True)
-        scanner = CocotbScanner(True)
-        walker.walk(node, scanner)
-
-        with open(path, "w") as f:
-            f.write("from munch import Munch\n\n")
-            f.write("reg_map = Munch.fromDict(")
-            f.write(json.dumps(scanner.reg_map, indent=4))
-            f.write(")\n")
-
-
-# TODO: Test whether the Exporter works correctly
-class Exporter(ExporterSubcommandPlugin):
-    short_desc = "Export the register model to Python dictionary"
-
-    def do_export(self, top_node: "AddrmapNode", options: "argparse.Namespace") -> None:
-        exporter = CocotbExporter()
-        exporter.export(top_node, path=options.output)

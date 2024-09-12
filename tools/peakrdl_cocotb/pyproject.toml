@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "peakrdl-cocotb"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "systemrdl-compiler >= 1.21.0, < 2",
+    "munch == 4.0.0",
+]
+
+authors = [
+    {name = "Antmicro", email = "contact@antmicro.com"},
+    {name = "Robert Szczepanski", email = "rszczepanski@antmicro.com"},
+]
+description = "Generate Python class-like accessible dictionary from a SystemRDL register model"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = [
+    "SystemRDL", "PeakRDL", "CSR", "compiler", "tool", "registers", "generator",
+    "Python", "map", "software",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+]
+
+[project.entry-points."peakrdl.exporters"]
+cocotb = "peakrdl_cocotb.__peakrdl__:Exporter"
