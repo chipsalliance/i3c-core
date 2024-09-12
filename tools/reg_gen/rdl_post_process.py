@@ -27,6 +27,8 @@ def postprocess_sv(fname):
     mod_lines = ""
 
     found_hard_reset = None
+    declared_includes = False
+    extra_includes = ["caliptra_sva.svh"]
 
     # Line by line manipulation
     # Look for unpacked arrays (could be struct arrays or signal arrays)
@@ -39,6 +41,7 @@ def postprocess_sv(fname):
         has_unpacked = re.search(r"\[\d+\]", line)
         has_struct = re.search(r"\bstruct\b\s*(?:unpacked)?", line)
         has_packed_struct = re.search(r"\bstruct\b\s*packed", line)
+        is_module = re.search(r"\bmodule\s*\w*\s*\($", line)
         is_endmodule = re.search(r"\bendmodule\b", line)
         has_reset = re.search(r"\bnegedge\b", line)
         if has_reset is not None and found_hard_reset is None:
@@ -74,6 +77,13 @@ def postprocess_sv(fname):
             mod_lines += "`CALIPTRA_ASSERT_KNOWN(ERR_HWIF_IN, hwif_in, clk, !" + reset_name + ")\n"
             mod_lines += "\n"
             mod_lines += line
+        # Include caliptra asserts header
+        elif not declared_includes and is_module is not None:
+            for inc in extra_includes:
+                mod_lines += f'`include "{inc}"\n'
+            mod_lines += "\n"
+            mod_lines += line
+            declared_includes = True
         else:
             mod_lines += line
     # print(f"modified {mod_cnt} lines with unpacked arrays in {fname}")
