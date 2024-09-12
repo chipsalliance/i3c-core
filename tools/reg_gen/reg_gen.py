@@ -167,7 +167,7 @@ def main():
 
     # Export Cocotb dictionary
     exporter = CocotbExporter()
-    output_file = os.path.join("verification/cocotb/common/reg_map.py")
+    output_file = os.path.join(i3c_root_dir, "verification/cocotb/common/reg_map.py")
     exporter.export(root, path=output_file)
     logging.info(f"Created: Python dictionary file {output_file}")
 
