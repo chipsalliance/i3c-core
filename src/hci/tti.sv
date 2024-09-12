@@ -8,20 +8,20 @@ module tti
 
     parameter int unsigned RxDescFifoDepth = 64,
     parameter int unsigned TxDescFifoDepth = 64,
-    parameter int unsigned RxDataFifoDepth = 64,
-    parameter int unsigned TxDataFifoDepth = 64,
+    parameter int unsigned RxFifoDepth = 64,
+    parameter int unsigned TxFifoDepth = 64,
     parameter int unsigned IbiFifoDepth = 64,
 
     parameter int unsigned RxDescDataWidth = 32,
     parameter int unsigned TxDescDataWidth = 32,
-    parameter int unsigned RxDataDataWidth = 32,
-    parameter int unsigned TxDataDataWidth = 32,
+    parameter int unsigned RxDataWidth = 32,
+    parameter int unsigned TxDataWidth = 32,
     parameter int unsigned IbiDataWidth = 32,
 
     parameter int unsigned RxDescThldWidth = 8,
     parameter int unsigned TxDescThldWidth = 8,
-    parameter int unsigned RxDataThldWidth = 3,
-    parameter int unsigned TxDataThldWidth = 3,
+    parameter int unsigned RxThldWidth = 3,
+    parameter int unsigned TxThldWidth = 3,
     parameter int unsigned IbiThldWidth = 8
 ) (
     input clk_i,  // clock
@@ -42,16 +42,15 @@ module tti
     input  logic                       rx_desc_queue_reg_rst_data_i,
 
     // RX data queue
-    output logic                       rx_data_queue_req_o,
-    input  logic                       rx_data_queue_ack_i,
-    input  logic [RxDataDataWidth-1:0] rx_data_queue_data_i,
-    output logic [RxDataThldWidth-1:0] rx_data_queue_start_thld_o,
-    //    input  logic [RxDataThldWidth-1:0] rx_data_queue_start_thld_i,
-    output logic [RxDataThldWidth-1:0] rx_data_queue_ready_thld_o,
-    input  logic [RxDataThldWidth-1:0] rx_data_queue_ready_thld_i,
-    output logic                       rx_data_queue_reg_rst_o,
-    input  logic                       rx_data_queue_reg_rst_we_i,
-    input  logic                       rx_data_queue_reg_rst_data_i,
+    output logic                   rx_data_queue_req_o,
+    input  logic                   rx_data_queue_ack_i,
+    input  logic [RxDataWidth-1:0] rx_data_queue_data_i,
+    output logic [RxThldWidth-1:0] rx_data_queue_start_thld_o,
+    output logic [RxThldWidth-1:0] rx_data_queue_ready_thld_o,
+    input  logic [RxThldWidth-1:0] rx_data_queue_ready_thld_i,
+    output logic                   rx_data_queue_reg_rst_o,
+    input  logic                   rx_data_queue_reg_rst_we_i,
+    input  logic                   rx_data_queue_reg_rst_data_i,
 
     // TX descriptors queue
     output logic                       tx_desc_queue_req_o,
@@ -64,16 +63,15 @@ module tti
     input  logic                       tx_desc_queue_reg_rst_data_i,
 
     // TX data queue
-    output logic                       tx_data_queue_req_o,
-    input  logic                       tx_data_queue_ack_i,
-    output logic [RxDataDataWidth-1:0] tx_data_queue_data_o,
-    output logic [RxDataThldWidth-1:0] tx_data_queue_start_thld_o,
-    //    input  logic [RxDataThldWidth-1:0] tx_data_queue_start_thld_i,
-    output logic [RxDataThldWidth-1:0] tx_data_queue_ready_thld_o,
-    input  logic [RxDataThldWidth-1:0] tx_data_queue_ready_thld_i,
-    output logic                       tx_data_queue_reg_rst_o,
-    input  logic                       tx_data_queue_reg_rst_we_i,
-    input  logic                       tx_data_queue_reg_rst_data_i,
+    output logic                   tx_data_queue_req_o,
+    input  logic                   tx_data_queue_ack_i,
+    output logic [RxDataWidth-1:0] tx_data_queue_data_o,
+    output logic [RxThldWidth-1:0] tx_data_queue_start_thld_o,
+    output logic [RxThldWidth-1:0] tx_data_queue_ready_thld_o,
+    input  logic [RxThldWidth-1:0] tx_data_queue_ready_thld_i,
+    output logic                   tx_data_queue_reg_rst_o,
+    input  logic                   tx_data_queue_reg_rst_we_i,
+    input  logic                   tx_data_queue_reg_rst_data_i,
 
     // In-band Interrupt queue
     output logic                    ibi_queue_req_o,
@@ -111,10 +109,10 @@ module tti
     hwif_tti_o.QUEUE_THLD_CTRL.RX_DESC_THLD.next = rx_desc_queue_ready_thld_i;
     rx_desc_queue_ready_thld_o = RxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.value);
     tx_desc_queue_ready_thld_o = TxDescThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.value);
-    rx_data_queue_start_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value);
-    rx_data_queue_ready_thld_o = RxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value);
-    tx_data_queue_start_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value);
-    tx_data_queue_ready_thld_o = TxDataThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value);
+    rx_data_queue_start_thld_o = RxThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value);
+    rx_data_queue_ready_thld_o = RxThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value);
+    tx_data_queue_start_thld_o = TxThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value);
+    tx_data_queue_ready_thld_o = TxThldWidth'(hwif_tti_i.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value);
     ibi_queue_ready_thld_o = IbiThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.value);
   end : wire_hwif_thld
 

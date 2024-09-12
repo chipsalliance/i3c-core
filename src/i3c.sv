@@ -695,8 +695,6 @@ module i3c
       .t_bus_available_o(t_bus_available)
   );
 
-  // TTI
-
   // TTI RX Descriptor queue
   logic                          csr_tti_rx_desc_queue_req;
   logic                          csr_tti_rx_desc_queue_ack;
@@ -748,7 +746,7 @@ module i3c
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
 
-  tti #() xtti (
+  tti xtti (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
@@ -808,16 +806,13 @@ module i3c
   );
 
   // Recovery handler
-  recovery_handler #() xrecovery_handler (
+  recovery_handler xrecovery_handler (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
       // Recovery CSR interface
       .hwif_rec_i(hwif_rec_out),
       .hwif_rec_o(hwif_rec_inp),
-
-      // ...........................
-      // TTI CSR interface
 
       // TTI RX descriptors queue
       .csr_tti_rx_desc_queue_req_i         (csr_tti_rx_desc_queue_req),
@@ -869,9 +864,6 @@ module i3c
       .csr_tti_ibi_queue_reg_rst_i     (csr_tti_ibi_queue_reg_rst),
       .csr_tti_ibi_queue_reg_rst_we_o  (csr_tti_ibi_queue_reg_rst_we),
       .csr_tti_ibi_queue_reg_rst_data_o(csr_tti_ibi_queue_reg_rst_data),
-
-      // ...........................
-      // TTI controller interface
 
       // TTI RX descriptors queue
       .ctl_tti_rx_desc_queue_full_o(tti_rx_desc_queue_full),

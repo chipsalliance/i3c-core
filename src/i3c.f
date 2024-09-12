@@ -43,6 +43,7 @@ ${I3C_ROOT_DIR}/src/hci/dxt.sv
 ${I3C_ROOT_DIR}/src/hci/tti.sv
 ${I3C_ROOT_DIR}/src/hci/queues.sv
 ${I3C_ROOT_DIR}/src/hci/hci.sv
+${I3C_ROOT_DIR}/src/recovery/recovery_handler.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_timers.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_monitor.sv
 ${I3C_ROOT_DIR}/src/ctrl/ccc.sv
@@ -61,4 +62,3 @@ ${I3C_ROOT_DIR}/src/ctrl/controller_standby.sv
 ${I3C_ROOT_DIR}/src/ctrl/controller.sv
 ${I3C_ROOT_DIR}/src/i3c.sv
 ${I3C_ROOT_DIR}/src/i3c_wrapper.sv
-${I3C_ROOT_DIR}/src/recovery/recovery_handler.sv

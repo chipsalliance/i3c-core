@@ -151,7 +151,6 @@ module recovery_handler
 
   // ....................................................
 
-  // TODO: Categorize
   logic recovery_enable;
   assign recovery_enable = 1'b0;
 
@@ -367,7 +366,7 @@ module recovery_handler
       .ack_o (tti_ibi_queue_ack),
       .data_i(csr_tti_ibi_queue_data_i),
 
-      .start_thld_i('0),
+      .start_thld_i('0),  // The IBI queue does not support start threshold
       .ready_thld_i(csr_tti_ibi_queue_ready_thld_i),
       .ready_thld_o(ctl_tti_ibi_queue_ready_thld_o),
 
@@ -378,6 +377,8 @@ module recovery_handler
 
   // Prevent CSR writes to IBI queue in recovery mode
   // Make writes from CSR side seem as always accepted
+  // TODO: Consult TTI and recovery specification and verify if it is a
+  //       legitimate behavior.
   always_comb begin
     if (recovery_enable) begin
       tti_ibi_queue_req       = 1'b0;
@@ -391,59 +392,39 @@ module recovery_handler
   // ....................................................
   // TTI Queues <-> controller mux
 
-  // ......................
-  // RX descriptor queue (R1MUX)
-
-  // Queue input
-  always_comb begin
+  // RX descriptor queue
+  always_comb begin : R1MUX
     if (recovery_enable) begin
-      tti_rx_desc_queue_wvalid = 1'b0;
+      tti_rx_desc_queue_wvalid                = '0;
+      ctl_tti_rx_desc_queue_full_o            = '0;
+      ctl_tti_rx_desc_queue_empty_o           = '0;
+      ctl_tti_rx_desc_queue_wready_o          = '0;
+      ctl_tti_rx_desc_queue_ready_thld_trig_o = '0;
     end else begin
-      tti_rx_desc_queue_wvalid = ctl_tti_rx_desc_queue_wvalid_i;
-    end
-
-    tti_rx_desc_queue_wdata             = ctl_tti_rx_desc_queue_wdata_i; // Don't mux data, disabling valid is enough
-  end
-
-  // Controller input
-  always_comb begin
-    if (recovery_enable) begin
-      ctl_tti_rx_desc_queue_full_o            = 1'b0;
-      ctl_tti_rx_desc_queue_empty_o           = 1'b0;
-      ctl_tti_rx_desc_queue_wready_o          = 1'b0;  // TODO valid from handler
-      ctl_tti_rx_desc_queue_ready_thld_trig_o = 1'b0;
-    end else begin
+      tti_rx_desc_queue_wvalid                = ctl_tti_rx_desc_queue_wvalid_i;
       ctl_tti_rx_desc_queue_full_o            = tti_rx_desc_queue_full;
       ctl_tti_rx_desc_queue_empty_o           = tti_rx_desc_queue_empty;
       ctl_tti_rx_desc_queue_wready_o          = tti_rx_desc_queue_wready;
       ctl_tti_rx_desc_queue_ready_thld_trig_o = tti_rx_desc_queue_ready_thld_trig;
     end
+
+    tti_rx_desc_queue_wdata                   = ctl_tti_rx_desc_queue_wdata_i; // Don't mux data, disabling valid is enough
   end
 
   // Threshold
   assign ctl_tti_rx_desc_queue_ready_thld_o = tti_rx_desc_queue_ready_thld_o;
 
-  // ......................
-  // TX descriptor queue (T1MUX)
-
-  // Queue input
-  always_comb begin
+  // TX descriptor queue
+  always_comb begin : T1MUX
     if (recovery_enable) begin
-      tti_tx_desc_queue_rready = 1'b0;
+      tti_tx_desc_queue_rready                = '0;
+      ctl_tti_tx_desc_queue_full_o            = '0;
+      ctl_tti_tx_desc_queue_empty_o           = '0;
+      ctl_tti_tx_desc_queue_rvalid_o          = '0;
+      ctl_tti_tx_desc_queue_rdata_o           = '0;
+      ctl_tti_tx_desc_queue_ready_thld_trig_o = '0;
     end else begin
-      tti_tx_desc_queue_rready = ctl_tti_tx_desc_queue_rready_i;
-    end
-  end
-
-  // Controller input
-  always_comb begin
-    if (recovery_enable) begin
-      ctl_tti_tx_desc_queue_full_o            = 1'b0;
-      ctl_tti_tx_desc_queue_empty_o           = 1'b0;
-      ctl_tti_tx_desc_queue_rvalid_o          = 1'b0;
-      ctl_tti_tx_desc_queue_rdata_o           = 'd0;
-      ctl_tti_tx_desc_queue_ready_thld_trig_o = 1'b0;
-    end else begin
+      tti_tx_desc_queue_rready                = ctl_tti_tx_desc_queue_rready_i;
       ctl_tti_tx_desc_queue_full_o            = tti_tx_desc_queue_full;
       ctl_tti_tx_desc_queue_empty_o           = tti_tx_desc_queue_empty;
       ctl_tti_tx_desc_queue_rvalid_o          = tti_tx_desc_queue_rvalid;
@@ -456,28 +437,20 @@ module recovery_handler
   assign ctl_tti_tx_desc_queue_ready_thld_o = tti_tx_desc_queue_ready_thld_o;
 
   // ......................
-  // RX data queue (R2MUX)
 
-  // Queue input
-  always_comb begin
+  // RX data queue
+  always_comb begin : R2MUX
     if (recovery_enable) begin
-      tti_rx_data_queue_wvalid = 1'b0;
-      tti_rx_data_queue_wdata  = 'd0;
+      tti_rx_data_queue_wvalid                = '0;
+      tti_rx_data_queue_wdata                 = '0;
+      ctl_tti_rx_data_queue_full_o            = '0;
+      ctl_tti_rx_data_queue_empty_o           = '0;
+      ctl_tti_rx_data_queue_wready_o          = '0;
+      ctl_tti_rx_data_queue_start_thld_trig_o = '0;
+      ctl_tti_rx_data_queue_ready_thld_trig_o = '0;
     end else begin
-      tti_rx_data_queue_wvalid = ctl_tti_rx_data_queue_wvalid_i;
-      tti_rx_data_queue_wdata  = ctl_tti_rx_data_queue_wdata_i;
-    end
-  end
-
-  // Controller input
-  always_comb begin
-    if (recovery_enable) begin
-      ctl_tti_rx_data_queue_full_o            = 1'b0;
-      ctl_tti_rx_data_queue_empty_o           = 1'b0;
-      ctl_tti_rx_data_queue_wready_o          = 1'b0;
-      ctl_tti_rx_data_queue_start_thld_trig_o = 1'b0;
-      ctl_tti_rx_data_queue_ready_thld_trig_o = 1'b0;
-    end else begin
+      tti_rx_data_queue_wvalid                = ctl_tti_rx_data_queue_wvalid_i;
+      tti_rx_data_queue_wdata                 = ctl_tti_rx_data_queue_wdata_i;
       ctl_tti_rx_data_queue_full_o            = tti_rx_data_queue_full;
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = tti_rx_data_queue_wready;
@@ -491,27 +464,19 @@ module recovery_handler
   assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
   // ......................
-  // TX data queue (T2MUX)
 
-  // Queue input
-  always_comb begin
+  // TX data queue
+  always_comb begin : T2MUX
     if (recovery_enable) begin
-      tti_tx_data_queue_rready = 1'b0;
+      tti_tx_data_queue_rready                = '0;
+      ctl_tti_tx_data_queue_full_o            = '0;
+      ctl_tti_tx_data_queue_empty_o           = '0;
+      ctl_tti_tx_data_queue_rvalid_o          = '0;
+      ctl_tti_tx_data_queue_rdata_o           = '0;
+      ctl_tti_tx_data_queue_start_thld_trig_o = '0;
+      ctl_tti_tx_data_queue_ready_thld_trig_o = '0;
     end else begin
-      tti_tx_data_queue_rready = ctl_tti_tx_data_queue_rready_i;
-    end
-  end
-
-  // Controller input
-  always_comb begin
-    if (recovery_enable) begin
-      ctl_tti_tx_data_queue_full_o            = 0;
-      ctl_tti_tx_data_queue_empty_o           = 0;
-      ctl_tti_tx_data_queue_rvalid_o          = 0;
-      ctl_tti_tx_data_queue_rdata_o           = 0;
-      ctl_tti_tx_data_queue_start_thld_trig_o = 0;
-      ctl_tti_tx_data_queue_ready_thld_trig_o = 0;
-    end else begin
+      tti_tx_data_queue_rready                = ctl_tti_tx_data_queue_rready_i;
       ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
       ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
       ctl_tti_tx_data_queue_rvalid_o          = tti_tx_data_queue_rvalid;
@@ -528,32 +493,22 @@ module recovery_handler
   // ....................................................
   // TTI Queues <-> CSR mux
 
-  // ......................
-  // RX descriptor queue (R4SW)
-
-  // CSR input
-  always_comb begin
+  // RX descriptor queue
+  always_comb begin : R4SW
     if (recovery_enable) begin
-      csr_tti_rx_desc_queue_ack_o          = 1'b0;
-      csr_tti_rx_desc_queue_data_o         = 'b0;
-      csr_tti_rx_desc_queue_reg_rst_we_o   = 'b0;
-      csr_tti_rx_desc_queue_reg_rst_data_o = 'b0;
+      csr_tti_rx_desc_queue_ack_o          = '0;
+      csr_tti_rx_desc_queue_data_o         = '0;
+      csr_tti_rx_desc_queue_reg_rst_we_o   = '0;
+      csr_tti_rx_desc_queue_reg_rst_data_o = '0;
+      tti_rx_desc_queue_req                = '0;
+      tti_rx_desc_queue_reg_rst            = '0;
     end else begin
       csr_tti_rx_desc_queue_ack_o          = tti_rx_desc_queue_ack;
       csr_tti_rx_desc_queue_data_o         = tti_rx_desc_queue_data;
       csr_tti_rx_desc_queue_reg_rst_we_o   = tti_rx_desc_queue_reg_rst_we;
       csr_tti_rx_desc_queue_reg_rst_data_o = tti_rx_desc_queue_reg_rst_data;
-    end
-  end
-
-  // Queue input
-  always_comb begin
-    if (recovery_enable) begin
-      tti_rx_desc_queue_req     = 1'b0;
-      tti_rx_desc_queue_reg_rst = 1'b0;
-    end else begin
-      tti_rx_desc_queue_req     = csr_tti_rx_desc_queue_req_i;
-      tti_rx_desc_queue_reg_rst = csr_tti_rx_desc_queue_reg_rst_i;
+      tti_rx_desc_queue_req                = csr_tti_rx_desc_queue_req_i;
+      tti_rx_desc_queue_reg_rst            = csr_tti_rx_desc_queue_reg_rst_i;
     end
   end
 
@@ -562,31 +517,23 @@ module recovery_handler
   assign csr_tti_rx_desc_queue_ready_thld_o = tti_rx_desc_queue_ready_thld_o;
 
   // ......................
-  // TX descriptor queue (T4SW)
 
-  // CSR input
-  always_comb begin
+  // TX descriptor queue
+  always_comb begin : T4SW
     if (recovery_enable) begin
-      csr_tti_tx_desc_queue_ack_o          = 1'b0;
-      csr_tti_tx_desc_queue_reg_rst_we_o   = 'b0;
-      csr_tti_tx_desc_queue_reg_rst_data_o = 'b0;
+      csr_tti_tx_desc_queue_ack_o          = '0;
+      csr_tti_tx_desc_queue_reg_rst_we_o   = '0;
+      csr_tti_tx_desc_queue_reg_rst_data_o = '0;
+      tti_tx_desc_queue_data               = '0;
+      tti_tx_desc_queue_req                = '0;
+      tti_tx_desc_queue_reg_rst            = '0;
     end else begin
       csr_tti_tx_desc_queue_ack_o          = tti_tx_desc_queue_ack;
       csr_tti_tx_desc_queue_reg_rst_we_o   = tti_tx_desc_queue_reg_rst_we;
       csr_tti_tx_desc_queue_reg_rst_data_o = tti_tx_desc_queue_reg_rst_data;
-    end
-  end
-
-  // Queue input
-  always_comb begin
-    if (recovery_enable) begin
-      tti_tx_desc_queue_data    = 'd0;
-      tti_tx_desc_queue_req     = 1'b0;
-      tti_tx_desc_queue_reg_rst = 1'b0;
-    end else begin
-      tti_tx_desc_queue_data    = csr_tti_tx_desc_queue_data_i;
-      tti_tx_desc_queue_req     = csr_tti_tx_desc_queue_req_i;
-      tti_tx_desc_queue_reg_rst = csr_tti_tx_desc_queue_reg_rst_i;
+      tti_tx_desc_queue_data               = csr_tti_tx_desc_queue_data_i;
+      tti_tx_desc_queue_req                = csr_tti_tx_desc_queue_req_i;
+      tti_tx_desc_queue_reg_rst            = csr_tti_tx_desc_queue_reg_rst_i;
     end
   end
 
@@ -595,31 +542,23 @@ module recovery_handler
   assign csr_tti_tx_desc_queue_ready_thld_o = tti_tx_desc_queue_ready_thld_o;
 
   // ......................
-  // RX data queue (R4MUX)
 
-  // CSR input
-  always_comb begin
+  // RX data queue
+  always_comb begin : R4MUX
     if (recovery_enable) begin
-      csr_tti_rx_data_queue_ack_o          = 1'b0;
-      csr_tti_rx_data_queue_data_o         = 'b0;
-      csr_tti_rx_data_queue_reg_rst_we_o   = 'b0;
-      csr_tti_rx_data_queue_reg_rst_data_o = 'b0;
+      csr_tti_rx_data_queue_ack_o          = '0;
+      csr_tti_rx_data_queue_data_o         = '0;
+      csr_tti_rx_data_queue_reg_rst_we_o   = '0;
+      csr_tti_rx_data_queue_reg_rst_data_o = '0;
+      tti_rx_data_queue_req                = '0;
+      tti_rx_data_queue_reg_rst            = '0;
     end else begin
       csr_tti_rx_data_queue_ack_o          = tti_rx_data_queue_ack;
       csr_tti_rx_data_queue_data_o         = tti_rx_data_queue_data;
       csr_tti_rx_data_queue_reg_rst_we_o   = tti_rx_data_queue_reg_rst_we;
       csr_tti_rx_data_queue_reg_rst_data_o = tti_rx_data_queue_reg_rst_next;
-    end
-  end
-
-  // Queue input
-  always_comb begin
-    if (recovery_enable) begin
-      tti_rx_data_queue_req     = 1'b0;
-      tti_rx_data_queue_reg_rst = 1'b0;
-    end else begin
-      tti_rx_data_queue_req     = csr_tti_rx_data_queue_req_i;
-      tti_rx_data_queue_reg_rst = csr_tti_rx_data_queue_reg_rst_i;
+      tti_rx_data_queue_req                = csr_tti_rx_data_queue_req_i;
+      tti_rx_data_queue_reg_rst            = csr_tti_rx_data_queue_reg_rst_i;
     end
   end
 
@@ -629,31 +568,23 @@ module recovery_handler
   assign csr_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
   // ......................
-  // TX data queue (T4MUX)
 
-  // CSR input
-  always_comb begin
+  // TX data queue
+  always_comb begin : T4MUX
     if (recovery_enable) begin
-      csr_tti_tx_data_queue_ack_o          = 1'b0;
-      csr_tti_tx_data_queue_reg_rst_we_o   = 'b0;
-      csr_tti_tx_data_queue_reg_rst_data_o = 'b0;
+      csr_tti_tx_data_queue_ack_o          = '0;
+      csr_tti_tx_data_queue_reg_rst_we_o   = '0;
+      csr_tti_tx_data_queue_reg_rst_data_o = '0;
+      tti_tx_data_queue_data               = '0;
+      tti_tx_data_queue_req                = '0;
+      tti_tx_data_queue_reg_rst            = '0;
     end else begin
       csr_tti_tx_data_queue_ack_o          = tti_tx_data_queue_ack;
       csr_tti_tx_data_queue_reg_rst_we_o   = tti_tx_data_queue_reg_rst_we;
       csr_tti_tx_data_queue_reg_rst_data_o = tti_tx_data_queue_reg_rst_next;
-    end
-  end
-
-  // Queue input
-  always_comb begin
-    if (recovery_enable) begin
-      tti_tx_data_queue_data    = 'd0;
-      tti_tx_data_queue_req     = 1'b0;
-      tti_tx_data_queue_reg_rst = 1'b0;
-    end else begin
-      tti_tx_data_queue_data    = csr_tti_tx_data_queue_data_i;
-      tti_tx_data_queue_req     = csr_tti_tx_data_queue_req_i;
-      tti_tx_data_queue_reg_rst = csr_tti_tx_data_queue_reg_rst_i;
+      tti_tx_data_queue_data               = csr_tti_tx_data_queue_data_i;
+      tti_tx_data_queue_req                = csr_tti_tx_data_queue_req_i;
+      tti_tx_data_queue_reg_rst            = csr_tti_tx_data_queue_reg_rst_i;
     end
   end
 

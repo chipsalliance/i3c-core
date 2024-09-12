@@ -478,7 +478,7 @@ module hci_queues_wrapper
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
 
-  tti #() xtti (
+  tti xtti (
       .clk_i (aclk),
       .rst_ni(areset_n),
 
@@ -538,7 +538,7 @@ module hci_queues_wrapper
   );
 
   // Recovery handler
-  recovery_handler #() xrecovery_handler (
+  recovery_handler xrecovery_handler (
       .clk_i (aclk),
       .rst_ni(areset_n),
 
