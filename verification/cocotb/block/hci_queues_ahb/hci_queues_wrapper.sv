@@ -140,7 +140,7 @@ module hci_queues_wrapper
     output logic tti_rx_queue_empty_o,
     input logic tti_rx_queue_wvalid_i,
     output logic tti_rx_queue_wready_o,
-    input logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_i,
+    input logic [7:0] tti_rx_queue_wdata_i,
 
     // TX queue
     output logic tti_tx_queue_full_o,
@@ -151,7 +151,7 @@ module hci_queues_wrapper
     output logic tti_tx_queue_empty_o,
     output logic tti_tx_queue_rvalid_o,
     input logic tti_tx_queue_rready_i,
-    output logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_o,
+    output logic [7:0] tti_tx_queue_rdata_o,
 
     // In-band Interrupt Queue
     output logic tti_ibi_queue_full_o,

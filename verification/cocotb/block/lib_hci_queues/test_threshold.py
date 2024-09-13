@@ -585,7 +585,7 @@ async def should_raise_ready_thld_trig_receiver(
 
     # Write one more random data dword to trigger the threshold
     await q.enqueue(interface)
-    await RisingEdge(interface.clk)
+    await ClockCycles(interface.clk, 2)
 
     s_ready_thld_trig = interface.get_thld_status(q.name, "ready")
     assert s_ready_thld_trig == 1, (
@@ -670,7 +670,7 @@ async def should_raise_start_thld_trig_transmitter(
 
     # Reach the threshold
     await q.enqueue(interface)
-    await RisingEdge(interface.clk)
+    await ClockCycles(interface.clk, 2)
 
     # Verify the signal is risen
     s_start_thld_trig = interface.get_thld_status(q.name, "start")

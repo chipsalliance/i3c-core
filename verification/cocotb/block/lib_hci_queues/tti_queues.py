@@ -69,11 +69,25 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         )
 
     async def get_tx_data(self, timeout: int = 20, units: str = "us") -> int:
-        self.dut.tti_tx_queue_rready_i.value = 1
+
+        # The queue interface is actually 8-bit. Since the data width converter
+        # operates on complete 32-bit words only there should be always 4 bytes
+        # to be read.
+
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.tti_tx_queue_rvalid_o, True, self.clk, timeout, units)
+        self.dut.tti_tx_queue_rready_i.value = 1
+
+        word = 0
+        for i in range(4):
+            await RisingEdge(self.clk)
+            await expect_with_timeout(self.dut.tti_tx_queue_rvalid_o, True, self.clk, timeout, units)
+
+            # Store byte (little-endian)
+            word >>= 8
+            word  |= self.dut.tti_tx_queue_rdata_o.value.integer << 24
+
         self.dut.tti_tx_queue_rready_i.value = 0
-        return self.dut.tti_tx_queue_rdata_o.value.integer
+        return word
 
     async def put_tx_data(self, data: int = None):
         if not data:
@@ -83,12 +97,21 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
     async def put_rx_data(self, data: int = None, timeout: int = 20, units: str = "us"):
         if not data:
             data = randint(1, 2**32 - 1)
-        self.dut.tti_rx_queue_wdata_i.value = data
-        self.dut.tti_rx_queue_wvalid_i.value = 1
-        # In case ready is already set, assert valid at the next rising edge
-        await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.tti_rx_queue_wready_o, True, self.clk, timeout, units)
-        self.dut.tti_rx_queue_wvalid_i.value = 0
+
+        # The queue interface is actually 8-bit. Assume that we are writing complete
+        # 32-bit words. Repeat the write 4 times.
+        for i in range(4):
+
+            # Get byte (little endian)
+            byte = data & 0xFF
+            data >>= 8
+
+            self.dut.tti_rx_queue_wdata_i.value = byte
+            self.dut.tti_rx_queue_wvalid_i.value = 1
+            # In case ready is already set, assert valid at the next rising edge
+            await RisingEdge(self.clk)
+            await expect_with_timeout(self.dut.tti_rx_queue_wready_o, True, self.clk, timeout, units)
+            self.dut.tti_rx_queue_wvalid_i.value = 0
 
     async def get_rx_data(self) -> int:
         return dword2int(await self.read_csr(self.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
