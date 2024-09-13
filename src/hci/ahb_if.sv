@@ -106,21 +106,18 @@ module ahb_if
       .rdata(i3c_req_rdata)
   );
 
-  logic i3c_ign_rd_ack, i3c_ign_wr_ack;
 
   always_comb begin : ahb_2_i3c_comp
     cpuif_req_stall = i3c_req_write ? s_cpuif_req_stall_wr : s_cpuif_req_stall_rd;
     i3c_req_hld = (cpuif_req_stall | i3c_req_hld_ext) & ~s_cpuif_wr_ack & ~s_cpuif_rd_ack;
 
-    s_cpuif_req = i3c_req_dv | i3c_req_hld;
+    s_cpuif_req = i3c_req_dv;
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
     s_cpuif_wr_data = i3c_req_wdata;
     s_cpuif_wr_biten = '1;  // AHB-Lite implementation doesn't support write strobes
     i3c_req_err = s_cpuif_rd_err | s_cpuif_wr_err;
     i3c_req_rdata = s_cpuif_rd_data;
-    i3c_ign_rd_ack = s_cpuif_rd_ack;  // Read ack is not utilized
-    i3c_ign_wr_ack = s_cpuif_wr_ack;  // Write ack is not utilized
   end
 
   always_ff @(posedge hclk_i or negedge hreset_n_i) begin
