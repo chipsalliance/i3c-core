@@ -114,6 +114,7 @@ module controller
     output logic tti_rx_queue_wvalid_o,
     input logic tti_rx_queue_wready_i,
     output logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_o,
+    output logic tti_rx_queue_wflush_o,
 
     // TTI: TX Data
     input logic tti_tx_queue_full_i,
@@ -290,6 +291,7 @@ module controller
       .rx_queue_wvalid_o(tti_rx_queue_wvalid_o),
       .rx_queue_wready_i(tti_rx_queue_wready_i),
       .rx_queue_wdata_o(tti_rx_queue_wdata_o),
+      .rx_queue_wflush_o(tti_rx_queue_wflush_o),
       .tx_queue_full_i(tti_tx_queue_full_i),
       .tx_queue_start_thld_i(tti_tx_queue_start_thld_i),
       .tx_queue_start_thld_trig_i(tti_tx_queue_start_thld_trig_i),

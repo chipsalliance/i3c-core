@@ -54,6 +54,7 @@ module controller_standby_i3c
     output logic rx_queue_wvalid_o,
     input logic rx_queue_wready_i,
     output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
+    output logic rx_queue_wflush_o,
 
     // TTI: TX Data
     input logic tx_queue_full_i,
@@ -107,6 +108,7 @@ module controller_standby_i3c
       .rx_queue_wvalid_o(rx_queue_wvalid_o),
       .rx_queue_wready_i(rx_queue_wready_i),
       .rx_queue_wdata_o(rx_queue_wdata_o),
+      .rx_queue_wflush_o(rx_queue_wflush_o),
 
       .tx_queue_full_i  (tx_queue_full_i),
       .tx_queue_empty_i (tx_queue_empty_i),

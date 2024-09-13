@@ -285,6 +285,7 @@ module i3c
   logic                          tti_rx_queue_wvalid;
   logic                          tti_rx_queue_wready;
   logic [                   7:0] tti_rx_queue_wdata;
+  logic                          tti_rx_queue_wflush;
 
   // TTI TX queue
   logic                          tti_tx_queue_full;
@@ -506,6 +507,7 @@ module i3c
       .tti_rx_queue_wvalid_o(tti_rx_queue_wvalid),
       .tti_rx_queue_wready_i(tti_rx_queue_wready),
       .tti_rx_queue_wdata_o(tti_rx_queue_wdata),
+      .tti_rx_queue_wflush_o(tti_rx_queue_wflush),
 
       // TTI: TX Descriptor
       .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full),
@@ -903,6 +905,7 @@ module i3c
       .ctl_tti_rx_data_queue_wvalid_i(tti_rx_queue_wvalid),
       .ctl_tti_rx_data_queue_wready_o(tti_rx_queue_wready),
       .ctl_tti_rx_data_queue_wdata_i(tti_rx_queue_wdata),
+      .ctl_tti_rx_data_queue_wflush_i(tti_rx_queue_wflush),
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_queue_start_thld),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_queue_start_thld_trig),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_queue_ready_thld),

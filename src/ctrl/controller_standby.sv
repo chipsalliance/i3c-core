@@ -54,6 +54,7 @@ module controller_standby
     output logic rx_queue_wvalid_o,
     input logic rx_queue_wready_i,
     output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
+    output logic rx_queue_wflush_o,
 
     // TTI: TX Data
     input logic tx_queue_full_i,
@@ -92,6 +93,8 @@ module controller_standby
   logic i2c_rx_queue_wvalid_o;
   logic [TtiRxDataWidth-1:0] i3c_rx_queue_wdata_o;
   logic [TtiRxDataWidth-1:0] i2c_rx_queue_wdata_o;
+  logic i3c_rx_queue_wflush_o;
+  logic i2c_rx_queue_wflush_o;
   logic i3c_tx_desc_queue_rready_o;
   logic i2c_tx_desc_queue_rready_o;
   logic i3c_tx_queue_rready_o;
@@ -102,6 +105,7 @@ module controller_standby
     rx_desc_queue_wdata_o = sel_i2c_i3c ? i3c_rx_desc_queue_wdata_o : i2c_rx_desc_queue_wdata_o;
     rx_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_queue_wvalid_o : i2c_rx_queue_wvalid_o;
     rx_queue_wdata_o = sel_i2c_i3c ? i3c_rx_queue_wdata_o : i2c_rx_queue_wdata_o;
+    rx_queue_wflush_o = sel_i2c_i3c ? i3c_rx_queue_wflush_o : i2c_rx_queue_wflush_o;
     tx_desc_queue_rready_o = sel_i2c_i3c ? i3c_tx_desc_queue_rready_o : i2c_tx_desc_queue_rready_o;
     tx_queue_rready_o = sel_i2c_i3c ? i3c_tx_queue_rready_o : i2c_tx_queue_rready_o;
   end
@@ -146,6 +150,7 @@ module controller_standby
       .rx_queue_wvalid_o(i2c_rx_queue_wvalid_o),
       .rx_queue_wready_i(rx_queue_wready_i),
       .rx_queue_wdata_o(i2c_rx_queue_wdata_o),
+//      .rx_queue_wflush_o(i2c_rx_queue_wflush_o), // TODO: Add flush support for I2C
       .tx_queue_full_i(tx_queue_full_i),
       .tx_queue_start_thld_i(tx_queue_start_thld_i),
       .tx_queue_start_thld_trig_i(tx_queue_start_thld_trig_i),
@@ -202,6 +207,7 @@ module controller_standby
       .rx_queue_wvalid_o(i3c_rx_queue_wvalid_o),
       .rx_queue_wready_i(rx_queue_wready_i),
       .rx_queue_wdata_o(i3c_rx_queue_wdata_o),
+      .rx_queue_wflush_o(i3c_rx_queue_wflush_o),
       .tx_desc_queue_full_i(tx_desc_queue_full_i),
       .tx_desc_queue_ready_thld_i(tx_desc_queue_ready_thld_i),
       .tx_desc_queue_ready_thld_trig_i(tx_desc_queue_ready_thld_trig_i),
