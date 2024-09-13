@@ -278,7 +278,6 @@ def test_lint(session: nox.Session) -> None:
 def width_converter_Nto8_verify(session, test_group, test_name, coverage):
     verify_block(session, test_group, test_name, coverage)
 
-
 @nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["width_converter_8toN"])
 @nox.parametrize(
@@ -290,4 +289,16 @@ def width_converter_Nto8_verify(session, test_group, test_name, coverage):
 )
 @nox.parametrize("coverage", coverage_types)
 def width_converter_8toN_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["recovery_pec"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_pec",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def recovery_pec_verify(session, test_group, test_name, coverage):
     verify_block(session, test_group, test_name, coverage)

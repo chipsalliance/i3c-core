@@ -87,3 +87,5 @@ traitlets==5.14.3
 typing_extensions==4.12.2
 virtualenv==20.26.3
 wcwidth==0.2.13
+zstandard==0.23.0
+crc==7.0.0
