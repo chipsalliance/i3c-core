@@ -3,308 +3,468 @@
 
 regfile SecureFirmwareRecoveryInterfaceRegisters{
     name = "Secure Firmware Recovery Interface";
-    default regwidth = 32;
+    desc = "";
+
+    default regwidth = 32; // reg property
+    default accesswidth = 32; // reg property
+
+    /* -----------------------
+    * Register definitive definitions
+    * ----------------------- */
+
+    /* ---- Extended Capability Header ---- */
     reg {
-        regwidth = 32;
+        name = "Extended Capability Header";
+        desc = "";
+
+        default sw = r;
+        default hw = r;
+
         field {
             name = "CAP_LENGTH";
             desc = "Capability Structure Length in DWORDs";
-            sw = r;
-            hw = r;
             reset = 16'h0020;
         } CAP_LENGTH[23:8];
         field {
             name = "CAP_ID";
             desc = "Extended Capability ID";
-            sw = r;
-            hw = r;
             reset = 8'hC0;
         } CAP_ID[7:0];
-    } EXTCAP_HEADER;
+
+    } EXTCAP_HEADER[1] @0x00000000;
+
+
+
+    /* ---- Device Capabilities Information ---- */
     reg {
-        name = "PROT_CAP_0";
+        name = "Device Capabilities Information 0";
+        desc = "";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } PROT_CAP_0 ;
+
+    } PROT_CAP_0[1] @0x00000004;
+
+
     reg {
-        name = "PROT_CAP_1";
+        name = "Device Capabilities Information 1";
+        desc = "";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
-            reset = 32'h00000000;
-            } PLACEHOLDER[31:0];
-        } PROT_CAP_1 ;
-    reg {
-        name = "PROT_CAP_2";
-        field {
-            name = "";
-            desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } PROT_CAP_2;
+
+    } PROT_CAP_1[1] @0x00000008;
+
+
     reg {
-        name = "PROT_CAP_3";
+        name = "Device Capabilities Information 2";
+        desc = "";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } PROT_CAP_3;
+
+    } PROT_CAP_2[1] @0x0000000C;
+
+
     reg {
-        name = "DEVICE_ID_0";
+        name = "Device Capabilities Information 3";
+        desc = "";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_0;
+
+    } PROT_CAP_3[1] @0x00000010;
+
+
+
+    /* ---- Device identity information ---- */
     reg {
-        name = "DEVICE_ID_1";
+        name = "Device identity information 0";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_1;
+
+    } DEVICE_ID_0[1] @0x00000014;
+
+
     reg {
-        name = "DEVICE_ID_2";
+        name = "Device identity information 1";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_2;
+
+    } DEVICE_ID_1[1] @0x00000018;
+
+
     reg {
-        name = "DEVICE_ID_3";
+        name = "Device identity information 2";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_3;
+
+    } DEVICE_ID_2[1] @0x0000001C;
+
+
     reg {
-        name = "DEVICE_ID_4";
+        name = "Device identity information 3";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_4;
+
+    } DEVICE_ID_3[1] @0x00000020;
+
+
     reg {
-        name = "DEVICE_ID_5";
+        name = "Device identity information 4";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_5;
+
+    } DEVICE_ID_4[1] @0x00000024;
+
+
     reg {
-        name = "DEVICE_ID_6";
+        name = "Device identity information 5";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_ID_6;
+
+    } DEVICE_ID_5[1] @0x00000028;
+
+
     reg {
-        name = "DEVICE_STATUS_0";
+        name = "Device identity information 6";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_STATUS_0;
+
+    } DEVICE_ID_6[1] @0x0000002C;
+
+
+    /* ---- Device status information ---- */
     reg {
-        name = "DEVICE_STATUS_1";
+        name = "Device status information 0";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_STATUS_1;
+
+    } DEVICE_STATUS_0[1] @0x00000030;
+
+
     reg {
-        name = "DEVICE_RESET";
+        name = "Device status information 1";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } DEVICE_RESET;
+    } DEVICE_STATUS_1[1] @0x00000034;
+
+
+
+    /* ---- Device reset and control ---- */
     reg {
-        name = "RECOVERY_CTRL";
+        name = "Device reset and control";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } RECOVERY_CTRL;
+
+    } DEVICE_RESET[1] @0x00000038;
+
+
+
+    /* ---- Recovery control and image activation ---- */
     reg {
-        name = "RECOVERY_STATUS";
+        name = "Recovery control and image activation";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } RECOVERY_STATUS;
+
+    } RECOVERY_CTRL[1] @0x0000003C;
+
+
+
+    /* ---- Recovery status information ---- */
     reg {
-        name = "HW_STATUS";
+        name = "Recovery status information";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } HW_STATUS;
+
+    } RECOVERY_STATUS[1] @0x00000040;
+
+
+
+    /* ---- Hardware status including temperature ---- */
     reg {
-        name = "INDIRECT_FIFO_CTRL_0";
+        name = "Hardware status including temperature";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_CTRL_0;
+
+    } HW_STATUS[1] @0x00000044;
+
+
+
+    /* ---- Indirect memory window control ---- */
     reg {
-        name = "INDIRECT_FIFO_CTRL_1";
+        name = "Indirect memory window control 0";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_CTRL_1;
+
+    } INDIRECT_FIFO_CTRL_0[1] @0x00000048;
+
     reg {
-        name = "INDIRECT_FIFO_STATUS_0";
+        name = "Indirect memory window control 1";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_0;
+
+    } INDIRECT_FIFO_CTRL_1[1] @0x0000004C;
+
+
+
+    /* ---- Indirect memory window status ---- */
     reg {
-        name = "INDIRECT_FIFO_STATUS_1";
+        name = "Indirect memory window status 0";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_1;
+
+    } INDIRECT_FIFO_STATUS_0[1] @0x00000050;
+
+
     reg {
-        name = "INDIRECT_FIFO_STATUS_2";
+        name = "Indirect memory window status 1";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_2;
+
+    } INDIRECT_FIFO_STATUS_1[1] @0x00000054;
+
+
     reg {
-        name = "INDIRECT_FIFO_STATUS_3";
+        name = "Indirect memory window status 2";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_3;
+
+    } INDIRECT_FIFO_STATUS_2[1] @0x00000058;
+
+
     reg {
-        name = "INDIRECT_FIFO_STATUS_4";
+        name = "Indirect memory window status 3";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_4;
+
+    } INDIRECT_FIFO_STATUS_3[1] @0x0000005C;
+
+
     reg {
-        name = "INDIRECT_FIFO_STATUS_5";
+        name = "Indirect memory window status 4";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_5;
+
+    } INDIRECT_FIFO_STATUS_4[1] @0x00000060;
+
+
     reg {
-        name = "INDIRECT_FIFO_DATA";
+        name = "Indirect memory window status 5";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
             reset = 32'h00000000;
         } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_DATA;
+
+    } INDIRECT_FIFO_STATUS_5[1] @0x00000064;
+
+
+    reg {
+        name = "Indirect memory window for pushing recovery image";
+
+        default sw = rw;
+        default hw = rw;
+        default we = true;
+
+        field {
+            name = "";
+            desc = "";
+            reset = 32'h00000000;
+        } PLACEHOLDER[31:0];
+
+    } INDIRECT_FIFO_DATA[1] @0x00000068;
 };
