@@ -41,10 +41,10 @@ module width_converter_Nto8 #(
     if (!rst_ni) sreg <= {Width{1'b0}};
     else begin
       if ((bcnt == 0) & in_valid_i & in_ready_o) sreg <= in_data_i;
-      else if ((bcnt != 0) & out_valid_o & out_ready_i) sreg <= sreg << 8;
+      else if ((bcnt != 0) & out_valid_o & out_ready_i) sreg <= sreg >> 8;
     end
 
   // Data output
-  assign out_data_o = sreg[Width-1-:8];
+  assign out_data_o = sreg[7:0];
 
 endmodule

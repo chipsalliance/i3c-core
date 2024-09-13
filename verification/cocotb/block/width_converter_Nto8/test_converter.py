@@ -79,10 +79,10 @@ async def run_test(dut):
     # Convert input to bytes
     inp_bytes = []
     for word in inp_data:
-        inp_bytes.append((word >> 24) & 0xFF)
-        inp_bytes.append((word >> 16) & 0xFF)
-        inp_bytes.append((word >> 8) & 0xFF)
         inp_bytes.append((word) & 0xFF)
+        inp_bytes.append((word >> 8) & 0xFF)
+        inp_bytes.append((word >> 16) & 0xFF)
+        inp_bytes.append((word >> 24) & 0xFF)
 
     dut._log.info(" ".join(["{:02X}h".format(b) for b in inp_bytes]))
     dut._log.info(" ".join(["{:02X}h".format(b) for b in out_bytes]))
