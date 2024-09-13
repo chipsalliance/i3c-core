@@ -284,7 +284,7 @@ module i3c
   logic                          tti_rx_queue_empty;
   logic                          tti_rx_queue_wvalid;
   logic                          tti_rx_queue_wready;
-  logic [    TtiRxDataWidth-1:0] tti_rx_queue_wdata;
+  logic [                   7:0] tti_rx_queue_wdata;
 
   // TTI TX queue
   logic                          tti_tx_queue_full;
@@ -295,7 +295,7 @@ module i3c
   logic                          tti_tx_queue_empty;
   logic                          tti_tx_queue_rvalid;
   logic                          tti_tx_queue_rready;
-  logic [    TtiTxDataWidth-1:0] tti_tx_queue_rdata;
+  logic [                   7:0] tti_tx_queue_rdata;
 
   // In-band Interrupt queue
   logic                          tti_ibi_queue_full;

@@ -26,8 +26,8 @@ module controller
 
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
-    parameter int unsigned TtiRxDataWidth = 32,
-    parameter int unsigned TtiTxDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 8,
+    parameter int unsigned TtiTxDataWidth = 8,
     parameter int unsigned TtiIbiDataWidth = 32,
 
     parameter int unsigned TtiRxDescThldWidth = 8,

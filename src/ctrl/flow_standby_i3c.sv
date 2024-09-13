@@ -14,8 +14,8 @@ module flow_standby_i3c
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
-    parameter int unsigned RxDataWidth = 32,
-    parameter int unsigned TxDataWidth = 32
+    parameter int unsigned RxDataWidth = 8,
+    parameter int unsigned TxDataWidth = 8
 ) (
     input logic clk_i,
     input logic rst_ni,
