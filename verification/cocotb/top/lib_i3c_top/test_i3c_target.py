@@ -63,9 +63,33 @@ async def test_i3c_target(dut):
             wait_irq = False
             dut._log.debug(":::Timeout cancelled polling:::")
 
+    # Convert bytes to 32-bit words
+    words_ref = []
+    for xfer in test_data:
+
+        # Pad
+        pad_len  = ((len(xfer) + 3) // 4 * 4) - len(xfer)
+        xfer_pad = xfer + [0 for i in range(pad_len)]
+
+        # Convert to 32-bit little-endian words
+        for i in range(len(xfer_pad) // 4):
+            word = (xfer_pad[4*i+3] << 24) | \
+                   (xfer_pad[4*i+2] << 16) | \
+                   (xfer_pad[4*i+1] <<  8) | \
+                   (xfer_pad[4*i+0]      )
+            words_ref.append(word)
+
+    dut._log.info(test_data)
+    dut._log.info(words_ref)
+
     # Read data
-    test_data_lin = test_data[0] + test_data[1]
-    for i in range(len(test_data_lin)):
-        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
-        dut._log.debug(f"Comparing input {test_data_lin[i]} and CSR value {r_data}")
-        assert test_data_lin[i] == r_data
+    words_out = []
+    for i in range(len(words_ref)):
+        r_data = dword2int(await tb.read_csr(tb.register_map["RX_DATA_PORT"], 4))
+        words_out.append(r_data)
+
+    dut._log.debug("Comparing input [{}] and CSR data [{}]".format(
+        " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
+        " ".join([f"0x{d:08X}" for d in words_out]),
+    ))
+    assert words_out == words_ref
