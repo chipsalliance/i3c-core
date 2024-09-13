@@ -27,7 +27,7 @@ module width_converter_8toN #(
   always_ff @(posedge clk_i)
     if (!rst_ni) bcnt <= 0;
     else begin
-      if (in_flush_i) bcnt <= Bytes;
+      if ((bcnt != 0) & in_flush_i) bcnt <= Bytes;
       else if ((bcnt != Bytes) & in_valid_i & in_ready_o) bcnt <= bcnt + 1;
       else if ((bcnt == Bytes) & out_valid_o & out_ready_i) bcnt <= 0;
     end
