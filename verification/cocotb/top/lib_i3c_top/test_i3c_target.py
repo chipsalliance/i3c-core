@@ -15,7 +15,7 @@ from cocotb.triggers import ClockCycles
 @cocotb.test()
 async def test_i3c_target(dut):
 
-    cocotb.log.setLevel(logging.DEBUG)
+    cocotb.log.setLevel(logging.INFO)
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -97,3 +97,16 @@ async def test_i3c_target(dut):
         )
     )
     assert words_out == words_ref
+
+    # Loopback data to the TX queue
+    for i in range(len(test_data_lin)):
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, 4)
+        dut._log.debug(f"Writing data {test_data_lin[i]} back to the TX queue.")
+
+    # Send Private Write on I3C
+    for i in range(len(test_data)):
+        read_data = await i3c_controller.i3c_read(0x5A, len(test_data[i]))
+        print(f"Read data: {read_data}")
+        # assert read_data == test_data[i]
+
+    # await ClockCycles(tb.clk, 10)

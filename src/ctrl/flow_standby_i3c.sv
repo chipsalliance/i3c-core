@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// TODO: Private Read
-// TODO: Private Write
-// TODO: CCC
-// TODO: DAA
-// TODO: BCAST
+/*
+  This module is supposed to operate on I3C Frames, which
+  are stripped of starts, stops, addresses, reserved bytes.
+  For now, it is sufficient to:
+  - receive information if the next byte is R or W or CCC
 
-// This module is supposed to operate on I3C Frames, which
-// are stripped of starts, stops, addresses, reserved bytes.
-// For now, it is sufficient to:
-// - receive information if the next byte is R or W or CCC
+  TODO: Private Read
+  TODO: Private Write
+  TODO: CCC
+  TODO: DAA
+  TODO: BCAST
+*/
 module flow_standby_i3c
   import controller_pkg::*;
   import i3c_pkg::*;
@@ -64,7 +66,7 @@ module flow_standby_i3c
 
   // TODO: Drive outputs appropriately
   always_comb begin
-    tx_queue_rready_o = 1'b0;
+    tx_queue_rready_o = 1'b1;
   end
 
   //  FSM
@@ -150,7 +152,7 @@ module flow_standby_i3c
     if (~rst_ni) begin
       transfer_tx_byte <= '0;
     end else begin
-      transfer_tx_byte <= 8'hBC;  // TODO: temporarily hard-coded data path
+      transfer_tx_byte <= tx_queue_rdata_i;  // TODO: temporarily hard-coded data path
       if (tx_byte_valid_o && tx_byte_ready_i) begin
         tx_byte_o <= transfer_tx_byte;
       end
