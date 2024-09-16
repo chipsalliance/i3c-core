@@ -26,18 +26,23 @@ module bus_monitor
 
     // TODO: Refactor signals to `state_detected` to clarify purpose
     output logic start_detect_o,  // Module detected START or REPEATED START condition
-    output logic stop_detect_o    // Module detected STOP condition
-);
+    output logic stop_detect_o,   // Module detected STOP condition
+
+    input is_in_hdr_mode_i,       // Module is in HDR mode
+    output hdr_exit_detect_o      // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
+ );
   logic enable, enable_q;
 
   logic scl_negedge;
   logic scl_posedge;
   logic scl_edge;
   logic scl_stable_high;
+  logic scl_stable_low;
 
   logic sda_negedge;
   logic sda_posedge;
   logic sda_edge;
+  logic sda_stable_high;
 
   logic start_det_trigger, start_det_pending;
   logic start_det;  // indicates start or repeated start is detected on the bus
@@ -45,6 +50,13 @@ module bus_monitor
   logic stop_det;  // indicates stop is detected on the bus
   // Stop / Start detection counter
   logic [13:0] ctrl_det_count;
+
+  // FFs for HDR exit condition detection
+  logic [4:0] hdr_exit_det_count;
+  logic hdr_exit_det_pending;
+  logic hdr_exit_det_trigger;
+  logic detected_hdr_exit;
+  logic hdr_exit_det;
 
   assign enable = enable_i;
 
@@ -77,7 +89,9 @@ module bus_monitor
   assign sda_edge = sda_negedge | sda_posedge;
 
   assign scl_stable_high = scl_i_q & scl_i;
+  assign scl_stable_low = !(scl_i_q | scl_i);
 
+  assign sda_stable_high = sda_i_q & sda_i;
   // Start and Stop detection
 
   // Note that this counter combines Start and Stop detection into one
@@ -114,6 +128,25 @@ module bus_monitor
     end
   end
 
+  // exit HDR detection
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+    	hdr_exit_det_count <= 5'b10000;
+    	hdr_exit_det_pending <= 1'b0;
+    	detected_hdr_exit <= 1'b0;
+    end else if (hdr_exit_det_trigger) begin
+      hdr_exit_det_pending <= 1'b1;
+    end else if (!enable || stop_det) begin
+      hdr_exit_det_count <= 5'b10000;
+      hdr_exit_det_pending <= 1'b0;
+    end else if (enable && hdr_exit_det_pending && sda_negedge) begin
+      hdr_exit_det_count <= {1'b0, hdr_exit_det_count[4:1]};
+    end
+  end
+  // hdr_exit detection by target
+  assign hdr_exit_det = enable & hdr_exit_det_count[0] & stop_det;
+  assign hdr_exit_det_trigger = scl_stable_low && sda_stable_high && is_in_hdr_mode_i;
+
   // (Repeated) Start condition detection by target
   assign start_det_trigger = enable & scl_stable_high & sda_negedge;
   assign start_det = enable & start_det_pending & (ctrl_det_count >= 14'(t_hd_dat_i));
@@ -124,5 +157,6 @@ module bus_monitor
 
   assign start_detect_o = start_det;
   assign stop_detect_o = stop_det;
+  assign hdr_exit_detect_o = hdr_exit_det;
 
 endmodule
