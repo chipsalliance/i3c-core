@@ -56,7 +56,7 @@ module recovery_handler
     output logic                          ctl_tti_rx_data_queue_empty_o,
     input  logic                          ctl_tti_rx_data_queue_wvalid_i,
     output logic                          ctl_tti_rx_data_queue_wready_o,
-    input  logic [7:0]                    ctl_tti_rx_data_queue_wdata_i,
+    input  logic [                   7:0] ctl_tti_rx_data_queue_wdata_i,
     input  logic                          ctl_tti_rx_data_queue_wflush_i,
     output logic [TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_start_thld_o,
     output logic                          ctl_tti_rx_data_queue_start_thld_trig_o,
@@ -68,7 +68,7 @@ module recovery_handler
     output logic                          ctl_tti_tx_data_queue_empty_o,
     output logic                          ctl_tti_tx_data_queue_rvalid_o,
     input  logic                          ctl_tti_tx_data_queue_rready_i,
-    output logic [7:0]                    ctl_tti_tx_data_queue_rdata_o,
+    output logic [                   7:0] ctl_tti_tx_data_queue_rdata_o,
     output logic [TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_start_thld_o,
     output logic                          ctl_tti_tx_data_queue_start_thld_trig_o,
     output logic [TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_ready_thld_o,
@@ -198,8 +198,8 @@ module recovery_handler
   logic                          tti_rx_data_queue_empty;
   logic                          tti_rx_data_queue_wvalid;
   logic                          tti_rx_data_queue_wready;
-  logic [7:0]                    tti_rx_data_queue_wdata;
-  logic                          tti_rx_data_queue_wflush; // For data width conv.
+  logic [                   7:0] tti_rx_data_queue_wdata;
+  logic                          tti_rx_data_queue_wflush;  // For data width conv.
   logic                          tti_rx_data_queue_start_thld_trig;
   logic                          tti_rx_data_queue_ready_thld_trig;
 
@@ -275,7 +275,9 @@ module recovery_handler
       .clk_i,
       .rst_ni,
 
-      .sink_valid_i   (tti_tx_data_queue_rvalid_q),
+      // Allow data flow between FIFO and width converter only if the downstream
+      // port is ready.
+      .sink_valid_i   (tti_tx_data_queue_rvalid_q & tti_tx_data_queue_rready),
       .sink_ready_o   (tti_tx_data_queue_rready_q),
       .sink_data_i    (tti_tx_data_queue_rdata_q),
 
@@ -371,7 +373,7 @@ module recovery_handler
       .tx_ready_thld_trig_o(tti_tx_data_queue_ready_thld_trig),
       .tx_empty_o(tti_tx_data_queue_empty),
       .tx_rvalid_o(tti_tx_data_queue_rvalid_q),
-      .tx_rready_i(tti_tx_data_queue_rready_q),
+      .tx_rready_i(tti_tx_data_queue_rready_q & tti_tx_data_queue_rready), // Allow data flow between FIFO and width converter only if the downstream port is ready.
       .tx_rdata_o(tti_tx_data_queue_rdata_q),
       .tx_req_i(tti_tx_data_queue_req),
       .tx_ack_o(tti_tx_data_queue_ack),
