@@ -558,6 +558,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#interrupts" class="md-nav__link">
+    <span class="md-ellipsis">Interrupts</span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -630,6 +637,168 @@ SystemVerilog CSR description is generated with <a class="reference external" hr
 Communication with internal registers of I3C Core is executed by using <code class="docutils literal notranslate"><span class="pre">lsu_write_32()</span></code> and <code class="docutils literal notranslate"><span class="pre">lsu_read_32()</span></code> functions from <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/a50f6d212c93827d9303b6b734152302c0ccd7cd/src/integration/test_suites/libs/riscv_hw_if/riscv_hw_if.h">riscv_hw_if.h</a> Caliptra header.
 Software is executed on the simulated <a class="reference external" href="https://github.com/chipsalliance/Cores-VeeR-EL2">VeeR-EL2 core</a>.
 The software test executes read/write operations on different configurations of registers to check whether RTL generated from RDL configuration behaves properly from the software point of view.</p>
+<h2 id="interrupts">Interrupts<a class="headerlink" href="#interrupts" title="Link to this heading">¶</a></h2>
+<p>Calitpra specifies required interface for interrupts which consists of two aggregator single bit signals:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">error_intr_o</span></code> - error interrupts assigned a higher priority and expected to be infrequent,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notif_intr_o</span></code> - alert the processor of normal operation activity, such as completion of requested operations or arrival of SoC requests through the shared interface.</p></li>
+</ul>
+<table class="docutils data align-default" id="tab-tti-interrupts">
+<caption><span class="caption-number">Table 24 </span><span class="caption-text"><em>Division of interrupts between errors and notifications</em></span><a class="headerlink" href="#tab-tti-interrupts" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 13.0%" />
+<col style="width: 40.0%" />
+<col style="width: 17.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Register group</strong></p></td>
+<td><p><strong>Register name</strong></p></td>
+<td><p><strong>Field name</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+<td><p><strong>Type</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI Base registers</p></td>
+<td><p>INTR_STATUS</p></td>
+<td><p>SCHED_CMD_MISSED_TICK_STAT</p></td>
+<td><p>Scheduled commands could be executed due to controller being busy</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI Base registers</p></td>
+<td><p>INTR_STATUS</p></td>
+<td><p>HC_ERR_CMD_SEQ_TIMEOUT_STAT</p></td>
+<td><p>Command timeout after prolonged stall</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI Base registers</p></td>
+<td><p>INTR_STATUS</p></td>
+<td><p>HC_WARN_CMD_SEQ_STALL_STAT</p></td>
+<td><p>Clock stalled due to lack of commands</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI Base registers</p></td>
+<td><p>INTR_STATUS</p></td>
+<td><p>HC_SEQ_CANCEL_STAT</p></td>
+<td><p>Controller had to cancel command sequence</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI Base registers</p></td>
+<td><p>INTR_STATUS</p></td>
+<td><p>HC_INTERNAL_ERR_STAT</p></td>
+<td><p>Controller internal unrecoverable error</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>TRANSFER_ERR_STAT</p></td>
+<td><p>Transfer error</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>TRANSFER_ABORT_STAT</p></td>
+<td><p>Transfer aborted</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>RESP_READY_STAT</p></td>
+<td><p>Response queue fulfils RESP_BUF_THLD</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>CMD_QUEUE_READY_STAT</p></td>
+<td><p>Command queue fulfils CMD_EMPTY_BUF_THLD</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>IBI_STATUS_THLD_STAT</p></td>
+<td><p>IBI queue fulfils IBI_STATUS_THLD</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>RX_THLD_STAT</p></td>
+<td><p>RX queue fulfils RX_BUF_THLD</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>HCI PIO registers</p></td>
+<td><p>PIO_INTR_STATUS</p></td>
+<td><p>TX_THLD_STAT</p></td>
+<td><p>TX queue fulfils TX_BUF_THLD</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TRANSFER_ERR_STAT</p></td>
+<td><p>Bus error occurred</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TRANSFER_ABORT_STAT</p></td>
+<td><p>Bus aborted transaction</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>IBI_THLD_STAT</p></td>
+<td><p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD</span></code></p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>RX_DESC_THLD_STAT</p></td>
+<td><p>TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD</span></code></p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TX_DESC_THLD_STAT</p></td>
+<td><p>TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD</span></code></p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>RX_DATA_THLD_STAT</p></td>
+<td><p>TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD</span></code></p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TX_DATA_THLD_STAT</p></td>
+<td><p>TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD</span></code></p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TX_DESC_TIMEOUT</p></td>
+<td><p>Pending Write was NACK’ed, because the <code class="docutils literal notranslate"><span class="pre">TX_DESC_STAT</span></code> event was not handled in time</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>RX_DESC_TIMEOUT</p></td>
+<td><p>Pending Read was NACK’ed, because the <code class="docutils literal notranslate"><span class="pre">RX_DESC_STAT</span></code> event was not handled in time</p></td>
+<td><p><strong>Error</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>TX_DESC_STAT</p></td>
+<td><p>There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>TTI registers</p></td>
+<td><p>INTERRUPT_STATUS</p></td>
+<td><p>RX_DESC_STAT</p></td>
+<td><p>There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue</p></td>
+<td><p><strong>Notification</strong></p></td>
+</tr>
+</tbody>
+</table>
 
 
   <hr>
@@ -637,7 +806,7 @@ The software test executes read/write operations on different configurations of 
   <small>
     
       Last update:
-      2024-09-10
+      2024-09-17
     
   </small>
 </div>
