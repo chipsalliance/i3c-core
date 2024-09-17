@@ -18,6 +18,7 @@ async def setup(dut):
     dut.enable_i.value = 0
     dut.t_hd_dat_i.value = 0x05
     dut.t_r_i.value = 0x02
+    dut.is_in_hdr_mode_i.value = 0
     await ClockCycles(dut.clk_i, 10)
 
 
@@ -92,3 +93,51 @@ async def test_bus_monitor(dut: SimHandleBase):
         e_terminate.clear()
 
     await ClockCycles(clk, 10)
+
+
+@cocotb.test()
+async def test_bus_monitor_hdr_exit(dut: SimHandleBase):
+    """
+    Test bus monitor:
+        - Check if hdr exit condition is detected
+        - If the controller is in the HDR mode we should detect HDR exit condition
+    """
+    cocotb.log.setLevel("INFO")
+    clk = dut.clk_i
+    rst_n = dut.rst_ni
+    e_terminate = cocotb.triggers.Event()
+
+    i3c_controller = I3cController(
+        sda_i=None,
+        sda_o=dut.sda_i,
+        scl_i=None,
+        scl_o=dut.scl_i,
+        speed=12.5e6,
+    )
+    t_detect_hdr_exit = cocotb.start_soon(
+        count_high_cycles(clk, dut.hdr_exit_detect_o, e_terminate)
+    )
+
+    clock = Clock(clk, 2, units="ns")
+    cocotb.start_soon(clock.start())
+
+    await setup(dut)
+    await reset_n(clk, rst_n, cycles=5)
+
+    dut.enable_i.value = 1
+    # initially, the core is in SDR mode, so sending the first
+    # HDR exit should not trigger the exit event
+    await i3c_controller.send_hdr_exit()
+    e_terminate.set()
+    await RisingEdge(clk)
+    num_detects = t_detect_hdr_exit.result()
+    assert num_detects == 0
+    # enter hdr mode and send the exit pattern again
+    dut.is_in_hdr_mode_i.value = 1
+    await i3c_controller.send_hdr_exit()
+    e_terminate.set()
+    await RisingEdge(clk)
+    await ClockCycles(clk, 10)
+    num_detects = t_detect_hdr_exit.result()
+    cocotb.log.info(f"HDR exits detected {num_detects}")
+    e_terminate.clear()
