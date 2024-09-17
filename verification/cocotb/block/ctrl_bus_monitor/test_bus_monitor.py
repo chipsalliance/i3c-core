@@ -128,16 +128,14 @@ async def test_bus_monitor_hdr_exit(dut: SimHandleBase):
     # initially, the core is in SDR mode, so sending the first
     # HDR exit should not trigger the exit event
     await i3c_controller.send_hdr_exit()
-    e_terminate.set()
     await RisingEdge(clk)
-    num_detects = t_detect_hdr_exit.result()
-    assert num_detects == 0
     # enter hdr mode and send the exit pattern again
     dut.is_in_hdr_mode_i.value = 1
     await i3c_controller.send_hdr_exit()
+    await ClockCycles(clk, 10)
     e_terminate.set()
     await RisingEdge(clk)
-    await ClockCycles(clk, 10)
     num_detects = t_detect_hdr_exit.result()
     cocotb.log.info(f"HDR exits detected {num_detects}")
+    assert num_detects == 1
     e_terminate.clear()
