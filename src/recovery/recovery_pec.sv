@@ -1,4 +1,10 @@
-// XOR equations generated using https://bues.ch/cms/hacking/crcgen
+// SPDX-License-Identifier: Apache-2.0
+
+/*
+    The module is responsible for calculating PEC checksum for recovery data
+    transferred over I3C. XOR equations were inspired by code generated using
+    https://bues.ch/cms/hacking/crcgen
+*/
 
 module recovery_pec (
 
