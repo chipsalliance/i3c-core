@@ -107,6 +107,9 @@ module controller_standby_i3c
   logic start_detect;
   logic stop_detect;
 
+  logic is_in_hdr_mode;
+  logic hdr_exit_detect;
+
   flow_standby_i3c xflow_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -228,7 +231,9 @@ module controller_standby_i3c
       .t_hd_dat_i(t_hd_dat_i),
       .t_r_i(t_r_i),
       .start_detect_o(start_detect),
-      .stop_detect_o(stop_detect)
+      .stop_detect_o(stop_detect),
+      .is_in_hdr_mode_i(is_in_hdr_mode),
+      .hdr_exit_detect_o(hdr_exit_detect)
   );
 
   bus_timers xbus_timers (
