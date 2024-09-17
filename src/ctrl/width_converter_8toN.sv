@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// Bus width converter from 8-bit to N-bit
+/*
+    Bus width converter from 8-bit to N-bit (N is a multiple of 8)
+
+    This module implements data width converter to be used to pack 8-bit data
+    receiver over I3C into N-bit words to be stored in TTI RX queue.
+    The module has a "flush" capability which allows it to output partially
+    assembled N-bit words on request.
+*/
+
 module width_converter_8toN #(
     parameter int unsigned Width = 32
 ) (
@@ -18,18 +26,23 @@ module width_converter_8toN #(
     output logic [Width-1:0] out_data_o
 );
 
+  // Ensure that Width is divisible by 8
+  initial begin : param_check
+    if ((Width % 8) != 0) $error("Width must be divisible by 8");
+  end
+
   // Number of bytes of wider data bus
-  localparam int unsigned Bytes = (Width + 7) / 8;
+  localparam int unsigned Bytes = Width / 8;
 
   // Byte counter
   logic [$clog2(Bytes):0] bcnt;
 
   always_ff @(posedge clk_i)
-    if (!rst_ni) bcnt <= 0;
+    if (!rst_ni) bcnt <= '0;
     else begin
-      if ((bcnt != 0) & in_flush_i) bcnt <= Bytes;
+      if ((bcnt != '0) & in_flush_i) bcnt <= Bytes;
       else if ((bcnt != Bytes) & in_valid_i & in_ready_o) bcnt <= bcnt + 1;
-      else if ((bcnt == Bytes) & out_valid_o & out_ready_i) bcnt <= 0;
+      else if ((bcnt == Bytes) & out_valid_o & out_ready_i) bcnt <= '0;
     end
 
   // Valid / ready
@@ -40,11 +53,11 @@ module width_converter_8toN #(
   logic [Width-1:0] sreg;
 
   always_ff @(posedge clk_i)
-    if (!rst_ni) sreg <= {Width{1'b0}};
+    if (!rst_ni) sreg <= '0;
     else begin
       if ((bcnt != Bytes) & in_valid_i & in_ready_o) sreg[bcnt*8+:8] <= in_data_i;
       else if ((bcnt == Bytes) & out_valid_o & out_ready_i)
-        sreg <= {Width{1'b0}};  // Clear the reg not to leak data
+        sreg <= '0;  // Clear the reg not to leak data
     end
 
   // Data output
