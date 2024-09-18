@@ -57,8 +57,8 @@ module write_queue #(
   logic [FifoDepthWidth-1:0] empty_entries;
 
   initial begin
-    if (ThldIsPow == LimitReadyThld) begin
-      $warning("Configuration with both `ThldIsPow` and `LimitReadyThld` enabled or disabled",
+    if (ThldIsPow == 1'b1 && LimitReadyThld == 1'b1) begin
+      $warning("Configuration with both `ThldIsPow` and `LimitReadyThld` enabled",
                "is not tested and might result in unexpected behavior.");
     end
   end
