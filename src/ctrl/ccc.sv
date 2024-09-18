@@ -20,8 +20,9 @@ module ccc
 
     input logic [31:0] queue_size_reg_i,
     output logic response_byte_o,
-    output logic response_valid_o
+    output logic response_valid_o,
 
+    output logic is_in_hdr_mode_o
 );
 
   // Latch CCC data
@@ -67,9 +68,13 @@ module ccc
         response_byte_o  = tx_data_buffer_size;
         response_valid_o = '1;
       end
+      `I3C_BCAST_ENTHDR0: begin
+        is_in_hdr_mode_o = '1;
+      end
       default: begin
         response_byte_o  = '0;
         response_valid_o = '0;
+        is_in_hdr_mode_o = '0;
       end
     endcase
   end
