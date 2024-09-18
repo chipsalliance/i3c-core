@@ -28,21 +28,21 @@ async def test_flush(dut, count):
         inp_word |= byte << (i * 8)
 
         await RisingEdge(dut.clk_i)
-        dut.in_data_i.value = byte
-        dut.in_valid_i.value = 1
+        dut.sink_data_i.value = byte
+        dut.sink_valid_i.value = 1
 
     await RisingEdge(dut.clk_i)
-    dut.in_valid_i.value = 0
+    dut.sink_valid_i.value = 0
 
     # Wait 1 clock and flush
     await RisingEdge(dut.clk_i)
-    dut.in_flush_i.value = 1
+    dut.sink_flush_i.value = 1
     await RisingEdge(dut.clk_i)
-    dut.in_flush_i.value = 0
+    dut.sink_flush_i.value = 0
 
     # Wait for data
-    await with_timeout(RisingEdge(dut.out_valid_o), 1, "us")
-    out_word = int(dut.out_data_o.value)
+    await with_timeout(RisingEdge(dut.source_valid_o), 1, "us")
+    out_word = int(dut.source_data_o.value)
 
     # Intentional delay gap
     await ClockCycles(dut.clk_i, 5)
@@ -62,7 +62,7 @@ async def run_test(dut):
     await cocotb.start(clock.start())
 
     # Make output always ready
-    dut.out_ready_i.value = 1
+    dut.source_ready_i.value = 1
 
     # Test flushing for 1-3 bytes of input
     for i in [1, 2, 3]:

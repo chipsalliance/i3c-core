@@ -19,21 +19,21 @@ async def data_feeder(dut, data):
     for word in data:
 
         # Put a data word, wait for it to be accepted
-        dut.in_data_i.value = word
-        dut.in_valid_i.value = 1
+        dut.sink_data_i.value = word
+        dut.sink_valid_i.value = 1
 
         while True:
             await RisingEdge(dut.clk_i)
-            if dut.in_valid_i.value and dut.in_ready_o.value:
+            if dut.sink_valid_i.value and dut.sink_ready_o.value:
                 break
 
         # Wait at random
         if random.random() > 0.5:
-            dut.in_valid_i.value = 0
+            dut.sink_valid_i.value = 0
             await ClockCycles(dut.clk_i, random.randint(5, 10))
 
     await RisingEdge(dut.clk_i)
-    dut.in_valid_i.value = 0
+    dut.sink_valid_i.value = 0
 
 
 async def data_receiver(dut, data):
@@ -46,11 +46,11 @@ async def data_receiver(dut, data):
         await RisingEdge(dut.clk_i)
 
         # Receive a byte
-        if dut.out_valid_o.value and dut.out_ready_i.value:
-            data.append(int(dut.out_data_o.value))
+        if dut.source_valid_o.value and dut.source_ready_i.value:
+            data.append(int(dut.source_data_o.value))
 
         # Accept or not accept at random
-        dut.out_ready_i.value = random.random() > 0.5
+        dut.source_ready_i.value = random.random() > 0.5
 
 
 @cocotb.test()
