@@ -83,6 +83,10 @@ module recovery_handler
     output logic [TtiIbiThldWidth-1:0] ctl_tti_ibi_queue_ready_thld_o,
     output logic                       ctl_tti_ibi_queue_ready_thld_trig_o,
 
+    // Received I2C/I3C address along with RnW# bit
+    input  logic [7:0] ctl_bus_addr_i,
+    input  logic ctl_bus_addr_valid_i,
+
     // ....................................................
     // TTI interface (CSR side)
 

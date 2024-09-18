@@ -67,6 +67,10 @@ module controller_standby
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
+    // I2C/I3C received address (with RnW# bit) for the recovery handler
+    output logic [7:0] bus_addr_o,
+    output logic bus_addr_valid_o,
+
     // Configuration
     input logic phy_en_i,
     input logic [1:0] phy_mux_select_i,
@@ -99,6 +103,10 @@ module controller_standby
   logic i2c_tx_desc_queue_rready_o;
   logic i3c_tx_queue_rready_o;
   logic i2c_tx_queue_rready_o;
+  logic [7:0] i3c_bus_addr_o;
+  logic i3c_bus_addr_valid_o;
+  logic [7:0] i2c_bus_addr_o;
+  logic i2c_bus_addr_valid_o;
   // Mux TTI outputs between I2C and I3C
   always_comb begin
     rx_desc_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_desc_queue_wvalid_o : i2c_rx_desc_queue_wvalid_o;
@@ -108,6 +116,8 @@ module controller_standby
     rx_queue_wflush_o = sel_i2c_i3c ? i3c_rx_queue_wflush_o : i2c_rx_queue_wflush_o;
     tx_desc_queue_rready_o = sel_i2c_i3c ? i3c_tx_desc_queue_rready_o : i2c_tx_desc_queue_rready_o;
     tx_queue_rready_o = sel_i2c_i3c ? i3c_tx_queue_rready_o : i2c_tx_queue_rready_o;
+    bus_addr_o = sel_i2c_i3c ? i3c_bus_addr_o : i2c_bus_addr_o;
+    bus_addr_valid_o = sel_i2c_i3c ? i3c_bus_addr_valid_o : i2c_bus_addr_valid_o;
   end
 
   controller_standby_i2c #(
@@ -160,6 +170,8 @@ module controller_standby
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_rready_o(i2c_tx_queue_rready_o),
       .tx_queue_rdata_i(tx_queue_rdata_i),
+      .bus_addr_o(i2c_bus_addr_o),
+      .bus_addr_valid_o(i2c_bus_addr_valid_o),
       .phy_en_i(phy_en_i),
       .phy_mux_select_i(phy_mux_select_i),
       .i2c_active_en_i(i2c_active_en_i),
@@ -224,6 +236,8 @@ module controller_standby
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_rready_o(i3c_tx_queue_rready_o),
       .tx_queue_rdata_i(tx_queue_rdata_i),
+      .bus_addr_o(i3c_bus_addr_o),
+      .bus_addr_valid_o(i3c_bus_addr_valid_o),
       .phy_en_i(phy_en_i),
       .phy_mux_select_i(phy_mux_select_i),
       .i2c_active_en_i(i2c_active_en_i),

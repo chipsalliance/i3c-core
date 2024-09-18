@@ -435,6 +435,9 @@ module i3c
   logic [19:0] t_bus_idle;
   logic [19:0] t_bus_available;
 
+  logic [7:0] rx_bus_addr;
+  logic rx_bus_addr_valid;
+
   controller #(
       .DatAw(DatAw),
       .DctAw(DctAw)
@@ -537,6 +540,10 @@ module i3c
       .ibi_queue_wvalid_o(),
       .ibi_queue_wready_i('0),
       .ibi_queue_wdata_o(),
+
+       // I2C/I3C received address (with RnW# bit) for the recovery handler
+      .bus_addr_o(rx_bus_addr),
+      .bus_addr_valid_o(rx_bus_addr_valid),
 
       // DAT <-> Controller interface
       .dat_read_valid_hw_o(dat_read_valid_hw),
@@ -931,7 +938,11 @@ module i3c
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld),
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
 
-      .irq_o() // TODO: Connect me
+      .irq_o(), // TODO: Connect me
+
+      // Received I2C/I3C address along with RnW# bit
+      .ctl_bus_addr_i(rx_bus_addr),
+      .ctl_bus_addr_valid_i(rx_bus_addr_valid)
   );
 
   // I3C PHY

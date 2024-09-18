@@ -69,6 +69,10 @@ module controller_standby_i2c
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
+    // I2C received address (with RnW# bit) for the recovery handler
+    output logic [7:0] bus_addr_o,
+    output logic bus_addr_valid_o,
+
     input logic phy_en_i,
     input logic [1:0] phy_mux_select_i,
     input logic i2c_active_en_i,
@@ -177,5 +181,10 @@ module controller_standby_i2c
 
   // TODO: Temporarily set here to always use OD. Verify this connection
   assign phy_sel_od_pp_o = 1'b0;
+
+  // TODO: Make the I2C FSM output its received address + RnW bit and connect
+  // them here.
+  assign bus_addr_o = '0;
+  assign bus_addr_valid_o = '0;
 
 endmodule

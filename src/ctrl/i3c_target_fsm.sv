@@ -91,6 +91,7 @@ module i3c_target_fsm
     input logic is_i3c_rsvd_addr_match,
     input logic is_any_addr_match,
     output logic [7:0] bus_addr,
+    output logic bus_addr_match,
     output logic bus_addr_valid,
 
     output logic event_target_nack_o,  // this target sent a NACK (this is used to keep count)
@@ -124,6 +125,7 @@ module i3c_target_fsm
   logic       xfer_for_us_q;  // Target was addressed in this transfer
   logic       xfer_for_us_d;  //     - event_cmd_complete_o is only for our transfers
 
+  logic       input_strobe;
   logic [7:0] input_byte;  // register for reads from host
   logic       input_byte_clr;  // clear input_byte contents
   // logic       nack_timeout;
@@ -246,6 +248,17 @@ module i3c_target_fsm
     end
   end
 
+  // Sampled data strobe
+  always_ff @(posedge clk_i or negedge rst_ni) begin : tgt_input_register_strobe
+    if (!rst_ni) begin
+      input_strobe <= 1'b0;
+    end else if (scl_posedge & !bit_ack) begin
+      input_strobe <= 1'b1;
+    end else begin
+      input_strobe <= 1'b0;
+    end
+  end
+
   // Detection by the target of ACK bit sent by the host
   // In I3C 9th-bit is a T-bit (instead of ACK), maybe do parity check here?
   always_ff @(posedge clk_i or negedge rst_ni) begin : host_ack_register
@@ -258,10 +271,10 @@ module i3c_target_fsm
     end
   end
 
-  // TODO: Address matching in i3c is more complex, moved function to daa.sv
-  // daa is comb based, so outputs will toggle a lot
-  // only read match evaluation in addr state
-  assign bus_addr = input_byte;
+  // Latch received bus address
+  always_ff @(posedge clk_i)
+    if (input_strobe)
+      bus_addr <= input_byte;
 
   // An artificial acq_fifo_wready is used here to ensure we always have
   // space to asborb a stop / repeat start format byte.  Without guaranteeing
@@ -387,7 +400,6 @@ module i3c_target_fsm
     event_tx_arbitration_lost_o = 1'b0;
     event_tx_bus_timeout_o = 1'b0;
     event_read_cmd_received_o = 1'b0;
-    bus_addr_valid = 1'b0;
 
     unique case (state_q)
       // Idle: initial state, SDA is released (high), SCL is released if the
@@ -416,12 +428,6 @@ module i3c_target_fsm
             xact_for_us_d = 1'b1;
             xfer_for_us_d = 1'b1;
           end
-        end
-        // TODO: We should assert valid on next posedge of SCL
-        // instead of bit_idx[6] to avoid comparison with incomplete
-        // addresses.
-        if (bit_idx == 4'd6) begin
-          bus_addr_valid = 1'b1;
         end
       end
       // AddrAckWait: pause for hold time before acknowledging
@@ -848,6 +854,26 @@ module i3c_target_fsm
     end
   end
   // verilator lint_on LATCH
+
+  // Signal the DAA module to perform addres check
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) begin
+      bus_addr_valid <= 1'b0;
+    end else if (state_q == AddrRead & bit_idx == 4'd6 & input_strobe) begin
+      bus_addr_valid <= 1'b1;
+    end else begin
+      bus_addr_valid <= 1'b0;
+    end
+
+  // Announce that a valid address has been received
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) begin
+      bus_addr_match <= 1'b0;
+    end else if (state_q == AddrRead & bit_idx == 4'd7 & scl_posedge) begin
+      bus_addr_match <= is_dyn_addr_match | is_sta_addr_match;
+    end else begin
+      bus_addr_match <= 1'b0;
+    end
 
   // Synchronous state transition
   always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition

@@ -67,6 +67,10 @@ module controller_standby_i3c
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
+    // I3C received address (with RnW# bit) for the recovery handler
+    output logic [7:0] bus_addr_o,
+    output logic bus_addr_valid_o,
+
     // Configuration
     input logic phy_en_i,
     input logic [1:0] phy_mux_select_i,
@@ -147,6 +151,7 @@ module controller_standby_i3c
 
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
+  logic bus_addr_match;
   logic bus_addr_valid;
   logic is_sta_addr_match;
   logic is_dyn_addr_match;
@@ -196,6 +201,7 @@ module controller_standby_i3c
       .is_sta_addr_match(is_sta_addr_match),
       .is_dyn_addr_match(is_dyn_addr_match),
       .bus_addr(bus_addr),
+      .bus_addr_match(bus_addr_match),
       .bus_addr_valid(bus_addr_valid),
       .is_i3c_rsvd_addr_match(is_i3c_rsvd_addr_match),
       .is_any_addr_match(is_any_addr_match),
@@ -248,5 +254,8 @@ module controller_standby_i3c
       .daa_unique_response(daa_unique_response)
   );
 
+  // Expose the received address + RnW bit
+  assign bus_addr_o = bus_addr;
+  assign bus_addr_valid_o = bus_addr_match;
 
 endmodule
