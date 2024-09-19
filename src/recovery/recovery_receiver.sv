@@ -21,6 +21,10 @@ module recovery_receiver
     output logic                            data_queue_select_o,
     input  logic                            data_queue_ready_i,
 
+    // Bus condition detection
+    input  logic                            bus_start_i,
+    input  logic                            bus_stop_i,
+
     // PEC computation control
     input  logic [                   7:0]   pec_crc_i,
     output logic                            pec_enable_o,
@@ -28,6 +32,7 @@ module recovery_receiver
 
     // Received command interface
     output logic                            cmd_valid_o,
+    output logic                            cmd_is_rd_o,
     output logic [                   7:0]   cmd_cmd_o,
     output logic [                  15:0]   cmd_len_o,
     output logic                            cmd_error_o,
@@ -36,6 +41,9 @@ module recovery_receiver
 
     // Internal signals
     logic [15:0]    dcnt;
+
+    logic [ 7:0]    len_lsb;
+    logic [ 7:0]    len_msb;
 
     logic [ 7:0]    pec_recv;
     logic [ 7:0]    pec_calc;
@@ -49,6 +57,7 @@ module recovery_receiver
         RxLenH  = 'h12,
         RxData  = 'h20,
         RxPec   = 'h30,
+        CmdIsRd = 'h38,
         Cmd     = 'h40,
         Busy    = 'h41
     } state_e; 
@@ -70,17 +79,31 @@ module recovery_receiver
         else            state_q <= state_d;
 
     always_comb case (state_q)
-        Idle:                   state_d = RxCmd;
-        RxCmd:  if (rx_flow)    state_d = RxLenL;
-        RxLenL: if (rx_flow)    state_d = RxLenH;
-        RxLenH: if (rx_flow)    state_d = RxData;
-        RxData: if ((rx_flow_queue & dcnt == 1) | (dcnt == 0))
-                    state_d = RxPec;
-        RxPec:  if (rx_flow)    state_d = Cmd;
-        Cmd:                    state_d = Busy;
-        Busy:   if (cmd_done_i) state_d = Idle;
+        Idle:   if (bus_start_i)        state_d = RxCmd;
 
-        default:                state_d = Idle;
+        RxCmd:  if (rx_flow)            state_d = RxLenL;
+                else if (bus_stop_i)    state_d = Idle;
+
+        RxLenL: if (rx_flow)            state_d = RxLenH;
+                else if (bus_stop_i)    state_d = Idle;
+
+        RxLenH: if (rx_flow)            state_d = RxData;
+                else if (bus_start_i)   state_d = CmdIsRd;
+                else if (bus_stop_i)    state_d = Idle;
+
+        RxData: if ((rx_flow_queue & dcnt == 1) | (dcnt == 0)) state_d = RxPec;
+                else if (bus_stop_i)    state_d = Idle;
+
+        RxPec:  if (rx_flow)            state_d = Cmd;
+                else if (bus_stop_i)    state_d = Idle;
+
+        CmdIsRd:                        state_d = Cmd;
+
+        Cmd:                            state_d = Busy;
+
+        Busy:   if (cmd_done_i)         state_d = Idle;
+
+        default:                        state_d = Idle;
     endcase
 
     // Data ready
@@ -102,41 +125,56 @@ module recovery_receiver
     // Data counter
     always_ff @(posedge clk_i)
         case (state_q)
-            RxLenL:     if (rx_flow)        dcnt[ 7:0] <= data_data_i;
-            RxLenH:     if (rx_flow)        dcnt[15:8] <= data_data_i;
-            RxData:     if (rx_flow_queue)  dcnt       <= dcnt - 1;
+            RxLenL:     if (rx_flow)        dcnt[ 7:0]  <= data_data_i;
+            RxLenH:     if (rx_flow)        dcnt[15:8]  <= data_data_i;
+            RxData:     if (rx_flow_queue)  dcnt        <= dcnt - 1;
         endcase
 
     // Command header & PEC capture
     always_ff @(posedge clk_i) begin
         case (state_q)
-            RxCmd:      if (rx_flow)        cmd_cmd_o       <= data_data_i;
-            RxLenL:     if (rx_flow)        cmd_len_o[ 7:0] <= data_data_i;
-            RxLenH:     if (rx_flow)        cmd_len_o[15:8] <= data_data_i;
-            RxPec:      if (rx_flow)        pec_recv        <= data_data_i;
+            RxCmd:      if (rx_flow)        cmd_cmd_o   <= data_data_i;
+            RxLenL:     if (rx_flow)        len_lsb     <= data_data_i;
+            RxLenH:     if (rx_flow)        len_msb     <= data_data_i;
+            RxPec:      if (rx_flow)        pec_recv    <= data_data_i;
+
+            CmdIsRd: begin
+                len_lsb  <= '0;
+                len_msb  <= '0;
+                pec_recv <= len_lsb;
+            end
         endcase
     end
 
     // PEC enable
     assign pec_enable_o = (data_queue_select_o) ? rx_flow_queue : rx_flow;
     // PEC clear
-    assign pec_clear_o  = (state_q == RxPec) && rx_flow;
+    assign pec_clear_o  = bus_start_i;
 
     // PEC capture
-    always_ff @(posedge clk_i)
-        if ((state_q == RxPec) && rx_flow)
-            pec_calc <= pec_crc_i;
+    always_ff @(posedge clk_i) case (state_q)
+        RxPec:    if (rx_flow)  pec_calc <= pec_crc_i; // PEC of a write command
+        RxLenL:   if (rx_flow)  pec_calc <= pec_crc_i; // PEC of a read command
+    endcase
 
     // PEC comparator
     assign pec_match = !(|(pec_calc ^ pec_recv));
 
     // Command interface
     always_ff @(posedge clk_i)
-        if (!rst_ni)
+        if (!rst_ni) begin
             cmd_valid_o <= '0;
-        else 
+            cmd_is_rd_o <= '0;
+        end else begin
             cmd_valid_o <= (state_q == Cmd);
 
+            if (state_q == CmdIsRd)
+                cmd_is_rd_o <= 1'b1;
+            if (state_q == Idle)
+                cmd_is_rd_o <= '0;
+        end
+
+    assign cmd_len_o   = {len_msb, len_lsb};
     assign cmd_error_o = !pec_match;
 
     // Discard any RX descriptors

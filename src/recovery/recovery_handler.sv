@@ -669,6 +669,7 @@ module recovery_handler
   // ....................................................
 
   logic         cmd_valid;
+  logic         cmd_is_rd;
   logic [ 7:0]  cmd_cmd;
   logic [15:0]  cmd_len;
   logic         cmd_error;
@@ -681,7 +682,7 @@ module recovery_handler
 
   recovery_pec xrecovery_rx_pec (
     .clk_i,
-    .rst_ni     (rst_ni & !rx_pec_clear),
+    .rst_ni     (rst_ni & !rx_pec_clear & recovery_enable),
 
     .dat_i      (tti_rx_data_queue_wdata),
     .valid_i    (rx_pec_enable),
@@ -691,7 +692,7 @@ module recovery_handler
   // Recovery packet reception handler
   recovery_receiver xrecovery_receiver (
     .clk_i,
-    .rst_ni,
+    .rst_ni                 (rst_ni & recovery_enable),
 
     .desc_valid_i           (recv_tti_rx_desc_valid),
     .desc_ready_o           (recv_tti_rx_desc_ready),
@@ -704,11 +705,15 @@ module recovery_handler
     .data_queue_select_o    (recv_tti_rx_data_queue_select),
     .data_queue_ready_i     (tti_rx_data_queue_wready),
 
+    .bus_start_i            (ctl_bus_start_i),
+    .bus_stop_i             (ctl_bus_stop_i),
+
     .pec_crc_i              (rx_pec_crc),
     .pec_enable_o           (rx_pec_enable),
     .pec_clear_o            (rx_pec_clear),
 
     .cmd_valid_o            (cmd_valid),
+    .cmd_is_rd_o            (cmd_is_rd),
     .cmd_cmd_o              (cmd_cmd),
     .cmd_len_o              (cmd_len),
     .cmd_error_o            (cmd_error),
@@ -723,6 +728,7 @@ module recovery_handler
     .rst_ni,
 
     .cmd_valid_i        (cmd_valid),
+    .cmd_is_rd_i        (cmd_is_rd),
     .cmd_cmd_i          (cmd_cmd),
     .cmd_len_i          (cmd_len),
     .cmd_error_i        (cmd_error),

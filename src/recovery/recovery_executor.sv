@@ -6,6 +6,7 @@ module recovery_executor
 
     // Command interface
     input  logic        cmd_valid_i,
+    input  logic        cmd_is_rd_i,
     input  logic [ 7:0] cmd_cmd_i,
     input  logic [15:0] cmd_len_i,
     input  logic        cmd_error_i,
