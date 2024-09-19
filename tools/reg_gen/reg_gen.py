@@ -43,12 +43,12 @@ def setup_logger(level=logging.INFO, filename="log.log"):
 def main():
     setup_logger(level=logging.INFO, filename="reg_gen.log")
 
-    repo_root = os.environ.get("CALIPTRA_ROOT")
-    if repo_root is None:
+    repo_root = Path(os.environ.get("CALIPTRA_ROOT"))
+    if not repo_root.exists():
         raise ValueError("Caliptra root is not defined as environment variable. Aborting.")
 
     def get_template_path(name):
-        return os.path.join(repo_root, Path("tools/templates/rdl") / name)
+        return repo_root / "tools" / "templates" / "rdl" / name
 
     parser = argparse.ArgumentParser(description="Reg gen")
     parser.add_argument(
@@ -90,6 +90,7 @@ def main():
             raise ValueError(
                 f"SystemRDL Parameters should be a space separated list. Expected: -P param_1=1 -P param2=2. Got: {p}"
             )
+    output_dir = Path(args.output_dir)
 
     # Compile
     rdlc = RDLCompiler()
@@ -103,20 +104,20 @@ def main():
     exporter = RegblockExporter()
     exporter.export(
         root,
-        args.output_dir,
+        str(output_dir),
         cpuif_cls=PassthroughCpuif,
         retime_read_response=False,
         reuse_hwif_typedefs=not args.style_hier,
     )
-    logging.info(f"Created: SystemVerilog files in {args.output_dir}")
+    logging.info(f"Created: SystemVerilog files in {output_dir}")
 
     # Export UVM register model
     file_path_uvm = REGISTERS_PREFIX + "_uvm.sv"
-    output_file = os.path.join(args.output_dir, file_path_uvm)
+    output_file = output_dir / file_path_uvm
     exporter = UVMExporter(user_template_dir=args.ral_template)
     exporter.export(
         root,
-        output_file,
+        str(output_file),
         reuse_class_definitions=not args.style_hier,
     )
     logging.info(f"Created: UVM file {output_file}")
@@ -126,11 +127,11 @@ def main():
     def export_uvm_collateral(template_path, collateral_suffix):
         file_path = REGISTERS_PREFIX + collateral_suffix
         print(f"reg_gen: UVM collateral template path: {template_path}")
-        output_file = os.path.join(args.output_dir, file_path)
+        output_file = output_dir / file_path
         exporter = UVMExporter(user_template_dir=template_path)
         exporter.export(
             root,
-            output_file,
+            str(output_file),
             reuse_class_definitions=not args.style_hier,
         )
         logging.info(f"Created file {output_file}")
@@ -142,33 +143,33 @@ def main():
     exporter = CHeaderExporter()
     i3c_root_dir = Path(os.environ.get("I3C_ROOT_DIR"))
     try:
-        os.mkdir(i3c_root_dir / "sw")
+        (i3c_root_dir / "sw").mkdir()
     except FileExistsError:
         pass
     output_file = i3c_root_dir / "sw" / (REGISTERS_PREFIX + ".h")
-    exporter.export(root, path=output_file, reuse_typedefs=not args.style_hier)
+    exporter.export(root, path=str(output_file), reuse_typedefs=not args.style_hier)
     logging.info(f"Created: c-header file {output_file}")
 
     # Export documentation in HTML
     exporter = HTMLExporter()
-    output_file = os.path.join("src/rdl/docs/html/")
-    exporter.export(root, output_file)
+    output_file = i3c_root_dir / "src" / "rdl" / "docs" / "html"
+    exporter.export(root, str(output_file))
     logging.info(f"Created: HTML files in {output_file}")
 
     # Export Markdown documentation
     exporter = MarkdownExporter()
-    output_file = os.path.join("src/rdl/docs/README.md")
-    exporter.export(root, output_file, rename=REGISTERS_PREFIX)
+    output_file = i3c_root_dir / "src" / "rdl" / "docs" / "README.md"
+    exporter.export(root, str(output_file), rename=REGISTERS_PREFIX)
     logging.info(f"Created: Markdown file {output_file}")
 
     # Fix SystemVerilog files
-    postprocess_sv(Path(args.output_dir) / (REGISTERS_PREFIX + ".sv"))
-    postprocess_sv(Path(args.output_dir) / (REGISTERS_PREFIX + "_pkg.sv"))
+    postprocess_sv(output_dir / (REGISTERS_PREFIX + ".sv"))
+    postprocess_sv(output_dir / (REGISTERS_PREFIX + "_pkg.sv"))
 
     # Export Cocotb dictionary
     exporter = CocotbExporter()
-    output_file = os.path.join(i3c_root_dir, "verification/cocotb/common/reg_map.py")
-    exporter.export(root, path=output_file)
+    output_file = i3c_root_dir / "verification" / "cocotb" / "common" / "reg_map.py"
+    exporter.export(root, path=str(output_file))
     logging.info(f"Created: Python dictionary file {output_file}")
 
 
