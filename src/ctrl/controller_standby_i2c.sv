@@ -19,7 +19,6 @@ module controller_standby_i2c
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input i3c_config_t core_config,
 
     // Interface to SDA/SCL
     input  logic ctrl_scl_i,
@@ -82,9 +81,6 @@ module controller_standby_i2c
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i
 );
-
-  logic enable;
-  assign enable = core_config.i2c_standby_en;
 
   logic [TxFifoWidth-1:0] tx_fifo_data_int;
   logic tx_fifo_valid_int;
@@ -169,7 +165,7 @@ module controller_standby_i2c
       .target_address1_i(0),
       .target_mask1_i(0),
       // Others
-      .target_enable_i(enable),
+      .target_enable_i(i2c_standby_en_i),
       .target_idle_o(),
       .target_sr_p_cond_o(),
       .event_target_nack_o(),

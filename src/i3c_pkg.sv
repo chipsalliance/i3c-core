@@ -241,15 +241,4 @@ package i3c_pkg;
     target_dev_id_value_t vendor_random_value;
   } target_dev_provisioned_id_t;
 
-
-  // TODO: Enum for ixc_*_en signals
-  typedef struct packed {
-    logic phy_en;
-    logic [1:0] phy_mux_select;
-    logic i2c_active_en;
-    logic i2c_standby_en;
-    logic i3c_active_en;
-    logic i3c_standby_en;
-  } i3c_config_t;
-
 endpackage

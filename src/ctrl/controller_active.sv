@@ -19,8 +19,6 @@ module controller_active
     input logic clk_i,
     input logic rst_ni,
 
-    input i3c_config_t core_config,
-
     // Interface to SDA/SCL
     input logic ctrl_scl_i[2],
     input logic ctrl_sda_i[2],
