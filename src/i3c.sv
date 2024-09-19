@@ -435,6 +435,9 @@ module i3c
   logic [19:0] t_bus_idle;
   logic [19:0] t_bus_available;
 
+  logic bus_start;
+  logic bus_stop;
+
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
 
@@ -540,6 +543,10 @@ module i3c
       .ibi_queue_wvalid_o(),
       .ibi_queue_wready_i('0),
       .ibi_queue_wdata_o(),
+
+      // I2C/I3C bus condition detection
+      .bus_start_o(bus_start),
+      .bus_stop_o(bus_stop),
 
        // I2C/I3C received address (with RnW# bit) for the recovery handler
       .bus_addr_o(rx_bus_addr),
@@ -939,6 +946,10 @@ module i3c
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
 
       .irq_o(), // TODO: Connect me
+
+      // I2C/I3C bus condition detection
+      .ctl_bus_start_i(bus_start),
+      .ctl_bus_stop_i(bus_stop),
 
       // Received I2C/I3C address along with RnW# bit
       .ctl_bus_addr_i(rx_bus_addr),

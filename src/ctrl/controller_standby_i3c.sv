@@ -67,6 +67,10 @@ module controller_standby_i3c
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
+    // Bus condition detection
+    output logic bus_start_o,
+    output logic bus_stop_o,
+
     // I3C received address (with RnW# bit) for the recovery handler
     output logic [7:0] bus_addr_o,
     output logic bus_addr_valid_o,
@@ -253,6 +257,10 @@ module controller_standby_i3c
       .stby_cr_device_pid_lo_reg(stby_cr_device_pid_lo_reg),
       .daa_unique_response(daa_unique_response)
   );
+
+  // Expose bus condition detection
+  assign bus_start_o = start_detect;
+  assign bus_stop_o  = stop_detect;
 
   // Expose the received address + RnW bit
   assign bus_addr_o = bus_addr;

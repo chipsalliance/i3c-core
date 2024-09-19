@@ -148,6 +148,10 @@ module controller
     output logic [    127:0] dct_wdata_hw_o,
     input  logic [    127:0] dct_rdata_hw_i,
 
+    // I2C/I3C Bus condition detection
+    output logic bus_start_o,
+    output logic bus_stop_o,
+
     // I2C/I3C received address (with RnW# bit) for the recovery handler
     output logic [7:0] bus_addr_o,
     output logic bus_addr_valid_o,
@@ -305,6 +309,8 @@ module controller
       .tx_queue_rvalid_i(tti_tx_queue_rvalid_i),
       .tx_queue_rready_o(tti_tx_queue_rready_o),
       .tx_queue_rdata_i(tti_tx_queue_rdata_i),
+      .bus_start_o(bus_start_o),
+      .bus_stop_o(bus_stop_o),
       .bus_addr_o(bus_addr_o),
       .bus_addr_valid_o(bus_addr_valid_o),
       .phy_en_i(phy_en_i),
