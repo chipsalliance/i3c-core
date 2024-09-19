@@ -23,6 +23,7 @@ module bus_monitor
 
     input logic [19:0] t_hd_dat_i,  // Data hold time
     input logic [19:0] t_r_i,       // Rise time
+    input logic [19:0] t_f_i,       // Fall time
 
     // TODO: Refactor signals to `state_detected` to clarify purpose
     output logic start_detect_o,  // Module detected START or REPEATED START condition
@@ -33,6 +34,8 @@ module bus_monitor
  );
   logic enable, enable_q;
 
+  logic scl_negedge_i;
+  logic scl_posedge_i;
   logic scl_negedge;
   logic scl_posedge;
   logic scl_edge;
@@ -41,6 +44,8 @@ module bus_monitor
 
   logic sda_negedge;
   logic sda_posedge;
+  logic sda_negedge_i;
+  logic sda_posedge_i;
   logic sda_edge;
   logic sda_stable_high;
 
@@ -59,6 +64,42 @@ module bus_monitor
   logic hdr_exit_det;
 
   assign enable = enable_i;
+
+  edge_detector edge_detector_scl_negedge  (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .trigger(scl_negedge_i),
+      .line(!scl_i),
+      .delay_count(t_f_i),
+      .detect(scl_negedge)
+  );
+
+  edge_detector edge_detector_scl_posedge  (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .trigger(scl_posedge_i),
+      .line(scl_i),
+      .delay_count(t_r_i),
+      .detect(scl_posedge)
+  );
+
+  edge_detector edge_detector_sda_negedge  (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .trigger(sda_negedge_i),
+      .line(!sda_i),
+      .delay_count(t_f_i),
+      .detect(sda_negedge)
+  );
+
+  edge_detector edge_detector_sda_posedge  (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .trigger(sda_posedge_i),
+      .line(sda_i),
+      .delay_count(t_r_i),
+      .detect(sda_posedge)
+  );
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
@@ -80,10 +121,10 @@ module bus_monitor
     end
   end
 
-  assign scl_negedge = scl_i_q && !scl_i;
-  assign scl_posedge = !scl_i_q && scl_i;
-  assign sda_negedge = sda_i_q && !sda_i;
-  assign sda_posedge = !sda_i_q && sda_i;
+  assign scl_negedge_i = scl_i_q && !scl_i;
+  assign scl_posedge_i = !scl_i_q && scl_i;
+  assign sda_negedge_i = sda_i_q && !sda_i;
+  assign sda_posedge_i = !sda_i_q && sda_i;
 
   assign scl_edge = scl_negedge | scl_posedge;
   assign sda_edge = sda_negedge | sda_posedge;

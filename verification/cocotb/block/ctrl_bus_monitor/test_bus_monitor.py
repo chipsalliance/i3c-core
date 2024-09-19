@@ -18,6 +18,7 @@ async def setup(dut):
     dut.enable_i.value = 0
     dut.t_hd_dat_i.value = 0x05
     dut.t_r_i.value = 0x02
+    dut.t_f_i.value = 0x02
     dut.is_in_hdr_mode_i.value = 0
     await ClockCycles(dut.clk_i, 10)
 
