@@ -301,6 +301,7 @@ module i3c
   logic                          tti_ibi_queue_full;
   logic [   TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld;
   logic                          tti_ibi_queue_ready_thld_trig;
+  logic [   TtiIbiDataWidth-1:0] tti_ibi_queue_wr_data;
   logic                          tti_ibi_queue_empty;
   logic                          tti_ibi_queue_rvalid;
   logic                          tti_ibi_queue_rready;
@@ -467,6 +468,8 @@ module i3c
       // HCI RX queue
       .hci_rx_queue_empty_i(hci_rx_queue_empty),
       .hci_rx_queue_full_i(hci_rx_queue_full),
+      .hci_rx_queue_start_thld_i(hci_rx_queue_start_thld),
+      .hci_rx_queue_start_thld_trig_i(hci_rx_queue_start_thld_trig),
       .hci_rx_queue_ready_thld_i(hci_rx_queue_ready_thld),
       .hci_rx_queue_ready_thld_trig_i(hci_rx_queue_ready_thld_trig),
       .hci_rx_queue_wvalid_o(hci_rx_queue_wvalid),
@@ -476,6 +479,8 @@ module i3c
       // HCI TX queue
       .hci_tx_queue_empty_i(hci_tx_queue_empty),
       .hci_tx_queue_full_i(hci_tx_queue_full),
+      .hci_tx_queue_start_thld_i(hci_tx_queue_start_thld),
+      .hci_tx_queue_start_thld_trig_i(hci_tx_queue_start_thld_trig),
       .hci_tx_queue_ready_thld_i(hci_tx_queue_ready_thld),
       .hci_tx_queue_ready_thld_trig_i(hci_tx_queue_ready_thld_trig),
       .hci_tx_queue_rvalid_i(hci_tx_queue_rvalid),
@@ -521,6 +526,15 @@ module i3c
       .tti_tx_queue_rvalid_i(tti_tx_queue_rvalid),
       .tti_tx_queue_rready_o(tti_tx_queue_rready),
       .tti_tx_queue_rdata_i(tti_tx_queue_rdata),
+
+      // TODO: In-band Interrupt queue
+      .ibi_queue_full_i('0),
+      .ibi_queue_thld_i('0),
+      .ibi_queue_above_thld_i('0),
+      .ibi_queue_empty_i('0),
+      .ibi_queue_wvalid_o(),
+      .ibi_queue_wready_i('0),
+      .ibi_queue_wdata_o(),
 
       // DAT <-> Controller interface
       .dat_read_valid_hw_o(dat_read_valid_hw),

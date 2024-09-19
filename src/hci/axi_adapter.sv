@@ -82,7 +82,10 @@ module axi_adapter #(
       .DW(CsrDataWidth),
       .UW(AxiDataWidth),
       .IW(AxiIdWidth)
-  ) axi ();
+  ) axi (
+      .clk  (clk_i),
+      .rst_n(rst_ni)
+  );
 
   // AXI Read Channels
   always_comb begin : axi_r
