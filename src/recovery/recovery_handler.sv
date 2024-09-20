@@ -617,23 +617,32 @@ module recovery_handler
 
   // ......................
 
+  logic exec_tti_rx_data_req;
+  logic exec_tti_rx_data_ack;
+  logic [TtiRxDataDataWidth-1:0] exec_tti_rx_data_data;
+  logic exec_tti_rx_queue_sel;
+
   // RX data queue
-  always_comb begin : R4MUX
-    if (recovery_enable) begin
+  always_comb begin : R3MUX
+    if (recovery_enable & exec_tti_rx_queue_sel) begin
       csr_tti_rx_data_queue_ack_o          = '0;
-      csr_tti_rx_data_queue_data_o         = '0;
       csr_tti_rx_data_queue_reg_rst_we_o   = '0;
       csr_tti_rx_data_queue_reg_rst_data_o = '0;
-      tti_rx_data_queue_req                = '0;
+      tti_rx_data_queue_req                = exec_tti_rx_data_req;
       tti_rx_data_queue_reg_rst            = '0;
+      exec_tti_rx_data_ack                 = tti_rx_data_queue_ack;
     end else begin
       csr_tti_rx_data_queue_ack_o          = tti_rx_data_queue_ack;
-      csr_tti_rx_data_queue_data_o         = tti_rx_data_queue_data;
       csr_tti_rx_data_queue_reg_rst_we_o   = tti_rx_data_queue_reg_rst_we;
       csr_tti_rx_data_queue_reg_rst_data_o = tti_rx_data_queue_reg_rst_next;
       tti_rx_data_queue_req                = csr_tti_rx_data_queue_req_i;
       tti_rx_data_queue_reg_rst            = csr_tti_rx_data_queue_reg_rst_i;
+      exec_tti_rx_data_ack                 = '0;
     end
+
+    // No need to mux data
+    csr_tti_rx_data_queue_data_o    = tti_rx_data_queue_data;
+    exec_tti_rx_data_data           = tti_rx_data_queue_data;
   end
 
   // Threshold
@@ -726,14 +735,22 @@ module recovery_handler
   // Command executor
   recovery_executor xrecovery_executor (
     .clk_i,
-    .rst_ni,
+    .rst_ni                 (rst_ni & recovery_enable),
 
-    .cmd_valid_i        (cmd_valid),
-    .cmd_is_rd_i        (cmd_is_rd),
-    .cmd_cmd_i          (cmd_cmd),
-    .cmd_len_i          (cmd_len),
-    .cmd_error_i        (cmd_error),
-    .cmd_done_o         (cmd_done)
+    .cmd_valid_i            (cmd_valid),
+    .cmd_is_rd_i            (cmd_is_rd),
+    .cmd_cmd_i              (cmd_cmd),
+    .cmd_len_i              (cmd_len),
+    .cmd_error_i            (cmd_error),
+    .cmd_done_o             (cmd_done),
+
+    .rx_req_o               (exec_tti_rx_data_req),
+    .rx_ack_i               (exec_tti_rx_data_ack),
+    .rx_data_i              (exec_tti_rx_data_data),
+    .rx_queue_sel_o         (exec_tti_rx_queue_sel),
+
+    .hwif_rec_i             (hwif_rec_i),
+    .hwif_rec_o             (hwif_rec_o)
   );
 
 endmodule
