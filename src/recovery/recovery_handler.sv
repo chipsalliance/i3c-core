@@ -621,6 +621,7 @@ module recovery_handler
   logic exec_tti_rx_data_ack;
   logic [TtiRxDataDataWidth-1:0] exec_tti_rx_data_data;
   logic exec_tti_rx_queue_sel;
+  logic exec_tti_rx_queue_clr; // TODO: pulse this signal when changing recovery_enable from 1 to 0 to clear the queue
 
   // RX data queue
   always_comb begin : R3MUX
@@ -629,7 +630,7 @@ module recovery_handler
       csr_tti_rx_data_queue_reg_rst_we_o   = '0;
       csr_tti_rx_data_queue_reg_rst_data_o = '0;
       tti_rx_data_queue_req                = exec_tti_rx_data_req;
-      tti_rx_data_queue_reg_rst            = '0;
+      tti_rx_data_queue_reg_rst            = exec_tti_rx_queue_clr;
       exec_tti_rx_data_ack                 = tti_rx_data_queue_ack;
     end else begin
       csr_tti_rx_data_queue_ack_o          = tti_rx_data_queue_ack;
@@ -748,6 +749,7 @@ module recovery_handler
     .rx_ack_i               (exec_tti_rx_data_ack),
     .rx_data_i              (exec_tti_rx_data_data),
     .rx_queue_sel_o         (exec_tti_rx_queue_sel),
+    .rx_queue_clr_o         (exec_tti_rx_queue_clr),
 
     .hwif_rec_i             (hwif_rec_i),
     .hwif_rec_o             (hwif_rec_o)

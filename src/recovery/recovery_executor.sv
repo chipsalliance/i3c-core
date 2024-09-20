@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+
+/*
+    Recovery command execution module. Responds to commands decoded from I3C
+    transactions by recovery_receiver and controls data frow to/from CSRs and
+    TTI data queues.
+
+    FIXME: Check if cmd_len_i is valid w.r.t. cmd_cmd_i
+*/
 module recovery_executor
   import i3c_pkg::*;
 (
@@ -16,7 +25,9 @@ module recovery_executor
     output logic        rx_req_o,
     input  logic        rx_ack_i,
     input  logic [31:0] rx_data_i,  // FIXME: parametrize
+
     output logic        rx_queue_sel_o,
+    output logic        rx_queue_clr_o,
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
@@ -80,7 +91,9 @@ module recovery_executor
     typedef enum logic [7:0] {
         Idle        = 'h00,
         CsrWrite    = 'h10,
-        Done        = 'hD0
+        CsrRead     = 'h20,
+        Done        = 'hD0,
+        Error       = 'hE0
     } state_e;
 
     state_e state_d, state_q;
@@ -94,11 +107,15 @@ module recovery_executor
 
     // Next state
     always_comb case (state_q)
-        Idle: begin
-            if (cmd_valid_i & !cmd_is_rd_i)     state_d <= CsrWrite;
-            if (cmd_valid_i &  cmd_is_rd_i)     state_d <= Done;
-        end
+        Idle: if (cmd_valid_i) begin
+                if (cmd_error_i)        state_d <= Error;
+                else if (!cmd_is_rd_i)  state_d <= CsrWrite;
+                else                    state_d <= CsrRead;
+            end
+
         CsrWrite:   if (rx_ack_i & (dcnt == 1)) state_d <= Done;
+        CsrRead:    state_d <= Done;
+        Error:      state_d <= Done;
         Done:       state_d <= Idle;
     endcase
 
@@ -132,10 +149,11 @@ module recovery_executor
     // ....................................................
 
     assign rx_queue_sel_o = 1'b1;
+    assign rx_queue_clr_o = (state_q == Error);
 
     // RX FIFO data request
     always_ff @(posedge clk_i) case (state_q)
-        Idle:       rx_req_o <= cmd_valid_i & (cmd_len_i != 0);
+        Idle:       rx_req_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0);
         CsrWrite:   rx_req_o <= rx_ack_i    & (dcnt != 1);
         default:    rx_req_o <= '0;
     endcase
