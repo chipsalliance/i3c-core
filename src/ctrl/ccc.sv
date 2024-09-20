@@ -68,6 +68,8 @@ module ccc
 
   always_comb begin
     response_valid_o = '0;
+    response_byte_o  = '0;
+    is_in_hdr_mode_o = '0;
     rstact_rst_action_next = '0;
     rstact_rst_action_valid = '0;
     unique case (command_code)
@@ -93,11 +95,7 @@ module ccc
           end
         endcase
       end
-      default: begin
-        response_byte_o  = '0;
-        response_valid_o = '0;
-        is_in_hdr_mode_o = '0;
-      end
+      default: ;
     endcase
   end
 
