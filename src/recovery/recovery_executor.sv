@@ -52,6 +52,15 @@ module recovery_executor
         CMD_INDIRECT_FIFO_DATA = 'd47
     } command_e;
 
+    // Protocol error codes
+    typedef enum logic [7:0] {
+        PROTOCOL_OK                 = 'h0,
+        PROTOCOL_ERROR_READ_ONLY    = 'h1,
+        PROTOCOL_ERROR_PARAMETER    = 'h2,
+        PROTOCOL_ERROR_LENGTH       = 'h3,
+        PROTOCOL_ERROR_CRC          = 'h4
+    } protocol_error_e;
+
     // Target CSR selector
     typedef enum logic [7:0] {
         CSR_PROC_CAP_0              = 'd0,
@@ -78,12 +87,16 @@ module recovery_executor
         CSR_INDIRECT_FIFO_STATUS_2  = 'd21,
         CSR_INDIRECT_FIFO_STATUS_3  = 'd22,
         CSR_INDIRECT_FIFO_STATUS_4  = 'd23,
-        CSR_INDIRECT_FIFO_STATUS_5  = 'd24
+        CSR_INDIRECT_FIFO_STATUS_5  = 'd24,
+
+        CSR_INVALID                 = 'hFF
     } csr_e;
 
     // Internal signals
     logic [15:0] dcnt;
+
     csr_e        csr_sel;
+    logic        csr_writeable;
 
     // ....................................................
 
@@ -129,7 +142,7 @@ module recovery_executor
 
     // Target / source CSR
     always_ff @(posedge clk_i) case (state_q)
-        Idle:       if(cmd_valid_i) case (cmd_cmd_i)
+        Idle: if(cmd_valid_i) case (cmd_cmd_i)
             CMD_PROT_CAP:               csr_sel <= CSR_PROC_CAP_0;
             CMD_DEVICE_ID:              csr_sel <= CSR_DEVICE_ID_0;
             CMD_DEVICE_STATUS:          csr_sel <= CSR_DEVICE_STATUS_0;
@@ -139,12 +152,54 @@ module recovery_executor
             CMD_HW_STATUS:              csr_sel <= CSR_HW_STATUS;
             CMD_INDIRECT_FIFO_CTRL:     csr_sel <= CSR_INDIRECT_FIFO_CTRL_0;
             CMD_INDIRECT_FIFO_STATUS:   csr_sel <= CSR_INDIRECT_FIFO_STATUS_0;
-            endcase
+
+            default:                    csr_sel <= CSR_INVALID;
+        endcase
 
         // FIXME: This will overflow resulting on overwriting unwanted CSRs if
         // a malicious packet with length > CSR length is received
         CsrWrite:   if (rx_ack_i)       csr_sel <= csr_e'(csr_sel + 1);
     endcase
+
+    // CSR writeable flag
+    always_comb case (csr_sel)
+        CSR_DEVICE_RESET:               csr_writeable = 1'b1;
+        CSR_RECOVERY_CTRL:              csr_writeable = 1'b1;
+        CSR_INDIRECT_FIFO_CTRL_0:       csr_writeable = 1'b1;
+        CSR_INDIRECT_FIFO_CTRL_1:       csr_writeable = 1'b1;
+        default:                        csr_writeable = '0;
+    endcase
+
+    // ....................................................
+
+    logic [ 7:0] status_device;
+    logic [ 7:0] status_protocol;
+    logic [15:0] status_reason;
+
+    logic status_device_we;
+    logic status_protocol_we;
+    logic status_reason_we;
+
+    // Device status CSR update
+    always_comb begin
+        hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.we =
+            status_device_we | status_protocol_we | status_reason_we;
+    end
+
+    always_comb begin
+        hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[ 7: 0] = status_device_we   ? status_device   : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[ 7: 0];
+        hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[15: 8] = status_protocol_we ? status_protocol : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[15: 8];
+        hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[31:16] = status_reason_we   ? status_reason   : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[31:16];
+    end
+
+    // Protocol status
+    always_ff @(posedge clk_i) case (state_q)
+        Idle:   if (cmd_valid_i & cmd_error_i)  status_protocol <= PROTOCOL_ERROR_CRC;
+                else                            status_protocol <= PROTOCOL_OK;
+    endcase
+
+    // Update status on command done
+    assign status_protocol_we = (state_q == Done);
 
     // ....................................................
 
