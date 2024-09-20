@@ -505,10 +505,11 @@ module recovery_handler
   logic [7:0] recv_tti_rx_data_data;
 
   logic       recv_tti_rx_data_queue_select;
+  logic       recv_tti_rx_data_queue_flow;
 
   // RX data queue
   always_comb begin : R2MUX
-    if (recovery_enable | recv_tti_rx_data_queue_select) begin
+    if (recovery_enable & recv_tti_rx_data_queue_select) begin
       recv_tti_rx_data_valid                  = ctl_tti_rx_data_queue_wvalid_i;
       tti_rx_data_queue_wvalid                = '0;
       tti_rx_data_queue_wflush                = '0;
@@ -703,7 +704,7 @@ module recovery_handler
     .data_data_i            (recv_tti_rx_data_data),
 
     .data_queue_select_o    (recv_tti_rx_data_queue_select),
-    .data_queue_ready_i     (tti_rx_data_queue_wready),
+    .data_queue_flow_i      (tti_rx_data_queue_wvalid & tti_rx_data_queue_wready),
 
     .bus_start_i            (ctl_bus_start_i),
     .bus_stop_i             (ctl_bus_stop_i),
