@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
+import random
 import crc
 from cocotbext_i3c.i3c_controller import I3cController
 
@@ -99,7 +100,7 @@ class RecoveryInterface:
         # Return the data and received PEC validity
         return data, (pec_recv == pec_calc)
 
-    async def command(self, address, command, is_write, data=None):
+    async def command(self, address, command, is_write, data=None, force_pec_error=False):
         """
         Issues a command to the target
         """
@@ -119,8 +120,11 @@ class RecoveryInterface:
                 xfer.extend(data)
 
             # Compute and append PEC
-            # FIXME: Supposedly I3C address should be included in PEC calculation as well
-            pec = int(self.pec_calc.checksum(bytes(xfer)))
+            if force_pec_error:
+                pec = random.randint(0, 255)
+            else:
+                # FIXME: Supposedly I3C address should be included in PEC calculation as well
+                pec = int(self.pec_calc.checksum(bytes(xfer)))
             xfer.append(pec)
 
             # Do the I3C write transfer using the controller functionality
@@ -136,8 +140,11 @@ class RecoveryInterface:
             xfer = [command]
 
             # Compute and append PEC
-            # FIXME: Supposedly I3C address should be included in PEC calculation as well
-            pec = int(self.pec_calc.checksum(bytes(xfer)))
+            if force_pec_error:
+                pec = random.randint(0, 255)
+            else:
+                # FIXME: Supposedly I3C address should be included in PEC calculation as well
+                pec = int(self.pec_calc.checksum(bytes(xfer)))
             xfer.append(pec)
 
             # Do the I3C write transfer, do not terminate with stop
