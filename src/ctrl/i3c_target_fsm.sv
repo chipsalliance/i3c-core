@@ -91,6 +91,7 @@ module i3c_target_fsm
     input logic is_i3c_rsvd_addr_match,
     input logic is_any_addr_match,
     output logic [7:0] bus_addr,
+    output logic bus_rnw,
     output logic bus_addr_match,
     output logic bus_addr_valid,
 
@@ -273,8 +274,13 @@ module i3c_target_fsm
 
   // Latch received bus address
   always_ff @(posedge clk_i)
-    if (input_strobe)
+    if (input_strobe & (bit_idx != 4'd7))
       bus_addr <= input_byte;
+
+  // Latch received RnW bit
+  always_ff @(posedge clk_i)
+    if (input_strobe & (bit_idx == 4'd7))
+      bus_rnw <= input_byte[0];
 
   // An artificial acq_fifo_wready is used here to ensure we always have
   // space to asborb a stop / repeat start format byte.  Without guaranteeing
@@ -869,7 +875,7 @@ module i3c_target_fsm
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin
       bus_addr_match <= 1'b0;
-    end else if (state_q == AddrRead & bit_idx == 4'd7 & scl_posedge) begin
+    end else if (state_q == AddrRead & bit_idx == 4'd7 & input_strobe) begin
       bus_addr_match <= is_dyn_addr_match | is_sta_addr_match;
     end else begin
       bus_addr_match <= 1'b0;

@@ -155,6 +155,7 @@ module controller_standby_i3c
 
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
+  logic bus_rnw;
   logic bus_addr_match;
   logic bus_addr_valid;
   logic is_sta_addr_match;
@@ -205,6 +206,7 @@ module controller_standby_i3c
       .is_sta_addr_match(is_sta_addr_match),
       .is_dyn_addr_match(is_dyn_addr_match),
       .bus_addr(bus_addr),
+      .bus_rnw(bus_rnw),
       .bus_addr_match(bus_addr_match),
       .bus_addr_valid(bus_addr_valid),
       .is_i3c_rsvd_addr_match(is_i3c_rsvd_addr_match),
@@ -263,7 +265,7 @@ module controller_standby_i3c
   assign bus_stop_o  = stop_detect;
 
   // Expose the received address + RnW bit
-  assign bus_addr_o = bus_addr;
+  assign bus_addr_o = {bus_addr, bus_rnw};
   assign bus_addr_valid_o = bus_addr_match;
 
 endmodule
