@@ -65,16 +65,17 @@ module bus_monitor
 
   assign enable = enable_i;
 
-  edge_detector edge_detector_scl_negedge  (
+  edge_detector #(.INVERT_DETECTION(1'b1))
+  edge_detector_scl_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(scl_negedge_i),
-      .line(!scl_i),
+      .line(scl_i),
       .delay_count(t_f_i),
       .detect(scl_negedge)
   );
 
-  edge_detector edge_detector_scl_posedge  (
+  edge_detector edge_detector_scl_posedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(scl_posedge_i),
@@ -83,16 +84,17 @@ module bus_monitor
       .detect(scl_posedge)
   );
 
-  edge_detector edge_detector_sda_negedge  (
+  edge_detector #(.INVERT_DETECTION(1'b1))
+  edge_detector_sda_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(sda_negedge_i),
-      .line(!sda_i),
+      .line(sda_i),
       .delay_count(t_f_i),
       .detect(sda_negedge)
   );
 
-  edge_detector edge_detector_sda_posedge  (
+  edge_detector edge_detector_sda_posedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(sda_posedge_i),
