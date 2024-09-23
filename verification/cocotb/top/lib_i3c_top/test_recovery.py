@@ -73,9 +73,9 @@ async def test_recovery_write(dut):
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.register_map["DEVICE_STATUS_0"], 4))
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data   = dword2int(await tb.read_csr(tb.register_map["DEVICE_RESET"], 4))
+    data   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
     # Check
@@ -92,11 +92,11 @@ async def test_recovery_write(dut):
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.register_map["DEVICE_STATUS_0"], 4))
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data0 = dword2int(await tb.read_csr(tb.register_map["INDIRECT_FIFO_CTRL_0"], 4))
+    data0 = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4))
     dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
-    data1 = dword2int(await tb.read_csr(tb.register_map["INDIRECT_FIFO_CTRL_1"], 4))
+    data1 = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4))
     dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
 
     # Check
@@ -133,9 +133,9 @@ async def test_recovery_write_pec(dut):
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.register_map["DEVICE_STATUS_0"], 4))
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data   = dword2int(await tb.read_csr(tb.register_map["DEVICE_RESET"], 4))
+    data   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
     # Check

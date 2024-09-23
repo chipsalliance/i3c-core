@@ -85,7 +85,7 @@ async def test_i3c_target(dut):
     # Read data
     words_out = []
     for i in range(len(words_ref)):
-        r_data = dword2int(await tb.read_csr(tb.register_map["RX_DATA_PORT"], 4))
+        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
         words_out.append(r_data)
 
     dut._log.debug("Comparing input [{}] and CSR data [{}]".format(
