@@ -161,7 +161,11 @@ module recovery_handler
   // ....................................................
 
   logic recovery_enable;
-  assign recovery_enable = 1'b0;
+
+  // FIXME: Due to lack of a dedicated CSR field that controls recovery mode
+  // the Recovery Handler is permanently enabled which disabled the "regular"
+  // TTI data path.
+  assign recovery_enable = 1'b1;
 
   // ....................................................
   // TTI Queues

@@ -68,15 +68,17 @@ async def test_i3c_target(dut):
     for xfer in test_data:
 
         # Pad
-        pad_len  = ((len(xfer) + 3) // 4 * 4) - len(xfer)
+        pad_len = ((len(xfer) + 3) // 4 * 4) - len(xfer)
         xfer_pad = xfer + [0 for i in range(pad_len)]
 
         # Convert to 32-bit little-endian words
         for i in range(len(xfer_pad) // 4):
-            word = (xfer_pad[4*i+3] << 24) | \
-                   (xfer_pad[4*i+2] << 16) | \
-                   (xfer_pad[4*i+1] <<  8) | \
-                   (xfer_pad[4*i+0]      )
+            word = (
+                (xfer_pad[4 * i + 3] << 24)
+                | (xfer_pad[4 * i + 2] << 16)
+                | (xfer_pad[4 * i + 1] << 8)
+                | (xfer_pad[4 * i + 0])
+            )
             words_ref.append(word)
 
     dut._log.info(test_data)
@@ -88,8 +90,10 @@ async def test_i3c_target(dut):
         r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
         words_out.append(r_data)
 
-    dut._log.debug("Comparing input [{}] and CSR data [{}]".format(
-        " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
-        " ".join([f"0x{d:08X}" for d in words_out]),
-    ))
+    dut._log.debug(
+        "Comparing input [{}] and CSR data [{}]".format(
+            " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
+            " ".join([f"0x{d:08X}" for d in words_out]),
+        )
+    )
     assert words_out == words_ref
