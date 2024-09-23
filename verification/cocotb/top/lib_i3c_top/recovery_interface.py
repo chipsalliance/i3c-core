@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import random
+
 import crc
 from cocotbext_i3c.i3c_controller import I3cController
 

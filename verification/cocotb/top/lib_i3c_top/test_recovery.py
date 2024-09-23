@@ -10,11 +10,13 @@ from interface import I3CTopTestInterface
 from recovery_interface import RecoveryInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, Timer
+from cocotb.triggers import Timer
+
 
 async def timeout():
     await Timer(50, "us")
     raise RuntimeError("Test timeout!")
+
 
 async def initialize(dut):
     """
@@ -55,6 +57,7 @@ async def initialize(dut):
 
     return i3c_controller, i3c_target, tb, recovery
 
+
 @cocotb.test()
 async def test_recovery_write(dut):
     """
@@ -66,16 +69,17 @@ async def test_recovery_write(dut):
 
     # Write to the RESET CSR (one word)
     await recovery.command(
-        0x5A, RecoveryInterface.Command.DEVICE_RESET, True,
-            [0xAA, 0xBB, 0xCC, 0xDD]
+        0x5A, RecoveryInterface.Command.DEVICE_RESET, True, [0xAA, 0xBB, 0xCC, 0xDD]
     )
 
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
     # Check
@@ -85,18 +89,26 @@ async def test_recovery_write(dut):
 
     # Write to the FIFO_CTRL CSR (two words)
     await recovery.command(
-        0x5A, RecoveryInterface.Command.INDIRECT_FIFO_CTRL, True,
-            [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44]
+        0x5A,
+        RecoveryInterface.Command.INDIRECT_FIFO_CTRL,
+        True,
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
     )
 
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data0 = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4))
+    data0 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
+    )
     dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
-    data1 = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4))
+    data1 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
+    )
     dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
 
     # Check
@@ -104,6 +116,7 @@ async def test_recovery_write(dut):
     assert protocol_status == 0
     assert data0 == 0xDDCCBBAA
     assert data1 == 0x44332211
+
 
 @cocotb.test()
 async def test_recovery_write_pec(dut):
@@ -116,8 +129,7 @@ async def test_recovery_write_pec(dut):
 
     # Write to the RESET CSR
     await recovery.command(
-        0x5A, RecoveryInterface.Command.DEVICE_RESET, True,
-            [0xEF, 0xBE, 0xAD, 0xDE]
+        0x5A, RecoveryInterface.Command.DEVICE_RESET, True, [0xEF, 0xBE, 0xAD, 0xDE]
     )
 
     # Wait, skip checks
@@ -125,21 +137,24 @@ async def test_recovery_write_pec(dut):
 
     # Write to the RESET CSR again, deliberately malform PEC
     await recovery.command(
-        0x5A, RecoveryInterface.Command.DEVICE_RESET, True,
-            [0xBA, 0xBA, 0xFE, 0xCA],
-            force_pec_error=True
+        0x5A,
+        RecoveryInterface.Command.DEVICE_RESET,
+        True,
+        [0xBA, 0xBA, 0xFE, 0xCA],
+        force_pec_error=True,
     )
 
     # Wait & read the CSR from the AHB/AXI side
     await Timer(1, "us")
 
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    data   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0x04  # PEC error
-    assert data == 0xDEADBEEF       # From previous write
-
+    assert data == 0xDEADBEEF  # From previous write

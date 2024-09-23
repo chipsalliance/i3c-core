@@ -84,12 +84,12 @@ module recovery_handler
     output logic                       ctl_tti_ibi_queue_ready_thld_trig_o,
 
     // S/Sr and P bus condition
-    input  logic ctl_bus_start_i,
-    input  logic ctl_bus_stop_i,
+    input logic ctl_bus_start_i,
+    input logic ctl_bus_stop_i,
 
     // Received I2C/I3C address along with RnW# bit
-    input  logic [7:0] ctl_bus_addr_i,
-    input  logic ctl_bus_addr_valid_i,
+    input logic [7:0] ctl_bus_addr_i,
+    input logic ctl_bus_addr_valid_i,
 
     // ....................................................
     // TTI interface (CSR side)
@@ -263,25 +263,25 @@ module recovery_handler
   logic                          tti_tx_data_queue_rready_q;
   logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_rdata_q;
 
-  width_converter_8toN # (
-      .Width (TtiRxDataDataWidth)
+  width_converter_8toN #(
+      .Width(TtiRxDataDataWidth)
 
   ) tti_conv_8toN (
       .clk_i,
       .rst_ni,
 
-      .sink_valid_i   (tti_rx_data_queue_wvalid),
-      .sink_ready_o   (tti_rx_data_queue_wready),
-      .sink_data_i    (tti_rx_data_queue_wdata),
-      .sink_flush_i   (tti_rx_data_queue_wflush),
+      .sink_valid_i(tti_rx_data_queue_wvalid),
+      .sink_ready_o(tti_rx_data_queue_wready),
+      .sink_data_i (tti_rx_data_queue_wdata),
+      .sink_flush_i(tti_rx_data_queue_wflush),
 
-      .source_valid_o  (tti_rx_data_queue_wvalid_q),
-      .source_ready_i  (tti_rx_data_queue_wready_q),
-      .source_data_o   (tti_rx_data_queue_wdata_q)
+      .source_valid_o(tti_rx_data_queue_wvalid_q),
+      .source_ready_i(tti_rx_data_queue_wready_q),
+      .source_data_o (tti_rx_data_queue_wdata_q)
   );
 
-  width_converter_Nto8 # (
-      .Width (TtiRxDataDataWidth)
+  width_converter_Nto8 #(
+      .Width(TtiRxDataDataWidth)
 
   ) tti_conv_Nto8 (
       .clk_i,
@@ -289,13 +289,13 @@ module recovery_handler
 
       // Allow data flow between FIFO and width converter only if the downstream
       // port is ready.
-      .sink_valid_i   (tti_tx_data_queue_rvalid_q & tti_tx_data_queue_rready),
-      .sink_ready_o   (tti_tx_data_queue_rready_q),
-      .sink_data_i    (tti_tx_data_queue_rdata_q),
+      .sink_valid_i(tti_tx_data_queue_rvalid_q & tti_tx_data_queue_rready),
+      .sink_ready_o(tti_tx_data_queue_rready_q),
+      .sink_data_i (tti_tx_data_queue_rdata_q),
 
-      .source_valid_o  (tti_tx_data_queue_rvalid),
-      .source_ready_i  (tti_tx_data_queue_rready),
-      .source_data_o   (tti_tx_data_queue_rdata)
+      .source_valid_o(tti_tx_data_queue_rvalid),
+      .source_ready_i(tti_tx_data_queue_rready),
+      .source_data_o (tti_tx_data_queue_rdata)
   );
 
   // Data queues
@@ -474,7 +474,7 @@ module recovery_handler
     end
 
     tti_rx_desc_queue_wdata                   = ctl_tti_rx_desc_queue_wdata_i; // Don't mux data, disabling valid is enough
-    recv_tti_rx_desc_data                     = ctl_tti_rx_desc_queue_wdata_i;
+    recv_tti_rx_desc_data = ctl_tti_rx_desc_queue_wdata_i;
   end
 
   // Threshold
@@ -534,7 +534,7 @@ module recovery_handler
     end
 
     tti_rx_data_queue_wdata                   = ctl_tti_rx_data_queue_wdata_i; // Don't mux data, disabling valid is enough
-    recv_tti_rx_data_data                     = ctl_tti_rx_data_queue_wdata_i;
+    recv_tti_rx_data_data = ctl_tti_rx_data_queue_wdata_i;
   end
 
   // Thresholds
@@ -646,8 +646,8 @@ module recovery_handler
     end
 
     // No need to mux data
-    csr_tti_rx_data_queue_data_o    = tti_rx_data_queue_data;
-    exec_tti_rx_data_data           = tti_rx_data_queue_data;
+    csr_tti_rx_data_queue_data_o = tti_rx_data_queue_data;
+    exec_tti_rx_data_data        = tti_rx_data_queue_data;
   end
 
   // Threshold
@@ -683,80 +683,80 @@ module recovery_handler
 
   // ....................................................
 
-  logic         cmd_valid;
-  logic         cmd_is_rd;
-  logic [ 7:0]  cmd_cmd;
-  logic [15:0]  cmd_len;
-  logic         cmd_error;
-  logic         cmd_done;
+  logic        cmd_valid;
+  logic        cmd_is_rd;
+  logic [ 7:0] cmd_cmd;
+  logic [15:0] cmd_len;
+  logic        cmd_error;
+  logic        cmd_done;
 
   // RX PEC calculator
-  logic [7:0] rx_pec_crc;
-  logic       rx_pec_enable;
-  logic       rx_pec_clear;
+  logic [ 7:0] rx_pec_crc;
+  logic        rx_pec_enable;
+  logic        rx_pec_clear;
 
   recovery_pec xrecovery_rx_pec (
-    .clk_i,
-    .rst_ni     (rst_ni & !rx_pec_clear & recovery_enable),
+      .clk_i,
+      .rst_ni(rst_ni & !rx_pec_clear & recovery_enable),
 
-    .dat_i      (tti_rx_data_queue_wdata),
-    .valid_i    (rx_pec_enable),
-    .crc_o      (rx_pec_crc)
+      .dat_i  (tti_rx_data_queue_wdata),
+      .valid_i(rx_pec_enable),
+      .crc_o  (rx_pec_crc)
   );
 
   // Recovery packet reception handler
   recovery_receiver xrecovery_receiver (
-    .clk_i,
-    .rst_ni                 (rst_ni & recovery_enable),
+      .clk_i,
+      .rst_ni(rst_ni & recovery_enable),
 
-    .desc_valid_i           (recv_tti_rx_desc_valid),
-    .desc_ready_o           (recv_tti_rx_desc_ready),
-    .desc_data_i            (recv_tti_rx_desc_data),
+      .desc_valid_i(recv_tti_rx_desc_valid),
+      .desc_ready_o(recv_tti_rx_desc_ready),
+      .desc_data_i (recv_tti_rx_desc_data),
 
-    .data_valid_i           (recv_tti_rx_data_valid),
-    .data_ready_o           (recv_tti_rx_data_ready),
-    .data_data_i            (recv_tti_rx_data_data),
+      .data_valid_i(recv_tti_rx_data_valid),
+      .data_ready_o(recv_tti_rx_data_ready),
+      .data_data_i (recv_tti_rx_data_data),
 
-    .data_queue_select_o    (recv_tti_rx_data_queue_select),
-    .data_queue_flow_i      (tti_rx_data_queue_wvalid & tti_rx_data_queue_wready),
+      .data_queue_select_o(recv_tti_rx_data_queue_select),
+      .data_queue_flow_i  (tti_rx_data_queue_wvalid & tti_rx_data_queue_wready),
 
-    .bus_start_i            (ctl_bus_start_i),
-    .bus_stop_i             (ctl_bus_stop_i),
+      .bus_start_i(ctl_bus_start_i),
+      .bus_stop_i (ctl_bus_stop_i),
 
-    .pec_crc_i              (rx_pec_crc),
-    .pec_enable_o           (rx_pec_enable),
-    .pec_clear_o            (rx_pec_clear),
+      .pec_crc_i   (rx_pec_crc),
+      .pec_enable_o(rx_pec_enable),
+      .pec_clear_o (rx_pec_clear),
 
-    .cmd_valid_o            (cmd_valid),
-    .cmd_is_rd_o            (cmd_is_rd),
-    .cmd_cmd_o              (cmd_cmd),
-    .cmd_len_o              (cmd_len),
-    .cmd_error_o            (cmd_error),
-    .cmd_done_i             (cmd_done)
+      .cmd_valid_o(cmd_valid),
+      .cmd_is_rd_o(cmd_is_rd),
+      .cmd_cmd_o  (cmd_cmd),
+      .cmd_len_o  (cmd_len),
+      .cmd_error_o(cmd_error),
+      .cmd_done_i (cmd_done)
   );
 
   // ....................................................
 
   // Command executor
   recovery_executor xrecovery_executor (
-    .clk_i,
-    .rst_ni                 (rst_ni & recovery_enable),
+      .clk_i,
+      .rst_ni(rst_ni & recovery_enable),
 
-    .cmd_valid_i            (cmd_valid),
-    .cmd_is_rd_i            (cmd_is_rd),
-    .cmd_cmd_i              (cmd_cmd),
-    .cmd_len_i              (cmd_len),
-    .cmd_error_i            (cmd_error),
-    .cmd_done_o             (cmd_done),
+      .cmd_valid_i(cmd_valid),
+      .cmd_is_rd_i(cmd_is_rd),
+      .cmd_cmd_i  (cmd_cmd),
+      .cmd_len_i  (cmd_len),
+      .cmd_error_i(cmd_error),
+      .cmd_done_o (cmd_done),
 
-    .rx_req_o               (exec_tti_rx_data_req),
-    .rx_ack_i               (exec_tti_rx_data_ack),
-    .rx_data_i              (exec_tti_rx_data_data),
-    .rx_queue_sel_o         (exec_tti_rx_queue_sel),
-    .rx_queue_clr_o         (exec_tti_rx_queue_clr),
+      .rx_req_o      (exec_tti_rx_data_req),
+      .rx_ack_i      (exec_tti_rx_data_ack),
+      .rx_data_i     (exec_tti_rx_data_data),
+      .rx_queue_sel_o(exec_tti_rx_queue_sel),
+      .rx_queue_clr_o(exec_tti_rx_queue_clr),
 
-    .hwif_rec_i             (hwif_rec_i),
-    .hwif_rec_o             (hwif_rec_o)
+      .hwif_rec_i(hwif_rec_i),
+      .hwif_rec_o(hwif_rec_o)
   );
 
 endmodule
