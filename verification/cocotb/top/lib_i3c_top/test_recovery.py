@@ -164,3 +164,29 @@ async def test_recovery_write_pec(dut):
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0x04  # PEC error
     assert data == 0xDEADBEEF  # From previous write
+
+
+@cocotb.test()
+async def test_recovery_read(dut):
+    """
+    Tests CSR read(s) using the recovery protocol
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # Write data to PROT_CAP CSR
+    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr, int2dword(0x04030201), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr, int2dword(0x08070605), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr, int2dword(0x0C0B0A09), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr, int2dword(0xFF0F0E0D), 4)
+
+    # Wait
+    await Timer(1, "us")
+
+    # Read the PROT_CAP register
+    await recovery.command_read(0x5A, I3cRecoveryInterface.Command.PROT_CAP)
+
+    # Wait
+    await Timer(2, "us")
+
