@@ -541,18 +541,27 @@ module recovery_handler
 
   // ......................
 
+  logic       send_tti_tx_data_valid;
+  logic       send_tti_tx_data_ready;
+  logic [7:0] send_tti_tx_data_data;
+
+  logic       send_tti_tx_data_queue_select;
+  logic       send_tti_tx_start_trig;
+
   // TX data queue
   always_comb begin : T2MUX
-    if (recovery_enable) begin
+    if (recovery_enable & send_tti_tx_data_queue_select) begin
       tti_tx_data_queue_rready                = '0;
+      send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
       ctl_tti_tx_data_queue_full_o            = '0;
       ctl_tti_tx_data_queue_empty_o           = '0;
-      ctl_tti_tx_data_queue_rvalid_o          = '0;
-      ctl_tti_tx_data_queue_rdata_o           = '0;
-      ctl_tti_tx_data_queue_start_thld_trig_o = '0;
+      ctl_tti_tx_data_queue_rvalid_o          = send_tti_tx_data_valid;
+      ctl_tti_tx_data_queue_rdata_o           = send_tti_tx_data_data;
+      ctl_tti_tx_data_queue_start_thld_trig_o = send_tti_tx_start_trig;
       ctl_tti_tx_data_queue_ready_thld_trig_o = '0;
     end else begin
       tti_tx_data_queue_rready                = ctl_tti_tx_data_queue_rready_i;
+      send_tti_tx_data_ready                  = '0;
       ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
       ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
       ctl_tti_tx_data_queue_rvalid_o          = tti_tx_data_queue_rvalid;
@@ -686,7 +695,7 @@ module recovery_handler
   logic [ 7:0] cmd_cmd;
   logic [15:0] cmd_len;
   logic        cmd_error;
-  logic        cmd_done;
+  logic        cmd_done; // TODO: Consider replacing this with rx_cmd_ready and making the executor not ready rather than pulsing done.
 
   // RX PEC calculator
   logic [ 7:0] rx_pec_crc;
@@ -735,6 +744,59 @@ module recovery_handler
 
   // ....................................................
 
+  logic        res_valid;
+  logic        res_ready;
+  logic [15:0] res_len;
+
+  logic        res_dvalid;
+  logic        res_dready;
+  logic [ 7:0] res_data;
+
+  // TX PEC calculator
+  logic [ 7:0] tx_pec_crc;
+  logic        tx_pec_enable;
+  logic        tx_pec_clear;
+
+  recovery_pec xrecovery_tx_pec (
+      .clk_i,
+      .rst_ni(rst_ni & !tx_pec_clear & recovery_enable),
+
+      .dat_i  (tti_tx_data_queue_rdata),
+      .valid_i(tx_pec_enable),
+      .crc_o  (tx_pec_crc)
+  );
+
+  // Recovery packet transmitter
+  recovery_transmitter xrecovery_transmitter (
+      .clk_i,
+      .rst_ni(rst_ni & recovery_enable),
+
+      .desc_valid_o(send_tti_tx_desc_valid),
+      .desc_ready_i(send_tti_tx_desc_ready),
+      .desc_data_o (send_tti_tx_desc_data),
+
+      .data_valid_o(send_tti_tx_data_valid),
+      .data_ready_i(send_tti_tx_data_ready),
+      .data_data_o (send_tti_tx_data_data),
+
+      .data_queue_select_o(send_tti_tx_data_queue_select),
+      .start_trig_o(send_tti_tx_start_trig),
+
+      .pec_crc_i   (tx_pec_crc),
+      .pec_enable_o(tx_pec_enable),
+      .pec_clear_o (tx_pec_clear),
+
+      .res_valid_i  (res_valid),
+      .res_ready_o  (res_ready),
+      .res_len_i    (res_len),
+
+      .res_dvalid_i (res_dvalid),
+      .res_dready_o (res_dready),
+      .res_data_i   (res_data)
+  );
+
+  // ....................................................
+
   // Command executor
   recovery_executor xrecovery_executor (
       .clk_i,
@@ -746,6 +808,14 @@ module recovery_handler
       .cmd_len_i  (cmd_len),
       .cmd_error_i(cmd_error),
       .cmd_done_o (cmd_done),
+
+      .res_valid_o  (res_valid),
+      .res_ready_i  (res_ready),
+      .res_len_o    (res_len),
+
+      .res_dvalid_o (res_dvalid),
+      .res_dready_i (res_dready),
+      .res_data_o   (res_data),
 
       .rx_req_o      (exec_tti_rx_data_req),
       .rx_ack_i      (exec_tti_rx_data_ack),

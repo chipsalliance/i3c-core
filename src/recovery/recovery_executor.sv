@@ -21,6 +21,15 @@ module recovery_executor
     input  logic        cmd_error_i,
     output logic        cmd_done_o,
 
+    // Response interface
+    output logic        res_valid_o,
+    input  logic        res_ready_i,
+    output logic [15:0] res_len_o,
+
+    output logic        res_dvalid_o,
+    input  logic        res_dready_i,
+    output logic [ 7:0] res_data_o,
+
     // RX data interface
     output logic        rx_req_o,
     input  logic        rx_ack_i,
@@ -63,10 +72,10 @@ module recovery_executor
 
   // Target CSR selector
   typedef enum logic [7:0] {
-    CSR_PROC_CAP_0             = 'd0,
-    CSR_PROC_CAP_1             = 'd1,
-    CSR_PROC_CAP_2             = 'd2,
-    CSR_PROC_CAP_3             = 'd3,
+    CSR_PROT_CAP_0             = 'd0,
+    CSR_PROT_CAP_1             = 'd1,
+    CSR_PROT_CAP_2             = 'd2,
+    CSR_PROT_CAP_3             = 'd3,
     CSR_DEVICE_ID_0            = 'd4,
     CSR_DEVICE_ID_1            = 'd5,
     CSR_DEVICE_ID_2            = 'd6,
@@ -94,19 +103,24 @@ module recovery_executor
 
   // Internal signals
   logic [15:0] dcnt;
+  logic [ 1:0] bcnt;
 
   csr_e        csr_sel;
+  logic [31:0] csr_data;
+  logic [15:0] csr_length;
   logic        csr_writeable;
 
   // ....................................................
 
   // FSM
   typedef enum logic [7:0] {
-    Idle     = 'h00,
-    CsrWrite = 'h10,
-    CsrRead  = 'h20,
-    Done     = 'hD0,
-    Error    = 'hE0
+    Idle        = 'h00,
+    CsrWrite    = 'h10,
+    CsrRead     = 'h20,
+    CsrReadLen  = 'h21,
+    CsrReadData = 'h22,
+    Done        = 'hD0,
+    Error       = 'hE0
   } state_e;
 
   state_e state_d, state_q;
@@ -126,11 +140,28 @@ module recovery_executor
         else state_d = CsrRead;
       end
 
-      CsrWrite: if (rx_ack_i & (dcnt == 1)) state_d = Done;
-      CsrRead:  state_d = Done;
-      Error:    state_d = Done;
-      Done:     state_d = Idle;
-      default:  state_d = Idle;
+      CsrWrite:
+        if (rx_ack_i & (dcnt == 1))
+          state_d = Done;
+
+      CsrRead:
+        if (res_ready_i)
+          state_d = CsrReadLen;
+
+      CsrReadLen:
+        state_d = CsrReadData;
+
+      CsrReadData:
+        if (res_dvalid_o & res_ready_i & (dcnt == 0))
+          state_d = Done;
+
+      Error:
+        state_d = Done;
+      Done:
+        state_d = Idle;
+
+      default:
+        state_d = Idle;
     endcase
 
   // ....................................................
@@ -139,10 +170,28 @@ module recovery_executor
   always_ff @(posedge clk_i)
     unique case (state_q)
       Idle:
-      if (cmd_valid_i)
-        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
-      CsrWrite: if (rx_ack_i) dcnt <= dcnt - 1;
+        if (cmd_valid_i)
+          dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
+      CsrWrite:
+        if (rx_ack_i)
+          dcnt <= dcnt - 1;
+      CsrReadLen:
+        dcnt <= csr_length;
+      CsrReadData:
+        if (res_dvalid_o & res_dready_i)
+          dcnt <= dcnt - 1;
       default: dcnt <= dcnt;
+    endcase
+
+  // Byte counter
+  always_ff @(posedge clk_i)
+    unique case (state_q)
+      Idle:
+        bcnt <= '0;
+      CsrReadData:
+        if (res_dvalid_o & res_dready_i)
+          bcnt <= bcnt + 1;
+      default: bcnt <= bcnt;
     endcase
 
   // Target / source CSR
@@ -151,7 +200,7 @@ module recovery_executor
       Idle:
       if (cmd_valid_i)
         unique case (cmd_cmd_i)
-          CMD_PROT_CAP:             csr_sel <= CSR_PROC_CAP_0;
+          CMD_PROT_CAP:             csr_sel <= CSR_PROT_CAP_0;
           CMD_DEVICE_ID:            csr_sel <= CSR_DEVICE_ID_0;
           CMD_DEVICE_STATUS:        csr_sel <= CSR_DEVICE_STATUS_0;
           CMD_DEVICE_RESET:         csr_sel <= CSR_DEVICE_RESET;
@@ -167,6 +216,7 @@ module recovery_executor
       // FIXME: This will overflow resulting on overwriting unwanted CSRs if
       // a malicious packet with length > CSR length is received
       CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 1);
+      CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 1);
       default:  csr_sel <= csr_sel;
     endcase
 
@@ -179,6 +229,54 @@ module recovery_executor
       CSR_INDIRECT_FIFO_CTRL_1: csr_writeable = 1'b1;
       default:                  csr_writeable = '0;
     endcase
+
+  // CSR length (in bytes)
+  always_comb
+    unique case (state_q)
+      Idle:
+      if (cmd_valid_i)
+        unique case (cmd_cmd_i)
+          CMD_PROT_CAP:             csr_length <= 'd15;
+          CMD_DEVICE_ID:            csr_length <= 'd24;
+          CMD_DEVICE_STATUS:        csr_length <= 'd8;
+          CMD_DEVICE_RESET:         csr_length <= 'd3;
+          CMD_RECOVERY_CTRL:        csr_length <= 'd3;
+          CMD_RECOVERY_STATUS:      csr_length <= 'd2;
+          CMD_HW_STATUS:            csr_length <= 'd4;
+          CMD_INDIRECT_FIFO_CTRL:   csr_length <= 'd6;
+          CMD_INDIRECT_FIFO_STATUS: csr_length <= 'd20;
+        endcase
+    endcase
+
+  // CSR read data mux
+  always_comb unique case(csr_sel)
+    CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
+    CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
+    CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
+    CSR_PROT_CAP_3:             csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_0:            csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
+    CSR_DEVICE_ID_1:            csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
+    CSR_DEVICE_ID_2:            csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
+    CSR_DEVICE_ID_3:            csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_4:            csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
+    CSR_DEVICE_ID_5:            csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
+    CSR_DEVICE_ID_6:            csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_0:        csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_1:        csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
+    CSR_DEVICE_RESET:           csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
+    CSR_RECOVERY_CTRL:          csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
+    CSR_RECOVERY_STATUS:        csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
+    CSR_HW_STATUS:              csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
+
+    CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+  endcase
 
   // ....................................................
 
@@ -230,10 +328,10 @@ module recovery_executor
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we      = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we      = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we           = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
+    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we          = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
   end
 
   always_comb begin
@@ -245,7 +343,42 @@ module recovery_executor
 
   // ....................................................
 
-  // Response
+  // Command response
   assign cmd_done_o = (state_q == Done);
+
+  // ....................................................
+
+  // Transmitt valid
+  always_ff @(posedge clk_i)
+    unique case (state_q)
+      CsrReadLen:
+        if (res_ready_i)
+            res_valid_o <= 1'd1;
+      default: res_valid_o <= '0;
+    endcase
+
+  // Transmitt length
+  always_ff @(posedge clk_i)
+    unique case (state_q)
+      CsrReadLen:
+        if (res_ready_i)
+          res_len_o <= csr_length;
+    endcase
+
+  // Transmitt data valid
+  always_ff @(posedge clk_i)
+    unique case (state_q)
+      CsrReadData: res_dvalid_o <= !(res_ready_i & (dcnt == 0));
+      default:     res_dvalid_o <= '0;
+    endcase
+
+  // Transmitt data
+  always_ff @(posedge clk_i)
+    unique case (bcnt)
+      'd0: res_data_o <= csr_data[ 7: 0];
+      'd1: res_data_o <= csr_data[15: 8];
+      'd2: res_data_o <= csr_data[23:16];
+      'd3: res_data_o <= csr_data[31:24];
+    endcase
 
 endmodule
