@@ -355,6 +355,7 @@ module i3c_target_fsm
     // Read the CCC byte
     CCCRead = 'd26,
     AcquireRStart = 'd27,
+    AcquireTBit = 5'd28,
 
     // IBI start
     AcquireIbiStart = 'd30,
@@ -687,6 +688,38 @@ module i3c_target_fsm
         xfer_for_us_d = 1'b0;
       end
 
+      // RsvdByteAckWait: pause before acknowledging
+      RsvdByteAckWait: begin
+        target_idle_o = 1'b0;
+        if (scl_i) begin
+          // The controller is going too fast. Abandon the transaction.
+          // Nothing is recorded for this case.
+          nack_transaction_d = 1'b1;
+        end
+      end
+      // RsvdByteAckSetup: target pulls SDA low while SCL is low
+      RsvdByteAckSetup: begin
+        target_idle_o = 1'b0;
+        sda_d = 1'b0;
+        target_transmitting_o = 1'b1;
+      end
+      // RsvdByteAckPulse: target pulls SDA low while SCL is released
+      RsvdByteAckPulse: begin
+        target_idle_o = 1'b0;
+        sda_d = 1'b0;
+        target_transmitting_o = 1'b1;
+      end
+      // RsvdByteAckHold: target pulls SDA low while SCL is pulled low
+      RsvdByteAckHold: begin
+        target_idle_o = 1'b0;
+        sda_d = 1'b0;
+        target_transmitting_o = 1'b1;
+      end
+
+      CCCRead: begin
+        target_idle_o = 1'b1;
+      end
+
       // default
       default: begin
         target_idle_o = 1'b1;
@@ -785,19 +818,19 @@ module i3c_target_fsm
         // bit_ack goes high the cycle after scl_i goes low, after the 8th bit
         // was captured.
         if (bit_ack) begin
-          if (is_any_addr_match) begin  // Static, Dynamic or Reserved
+          if (is_dyn_addr_match || is_sta_addr_match) begin  // Static, Dynamic or Reserved
             // We can follow old flow
             state_d = AddrAckWait;
             // Wait for hold time to avoid interfering with the controller.
             load_tcount = 1'b1;
             tcount_sel = tHoldData;
+          end else if (is_i3c_rsvd_addr_match) begin
+            state_d = RsvdByteAckWait;
+            load_tcount = 1'b1;
+            tcount_sel = tHoldData;
           end else begin  // no matching address
             // This means this transfer is not meant for us.
             state_d = WaitForStop;
-          end
-          // After ACK we go to:
-          if (is_i3c_rsvd_addr_match) begin
-            post_ack_decision_d = PostAckSymbolDetect;
           end
         end
       end
@@ -844,8 +877,6 @@ module i3c_target_fsm
             // best for software to ensure there is always space in the ACQ
             // FIFO.
             state_d = WaitForStop;
-          end else if (post_ack_decision_q == PostAckSymbolDetect) begin
-            state_d = PostAckSymbolDetect;
           end else if (rw_bit_q) begin
             // Not NACKing automatically, not stretching, and it's a read.
             state_d = TransmitWait;
@@ -1095,6 +1126,51 @@ module i3c_target_fsm
           state_d = AcquireRStart;
         end
       end
+      // RsvdByteAckWait: pause for hold time before acknowledging
+      RsvdByteAckWait: begin
+        if (scl_i) begin
+          // The controller is going too fast. Abandon the transaction.
+          state_d = WaitForStop;
+        end else if (tcount_q == 20'd1) begin
+          if (nack_transaction_q) begin
+            state_d = WaitForStop;
+          end else begin
+            state_d = RsvdByteAckSetup;
+          end
+        end
+      end
+      // RsvdByteAckSetup: target pulls SDA low while SCL is low
+      RsvdByteAckSetup: begin
+        if (scl_i) state_d = RsvdByteAckPulse;
+      end
+      // RsvdByteAckPulse: target pulls SDA low while SCL is released
+      RsvdByteAckPulse: begin
+        if (!scl_i) begin
+          state_d = RsvdByteAckHold;
+          load_tcount = 1'b1;
+          tcount_sel = tHoldData;
+        end
+      end
+      // RsvdByteAckHold: target pulls SDA low while SCL is pulled low
+      RsvdByteAckHold: begin
+        if (tcount_q == 20'd1) begin
+          // TODO: detect potential repeated start after this ACK
+          state_d = CCCRead;
+        end
+      end
+
+      CCCRead: begin
+        if (bit_ack) begin
+          state_d = AcquireTBit;
+          load_tcount = 1'b1;
+          tcount_sel = tHoldData;
+        end
+      end
+
+      AcquireTBit: begin
+
+      end
+
       // AcquireRStart: hold for the end of the Repeated Start condition
       AcquireRStart: begin
         post_ack_decision_d = Idle;

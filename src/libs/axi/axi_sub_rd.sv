@@ -205,7 +205,7 @@ module axi_sub_rd import axi_pkg::*; #(
     always_comb begin
         txn_xfer_ctx[0].id   = txn_ctx.id;
         txn_xfer_ctx[0].user = txn_ctx.user;
-        $display("@ %0d, Setting txn_xfer_ctx[0].last, txn_cnt = %0d", $time, txn_cnt);
+        //$display("@ %0d, Setting txn_xfer_ctx[0].last, txn_cnt = %0d", $time, txn_cnt);
         txn_xfer_ctx[0].last = txn_cnt == 0;
         txn_xfer_ctx[0].resp = (EX_EN && txn_ctx.lock) ? AXI_RESP_EXOKAY : AXI_RESP_OKAY;
     end
