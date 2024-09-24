@@ -1113,7 +1113,7 @@ module i3c_target_fsm
           // TODO: This assumes a Private Write, add logic for handling Private Read:
           // if ( rnw ) // Transmit* or Acquire*
           // This is next data byte
-          state_d = AcquireByte;
+          state_d = post_ack_decision_q;
         end
         if (sda_posedge) begin
           // This is a STOP
@@ -1154,8 +1154,10 @@ module i3c_target_fsm
       // RsvdByteAckHold: target pulls SDA low while SCL is pulled low
       RsvdByteAckHold: begin
         if (tcount_q == 20'd1) begin
-          // TODO: detect potential repeated start after this ACK
-          state_d = CCCRead;
+          // After this ACK we get either repeated start or CCC,
+          // PostAckSymbolDetect takes care of choosing the correct path
+          state_d = PostAckSymbolDetect;
+          post_ack_decision_d = CCCRead;
         end
       end
 
@@ -1168,8 +1170,13 @@ module i3c_target_fsm
       end
 
       AcquireTBit: begin
-
+        // TODO: this assumes lack of optional write data for the CCC,
+        // set post_ack_decision_d appropriately to add support for it
+        state_d = PostAckSymbolDetect;
+        post_ack_decision_d = Idle;
       end
+
+
 
       // AcquireRStart: hold for the end of the Repeated Start condition
       AcquireRStart: begin

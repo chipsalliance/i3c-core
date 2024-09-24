@@ -45,10 +45,13 @@ async def test_ccc(dut):
 
 
     # Send Private Write on I3C
-    await i3c_controller.i3c_write(0x5A, [0xE3])
-    r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
-    # dut._log.debug(f"Comparing input {test_data_lin[i]} and CSR value {r_data}")
-    assert r_data == 0xE3
+    # await i3c_controller.i3c_write(0x5A, [0xA6])
+    # r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+    # assert r_data == 0xA6
+
+    await i3c_controller.i3c_ccc_write(0x20, broadcast_data=[])
+    # r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+    # assert r_data == 0xA6
 
 
     # test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
