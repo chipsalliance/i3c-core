@@ -96,7 +96,10 @@ module controller_standby
     input logic [19:0] t_f_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
-    input logic [19:0] t_bus_available_i
+    input logic [19:0] t_bus_available_i,
+
+    output logic [7:0] rst_action_o,
+    output logic       rst_action_valid_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -288,7 +291,9 @@ module controller_standby
       .t_f_i(t_f_i),
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
-      .t_bus_available_i(t_bus_available_i)
+      .t_bus_available_i(t_bus_available_i),
+      .rst_action_o(rst_action_o),
+      .rst_action_valid_o(rst_action_valid_o)
   );
 
 endmodule

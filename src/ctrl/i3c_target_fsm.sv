@@ -109,7 +109,10 @@ module i3c_target_fsm
     output logic event_unexp_stop_o,  // target received an unexpected stop
     output logic event_tx_arbitration_lost_o,  // Arbitration was lost during a read transfer
     output logic event_tx_bus_timeout_o,  // Bus timed out during a read transfer
-    output logic event_read_cmd_received_o  // A read awaits confirmation for TX FIFO release
+    output logic event_read_cmd_received_o,  // A read awaits confirmation for TX FIFO release
+
+    output logic [7:0] rst_action_o,
+    output logic       rst_action_valid_o
 );
 
   // I2C bus clock timing variables
@@ -148,6 +151,10 @@ module i3c_target_fsm
   logic       rw_bit;  // indicates host wants to read (1) or write (0)
   logic       host_ack;  // indicates host acknowledged transmitted byte
 
+  logic [7:0] command_code; // CCC byte
+  logic       command_code_valid;
+  logic       is_in_hdr_mode;
+
   // TODO: Set transfer type based on the discovered state
   assign transfer_type_o = 0;
 
@@ -163,6 +170,31 @@ module i3c_target_fsm
   } tcount_sel_e;
 
   tcount_sel_e tcount_sel;
+
+  ccc ccc(
+    .clk_i(clk_i),
+    .rst_ni(rst_ni),
+
+    // Latch CCC data
+    .command_code_i(command_code),
+    .command_code_valid_i(command_code_valid),
+
+    .defining_byte_i(0),
+    .defining_byte_valid_i(0),
+
+    //TODO: Establish correct size
+    .command_data_i(0),
+    .command_data_valid_i(0),
+
+    .queue_size_reg_i(0),
+    .response_byte_o(),
+    .response_valid_o(),
+
+    .is_in_hdr_mode_o(is_in_hdr_mode),
+
+    .rst_action_o(rst_action_o),
+    .rst_action_valid_o(rst_action_valid_o)
+  );
 
   always_comb begin : counter_functions
     tcount_d = tcount_q;
@@ -718,6 +750,11 @@ module i3c_target_fsm
 
       CCCRead: begin
         target_idle_o = 1'b1;
+        if (tcount_q == 20'd1) begin
+          command_code_valid = 1'b1;
+          command_code = input_byte;
+        end
+
       end
 
       // default

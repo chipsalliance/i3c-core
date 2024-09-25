@@ -442,6 +442,8 @@ module i3c
 
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
+  logic [7:0] rst_action;
+  logic       rst_action_valid;
 
   controller #(
       .DatAw(DatAw),
@@ -586,7 +588,10 @@ module i3c
       .t_f_i(t_f),
       .t_bus_free_i(t_bus_free),
       .t_bus_idle_i(t_bus_idle),
-      .t_bus_available_i(t_bus_available)
+      .t_bus_available_i(t_bus_available),
+
+      .rst_action_o(rst_action),
+      .rst_action_valid_o(rst_action_valid)
   );
 
   // HCI
@@ -726,7 +731,10 @@ module i3c
       .t_f_o(t_f),
       .t_bus_free_o(t_bus_free),
       .t_bus_idle_o(t_bus_idle),
-      .t_bus_available_o(t_bus_available)
+      .t_bus_available_o(t_bus_available),
+
+      .rst_action_i(rst_action),
+      .rst_action_valid_i(rst_action_valid)
   );
 
   // TTI RX Descriptor queue

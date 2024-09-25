@@ -153,7 +153,10 @@ module hci
     output logic [19:0] t_f_o,
     output logic [19:0] t_bus_free_o,
     output logic [19:0] t_bus_idle_o,
-    output logic [19:0] t_bus_available_o
+    output logic [19:0] t_bus_available_o,
+
+    input logic [7:0] rst_action_i,
+    input logic       rst_action_valid_i
 );
   I3CCSR_pkg::I3CCSR__in_t  hwif_in;
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
@@ -323,6 +326,11 @@ module hci
 
     hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = tti_ibi_queue_wr_ack;
   end : wire_hwif_tti
+
+  always_comb begin : wire_hwif_ccc
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_i;
+    // hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next = rst_action_valid_i;
+  end : wire_hwif_ccc
 
   I3CCSR i3c_csr (
       .clk(clk_i),

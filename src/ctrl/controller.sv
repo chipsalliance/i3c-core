@@ -176,7 +176,10 @@ module controller
     input logic [19:0] t_f_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
-    input logic [19:0] t_bus_available_i
+    input logic [19:0] t_bus_available_i,
+
+    output logic [7:0] rst_action_o,
+    output logic       rst_action_valid_o
 );
 
   // 4:1 multiplexer for signals between PHY and controllers.
@@ -332,7 +335,9 @@ module controller
       .t_f_i(t_f_i),
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
-      .t_bus_available_i(t_bus_available_i)
+      .t_bus_available_i(t_bus_available_i),
+      .rst_action_o(rst_action_o),
+      .rst_action_valid_o(rst_action_valid_o)
   );
 
 endmodule

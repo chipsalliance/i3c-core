@@ -25,8 +25,8 @@ module ccc
 
     output logic is_in_hdr_mode_o,
 
-    input I3CCSR_pkg::I3CCSR__in_t hwif_in,
-    output I3CCSR_pkg::I3CCSR__out_t hwif_out
+    output logic [7:0] rst_action_o,
+    output logic       rst_action_valid_o
 );
 
   // Latch CCC data
@@ -55,9 +55,6 @@ module ccc
   logic [7:0] ibi_status_size;
   logic [7:0] cr_queue_size;
 
-  logic [7:0] rstact_rst_action_next;
-  logic       rstact_rst_action_valid;
-
   assign tx_data_buffer_size = queue_size_reg_i[31:24];
   assign rx_data_buffer_size = queue_size_reg_i[23:16];
   assign ibi_status_size = queue_size_reg_i[15:8];
@@ -70,8 +67,8 @@ module ccc
     response_valid_o = '0;
     response_byte_o  = '0;
     is_in_hdr_mode_o = '0;
-    rstact_rst_action_next = '0;
-    rstact_rst_action_valid = '0;
+    rst_action_o = '0;
+    rst_action_valid_o = '0;
     unique case (command_code)
       // Idle: Wait for command appearance in the Command Queue
       `I3C_DIRECT_GETMRL: begin
@@ -89,8 +86,8 @@ module ccc
         unique case (defining_byte)
           `I3C_RSTACT_NO_RESET, `I3C_RSTACT_PERIPHERAL_RESET: begin
             if (defining_byte_valid) begin
-              rstact_rst_action_next = defining_byte;
-              rstact_rst_action_valid = '1;
+              rst_action_o = defining_byte;
+              rst_action_valid_o = '1;
             end
           end
         endcase
@@ -98,11 +95,4 @@ module ccc
       default: ;
     endcase
   end
-
-  always_ff @(posedge clk_i) begin
-    if (rstact_rst_action_valid) begin
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next <= rstact_rst_action_next;
-    end
-  end
-
 endmodule
