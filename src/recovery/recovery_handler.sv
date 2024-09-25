@@ -159,6 +159,7 @@ module recovery_handler
 
   // RX descriptor
   logic                          tti_rx_desc_queue_full;
+  logic                          unused_tti_rx_desc_start_thld_trig;
   logic                          tti_rx_desc_queue_empty;
   logic                          tti_rx_desc_queue_wvalid;
   logic                          tti_rx_desc_queue_wready;
