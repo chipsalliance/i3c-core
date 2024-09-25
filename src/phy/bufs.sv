@@ -14,7 +14,7 @@
 module bufs (
     input logic phy_data_i,
     input logic sel_od_pp_i,
-    inout logic phy_data_io
+    inout wire  phy_data_io
 );
 
   logic phy_data_i_z;

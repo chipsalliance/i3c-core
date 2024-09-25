@@ -24,8 +24,8 @@ module i3c_io (
     input logic sel_od_pp_i,
 
     // Bus {SCL, SDA}
-    inout logic scl_io,
-    inout logic sda_io
+    inout wire scl_io,
+    inout wire sda_io
 );
 
   wire scl_io_int;

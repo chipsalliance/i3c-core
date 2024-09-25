@@ -11,7 +11,7 @@
 */
 module buf_od (
     input logic drive_low,
-    inout logic buf_od_o
+    inout wire  buf_od_o
 );
 
   assign buf_od_o = drive_low ? 1'b0 : 1'bz;

@@ -102,8 +102,8 @@ module i3c_wrapper #(
     output logic sel_od_pp_o
 `else
     // I3C bus IO
-    inout  logic i3c_scl_io,
-    inout  logic i3c_sda_io
+    inout  wire i3c_scl_io,
+    inout  wire i3c_sda_io
 `endif
 
     // TODO: Add interrupts
