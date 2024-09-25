@@ -241,7 +241,8 @@ module controller_standby_i3c
       .event_tx_bus_timeout_o(i3c_event_tx_bus_timeout_o),
       .event_read_cmd_received_o(i3c_event_read_cmd_received_o),
       .rst_action_o(rst_action_o),
-      .rst_action_valid_o(rst_action_valid_o)
+      .rst_action_valid_o(rst_action_valid_o),
+      .is_in_hdr_mode_o(is_in_hdr_mode)
   );
 
   bus_monitor xbus_monitor (

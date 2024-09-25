@@ -112,7 +112,8 @@ module i3c_target_fsm
     output logic event_read_cmd_received_o,  // A read awaits confirmation for TX FIFO release
 
     output logic [7:0] rst_action_o,
-    output logic       rst_action_valid_o
+    output logic       rst_action_valid_o,
+    output logic       is_in_hdr_mode_o
 );
 
   // I2C bus clock timing variables
@@ -153,7 +154,6 @@ module i3c_target_fsm
 
   logic [7:0] command_code; // CCC byte
   logic       command_code_valid;
-  logic       is_in_hdr_mode;
 
   // TODO: Set transfer type based on the discovered state
   assign transfer_type_o = 0;
@@ -190,7 +190,7 @@ module i3c_target_fsm
     .response_byte_o(),
     .response_valid_o(),
 
-    .is_in_hdr_mode_o(is_in_hdr_mode),
+    .is_in_hdr_mode_o(is_in_hdr_mode_o),
 
     .rst_action_o(rst_action_o),
     .rst_action_valid_o(rst_action_valid_o)
@@ -750,7 +750,7 @@ module i3c_target_fsm
 
       CCCRead: begin
         target_idle_o = 1'b1;
-        if (tcount_q == 20'd1) begin
+        if (bit_ack) begin
           command_code_valid = 1'b1;
           command_code = input_byte;
         end
