@@ -242,7 +242,8 @@ module controller_standby_i3c
       .event_read_cmd_received_o(i3c_event_read_cmd_received_o),
       .rst_action_o(rst_action_o),
       .rst_action_valid_o(rst_action_valid_o),
-      .is_in_hdr_mode_o(is_in_hdr_mode)
+      .is_in_hdr_mode_o(is_in_hdr_mode),
+      .hdr_exit_detect_i(hdr_exit_detect)
   );
 
   bus_monitor xbus_monitor (

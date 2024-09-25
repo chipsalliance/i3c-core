@@ -113,7 +113,8 @@ module i3c_target_fsm
 
     output logic [7:0] rst_action_o,
     output logic       rst_action_valid_o,
-    output logic       is_in_hdr_mode_o
+    output logic       is_in_hdr_mode_o,
+    input  logic       hdr_exit_detect_i
 );
 
   // I2C bus clock timing variables
@@ -155,6 +156,10 @@ module i3c_target_fsm
   logic [7:0] command_code; // CCC byte
   logic       command_code_valid;
 
+  logic       is_in_hdr_mode;
+
+  assign is_in_hdr_mode_o = is_in_hdr_mode;
+
   // TODO: Set transfer type based on the discovered state
   assign transfer_type_o = 0;
 
@@ -190,7 +195,7 @@ module i3c_target_fsm
     .response_byte_o(),
     .response_valid_o(),
 
-    .is_in_hdr_mode_o(is_in_hdr_mode_o),
+    .is_in_hdr_mode_o(is_in_hdr_mode),
 
     .rst_action_o(rst_action_o),
     .rst_action_valid_o(rst_action_valid_o)
@@ -388,6 +393,7 @@ module i3c_target_fsm
     CCCRead = 'd26,
     AcquireRStart = 'd27,
     AcquireTBit = 5'd28,
+    IdleHDR = 5'd29,
 
     // IBI start
     AcquireIbiStart = 'd30,
@@ -1207,13 +1213,24 @@ module i3c_target_fsm
       end
 
       AcquireTBit: begin
+        // TODO: implement sampling the T bit and checking its correctness
+        // w.r.t. input_byte. Either PostAckSymbolDetect should do this or
+        // we should have another set of states for this
+        state_d = PostAckSymbolDetect;
         // TODO: this assumes lack of optional write data for the CCC,
         // set post_ack_decision_d appropriately to add support for it
-        state_d = PostAckSymbolDetect;
-        post_ack_decision_d = Idle;
+        if (is_in_hdr_mode) begin
+          post_ack_decision_d = IdleHDR;
+        end else begin
+          post_ack_decision_d = Idle;
+        end
       end
 
-
+      IdleHDR: begin
+        if (hdr_exit_detect_i) begin
+          state_d = Idle;
+        end
+      end
 
       // AcquireRStart: hold for the end of the Repeated Start condition
       AcquireRStart: begin
@@ -1234,22 +1251,24 @@ module i3c_target_fsm
     // When a start is detected, always go to the acquire start state.
     // Differences in repeated start / start handling are done in the
     // other FSM.
-    if (!target_idle && !target_enable_i) begin
-      // If the target function is currently not idle but target_enable is suddenly dropped,
-      // (maybe because the host locked up and we want to cycle back to an initial state),
-      // transition immediately.
-      // The same treatment is not given to the host mode because it already attempts to
-      // gracefully terminate.  If the host cannot gracefully terminate for whatever reason,
-      // (the other side is holding SCL low), we may need to forcefully reset the module.
-      // ICEBOX(#18004): It may be worth having a force stop condition to force the host back to
-      // Idle in case graceful termination is not possible.
-      state_d = Idle;
-    end else if (target_enable_i && bus_start_det_i && !ibi_handling) begin
-      state_d = AcquireStart;
-    end else if (bus_stop_detect_i || bus_timeout_i) begin
-      state_d = Idle;
-    end else if (bus_arbitration_lost_i) begin
-      state_d = WaitForStop;
+    if (!is_in_hdr_mode) begin
+      if (!target_idle && !target_enable_i) begin
+        // If the target function is currently not idle but target_enable is suddenly dropped,
+        // (maybe because the host locked up and we want to cycle back to an initial state),
+        // transition immediately.
+        // The same treatment is not given to the host mode because it already attempts to
+        // gracefully terminate.  If the host cannot gracefully terminate for whatever reason,
+        // (the other side is holding SCL low), we may need to forcefully reset the module.
+        // ICEBOX(#18004): It may be worth having a force stop condition to force the host back to
+        // Idle in case graceful termination is not possible.
+        state_d = Idle;
+      end else if (target_enable_i && bus_start_det_i && !ibi_handling) begin
+        state_d = AcquireStart;
+      end else if (bus_stop_detect_i || bus_timeout_i) begin
+        state_d = Idle;
+      end else if (bus_arbitration_lost_i) begin
+        state_d = WaitForStop;
+      end
     end
   end
   // verilator lint_on LATCH
