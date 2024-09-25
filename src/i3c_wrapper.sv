@@ -99,7 +99,7 @@ module i3c_wrapper #(
     input  logic sda_i,
     output logic scl_o,
     output logic sda_o,
-    output logic sel_od_pp_o,
+    output logic sel_od_pp_o
 `else
     // I3C bus IO
     inout  logic i3c_scl_io,
@@ -303,6 +303,7 @@ module i3c_wrapper #(
   assign sda_io2phy = sda_i;
   assign scl_o = scl_phy2io;
   assign sda_o = sda_phy2io;
+  assign sel_od_pp_o = sel_od_pp;
 `else
   i3c_io xio (
       .scl_i(scl_phy2io),
@@ -315,6 +316,5 @@ module i3c_wrapper #(
   );
 `endif
 
-  assign sel_od_pp_o = sel_od_pp;
 
 endmodule
