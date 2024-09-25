@@ -926,7 +926,9 @@ module i3c
       .ctl_tti_ibi_queue_rready_i(tti_ibi_queue_rready),
       .ctl_tti_ibi_queue_rdata_o(tti_ibi_queue_rdata),
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld),
-      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig)
+      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
+
+      .irq_o() // TODO: Connect me
   );
 
   // I3C PHY
