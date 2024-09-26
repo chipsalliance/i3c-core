@@ -26,7 +26,11 @@ module ccc
     output logic is_in_hdr_mode_o,
 
     output logic [7:0] rst_action_o,
-    output logic       rst_action_valid_o
+    output logic       rst_action_valid_o,
+
+    // TODO: establish correct sizes
+    output logic [1:0] command_min_bytes_o,
+    output logic [1:0] command_max_bytes_o
 );
 
   // Latch CCC data
@@ -69,6 +73,8 @@ module ccc
     is_in_hdr_mode_o = '0;
     rst_action_o = '0;
     rst_action_valid_o = '0;
+    command_min_bytes_o = '0;
+    command_max_bytes_o = '0;
     unique case (command_code)
       // Idle: Wait for command appearance in the Command Queue
       `I3C_DIRECT_GETMRL: begin
@@ -83,6 +89,8 @@ module ccc
         is_in_hdr_mode_o = '1;
       end
       `I3C_DIRECT_RSTACT, `I3C_BCAST_RSTACT: begin
+        command_min_bytes_o = '1;
+        command_max_bytes_o = '1;
         unique case (defining_byte)
           `I3C_RSTACT_NO_RESET, `I3C_RSTACT_PERIPHERAL_RESET: begin
             if (defining_byte_valid) begin

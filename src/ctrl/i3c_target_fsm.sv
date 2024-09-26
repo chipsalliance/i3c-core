@@ -152,11 +152,23 @@ module i3c_target_fsm
   logic       bit_ack;  // indicates ACK bit been sent or received
   logic       rw_bit;  // indicates host wants to read (1) or write (0)
   logic       host_ack;  // indicates host acknowledged transmitted byte
+  logic       host_tbit_ok; // indicates that T bit matches the expected (odd) parity
 
   logic [7:0] command_code; // CCC byte
   logic       command_code_valid;
 
   logic       is_in_hdr_mode;
+
+  logic [1:0] command_min_bytes; // minimum number of bytes expected after a CCC read/write
+  logic [1:0] command_max_bytes; // maximum number of bytes expected after a CCC read/write
+
+  logic tbit_after_byte_q;  // whether to expect a T bit after acquiring data byte (we're doing i3c
+                            // flow) or old-style ACK (we're doing i2c) flow. Whether the flow is
+                            // i2c or i3c depends on the target address - if a dynamic address matches
+                            // then it's i3c, if a static address matches then it's i3c, if the address
+                            // is a reserved byte it's i3c with the caveat that this might get overriden
+                            // by a later address read
+  logic tbit_after_byte_d;
 
   assign is_in_hdr_mode_o = is_in_hdr_mode;
 
@@ -198,7 +210,10 @@ module i3c_target_fsm
     .is_in_hdr_mode_o(is_in_hdr_mode),
 
     .rst_action_o(rst_action_o),
-    .rst_action_valid_o(rst_action_valid_o)
+    .rst_action_valid_o(rst_action_valid_o),
+
+    .command_min_bytes_o(command_min_bytes),
+    .command_max_bytes_o(command_max_bytes)
   );
 
   always_comb begin : counter_functions
@@ -251,6 +266,14 @@ module i3c_target_fsm
     end else begin
       xact_for_us_q <= xact_for_us_d;
       xfer_for_us_q <= xfer_for_us_d;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      tbit_after_byte_q <= 1'b0;
+    end else begin
+      tbit_after_byte_q <= tbit_after_byte_d;
     end
   end
 
@@ -317,9 +340,13 @@ module i3c_target_fsm
   always_ff @(posedge clk_i or negedge rst_ni) begin : host_ack_register
     if (!rst_ni) begin
       host_ack <= 1'b0;
+      host_tbit_ok <= 1'b0;
     end else if (scl_posedge) begin
       if (bit_ack) begin
         host_ack <= ~sda_i;
+        // T bit indicates odd parity, i.e. the number of set bits in the whole
+        // 9-bit transfer must be odd or equivalently their XOR must be 1
+        host_tbit_ok <= ^input_byte ^ sda_i;
       end
     end
   end
@@ -385,10 +412,9 @@ module i3c_target_fsm
     RsvdByteAckHold  = 'd22,
 
     // Do we get SR or CCC next?
-    // This state is only reached from RsvdByte* (may become obsolete with T-bits)
-    PostAckSymbolDetect = 'd23,
-    PostAckSymbolDetect2 = 'd24,
-    PostAckSymbolDetect3 = 'd25,
+    PostAckTBitSymbolDetect = 5'd23,
+    PostAckTBitSymbolDetect2 = 5'd24,
+    PostAckTBitSymbolDetect3 = 5'd25,
     // Read the CCC byte
     CCCRead = 'd26,
     AcquireRStart = 'd27,
@@ -861,16 +887,24 @@ module i3c_target_fsm
         // bit_ack goes high the cycle after scl_i goes low, after the 8th bit
         // was captured.
         if (bit_ack) begin
-          if (is_dyn_addr_match || is_sta_addr_match) begin  // Static, Dynamic or Reserved
-            // We can follow old flow
-            state_d = AddrAckWait;
+          if (is_any_addr_match) begin
+            load_tcount = 1'b1;
             // Wait for hold time to avoid interfering with the controller.
-            load_tcount = 1'b1;
             tcount_sel = tHoldData;
-          end else if (is_i3c_rsvd_addr_match) begin
-            state_d = RsvdByteAckWait;
-            load_tcount = 1'b1;
-            tcount_sel = tHoldData;
+            if (is_dyn_addr_match) begin
+              state_d = AddrAckWait;
+              tbit_after_byte_d = 1'b1;
+            end else if (is_sta_addr_match) begin
+              state_d = AddrAckWait;
+              tbit_after_byte_d = 1'b0;
+            end else if (is_i3c_rsvd_addr_match) begin
+              state_d = RsvdByteAckWait;
+              // usually whether or not T bit will appear insetad of ACK
+              // after reading/writing data will depend on later address read
+              // since this time we've just read reserved address - except for
+              // CCCs which always expect T bits so we set it here for this purpose
+              tbit_after_byte_d = 1'b1;
+            end
           end else begin  // no matching address
             // This means this transfer is not meant for us.
             state_d = WaitForStop;
@@ -1102,9 +1136,13 @@ module i3c_target_fsm
       // AcquireByte: target acquires a byte
       AcquireByte: begin
         if (bit_ack) begin
-          state_d = AcquireAckWait;
           load_tcount = 1'b1;
           tcount_sel = tHoldData;
+          if (tbit_after_byte_q) begin
+            state_d = AcquireTBit;
+          end else begin
+            state_d = AcquireAckWait;
+          end
         end
       end
       // AcquireAckWait: pause for hold time before acknowledging
@@ -1138,19 +1176,19 @@ module i3c_target_fsm
           state_d = AcquireByte;
         end
       end
-      PostAckSymbolDetect: begin
+      PostAckTBitSymbolDetect: begin
         input_byte_clr = '1;  // Clear input byte
-        state_d = PostAckSymbolDetect2;
+        state_d = PostAckTBitSymbolDetect2;
       end
-      PostAckSymbolDetect2: begin
+      PostAckTBitSymbolDetect2: begin
         // TODO: Currently we wait for scl posedge indefinitely, add correct timings and timeout
 
         // When SCL posedge comes, latch SDA
         if (scl_posedge) begin
-          state_d = PostAckSymbolDetect3;
+          state_d = PostAckTBitSymbolDetect3;
         end
       end
-      PostAckSymbolDetect3: begin
+      PostAckTBitSymbolDetect3: begin
         // Check if next transition is on SDA or SCL
         if (scl_posedge || scl_negedge) begin
           // TODO: This assumes a Private Write, add logic for handling Private Read:
@@ -1198,8 +1236,8 @@ module i3c_target_fsm
       RsvdByteAckHold: begin
         if (tcount_q == 20'd1) begin
           // After this ACK we get either repeated start or CCC,
-          // PostAckSymbolDetect takes care of choosing the correct path
-          state_d = PostAckSymbolDetect;
+          // PostAckTBitSymbolDetect takes care of choosing the correct path
+          state_d = PostAckTBitSymbolDetect;
           post_ack_decision_d = CCCRead;
         end
       end
@@ -1213,17 +1251,31 @@ module i3c_target_fsm
       end
 
       AcquireTBit: begin
-        // TODO: implement sampling the T bit and checking its correctness
-        // w.r.t. input_byte. Either PostAckSymbolDetect should do this or
-        // we should have another set of states for this
-        state_d = PostAckSymbolDetect;
-        // TODO: this assumes lack of optional write data for the CCC,
-        // set post_ack_decision_d appropriately to add support for it
-        if (is_in_hdr_mode) begin
-          post_ack_decision_d = IdleHDR;
+        // host_tbit_ok will be set in a previous cycle because bit_ack went high
+        if (host_tbit_ok) begin
+          state_d = PostAckTBitSymbolDetect;
+
+          if (is_in_hdr_mode) begin
+            // we detected HDR enter CCC
+            post_ack_decision_d = IdleHDR;
+          end else if (command_min_bytes > 2'd0) begin
+            // there is optional data to be read
+            // TODO: track how many CCC bytes we've read and still need to read
+            // based on command_min_bytes and command_max_bytes
+            post_ack_decision_d = AcquireByte;
+          end else begin
+            // we don't expect any more data for this CCC - expecting stop
+            // or repeated start (detecting this will be handled by PostAckTBitSymbolDetect
+            // so this is a blanket transition to go somewhere safe in case neither
+            // are detected)
+            post_ack_decision_d = WaitForStop;
+          end
         end else begin
-          post_ack_decision_d = Idle;
+          // T bit invalid - is this the correct state?
+          state_d = WaitForStop;
         end
+
+
       end
 
       IdleHDR: begin
