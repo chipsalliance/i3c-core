@@ -41,6 +41,7 @@ package controller_pkg;
   // Width of each entry in the RX and TX FIFO: just an 8-bit data byte.
   parameter int unsigned RxFifoWidth = 8;
   parameter int unsigned TxFifoWidth = 8;
+  parameter int unsigned IbiFifoWidth = 8;
 
   // Width of each entry in the ACQ FIFO with enough space for an 8-bit data
   // byte and an identifier defined by i2c_acq_byte_id_e.

@@ -6,8 +6,9 @@ module controller_standby_i3c
 #(
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
-    parameter int unsigned TtiRxDataWidth = 32,
-    parameter int unsigned TtiTxDataWidth = 32,
+    parameter int unsigned TtiRxDataWidth = 8,
+    parameter int unsigned TtiTxDataWidth = 8,
+    parameter int unsigned TtiIbiDataWidth = 32,
 
     parameter int unsigned TtiRxDescThldWidth = 8,
     parameter int unsigned TtiTxDescThldWidth = 8,
@@ -66,6 +67,13 @@ module controller_standby_i3c
     input logic tx_queue_rvalid_i,
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
+
+    // TTI: In-band-interrupt queue
+    input logic ibi_queue_full_i,
+    input logic ibi_queue_empty_i,
+    input logic ibi_queue_rvalid_i,
+    output logic ibi_queue_rready_o,
+    input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
 
     // Bus condition detection
     output logic bus_start_o,
@@ -203,6 +211,9 @@ module controller_standby_i3c
       .rx_fifo_wvalid_o(rx_byte_valid),
       .rx_fifo_wdata_o(rx_byte),
       .rx_fifo_wready_i(rx_byte_ready),
+      .ibi_fifo_rvalid_i(ibi_queue_rvalid_i),
+      .ibi_fifo_rready_o(ibi_queue_rready_o),
+      .ibi_fifo_rdata_i(ibi_queue_rdata_i), // FIXME: Here we connect 32-bit data to 8-bit input. This is ok for now as we send MDB byte only.
       .transfer_type_o(transfer_type),
       .t_r_i(t_r_i),
       .t_f_i(t_f_i),

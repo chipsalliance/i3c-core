@@ -8,6 +8,7 @@ module controller_standby
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiRxDataWidth = 8,
     parameter int unsigned TtiTxDataWidth = 8,
+    parameter int unsigned TtiIbiDataWidth = 32,
 
     parameter int unsigned TtiRxDescThldWidth = 8,
     parameter int unsigned TtiTxDescThldWidth = 8,
@@ -67,6 +68,13 @@ module controller_standby
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
+    // TTI: In-band-interrupt queue
+    input logic ibi_queue_full_i,
+    input logic ibi_queue_empty_i,
+    input logic ibi_queue_rvalid_i,
+    output logic ibi_queue_rready_o,
+    input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
+
     // I2C/I3C Bus condition detection
     output logic bus_start_o,
     output logic bus_stop_o,
@@ -116,6 +124,10 @@ module controller_standby
   logic i3c_bus_addr_valid_o;
   logic [7:0] i2c_bus_addr_o;
   logic i2c_bus_addr_valid_o;
+  logic i3c_ibi_queue_full_i;
+  logic i3c_ibi_queue_empty_i;
+  logic i3c_ibi_queue_rvalid_i;
+  logic i3c_ibi_queue_rready_o;
   // Mux TTI outputs between I2C and I3C
   always_comb begin
     rx_desc_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_desc_queue_wvalid_o : i2c_rx_desc_queue_wvalid_o;
@@ -129,6 +141,12 @@ module controller_standby
     bus_stop_o = sel_i2c_i3c ? i3c_bus_stop_o : i2c_bus_stop_o;
     bus_addr_o = sel_i2c_i3c ? i3c_bus_addr_o : i2c_bus_addr_o;
     bus_addr_valid_o = sel_i2c_i3c ? i3c_bus_addr_valid_o : i2c_bus_addr_valid_o;
+
+    // Connect IBI only in I3C mode
+    i3c_ibi_queue_full_i = sel_i2c_i3c ? ibi_queue_full_i : '0;
+    i3c_ibi_queue_empty_i = sel_i2c_i3c ? ibi_queue_empty_i : '0;
+    i3c_ibi_queue_rvalid_i = sel_i2c_i3c ? ibi_queue_rvalid_i : '0;
+    ibi_queue_rready_o = sel_i2c_i3c ? i3c_ibi_queue_rready_o : '0;
   end
 
   controller_standby_i2c #(
@@ -249,6 +267,11 @@ module controller_standby
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_rready_o(i3c_tx_queue_rready_o),
       .tx_queue_rdata_i(tx_queue_rdata_i),
+      .ibi_queue_full_i(i3c_ibi_queue_full_i),
+      .ibi_queue_empty_i(i3c_ibi_queue_empty_i),
+      .ibi_queue_rvalid_i(i3c_ibi_queue_rvalid_i),
+      .ibi_queue_rready_o(i3c_ibi_queue_rready_o),
+      .ibi_queue_rdata_i(ibi_queue_rdata_i),
       .bus_start_o(i3c_bus_start_o),
       .bus_stop_o(i3c_bus_stop_o),
       .bus_addr_o(i3c_bus_addr_o),

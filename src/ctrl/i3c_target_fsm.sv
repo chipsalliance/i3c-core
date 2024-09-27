@@ -77,6 +77,11 @@ module i3c_target_fsm
     output logic [RxFifoWidth-1:0] rx_fifo_wdata_o,   // data to write to rx_fifo from target
     input  logic                   rx_fifo_wready_i,
 
+    // IBI FIFO
+    input  logic                    ibi_fifo_rvalid_i,
+    output logic                    ibi_fifo_rready_o,
+    input  logic [IbiFifoWidth-1:0] ibi_fifo_rdata_i,
+
     output logic [ 1:0] transfer_type_o,  // 00 - Write, 01- Read, 10 - CCC
     // TODO: Revisit widths of the timings; each timing is configured via 20-bit CSR field
     // Timings

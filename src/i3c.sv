@@ -537,14 +537,14 @@ module i3c
       .tti_tx_queue_rready_o(tti_tx_queue_rready),
       .tti_tx_queue_rdata_i(tti_tx_queue_rdata),
 
-      // TODO: In-band Interrupt queue
-      .ibi_queue_full_i('0),
-      .ibi_queue_thld_i('0),
-      .ibi_queue_above_thld_i('0),
-      .ibi_queue_empty_i('0),
-      .ibi_queue_wvalid_o(),
-      .ibi_queue_wready_i('0),
-      .ibi_queue_wdata_o(),
+      // TTI: In-band Interrupt queue
+      .ibi_queue_full_i(tti_ibi_queue_full),
+      .ibi_queue_thld_i(tti_ibi_queue_ready_thld),
+      .ibi_queue_above_thld_i(tti_ibi_queue_ready_thld_trig),
+      .ibi_queue_empty_i(tti_ibi_queue_empty),
+      .ibi_queue_rvalid_i(tti_ibi_queue_rvalid),
+      .ibi_queue_rready_o(tti_ibi_queue_rready),
+      .ibi_queue_rdata_i(tti_ibi_queue_rdata),
 
       // I2C/I3C bus condition detection
       .bus_start_o(bus_start),
