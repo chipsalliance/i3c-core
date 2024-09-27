@@ -213,7 +213,9 @@ module controller_standby_i3c
       .rx_fifo_wready_i(rx_byte_ready),
       .ibi_fifo_rvalid_i(ibi_queue_rvalid_i),
       .ibi_fifo_rready_o(ibi_queue_rready_o),
-      .ibi_fifo_rdata_i(ibi_queue_rdata_i), // FIXME: Here we connect 32-bit data to 8-bit input. This is ok for now as we send MDB byte only.
+      // FIXME: Here we connect 32-bit data to 8-bit input. This is ok for now as we send MDB byte only.
+      .ibi_fifo_rdata_i(ibi_queue_rdata_i),
+      .ibi_address_i(7'h55),  // FIXME: Provide address for IBIs here
       .transfer_type_o(transfer_type),
       .t_r_i(t_r_i),
       .t_f_i(t_f_i),
