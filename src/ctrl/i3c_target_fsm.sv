@@ -157,6 +157,9 @@ module i3c_target_fsm
   logic [7:0] command_code; // CCC byte
   logic       command_code_valid;
 
+  logic [7:0] defining_byte; // optional defining byte of the CCC code
+  logic       defining_byte_valid;
+
   logic       is_in_hdr_mode;
 
   logic [1:0] command_min_bytes; // minimum number of bytes expected after a CCC read/write
@@ -196,8 +199,8 @@ module i3c_target_fsm
     .command_code_i(command_code),
     .command_code_valid_i(command_code_valid),
 
-    .defining_byte_i(0),
-    .defining_byte_valid_i(0),
+    .defining_byte_i(defining_byte),
+    .defining_byte_valid_i(defining_byte_valid),
 
     //TODO: Establish correct size
     .command_data_i(0),
@@ -412,37 +415,40 @@ module i3c_target_fsm
     RsvdByteAckHold  = 'd22,
 
     // Do we get SR or CCC next?
-    PostAckTBitSymbolDetect = 5'd23,
-    PostAckTBitSymbolDetect2 = 5'd24,
-    PostAckTBitSymbolDetect3 = 5'd25,
+    PostAckTBitSymbolDetect = 'd23,
+    PostAckTBitSymbolDetect2 = 'd24,
+    PostAckTBitSymbolDetect3 = 'd25,
     // Read the CCC byte
     CCCRead = 'd26,
     AcquireRStart = 'd27,
-    AcquireTBit = 5'd28,
-    IdleHDR = 5'd29,
+    AcquireTBitWait = 'd28,
+    AcquireTBitSetup = 'd29,
+    AcquireTBitPulse = 'd30,
+    AcquireTBitHold = 'd31,
+    IdleHDR = 'd32,
 
     // IBI start
-    AcquireIbiStart = 'd30,
+    AcquireIbiStart = 'd33,
     // IBI address transmission
-    IbiAddrWait = 'd31,
-    IbiAddrSetup = 'd32,
-    IbiAddrPulse = 'd33,
-    IbiAddrHold = 'd34,
+    IbiAddrWait = 'd34,
+    IbiAddrSetup = 'd35,
+    IbiAddrPulse = 'd36,
+    IbiAddrHold = 'd37,
     // IBI address ACK reception
-    IbiAckWait = 'd35,
-    IbiAckSetup = 'd36,
-    IbiAckLatch = 'd37,
-    IbiAckHold = 'd38,
+    IbiAckWait = 'd38,
+    IbiAckSetup = 'd39,
+    IbiAckLatch = 'd40,
+    IbiAckHold = 'd41,
     // IBI payload transmission
-    IbiTransmitWait = 'd39,
-    IbiTransmitSetup = 'd40,
-    IbiTransmitPulse = 'd41,
-    IbiTransmitHold = 'd42,
+    IbiTransmitWait = 'd42,
+    IbiTransmitSetup = 'd43,
+    IbiTransmitPulse = 'd44,
+    IbiTransmitHold = 'd45,
     // IBI T-bit transmission
-    IbiTbitWait = 'd43,
-    IbiTbitSetup = 'd44,
-    IbiTbitPulse = 'd45,
-    IbiTbitHold = 'd46
+    IbiTbitWait = 'd46,
+    IbiTbitSetup = 'd47,
+    IbiTbitPulse = 'd48,
+    IbiTbitHold = 'd49
   } state_e;
 
   state_e state_q, state_d;
@@ -1139,7 +1145,9 @@ module i3c_target_fsm
           load_tcount = 1'b1;
           tcount_sel = tHoldData;
           if (tbit_after_byte_q) begin
-            state_d = AcquireTBit;
+            state_d = AcquireTBitWait;
+            defining_byte = input_byte;
+            defining_byte_valid = 1'b1;
           end else begin
             state_d = AcquireAckWait;
           end
@@ -1199,7 +1207,11 @@ module i3c_target_fsm
         if (sda_posedge) begin
           // This is a STOP
           input_byte_clr = '1;  // Clear input byte
-          state_d = WaitForStop;  // Is this the right state?
+          if (is_in_hdr_mode) begin
+            state_d = IdleHDR;
+          end else begin
+            state_d = Idle;  // Is this the right state?
+          end
         end
         if (sda_negedge) begin
           // This is a Repeated Start
@@ -1244,21 +1256,44 @@ module i3c_target_fsm
 
       CCCRead: begin
         if (bit_ack) begin
-          state_d = AcquireTBit;
+          state_d = AcquireTBitWait;
           load_tcount = 1'b1;
           tcount_sel = tHoldData;
         end
       end
 
-      AcquireTBit: begin
-        // host_tbit_ok will be set in a previous cycle because bit_ack went high
+      // AcquireTBitWait: pause for hold time before acknowledging
+      AcquireTBitWait: begin
+        if (scl_i) begin
+          // The controller is going too fast. Abandon the transaction.
+          state_d = WaitForStop;
+        end else if (tcount_q == 20'd1) begin
+          if (nack_transaction_q) begin
+            state_d = WaitForStop;
+          end else begin
+            state_d = AcquireTBitSetup;
+          end
+        end
+      end
+
+      AcquireTBitSetup: begin
+        if (scl_i) state_d = AcquireTBitPulse;
+      end
+
+      AcquireTBitPulse: begin
+        if (!scl_i) begin
+          state_d = AcquireTBitHold;
+          load_tcount = 1'b1;
+          tcount_sel = tHoldData;
+        end
+      end
+
+      AcquireTBitHold: begin
+        // host_tbit_ok will be set because bit_ack went high some time earlier
         if (host_tbit_ok) begin
           state_d = PostAckTBitSymbolDetect;
 
-          if (is_in_hdr_mode) begin
-            // we detected HDR enter CCC
-            post_ack_decision_d = IdleHDR;
-          end else if (command_min_bytes > 2'd0) begin
+          if (command_min_bytes > 2'd0) begin
             // there is optional data to be read
             // TODO: track how many CCC bytes we've read and still need to read
             // based on command_min_bytes and command_max_bytes

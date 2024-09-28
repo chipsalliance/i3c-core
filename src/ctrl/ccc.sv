@@ -91,14 +91,10 @@ module ccc
       `I3C_DIRECT_RSTACT, `I3C_BCAST_RSTACT: begin
         command_min_bytes_o = '1;
         command_max_bytes_o = '1;
-        unique case (defining_byte)
-          `I3C_RSTACT_NO_RESET, `I3C_RSTACT_PERIPHERAL_RESET: begin
-            if (defining_byte_valid) begin
-              rst_action_o = defining_byte;
-              rst_action_valid_o = '1;
-            end
-          end
-        endcase
+        if (defining_byte_valid) begin
+          rst_action_o = defining_byte;
+          rst_action_valid_o = '1;
+        end
       end
       default: ;
     endcase
