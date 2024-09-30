@@ -44,10 +44,6 @@ async def test_target_reset(dut):
 
     await i3c_controller.i3c_ccc_write(RSTACT_BCAST, defining_byte=RSTACT_PERIPHERAL_RESET, broadcast_data=[])
 
-    # Verilator doesn't support struct access so we need this hacky way of accessing
-    # the RST_ACTION register where we take the flattened bit vector value of all CSRs
-    # and index into a range where RST_ACTION is which happens to be at indices 1183:1191
-    csr_values = str(dut.xi3c_wrapper.i3c.xhci.i3c_csr.field_storage.value)
-    rst_action = int(csr_values[1183:1191], base=2)
+    rst_action = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.base_addr, 1, timeout=100))
     assert rst_action == RSTACT_PERIPHERAL_RESET
 
