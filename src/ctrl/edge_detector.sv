@@ -22,8 +22,7 @@ module edge_detector
     input logic trigger,
     input logic line,
     input logic [CNTR_W-1:0] delay_count,
-    output logic detect,
-    output logic stable
+    output logic detect
 );
 
   logic [CNTR_W-1:0] count;
@@ -36,17 +35,14 @@ module edge_detector
       count <= '0;
       check_in_progress <= 1'b0;
       detect <= 1'b0;
-      stable <= 1'b0;
     end else if (trigger) begin
       check_in_progress <= 1'b1;
       count <= '0;
-      stable <= 1'b0;
     end else if(check_in_progress && detect_line) begin
       count <= count + 1'b1;
       if (count >= delay_count) begin
         check_in_progress <= 1'b0;
         detect <= 1'b1;
-        stable <= 1'b1;
       end
     end else begin
       detect <= 1'b0;

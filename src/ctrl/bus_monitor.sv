@@ -39,8 +39,6 @@ module bus_monitor
   logic scl_negedge;
   logic scl_posedge;
   logic scl_edge;
-  logic scl_posedge_stable;
-  logic scl_negedge_stable;
   logic scl_stable_high;
   logic scl_stable_low;
 
@@ -48,8 +46,6 @@ module bus_monitor
   logic sda_posedge;
   logic sda_negedge_i;
   logic sda_posedge_i;
-  logic sda_posedge_stable;
-  logic sda_negedge_stable;
   logic sda_edge;
   logic sda_stable_high;
 
@@ -76,8 +72,7 @@ module bus_monitor
       .trigger(scl_negedge_i),
       .line(scl_i),
       .delay_count(t_f_i),
-      .detect(scl_negedge),
-      .stable(scl_negedge_stable)
+      .detect(scl_negedge)
   );
 
   edge_detector edge_detector_scl_posedge (
@@ -86,8 +81,7 @@ module bus_monitor
       .trigger(scl_posedge_i),
       .line(scl_i),
       .delay_count(t_r_i),
-      .detect(scl_posedge),
-      .stable(scl_posedge_stable)
+      .detect(scl_posedge)
   );
 
   edge_detector #(.DETECT_NEGEDGE(1'b1))
@@ -97,8 +91,7 @@ module bus_monitor
       .trigger(sda_negedge_i),
       .line(sda_i),
       .delay_count(t_f_i),
-      .detect(sda_negedge),
-      .stable(sda_negedge_stable)
+      .detect(sda_negedge)
   );
 
   edge_detector edge_detector_sda_posedge (
@@ -107,8 +100,7 @@ module bus_monitor
       .trigger(sda_posedge_i),
       .line(sda_i),
       .delay_count(t_r_i),
-      .detect(sda_posedge),
-      .stable(sda_posedge_stable)
+      .detect(sda_posedge)
   );
 
   stable_high_detector stable_detector_sda_high (
