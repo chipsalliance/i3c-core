@@ -1292,19 +1292,9 @@ module i3c_target_fsm
         // host_tbit_ok will be set because bit_ack went high some time earlier
         if (host_tbit_ok) begin
           state_d = PostAckTBitSymbolDetect;
-
-          if (command_min_bytes > 2'd0) begin
-            // there is optional data to be read
-            // TODO: track how many CCC bytes we've read and still need to read
-            // based on command_min_bytes and command_max_bytes
-            post_ack_decision_d = AcquireByte;
-          end else begin
-            // we don't expect any more data for this CCC - expecting stop
-            // or repeated start (detecting this will be handled by PostAckTBitSymbolDetect
-            // so this is a blanket transition to go somewhere safe in case neither
-            // are detected)
-            post_ack_decision_d = WaitForStop;
-          end
+          // TODO: track how many CCC bytes we've read and still need to read
+          // based on command_min_bytes and command_max_bytes
+          post_ack_decision_d = AcquireByte;
         end else begin
           // T bit invalid - is this the correct state?
           state_d = WaitForStop;
