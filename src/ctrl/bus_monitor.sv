@@ -29,8 +29,9 @@ module bus_monitor
     output logic start_detect_o,  // Module detected START or REPEATED START condition
     output logic stop_detect_o,   // Module detected STOP condition
 
-    input  is_in_hdr_mode_i,  // Module is in HDR mode
-    output hdr_exit_detect_o  // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
+    input logic is_in_hdr_mode_i,       // Module is in HDR mode
+    output logic hdr_exit_detect_o,     // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
+    output logic target_reset_detect_o  // Deteced Target Reset condtition
 );
   logic enable, enable_q;
 
@@ -228,4 +229,17 @@ module bus_monitor
   assign stop_detect_o = stop_det;
   assign hdr_exit_detect_o = hdr_exit_det;
 
+  target_reset_detector target_reset_detector(
+    .clk_i,
+    .rst_ni,
+    .enable_i,
+    .scl_high(scl_stable_high),
+    .scl_low(scl_stable_low),
+    .scl_negedge,
+    .sda_posedge,
+    .sda_negedge,
+    .start_detected_i(start_det),
+    .stop_detected_i(stop_det),
+    .target_reset_detect_o
+  );
 endmodule

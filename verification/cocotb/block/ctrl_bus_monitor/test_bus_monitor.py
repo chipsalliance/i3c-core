@@ -34,6 +34,15 @@ async def count_high_cycles(clk, sig, e_terminate):
         await RisingEdge(clk)
     return num_det
 
+def create_default_controller(dut: SimHandleBase) -> I3cController:
+    return I3cController(
+        sda_i=None,
+        sda_o=dut.sda_i,
+        scl_i=None,
+        scl_o=dut.scl_i,
+        speed=12.5e6,
+    )
+
 
 @cocotb.test()
 async def test_bus_monitor(dut: SimHandleBase):
@@ -49,13 +58,7 @@ async def test_bus_monitor(dut: SimHandleBase):
     clk = dut.clk_i
     rst_n = dut.rst_ni
 
-    i3c_controller = I3cController(
-        sda_i=None,
-        sda_o=dut.sda_i,
-        scl_i=None,
-        scl_o=dut.scl_i,
-        speed=12.5e6,
-    )
+    i3c_controller = create_default_controller(dut)
 
     clock = Clock(clk, 2, units="ns")
     cocotb.start_soon(clock.start())
@@ -140,3 +143,40 @@ async def test_bus_monitor_hdr_exit(dut: SimHandleBase):
     cocotb.log.info(f"HDR exits detected {num_detects}")
     assert num_detects == 1
     e_terminate.clear()
+
+
+@cocotb.test()
+async def test_target_reset_detection(dut: SimHandleBase):
+    cocotb.log.setLevel("INFO")
+
+    i3c_controller = create_default_controller(dut)
+    clock = Clock(dut.clk_i, 2, units="ns")
+    cocotb.start_soon(clock.start())
+
+    await setup(dut)
+    await reset_n(dut.clk_i, dut.rst_ni, cycles=5)
+
+    dut.enable_i.value = 1
+
+    # Basic target reset
+    cocotb.log.info("Performing basic target reset test with no configuration")
+
+    e_terminate = cocotb.triggers.Event()
+    t_detect_target_reset = cocotb.start_soon(count_high_cycles(
+        dut.clk_i,
+        dut.target_reset_detect_o,
+        e_terminate
+    ))
+    await i3c_controller.target_reset()
+
+    await ClockCycles(dut.clk_i, 32)
+    e_terminate.set()
+    await RisingEdge(dut.clk_i)
+
+    num_resets = t_detect_target_reset.result()
+    cocotb.log.info(f"Resets detected: {num_resets}")
+    assert num_resets == 1
+
+    e_terminate.clear()
+
+    await ClockCycles(dut.clk_i, 10)

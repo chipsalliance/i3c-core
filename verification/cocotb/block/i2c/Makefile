@@ -52,6 +52,7 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/ctrl/i2c_controller_fsm.sv \
     $(SRC_DIR)/ctrl/i2c_target_fsm.sv \
     $(SRC_DIR)/ctrl/i3c_controller_fsm.sv \
+    $(SRC_DIR)/ctrl/target_reset_detector.sv \
     $(SRC_DIR)/ctrl/bus_monitor.sv \
     $(SRC_DIR)/ctrl/i3c_target_fsm.sv \
     $(SRC_DIR)/ctrl/flow_active.sv \

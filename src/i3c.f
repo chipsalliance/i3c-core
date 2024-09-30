@@ -51,6 +51,7 @@ ${I3C_ROOT_DIR}/src/recovery/recovery_transmitter.sv
 ${I3C_ROOT_DIR}/src/recovery/recovery_executor.sv
 ${I3C_ROOT_DIR}/src/recovery/recovery_handler.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_timers.sv
+${I3C_ROOT_DIR}/src/ctrl/target_reset_detector.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_monitor.sv
 ${I3C_ROOT_DIR}/src/ctrl/ccc.sv
 ${I3C_ROOT_DIR}/src/ctrl/daa.sv
