@@ -792,7 +792,16 @@ module i3c_target_fsm
           command_code_valid = 1'b1;
           command_code = input_byte;
         end
+      end
 
+      AcquireTBitHold: begin
+        target_idle_o = 1'b0;
+        sda_d = 1'b0;
+        target_transmitting_o = 1'b1;
+        if (host_tbit_ok) begin
+          rx_fifo_wvalid_o = '1;
+          rx_fifo_wdata_o  = input_byte;  // transfer data to rx_fifo
+        end
       end
 
       // default
