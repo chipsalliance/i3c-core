@@ -161,11 +161,9 @@ module recovery_handler
   // ....................................................
 
   logic recovery_enable;
+  localparam int unsigned RecoveryMode = 'h3;
 
-  // FIXME: Due to lack of a dedicated CSR field that controls recovery mode
-  // the Recovery Handler is permanently enabled which disabled the "regular"
-  // TTI data path.
-  assign recovery_enable = 1'b1;
+  assign recovery_enable = hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode;
 
   // ....................................................
   // TTI Queues

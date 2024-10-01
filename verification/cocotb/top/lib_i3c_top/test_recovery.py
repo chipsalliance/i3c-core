@@ -3,7 +3,7 @@
 import logging
 
 from boot import boot_init
-from bus2csr import dword2int
+from bus2csr import dword2int, int2dword
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
@@ -54,6 +54,10 @@ async def initialize(dut):
 
     # Configure the top level
     await boot_init(tb)
+
+    # Enable the recovery mode
+    status = 0x3 # "Recovery Mode"
+    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4)
 
     return i3c_controller, i3c_target, tb, recovery
 
