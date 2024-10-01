@@ -934,7 +934,10 @@ module i3c_target_fsm
       end
       IbiAckLatch: begin
         if (scl_i) begin
-          // TODO: Latch ACK/NAK
+          if (sda_i)
+            post_ack_decision_d = WaitForStop; // NACK
+          else
+            post_ack_decision_d = IbiTransmitWait; // ACK
           state_d = IbiAckHold;
           load_tcount = 1'b1;
           tcount_sel = tHoldData;
@@ -942,7 +945,7 @@ module i3c_target_fsm
       end
       IbiAckHold: begin
         if (tcount_q == 20'd1) begin
-          state_d = IbiTransmitWait;
+          state_d = post_ack_decision_d;
         end
       end
 
