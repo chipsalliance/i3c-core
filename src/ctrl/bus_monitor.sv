@@ -155,6 +155,9 @@ module bus_monitor
   assign scl_edge = scl_negedge | scl_posedge;
   assign sda_edge = sda_negedge | sda_posedge;
 
+  assign simultaneous_posedge = sda_posedge && scl_posedge;
+  assign simultaneous_negedge = sda_negedge && scl_negedge;
+
   // Start and Stop detection
 
   // Note that this counter combines Start and Stop detection into one
@@ -211,11 +214,11 @@ module bus_monitor
   assign hdr_exit_det_trigger = scl_stable_low && sda_stable_high && is_in_hdr_mode_i;
 
   // (Repeated) Start condition detection by target
-  assign start_det_trigger = enable & scl_stable_high & sda_negedge;
+  assign start_det_trigger = enable & scl_stable_high & sda_negedge & !simultaneous_negedge;
   assign start_det = enable & start_det_pending & (ctrl_det_count >= 14'(t_hd_dat_i));
 
   // Stop condition detection by target
-  assign stop_det_trigger = enable & scl_stable_high & sda_posedge;
+  assign stop_det_trigger = enable & scl_stable_high & sda_posedge & !simultaneous_posedge;
   assign stop_det = enable & stop_det_pending & (ctrl_det_count >= 14'(t_hd_dat_i));
 
   assign start_detect_o = start_det;

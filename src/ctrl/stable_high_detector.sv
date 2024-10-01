@@ -13,13 +13,22 @@ module stable_high_detector
 );
   logic [CNTR_W-1:0] count;
   logic do_count;
+  logic line;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      line <= '0;
+    end else begin
+      line <= line_i;
+    end
+  end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       count <= '0;
-    end else if (line_i && do_count) begin
+    end else if (line && do_count) begin
       count <= count + 1'b1;
-    end else if (!line_i) begin
+    end else if (!line) begin
       count <= '0;
     end
   end
@@ -27,9 +36,9 @@ module stable_high_detector
   always_comb begin
     do_count = '1;
     stable_o = '0;
-    if (count >= delay_count_i) begin
+    if (count > delay_count_i) begin
       do_count = '0;
-      stable_o = line_i;
+      stable_o = line;
     end
   end
 endmodule
