@@ -20,6 +20,9 @@ module daa
     output logic is_i3c_rsvd_addr_match_o,
     output logic is_any_addr_match_o,
 
+    // Output effective target address (static or dynamic)
+    output logic [6:0] target_address_o,
+
     // Produce response for ENTDAA
     input  [31:0] stby_cr_device_addr_reg,
     input  [31:0] stby_cr_device_char_reg,
@@ -73,4 +76,11 @@ module daa
       end
     end
   end
+
+  // Effective target address
+  // When dynamic address is not set the static address is used. In the other
+  // case the dynamic address is used.
+  // FIXME: What if target_sta_addr_valid is 1'b0 ?
+  assign target_address_o = target_dyn_addr_valid ? target_dyn_addr : target_sta_addr;
+
 endmodule

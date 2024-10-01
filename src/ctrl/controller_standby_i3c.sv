@@ -183,6 +183,8 @@ module controller_standby_i3c
   assign stby_cr_device_addr_reg   = {1'b1, 8'h00, 7'h5A, 1'b1, 8'h00, 7'h22};
   assign stby_cr_device_char_reg   = '0;
   assign stby_cr_device_pid_lo_reg = '0;
+  // Effective address for IBIs
+  logic [6:0] target_address;
   // end: Target FSM <--> DAA
 
   logic bus_busy;
@@ -215,7 +217,7 @@ module controller_standby_i3c
       .ibi_fifo_rready_o(ibi_queue_rready_o),
       // FIXME: Here we connect 32-bit data to 8-bit input. This is ok for now as we send MDB byte only.
       .ibi_fifo_rdata_i(ibi_queue_rdata_i),
-      .ibi_address_i(7'h55),  // FIXME: Provide address for IBIs here
+      .ibi_address_i(target_address),
       .transfer_type_o(transfer_type),
       .t_r_i(t_r_i),
       .t_f_i(t_f_i),
@@ -278,12 +280,13 @@ module controller_standby_i3c
       .stby_cr_device_addr_reg(stby_cr_device_addr_reg),
       .stby_cr_device_char_reg(stby_cr_device_char_reg),
       .stby_cr_device_pid_lo_reg(stby_cr_device_pid_lo_reg),
-      .daa_unique_response(daa_unique_response)
+      .daa_unique_response(daa_unique_response),
+      .target_address_o(target_address)
   );
 
   // Expose bus condition detection
   assign bus_start_o = start_detect;
-  assign bus_stop_o  = stop_detect;
+  assign bus_stop_o = stop_detect;
 
   // Expose the received address + RnW bit
   assign bus_addr_o = {bus_addr, bus_rnw};

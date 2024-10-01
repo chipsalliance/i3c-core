@@ -403,7 +403,7 @@ module i3c_target_fsm
   always_comb begin
     if (ibi_handling)
       if (ibi_payload) output_byte = ibi_fifo_rdata_i;
-      else output_byte = ibi_address_i;
+      else output_byte = {ibi_address_i, 1'b1};
     else begin
       output_byte = tx_fifo_rdata_i;
     end

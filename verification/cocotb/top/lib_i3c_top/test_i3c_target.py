@@ -133,7 +133,7 @@ async def test_i3c_target_ibi(dut):
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
     target = i3c_controller.add_target(addr)
-    target.set_bcr_fields(ibi_req_capable = True, ibi_payload = True)
+    target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
 
     # Write MDB to Target's IBI queue
     mdb = 0xAA
