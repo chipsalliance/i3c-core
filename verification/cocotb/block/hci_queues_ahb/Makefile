@@ -32,6 +32,8 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/ctrl/width_converter_8toN.sv \
     $(SRC_DIR)/ctrl/width_converter_Nto8.sv \
     $(SRC_DIR)/recovery/recovery_pec.sv \
+    $(SRC_DIR)/recovery/recovery_receiver.sv \
+    $(SRC_DIR)/recovery/recovery_executor.sv \
     $(SRC_DIR)/recovery/recovery_handler.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p_pkg.sv \
     $(SRC_DIR)/libs/mem/prim_generic_ram_1p.sv \
