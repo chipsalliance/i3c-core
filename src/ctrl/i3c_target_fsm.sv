@@ -273,13 +273,17 @@ module i3c_target_fsm
   end
 
   // Latch received bus address
-  always_ff @(posedge clk_i)
-    if (input_strobe & (bit_idx != 4'd7))
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      bus_addr <= '0;
+    else if (input_strobe & (bit_idx != 4'd7))
       bus_addr <= input_byte;
 
   // Latch received RnW bit
-  always_ff @(posedge clk_i)
-    if (input_strobe & (bit_idx == 4'd7))
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      bus_rnw <= '0;
+    else if (input_strobe & (bit_idx == 4'd7))
       bus_rnw <= input_byte[0];
 
   // An artificial acq_fifo_wready is used here to ensure we always have
