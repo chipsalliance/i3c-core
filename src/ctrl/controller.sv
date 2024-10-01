@@ -178,8 +178,7 @@ module controller
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
 
-    output logic [7:0] rst_action_o,
-    output logic       rst_action_valid_o
+    output logic [7:0] rst_action_o
 );
 
   // 4:1 multiplexer for signals between PHY and controllers.
@@ -239,13 +238,13 @@ module controller
       .resp_queue_wvalid_o(hci_resp_queue_wvalid_o),
       .resp_queue_wready_i(hci_resp_queue_wready_i),
       .resp_queue_wdata_o(hci_resp_queue_wdata_o),
-      .ibi_queue_full_i('0), // TODO: Add and connect a queue for the IBI reception
-      .ibi_queue_thld_i('0),
-      .ibi_queue_above_thld_i('0),
-      .ibi_queue_empty_i('0),
-      //.ibi_queue_wvalid_o,
-      .ibi_queue_wready_i('0),
-      //.ibi_queue_wdata_o,
+      .ibi_queue_full_i(ibi_queue_full_i),
+      .ibi_queue_thld_i(ibi_queue_thld_i),
+      .ibi_queue_above_thld_i(ibi_queue_above_thld_i),
+      .ibi_queue_empty_i(ibi_queue_empty_i),
+      .ibi_queue_wvalid_o(ibi_queue_wvalid_o),
+      .ibi_queue_wready_i(ibi_queue_wready_i),
+      .ibi_queue_wdata_o(ibi_queue_wdata_o),
       .dat_read_valid_hw_o(dat_read_valid_hw_o),
       .dat_index_hw_o(dat_index_hw_o),
       .dat_rdata_hw_i(dat_rdata_hw_i),
@@ -336,8 +335,7 @@ module controller
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
-      .rst_action_o(rst_action_o),
-      .rst_action_valid_o(rst_action_valid_o)
+      .rst_action_o(rst_action_o)
   );
 
 endmodule

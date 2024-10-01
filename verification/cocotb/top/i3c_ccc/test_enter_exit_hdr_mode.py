@@ -3,14 +3,12 @@
 import logging
 
 from boot import boot_init
-from bus2csr import dword2int
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
 from cocotb.triggers import ClockCycles
-from cocotb.clock import Clock
 
 
 @cocotb.test()
@@ -42,9 +40,15 @@ async def test_enter_exit_hdr_mode(dut):
     await boot_init(tb)
 
     await i3c_controller.i3c_ccc_write(ENTHDR0, broadcast_data=[])
-    
-    assert dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d == 32 # IdleHDR
-    
+
+    assert (
+        dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d
+        == 32
+    )  # IdleHDR
+
     await i3c_controller.send_hdr_exit()
 
-    assert dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d == 0 # Idle
+    assert (
+        dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d
+        == 0
+    )  # Idle

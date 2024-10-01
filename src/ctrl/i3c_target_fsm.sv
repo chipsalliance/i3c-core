@@ -112,7 +112,6 @@ module i3c_target_fsm
     output logic event_read_cmd_received_o,  // A read awaits confirmation for TX FIFO release
 
     output logic [7:0] rst_action_o,
-    output logic       rst_action_valid_o,
     output logic       is_in_hdr_mode_o,
     input  logic       hdr_exit_detect_i
 );
@@ -213,7 +212,6 @@ module i3c_target_fsm
     .is_in_hdr_mode_o(is_in_hdr_mode),
 
     .rst_action_o(rst_action_o),
-    .rst_action_valid_o(rst_action_valid_o),
 
     .command_min_bytes_o(command_min_bytes),
     .command_max_bytes_o(command_max_bytes)

@@ -26,7 +26,6 @@ module ccc
     output logic is_in_hdr_mode_o,
 
     output logic [7:0] rst_action_o,
-    output logic       rst_action_valid_o,
 
     // TODO: establish correct sizes
     output logic [1:0] command_min_bytes_o,
@@ -72,7 +71,6 @@ module ccc
     response_byte_o  = '0;
     is_in_hdr_mode_o = '0;
     rst_action_o = '0;
-    rst_action_valid_o = '0;
     command_min_bytes_o = '0;
     command_max_bytes_o = '0;
     unique case (command_code)
@@ -93,7 +91,6 @@ module ccc
         command_max_bytes_o = '1;
         if (defining_byte_valid) begin
           rst_action_o = defining_byte;
-          rst_action_valid_o = '1;
         end
       end
       default: ;

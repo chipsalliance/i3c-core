@@ -443,7 +443,6 @@ module i3c
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
   logic [7:0] rst_action;
-  logic       rst_action_valid;
 
   controller #(
       .DatAw(DatAw),
@@ -571,8 +570,8 @@ module i3c
       // TODO: TTI interface
 
       //TODO: Rename
-      .i3c_fsm_en_i,
-      .i3c_fsm_idle_o,
+      .i3c_fsm_en_i(i3c_fsm_en_i),
+      .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
       .err(),  // TODO: Handle errors
       .irq(),  // TODO: Handle interrupts
@@ -590,8 +589,7 @@ module i3c
       .t_bus_idle_i(t_bus_idle),
       .t_bus_available_i(t_bus_available),
 
-      .rst_action_o(rst_action),
-      .rst_action_valid_o(rst_action_valid)
+      .rst_action_o(rst_action)
   );
 
   // HCI
@@ -634,20 +632,20 @@ module i3c
       .TtiRxThldWidth(TtiRxThldWidth),
       .TtiTxThldWidth(TtiTxThldWidth)
   ) xhci (
-      .clk_i,
-      .rst_ni,
-      .s_cpuif_req,
-      .s_cpuif_req_is_wr,
-      .s_cpuif_addr,
-      .s_cpuif_wr_data,
-      .s_cpuif_wr_biten,
-      .s_cpuif_req_stall_wr,
-      .s_cpuif_req_stall_rd,
-      .s_cpuif_rd_ack,
-      .s_cpuif_rd_err,
-      .s_cpuif_rd_data,
-      .s_cpuif_wr_ack,
-      .s_cpuif_wr_err,
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .s_cpuif_req(s_cpuif_req),
+      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
+      .s_cpuif_addr(s_cpuif_addr),
+      .s_cpuif_wr_data(s_cpuif_wr_data),
+      .s_cpuif_wr_biten(s_cpuif_wr_biten),
+      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
+      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
+      .s_cpuif_rd_ack(s_cpuif_rd_ack),
+      .s_cpuif_rd_err(s_cpuif_rd_err),
+      .s_cpuif_rd_data(s_cpuif_rd_data),
+      .s_cpuif_wr_ack(s_cpuif_wr_ack),
+      .s_cpuif_wr_err(s_cpuif_wr_err),
 
       .dat_read_valid_hw_i(dat_read_valid_hw),
       .dat_index_hw_i(dat_index_hw),
@@ -659,11 +657,11 @@ module i3c
       .dct_wdata_hw_i(dct_wdata_hw),
       .dct_rdata_hw_o(dct_rdata_hw),
 
-      .dat_mem_src_i,
-      .dat_mem_sink_o,
+      .dat_mem_src_i(dat_mem_src_i),
+      .dat_mem_sink_o(dat_mem_sink_o),
 
-      .dct_mem_src_i,
-      .dct_mem_sink_o,
+      .dct_mem_src_i(dct_mem_src_i),
+      .dct_mem_sink_o(dct_mem_sink_o),
 
       .hwif_tti_o(hwif_tti_out),
       .hwif_tti_i(hwif_tti_inp),
@@ -733,8 +731,7 @@ module i3c
       .t_bus_idle_o(t_bus_idle),
       .t_bus_available_o(t_bus_available),
 
-      .rst_action_i(rst_action),
-      .rst_action_valid_i(rst_action_valid)
+      .rst_action_i(rst_action)
   );
 
   // TTI RX Descriptor queue
