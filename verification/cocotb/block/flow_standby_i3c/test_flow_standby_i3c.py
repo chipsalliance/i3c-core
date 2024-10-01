@@ -1,25 +1,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import random
+
 from cocotb_helpers import cycle, reset_n
 
 import cocotb
-import random
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles
 from cocotb.queue import Queue, QueueEmpty, QueueFull
+from cocotb.triggers import ClockCycles
+
 
 async def setup(dut):
-    """
-
-    """
+    """ """
     dut.enable_i.value = 1
     await ClockCycles(dut.clk_i, 10)
 
+
 class RxQueue:
     """
-        Class to mock RX Queue
+    Class to mock RX Queue
     """
 
     def __init__(self, dut):
@@ -30,25 +31,26 @@ class RxQueue:
         self.wdata = dut.rx_queue_wdata_o
         self.q = Queue()
 
-    async def bfm(self,dut):
+    async def bfm(self, dut):
         while True:
             self.empty.value = self.q.empty()
             self.full.value = self.q.full()
             if not self.full.value:
-                self.wready.value= 1
+                self.wready.value = 1
 
             if self.wvalid.value and self.wready.value:
                 try:
                     self.q.put_nowait(self.wdata.value)
                     print(f"Data written to queue: {self.wdata.value}")
                 except QueueFull:
-                    print(f"Queue is already full")
+                    print("Queue is already full")
                     pass
             await ClockCycles(dut.clk_i, 1)
 
+
 class TxQueue:
     """
-        Class to mock TX Queue
+    Class to mock TX Queue
     """
 
     def __init__(self, dut):
@@ -65,7 +67,7 @@ class TxQueue:
         Add N random entries to the queue.
         """
         for i in range(N):
-            self.q.put_nowait(random.randint(0,1023))
+            self.q.put_nowait(random.randint(0, 1023))
 
     def _peek(self):
         """
@@ -73,23 +75,24 @@ class TxQueue:
         """
         return self.q._queue[0]
 
-    async def bfm(self,dut):
+    async def bfm(self, dut):
         self.add_data(10)
         self.rdata.value = self._peek()
         while True:
             self.empty.value = self.q.empty()
             self.full.value = self.q.full()
             if not self.empty.value:
-                self.rvalid.value= 1
+                self.rvalid.value = 1
 
             if self.rvalid.value and self.rready.value:
                 try:
                     self.rdata.value = self.q.get_nowait()
                     print(f"Data read from queue: {self.rdata.value}")
                 except QueueEmpty:
-                    print(f"Queue is already empty")
+                    print("Queue is already empty")
                     pass
             await ClockCycles(dut.clk_i, 1)
+
 
 async def bus_tx(dut):
     clk = dut.clk_i
@@ -97,7 +100,7 @@ async def bus_tx(dut):
     dut.transfer_type_i.value = 0
 
     # Signal START
-    await cycle(clk,dut.transfer_stop_i)
+    await cycle(clk, dut.transfer_stop_i)
 
     # Receive byte from the bus
     dut.rx_byte_valid_i.value = 1
@@ -108,7 +111,7 @@ async def bus_tx(dut):
 
     # Signal STOP
     await ClockCycles(clk, 3)
-    await cycle(clk,dut.transfer_stop_i)
+    await cycle(clk, dut.transfer_stop_i)
 
 
 @cocotb.test()
@@ -136,6 +139,5 @@ async def test_rx(dut: SimHandleBase):
     cocotb.start_soon(tx_queue.bfm(dut))
 
     await bus_tx(dut)
-
 
     await ClockCycles(clk, 50)
