@@ -142,6 +142,7 @@ module recovery_executor
       if (cmd_valid_i)
         dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
       CsrWrite: if (rx_ack_i) dcnt <= dcnt - 1;
+      default: dcnt <= dcnt;
     endcase
 
   // Target / source CSR
@@ -166,6 +167,7 @@ module recovery_executor
       // FIXME: This will overflow resulting on overwriting unwanted CSRs if
       // a malicious packet with length > CSR length is received
       CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 1);
+      default:  csr_sel <= csr_sel;
     endcase
 
   // CSR writeable flag
@@ -206,6 +208,7 @@ module recovery_executor
       Idle:
       if (cmd_valid_i & cmd_error_i) status_protocol <= PROTOCOL_ERROR_CRC;
       else status_protocol <= PROTOCOL_OK;
+      default: status_protocol <= status_protocol;
     endcase
 
   // Update status on command done

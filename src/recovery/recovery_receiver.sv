@@ -111,8 +111,9 @@ module recovery_receiver
     if (!rst_ni) data_ready_o <= '0;
     else
       unique case (state_q)
-        RxCmd: data_ready_o <= 1'b1;
-        RxPec: if (rx_flow) data_ready_o <= '0;
+        RxCmd:   data_ready_o <= 1'b1;
+        RxPec:   if (rx_flow) data_ready_o <= '0;
+        default: data_ready_o <= data_ready_o;
       endcase
 
   // Data queue mux select
@@ -123,9 +124,10 @@ module recovery_receiver
   // Data counter
   always_ff @(posedge clk_i)
     unique case (state_q)
-      RxLenL: if (rx_flow) dcnt[7:0] <= data_data_i;
-      RxLenH: if (rx_flow) dcnt[15:8] <= data_data_i;
-      RxData: if (data_queue_flow_i) dcnt <= dcnt - 1;
+      RxLenL:  if (rx_flow) dcnt[7:0] <= data_data_i;
+      RxLenH:  if (rx_flow) dcnt[15:8] <= data_data_i;
+      RxData:  if (data_queue_flow_i) dcnt <= dcnt - 1;
+      default: dcnt <= dcnt;
     endcase
 
   // Command header & PEC capture
@@ -141,6 +143,13 @@ module recovery_receiver
         len_msb  <= '0;
         pec_recv <= len_lsb;
       end
+
+      default: begin
+        cmd_cmd_o <= cmd_cmd_o;
+        len_lsb   <= len_lsb;
+        len_msb   <= len_msb;
+        pec_recv  <= pec_recv;
+      end
     endcase
   end
 
@@ -152,8 +161,9 @@ module recovery_receiver
   // PEC capture
   always_ff @(posedge clk_i)
     unique case (state_q)
-      RxPec:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
-      RxLenL: if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
+      RxPec:   if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
+      RxLenL:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
+      default: pec_calc <= pec_calc;
     endcase
 
   // PEC comparator
