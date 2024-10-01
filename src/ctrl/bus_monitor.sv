@@ -65,7 +65,7 @@ module bus_monitor
 
   assign enable = enable_i;
 
-  edge_detector #(.INVERT_DETECTION(1'b1))
+  edge_detector #(.DETECT_NEGEDGE(1'b1))
   edge_detector_scl_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -84,7 +84,7 @@ module bus_monitor
       .detect(scl_posedge)
   );
 
-  edge_detector #(.INVERT_DETECTION(1'b1))
+  edge_detector #(.DETECT_NEGEDGE(1'b1))
   edge_detector_sda_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -101,6 +101,30 @@ module bus_monitor
       .line(sda_i),
       .delay_count(t_r_i),
       .detect(sda_posedge)
+  );
+
+  stable_high_detector stable_detector_sda_high (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .line_i(sda_i),
+      .delay_count_i(t_r_i),
+      .stable_o(sda_stable_high)
+  );
+
+  stable_high_detector stable_detector_scl_high (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .line_i(scl_i),
+      .delay_count_i(t_r_i),
+      .stable_o(scl_stable_high)
+  );
+
+  stable_high_detector stable_detector_scl_low (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .line_i(!scl_i),
+      .delay_count_i(t_f_i),
+      .stable_o(scl_stable_low)
   );
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -131,10 +155,6 @@ module bus_monitor
   assign scl_edge = scl_negedge | scl_posedge;
   assign sda_edge = sda_negedge | sda_posedge;
 
-  assign scl_stable_high = scl_i_q & scl_i;
-  assign scl_stable_low = !(scl_i_q | scl_i);
-
-  assign sda_stable_high = sda_i_q & sda_i;
   // Start and Stop detection
 
   // Note that this counter combines Start and Stop detection into one
@@ -174,9 +194,9 @@ module bus_monitor
   // exit HDR detection
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-    	hdr_exit_det_count <= 5'b10000;
-    	hdr_exit_det_pending <= 1'b0;
-    	detected_hdr_exit <= 1'b0;
+      hdr_exit_det_count <= 5'b10000;
+      hdr_exit_det_pending <= 1'b0;
+      detected_hdr_exit <= 1'b0;
     end else if (hdr_exit_det_trigger) begin
       hdr_exit_det_pending <= 1'b1;
     end else if (!enable || stop_det) begin

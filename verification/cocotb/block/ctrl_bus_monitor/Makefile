@@ -15,6 +15,7 @@ TOPLEVEL     = bus_monitor
 VERILOG_SOURCES  = \
     $(SRC_DIR)/ctrl/controller_pkg.sv \
     $(SRC_DIR)/ctrl/edge_detector.sv \
+    $(SRC_DIR)/ctrl/stable_high_detector.sv \
     $(SRC_DIR)/ctrl/bus_monitor.sv \
 
 include $(TEST_DIR)/../block_common.mk
