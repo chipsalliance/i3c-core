@@ -3,19 +3,31 @@
 import logging
 
 from boot import boot_init
-from bus2csr import dword2int
+from bus2csr import dword2int, int2dword
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import ClockCycles, Timer
 
 
-@cocotb.test()
-async def test_i3c_target(dut):
+async def timeout_task(timeout_us=5):
+    """
+    A generic task for handling test timeout. Waits a fixed amount of
+    simulation time and then throws an exception.
+    """
+    await Timer(timeout_us, "us")
+    raise TimeoutError("Timeout!")
+
+
+async def test_setup(dut):
+    """
+    Sets up controller, target models and top-level core interface
+    """
 
     cocotb.log.setLevel(logging.INFO)
+    cocotb.start_soon(timeout_task(20))
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -40,6 +52,15 @@ async def test_i3c_target(dut):
 
     # Configure the top level
     await boot_init(tb)
+
+    return i3c_controller, i3c_target, tb
+
+
+@cocotb.test()
+async def test_i3c_target(dut):
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
 
     # Send Private Write on I3C
     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
@@ -98,15 +119,30 @@ async def test_i3c_target(dut):
     )
     assert words_out == words_ref
 
-    # Loopback data to the TX queue
-    for i in range(len(test_data_lin)):
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, 4)
-        dut._log.debug(f"Writing data {test_data_lin[i]} back to the TX queue.")
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
 
-    # Send Private Write on I3C
-    for i in range(len(test_data)):
-        read_data = await i3c_controller.i3c_read(0x5A, len(test_data[i]))
-        print(f"Read data: {read_data}")
-        # assert read_data == test_data[i]
 
-    # await ClockCycles(tb.clk, 10)
+@cocotb.test()
+async def test_i3c_target_ibi(dut):
+
+    # Target address
+    addr = 0x5A
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+
+    target = i3c_controller.add_target(addr)
+    target.set_bcr_fields(ibi_req_capable = True, ibi_payload = True)
+
+    # Write MDB to Target's IBI queue
+    mdb = 0xAA
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(mdb), 4)
+
+    # Wait for the IBI to be serviced, check data
+    data = await i3c_controller.wait_for_ibi()
+    expected = bytearray([addr, mdb])
+    assert data == expected
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
