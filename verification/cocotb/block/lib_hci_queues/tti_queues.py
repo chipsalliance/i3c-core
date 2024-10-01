@@ -80,11 +80,13 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         word = 0
         for i in range(4):
             await RisingEdge(self.clk)
-            await expect_with_timeout(self.dut.tti_tx_queue_rvalid_o, True, self.clk, timeout, units)
+            await expect_with_timeout(
+                self.dut.tti_tx_queue_rvalid_o, True, self.clk, timeout, units
+            )
 
             # Store byte (little-endian)
             word >>= 8
-            word  |= self.dut.tti_tx_queue_rdata_o.value.integer << 24
+            word |= self.dut.tti_tx_queue_rdata_o.value.integer << 24
 
         self.dut.tti_tx_queue_rready_i.value = 0
         return word
@@ -110,7 +112,9 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
             self.dut.tti_rx_queue_wvalid_i.value = 1
             # In case ready is already set, assert valid at the next rising edge
             await RisingEdge(self.clk)
-            await expect_with_timeout(self.dut.tti_rx_queue_wready_o, True, self.clk, timeout, units)
+            await expect_with_timeout(
+                self.dut.tti_rx_queue_wready_o, True, self.clk, timeout, units
+            )
             self.dut.tti_rx_queue_wvalid_i.value = 0
 
     async def get_rx_data(self) -> int:

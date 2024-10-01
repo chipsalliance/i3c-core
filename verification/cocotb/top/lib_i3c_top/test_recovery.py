@@ -56,8 +56,10 @@ async def initialize(dut):
     await boot_init(tb)
 
     # Enable the recovery mode
-    status = 0x3 # "Recovery Mode"
-    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4)
+    status = 0x3  # "Recovery Mode"
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+    )
 
     return i3c_controller, i3c_target, tb, recovery
 
