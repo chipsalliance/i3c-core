@@ -159,7 +159,9 @@ module i3c_target_fsm
   logic [7:0] defining_byte; // optional defining byte of the CCC code
   logic       defining_byte_valid;
 
-  logic       is_in_hdr_mode;
+  logic       enter_hdr_ccc;
+  logic       enter_hdr_after_stop;
+  logic       enter_hdr_after_stop_clr;
 
   logic [1:0] command_min_bytes; // minimum number of bytes expected after a CCC read/write
   logic [1:0] command_max_bytes; // maximum number of bytes expected after a CCC read/write
@@ -167,12 +169,10 @@ module i3c_target_fsm
   logic tbit_after_byte_q;  // whether to expect a T bit after acquiring data byte (we're doing i3c
                             // flow) or old-style ACK (we're doing i2c) flow. Whether the flow is
                             // i2c or i3c depends on the target address - if a dynamic address matches
-                            // then it's i3c, if a static address matches then it's i3c, if the address
+                            // then it's i3c, if a static address matches then it's i2c, if the address
                             // is a reserved byte it's i3c with the caveat that this might get overriden
                             // by a later address read
   logic tbit_after_byte_d;
-
-  assign is_in_hdr_mode_o = is_in_hdr_mode;
 
   // TODO: Set transfer type based on the discovered state
   assign transfer_type_o = 0;
@@ -209,7 +209,7 @@ module i3c_target_fsm
     .response_byte_o(),
     .response_valid_o(),
 
-    .is_in_hdr_mode_o(is_in_hdr_mode),
+    .enter_hdr_ccc_o(enter_hdr_ccc),
 
     .rst_action_o(rst_action_o),
 
@@ -494,10 +494,20 @@ module i3c_target_fsm
   state_e post_ack_decision_q;  // Latch _d
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_latch_ack_decision
-    if (~rst_ni) begin
+    if (!rst_ni) begin
       post_ack_decision_q <= Idle;
     end else begin
       post_ack_decision_q <= post_ack_decision_d;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_latch_enter_hdr
+    if (!rst_ni) begin
+      enter_hdr_after_stop <= 1'b0;
+    end else if (enter_hdr_after_stop_clr) begin
+      enter_hdr_after_stop <= 1'b0;
+    end else if (enter_hdr_ccc) begin
+      enter_hdr_after_stop <= 1'b1;
     end
   end
 
@@ -802,6 +812,10 @@ module i3c_target_fsm
         end
       end
 
+      IdleHDR: begin
+        is_in_hdr_mode_o = 1'b1;
+      end
+
       // default
       default: begin
         target_idle_o = 1'b1;
@@ -814,6 +828,7 @@ module i3c_target_fsm
         event_cmd_complete_o = 1'b0;
         xact_for_us_d = 1'b0;
         nack_transaction_d = 1'b0;
+        is_in_hdr_mode_o = 1'b0;
       end
     endcase  // unique case (state_q)
 
@@ -867,6 +882,7 @@ module i3c_target_fsm
     load_tcount = 1'b0;
     tcount_sel = tNoDelay;
     input_byte_clr = 1'b0;
+    enter_hdr_after_stop_clr = 1'b0;
     unique case (state_q)
       // Idle: initial state, SDA and SCL are released (high)
       Idle: begin
@@ -904,6 +920,22 @@ module i3c_target_fsm
             load_tcount = 1'b1;
             // Wait for hold time to avoid interfering with the controller.
             tcount_sel = tHoldData;
+            // TODO: Check that dynamic address really takes precedence
+            // over static address in determining communication flow (I2C/I3C)
+            //
+            // Specification doesn't exactly mention which address takes
+            // precedence in a situation where the dynamic and static address
+            // are the same - this can happen as there's even a dedicated CCC
+            // for setting the dynamic address to be the same as the static
+            // address. This is important for determining whether or not to
+            // expect ACKs or T-bits after a byte is transmitted. Since there
+            // are communication flow variants where the transfer starts/doesn't
+            // start with a reserved byte for both I2C and I3C so the type of
+            // communication (I2C/I3C) is decided based on the type of address
+            // that matched.
+            // We assume here that dynamic address takes precedence over the
+            // static address since sections 5.1.2 and 5.1.2.1.1 hint at this
+            // interpretation but it's not explicitly written anywhere
             if (is_dyn_addr_match) begin
               state_d = AddrAckWait;
               tbit_after_byte_d = 1'b1;
@@ -1214,8 +1246,9 @@ module i3c_target_fsm
         if (sda_posedge) begin
           // This is a STOP
           input_byte_clr = '1;  // Clear input byte
-          if (is_in_hdr_mode) begin
+          if (enter_hdr_after_stop) begin
             state_d = IdleHDR;
+            enter_hdr_after_stop_clr = 1'b1;
           end else begin
             state_d = Idle;  // Is this the right state?
           end
@@ -1335,7 +1368,7 @@ module i3c_target_fsm
     // When a start is detected, always go to the acquire start state.
     // Differences in repeated start / start handling are done in the
     // other FSM.
-    if (!is_in_hdr_mode) begin
+    if (!is_in_hdr_mode_o) begin
       if (!target_idle && !target_enable_i) begin
         // If the target function is currently not idle but target_enable is suddenly dropped,
         // (maybe because the host locked up and we want to cycle back to an initial state),

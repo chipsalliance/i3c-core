@@ -23,7 +23,7 @@ module ccc
     output logic response_byte_o,
     output logic response_valid_o,
 
-    output logic is_in_hdr_mode_o,
+    output logic enter_hdr_ccc_o,
 
     output logic [7:0] rst_action_o,
 
@@ -45,7 +45,11 @@ module ccc
       defining_byte_valid <= '0;
       command_data  <= '0;
     end else begin
-      command_code  <= command_code_valid_i ? command_code_i : command_code;
+      if (clear_command_code) begin
+        command_code <= '0;
+      end else if (command_code_valid_i) begin
+        command_code <= command_code_i;
+      end
       defining_byte <= defining_byte_valid_i ? defining_byte_i : defining_byte;
       defining_byte_valid <= defining_byte_valid_i;
       command_data  <= command_data_valid_i ? command_data_i : command_data;
@@ -66,13 +70,17 @@ module ccc
   // Decode CCC
   logic is_direct_cmd = command_code[7];  // 0 - BCast, 1 - Direct
 
+  // CCC handling logic
+  logic clear_command_code;
+
   always_comb begin
     response_valid_o = '0;
     response_byte_o  = '0;
-    is_in_hdr_mode_o = '0;
+    enter_hdr_ccc_o = '0;
     rst_action_o = '0;
     command_min_bytes_o = '0;
     command_max_bytes_o = '0;
+    clear_command_code = '0;
     unique case (command_code)
       // Idle: Wait for command appearance in the Command Queue
       `I3C_DIRECT_GETMRL: begin
@@ -84,7 +92,8 @@ module ccc
         response_valid_o = '1;
       end
       `I3C_BCAST_ENTHDR0: begin
-        is_in_hdr_mode_o = '1;
+        enter_hdr_ccc_o = '1;
+        clear_command_code = '1;
       end
       `I3C_DIRECT_RSTACT, `I3C_BCAST_RSTACT: begin
         command_min_bytes_o = '1;
