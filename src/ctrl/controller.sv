@@ -173,6 +173,7 @@ module controller
     input logic [19:0] t_hd_dat_i,
     input logic [19:0] t_su_dat_i,
     input logic [19:0] t_r_i,
+    input logic [19:0] t_f_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i
@@ -262,6 +263,7 @@ module controller
       .i3c_standby_en_i(i3c_standby_en_i),
       .t_hd_dat_i(t_hd_dat_i),
       .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i)
@@ -322,6 +324,7 @@ module controller
       .t_su_dat_i(t_su_dat_i),
       .t_hd_dat_i(t_hd_dat_i),
       .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i)

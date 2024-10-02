@@ -19,6 +19,7 @@ module configuration (
     output logic [19:0] t_su_dat_o,
     output logic [19:0] t_hd_dat_o,
     output logic [19:0] t_r_o,
+    output logic [19:0] t_f_o,
 
     // Bus timers
     output logic [19:0] t_bus_free_o,
@@ -82,6 +83,7 @@ module configuration (
   assign t_su_dat_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value);
   assign t_hd_dat_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value);
   assign t_r_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
+  assign t_f_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value);
 
   // Configuration: bus_timers
   // 20 bits is enough to measure 1ms for clock speed 1GHz.

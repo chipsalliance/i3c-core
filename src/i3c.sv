@@ -431,6 +431,7 @@ module i3c
   logic [19:0] t_hd_dat;
   logic [19:0] t_su_dat;
   logic [19:0] t_r;
+  logic [19:0] t_f;
   logic [19:0] t_bus_free;
   logic [19:0] t_bus_idle;
   logic [19:0] t_bus_available;
@@ -581,6 +582,7 @@ module i3c
       .t_su_dat_i(t_su_dat),
       .t_hd_dat_i(t_hd_dat),
       .t_r_i(t_r),
+      .t_f_i(t_f),
       .t_bus_free_i(t_bus_free),
       .t_bus_idle_i(t_bus_idle),
       .t_bus_available_i(t_bus_available)
@@ -720,6 +722,7 @@ module i3c
       .t_su_dat_o(t_su_dat),
       .t_hd_dat_o(t_hd_dat),
       .t_r_o(t_r),
+      .t_f_o(t_f),
       .t_bus_free_o(t_bus_free),
       .t_bus_idle_o(t_bus_idle),
       .t_bus_available_o(t_bus_available)

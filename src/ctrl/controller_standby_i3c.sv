@@ -85,6 +85,7 @@ module controller_standby_i3c
     input logic [19:0] t_su_dat_i,
     input logic [19:0] t_hd_dat_i,
     input logic [19:0] t_r_i,
+    input logic [19:0] t_f_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i
@@ -204,6 +205,7 @@ module controller_standby_i3c
       .rx_fifo_wready_i(rx_byte_ready),
       .transfer_type_o(transfer_type),
       .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
       .tsu_dat_i(t_su_dat_i),
       .thd_dat_i(t_hd_dat_i),
       .is_sta_addr_match(is_sta_addr_match),
@@ -230,6 +232,7 @@ module controller_standby_i3c
       .sda_i(ctrl_sda_i),
       .t_hd_dat_i(t_hd_dat_i),
       .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
       .start_detect_o(start_detect),
       .stop_detect_o(stop_detect),
       .is_in_hdr_mode_i(is_in_hdr_mode),

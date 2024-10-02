@@ -100,6 +100,7 @@ module controller_active
     input logic i3c_standby_en_i,
     input logic [19:0] t_hd_dat_i,
     input logic [19:0] t_r_i,
+    input logic [19:0] t_f_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i

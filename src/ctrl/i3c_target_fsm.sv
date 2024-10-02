@@ -81,6 +81,7 @@ module i3c_target_fsm
     // TODO: Revisit widths of the timings; each timing is configured via 20-bit CSR field
     // Timings
     input        [12:0] t_r_i,            // rise time of both SDA and SCL in clock units
+    input        [12:0] t_f_i,            // fall time of both SDA and SCL in clock units
     input        [12:0] tsu_dat_i,        // data setup time in clock units
     input        [12:0] thd_dat_i,        // data hold time in clock units
 

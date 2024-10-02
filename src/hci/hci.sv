@@ -150,6 +150,7 @@ module hci
     output logic [19:0] t_su_dat_o,
     output logic [19:0] t_hd_dat_o,
     output logic [19:0] t_r_o,
+    output logic [19:0] t_f_o,
     output logic [19:0] t_bus_free_o,
     output logic [19:0] t_bus_idle_o,
     output logic [19:0] t_bus_available_o
@@ -477,6 +478,7 @@ module hci
       .t_su_dat_o,
       .t_hd_dat_o,
       .t_r_o,
+      .t_f_o,
       .t_bus_free_o,
       .t_bus_idle_o,
       .t_bus_available_o
