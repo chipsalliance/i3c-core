@@ -177,6 +177,8 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
     [
         "test_i3c_target",
         "test_recovery",
+        "test_enter_exit_hdr_mode",
+        "test_target_reset",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
@@ -191,6 +193,8 @@ def i3c_ahb_verify(session, test_group, test_name, coverage):
     [
         "test_i3c_target",
         "test_recovery",
+        "test_enter_exit_hdr_mode",
+        "test_target_reset",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
