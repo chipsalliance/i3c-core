@@ -38,7 +38,7 @@ async def test_target_reset(dut):
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-    await ClockCycles(dut.hclk, 50)
+    await ClockCycles(tb.clk, 50)
     await boot_init(tb)
 
     await i3c_controller.i3c_ccc_write(
