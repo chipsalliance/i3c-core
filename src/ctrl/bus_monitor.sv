@@ -155,6 +155,7 @@ module bus_monitor
   assign scl_edge = scl_negedge | scl_posedge;
   assign sda_edge = sda_negedge | sda_posedge;
 
+  logic simultaneous_posedge, simultaneous_negedge;
   assign simultaneous_posedge = sda_posedge && scl_posedge;
   assign simultaneous_negedge = sda_negedge && scl_negedge;
 
