@@ -289,17 +289,13 @@ module i3c_target_fsm
 
   // Latch received bus address
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni)
-      bus_addr <= '0;
-    else if (input_strobe & (bit_idx != 4'd7))
-      bus_addr <= input_byte;
+    if (!rst_ni) bus_addr <= '0;
+    else if (input_strobe & (bit_idx != 4'd7)) bus_addr <= input_byte;
 
   // Latch received RnW bit
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni)
-      bus_rnw <= '0;
-    else if (input_strobe & (bit_idx == 4'd7))
-      bus_rnw <= input_byte[0];
+    if (!rst_ni) bus_rnw <= '0;
+    else if (input_strobe & (bit_idx == 4'd7)) bus_rnw <= input_byte[0];
 
   // An artificial acq_fifo_wready is used here to ensure we always have
   // space to asborb a stop / repeat start format byte.  Without guaranteeing
@@ -730,6 +726,24 @@ module i3c_target_fsm
   end
   // verilator lint_on LATCH
 
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) ibi_handling <= '0;
+    else if (state_q == Idle) ibi_handling <= ibi_fifo_rvalid_i;
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) ibi_payload <= '0;
+    else if (state_q == Idle) ibi_payload <= '0;
+    else if (state_q == IbiTransmitWait) ibi_payload <= 1'b1;
+    else if (state_q == IbiTbitWait) ibi_payload <= 1'b1;
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) sda_r <= 1'b1;
+    else if (state_q == IbiAddrSetup || state_q == IbiTransmitSetup)
+      sda_r <= output_byte[3'(7-bit_idx)];
+    else if (state_q == IbiTbitSetup)
+      // TODO: We are sending T=0 as we currently assume there's only one IBI byte
+      sda_r <= 1'b0;
+
   // Conditional state transition
   // TODO: Fix latch
   // verilator lint_off LATCH
@@ -744,8 +758,6 @@ module i3c_target_fsm
         // We have an IBI pending in the queue. SDA will be pulled low. Wait
         // for the controller to provide SCL clock.
         if (ibi_fifo_rvalid_i) state_d = AcquireIbiStart;
-        ibi_handling = ibi_fifo_rvalid_i;
-        ibi_payload = 1'b0;
         // The bus is idle. Waiting for a Start.
         post_ack_decision_d = Idle;
         // Initially don't drive the bus using push-pull
@@ -900,7 +912,6 @@ module i3c_target_fsm
         end
       end
       IbiAddrSetup: begin
-        sda_r = output_byte[3'(7-bit_idx)];
         if (tcount_q == 20'd1) begin
           state_d = IbiAddrPulse;
         end
@@ -934,10 +945,8 @@ module i3c_target_fsm
       end
       IbiAckLatch: begin
         if (scl_i) begin
-          if (sda_i)
-            post_ack_decision_d = WaitForStop; // NACK
-          else
-            post_ack_decision_d = IbiTransmitWait; // ACK
+          if (sda_i) post_ack_decision_d = WaitForStop;  // NACK
+          else post_ack_decision_d = IbiTransmitWait;  // ACK
           state_d = IbiAckHold;
           load_tcount = 1'b1;
           tcount_sel = tHoldData;
@@ -951,7 +960,6 @@ module i3c_target_fsm
 
       // IBI payload
       IbiTransmitWait: begin
-        ibi_payload = 1'b1;
         sel_od_pp_o = 1'b1;
         if (!scl_i) begin
           state_d = IbiTransmitSetup;
@@ -960,7 +968,6 @@ module i3c_target_fsm
         end
       end
       IbiTransmitSetup: begin
-        sda_r = output_byte[3'(7-bit_idx)];
         if (tcount_q == 20'd1) begin
           state_d = IbiTransmitPulse;
         end
@@ -983,7 +990,6 @@ module i3c_target_fsm
 
       // IBI payload T-bit
       IbiTbitWait: begin
-        ibi_payload = 1'b1;
         if (!scl_i) begin
           state_d = IbiTbitSetup;
           load_tcount = 1'b1;
@@ -991,8 +997,6 @@ module i3c_target_fsm
         end
       end
       IbiTbitSetup: begin
-        // TODO: We are sending T=0 as we currently assume there's only one IBI byte
-        sda_r = 1'b0;
         if (tcount_q == 20'd1) begin
           state_d = IbiTbitPulse;
         end
