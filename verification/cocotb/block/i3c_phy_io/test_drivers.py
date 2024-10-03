@@ -28,7 +28,6 @@ async def drive_lines(dut, data):
     """
     dut.ctrl_scl_i.value = data[0]
     dut.ctrl_sda_i.value = data[1]
-    print(dut.scl_io.value)
     await ClockCycles(dut.clk_i, 5)
 
 
@@ -62,5 +61,3 @@ async def test_drivers(dut):
     # Push-Pull tests
     dut.sel_od_pp_i.value = 1
     await drive_all_states(dut)
-
-    print(dut.scl_io.value)
