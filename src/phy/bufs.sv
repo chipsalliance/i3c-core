@@ -37,6 +37,6 @@ module bufs (
   );
 
   // Mux between OD and PP
-  assign phy_data_io = sel_driver_i ? buf_pp_o : buf_od_o;
+  assign phy_data_io = sel_od_pp_i ? buf_pp_o : buf_od_o;
 
 endmodule

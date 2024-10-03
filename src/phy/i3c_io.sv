@@ -31,16 +31,16 @@ module i3c_io (
 
   // SCL buffers
   bufs xbufs_scl (
-      .phy_data_i  (scl_i),
-      .sel_driver_i(sel_od_pp_i),
-      .phy_data_io (scl_io)
+      .phy_data_i (scl_i),
+      .sel_od_pp_i(sel_od_pp_i),
+      .phy_data_io(scl_io)
   );
 
   // SDA buffers
   bufs xbufs_sda (
-      .phy_data_i  (sda_i),
-      .sel_driver_i(sel_od_pp_i),
-      .phy_data_io (sda_io)
+      .phy_data_i (sda_i),
+      .sel_od_pp_i(sel_od_pp_i),
+      .phy_data_io(sda_io)
   );
 
   // Bus state is read to provide feedback to the controller
