@@ -600,7 +600,7 @@
 <figure class="align-default" id="integration">
 <img alt="" src="_images/integration.png" />
 <figcaption>
-<p><span class="caption-number">Figure 8 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 12 </span><span class="caption-text"><span class="caption-text">
 Integration of the I3C Core with Caliptra Subsystem in standard use case</span><a class="headerlink" href="#integration" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <h2 id="caliptra-subsystem">Caliptra Subsystem<a class="headerlink" href="#caliptra-subsystem" title="Link to this heading">¶</a></h2>
@@ -616,15 +616,15 @@ It consists of:</p>
 <li><p>SHA256 &amp; SHA512</p></li>
 <li><p>ROM</p></li>
 </ul>
-<p>All listed components are connected to AHB Lite bus that is controlled by VeeR EL2 serving the role of a manager.</p>
+<p>All listed components are connected to an AHB Lite bus that is controlled by VeeR EL2 acting as a manager.</p>
 <figure class="align-default" id="caliptra-ss">
 <img alt="" src="_images/caliptra_ss.png" />
 <figcaption>
-<p><span class="caption-number">Figure 9 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 13 </span><span class="caption-text"><span class="caption-text">
 Caliptra Subsystem block diagram</span><a class="headerlink" href="#caliptra-ss" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <h3 id="clock">Clock<a class="headerlink" href="#clock" title="Link to this heading">¶</a></h3>
-<p>The I3C core will be using the gated clock <code class="docutils literal notranslate"><span class="pre">clk_cg</span></code>, provided by the Caliptra-SS core.</p>
+<p>The I3C core will be using the gated <code class="docutils literal notranslate"><span class="pre">clk_cg</span></code> clock, provided by the Caliptra-SS core.</p>
 <h3 id="reset">Reset<a class="headerlink" href="#reset" title="Link to this heading">¶</a></h3>
 <p>The PON reset of the I3C core will be provided by the Caliptra-SS core.</p>
 <p>The I3C core is responsive after PON release, so it does not provide a handshake (e.g. <code class="docutils literal notranslate"><span class="pre">BOOT_DONE</span></code>, <code class="docutils literal notranslate"><span class="pre">RST_DONE</span></code>, etc.)</p>
@@ -633,10 +633,10 @@ Caliptra Subsystem block diagram</span><a class="headerlink" href="#caliptra-ss"
 The AHB/AXI interface is connected to an adapter, which enables access to the Control and Status Registers.
 SystemVerilog CSR description is generated with <a class="reference external" href="https://github.com/SystemRDL/PeakRDL">PeakRDL</a> and uses the <a class="reference external" href="https://peakrdl-regblock.readthedocs.io/en/latest/cpuif/internal_protocol.html">“Internal CPUIF Protocol”</a>.</p>
 <h2 id="controller-interface-test">Controller Interface test<a class="headerlink" href="#controller-interface-test" title="Link to this heading">¶</a></h2>
-<p>In test <a class="reference external" href="https://github.com/chipsalliance/caliptra-ss/tree/dev-antmicro/src/mcu/test_suites/smoke_test_i3c">smoke_test_i3c.c</a>, the I3C Core is connected via AHB bus to the Caliptra SubSystem.
-Communication with internal registers of I3C Core is executed by using <code class="docutils literal notranslate"><span class="pre">lsu_write_32()</span></code> and <code class="docutils literal notranslate"><span class="pre">lsu_read_32()</span></code> functions from <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/a50f6d212c93827d9303b6b734152302c0ccd7cd/src/integration/test_suites/libs/riscv_hw_if/riscv_hw_if.h">riscv_hw_if.h</a> Caliptra header.
+<p>In test <a class="reference external" href="https://github.com/chipsalliance/caliptra-ss/tree/dev-antmicro/src/mcu/test_suites/smoke_test_i3c">smoke_test_i3c.c</a>, the I3C Core is connected via an AHB bus to the Caliptra SubSystem.
+Communication with internal registers of the I3C Core is executed by using the <code class="docutils literal notranslate"><span class="pre">lsu_write_32()</span></code> and <code class="docutils literal notranslate"><span class="pre">lsu_read_32()</span></code> functions from the <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/a50f6d212c93827d9303b6b734152302c0ccd7cd/src/integration/test_suites/libs/riscv_hw_if/riscv_hw_if.h">riscv_hw_if.h</a> Caliptra header.
 Software is executed on the simulated <a class="reference external" href="https://github.com/chipsalliance/Cores-VeeR-EL2">VeeR-EL2 core</a>.
-The software test executes read/write operations on different configurations of registers to check whether RTL generated from RDL configuration behaves properly from the software point of view.</p>
+The software test executes read/write operations on different configurations of registers to check whether RTL generated from the RDL configuration behaves properly from the software point of view.</p>
 <h2 id="interrupts">Interrupts<a class="headerlink" href="#interrupts" title="Link to this heading">¶</a></h2>
 <p>Calitpra specifies required interface for interrupts which consists of two aggregator single bit signals:</p>
 <ul class="simple">
@@ -806,7 +806,7 @@ The software test executes read/write operations on different configurations of 
   <small>
     
       Last update:
-      2024-09-17
+      2024-10-03
     
   </small>
 </div>

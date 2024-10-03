@@ -570,12 +570,12 @@
 
 <h1 id="boot-and-initialization">Boot and Initialization<a class="headerlink" href="#boot-and-initialization" title="Link to this heading">¶</a></h1>
 <h2 id="boot">Boot<a class="headerlink" href="#boot" title="Link to this heading">¶</a></h2>
-<p>After Power-On Reset, the core should be configured to prevent it from interacting with the i3c bus in any way.</p>
+<p>After Power-On Reset, the core should be configured to prevent it from interacting with the I3C bus in any way.</p>
 <p>This implementation supports 3 modes at boot:</p>
 <ul class="simple">
 <li><p>Active Controller Mode</p></li>
 <li><p>Secondary Controller Mode (Target)</p></li>
-<li><p>Disabled</p></li>
+<li><p>Disabled Mode</p></li>
 </ul>
 <p>We propose the following boot sequence:</p>
 <ul class="simple">
@@ -583,63 +583,62 @@
 <li><p>Device is in Disabled Mode (reset values defined at synthesis time)</p></li>
 <li><p>System Manager initializes itself and enables clock for the I3C Core</p></li>
 <li><p>System Manager initializes relevant registers of the I3C Core</p></li>
-<li><p>System Manager enables desired mode of operation: Active or Secondary Controller Mode</p></li>
+<li><p>System Manager enables the desired mode of operation: Active or Secondary Controller Mode</p></li>
 <li><p>The device is ready for normal operation</p></li>
 </ul>
-<p>Initialization process is described in more detail in the Initialization Chapter of this documentation.</p>
 <h2 id="primary-controller-initialization">Primary Controller Initialization<a class="headerlink" href="#primary-controller-initialization" title="Link to this heading">¶</a></h2>
-<p>The following section details the initialization process on the software driver side, in compliance with <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>:</p>
+<p>The following section details the initialization process on the software driver side, in compliance with the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>:</p>
 <ul class="simple">
 <li><p>“6.1.1 Host Controller Initialization” in the PIO mode</p></li>
 <li><p>“6.17.1.1 Secondary Controller Initialization”</p></li>
 </ul>
-<p>The following process is described under the assumption the controller has undergone software- or hardware-issued reset prior to the initialization, so that all the registers and internal FSMs are in a default state.</p>
-<p>To initialize the controller the software is expected to perform the following steps:</p>
+<p>The following process is described under the assumption that the controller has undergone software- or hardware-issued reset prior to the initialization, so that all the registers and internal FSMs are in the default state.</p>
+<p>To initialize the controller, the software is expected to perform the following steps:</p>
 <ol class="arabic simple">
 <li><p>Verify the value of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hci_version-register">HCI_VERSION</a> register at the <code class="docutils literal notranslate"><span class="pre">I3CBase</span></code> address.
 The controller is compliant with MIPI HCI v1.2 and therefore the <code class="docutils literal notranslate"><span class="pre">HCI_VERSION</span></code> should read <code class="docutils literal notranslate"><span class="pre">0x120</span></code></p></li>
 <li><p>Evaluate DAT &amp; DCT table offsets:</p>
 <ul class="simple">
-<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register">DAT_SECTION_OFFSET</a> defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x30</span></code></p></li>
-<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register">DCT_SECTION_OFFSET</a> defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x34</span></code></p></li>
-<li><p>Both <code class="docutils literal notranslate"><span class="pre">DAT_SECTION_OFFSET</span></code> and <code class="docutils literal notranslate"><span class="pre">DCT_SECTION_OFFSET</span></code> contains the corresponding table offset, number of entries &amp; table size</p></li>
-<li><p>HCI spec permits to require the driver to allocate the DAT &amp; DCT table, in which case, the <code class="docutils literal notranslate"><span class="pre">TABLE_OFFSET</span></code> would read 0. This specific controller implementation allocates both DAT and DCT tables in the registers</p></li>
+<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register">DAT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x30</span></code></p></li>
+<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register">DCT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x34</span></code></p></li>
+<li><p>Both <code class="docutils literal notranslate"><span class="pre">DAT_SECTION_OFFSET</span></code> and <code class="docutils literal notranslate"><span class="pre">DCT_SECTION_OFFSET</span></code> contain the corresponding table offset, number of entries &amp; table size</p></li>
+<li><p>HCI spec permits to require the driver to allocate the DAT &amp; DCT table, in which case the <code class="docutils literal notranslate"><span class="pre">TABLE_OFFSET</span></code> would read 0. This specific controller implementation allocates both DAT and DCT tables in the registers</p></li>
 </ul>
 </li>
 <li><p>Evaluate <code class="docutils literal notranslate"><span class="pre">PIO_SECTION_OFFSET</span></code>:</p>
 <ul class="simple">
 <li><p>Read <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_section_offset-register">PIO_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span>&#160; <span class="pre">+</span> <span class="pre">0x3c</span></code>, the <code class="docutils literal notranslate"><span class="pre">section_offset</span></code> field points to the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file">PIOControl register file</a> that contains command, transfer, response and IBI ports as well as PIO control registers</p></li>
-<li><p>This specific controller implements the PIO mode capability. If it’s not supported, the <code class="docutils literal notranslate"><span class="pre">SECTION_OFFSET</span></code> will read 0</p></li>
+<li><p>This specific controller implements the PIO mode capability. If it’s not supported, <code class="docutils literal notranslate"><span class="pre">SECTION_OFFSET</span></code> will read 0</p></li>
 </ul>
 </li>
-<li><p>Evaluate RING_HEADERS_SECTION_OFFSET, the <code class="docutils literal notranslate"><span class="pre">SECTION_OFFSET</span></code> should read <code class="docutils literal notranslate"><span class="pre">0x0</span></code> as this controller doesn’t support the DMA mode</p></li>
-<li><p>Evaluate HC_CAPABILITIES register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0xC</span></code>:</p>
+<li><p>Evaluate <code class="docutils literal notranslate"><span class="pre">RING_HEADERS_SECTION_OFFSET</span></code>, the <code class="docutils literal notranslate"><span class="pre">SECTION_OFFSET</span></code> should read <code class="docutils literal notranslate"><span class="pre">0x0</span></code> as this controller doesn’t support the DMA mode</p></li>
+<li><p>Evaluate the <code class="docutils literal notranslate"><span class="pre">HC_CAPABILITIES</span></code> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0xC</span></code>:</p>
 <ul class="simple">
-<li><p>Stores controller capabilities such as scatter-gather, scheduled commands, combo transfers, IBI data abort, command size</p></li>
+<li><p>It stores controller capabilities such as scatter-gather, scheduled commands, combo transfers, IBI data abort, command size</p></li>
 </ul>
 </li>
 <li><p>Extended capabilities evaluation via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ext_caps_section_offset-register">EXT_CAPS_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x40</span></code></p>
 <ul class="simple">
-<li><p>Evaluate the linked list of Extended Capability structures, until the end of the linked list (i.e., an instance of register <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> with field <code class="docutils literal notranslate"><span class="pre">CAP_ID</span></code> having the value <code class="docutils literal notranslate"><span class="pre">0x00</span></code>)</p></li>
+<li><p>Evaluate the linked list of Extended Capability structures, until the end of the linked list (i.e., an instance of the <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> register with the <code class="docutils literal notranslate"><span class="pre">0x00</span></code> value in the <code class="docutils literal notranslate"><span class="pre">CAP_ID</span></code> field)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">EXT_OFFSET</span></code> will read <code class="docutils literal notranslate"><span class="pre">0x0</span></code> if the extended capabilities are not supported</p></li>
 </ul>
 </li>
 <li><p>Setup the threshold for the HCI queues (in the internal/private software data structures):</p>
 <ul class="simple">
-<li><p>The command, data buffer and IBI status queue sizes can be obtained through <code class="docutils literal notranslate"><span class="pre">QUEUE_SIZE</span></code> register at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x18</span></code></p></li>
-<li><p>The response queue size is defined at <code class="docutils literal notranslate"><span class="pre">ALT_QUEUE_SIZE</span></code> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x1C</span></code> when the size of the command queue is not equal to the size of response queue (which is the case for this host controller)</p></li>
+<li><p>The command, data buffer and IBI status queue sizes can be obtained through the <code class="docutils literal notranslate"><span class="pre">QUEUE_SIZE</span></code> register at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x18</span></code></p></li>
+<li><p>The response queue size is defined at <code class="docutils literal notranslate"><span class="pre">ALT_QUEUE_SIZE</span></code> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x1C</span></code> when the size of the command queue is not equal to the size of the response queue (which is the case for this host controller)</p></li>
 <li><p>both are contained within <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file">PIOControl register file</a></p></li>
 </ul>
 </li>
 <li><p>Enable the host controller:</p>
 <ul class="simple">
-<li><p>Ensure the <code class="docutils literal notranslate"><span class="pre">MODE_SELECTOR</span></code> field in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register is set to <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (PIO mode)</p></li>
-<li><p>Set the field <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register</p></li>
+<li><p>Ensure the <code class="docutils literal notranslate"><span class="pre">MODE_SELECTOR</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register is set to <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (PIO mode)</p></li>
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register</p></li>
 </ul>
 </li>
 <li><p>Enable controller interrupts:</p>
 <ul class="simple">
-<li><p>Set fields for the status interrupts to be enabled in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status_enable-register">INTR_STATUS_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x24</span></code>, following status interrupts can be set:</p>
+<li><p>Set fields for the status interrupts to be enabled in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status_enable-register">INTR_STATUS_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x24</span></code>; the following status interrupts can be set:</p>
 <ul>
 <li><p>Scheduled command missed tick</p></li>
 <li><p>Controller command sequence stall / timeout</p></li>
@@ -648,45 +647,45 @@ The controller is compliant with MIPI HCI v1.2 and therefore the <code class="do
 </ul>
 </li>
 <li><p>Upon writing <code class="docutils literal notranslate"><span class="pre">1'b1</span></code>, the interrupt will be reported in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register">STATUS_REGISTER</a></p></li>
-<li><p>Setting fields in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_signal_enable-register">INTR_SIGNAL_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x28</span></code> will result in not only reporting the interrupt in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register">STATUS_REGISTER</a> but will also deliver an interrupt condition to the host (interrupt trigger)</p></li>
+<li><p>Setting the fields in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_signal_enable-register">INTR_SIGNAL_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x28</span></code> will result in not only reporting the interrupt in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register">STATUS_REGISTER</a> register but will also deliver an interrupt condition to the host (interrupt trigger)</p></li>
 </ul>
 </li>
 <li><p>Enable and start PIO queues:</p>
 <ul class="simple">
-<li><p>Enable PIO interrupts via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register">PIO_INTR_STATUS_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register">PIO_INTR_SIGNAL_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code>; enabling fields in status register will cause the interrupts to be reported via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status-register">PIO_INTR_STATUS</a> register, additionally enabling interrupts in <code class="docutils literal notranslate"><span class="pre">PIO_INTR_SIGNAL_ENABLE</span></code> will cause an event for the host controller</p></li>
-<li><p>Enable queues by setting <code class="docutils literal notranslate"><span class="pre">ENABLE</span></code> field in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a> register</p></li>
-<li><p>Start PIO queues by setting <code class="docutils literal notranslate"><span class="pre">RS</span></code> field in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a></p></li>
+<li><p>Enable PIO interrupts via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register">PIO_INTR_STATUS_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register">PIO_INTR_SIGNAL_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code>; enabling fields in the status register will cause the interrupts to be reported via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status-register">PIO_INTR_STATUS</a> register, additionally enabling interrupts in <code class="docutils literal notranslate"><span class="pre">PIO_INTR_SIGNAL_ENABLE</span></code> will cause an event for the host controller</p></li>
+<li><p>Enable queues by setting the <code class="docutils literal notranslate"><span class="pre">ENABLE</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a> register</p></li>
+<li><p>Start PIO queues by setting the <code class="docutils literal notranslate"><span class="pre">RS</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a> register</p></li>
 </ul>
 </li>
 </ol>
-<p>The host control will expose its register map and will await the driver to set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> bit in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register.
-After which the controller will evaluate the capabilities limited by the software and initialize internal queues &amp; resources accordingly.</p>
+<p>The host control will expose its register map and will await the driver to set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> bit in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register.
+After that, the controller will evaluate the capabilities limited by the software and initialize internal queues &amp; resources accordingly.</p>
 <h2 id="secondary-controller-initialization">Secondary Controller Initialization<a class="headerlink" href="#secondary-controller-initialization" title="Link to this heading">¶</a></h2>
-<p>The Secondary Controller Initialization process requires additional steps (in addition to previous steps):</p>
+<p>The Secondary Controller Initialization process requires additional steps (in addition to the previous steps):</p>
 <ol class="arabic simple">
 <li><p>Evaluate the Standby Controller Mode Extended Capability structure (see Section 7.7.11):</p>
 <ul class="simple">
 <li><p>Determine whether an I3C Target Transaction Interface to software is supported.</p>
 <ul>
-<li><p>If this interface is supported, then discover its capabilities and configure the interface appropriately (i.e., by using its vendor-specified Extended Capability structure). Then, enable the interface using field TARGET_XACT_ENABLE in register STBY_CR_CONTROL (Section 7.7.11.1).</p></li>
+<li><p>If this interface is supported, then discover its capabilities and configure the interface appropriately (i.e., by using its vendor-specified Extended Capability structure). Then, enable the interface using the <code class="docutils literal notranslate"><span class="pre">TARGET_XACT_ENABLE</span></code> field in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register (Section 7.7.11.1).</p></li>
 </ul>
 </li>
-<li><p>Determine which methods of Dynamic Address Assignment are implemented and supported, by reading register STBY_CR_CAPABILITIES (Section 7.7.11.3)</p></li>
+<li><p>Determine which methods of Dynamic Address Assignment are implemented and supported by reading the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CAPABILITIES</span></code> register (Section 7.7.11.3)</p></li>
 <li><p>Determine which other CCCs need to be supported and configured, either as registers in the Standby Controller Mode Extended Capability structure, or as registers in any instances of other vendor-specific Extended Capability structures that might be defined to provide control for such CCC handling.</p></li>
 </ul>
 </li>
-<li><p>Set the BCR bits and the DCR value in register STBY_CR_DEVICE_CHAR (Section 7.7.11.5).</p></li>
-<li><p>Optionally, set the PID value in registers STBY_CR_DEVICE_CHAR and STBY_CR_DEVICE_PID_LO (Section 7.7.11.5 and Section 7.7.11.6) if required for the Dynamic Address Assignment with ENTDAA procedure, or if it is known that the GETPID CCC will be used by an Active Controller.</p></li>
+<li><p>Set the BCR bits and the DCR value in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_CHAR</span></code> register (Section 7.7.11.5).</p></li>
+<li><p>Optionally, set the PID value in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_CHAR</span></code> and <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_PID_LO</span></code> registers (Section 7.7.11.5 and Section 7.7.11.6) if required for the Dynamic Address Assignment with the ENTDAA procedure, or if it is known that the GETPID CCC will be used by an Active Controller.</p></li>
 <li><p>Configure registers to set up autonomous responses for CCCs, for those CCCs that are defined for such handling in this specification (see Section 6.17.3.1).</p></li>
 <li><p>Enable Secondary Controller Interrupts:</p>
 <ul class="simple">
-<li><p>In register STBY_CR_INTR_SIGNAL_ENABLE (Section 7.7.11.8), set the mask of enabled interrupts.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">STBY_CR_INTR_SIGNAL_ENABLE</span></code> register (Section 7.7.11.8), set the mask of enabled interrupts.</p></li>
 </ul>
 </li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The specification states that order of these operations has to be adjusted based on the initial desired operation, as well as supported handoff procedures.</p>
+<p>The specification states that the order of these operations has to be adjusted based on the initial desired operation, as well as supported handoff procedures.</p>
 </div>
 
 
@@ -695,7 +694,7 @@ After which the controller will evaluate the capabilities limited by the softwar
   <small>
     
       Last update:
-      2024-09-17
+      2024-10-03
     
   </small>
 </div>

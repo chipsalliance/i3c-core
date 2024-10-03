@@ -697,44 +697,44 @@
 
 
 <h1 id="normal-operation">Normal operation<a class="headerlink" href="#normal-operation" title="Link to this heading">¶</a></h1>
-<p>The following section details the software driver side of the normal operation: issuing the <a class="reference internal" href="#data-transfers">data transfers</a>, <a class="reference internal" href="#in-band-interrupts-ibi-handling">IBI interrupts</a>, <a class="reference internal" href="#interrupts">interrupts</a> handling and <a class="reference internal" href="#address-assignment">address assignment</a> procedure.</p>
+<p>The following section details the software driver side of the normal operation: issuing <a class="reference internal" href="#data-transfers">data transfers</a>, <a class="reference internal" href="#in-band-interrupts-ibi-handling">IBI interrupts</a>, <a class="reference internal" href="#interrupts">interrupts</a> handling and <a class="reference internal" href="#address-assignment">address assignment</a> procedure.</p>
 <h2 id="data-transfers">Data transfers<a class="headerlink" href="#data-transfers" title="Link to this heading">¶</a></h2>
 <p>I3C HCI specification allows two data transfer modes: DMA and PIO. In DMA mode the driver populates DMA descriptors to the core via its registers and instructs it to execute a transfer. In PIO mode certain registers are used to access FIFO queues and the driver needs to actively read/write data from/to them.</p>
 <p>Our implementation supports PIO mode only.</p>
-<p>According to “6.8.1 Transfers in PIO mode” and “6.12.1 PIO Mode” sections of the HCI spec the driver issues transfers to the core in the following manner:</p>
+<p>According to “6.8.1 Transfers in PIO mode” and “6.12.1 PIO Mode” sections of the HCI spec, the driver issues transfers to the core in the following manner:</p>
 <ul class="simple">
-<li><p>If data is to be transmitted to a device the driver writes it to the Tx data queue by writing to the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register">XFER_DATA_PORT</a> register. Some commands allow to provide data as immediate payload - for those no data needs to be written to the Tx queue.</p></li>
+<li><p>If data is to be transmitted to a device, the driver writes it to the Tx data queue by writing to the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register">XFER_DATA_PORT</a> register. Some commands allow providing data as the immediate payload - for those no data needs to be written to the Tx queue.</p></li>
 <li><p>The driver writes a command descriptor to the command queue port by writing the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#command_port-register">COMMAND_PORT</a> register.</p></li>
 <li><p>The controller executes the transfer. To indicate transfer completion the core may report an interrupt.</p></li>
-<li><p>Once the transfer is complete the driver reads command status from the response queue and received data (if any) from the Rx data queue.</p></li>
+<li><p>Once the transfer is complete, the driver reads command status from the response queue and the received data (if any) from the Rx data queue.</p></li>
 </ul>
 <p>Collecting responses and received data:</p>
 <ul class="simple">
 <li><p>A response is provided by the controller to the driver in the following cases:</p>
 <ul>
-<li><p>When a transfer is successful and <code class="docutils literal notranslate"><span class="pre">wroc</span></code> field is set in a corresponding command descriptor.</p></li>
-<li><p>When a read transfer is successful (denoted by <code class="docutils literal notranslate"><span class="pre">rnw</span></code> field).</p></li>
-<li><p>When a transfer generates an error (e.g. a short read request with <code class="docutils literal notranslate"><span class="pre">short_read_err</span></code> field set).</p></li>
+<li><p>When a transfer is successful and the <code class="docutils literal notranslate"><span class="pre">wroc</span></code> field is set in the corresponding command descriptor.</p></li>
+<li><p>When a read transfer is successful (denoted by the <code class="docutils literal notranslate"><span class="pre">rnw</span></code> field).</p></li>
+<li><p>When a transfer generates an error (e.g. a short read request with the <code class="docutils literal notranslate"><span class="pre">short_read_err</span></code> field set).</p></li>
 </ul>
 </li>
 <li><p>Driver can fetch the response descriptor by issuing a read from the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#response_port-register">RESPONSE_PORT</a> register.</p>
 <ul>
-<li><p>A reached response threshold is indicated with <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready-field">RESP_READY_STAT</a> by the controller when the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready_en-field">RESP_READY_STAT_EN</a> is set.
+<li><p>Reaching the response threshold is indicated with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready-field">RESP_READY_STAT</a> field by the controller when <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready_en-field">RESP_READY_STAT_EN</a> is set.
 A threshold interrupt is raised in accordance to <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_buf-field">RESP_BUF_THLD</a>.</p></li>
-<li><p>In case of a read request when no response is available, the controller shall raise an error on the frontend bus interface (AHB / AXI).</p></li>
-<li><p>Upon a successful read from the <code class="docutils literal notranslate"><span class="pre">RESPONSE_PORT</span></code> driver is to decode the response in accordance to <a class="reference internal" href="#response-descriptor">response descriptor</a> definition and verify the <code class="docutils literal notranslate"><span class="pre">tid</span></code>.
+<li><p>In case of a read request when no response is available, the controller raises an error on the frontend bus interface (AHB / AXI).</p></li>
+<li><p>Upon a successful read from the <code class="docutils literal notranslate"><span class="pre">RESPONSE_PORT</span></code>, the driver is to decode the response in accordance to the <a class="reference internal" href="#response-descriptor">response descriptor</a> definition and verify the <code class="docutils literal notranslate"><span class="pre">tid</span></code>.
 The <code class="docutils literal notranslate"><span class="pre">tid</span></code> should match the <code class="docutils literal notranslate"><span class="pre">tid</span></code> of a previously enqueued command.</p></li>
 </ul>
 </li>
-<li><p>Received transfer data can be obtained by the driver via a read from <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register">XFER_DATA_PORT</a> register.</p>
+<li><p>Received transfer data can be obtained by the driver via a read from the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register">XFER_DATA_PORT</a> register.</p>
 <ul>
-<li><p>A reached received data threshold is indicated by the controller with <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold-field">TX_THLD_STAT</a> interrupt if <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold_en-field">RX_THLD_STAT_EN</a> is set.
+<li><p>Reaching the received data threshold is indicated by the controller with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold-field">TX_THLD_STAT</a> interrupt if <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold_en-field">RX_THLD_STAT_EN</a> is set.
 The RX threshold can be set via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_buf-field">RX_BUF_THLD</a>.</p></li>
-<li><p>In case of a read when no RX data is available, the controller shall raise an error on the frontend bus interface (AHB / AXI).</p></li>
+<li><p>In case of a read when no RX data is available, the controller raises an error on the frontend bus interface (AHB / AXI).</p></li>
 </ul>
 </li>
 </ul>
-<p>Note that the <code class="docutils literal notranslate"><span class="pre">XFER_DATA_PORT</span></code> register is dual purpose - when writing data is passed to the Tx queue, when reading data is fetched from the Rx queue.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">XFER_DATA_PORT</span></code> register is dual-purpose - when writing data is passed to the Tx queue, and when reading data is fetched from the Rx queue.</p>
 <p>Section “8.4 Command Descriptor” describes in detail the format of commands for the core. Section “8.5 Response Descriptor” describes the structure of a response from the core.</p>
 <h3 id="command-descriptors">Command Descriptors<a class="headerlink" href="#command-descriptors" title="Link to this heading">¶</a></h3>
 <h4 id="immediate-transfer">Immediate transfer<a class="headerlink" href="#immediate-transfer" title="Link to this heading">¶</a></h4>
@@ -777,7 +777,7 @@ The RX threshold can be set via <a class="reference external" href="https://gith
 </tr>
 <tr class="row-odd"><td><p>[30]</p></td>
 <td><p>wroc</p></td>
-<td><p>If set send response on completion of the successful transfer</p></td>
+<td><p>If set, send response on completion of the successful transfer</p></td>
 </tr>
 <tr class="row-even"><td><p>[29]</p></td>
 <td><p>rnw</p></td>
@@ -980,16 +980,16 @@ Must be <code class="docutils literal notranslate"><span class="pre">3'b000</spa
 </tbody>
 </table>
 <h2 id="in-band-interrupts-ibi-handling">In-band interrupts (IBI) handling<a class="headerlink" href="#in-band-interrupts-ibi-handling" title="Link to this heading">¶</a></h2>
-<p>IBI are interrupts reported by I3C devices via in-band signaling on the bus. Sections “6.9.1 IBI Handling in PIO Mode”:</p>
+<p>IBI are interrupts reported by I3C devices via in-band signaling on the bus (section “6.9.1 IBI Handling in PIO Mode”):</p>
 <ul class="simple">
-<li><p>When the controller receives IBI from a target device is stores it in the IBI queue. Once the queue occupancy exceeds the threshold set by <code class="docutils literal notranslate"><span class="pre">IBI_STATUS_THLD_STAT</span></code> of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#queue_thld_ctrl-register">QUEUE_THLD_CTRL</a> register an interrupt is triggered.</p></li>
-<li><p>IBI descriptors can then be read from IBI data queue via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_port-register">IBI_PORT</a> register.</p></li>
+<li><p>When the controller receives IBI from a target device, it stores it in the IBI queue. Once the queue occupancy exceeds the threshold set by <code class="docutils literal notranslate"><span class="pre">IBI_STATUS_THLD_STAT</span></code> of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#queue_thld_ctrl-register">QUEUE_THLD_CTRL</a> register, an interrupt is triggered.</p></li>
+<li><p>IBI descriptors can then be read from the IBI data queue via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_port-register">IBI_PORT</a> register.</p></li>
 </ul>
 <p>IBI status descriptor structure is described in “8.6 IBI Status Descriptor” chapter of the spec.</p>
 <h2 id="interrupts">Interrupts<a class="headerlink" href="#interrupts" title="Link to this heading">¶</a></h2>
 <p>Events related to transfers trigger certain interrupts in the core that are signaled to the host. Individual interrupt signals can be enabled or disabled via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register">PIO_INTR_SIGNAL_ENABLE</a> register.</p>
 <p>Interrupts status can be read from the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register">PIO_INTR_STATUS</a> register.</p>
-<p>Interrupts related to Tx and Rx data queues namely <code class="docutils literal notranslate"><span class="pre">TX_THLD_SIGNAL_EN</span></code> and <code class="docutils literal notranslate"><span class="pre">RX_THLD_SIGNAL_EN</span></code> are triggered when queue occupancy raises above / falls below a certain threshold. These thresholds are controlled by fields of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#data_buffer_thld_ctrl-register">DATA_BUFFER_THLD_CTRL</a> register:</p>
+<p>Interrupts related to Tx and Rx data queues, namely <code class="docutils literal notranslate"><span class="pre">TX_THLD_SIGNAL_EN</span></code> and <code class="docutils literal notranslate"><span class="pre">RX_THLD_SIGNAL_EN</span></code>, are triggered when queue occupancy rises above / falls below a certain threshold. These thresholds are controlled by fields of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#data_buffer_thld_ctrl-register">DATA_BUFFER_THLD_CTRL</a> register:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">RX_BUF_THLD</span></code> for the receive queue,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">TX_BUF_THLD</span></code> for the transmit queue.</p></li>
@@ -1000,66 +1000,66 @@ Must be <code class="docutils literal notranslate"><span class="pre">3'b000</spa
 <li><p><code class="docutils literal notranslate"><span class="pre">IBI_DATA_THLD</span></code> for IBI data queue,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">RESP_BUF_THLD</span></code> and <code class="docutils literal notranslate"><span class="pre">CMD_EMPTY_BUF_THLD</span></code> for command response queue.</p></li>
 </ul>
-<p>There’s also the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_force-register">PIO_INTR_FORCE</a> that allows to force trigger certain interrupts for debugging purposes.</p>
+<p>There’s also the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_force-register">PIO_INTR_FORCE</a> register that allows force triggering certain interrupts for debugging purposes.</p>
 <h2 id="address-assignment">Address Assignment<a class="headerlink" href="#address-assignment" title="Link to this heading">¶</a></h2>
 <h3 id="device-management">Device Management<a class="headerlink" href="#device-management" title="Link to this heading">¶</a></h3>
 <h4 id="device-attach-enumeration-and-initialization">Device Attach, Enumeration, and Initialization<a class="headerlink" href="#device-attach-enumeration-and-initialization" title="Link to this heading">¶</a></h4>
-<p>The Controller assigns a dynamic address for each device on the I3C Bus. For devices with static addresses, dynamic address is equal to the static address. Each device must have its entry in the Device Address Table (DAT) before initiating dynamic address assignment. Each DAT entry must contain field value in either <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field">STATIC_ADDRESS</a> (if it is known) or a <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a>.
-Once the DAT table is set up, the software driver should follow at least one of the following scenarios (while preserving order):</p>
+<p>The Controller assigns a dynamic address for each device on the I3C Bus. For devices with static addresses, the dynamic address is equal to the static address. Each device must have its entry in the Device Address Table (DAT) before initiating dynamic address assignment. Each DAT entry must contain a field value in either <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field">STATIC_ADDRESS</a> (if it is known) or <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a>.
+Once the DAT table is set up, the software driver should follow at least one of the following scenarios (while keeping the order):</p>
 <ol class="arabic simple">
-<li><p>Send <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC to assign static address for a chosen device  or send <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCC to assign static address for all devices with known static address.</p></li>
-<li><p>Send <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC to initiate procedure of dynamic address assignment for all devices configured in DAT.</p></li>
+<li><p>Send the <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC to assign a static address for a chosen device  or send the <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCC to assign a static address for all devices with known static address.</p></li>
+<li><p>Send <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC to initiate the procedure of dynamic address assignment for all devices configured in DAT.</p></li>
 </ol>
-<p>After finished <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> process, the Device Characteristic Table (DCT) will be updated with values read from devices configured on the I3C Bus.</p>
-<p>Initial bus enumeration process should be performed in the following order:</p>
+<p>After finishing the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> process, the Device Characteristic Table (DCT) will be updated with values read from the devices configured on the I3C Bus.</p>
+<p>The initial bus enumeration process should be performed in the following order:</p>
 <ol class="arabic simple">
 <li><p>Check sizes of DAT and DCT by reading <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register">DAT_SECTION_OFFSET</a> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register">DCT_SECTION_OFFSET</a>.</p></li>
-<li><p>Set up DAT entries for devices with static address and send <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code>/<code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCC.</p></li>
-<li><p>Set up DAT entries for devices with dynamic address and send <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC.</p></li>
-<li><p>If any I3C device needs to change dynamic address, send <code class="docutils literal notranslate"><span class="pre">SETNEWDA</span></code> CCC to assign new address and ensure there is no error on the bus.</p></li>
+<li><p>Set up DAT entries for devices with static addresses and send the <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code>/<code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCC.</p></li>
+<li><p>Set up DAT entries for devices with dynamic addresses and send the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC.</p></li>
+<li><p>If any I3C device needs to change the dynamic address, send the <code class="docutils literal notranslate"><span class="pre">SETNEWDA</span></code> CCC to assign a new address and ensure there is no error on the bus.</p></li>
 </ol>
-<p>In case of incorrect results of the Dynamic Addressing procedure, the software can either send <code class="docutils literal notranslate"><span class="pre">SETNEWDA</span></code> CCC to misconfigured devices or send <code class="docutils literal notranslate"><span class="pre">RSTDAA</span></code> CCC to reset all dynamic addresses and then repeat the Dynamic Addressing procedure.</p>
-<p>Hot-Join request from I3C Target Devices should be handled automatically by the Host Controller. The driver should detect the Hot-Join IBI and populate a new entry in the DAT table.</p>
-<p>The driver should always refer to a device entry in the DAT table to schedule a transfer, the Controller will use appropriate address (either static or dynamic) that matches such entry. For I2C devices, the static address will always be used.</p>
+<p>In case of incorrect results of the Dynamic Addressing procedure, the software can either send the <code class="docutils literal notranslate"><span class="pre">SETNEWDA</span></code> CCC to the misconfigured devices or send the <code class="docutils literal notranslate"><span class="pre">RSTDAA</span></code> CCC to reset all dynamic addresses and then repeat the Dynamic Addressing procedure.</p>
+<p>Hot-Join requests from I3C Target Devices should be handled automatically by the Host Controller. The driver should detect the Hot-Join IBI and populate a new entry in the DAT table.</p>
+<p>The driver should always refer to a device entry in the DAT table to schedule a transfer. The Controller will use an appropriate address (either static or dynamic) that matches such an entry. For I2C devices, the static address will always be used.</p>
 <h4 id="device-detach-reset-and-power-management">Device Detach, Reset, and Power Management<a class="headerlink" href="#device-detach-reset-and-power-management" title="Link to this heading">¶</a></h4>
-<p>Upon a device detach event, the DAT entry shall not be altered. The assigned address is reserved, the software can re-use it by executing an address assignment command targeting the specific DAT entry.</p>
+<p>Upon a device detach event, the DAT entry will not be altered. The assigned address is reserved, the software can re-use it by executing an address assignment command targeting the specific DAT entry.</p>
 <p>If the detached device re-attaches to the bus, it will use the same DAT entry as before if it was not overwritten.</p>
 <p>Once the new device joins the bus, it should wait for the Controller to assign a dynamic address.</p>
 <p>Since there can be an offline capable device, it might not respond to directed commands immediately and the driver should allow devices to take time to respond, with retries and/or longer timeout.</p>
 <h4 id="device-context">Device Context<a class="headerlink" href="#device-context" title="Link to this heading">¶</a></h4>
 <p>The context of a device on the bus is realized through the DAT and the DCT tables. The DCT table is transient and can be significantly smaller than the DAT, since it is only used during the address assignment procedure (<code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code>). The software should copy contents of a DCT entry to the internal driver context, on a per-device basis.</p>
-<p>The software can disable Controller Role Request (CRR) and In-Band Interrupt (IBI) for each device in their respective DAT entries. If either CRR or IBI should be re-enable, the driver should modify the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#crr_reject-field">CRR_REJECT</a>/<a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_reject-field">IBI_REJECT</a> field in DAT and send a <code class="docutils literal notranslate"><span class="pre">ENEC</span></code> CCC to such device.</p>
-<p>If IBIs are disable using target IBI credit mechanism, when the target’s credit counter is zero, then the Host Controller shall automatically re-enable IBIs for that Target using the <code class="docutils literal notranslate"><span class="pre">ENEC</span></code> CCC, after the software writes to that Target’s register <code class="docutils literal notranslate"><span class="pre">TARGET_CREDIT_N</span></code>.</p>
+<p>The software can disable the Controller Role Request (CRR) and In-Band Interrupt (IBI) for each device in their respective DAT entries. If either CRR or IBI should be re-enabled, the driver should modify the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#crr_reject-field">CRR_REJECT</a>/<a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_reject-field">IBI_REJECT</a> field in DAT and send the <code class="docutils literal notranslate"><span class="pre">ENEC</span></code> CCC to such a device.</p>
+<p>If IBIs were disabled using the target IBI credit mechanism, and the target’s credit counter is zero, then the Host Controller will automatically re-enable IBIs for that Target using the <code class="docutils literal notranslate"><span class="pre">ENEC</span></code> CCC, after the software writes to that Target’s <code class="docutils literal notranslate"><span class="pre">TARGET_CREDIT_N</span></code> register.</p>
 <h3 id="device-addressing">Device Addressing<a class="headerlink" href="#device-addressing" title="Link to this heading">¶</a></h3>
 <h4 id="dynamic-address-assignment-with-entdaa">Dynamic Address Assignment with ENTDAA<a class="headerlink" href="#dynamic-address-assignment-with-entdaa" title="Link to this heading">¶</a></h4>
-<p>Each I3C target device that supports the ENTDAA procedure and that has not been assigned static addresses should have assigned dynamic address during Dynamic Address Assignment procedure based on the DAT table entry. For each DAT entry, software shall:</p>
+<p>Each I3C target device that supports the ENTDAA procedure and that has not been assigned static addresses should have assigned a dynamic address during the Dynamic Address Assignment procedure based on the DAT table entry. For each DAT entry, software should:</p>
 <ul class="simple">
 <li><p>Set the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dev-field">DEVICE</a> field to indicate the Device’s type</p></li>
 <li><p>Set the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a> field to indicate the Device’s preferred Dynamic Address</p></li>
 </ul>
-<p>After DAT configuration, software shall:</p>
+<p>After DAT configuration, the software should:</p>
 <ol class="arabic simple">
 <li><p>Enqueue one or more Command Descriptors of Address Assignment Command type for the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC, using the steps listed in Section 8.4.1.1</p></li>
 <li><p>Wait for a response and ensure that the response descriptor indicates a successful result</p></li>
 <li><p>For each successful response: read the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pid_hi-field">PID</a>, <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#bcr-field">BCR</a> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dcr-field">DCR</a> values from the appropriate fields of the indicated entries in the DCT for the assigned Dynamic Address(es) as part of the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> process:
 A. Note that these values are transient, so software must read them and save them internally before performing subsequent Address Assignment commands with the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC
-B. Each DCT entry for a successful assignment with the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> modal flow shall have the same value in field <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_addr-field-1">DYNAMIC_ADDRESS</a> as the corresponding DAT entry <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a> that was used for the I3C Device to which this address was assigned</p></li>
+B. Each DCT entry for a successful assignment with the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> modal flow should have the same value in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_addr-field-1">DYNAMIC_ADDRESS</a> field as the corresponding  <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a> DAT entry that was used for the I3C Device to which this address was assigned</p></li>
 </ol>
 <p>If the address assignment command completes with <strong>NACK</strong>, it means one of following:</p>
 <ul class="simple">
 <li><p>There are no I3C devices available to participate</p></li>
-<li><p>Not all devices were assigned an address, this is indicated by <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> value in the response descriptor lower than <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> value in the command descriptor</p></li>
-<li><p>There were no addresses assigned to any devices (no I3C devices responded), this is indicated by <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> value in the response descriptor equal to <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> value in the command descriptor</p></li>
+<li><p>Not all devices were assigned an address, this is indicated by the <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> value in the response descriptor lower than the <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> value in the command descriptor</p></li>
+<li><p>There were no addresses assigned to any devices (no I3C devices responded), this is indicated by the <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> value in the response descriptor equal to the <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> value in the command descriptor</p></li>
 </ul>
 <h4 id="using-static-addresses">Using Static Addresses<a class="headerlink" href="#using-static-addresses" title="Link to this heading">¶</a></h4>
-<p>For each I3C target device with known address and each I2C target device, software shall write this address to <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field">STATIC_ADDRESS</a> field  of respective DAT table entry. For each such DAT entry, software shall:</p>
+<p>For each I3C target device with a known address and each I2C target device, software will write this address to the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field">STATIC_ADDRESS</a> field  of the respective DAT table entry. For each such DAT entry, the software will:</p>
 <ul class="simple">
 <li><p>Set the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dev-field">DEVICE</a> field to indicate the Device’s type</p></li>
 <li><p>Set the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field">DYNAMIC_ADDRESS</a> field to indicate the Device’s preferred Dynamic Address</p></li>
 </ul>
-<p>After DAT configuration, software shall:</p>
+<p>After DAT configuration, the software will:</p>
 <ol class="arabic simple">
-<li><p>For I3C devices configured with <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC:
+<li><p>For I3C devices configured with the <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC:
 A. Enqueue one or more command descriptors of address assignment command type for the <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC, using the steps listed in Section 8.4.1.2
 B. Wait for a response and ensure that the response descriptor indicates a successful result</p></li>
 <li><p>For those I3C Devices which will be configured with the <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCC:
@@ -1069,18 +1069,18 @@ B. Wait for a response and ensure that the response descriptor indicates a succe
 <p>If the address assignment command for <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> completes with <strong>NACK</strong>, it means that the configured device is not present, or was not ready, or did not detect the <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> CCC on the bus.</p>
 <p>If the address assignment command for <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> completes with <strong>NACK</strong>, there is no method to determine the status of any individual I3C target device that was asked to assign its own static address as dynamic address.</p>
 <h4 id="grouped-addressing">Grouped Addressing<a class="headerlink" href="#grouped-addressing" title="Link to this heading">¶</a></h4>
-<p>The I3C Controller supports grouping multiple I3C target devices to manage multiple devices at a single address. Since group addresses share the same address space as valid I3C dynamic addresses, software must avoid assigning conflicting addresses (i.e., dynamic and group address having the same value).</p>
+<p>The I3C Controller supports grouping multiple I3C target devices to manage multiple devices at a single address. Since group addresses share the same address space as valid I3C dynamic addresses, the software must avoid assigning conflicting addresses (i.e., dynamic and group addresses having the same value).</p>
 <p>Possible operations for group management:</p>
 <ul class="simple">
 <li><p>The Controller may assign the I3C target device to a group address by sending a direct <code class="docutils literal notranslate"><span class="pre">SETGRPA</span></code> CCC addressed to a dynamic address</p></li>
-<li><p>The Controller may assign the I3C target device to a group address by sending a direct <code class="docutils literal notranslate"><span class="pre">RSTGRPA</span></code> CCC addressed to either dynamic address or the group address</p></li>
+<li><p>The Controller may assign the I3C target device to a group address by sending a direct <code class="docutils literal notranslate"><span class="pre">RSTGRPA</span></code> CCC addressed to either a dynamic address or a group address</p></li>
 <li><p>The Controller may disband all groups by sending a broadcast <code class="docutils literal notranslate"><span class="pre">RSTGRPA</span></code> CCC</p></li>
 </ul>
-<p>Each group address must have a dedicated DAT entry which can be accessed from the Controller for write-type transfers. Software shall not perform read operations on group addresses.</p>
+<p>Each group address must have a dedicated DAT entry which can be accessed from the Controller for write-type transfers. The software should not perform read operations on group addresses.</p>
 <h2 id="linux-kernel">Linux Kernel<a class="headerlink" href="#linux-kernel" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/torvalds/linux/tree/master/drivers/i3c/master">Linux driver for I3C Controller Mode</a></p></li>
-<li><p><a class="reference external" href="https://patchwork.kernel.org/project/linux-i3c/list/?series=851338">Pending patch for adding I3C target mode support in Linux Kernel</a></p></li>
+<li><p><a class="reference external" href="https://patchwork.kernel.org/project/linux-i3c/list/?series=851338">Pending patch for adding I3C target mode support in the Linux Kernel</a></p></li>
 </ul>
 
 
@@ -1089,7 +1089,7 @@ B. Wait for a response and ensure that the response descriptor indicates a succe
   <small>
     
       Last update:
-      2024-09-17
+      2024-10-03
     
   </small>
 </div>

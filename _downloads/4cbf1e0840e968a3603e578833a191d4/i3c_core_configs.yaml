@@ -14,7 +14,7 @@ ahb:
   DatDepth: 128
   DctDepth: 128
   FrontendBusInterface: "AHB"
-  FrontendBusAddrWidth: 12
+  FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
 
 axi:

@@ -490,14 +490,14 @@
         
           <li class="md-nav__item">
   <a href="#csr-write" class="md-nav__link">
-    <span class="md-ellipsis">CSR Write</span>
+    <span class="md-ellipsis">CSR write</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#csr-read" class="md-nav__link">
-    <span class="md-ellipsis">CSR Read</span>
+    <span class="md-ellipsis">CSR read</span>
   </a>
   
 </li>
@@ -516,14 +516,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id1" class="md-nav__link">
+  <a href="#id4" class="md-nav__link">
     <span class="md-ellipsis">CSR write</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#id2" class="md-nav__link">
+  <a href="#id5" class="md-nav__link">
     <span class="md-ellipsis">CSR read</span>
   </a>
   
@@ -629,85 +629,101 @@
 
 
 <h1 id="recovery-flow">Recovery flow<a class="headerlink" href="#recovery-flow" title="Link to this heading">¶</a></h1>
-<p>The recovery flow is implemented according to OCP Secure Firmware Recovery standard v1.1-rc3.
+<p>The recovery flow is implemented according to the OCP Secure Firmware Recovery standard v1.1-rc3.
 In recovery mode, the I3C Core acts as an I3C Target Device.
 In the Recovery Mode the Recovery Initiator Device (e.g. BMC) is primarily responsible for streaming the Firmware Recovery Image to the I3C Core.
-In order to facilitate this process, the I3C Core implements CSRs as specified in the <a class="reference internal" href="ext_cap.html#secure_firmware_recovery_interface"><span class="std std-ref">Secure Firmware Recovery Interface</span></a>.
-The firmware is responsible for implementing the recovery flow and transfering firmware data to the program memory.</p>
+In order to facilitate this process, the I3C Core implements CSRs as specified in the <a class="reference internal" href="ext_cap.html#secure-firmware-recovery-interface-id-0xc0"><span class="std std-ref">Secure Firmware Recovery Interface</span></a>.
+The firmware is responsible for implementing the recovery flow and transferring firmware data to the program memory.</p>
 <p>The recovery flow adheres to the following steps:</p>
-<ol class="arabic">
-<li><p>Upon reset the hardware sets FIFO size and region type in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR</p></li>
-<li><p>The device’s firmware configures the I3C core and sets appropriate bits in <code class="docutils literal notranslate"><span class="pre">PROT_CAP</span></code> CSR to indicate its recovery capabilities
+<ol class="arabic simple">
+<li><p>Upon reset, the hardware sets the FIFO size and region type in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR</p></li>
+<li><p>The device’s firmware configures the I3C core and sets the appropriate bits in the <code class="docutils literal notranslate"><span class="pre">PROT_CAP</span></code> CSR to indicate its recovery capabilities
 These must include the mandatory ones:</p>
 <ul class="simple">
 <li><p>bit 0 (<code class="docutils literal notranslate"><span class="pre">DEVICE_ID</span></code>)</p></li>
 <li><p>bit 4 (<code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS</span></code>)</p></li>
 <li><p>bit 6 (<code class="docutils literal notranslate"><span class="pre">Local</span> <span class="pre">C-image</span> <span class="pre">support</span></code>) or bit 7 (<code class="docutils literal notranslate"><span class="pre">Push</span> <span class="pre">C-image</span> <span class="pre">support</span></code>)</p></li>
-<li><p>bit 5 (<code class="docutils literal notranslate"><span class="pre">INDIRECT_CTRL</span></code>) only if bit 7 is set</p></li>
+<li><p>bit 5 (<code class="docutils literal notranslate"><span class="pre">INDIRECT_CTRL</span></code>), only if bit 7 is set</p></li>
 </ul>
 </li>
-<li><p>Upon request for recovery mode entry, the firmware writes 0x3 (Recovery mode) to <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS</span></code></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>What actually triggers the recovery mode?</p>
-</div>
-</li>
-<li><p>The Recovery Handler writes 0x1 (Awaiting recovery image) to <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> and sets recovery image index to 0</p></li>
+<li><p>Upon request for recovery mode entry, the firmware writes <code class="docutils literal notranslate"><span class="pre">0x3</span></code> (Recovery mode) to <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS</span></code></p></li>
+<li><p>The Recovery Handler writes <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (Awaiting recovery image) to <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> and sets recovery image index to <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
 <li><p>The Recovery Initiator writes to <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> to inform the Recovery handler about the image size</p>
 <ul class="simple">
-<li><p>Component Memory Space (<code class="docutils literal notranslate"><span class="pre">CMS</span></code>) field is set to 0</p></li>
+<li><p>Component Memory Space (<code class="docutils literal notranslate"><span class="pre">CMS</span></code>) field is set to <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
 </ul>
 </li>
-<li><p>The Recovery Initiator writes a data chunk to the receive fifo via <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> CSR.
-The I3C core responds with a NACK in case when the FIFO is full.</p></li>
-<li><p>The Recovery Handler updates FIFO pointers (Read Index and Write Index) presented in <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR</p></li>
+<li><p>The Recovery Initiator writes a data chunk to the receive FIFO via the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> CSR.
+The I3C core responds with a NACK when the FIFO is full.</p></li>
+<li><p>The Recovery Handler updates FIFO pointers (Read Index and Write Index) presented in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR</p></li>
 <li><p>The device’s firmware reacts to a signal (interrupt, CSR poll?) that a data chunk has been written to the FIFO</p></li>
-<li><p>The device’s firmware reads the data chunk from the FIFO and stores it in appropriate location in memory</p></li>
+<li><p>The device’s firmware reads the data chunk from the FIFO and stores it in an appropriate location in the memory</p></li>
 <li><p>Steps 5 to 8 are repeated until the Recovery handler detects that the whole firmware image has been transmitted</p></li>
-<li><p>The device’s firmware polls <code class="docutils literal notranslate"><span class="pre">RECOVERY_CONTROL</span></code> register until it receives the “Activate image” command from the Recovery Initiator</p></li>
+<li><p>The device’s firmware polls the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CONTROL</span></code> register until it receives the “Activate image” command from the Recovery Initiator</p></li>
 <li><p>The device’s firmware updates the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> CSR to indicate that the uploaded firmware is being booted</p></li>
 </ol>
 <h2 id="recovery-handler">Recovery handler<a class="headerlink" href="#recovery-handler" title="Link to this heading">¶</a></h2>
-<p>Since the OCP Secure Firmware Recovery standard describes a set of CSRs that are the interface between the device being updated and the Recovery Initiator, I3C transactions that implement accessing them must be handled in logic instead of firmware which is the purpose of the Recovery Handler block.</p>
-<p>When the recovery mode is active the handler takes over the TTI interface of the controller effectively detaching it from TTI CSRs.
-<img alt="" src="_images/recovery_handler.png" /></p>
-<p>The architecture of the Recovery Handler module is shown in the block diagram below:
-<img alt="" src="_images/recovery_handler_bd.png" /></p>
+<p>Since the OCP Secure Firmware Recovery standard describes a set of CSRs that are the interface between the device being updated and the Recovery Initiator, I3C transactions that access them must be handled in the logic instead of the firmware, which is the purpose of the Recovery Handler block.</p>
+<p>When the recovery mode is active, the handler takes over the TTI interface of the controller, effectively detaching it from TTI CSRs.</p>
+<figure class="align-default" id="id1">
+<img alt="" src="_images/recovery_handler.png" />
+<figcaption>
+<p><span class="caption-number">Figure 8 </span><span class="caption-text"><span class="caption-text">
+Recovery handler</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>The architecture of the Recovery Handler module is shown in the block diagram below:</p>
+<figure class="align-default" id="recovery-handler-bd">
+<img alt="" src="_images/recovery_handler_bd.png" />
+<figcaption>
+<p><span class="caption-number">Figure 9 </span><span class="caption-text"><span class="caption-text">
+Recovery handler architecture</span><a class="headerlink" href="#recovery-handler-bd" title="Permalink to this image">¶</a></figcaption>
+</figure>
 <p>The module’s backend is connected directly to the controller’s TTI interface.
-There are several muxes on RX and TX data paths which allow bypassing the module in normal operation mode and remove/inject data in recovery mode.
+There are several muxes on the RX and TX data paths which allow bypassing the module in normal operation mode and remove/inject data in recovery mode.
 There are two <code class="docutils literal notranslate"><span class="pre">PEC</span></code> (Packet Error Code) blocks responsible for calculating CRC for RX and TX data paths.
 The CRC algorithm operates on individual bytes and implements C(x) = x^8+x^2+x^1+1 polynomial (see MCTP I3C binding, section 5.3.1).
 The frontend is connected to I3C core CSRs accessible by software.</p>
 <h3 id="normal-operation">Normal operation<a class="headerlink" href="#normal-operation" title="Link to this heading">¶</a></h3>
-<p>When recovery mode is inactive switches <code class="docutils literal notranslate"><span class="pre">R4SW</span></code>, <code class="docutils literal notranslate"><span class="pre">T4SW</span></code> are closed and all muxes are set to form a direct path between controller’s TTI interface, TTI queues and TTI CSRs.</p>
+<p>When recovery mode is inactive, the <code class="docutils literal notranslate"><span class="pre">R4SW</span></code> and <code class="docutils literal notranslate"><span class="pre">T4SW</span></code> switches are closed and all muxes are set to form a direct path between the controller’s TTI interface, TTI queues and TTI CSRs.</p>
 <h3 id="recovery-operation">Recovery operation<a class="headerlink" href="#recovery-operation" title="Link to this heading">¶</a></h3>
-<p>In recovery mode switches <code class="docutils literal notranslate"><span class="pre">R4SW</span></code> and <code class="docutils literal notranslate"><span class="pre">T4SW</span></code> are open and muxes <code class="docutils literal notranslate"><span class="pre">R4MUX</span></code> and <code class="docutils literal notranslate"><span class="pre">T4MUX</span></code> connect TTI queues frontend to recovery CSRs (<code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO</span></code>). Apart from the muxes, there’s additional logic that controls when data can be accessed through <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO</span></code> interface.</p>
+<p>In recovery mode, the <code class="docutils literal notranslate"><span class="pre">R4SW</span></code> and <code class="docutils literal notranslate"><span class="pre">T4SW</span></code> switches are open and the <code class="docutils literal notranslate"><span class="pre">R4MUX</span></code> and <code class="docutils literal notranslate"><span class="pre">T4MUX</span></code> muxes connect the TTI queues frontend to the recovery CSRs (<code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO</span></code>). Apart from the muxes, there’s additional logic that controls when data can be accessed through the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO</span></code> interface.</p>
 <h2 id="csr-access-via-i3c">CSR access via I3C<a class="headerlink" href="#csr-access-via-i3c" title="Link to this heading">¶</a></h2>
-<p>Recovery mode CSRs are accessible through I3C bus. The following protocol is used to implement read/write operations:</p>
-<h3 id="csr-write">CSR Write<a class="headerlink" href="#csr-write" title="Link to this heading">¶</a></h3>
-<p><img alt="" src="_images/i3c_csr_wr.png" /></p>
-<p>The Recovery Initiator sends command byte followed by 16-bit payload length LSB and MSB bytes using I3C private transfers.
-Payload data bytes follow ended by a Packet Error Code (PEC) checksum.</p>
-<h3 id="csr-read">CSR Read<a class="headerlink" href="#csr-read" title="Link to this heading">¶</a></h3>
-<p><img alt="" src="_images/i3c_csr_rd.png" /></p>
-<p>For CSR read the Recovery Initiator sends only the command byte and PEC checksum.
+<p>Recovery mode CSRs are accessible through the I3C bus. The following protocol is used to implement read/write operations:</p>
+<h3 id="csr-write">CSR write<a class="headerlink" href="#csr-write" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="id2">
+<img alt="" src="_images/i3c_csr_wr.png" />
+<figcaption>
+<p><span class="caption-number">Figure 10 </span><span class="caption-text"><span class="caption-text">
+CSR write</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>The Recovery Initiator sends a command byte, followed by 16-bit payload length LSB and MSB bytes using I3C private transfers.
+The payload data immediately follows the length bytes.
+Each transfer ends with an additional byte containing a Packet Error Code (PEC) checksum.</p>
+<h3 id="csr-read">CSR read<a class="headerlink" href="#csr-read" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="id3">
+<img alt="" src="_images/i3c_csr_rd.png" />
+<figcaption>
+<p><span class="caption-number">Figure 11 </span><span class="caption-text"><span class="caption-text">
+CSR read</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>For CSR read, the Recovery Initiator sends only the command byte and PEC checksum.
 Next, it issues a repeated start and begins a private read transaction.
-The device responds by sending data length LSB and MSB bytes followed by the data and PEC.</p>
+The device responds by sending data length LSB and MSB bytes, followed by the data and PEC.</p>
 <h2 id="recovery-handler-operation">Recovery handler operation<a class="headerlink" href="#recovery-handler-operation" title="Link to this heading">¶</a></h2>
-<p>The main job of the Recovery Handler is providing hardware means for an active controller to access CSRs relevant to recovery operation.</p>
-<h3 id="id1">CSR write<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>When the Recovery Initiator tries to write to a CSR through I3C it first sends the command byte followed by two length bytes which are received by the handler logic.
-If the length is non-zero the handler resets the <code class="docutils literal notranslate"><span class="pre">PEC</span></code> block and sets <code class="docutils literal notranslate"><span class="pre">R2MUX</span></code> to pass the remaining data to TTI RX data queue.
-The <code class="docutils literal notranslate"><span class="pre">R2MUX</span></code> disconnects the queue just before the last byte which is the PEC checksum.
-Finally, The last byte is compared with the checksum computed by the <code class="docutils literal notranslate"><span class="pre">PEC</span></code> block.</p>
-<p>If the checksum matches the command handling part of the handler logic reads data from the TTI RX data queue and updates relevant CSR fields.</p>
-<p>If the checksum does not match then the handler discards all the data in the queue.</p>
-<p>In case of an <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> write command the handler does not process the data at all. Instead it opens <code class="docutils literal notranslate"><span class="pre">R3MUX</span></code> to make it available to the software.
-When the software reads data from <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> CSR the handler updates the queue pointer in <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR.</p>
-<h3 id="id2">CSR read<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
-<p>A CSR read begins similarly as write by receiving the command byte.
-Following that, the command handling part reads data from the CSR being read and passes it to the transmit part which formats the response I3C packet.</p>
-<p>The transmit logic injects CSR length, resets TX <code class="docutils literal notranslate"><span class="pre">PEC</span></code> module, sends the CSR content to the I3C core and finally injects the calculated PEC checksum.</p>
+<p>The main job of the Recovery Handler is providing hardware means for an active controller to access CSRs relevant to the recovery operation.</p>
+<h3 id="id4">CSR write<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>When the Recovery Initiator tries to write to a CSR through I3C, it first sends the command byte followed by two length bytes which are received by the handler logic.
+If the length is non-zero, the handler resets the <code class="docutils literal notranslate"><span class="pre">PEC</span></code> block and sets <code class="docutils literal notranslate"><span class="pre">R2MUX</span></code> to pass the remaining data to the TTI RX data queue.
+<code class="docutils literal notranslate"><span class="pre">R2MUX</span></code> disconnects the queue just before the last byte, which is the PEC checksum.
+Finally, the last byte is compared with the checksum computed by the <code class="docutils literal notranslate"><span class="pre">PEC</span></code> block.</p>
+<p>If the checksum matches the command, the handling part of the handler logic reads data from the TTI RX data queue and updates relevant CSR fields.</p>
+<p>If the checksum does not match, then the handler discards all the data in the queue.</p>
+<p>In case of an <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> write command the handler does not process the data at all. Instead, it opens <code class="docutils literal notranslate"><span class="pre">R3MUX</span></code> to make it available to the software.
+When the software reads data from the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> CSR, the handler updates the queue pointer in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> CSR.</p>
+<h3 id="id5">CSR read<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>A CSR read begins similarly as write, by receiving the command byte.
+Following that, the command handling part reads data from the CSR being read and passes it to the transmit part, which formats the response I3C packet.</p>
+<p>The transmit logic injects the CSR length, resets the TX <code class="docutils literal notranslate"><span class="pre">PEC</span></code> module, sends the CSR content to the I3C core and finally injects the calculated PEC checksum.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>TODO: Handle <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> read. This is not a priority as firmware write is more important than readback.</p>
@@ -719,7 +735,7 @@ Following that, the command handling part reads data from the CSR being read and
   <small>
     
       Last update:
-      2024-09-17
+      2024-10-03
     
   </small>
 </div>

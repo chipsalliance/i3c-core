@@ -482,7 +482,7 @@
         
           <li class="md-nav__item">
   <a href="#secure-firmware-recovery-interface-id-0xc0" class="md-nav__link">
-    <span class="md-ellipsis">&lt;a name=&#34;secure_<wbr>firmware_<wbr>recovery_<wbr>interface&#34;/&gt;Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
+    <span class="md-ellipsis">Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
   </a>
   
 </li>
@@ -827,7 +827,7 @@
 <h2 id="security">Security<a class="headerlink" href="#security" title="Link to this heading">¶</a></h2>
 <p>The original HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
 This mechanism is unacceptable for the Recovery Mode as memory offsets must be known at synthesis time.
-Implementation based on this specification shall provide a list of known memory offsets for each of the Extended Capabilities.</p>
+Implementation based on this specification should provide a list of known memory offsets for each of the Extended Capabilities.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In order to increase security of the solution, the offsets are provided, so software may choose to skip the discovery mechanism. This specification is compliant with the original specification, so the mechanism of discovery can still be used, if needed.</p>
@@ -892,9 +892,9 @@ Implementation based on this specification shall provide a list of known memory 
 </table>
 <h3 id="controller-config-id-0x02">Controller Config (ID=0x02)<a class="headerlink" href="#controller-config-id-0x02" title="Link to this heading">¶</a></h3>
 <p>The Controller Config Capability follows section 7.7.3 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
-<h3 id="secure-firmware-recovery-interface-id-0xc0"><a name="secure_firmware_recovery_interface"/>Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
-<p>This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and I3C Target Recovery Specification</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code>.
+<h3 id="secure-firmware-recovery-interface-id-0xc0">Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
+<p>This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and the I3C Target Recovery Specification.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
 <table class="docutils data align-default" id="tab-secure-firmware-recovery-interface">
 <caption><span class="caption-number">Table 5 </span><span class="caption-text">Secure Firmware Recovery Interface</span><a class="headerlink" href="#tab-secure-firmware-recovery-interface" title="Link to this table">¶</a></caption>
@@ -1006,7 +1006,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 </li>
 <li><p>Calibration of the on-chip resistor</p></li>
 </ul>
-<p>The <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_SECTION_OFFSET</span></code>.
+<p>The <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_SECTION_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
 <table class="docutils data align-default" id="tab-soc-management-interface">
 <caption><span class="caption-number">Table 6 </span><span class="caption-text">SoC Management Interface</span><a class="headerlink" href="#tab-soc-management-interface" title="Link to this table">¶</a></caption>
@@ -1063,7 +1063,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 It is permissible to implement all registers as generic RW registers.</p>
 <h3 id="target-transaction-interface-id-0xc4">Target Transaction Interface (ID=0xC4)<a class="headerlink" href="#target-transaction-interface-id-0xc4" title="Link to this heading">¶</a></h3>
 <p>The Target Transaction Interface (TTI) provides additional registers and queues to enable data flow for Devices configured in the Target Mode.
-This specfication is meant for Standby Controllers, which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the <code class="docutils literal notranslate"><span class="pre">Target_XACT_SUPPORT</span></code> field of the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CAPABILITIES</span></code>.</p>
+This specification is meant for Standby Controllers which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the <code class="docutils literal notranslate"><span class="pre">Target_XACT_SUPPORT</span></code> field of <code class="docutils literal notranslate"><span class="pre">STBY_CR_CAPABILITIES</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The term “TX” is used to denote instances in which the software performs a write to respond to an I3C Bus Read transaction.</p>
@@ -1077,11 +1077,11 @@ This specfication is meant for Standby Controllers, which are capable of operati
 <li><p>Width of the interface</p>
 <ul>
 <li><p>This TTI will be integrated in an SoC with 64b AXI as the System Bus</p></li>
-<li><p>CSRs in the I3C HCI specifciation are 32b wide, so it makes sense to use the same width</p></li>
+<li><p>CSRs in the I3C HCI specification are 32b wide, so it makes sense to use the same width</p></li>
 <li><p>Each System Bus read could potentially hold 2 CSRs</p>
 <ul>
-<li><p>[Recommended] Do not use the upper half of the word</p></li>
-<li><p>[Optimized] Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)</p></li>
+<li><p><strong>Recommended</strong> Do not use the upper half of the word</p></li>
+<li><p><strong>Optimized</strong> Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)</p></li>
 </ul>
 </li>
 <li><p>TTI Queues will also be 32b wide for the same reason</p></li>
@@ -1089,7 +1089,7 @@ This specfication is meant for Standby Controllers, which are capable of operati
 </li>
 <li><p>Communication scenarios with I3C Devices</p>
 <ul>
-<li><p>When valid I3C frame appears and bit RnW is set to Read, then Device has a timing constraint on providing valid data</p>
+<li><p>When a valid I3C frame appears and the <code class="docutils literal notranslate"><span class="pre">RnW</span></code> bit is set to Read, then Device has a timing constraint on providing valid data</p>
 <ul>
 <li><p>Typically, this is not a problem for simple sensors, which can prepopulate data</p></li>
 <li><p>Problem for a SoC</p>
@@ -1103,14 +1103,14 @@ This specfication is meant for Standby Controllers, which are capable of operati
 <li><p>Prohibited by I3C Basic Specification</p></li>
 </ul>
 </li>
-<li><p>I3C allows Controller to stretch Clock (Section 5.1.2.5, I3C Basic)</p>
+<li><p>I3C allows the Controller to stretch Clock (Section 5.1.2.5, I3C Basic)</p>
 <ul>
 <li><p>Does not alleviate Target side timing issues</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>There are 2 designs, which are considered here to increase robustness</p>
+<li><p>There are 2 designs which are considered here to increase robustness</p>
 <ul>
 <li><p>Write-first approach: Before each Read from this Device, a Write is issued to inform Target to prepare the payload</p>
 <ul>
@@ -1125,19 +1125,19 @@ Reads occur only when the Target Device has valid data, completely solves the ti
 </li>
 </ul>
 <h4 id="boot">Boot<a class="headerlink" href="#boot" title="Link to this heading">¶</a></h4>
-<p>The Target Device boots with bus operation disabled as per description of field <code class="docutils literal notranslate"><span class="pre">STBY_CR_ENABLE_INT</span></code> in the register <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> (section 7.7.11.1)</p>
+<p>The Target Device boots with bus operation disabled as per description of the <code class="docutils literal notranslate"><span class="pre">STBY_CR_ENABLE_INT</span></code> field in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register (section 7.7.11.1)</p>
 <h4 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h4>
-<p>Software is responsible for setting bit <code class="docutils literal notranslate"><span class="pre">TARGET_XACT_ENABLE</span></code> in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register.</p>
+<p>The software is responsible for setting the <code class="docutils literal notranslate"><span class="pre">TARGET_XACT_ENABLE</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register.</p>
 <h4 id="operation">Operation<a class="headerlink" href="#operation" title="Link to this heading">¶</a></h4>
 <p>TTI is used to handle generic Read-Type and Write-Type transactions sent by the Active Controller on the I3C bus.
 In this mode, software is responsible for servicing TX and RX queues based on the interrupt signals.</p>
 <p>There are 5 queues to communicate between the bus and the register interface:</p>
 <ul class="simple">
 <li><p>TX Descriptor queue, which holds information about the write transfer</p></li>
-<li><p>TX Data queue to buffer data, which is written from the Target Device to the bus</p></li>
+<li><p>TX Data queue to buffer data written from the Target Device to the bus</p></li>
 <li><p>RX Descriptor queue, which holds information about the read transfer</p></li>
-<li><p>RX Data queue to buffer data, which is read from the bus by the Target Device</p></li>
-<li><p>IBI queue to buffer data, which will be written to the Bus as an In-Band Interrupt</p></li>
+<li><p>RX Data queue to buffer data read from the bus by the Target Device</p></li>
+<li><p>IBI queue to buffer data which will be written to the Bus as an In-Band Interrupt</p></li>
 </ul>
 <h5 id="bus-read-transaction">Bus Read Transaction<a class="headerlink" href="#bus-read-transaction" title="Link to this heading">¶</a></h5>
 <p>After the Bus Read Transaction is acknowledged by the Target Device, it performs a write to the Interrupt Register to inform software of a pending read transaction.
@@ -1160,23 +1160,23 @@ It is permissible to write 32b data to the TX queue, then writing the TX descrip
 </li>
 <li><p>Issuing soft reset can break the pending transaction</p>
 <ul>
-<li><p>Software should be notified when pending transaction is done</p></li>
+<li><p>Software should be notified when the pending transaction is done</p></li>
 </ul>
 </li>
 </ul>
 </div>
 <h5 id="bus-write-transaction">Bus Write Transaction<a class="headerlink" href="#bus-write-transaction" title="Link to this heading">¶</a></h5>
-<p>The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the R/W bit is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>.
+<p>The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the <code class="docutils literal notranslate"><span class="pre">R/W</span></code> bit is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>.
 The Target Device writes incoming bytes to the TTI RX Data Queue.
 After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.</p>
 <p>If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
-The Active Controller can attempt mitigating such situation by reading Target queue size from <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending big chunk of data.</p>
+The Active Controller can attempt mitigating such a situation by reading Target queue size from the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending a big chunk of data.</p>
 <h5 id="in-band-interrupts">In-Band Interrupts<a class="headerlink" href="#in-band-interrupts" title="Link to this heading">¶</a></h5>
 <p>The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.
 The IBI Status Descriptor should be compliant with section “8.6 IBI Status Descriptor” of the MIPI I3C HCI specification v1.2.
-If the IBI requires more data to be sent than allowed in a single chunk, it should be split into multiple IBI transfers with <code class="docutils literal notranslate"><span class="pre">LAST_STATUS</span></code> IBI Descriptor field set to <code class="docutils literal notranslate"><span class="pre">0</span></code> unless it is the last one.</p>
+If the IBI requires more data to be sent than it is allowed in a single chunk, it should be split into multiple IBI transfers with the <code class="docutils literal notranslate"><span class="pre">LAST_STATUS</span></code> IBI Descriptor field set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, unless it is the last one.</p>
 <h4 id="register-interface">Register Interface<a class="headerlink" href="#register-interface" title="Link to this heading">¶</a></h4>
-<p>The <code class="docutils literal notranslate"><span class="pre">TTI_EXTCAP_HEADER</span></code> is located at memory offset <code class="docutils literal notranslate"><span class="pre">TTI_SECTION_OFFSET</span></code>.
+<p>The <code class="docutils literal notranslate"><span class="pre">TTI_EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">TTI_SECTION_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
 <table class="docutils data align-default" id="tab-tti-register-interface">
 <caption><span class="caption-number">Table 7 </span><span class="caption-text">TTI Register Interface</span><a class="headerlink" href="#tab-tti-register-interface" title="Link to this table">¶</a></caption>
@@ -1365,31 +1365,31 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 <td><p>IBI_THLD_STAT</p></td>
 <td><p>R</p></td>
 <td><p>0x0</p></td>
-<td><p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD</span></code></p></td>
+<td><p>TTI IBI Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_IBI_THLD</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>1 [11]</p></td>
 <td><p>RX_DESC_THLD_STAT</p></td>
 <td><p>R</p></td>
 <td><p>0x0</p></td>
-<td><p>TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD</span></code></p></td>
+<td><p>TTI RX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DESC_THLD</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>1 [10]</p></td>
 <td><p>TX_DESC_THLD_STAT</p></td>
 <td><p>R</p></td>
 <td><p>0x0</p></td>
-<td><p>TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD</span></code></p></td>
+<td><p>TTI TX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DESC_THLD</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>1 [9]</p></td>
 <td><p>RX_DATA_THLD_STAT</p></td>
 <td><p>R</p></td>
 <td><p>0x0</p></td>
-<td><p>TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD</span></code></p></td>
+<td><p>TTI RX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_RX_DATA_THLD</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>1 [8]</p></td>
 <td><p>TX_DATA_THLD_STAT</p></td>
 <td><p>R</p></td>
 <td><p>0x0</p></td>
-<td><p>TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD</span></code></p></td>
+<td><p>TTI TX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_THLD</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>1 [3]</p></td>
 <td><p>TX_DESC_TIMEOUT</p></td>
@@ -1893,7 +1893,7 @@ Interrupt triggers when 2<sup>N+1</sup> TX Buffer DWORD entries are available.</
 </table>
 <h4 id="tti-queues">TTI Queues<a class="headerlink" href="#tti-queues" title="Link to this heading">¶</a></h4>
 <p>TTI TX Descriptor, TTI TX Data, TTI RX Descriptor, TTI RX Data and TTI IBI queues should be implemented as FIFO queues of 32 bit (1 DWORD) width.
-Depth shall be parametrizable and register <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code>’s reset value should be set accordingly.
+Depth should be parametrizable and the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register’s reset value should be set accordingly.
 In order to prevent overflow/underrun scenarios, a programmable threshold signal is provided.
 Software-issued reset of the queues contents is also possible.</p>
 <h4 id="errors">Errors<a class="headerlink" href="#errors" title="Link to this heading">¶</a></h4>
@@ -1933,7 +1933,7 @@ Software-issued reset of the queues contents is also possible.</p>
 <ol class="arabic simple">
 <li><p>Prepare an IBI with Error Type Notification</p>
 <ol class="arabic simple">
-<li><p>Can use <code class="docutils literal notranslate"><span class="pre">5’h0D</span></code> Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)</p></li>
+<li><p>Can use the <code class="docutils literal notranslate"><span class="pre">5’h0D</span></code> Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)</p></li>
 </ol>
 </li>
 </ol>
@@ -1946,7 +1946,7 @@ Software-issued reset of the queues contents is also possible.</p>
 <li><p>Add Debug EC</p></li>
 <li><p>Virtual TTI</p>
 <ul>
-<li><p>Consider reusing existing CSRs from Active Controller in this way?</p></li>
+<li><p>Consider reusing existing CSRs from Active Controller in this way</p></li>
 </ul>
 </li>
 <li><p><a class="reference external" href="https://www.dmtf.org/sites/default/files/standards/documents/DSP0233_1.0.0WIP.pdf">MCTP Binding</a></p></li>
@@ -1958,7 +1958,7 @@ Software-issued reset of the queues contents is also possible.</p>
   <small>
     
       Last update:
-      2024-09-17
+      2024-10-03
     
   </small>
 </div>
