@@ -126,6 +126,7 @@ module controller
     input logic tti_tx_queue_rvalid_i,
     output logic tti_tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
+    output logic tti_tx_host_nack_o,
 
     // In-band Interrupt queue
     input logic ibi_queue_full_i,
@@ -337,7 +338,8 @@ module controller
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
-      .rst_action_o(rst_action_o)
+      .rst_action_o(rst_action_o),
+      .tx_host_nack_o(tti_tx_host_nack_o)
   );
 
 endmodule

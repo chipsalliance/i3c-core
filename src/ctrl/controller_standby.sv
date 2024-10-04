@@ -99,7 +99,8 @@ module controller_standby
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
 
-    output logic [7:0] rst_action_o
+    output logic [7:0] rst_action_o,
+    output logic tx_host_nack_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -133,6 +134,8 @@ module controller_standby
   logic i3c_ibi_queue_empty_i;
   logic i3c_ibi_queue_rvalid_i;
   logic i3c_ibi_queue_rready_o;
+  logic i3c_tx_host_nack_o;
+  logic i2c_tx_host_nack_o;
   // Mux TTI outputs between I2C and I3C
   always_comb begin
     rx_desc_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_desc_queue_wvalid_o : i2c_rx_desc_queue_wvalid_o;
@@ -153,6 +156,8 @@ module controller_standby
     i3c_ibi_queue_empty_i = sel_i2c_i3c ? ibi_queue_empty_i : '0;
     i3c_ibi_queue_rvalid_i = sel_i2c_i3c ? ibi_queue_rvalid_i : '0;
     ibi_queue_rready_o = sel_i2c_i3c ? i3c_ibi_queue_rready_o : '0;
+
+    tx_host_nack_o = sel_i2c_i3c ? i3c_tx_host_nack_o : i2c_tx_host_nack_o;
   end
 
   controller_standby_i2c #(
@@ -220,7 +225,8 @@ module controller_standby
       .t_r_i(t_r_i),
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
-      .t_bus_available_i(t_bus_available_i)
+      .t_bus_available_i(t_bus_available_i),
+      .tx_host_nack_o(i2c_tx_host_nack_o)
   );
 
 
@@ -297,7 +303,8 @@ module controller_standby
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
-      .rst_action_o(rst_action_o)
+      .rst_action_o(rst_action_o),
+      .tx_host_nack_o(i3c_tx_host_nack_o)
   );
 
 endmodule

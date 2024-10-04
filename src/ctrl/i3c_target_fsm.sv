@@ -69,9 +69,10 @@ module i3c_target_fsm
     output logic bus_rstart_det_o,
 
     // TX FIFO used for Target Read
-    input                          tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
+    input  logic                   tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
     output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
-    input        [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
+    input  logic [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
+    output logic                   tx_host_nack_o,    // a NACK has been received during transmission
 
     // RX FIFO used for Target Write
     output logic                   rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
@@ -533,6 +534,7 @@ module i3c_target_fsm
     event_tx_bus_timeout_o = 1'b0;
     event_read_cmd_received_o = 1'b0;
     ibi_fifo_rready_o = 1'b0;
+    tx_host_nack_o = 1'b0;
 
     unique case (state_q)
       // Idle: initial state, SDA is released (high), SCL is released if the
@@ -718,6 +720,7 @@ module i3c_target_fsm
         if (!scl_i) begin
           // Pop Fifo regardless of ack/nack
           tx_fifo_rready_o = 1'b1;
+          tx_host_nack_o = sda_i;
         end
       end
       // WaitForStop just waiting for host to trigger a stop after nack

@@ -99,7 +99,8 @@ module controller_standby_i3c
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
 
-    output logic [7:0] rst_action_o
+    output logic [7:0] rst_action_o,
+    output logic tx_host_nack_o
 );
   // TODO: Set TTI descriptor outputs
   always_comb begin
@@ -214,6 +215,7 @@ module controller_standby_i3c
       .tx_fifo_rvalid_i(tx_byte_valid),
       .tx_fifo_rready_o(tx_byte_ready),
       .tx_fifo_rdata_i(tx_byte),
+      .tx_host_nack_o(tx_host_nack_o),
       .rx_fifo_wvalid_o(rx_byte_valid),
       .rx_fifo_wdata_o(rx_byte),
       .rx_fifo_wready_i(rx_byte_ready),
