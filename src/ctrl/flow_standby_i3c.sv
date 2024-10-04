@@ -64,11 +64,6 @@ module flow_standby_i3c
   logic [7:0] transfer_rx_byte;
   logic [7:0] transfer_tx_byte;
 
-  // TODO: Drive outputs appropriately
-  always_comb begin
-    tx_queue_rready_o = 1'b1;
-  end
-
   //  FSM
   typedef enum logic [3:0] {
     Idle,
@@ -146,18 +141,10 @@ module flow_standby_i3c
     end
   end
 
-  assign tx_byte_valid_o = tx_byte_ready_i;  // TODO: temporarily always accept transfers
-
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_handler_tx
-    if (~rst_ni) begin
-      transfer_tx_byte <= '0;
-    end else begin
-      transfer_tx_byte <= tx_queue_rdata_i;  // TODO: temporarily hard-coded data path
-      if (tx_byte_valid_o && tx_byte_ready_i) begin
-        tx_byte_o <= transfer_tx_byte;
-      end
-    end
-  end
+  // Pass through TX data from the queue
+  assign tx_byte_o = tx_queue_rdata_i;
+  assign tx_byte_valid_o = tx_queue_rvalid_i;
+  assign tx_queue_rready_o = tx_byte_ready_i;
 
   // Pass data to TTI RX queue
   // TODO: Check for full, handshake
