@@ -71,6 +71,7 @@ module controller_standby_i2c
 
     // Bus condition detection
     output logic bus_start_o,
+    output logic bus_rstart_o,
     output logic bus_stop_o,
 
     // I2C received address (with RnW# bit) for the recovery handler
@@ -188,6 +189,7 @@ module controller_standby_i2c
 
   // TODO: Make the I2C FSM report start/stop condition detection
   assign bus_start_o = '0;
+  assign bus_rstart_o= '0;
   assign bus_stop_o  = '0;
 
   // TODO: Make the I2C FSM output its received address + RnW bit and connect

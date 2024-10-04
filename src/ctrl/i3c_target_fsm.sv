@@ -66,6 +66,7 @@ module i3c_target_fsm
 
     output logic target_idle_o,  // indicates the target is idle
     output logic target_transmitting_o,  // Target is transmitting SDA (disambiguates high sda_o)
+    output logic bus_rstart_det_o,
 
     // TX FIFO used for Target Read
     input                          tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
@@ -883,6 +884,7 @@ module i3c_target_fsm
     tcount_sel = tNoDelay;
     input_byte_clr = 1'b0;
     enter_hdr_after_stop_clr = 1'b0;
+    bus_rstart_det_o = 1'b0;
     unique case (state_q)
       // Idle: initial state, SDA and SCL are released (high)
       Idle: begin
@@ -1355,6 +1357,7 @@ module i3c_target_fsm
         if (!scl_i) begin
           state_d = AddrRead;
           input_byte_clr = 1'b1;
+          bus_rstart_det_o = 1'b1;
         end
       end
       default: begin

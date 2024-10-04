@@ -77,6 +77,7 @@ module controller_standby_i3c
 
     // Bus condition detection
     output logic bus_start_o,
+    output logic bus_rstart_o,
     output logic bus_stop_o,
 
     // I3C received address (with RnW# bit) for the recovery handler
@@ -207,6 +208,7 @@ module controller_standby_i3c
       .bus_stop_detect_i(stop_detect),
       .bus_arbitration_lost_i(i3c_bus_arbitration_lost_i),
       .bus_timeout_i(i3c_bus_timeout_i),
+      .bus_rstart_det_o(rstart_detect),
       .target_idle_o(i3c_target_idle_o),
       .target_transmitting_o(i3c_target_transmitting_o),
       .tx_fifo_rvalid_i(tx_byte_valid),
@@ -291,6 +293,7 @@ module controller_standby_i3c
 
   // Expose bus condition detection
   assign bus_start_o = start_detect;
+  assign bus_rstart_o = rstart_detect;
   assign bus_stop_o = stop_detect;
 
   // Expose the received address + RnW bit
