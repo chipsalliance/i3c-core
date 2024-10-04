@@ -77,6 +77,7 @@ module controller_standby
 
     // I2C/I3C Bus condition detection
     output logic bus_start_o,
+    output logic bus_rstart_o,
     output logic bus_stop_o,
 
     // I2C/I3C received address (with RnW# bit) for the recovery handler
@@ -120,6 +121,8 @@ module controller_standby
   logic i2c_tx_queue_rready_o;
   logic i3c_bus_start_o;
   logic i2c_bus_start_o;
+  logic i3c_bus_rstart_o;
+  logic i2c_bus_rstart_o;
   logic i3c_bus_stop_o;
   logic i2c_bus_stop_o;
   logic [7:0] i3c_bus_addr_o;
@@ -140,6 +143,7 @@ module controller_standby
     tx_desc_queue_rready_o = sel_i2c_i3c ? i3c_tx_desc_queue_rready_o : i2c_tx_desc_queue_rready_o;
     tx_queue_rready_o = sel_i2c_i3c ? i3c_tx_queue_rready_o : i2c_tx_queue_rready_o;
     bus_start_o = sel_i2c_i3c ? i3c_bus_start_o : i2c_bus_start_o;
+    bus_rstart_o = sel_i2c_i3c ? i3c_bus_rstart_o : i2c_bus_rstart_o;
     bus_stop_o = sel_i2c_i3c ? i3c_bus_stop_o : i2c_bus_stop_o;
     bus_addr_o = sel_i2c_i3c ? i3c_bus_addr_o : i2c_bus_addr_o;
     bus_addr_valid_o = sel_i2c_i3c ? i3c_bus_addr_valid_o : i2c_bus_addr_valid_o;
@@ -202,6 +206,7 @@ module controller_standby
       .tx_queue_rready_o(i2c_tx_queue_rready_o),
       .tx_queue_rdata_i(tx_queue_rdata_i),
       .bus_start_o(i2c_bus_start_o),
+      .bus_rstart_o(i2c_bus_rstart_o),
       .bus_stop_o(i2c_bus_stop_o),
       .bus_addr_o(i2c_bus_addr_o),
       .bus_addr_valid_o(i2c_bus_addr_valid_o),
@@ -275,6 +280,7 @@ module controller_standby
       .ibi_queue_rready_o(i3c_ibi_queue_rready_o),
       .ibi_queue_rdata_i(ibi_queue_rdata_i),
       .bus_start_o(i3c_bus_start_o),
+      .bus_rstart_o(i3c_bus_rstart_o),
       .bus_stop_o(i3c_bus_stop_o),
       .bus_addr_o(i3c_bus_addr_o),
       .bus_addr_valid_o(i3c_bus_addr_valid_o),
