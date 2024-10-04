@@ -26,11 +26,13 @@ module recovery_executor
     input  logic        res_ready_i,
     output logic [15:0] res_len_o,
 
+    // Response data interface
     output logic        res_dvalid_o,
     input  logic        res_dready_i,
     output logic [ 7:0] res_data_o,
+    output logic        res_dlast_o,
 
-    // RX data interface
+    // TTI RX FIFO data interface
     output logic        rx_req_o,
     input  logic        rx_ack_i,
     input  logic [31:0] rx_data_i, // FIXME: parametrize
@@ -133,27 +135,35 @@ module recovery_executor
   // Next state
   always_comb
     unique case (state_q)
-      Idle:
-      if (cmd_valid_i) begin
-        if (cmd_error_i) state_d = Error;
-        else if (!cmd_is_rd_i) state_d = CsrWrite;
-        else state_d = CsrRead;
+      Idle: begin
+        state_d = Idle;
+        if (cmd_valid_i) begin
+          if (cmd_error_i) state_d = Error;
+          else if (!cmd_is_rd_i) state_d = CsrWrite;
+          else state_d = CsrRead;
+        end
       end
 
-      CsrWrite:
+      CsrWrite: begin
+        state_d = CsrWrite;
         if (rx_ack_i & (dcnt == 1))
           state_d = Done;
+      end
 
-      CsrRead:
+      CsrRead: begin
+        state_d = CsrReadLen;
         if (res_ready_i)
           state_d = CsrReadLen;
+      end
 
       CsrReadLen:
         state_d = CsrReadData;
 
-      CsrReadData:
-        if (res_dvalid_o & res_ready_i & (dcnt == 0))
+      CsrReadData: begin
+        state_d = CsrReadData;
+        if (res_dvalid_o & res_dready_i & (dcnt == 0))
           state_d = Done;
+      end
 
       Error:
         state_d = Done;
@@ -249,7 +259,7 @@ module recovery_executor
     endcase
 
   // CSR read data mux
-  always_comb unique case(csr_sel)
+  always_ff @(posedge clk_i) unique case(csr_sel)
     CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
     CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
     CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
@@ -366,19 +376,22 @@ module recovery_executor
     endcase
 
   // Transmitt data valid
-  always_ff @(posedge clk_i)
-    unique case (state_q)
-      CsrReadData: res_dvalid_o <= !(res_ready_i & (dcnt == 0));
-      default:     res_dvalid_o <= '0;
-    endcase
+  assign res_dvalid_o = (state_q == CsrReadData);
 
   // Transmitt data
-  always_ff @(posedge clk_i)
+  always_comb
     unique case (bcnt)
       'd0: res_data_o <= csr_data[ 7: 0];
       'd1: res_data_o <= csr_data[15: 8];
       'd2: res_data_o <= csr_data[23:16];
       'd3: res_data_o <= csr_data[31:24];
+    endcase
+
+  // Transmitt data last
+  always_ff @(posedge clk_i)
+    unique case (state_q)
+      CsrReadData: res_dlast_o <= (dcnt == 1);
+      default:     res_dlast_o <= '0;
     endcase
 
 endmodule
