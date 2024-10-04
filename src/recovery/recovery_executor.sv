@@ -40,7 +40,7 @@ module recovery_executor
     output logic rx_queue_sel_o,
     output logic rx_queue_clr_o,
 
-    input  logic tx_host_nack_i,
+    input  logic host_abort_i,
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
@@ -163,7 +163,7 @@ module recovery_executor
 
       CsrReadData: begin
         state_d = CsrReadData;
-        if (tx_host_nack_i)
+        if (host_abort_i)
           state_d = Error; // FIXME: Should we make this an error ?
         else if (res_dvalid_o & res_dready_i & (dcnt == 0))
           state_d = Done;

@@ -19,7 +19,7 @@ module recovery_transmitter
     // TTX TX control
     output logic       data_queue_select_o,
     output logic       start_trig_o,
-    input  logic       host_nack_i,
+    input  logic       host_abort_i,
 
     // PEC computation control
     input  logic [7:0] pec_crc_i,
@@ -75,7 +75,7 @@ module recovery_transmitter
 
       TxLenL: begin
         state_d = TxLenL;
-        if(host_nack_i)
+        if(host_abort_i)
           state_d = Idle;
         else if(data_ready_i)
           state_d = TxLenH;
@@ -83,7 +83,7 @@ module recovery_transmitter
 
       TxLenH: begin
         state_d = TxLenH;
-        if(host_nack_i)
+        if(host_abort_i)
           state_d = Idle;
         else if(data_ready_i)
           state_d = TxData;
@@ -91,7 +91,7 @@ module recovery_transmitter
 
       TxData: begin
         state_d = TxData;
-        if(host_nack_i)
+        if(host_abort_i)
           state_d = Flush;
         else if(data_ready_i && data_valid_o)
           if(res_dlast_i)
@@ -158,5 +158,8 @@ module recovery_transmitter
       TxData:   pec_enable_o = res_dvalid_i;
       default:  pec_enable_o = 1'b0;
     endcase
+
+  // PEC clear
+  assign pec_clear_o = 1'b0;
 
 endmodule
