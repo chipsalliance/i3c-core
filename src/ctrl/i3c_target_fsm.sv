@@ -397,8 +397,8 @@ module i3c_target_fsm
     TransmitPulse = 'd9,
     TransmitHold = 'd10,
     // Target function receives ack from external host
-    TransmitAck = 'd11,
-    TransmitAckPulse = 'd12,
+    TransmitTbit = 'd11,
+    TransmitTbitPulse = 'd12,
     WaitForStop = 'd13,
     // Target function receives write data from the external host
     AcquireByte = 'd14,
@@ -710,18 +710,20 @@ module i3c_target_fsm
         // Hold value
         sda_d = sda_q;
         target_transmitting_o = 1'b1;
-      end
-      // TransmitAck: target waits for host to ACK transmission
-      TransmitAck: begin
-        target_idle_o = 1'b0;
-      end
-      TransmitAckPulse: begin
-        target_idle_o = 1'b0;
-        if (!scl_i) begin
-          // Pop Fifo regardless of ack/nack
+
+        // Pop FIFO
+        if (tcount_q == 20'd1 && bit_ack)
           tx_fifo_rready_o = 1'b1;
-          tx_host_nack_o = sda_i;
-        end
+      end
+      // TransmitTbit: target waits for host to ACK transmission
+      TransmitTbit: begin
+        target_transmitting_o = 1'b1;
+        target_idle_o = 1'b0;
+        sda_d = tx_fifo_rvalid_i; // Set T bit if there's more data in TX fifo
+      end
+      TransmitTbitPulse: begin
+        target_transmitting_o = 1'b1;
+        target_idle_o = 1'b0;
       end
       // WaitForStop just waiting for host to trigger a stop after nack
       WaitForStop: begin
@@ -1033,7 +1035,7 @@ module i3c_target_fsm
       TransmitHold: begin
         if (tcount_q == 20'd1) begin
           if (bit_ack) begin
-            state_d = TransmitAck;
+            state_d = TransmitTbit;
           end else begin
             load_tcount = 1'b1;
             tcount_sel = tHoldData;
@@ -1042,20 +1044,20 @@ module i3c_target_fsm
         end
       end
       // Wait for clock to become positive.
-      TransmitAck: begin
+      TransmitTbit: begin
         if (scl_i) begin
-          state_d = TransmitAckPulse;
+          state_d = TransmitTbitPulse;
         end
       end
-      // TransmitAckPulse: target waits for host to ACK transmission
-      // If a nak is received, that means a stop is incoming.
-      TransmitAckPulse: begin
+      // TransmitTbitPulse
+      TransmitTbitPulse: begin
         if (!scl_i) begin
-          // If host acknowledged, that means we must continue
-          if (host_ack) begin
+          // We have data, continue
+          // FIXME: The decision where to go from here should be actually made
+          // in TransmitTbit
+          if (tx_fifo_rvalid_i) begin
             state_d = TransmitWait;
           end else begin
-            // If host nak'd then the transaction is about to terminate, go to a wait state
             state_d = WaitForStop;
           end
         end
