@@ -16,9 +16,10 @@ module recovery_transmitter
     input  logic       data_ready_i,
     output logic [7:0] data_data_o,
 
-    // TTX TX mux control
+    // TTX TX control
     output logic       data_queue_select_o,
     output logic       start_trig_o,
+    input  logic       host_nack_i,
 
     // PEC computation control
     input  logic [7:0] pec_crc_i,
@@ -30,38 +31,132 @@ module recovery_transmitter
     output logic        res_ready_o,
     input  logic [15:0] res_len_i,
 
+    // Response data interface
     input  logic        res_dvalid_i,
     output logic        res_dready_o,
-    input  logic [ 7:0] res_data_i
+    input  logic [ 7:0] res_data_i,
+    input  logic        res_dlast_i
 );
 
-    assign data_queue_select_o  = 1'b1;
-    assign start_trig_o         = 1'b0;
+  // TODO
+  assign data_queue_select_o  = 1'b1;
+  assign start_trig_o         = 1'b0;
 
-    // Dummy reply
-    reg [7:0] lcnt;
+  // Internal signals
+  logic [15:0] len_q;
 
-    always_ff @(posedge clk_i)
-        if (!rst_ni)
-            lcnt <= 0;
-        else if (lcnt == 0 & res_valid_i)
-            lcnt <= 3;
-        else if (lcnt != 0)
-            lcnt <= lcnt - 1;
+  // ....................................................
 
-    assign res_ready_o = (lcnt == 0);
+  // FSM
+  typedef enum logic [7:0] {
+    Idle        = 'h00,
+    TxLenL      = 'h10,
+    TxLenH      = 'h11,
+    TxData      = 'h20,
+    TxPEC       = 'h30,
+    Flush       = 'hF0
+  } state_e;
 
-    // Dummy reply
-    reg [7:0] dcnt;
+  state_e state_d, state_q;
 
-    always_ff @(posedge clk_i)
-        if (!rst_ni)
-            dcnt <= 0;
-        else if (dcnt == 0 & res_dvalid_i)
-            dcnt <= 3;
-        else if (dcnt != 0)
-            dcnt <= dcnt - 1;
+  // State transition
+  always_ff @(posedge clk_i)
+    if (!rst_ni) state_q <= Idle;
+    else state_q <= state_d;
 
-    assign res_dready_o = (dcnt == 0);
+  // Next state
+  always_comb
+    unique case (state_q)
+      Idle: begin
+        state_d = Idle;
+        if (res_valid_i)
+          state_d = TxLenL;
+      end
+
+      TxLenL: begin
+        state_d = TxLenL;
+        if(host_nack_i)
+          state_d = Idle;
+        else if(data_ready_i)
+          state_d = TxLenH;
+      end
+
+      TxLenH: begin
+        state_d = TxLenH;
+        if(host_nack_i)
+          state_d = Idle;
+        else if(data_ready_i)
+          state_d = TxData;
+      end
+
+      TxData: begin
+        state_d = TxData;
+        if(host_nack_i)
+          state_d = Flush;
+        else if(data_ready_i && data_valid_o)
+          if(res_dlast_i)
+            state_d = TxPEC;
+      end
+
+      TxPEC: begin
+        state_d = TxPEC;
+        if(data_ready_i && data_valid_o)
+          state_d = Idle;
+      end
+
+      Flush: begin
+        state_d = Flush;
+        if(!res_dvalid_i)
+          state_d = Idle;
+      end
+
+      default:
+        state_d = Idle;
+    endcase
+
+  // ....................................................
+
+  // Latch length
+  always_ff @(posedge clk_i)
+    if (state_q == Idle & res_ready_o & res_valid_i)
+      len_q <= res_len_i;
+
+  // Response ready
+  assign res_ready_o = (state_q == Idle);
+  // Response data ready
+  //sign res_dready_o = (state_q == TxData) & data_ready_i;
+  always_comb
+    unique case(state_q)
+      TxData:   res_dready_o = data_ready_i;
+      Flush:    res_dready_o = 1'b1;
+      default:  res_dready_o = 1'b0;
+    endcase
+
+  // Data output
+  always_comb
+    unique case(state_q)
+      TxLenL:   data_data_o  = len_q[ 7:0];
+      TxLenH:   data_data_o  = len_q[15:8];
+      TxPEC:    data_data_o  = pec_crc_i;
+      default:  data_data_o  = res_data_i;
+    endcase
+
+  always_comb
+    unique case(state_q)
+      TxLenL:   data_valid_o = 1'b1;
+      TxLenH:   data_valid_o = 1'b1;
+      TxData:   data_valid_o = res_dvalid_i;
+      TxPEC:    data_valid_o = 1'b1;
+      default:  data_valid_o = 1'b0;
+    endcase
+
+  // PEC enable
+  always_comb
+    unique case(state_q)
+      TxLenL:   pec_enable_o = 1'b1;
+      TxLenH:   pec_enable_o = 1'b1;
+      TxData:   pec_enable_o = res_dvalid_i;
+      default:  pec_enable_o = 1'b0;
+    endcase
 
 endmodule
