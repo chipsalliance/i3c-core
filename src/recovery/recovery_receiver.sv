@@ -28,7 +28,6 @@ module recovery_receiver
     // PEC computation control
     input  logic [7:0] pec_crc_i,
     output logic       pec_enable_o,
-    output logic       pec_clear_o,
 
     // Received command interface
     output logic        cmd_valid_o,
@@ -155,8 +154,6 @@ module recovery_receiver
 
   // PEC enable
   assign pec_enable_o = (data_queue_select_o) ? rx_flow : data_queue_flow_i;
-  // PEC clear
-  assign pec_clear_o  = bus_start_i;
 
   // PEC capture
   always_ff @(posedge clk_i)

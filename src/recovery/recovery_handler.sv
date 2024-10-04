@@ -699,18 +699,33 @@ module recovery_handler
   logic        cmd_done; // TODO: Consider replacing this with rx_cmd_ready and making the executor not ready rather than pulsing done.
 
   // RX PEC calculator
-  logic [ 7:0] rx_pec_crc;
-  logic        rx_pec_enable;
   logic        rx_pec_clear;
+  logic        rx_pec_valid;
+  logic        rx_pec_init;
+  logic [ 7:0] rx_pec_data;
+
+  logic [ 7:0] recv_pec_crc;
+  logic        recv_pec_enable;
 
   recovery_pec xrecovery_rx_pec (
       .clk_i,
       .rst_ni(rst_ni & !rx_pec_clear & recovery_enable),
 
-      .dat_i  (tti_rx_data_queue_wdata),
-      .valid_i(rx_pec_enable),
-      .crc_o  (rx_pec_crc)
+      .dat_i  (rx_pec_data),
+      .valid_i(rx_pec_valid),
+      .init_i (rx_pec_init),
+      .crc_o  (recv_pec_crc)
   );
+
+  // RX PEC mux for initializing it with I2C/I3C address byte
+  always_comb begin
+    rx_pec_data     = ctl_bus_addr_valid_i ? ctl_bus_addr_i : tti_rx_data_queue_wdata;
+    rx_pec_valid    = ctl_bus_addr_valid_i ? 1'b1           : recv_pec_enable;
+    rx_pec_init     = ctl_bus_addr_valid_i ? 1'b1           : 1'b0;
+  end
+
+  // Clear PEC on start
+  assign rx_pec_clear = ctl_bus_start_i;
 
   // Recovery packet reception handler
   recovery_receiver xrecovery_receiver (
@@ -731,9 +746,8 @@ module recovery_handler
       .bus_start_i(ctl_bus_start_i),
       .bus_stop_i (ctl_bus_stop_i),
 
-      .pec_crc_i   (rx_pec_crc),
-      .pec_enable_o(rx_pec_enable),
-      .pec_clear_o (rx_pec_clear),
+      .pec_crc_i   (recv_pec_crc),
+      .pec_enable_o(recv_pec_enable),
 
       .cmd_valid_o(cmd_valid),
       .cmd_is_rd_o(cmd_is_rd),
@@ -755,18 +769,33 @@ module recovery_handler
   logic        res_dlast;
 
   // TX PEC calculator
-  logic [ 7:0] tx_pec_crc;
-  logic        tx_pec_enable;
   logic        tx_pec_clear;
+  logic        tx_pec_valid;
+  logic        tx_pec_init;
+  logic [ 7:0] tx_pec_data;
+
+  logic [ 7:0] xmit_pec_crc;
+  logic        xmit_pec_enable;
 
   recovery_pec xrecovery_tx_pec (
       .clk_i,
       .rst_ni(rst_ni & !tx_pec_clear & recovery_enable),
 
-      .dat_i  (ctl_tti_tx_data_queue_rdata_o),
-      .valid_i(tx_pec_enable),
-      .crc_o  (tx_pec_crc)
+      .dat_i  (tx_pec_data),
+      .valid_i(tx_pec_valid),
+      .init_i (tx_pec_init),
+      .crc_o  (xmit_pec_crc)
   );
+
+  // TX PEC mux for initializing it with I2C/I3C address byte
+  always_comb begin
+    tx_pec_data     = ctl_bus_addr_valid_i ? ctl_bus_addr_i : ctl_tti_tx_data_queue_rdata_o;
+    tx_pec_valid    = ctl_bus_addr_valid_i ? 1'b1           : xmit_pec_enable;
+    tx_pec_init     = ctl_bus_addr_valid_i ? 1'b1           : 1'b0;
+  end
+
+  // Clear PEC on start
+  assign tx_pec_clear = ctl_bus_start_i;
 
   // Recovery packet transmitter
   recovery_transmitter xrecovery_transmitter (
@@ -786,9 +815,8 @@ module recovery_handler
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
-      .pec_crc_i   (tx_pec_crc),
-      .pec_enable_o(tx_pec_enable),
-      .pec_clear_o (tx_pec_clear),
+      .pec_crc_i   (xmit_pec_crc),
+      .pec_enable_o(xmit_pec_enable),
 
       .res_valid_i  (res_valid),
       .res_ready_o  (res_ready),
