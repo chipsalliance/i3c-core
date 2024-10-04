@@ -88,7 +88,9 @@ module controller_standby_i2c
     input logic [19:0] t_r_i,
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
-    input logic [19:0] t_bus_available_i
+    input logic [19:0] t_bus_available_i,
+
+    output logic tx_host_nack_o
 );
 
   logic [TxFifoWidth-1:0] tx_fifo_data_int;
@@ -196,5 +198,8 @@ module controller_standby_i2c
   // them here.
   assign bus_addr_o = '0;
   assign bus_addr_valid_o = '0;
+
+  // TODO: Detect host NACKs and expose them here
+  assign tx_host_nack_o = '0;
 
 endmodule
