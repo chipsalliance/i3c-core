@@ -24,7 +24,6 @@ module recovery_transmitter
     // PEC computation control
     input  logic [7:0] pec_crc_i,
     output logic       pec_enable_o,
-    output logic       pec_clear_o,
 
     // Response interface
     input  logic        res_valid_i,
@@ -158,8 +157,5 @@ module recovery_transmitter
       TxData:   pec_enable_o = data_valid_o & data_ready_i;
       default:  pec_enable_o = 1'b0;
     endcase
-
-  // PEC clear
-  assign pec_clear_o = 1'b0;
 
 endmodule
