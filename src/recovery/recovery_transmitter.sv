@@ -153,9 +153,9 @@ module recovery_transmitter
   // PEC enable
   always_comb
     unique case(state_q)
-      TxLenL:   pec_enable_o = 1'b1;
-      TxLenH:   pec_enable_o = 1'b1;
-      TxData:   pec_enable_o = res_dvalid_i;
+      TxLenL:   pec_enable_o = data_valid_o & data_ready_i;
+      TxLenH:   pec_enable_o = data_valid_o & data_ready_i;
+      TxData:   pec_enable_o = data_valid_o & data_ready_i;
       default:  pec_enable_o = 1'b0;
     endcase
 
