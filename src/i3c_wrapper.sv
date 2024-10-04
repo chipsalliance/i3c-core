@@ -311,8 +311,8 @@ module i3c_wrapper #(
       .scl_o(scl_io2phy),
       .sda_o(sda_io2phy),
       .sel_od_pp_i(sel_od_pp),
-      .scl_io(scl_io),
-      .sda_io(sda_io)
+      .scl_io(i3c_scl_io),
+      .sda_io(i3c_sda_io)
   );
 `endif
 
