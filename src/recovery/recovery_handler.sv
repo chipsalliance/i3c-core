@@ -73,6 +73,7 @@ module recovery_handler
     output logic                          ctl_tti_tx_data_queue_start_thld_trig_o,
     output logic [TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_ready_thld_o,
     output logic                          ctl_tti_tx_data_queue_ready_thld_trig_o,
+    input  logic                          ctl_tti_tx_host_nack_i,
 
     // In-band Interrupt (IBI) queue
     output logic                       ctl_tti_ibi_queue_full_o,
@@ -751,6 +752,7 @@ module recovery_handler
   logic        res_dvalid;
   logic        res_dready;
   logic [ 7:0] res_data;
+  logic        res_dlast;
 
   // TX PEC calculator
   logic [ 7:0] tx_pec_crc;
@@ -782,6 +784,8 @@ module recovery_handler
       .data_queue_select_o(send_tti_tx_data_queue_select),
       .start_trig_o(send_tti_tx_start_trig),
 
+      .host_nack_i (ctl_tti_tx_host_nack_i),
+
       .pec_crc_i   (tx_pec_crc),
       .pec_enable_o(tx_pec_enable),
       .pec_clear_o (tx_pec_clear),
@@ -792,7 +796,8 @@ module recovery_handler
 
       .res_dvalid_i (res_dvalid),
       .res_dready_o (res_dready),
-      .res_data_i   (res_data)
+      .res_data_i   (res_data),
+      .res_dlast_i  (res_dlast)
   );
 
   // ....................................................
@@ -816,12 +821,15 @@ module recovery_handler
       .res_dvalid_o (res_dvalid),
       .res_dready_i (res_dready),
       .res_data_o   (res_data),
+      .res_dlast_o  (res_dlast),
 
       .rx_req_o      (exec_tti_rx_data_req),
       .rx_ack_i      (exec_tti_rx_data_ack),
       .rx_data_i     (exec_tti_rx_data_data),
       .rx_queue_sel_o(exec_tti_rx_queue_sel),
       .rx_queue_clr_o(exec_tti_rx_queue_clr),
+
+      .tx_host_nack_i(ctl_tti_tx_host_nack_i),
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o)

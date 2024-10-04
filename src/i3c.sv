@@ -299,6 +299,8 @@ module i3c
   logic                          tti_tx_queue_rready;
   logic [                   7:0] tti_tx_queue_rdata;
 
+  logic                          tti_tx_host_nack;
+
   // In-band Interrupt queue
   logic                          tti_ibi_queue_full;
   logic [   TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld;
@@ -538,6 +540,7 @@ module i3c
       .tti_tx_queue_rvalid_i(tti_tx_queue_rvalid),
       .tti_tx_queue_rready_o(tti_tx_queue_rready),
       .tti_tx_queue_rdata_i(tti_tx_queue_rdata),
+      .tti_tx_host_nack_o(tti_tx_host_nack),
 
       // TTI: In-band Interrupt queue
       .ibi_queue_full_i(tti_ibi_queue_full),
@@ -946,6 +949,7 @@ module i3c
       .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_queue_start_thld_trig),
       .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_queue_ready_thld),
       .ctl_tti_tx_data_queue_ready_thld_trig_o(tti_tx_queue_ready_thld_trig),
+      .ctl_tti_tx_host_nack_i(tti_tx_host_nack),
 
       // TTI In-band Interrupt (IBI) queue
       .ctl_tti_ibi_queue_full_o(tti_ibi_queue_full),
