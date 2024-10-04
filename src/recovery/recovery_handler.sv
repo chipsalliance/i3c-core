@@ -763,7 +763,7 @@ module recovery_handler
       .clk_i,
       .rst_ni(rst_ni & !tx_pec_clear & recovery_enable),
 
-      .dat_i  (tti_tx_data_queue_rdata),
+      .dat_i  (ctl_tti_tx_data_queue_rdata_o),
       .valid_i(tx_pec_enable),
       .crc_o  (tx_pec_crc)
   );
@@ -784,7 +784,7 @@ module recovery_handler
       .data_queue_select_o(send_tti_tx_data_queue_select),
       .start_trig_o(send_tti_tx_start_trig),
 
-      .host_nack_i (ctl_tti_tx_host_nack_i),
+      .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
       .pec_crc_i   (tx_pec_crc),
       .pec_enable_o(tx_pec_enable),
@@ -829,7 +829,7 @@ module recovery_handler
       .rx_queue_sel_o(exec_tti_rx_queue_sel),
       .rx_queue_clr_o(exec_tti_rx_queue_clr),
 
-      .tx_host_nack_i(ctl_tti_tx_host_nack_i),
+      .host_abort_i  (ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o)
