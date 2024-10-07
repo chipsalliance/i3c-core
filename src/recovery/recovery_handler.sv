@@ -286,9 +286,7 @@ module recovery_handler
       .clk_i,
       .rst_ni,
 
-      // Allow data flow between FIFO and width converter only if the downstream
-      // port is ready.
-      .sink_valid_i(tti_tx_data_queue_rvalid_q & tti_tx_data_queue_rready),
+      .sink_valid_i(tti_tx_data_queue_rvalid_q),
       .sink_ready_o(tti_tx_data_queue_rready_q),
       .sink_data_i (tti_tx_data_queue_rdata_q),
 
@@ -384,7 +382,7 @@ module recovery_handler
       .tx_ready_thld_trig_o(tti_tx_data_queue_ready_thld_trig),
       .tx_empty_o(tti_tx_data_queue_empty),
       .tx_rvalid_o(tti_tx_data_queue_rvalid_q),
-      .tx_rready_i(tti_tx_data_queue_rready_q & tti_tx_data_queue_rready), // Allow data flow between FIFO and width converter only if the downstream port is ready.
+      .tx_rready_i(tti_tx_data_queue_rready_q),
       .tx_rdata_o(tti_tx_data_queue_rdata_q),
       .tx_req_i(tti_tx_data_queue_req),
       .tx_ack_o(tti_tx_data_queue_ack),
