@@ -9,6 +9,7 @@
 // TODO: Detection of T-bit (and parity check)
 // Definitely want parity checking to be performed in this module
 // TODO: Timings
+// TODO: Rework SDA drive logic (now its partially combinational, partially registered)
 
 // Initial focus is on supporting the following I3C flows:
 // 1. Private R/W:      ADDR -> ACK -> Data
@@ -872,9 +873,10 @@ module i3c_target_fsm
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sda_r <= 1'b1;
-    //  || state_q == TransmitWait || state_q == TransmitWaitOd
-    //
-    else if (state_q == IbiAddrSetup || state_q == TransmitSetup || state_q == AddrAckHold)
+    else if (state_q == AddrAckHold & (tcount_q == 20'd1) & rw_bit_q)
+      // Load 1st bit to be transmitted after address ACK.
+      sda_r <= output_byte[3'(7-bit_idx)];
+    else if (state_q == IbiAddrSetup | state_q == TransmitSetup)
       sda_r <= output_byte[3'(7-bit_idx)];
     else if (state_q == TbitSetup)
       sda_r <= (ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i);
