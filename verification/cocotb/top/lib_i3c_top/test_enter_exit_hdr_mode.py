@@ -43,7 +43,7 @@ async def test_enter_exit_hdr_mode(dut):
 
     assert (
         dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d
-        == 32
+        == 0xA0
     )  # IdleHDR
 
     await i3c_controller.send_hdr_exit()
