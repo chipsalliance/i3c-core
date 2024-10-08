@@ -514,8 +514,8 @@ module recovery_handler
       recv_tti_rx_data_valid                  = ctl_tti_rx_data_queue_wvalid_i;
       tti_rx_data_queue_wvalid                = '0;
       tti_rx_data_queue_wflush                = '0;
-      ctl_tti_rx_data_queue_full_o            = '0;
-      ctl_tti_rx_data_queue_empty_o           = '0;
+      ctl_tti_rx_data_queue_full_o            = tti_rx_data_queue_full;
+      ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = recv_tti_rx_data_ready;
       ctl_tti_rx_data_queue_start_thld_trig_o = '0;
       ctl_tti_rx_data_queue_ready_thld_trig_o = '0;
@@ -552,8 +552,8 @@ module recovery_handler
     if (recovery_enable & send_tti_tx_data_queue_select) begin
       tti_tx_data_queue_rready                = '0;
       send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
-      ctl_tti_tx_data_queue_full_o            = '0;
-      ctl_tti_tx_data_queue_empty_o           = '0;
+      ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
+      ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
       ctl_tti_tx_data_queue_rvalid_o          = send_tti_tx_data_valid;
       ctl_tti_tx_data_queue_rdata_o           = send_tti_tx_data_data;
       ctl_tti_tx_data_queue_start_thld_trig_o = send_tti_tx_start_trig;
