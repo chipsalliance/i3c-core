@@ -57,7 +57,7 @@ async def test_setup(dut):
 
 
 @cocotb.test()
-async def test_i3c_target(dut):
+async def test_i3c_target_write(dut):
 
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
@@ -102,22 +102,56 @@ async def test_i3c_target(dut):
             )
             words_ref.append(word)
 
-    dut._log.info(test_data)
-    dut._log.info(words_ref)
-
     # Read data
     words_out = []
     for i in range(len(words_ref)):
         r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
         words_out.append(r_data)
 
-    dut._log.debug(
+    # Compare
+    dut._log.info(
         "Comparing input [{}] and CSR data [{}]".format(
             " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
             " ".join([f"0x{d:08X}" for d in words_out]),
         )
     )
     assert words_out == words_ref
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
+
+
+@cocotb.test()
+async def test_i3c_target_read(dut):
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+
+    # Write data to TTI TX FIFO
+    test_data = [0xDDCCBBAA, 0x9988FFEE, 0x55667788]
+    for word in test_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
+
+    # Issue a private read
+    bytes_out = await i3c_controller.i3c_read(0x5A, len(test_data) * 4)
+    bytes_out = list(bytes_out)
+
+    # Convert reference data into bytes (little-endian)
+    bytes_ref = []
+    for word in test_data:
+        bytes_ref.append(word & 0xFF)
+        bytes_ref.append((word >> 8) & 0xFF)
+        bytes_ref.append((word >> 16) & 0xFF)
+        bytes_ref.append((word >> 24) & 0xFF)
+
+    # Compare
+    dut._log.info(
+        "Comparing input [{}] and CSR data [{}]".format(
+            " ".join([f"0x{d:02X}" for d in bytes_out]),
+            " ".join([f"0x{d:02X}" for d in bytes_ref]),
+        )
+    )
+    assert bytes_out == bytes_ref
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
