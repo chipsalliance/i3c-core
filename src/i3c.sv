@@ -524,7 +524,7 @@ module i3c
       // TTI: TX Descriptor
       .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full),
       .tti_tx_desc_queue_ready_thld_i(tti_tx_desc_queue_ready_thld),
-      .tti_tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld),
+      .tti_tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig),
       .tti_tx_desc_queue_empty_i(tti_tx_desc_queue_empty),
       .tti_tx_desc_queue_rvalid_i(tti_tx_desc_queue_rvalid),
       .tti_tx_desc_queue_rready_o(tti_tx_desc_queue_rready),

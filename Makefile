@@ -46,20 +46,20 @@ endif
 # I3C configuration
 #
 CFG_FILE            ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
-CFG_NAME            ?= ahb## Valid configuration name from the YAML configuration file
+CFG_NAME            ?= axi## Valid configuration name from the YAML configuration file
 CFG_GEN              = $(TOOL_DIR)/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files
 
 config-rtl: config-print ## Generate top I3C definitions svh file
-	python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
+	python3 $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
 
 RDL_REGS    := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/
-RDL_ARGS    := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
+RDL_ARGS    := $(shell python3 $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
 
 config-rdl: config-print
-	python $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
+	python3 $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
 
 config-print: ## Print configuration name, filename and RDL arguments
 	@echo Using \'$(CFG_NAME)\' I3C configuration from \'$(CFG_FILE)\'.

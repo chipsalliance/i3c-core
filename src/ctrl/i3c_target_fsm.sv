@@ -382,7 +382,7 @@ module i3c_target_fsm
   typedef enum logic [6:0] {
     Idle = 'd0,
     // Target function receives start and address from external host
-    AcquireStart = 5'd1,
+    AcquireStart = 'd1,
     AddrRead = 'd2,
     // Target function acknowledges the address and returns an ack to external host
     AddrAckWait = 'd3,
