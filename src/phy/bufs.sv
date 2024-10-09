@@ -33,7 +33,7 @@ module bufs (
 
   // Model of an Open-Drain driver
   buf_od xbuf_od (
-      .drive_low(phy_data_i),
+      .drive_low(~phy_data_i),
       .buf_od_o (buf_od_o)
   );
 
