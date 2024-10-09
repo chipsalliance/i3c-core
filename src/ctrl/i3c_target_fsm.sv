@@ -137,36 +137,36 @@ module i3c_target_fsm
   logic restart_det_d, restart_det_q;
   assign restart_det_q = '0;  // TODO: Handle
 
-  logic xact_for_us_q;  // Target was addressed in this transaction
-  logic xact_for_us_d;  //     - We only record Stop if the Target was addressed.
-  logic xfer_for_us_q;  // Target was addressed in this transfer
-  logic xfer_for_us_d;  //     - event_cmd_complete_o is only for our transfers
+  logic       xact_for_us_q;  // Target was addressed in this transaction
+  logic       xact_for_us_d;  //     - We only record Stop if the Target was addressed.
+  logic       xfer_for_us_q;  // Target was addressed in this transfer
+  logic       xfer_for_us_d;  //     - event_cmd_complete_o is only for our transfers
 
-  logic input_strobe;
+  logic       input_strobe;
   logic [7:0] input_byte;  // register for reads from host
-  logic input_byte_clr;  // clear input_byte contents
+  logic       input_byte_clr;  // clear input_byte contents
   // logic       nack_timeout;
-  logic expect_stop;
+  logic       expect_stop;
 
   // Target bit counter variables
   logic [3:0] bit_idx;  // bit index including ack/nack
-  logic bit_ack;  // indicates ACK bit been sent or received
-  logic rw_bit;  // indicates host wants to read (1) or write (0)
-  logic host_ack;  // indicates host acknowledged transmitted byte
-  logic host_tbit_ok;  // indicates that T bit matches the expected (odd) parity
+  logic       bit_ack;  // indicates ACK bit been sent or received
+  logic       rw_bit;  // indicates host wants to read (1) or write (0)
+  logic       host_ack;  // indicates host acknowledged transmitted byte
+  logic       host_tbit_ok; // indicates that T bit matches the expected (odd) parity
 
-  logic [7:0] command_code;  // CCC byte
-  logic command_code_valid;
+  logic [7:0] command_code; // CCC byte
+  logic       command_code_valid;
 
-  logic [7:0] defining_byte;  // optional defining byte of the CCC code
-  logic defining_byte_valid;
+  logic [7:0] defining_byte; // optional defining byte of the CCC code
+  logic       defining_byte_valid;
 
-  logic enter_hdr_ccc;
-  logic enter_hdr_after_stop;
-  logic enter_hdr_after_stop_clr;
+  logic       enter_hdr_ccc;
+  logic       enter_hdr_after_stop;
+  logic       enter_hdr_after_stop_clr;
 
-  logic [1:0] command_min_bytes;  // minimum number of bytes expected after a CCC read/write
-  logic [1:0] command_max_bytes;  // maximum number of bytes expected after a CCC read/write
+  logic [1:0] command_min_bytes; // minimum number of bytes expected after a CCC read/write
+  logic [1:0] command_max_bytes; // maximum number of bytes expected after a CCC read/write
 
   logic tbit_after_byte_q;  // whether to expect a T bit after acquiring data byte (we're doing i3c
                             // flow) or old-style ACK (we're doing i2c) flow. Whether the flow is
@@ -189,31 +189,31 @@ module i3c_target_fsm
 
   tcount_sel_e tcount_sel;
 
-  ccc ccc (
-      .clk_i (clk_i),
-      .rst_ni(rst_ni),
+  ccc ccc(
+    .clk_i(clk_i),
+    .rst_ni(rst_ni),
 
-      // Latch CCC data
-      .command_code_i(command_code),
-      .command_code_valid_i(command_code_valid),
+    // Latch CCC data
+    .command_code_i(command_code),
+    .command_code_valid_i(command_code_valid),
 
-      .defining_byte_i(defining_byte),
-      .defining_byte_valid_i(defining_byte_valid),
+    .defining_byte_i(defining_byte),
+    .defining_byte_valid_i(defining_byte_valid),
 
-      //TODO: Establish correct size
-      .command_data_i(0),
-      .command_data_valid_i(0),
+    //TODO: Establish correct size
+    .command_data_i(0),
+    .command_data_valid_i(0),
 
-      .queue_size_reg_i(0),
-      .response_byte_o (),
-      .response_valid_o(),
+    .queue_size_reg_i(0),
+    .response_byte_o(),
+    .response_valid_o(),
 
-      .enter_hdr_ccc_o(enter_hdr_ccc),
+    .enter_hdr_ccc_o(enter_hdr_ccc),
 
-      .rst_action_o(rst_action_o),
+    .rst_action_o(rst_action_o),
 
-      .command_min_bytes_o(command_min_bytes),
-      .command_max_bytes_o(command_max_bytes)
+    .command_min_bytes_o(command_min_bytes),
+    .command_max_bytes_o(command_max_bytes)
   );
 
   always_comb begin : counter_functions
@@ -688,7 +688,7 @@ module i3c_target_fsm
         if (!scl_i) begin
           if (ibi_handling) ibi_fifo_rready_o = 1'b1;
           else tx_fifo_rready_o = 1'b1;
-        end
+      end
       end
       TbitSetup: begin
         target_idle_o = 1'b0;
@@ -924,7 +924,7 @@ module i3c_target_fsm
           if (is_any_addr_match) begin
             load_tcount = 1'b1;
             // Wait for hold time to avoid interfering with the controller.
-            tcount_sel  = tHoldData;
+            tcount_sel = tHoldData;
             // TODO: Check that dynamic address really takes precedence
             // over static address in determining communication flow (I2C/I3C)
             //
@@ -1020,10 +1020,10 @@ module i3c_target_fsm
       TransmitWait: begin
         sel_od_pp_o = 1'b1;
         if (!scl_i) begin
-          state_d = TransmitSetup;
+        state_d = TransmitSetup;
           load_tcount = 1'b1;
           tcount_sel = tSetupData;
-        end
+      end
       end
       TransmitWaitOd: begin
         if (!scl_i) begin
@@ -1036,7 +1036,7 @@ module i3c_target_fsm
         sel_od_pp_o = 1'b1;
         if (tcount_q == 20'd1) begin
           state_d = TransmitPulse;
-        end
+      end
       end
       TransmitPulse: begin
         sel_od_pp_o = 1'b1;
@@ -1051,10 +1051,10 @@ module i3c_target_fsm
         if (tcount_q == 20'd1) begin
           if (bit_idx == 7) state_d = TbitWait;
           else state_d = TransmitWait;
-          load_tcount = 1'b1;
+            load_tcount = 1'b1;
           tcount_sel  = tSetupData;
+          end
         end
-      end
 
       // Transmit T-bit
       TbitWait: begin
@@ -1063,7 +1063,7 @@ module i3c_target_fsm
           state_d = TbitSetup;
           load_tcount = 1'b1;
           tcount_sel = tSetupData;
-        end
+      end
       end
       TbitSetup: begin
         sel_od_pp_o = 1'b1;
@@ -1158,7 +1158,7 @@ module i3c_target_fsm
       AcquireByte: begin
         if (bit_ack) begin
           load_tcount = 1'b1;
-          tcount_sel  = tHoldData;
+          tcount_sel = tHoldData;
           if (tbit_after_byte_q) begin
             state_d = AcquireTBitWait;
             defining_byte = input_byte;

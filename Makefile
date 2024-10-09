@@ -46,7 +46,7 @@ endif
 # I3C configuration
 #
 CFG_FILE            ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
-CFG_NAME            ?= ahb## Valid configuration name from the YAML configuration file
+CFG_NAME            ?= axi## Valid configuration name from the YAML configuration file
 CFG_GEN              = $(TOOL_DIR)/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files

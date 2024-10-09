@@ -41,10 +41,10 @@ module ccc
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_latch_inputs
     if (~rst_ni) begin
-      command_code <= '0;
+      command_code  <= '0;
       defining_byte <= '0;
       defining_byte_valid <= '0;
-      command_data <= '0;
+      command_data  <= '0;
     end else begin
       if (clear_command_code) begin
         command_code <= '0;
@@ -53,7 +53,7 @@ module ccc
       end
       defining_byte <= defining_byte_valid_i ? defining_byte_i : defining_byte;
       defining_byte_valid <= defining_byte_valid_i;
-      command_data <= command_data_valid_i ? command_data_i : command_data;
+      command_data  <= command_data_valid_i ? command_data_i : command_data;
     end
   end
 
@@ -75,7 +75,7 @@ module ccc
 
   always_comb begin
     response_valid_o = '0;
-    response_byte_o = '0;
+    response_byte_o  = '0;
     enter_hdr_ccc_o = '0;
     rst_action_o = '0;
     command_min_bytes_o = '0;
