@@ -28,10 +28,10 @@ module recovery_executor
     output logic [15:0] res_len_o,
 
     // Response data interface
-    output logic       res_dvalid_o,
-    input  logic       res_dready_i,
-    output logic [7:0] res_data_o,
-    output logic       res_dlast_o,
+    output logic        res_dvalid_o,
+    input  logic        res_dready_i,
+    output logic [ 7:0] res_data_o,
+    output logic        res_dlast_o,
 
     // TTI RX FIFO data interface
     output logic        rx_req_o,
@@ -41,7 +41,7 @@ module recovery_executor
     output logic rx_queue_sel_o,
     output logic rx_queue_clr_o,
 
-    input logic host_abort_i,
+    input  logic host_abort_i,
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
@@ -177,8 +177,8 @@ module recovery_executor
   always_ff @(posedge clk_i)
     unique case (state_q)
       Idle:
-      if (cmd_valid_i)
-        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
+        if (cmd_valid_i)
+          dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
       CsrWrite: if (rx_ack_i) dcnt <= dcnt - 1;
       CsrReadLen: dcnt <= csr_length;
       CsrReadData: if (res_dvalid_o & res_dready_i) dcnt <= dcnt - 1;
@@ -216,7 +216,7 @@ module recovery_executor
       // a malicious packet with length > CSR length is received
       CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 1);
       CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 1);
-      default: csr_sel <= csr_sel;
+      default:  csr_sel <= csr_sel;
     endcase
 
   // CSR writeable flag
@@ -251,34 +251,34 @@ module recovery_executor
   // CSR read data mux
   always_ff @(posedge clk_i)
     unique case (csr_sel)
-      CSR_PROT_CAP_0:      csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
-      CSR_PROT_CAP_1:      csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
-      CSR_PROT_CAP_2:      csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
-      CSR_PROT_CAP_3:      csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_0:     csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
-      CSR_DEVICE_ID_1:     csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
-      CSR_DEVICE_ID_2:     csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
-      CSR_DEVICE_ID_3:     csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_4:     csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
-      CSR_DEVICE_ID_5:     csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
-      CSR_DEVICE_ID_6:     csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_0: csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_1: csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
-      CSR_DEVICE_RESET:    csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
-      CSR_RECOVERY_CTRL:   csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
-      CSR_RECOVERY_STATUS: csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
-      CSR_HW_STATUS:       csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
+    CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
+    CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
+    CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
+    CSR_PROT_CAP_3:             csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_0:            csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
+    CSR_DEVICE_ID_1:            csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
+    CSR_DEVICE_ID_2:            csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
+    CSR_DEVICE_ID_3:            csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_4:            csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
+    CSR_DEVICE_ID_5:            csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
+    CSR_DEVICE_ID_6:            csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_0:        csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_1:        csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
+    CSR_DEVICE_RESET:           csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
+    CSR_RECOVERY_CTRL:          csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
+    CSR_RECOVERY_STATUS:        csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
+    CSR_HW_STATUS:              csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
 
-      CSR_INDIRECT_FIFO_CTRL_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_CTRL_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
       default: csr_data <= '0;
-    endcase
+  endcase
 
   // ....................................................
 
@@ -330,8 +330,8 @@ module recovery_executor
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
+    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we           = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
+    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we          = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
   end
