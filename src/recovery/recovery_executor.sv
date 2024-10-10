@@ -198,8 +198,9 @@ module recovery_executor
     endcase
 
   // Byte counter
-  always_ff @(posedge clk_i)
-    unique case (state_q)
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) bcnt <= '0;
+    else unique case (state_q)
       Idle:
         bcnt <= '0;
       CsrReadData:
@@ -259,38 +260,44 @@ module recovery_executor
           CMD_HW_STATUS:            csr_length <= 'd4;
           CMD_INDIRECT_FIFO_CTRL:   csr_length <= 'd6;
           CMD_INDIRECT_FIFO_STATUS: csr_length <= 'd20;
+          default:                  csr_length <= csr_length;
         endcase
+      default:                      csr_length <= csr_length;
     endcase
 
   // CSR read data mux
-  always_ff @(posedge clk_i) unique case(csr_sel)
-    CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
-    CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
-    CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
-    CSR_PROT_CAP_3:             csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
-    CSR_DEVICE_ID_0:            csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
-    CSR_DEVICE_ID_1:            csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
-    CSR_DEVICE_ID_2:            csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
-    CSR_DEVICE_ID_3:            csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
-    CSR_DEVICE_ID_4:            csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
-    CSR_DEVICE_ID_5:            csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
-    CSR_DEVICE_ID_6:            csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
-    CSR_DEVICE_STATUS_0:        csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
-    CSR_DEVICE_STATUS_1:        csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
-    CSR_DEVICE_RESET:           csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
-    CSR_RECOVERY_CTRL:          csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
-    CSR_RECOVERY_STATUS:        csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
-    CSR_HW_STATUS:              csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
+  always_ff @(posedge clk_i)
+    if (!rst_ni)
+        csr_data <= 0;
+    else unique case(csr_sel)
+        CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
+        CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
+        CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
+        CSR_PROT_CAP_3:             csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
+        CSR_DEVICE_ID_0:            csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
+        CSR_DEVICE_ID_1:            csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
+        CSR_DEVICE_ID_2:            csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
+        CSR_DEVICE_ID_3:            csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
+        CSR_DEVICE_ID_4:            csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
+        CSR_DEVICE_ID_5:            csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
+        CSR_DEVICE_ID_6:            csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
+        CSR_DEVICE_STATUS_0:        csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
+        CSR_DEVICE_STATUS_1:        csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
+        CSR_DEVICE_RESET:           csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
+        CSR_RECOVERY_CTRL:          csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
+        CSR_RECOVERY_STATUS:        csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
+        CSR_HW_STATUS:              csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
 
-    CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
-    CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
-  endcase
+        CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+        CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+        default:                    csr_data <= csr_data;
+    endcase
 
   // ....................................................
 
@@ -377,6 +384,7 @@ module recovery_executor
       CsrReadLen:
         if (res_ready_i)
           res_len_o <= csr_length;
+      default: res_len_o <= '0;
     endcase
 
   // Transmitt data valid
