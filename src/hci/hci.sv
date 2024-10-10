@@ -173,7 +173,7 @@ module hci
 
   // TTI CSR interface
   assign hwif_tti_o = hwif_out.I3C_EC.TTI;
-  assign hwif_in.I3C_EC.TTI = hwif_tti_i;
+//  assign hwif_in.I3C_EC.TTI = hwif_tti_i;
 
   // Recovery CSR interface
   assign hwif_rec_o = hwif_out.I3C_EC.SecFwRecoveryIf;
@@ -311,6 +311,13 @@ module hci
   logic [TtiRxDataWidth-1:0] tti_rx_queue_rd_data;
   logic tti_tx_queue_wr_ack;
   logic tti_ibi_queue_wr_ack;
+  always_comb begin
+      tti_rx_desc_queue_rd_ack = 1'b0;
+      tti_rx_queue_rd_ack = 1'b0;
+      tti_tx_desc_queue_wr_ack = 1'b0;
+      tti_tx_queue_wr_ack = 1'b0;
+      tti_ibi_queue_wr_ack = 1'b0;
+  end
 
   always_comb begin : wire_hwif_tti
     hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack = tti_rx_desc_queue_rd_ack;
