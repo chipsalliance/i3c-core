@@ -94,6 +94,10 @@ module axi_adapter #(
     axi.arid = arid_i;
     axi.araddr = araddr_i;
     axi.arsize = arsize_i;
+    axi.arlen = arlen_i;
+    axi.arburst = arburst_i;
+    axi.aruser = aruser_i;
+    axi.arlock = arlock_i;
 
     rvalid_o = axi.rvalid;
     axi.rready = rready_i;
@@ -110,6 +114,10 @@ module axi_adapter #(
     axi.awid    = awid_i;
     axi.awaddr  = awaddr_i;
     axi.awsize  = awsize_i;
+    axi.awlen   = awlen_i;
+    axi.awburst = awburst_i;
+    axi.awuser  = awuser_i;
+    axi.awlock  = awlock_i;
 
     axi.wvalid  = wvalid_i;
     wready_o    = axi.wready;

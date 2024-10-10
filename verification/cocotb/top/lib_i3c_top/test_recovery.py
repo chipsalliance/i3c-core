@@ -5,8 +5,8 @@ import logging
 from boot import boot_init
 from bus2csr import dword2int, int2dword
 from cocotbext_i3c.i3c_controller import I3cController
-from cocotbext_i3c.i3c_target import I3CTarget
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
+from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
@@ -45,6 +45,7 @@ async def initialize(dut):
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
         speed=12.5e6,
+        address=0x23,
     )
 
     tb = I3CTopTestInterface(dut)
@@ -164,7 +165,7 @@ async def test_recovery_write_pec(dut):
     assert data == 0xDEADBEEF  # From previous write
 
 
-@cocotb.test()
+@cocotb.test(skip=False)
 async def test_recovery_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
@@ -174,17 +175,27 @@ async def test_recovery_read(dut):
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
     # Write data to PROT_CAP CSR
-    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr, int2dword(0x04030201), 4)
-    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr, int2dword(0x08070605), 4)
-    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr, int2dword(0x0C0B0A09), 4)
-    await tb.write_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr, int2dword(0xFF0F0E0D), 4)
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr, int2dword(0x04030201), 4
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr, int2dword(0x08070605), 4
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr, int2dword(0x0C0B0A09), 4
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr, int2dword(0xFF0F0E0D), 4
+    )
 
     # Wait
     await Timer(1, "us")
 
     # Read the PROT_CAP register
-    await recovery.command_read(0x5A, I3cRecoveryInterface.Command.PROT_CAP)
+    recovery_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.PROT_CAP)
+
+    # PROT_CAP read always returns 15 bytes
+    assert len(recovery_data) == 15
 
     # Wait
     await Timer(2, "us")
-

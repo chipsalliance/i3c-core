@@ -51,15 +51,16 @@ CFG_GEN              = $(TOOL_DIR)/i3c_config/i3c_core_config.py
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files
 
+PYTHON ?= python3
 config-rtl: config-print ## Generate top I3C definitions svh file
-	python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
+	$(PYTHON) $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
 
 RDL_REGS    := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/
-RDL_ARGS    := $(shell python $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
+RDL_ARGS    := $(shell $(PYTHON) $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
 
 config-rdl: config-print
-	python $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
+	$(PYTHON) $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
 
 config-print: ## Print configuration name, filename and RDL arguments
 	@echo Using \'$(CFG_NAME)\' I3C configuration from \'$(CFG_FILE)\'.
@@ -71,57 +72,57 @@ config-print: ## Print configuration name, filename and RDL arguments
 lint: lint-rtl lint-tests ## Run RTL and tests lint
 
 lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
-	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s test_lint
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s test_lint
 
 lint-rtl: ## Run lint on RTL source code
 	$(SHELL) $(TOOL_DIR)/verible-scripts/run.sh
 
 lint-tests: ## Run lint on tests source code
-	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s lint
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s lint
 
 #
 # Tests
 #
 test: config ## Run single module test (use `TEST=<test_name>` flag)
-	cd $(COCOTB_VERIF_DIR) && python -m nox -R -s $(TEST)_verify
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)_verify
 
 tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
 	$(MAKE) config CFG_NAME=axi
-	cd $(COCOTB_VERIF_DIR) && python -m nox -R -t "axi"
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi"
 
 tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
 	$(MAKE) config CFG_NAME=ahb
-	cd $(COCOTB_VERIF_DIR) && python -m nox -R -t "ahb"
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "ahb"
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
 # TODO: Enable full coverage flow
 tests-coverage: ## Run all verification/block/* RTL tests with coverage
-	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 python -m nox -R -k "verify"
+	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 $(PYTHON) -m nox -R -k "verify"
 
 test-i3c-vip-uvm: config ## Run single I3C VIP UVM test with nox (use 'TEST=<i3c_driver|i3c_monitor>' flag)
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s $(TEST)
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)
 
 tests-i3c-vip-uvm: config ## Run all I3C VIP UVM tests with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_verify_uvm"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_verify_uvm"
 
 tests-i3c-vip-uvm-debug: config ## Run debugging I3C VIP UVM tests with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -t "uvm_debug_tests"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -t "uvm_debug_tests"
 
 tests-uvm: config ## Run all I3C Core UVM tests with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_verify_uvm"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_verify_uvm"
 
 tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
-	cd $(UVM_VERIF_DIR) && python -m nox -R -s "i3c_core_uvm_debug_tests"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_uvm_debug_tests"
 
 tests-tool: ## Run all tool tests
-	cd $(TOOL_VERIF_DIR) && python -m nox -k "verify"
+	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify"
 
 #
 # Utilities
 #
 timings: ## Generate values for I2C/I3C timings
-	python $(TOOL_DIR)/timing/timing.py
+	$(PYTHON) $(TOOL_DIR)/timing/timing.py
 
 deps: ## Install python dependencies
 	pip install -r $(I3C_ROOT_DIR)/requirements.txt

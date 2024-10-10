@@ -46,7 +46,7 @@ module width_converter_8toN #(
     end
 
   // Valid / ready
-  assign sink_ready_o  = (bcnt != Bytes);
+  assign sink_ready_o   = (bcnt != Bytes);
   assign source_valid_o = (bcnt == Bytes);
 
   // Data register

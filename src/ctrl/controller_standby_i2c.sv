@@ -191,8 +191,8 @@ module controller_standby_i2c
 
   // TODO: Make the I2C FSM report start/stop condition detection
   assign bus_start_o = '0;
-  assign bus_rstart_o= '0;
-  assign bus_stop_o  = '0;
+  assign bus_rstart_o = '0;
+  assign bus_stop_o = '0;
 
   // TODO: Make the I2C FSM output its received address + RnW bit and connect
   // them here.

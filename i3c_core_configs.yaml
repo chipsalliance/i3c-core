@@ -30,4 +30,4 @@ axi:
   FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 32
   FrontendBusUserWidth: 32
-  FrontendBusIdWidth: 2
+  FrontendBusIdWidth: 8

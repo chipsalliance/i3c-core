@@ -38,7 +38,7 @@ module edge_detector
     end else if (trigger) begin
       check_in_progress <= 1'b1;
       count <= '0;
-    end else if(check_in_progress && detect_line) begin
+    end else if (check_in_progress && detect_line) begin
       count <= count + 1'b1;
       if (count >= delay_count) begin
         check_in_progress <= 1'b0;

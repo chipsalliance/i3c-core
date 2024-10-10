@@ -11,8 +11,8 @@ module recovery_pec (
     input logic clk_i,
     input logic rst_ni,
 
-    input  logic       valid_i, // Data valid
-    input  logic       init_i,  // When 1 assume that previous CRC was 0
+    input  logic       valid_i,  // Data valid
+    input  logic       init_i,   // When 1 assume that previous CRC was 0
     input  logic [7:0] dat_i,
     output logic [7:0] crc_o
 );

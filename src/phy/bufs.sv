@@ -21,7 +21,8 @@ module bufs (
 
   assign phy_data_i_z = ~phy_data_i;
 
-  logic buf_pp_o, buf_od_o;
+  logic buf_pp_o;
+  wire  buf_od_o;
 
   // Model of a Push-Pull driver
   buf_pp xbuf_pp (
