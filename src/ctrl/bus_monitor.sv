@@ -29,9 +29,9 @@ module bus_monitor
     output logic start_detect_o,  // Module detected START or REPEATED START condition
     output logic stop_detect_o,   // Module detected STOP condition
 
-    input is_in_hdr_mode_i,       // Module is in HDR mode
-    output hdr_exit_detect_o      // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
- );
+    input  is_in_hdr_mode_i,  // Module is in HDR mode
+    output hdr_exit_detect_o  // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
+);
   logic enable, enable_q;
 
   logic scl_negedge_i;
@@ -65,8 +65,9 @@ module bus_monitor
 
   assign enable = enable_i;
 
-  edge_detector #(.DETECT_NEGEDGE(1'b1))
-  edge_detector_scl_negedge (
+  edge_detector #(
+      .DETECT_NEGEDGE(1'b1)
+  ) edge_detector_scl_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(scl_negedge_i),
@@ -84,8 +85,9 @@ module bus_monitor
       .detect(scl_posedge)
   );
 
-  edge_detector #(.DETECT_NEGEDGE(1'b1))
-  edge_detector_sda_negedge (
+  edge_detector #(
+      .DETECT_NEGEDGE(1'b1)
+  ) edge_detector_sda_negedge (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(sda_negedge_i),
@@ -204,7 +206,7 @@ module bus_monitor
     end else if (hdr_exit_det_trigger) begin
       hdr_exit_det_pending <= 1'b1;
     end else if (!enable || stop_det) begin
-      hdr_exit_det_count <= 5'b10000;
+      hdr_exit_det_count   <= 5'b10000;
       hdr_exit_det_pending <= 1'b0;
     end else if (enable && hdr_exit_det_pending && sda_negedge) begin
       hdr_exit_det_count <= {1'b0, hdr_exit_det_count[4:1]};

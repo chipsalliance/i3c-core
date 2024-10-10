@@ -200,7 +200,7 @@ module controller_standby
       .rx_queue_wvalid_o(i2c_rx_queue_wvalid_o),
       .rx_queue_wready_i(rx_queue_wready_i),
       .rx_queue_wdata_o(i2c_rx_queue_wdata_o),
-//      .rx_queue_wflush_o(i2c_rx_queue_wflush_o), // TODO: Add flush support for I2C
+      //      .rx_queue_wflush_o(i2c_rx_queue_wflush_o), // TODO: Add flush support for I2C
       .tx_queue_full_i(tx_queue_full_i),
       .tx_queue_start_thld_i(tx_queue_start_thld_i),
       .tx_queue_start_thld_trig_i(tx_queue_start_thld_trig_i),

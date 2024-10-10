@@ -72,7 +72,7 @@ module i3c_target_fsm
     input  logic                   tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
     output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
     input  logic [TxFifoWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
-    output logic                   tx_host_nack_o,    // a NACK has been received during transmission
+    output logic                   tx_host_nack_o,    // NACK has been received during transmission
 
     // RX FIFO used for Target Write
     output logic                   rx_fifo_wvalid_o,  // high if there is valid data in rx_fifo
@@ -137,36 +137,36 @@ module i3c_target_fsm
   logic restart_det_d, restart_det_q;
   assign restart_det_q = '0;  // TODO: Handle
 
-  logic       xact_for_us_q;  // Target was addressed in this transaction
-  logic       xact_for_us_d;  //     - We only record Stop if the Target was addressed.
-  logic       xfer_for_us_q;  // Target was addressed in this transfer
-  logic       xfer_for_us_d;  //     - event_cmd_complete_o is only for our transfers
+  logic xact_for_us_q;  // Target was addressed in this transaction
+  logic xact_for_us_d;  //     - We only record Stop if the Target was addressed.
+  logic xfer_for_us_q;  // Target was addressed in this transfer
+  logic xfer_for_us_d;  //     - event_cmd_complete_o is only for our transfers
 
-  logic       input_strobe;
+  logic input_strobe;
   logic [7:0] input_byte;  // register for reads from host
-  logic       input_byte_clr;  // clear input_byte contents
+  logic input_byte_clr;  // clear input_byte contents
   // logic       nack_timeout;
-  logic       expect_stop;
+  logic expect_stop;
 
   // Target bit counter variables
   logic [3:0] bit_idx;  // bit index including ack/nack
-  logic       bit_ack;  // indicates ACK bit been sent or received
-  logic       rw_bit;  // indicates host wants to read (1) or write (0)
-  logic       host_ack;  // indicates host acknowledged transmitted byte
-  logic       host_tbit_ok; // indicates that T bit matches the expected (odd) parity
+  logic bit_ack;  // indicates ACK bit been sent or received
+  logic rw_bit;  // indicates host wants to read (1) or write (0)
+  logic host_ack;  // indicates host acknowledged transmitted byte
+  logic host_tbit_ok;  // indicates that T bit matches the expected (odd) parity
 
-  logic [7:0] command_code; // CCC byte
-  logic       command_code_valid;
+  logic [7:0] command_code;  // CCC byte
+  logic command_code_valid;
 
-  logic [7:0] defining_byte; // optional defining byte of the CCC code
-  logic       defining_byte_valid;
+  logic [7:0] defining_byte;  // optional defining byte of the CCC code
+  logic defining_byte_valid;
 
-  logic       enter_hdr_ccc;
-  logic       enter_hdr_after_stop;
-  logic       enter_hdr_after_stop_clr;
+  logic enter_hdr_ccc;
+  logic enter_hdr_after_stop;
+  logic enter_hdr_after_stop_clr;
 
-  logic [1:0] command_min_bytes; // minimum number of bytes expected after a CCC read/write
-  logic [1:0] command_max_bytes; // maximum number of bytes expected after a CCC read/write
+  logic [1:0] command_min_bytes;  // minimum number of bytes expected after a CCC read/write
+  logic [1:0] command_max_bytes;  // maximum number of bytes expected after a CCC read/write
 
   logic tbit_after_byte_q;  // whether to expect a T bit after acquiring data byte (we're doing i3c
                             // flow) or old-style ACK (we're doing i2c) flow. Whether the flow is
@@ -175,9 +175,6 @@ module i3c_target_fsm
                             // is a reserved byte it's i3c with the caveat that this might get overriden
                             // by a later address read
   logic tbit_after_byte_d;
-
-  // TODO: Set transfer type based on the discovered state
-  assign transfer_type_o = 0;
 
   // IBI
   logic ibi_handling;  // Asserted when an IBI is transmitter
@@ -192,31 +189,31 @@ module i3c_target_fsm
 
   tcount_sel_e tcount_sel;
 
-  ccc ccc(
-    .clk_i(clk_i),
-    .rst_ni(rst_ni),
+  ccc ccc (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
 
-    // Latch CCC data
-    .command_code_i(command_code),
-    .command_code_valid_i(command_code_valid),
+      // Latch CCC data
+      .command_code_i(command_code),
+      .command_code_valid_i(command_code_valid),
 
-    .defining_byte_i(defining_byte),
-    .defining_byte_valid_i(defining_byte_valid),
+      .defining_byte_i(defining_byte),
+      .defining_byte_valid_i(defining_byte_valid),
 
-    //TODO: Establish correct size
-    .command_data_i(0),
-    .command_data_valid_i(0),
+      //TODO: Establish correct size
+      .command_data_i(0),
+      .command_data_valid_i(0),
 
-    .queue_size_reg_i(0),
-    .response_byte_o(),
-    .response_valid_o(),
+      .queue_size_reg_i(0),
+      .response_byte_o (),
+      .response_valid_o(),
 
-    .enter_hdr_ccc_o(enter_hdr_ccc),
+      .enter_hdr_ccc_o(enter_hdr_ccc),
 
-    .rst_action_o(rst_action_o),
+      .rst_action_o(rst_action_o),
 
-    .command_min_bytes_o(command_min_bytes),
-    .command_max_bytes_o(command_max_bytes)
+      .command_min_bytes_o(command_min_bytes),
+      .command_max_bytes_o(command_max_bytes)
   );
 
   always_comb begin : counter_functions
@@ -364,6 +361,9 @@ module i3c_target_fsm
     if (!rst_ni) bus_rnw <= '0;
     else if (input_strobe & (bit_idx == 4'd7)) bus_rnw <= input_byte[0];
 
+  // FIXME: Add CCC type transfer
+  assign transfer_type_o = {1'b0, bus_rnw};
+
   // An artificial acq_fifo_wready is used here to ensure we always have
   // space to asborb a stop / repeat start format byte.  Without guaranteeing
   // space for this entry, the target module would need to stretch the
@@ -410,10 +410,10 @@ module i3c_target_fsm
     AcquireAckPulse = 'h52,
     AcquireAckHold = 'h53,
     // If in AddrRead we read I3C Reserved Byte, we go to ACK here
-    RsvdByteAckWait  = 'h60,
+    RsvdByteAckWait = 'h60,
     RsvdByteAckSetup = 'h61,
     RsvdByteAckPulse = 'h62,
-    RsvdByteAckHold  = 'h63,
+    RsvdByteAckHold = 'h63,
     // Do we get SR or CCC next?
     PostAckTBitSymbolDetect = 'h70,
     PostAckTBitSymbolDetect2 = 'h71,
@@ -662,6 +662,7 @@ module i3c_target_fsm
         target_idle_o = 1'b0;
         target_transmitting_o = 1'b1;
         sda_d = sda_r;
+        // sda_d = 1'b0;
       end
       TransmitSetup: begin
         target_idle_o = 1'b0;
@@ -685,10 +686,8 @@ module i3c_target_fsm
         target_transmitting_o = 1'b1;
         sda_d = sda_r;
         if (!scl_i) begin
-            if (ibi_handling)
-                ibi_fifo_rready_o = 1'b1;
-            else
-                tx_fifo_rready_o = 1'b1;
+          if (ibi_handling) ibi_fifo_rready_o = 1'b1;
+          else tx_fifo_rready_o = 1'b1;
         end
       end
       TbitSetup: begin
@@ -862,17 +861,20 @@ module i3c_target_fsm
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) ibi_payload <= '0;
-    else unique case(state_q)
-    Idle: ibi_payload <= '0;
-    TransmitWait: ibi_payload <= ibi_handling;
-    TransmitWaitOd: ibi_payload <= ibi_handling;
-    TbitWait: ibi_payload <= ibi_handling;
-    default: ibi_payload <= ibi_payload;
-    endcase
+    else
+      unique case (state_q)
+        Idle: ibi_payload <= '0;
+        TransmitWait: ibi_payload <= ibi_handling;
+        TransmitWaitOd: ibi_payload <= ibi_handling;
+        TbitWait: ibi_payload <= ibi_handling;
+        default: ibi_payload <= ibi_payload;
+      endcase
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sda_r <= 1'b1;
-    else if (state_q == IbiAddrSetup || state_q == TransmitSetup)
+    //  || state_q == TransmitWait || state_q == TransmitWaitOd
+    //
+    else if (state_q == IbiAddrSetup || state_q == TransmitSetup || state_q == AddrAckHold)
       sda_r <= output_byte[3'(7-bit_idx)];
     else if (state_q == TbitSetup)
       sda_r <= (ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i);
@@ -922,7 +924,7 @@ module i3c_target_fsm
           if (is_any_addr_match) begin
             load_tcount = 1'b1;
             // Wait for hold time to avoid interfering with the controller.
-            tcount_sel = tHoldData;
+            tcount_sel  = tHoldData;
             // TODO: Check that dynamic address really takes precedence
             // over static address in determining communication flow (I2C/I3C)
             //
@@ -994,7 +996,9 @@ module i3c_target_fsm
       end
       // AddrAckHold: target pulls SDA low while SCL is pulled low
       AddrAckHold: begin
-        if (tcount_q == 20'd1) begin
+        // FIXME: WIP: Needed to increase this timing to respect setup of next push pull
+        // if (tcount_q == 20'd1) begin
+        if (tcount_q == 20'd5) begin
           if (nack_transaction_q) begin
             // If the Target is set to NACK already, release SDA and wait
             // for a Stop. This isn't an ideal response for SMBus reads, since
@@ -1085,7 +1089,7 @@ module i3c_target_fsm
           end
 
           load_tcount = 1'b1;
-          tcount_sel = tSetupData;
+          tcount_sel  = tSetupData;
         end
       end
 
@@ -1154,7 +1158,7 @@ module i3c_target_fsm
       AcquireByte: begin
         if (bit_ack) begin
           load_tcount = 1'b1;
-          tcount_sel = tHoldData;
+          tcount_sel  = tHoldData;
           if (tbit_after_byte_q) begin
             state_d = AcquireTBitWait;
             defining_byte = input_byte;

@@ -171,12 +171,15 @@ module hci
   I3CCSR_pkg::I3CCSR__DCT__out_t dct_o;
   I3CCSR_pkg::I3CCSR__DCT__in_t  dct_i;
 
+
   // TTI CSR interface
   assign hwif_tti_o = hwif_out.I3C_EC.TTI;
   assign hwif_in.I3C_EC.TTI = hwif_tti_i;
 
   // Recovery CSR interface
   assign hwif_rec_o = hwif_out.I3C_EC.SecFwRecoveryIf;
+
+  // TODO: Use this if
   assign hwif_in.I3C_EC.SecFwRecoveryIf = hwif_rec_i;
 
   // Reset control
@@ -302,29 +305,6 @@ module hci
     dct_o = hwif_out.DCT;
 
   end : wire_hwif
-
-  // TTI
-  logic tti_rx_desc_queue_rd_ack;
-  logic [TtiRxDataWidth-1:0] tti_rx_desc_queue_rd_data;
-  logic tti_tx_desc_queue_wr_ack;
-  logic tti_rx_queue_rd_ack;
-  logic [TtiRxDataWidth-1:0] tti_rx_queue_rd_data;
-  logic tti_tx_queue_wr_ack;
-  logic tti_ibi_queue_wr_ack;
-
-  always_comb begin : wire_hwif_tti
-    hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack = tti_rx_desc_queue_rd_ack;
-    hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data = tti_rx_desc_queue_rd_data;
-
-    hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack = tti_rx_queue_rd_ack;
-    hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data = tti_rx_queue_rd_data;
-
-    hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = tti_tx_desc_queue_wr_ack;
-
-    hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = tti_tx_queue_wr_ack;
-
-    hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = tti_ibi_queue_wr_ack;
-  end : wire_hwif_tti
 
   always_comb begin : wire_hwif_ccc
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_i;

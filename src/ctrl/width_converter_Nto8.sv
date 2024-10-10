@@ -42,7 +42,7 @@ module width_converter_Nto8 #(
     end
 
   // Valid / ready
-  assign sink_ready_o  = (bcnt == '0);
+  assign sink_ready_o   = (bcnt == '0);
   assign source_valid_o = (bcnt != '0);
 
   // Data register

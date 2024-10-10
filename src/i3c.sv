@@ -143,11 +143,11 @@ module i3c
     input  logic                    awvalid_i,
     output logic                    awready_o,
 
-    input  logic [AxiDataWidth-1:0] wdata_i,
-    input  logic [             7:0] wstrb_i,
-    input  logic                    wlast_i,
-    input  logic                    wvalid_i,
-    output logic                    wready_o,
+    input  logic [  AxiDataWidth-1:0] wdata_i,
+    input  logic [AxiDataWidth/8-1:0] wstrb_i,
+    input  logic                      wlast_i,
+    input  logic                      wvalid_i,
+    output logic                      wready_o,
 
     output logic [           1:0] bresp_o,
     output logic [AxiIdWidth-1:0] bid_o,
@@ -166,7 +166,7 @@ module i3c
     input  logic i3c_sda_i,  // serial data input from i3c bus
     output logic i3c_sda_o,  // serial data output to i3c bus
 
-    output logic sel_od_pp_o, // 0 - Open Drain, 1 - Push Pull
+    output logic sel_od_pp_o,  // 0 - Open Drain, 1 - Push Pull
 
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
@@ -524,7 +524,7 @@ module i3c
       // TTI: TX Descriptor
       .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full),
       .tti_tx_desc_queue_ready_thld_i(tti_tx_desc_queue_ready_thld),
-      .tti_tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld),
+      .tti_tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig),
       .tti_tx_desc_queue_empty_i(tti_tx_desc_queue_empty),
       .tti_tx_desc_queue_rvalid_i(tti_tx_desc_queue_rvalid),
       .tti_tx_desc_queue_rready_o(tti_tx_desc_queue_rready),
@@ -552,11 +552,11 @@ module i3c
       .ibi_queue_rdata_i(tti_ibi_queue_rdata),
 
       // I2C/I3C bus condition detection
-      .bus_start_o(bus_start),
+      .bus_start_o (bus_start),
       .bus_rstart_o(bus_rstart),
-      .bus_stop_o(bus_stop),
+      .bus_stop_o  (bus_stop),
 
-       // I2C/I3C received address (with RnW# bit) for the recovery handler
+      // I2C/I3C received address (with RnW# bit) for the recovery handler
       .bus_addr_o(rx_bus_addr),
       .bus_addr_valid_o(rx_bus_addr_valid),
 
@@ -575,7 +575,7 @@ module i3c
       // TODO: TTI interface
 
       //TODO: Rename
-      .i3c_fsm_en_i(i3c_fsm_en_i),
+      .i3c_fsm_en_i  (i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
       .err(),  // TODO: Handle errors
@@ -662,10 +662,10 @@ module i3c
       .dct_wdata_hw_i(dct_wdata_hw),
       .dct_rdata_hw_o(dct_rdata_hw),
 
-      .dat_mem_src_i(dat_mem_src_i),
+      .dat_mem_src_i (dat_mem_src_i),
       .dat_mem_sink_o(dat_mem_sink_o),
 
-      .dct_mem_src_i(dct_mem_src_i),
+      .dct_mem_src_i (dct_mem_src_i),
       .dct_mem_sink_o(dct_mem_sink_o),
 
       .hwif_tti_o(hwif_tti_out),
@@ -960,11 +960,11 @@ module i3c
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld),
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
 
-      .irq_o(), // TODO: Connect me
+      .irq_o(),  // TODO: Connect me
 
       // I2C/I3C bus condition detection
-      .ctl_bus_start_i(bus_start | bus_rstart), // S/Sr are both used to reset PEC
-      .ctl_bus_stop_i(bus_stop),
+      .ctl_bus_start_i(bus_start | bus_rstart),  // S/Sr are both used to reset PEC
+      .ctl_bus_stop_i (bus_stop),
 
       // Received I2C/I3C address along with RnW# bit
       .ctl_bus_addr_i(rx_bus_addr),

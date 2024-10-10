@@ -5,11 +5,11 @@ module stable_high_detector
 #(
     parameter int CNTR_W = 20
 ) (
-  input logic clk_i,
-  input logic rst_ni,
-  input logic line_i,
-  input logic [CNTR_W-1:0] delay_count_i,
-  output logic stable_o
+    input logic clk_i,
+    input logic rst_ni,
+    input logic line_i,
+    input logic [CNTR_W-1:0] delay_count_i,
+    output logic stable_o
 );
   logic [CNTR_W-1:0] count;
   logic do_count;
