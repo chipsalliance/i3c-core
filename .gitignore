@@ -32,7 +32,6 @@ sim/
 src/csr/html/
 src/csr/md/
 src/rdl/docs/html*
-sw/
 tools/uvm/generic
 tools/uvm/verilator
 uvm-1.2*/
