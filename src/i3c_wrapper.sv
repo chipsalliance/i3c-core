@@ -93,20 +93,11 @@ module i3c_wrapper #(
 
 `endif
 
-    // I3C input and output signals are exposed for the purpose of simulation with Verilator
-`ifdef VERILATOR
     input  logic scl_i,
     input  logic sda_i,
     output logic scl_o,
     output logic sda_o,
     output logic sel_od_pp_o
-`else
-    // I3C bus IO
-    inout  wire i3c_scl_io,
-    inout  wire i3c_sda_io
-`endif
-
-    // TODO: Add interrupts
 );
 
   `define REPORT_INCOMPATIBLE_PARAM(param_name, received, expected) \
@@ -298,23 +289,10 @@ module i3c_wrapper #(
       .cfg_i('0)  // Unused
   );
 
-`ifdef VERILATOR
   assign scl_io2phy = scl_i;
   assign sda_io2phy = sda_i;
   assign scl_o = scl_phy2io;
   assign sda_o = sda_phy2io;
   assign sel_od_pp_o = sel_od_pp;
-`else
-  i3c_io xio (
-      .scl_i(scl_phy2io),
-      .sda_i(sda_phy2io),
-      .scl_o(scl_io2phy),
-      .sda_o(sda_io2phy),
-      .sel_od_pp_i(sel_od_pp),
-      .scl_io(i3c_scl_io),
-      .sda_io(i3c_sda_io)
-  );
-`endif
-
 
 endmodule
