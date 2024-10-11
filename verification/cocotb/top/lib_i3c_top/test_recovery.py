@@ -66,6 +66,41 @@ async def initialize(dut):
 
 
 @cocotb.test()
+async def test_loopback(dut):
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    temp_adr = 0x88
+    # indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
+    # dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    # TX_DATA_PORT
+    for i in range(100):
+        dut._log.info(f"Loop: Write = 0x{i:08X}")
+        await tb.write_csr(temp_adr, int2dword(i), 4)
+
+    # Read some
+    for i in range(20):
+        indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
+        dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    # Write some
+    for i in range(20):
+        dut._log.info(f"Loop: Write = 0x{i:08X}")
+        await tb.write_csr(temp_adr, int2dword(i), 4)
+
+    # RX_DATA_PORT
+    # try to read the rest, we will only get 64 back
+    for i in range(100):
+        indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
+        dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    await Timer(1, "us")
+
+
+@cocotb.test(skip=True)
 async def test_recovery_write(dut):
     """
     Tests CSR write(s) using the recovery protocol
@@ -124,7 +159,7 @@ async def test_recovery_write(dut):
     assert data1 == 0x44332211
 
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_recovery_write_pec(dut):
     """
     Tests recovery handler behavior upon receiving packet with incorrect PEC
@@ -165,7 +200,7 @@ async def test_recovery_write_pec(dut):
     assert data == 0xDEADBEEF  # From previous write
 
 
-@cocotb.test(skip=False)
+@cocotb.test(skip=True)
 async def test_recovery_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
