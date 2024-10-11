@@ -36,6 +36,10 @@ The `I3C` bus is exposed on the J3 Prototype Header in `LVCMOS18` IO standard.
   - SCL
 :::
 
+:::{info}
+SDA and SCL should be pulled up by external 2k{math}`\Omega` resistors to 1.8V.
+:::
+
 ### NXP i.MX RT600 Evaluation Kit
 
 The [NXP i.MX RT600 Evaluation Kit](https://www.nxp.com/design/design-center/development-boards-and-designs/i-mx-evaluation-and-development-boards/i-mx-rt600-evaluation-kit:MIMXRT685-EVK) is a microcontroller development board with a hardware I3C controller. This board was selected, because it is supported in [Zephyr](https://docs.zephyrproject.org/latest/boards/nxp/mimxrt685_evk/doc/index.html). A Zephyr based application was developed for the testing purposes.
