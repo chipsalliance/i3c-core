@@ -73,29 +73,52 @@ async def test_loopback(dut):
     await Timer(1, "us")
 
     temp_adr = 0x88
+    indirect_fifo_status_0_addr = 0x150
     # indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
     # dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
 
+    indirect_status = dword2int(await tb.read_csr(indirect_fifo_status_0_addr, 4))
+    dut._log.info(f"Indirect status= 0x{indirect_status:08X}")
+    # Q should be empty
+    assert indirect_status == 1
+
     # TX_DATA_PORT
     for i in range(100):
-        dut._log.info(f"Loop: Write = 0x{i:08X}")
+        # dut._log.info(f"Loop: Write = 0x{i:08X}")
         await tb.write_csr(temp_adr, int2dword(i), 4)
 
     # Read some
     for i in range(20):
         indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
-        dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+        # dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    indirect_status = dword2int(await tb.read_csr(indirect_fifo_status_0_addr, 4))
+    dut._log.info(f"Indirect status= 0x{indirect_status:08X}")
+
+    # Q should not be empty
+    assert indirect_status == 0
+    await tb.write_csr(indirect_fifo_status_0_addr, int2dword(1), 4)
 
     # Write some
-    for i in range(20):
+    for i in range(5):
         dut._log.info(f"Loop: Write = 0x{i:08X}")
         await tb.write_csr(temp_adr, int2dword(i), 4)
 
     # RX_DATA_PORT
     # try to read the rest, we will only get 64 back
-    for i in range(100):
+    for i in range(5):
         indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
         dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    indirect_status = dword2int(await tb.read_csr(indirect_fifo_status_0_addr, 4))
+    dut._log.info(f"Indirect status= 0x{indirect_status:08X}")
+
+    for i in range(64 + 20):
+        indirect_fifo_data = dword2int(await tb.read_csr(temp_adr, 4))
+        dut._log.info(f"Loop: Read = 0x{indirect_fifo_data:08X}")
+
+    indirect_status = dword2int(await tb.read_csr(indirect_fifo_status_0_addr, 4))
+    dut._log.info(f"Indirect status= 0x{indirect_status:08X}")
 
     await Timer(1, "us")
 
