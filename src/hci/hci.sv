@@ -475,9 +475,12 @@ module hci
   // If RX FIFO is full, we will not assert rready
   // if RX FIFO is full, it will not produce wready
 
-  assign hci_tx_rready = hci_tx_rvalid && (~hci_rx_full);
-  assign hci_rx_wvalid = hci_rx_wready && hci_tx_rvalid;
-  assign hci_rx_wdata  = hci_tx_rdata;
+  assign hci_tx_rready  = hci_tx_rvalid && (~hci_rx_full);
+  assign hci_rx_wvalid  = hci_rx_wready && hci_tx_rvalid;
+  assign hci_rx_wdata   = hci_tx_rdata;
+
+  // Route out for the CSR
+  assign hci_rx_empty_o = hci_rx_empty;
 
   configuration xconfiguration (
       .clk_i,

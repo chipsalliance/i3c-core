@@ -604,6 +604,11 @@ module i3c
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
 
+  // WIP: FIFO STATUS - exposes RX queue empty
+  assign hwif_rec_inp.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.next = {31'b0, hci_rx_queue_empty};
+  // HW always updates value
+  assign hwif_rec_inp.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.we   = '1;
+
   // HCI
   hci #(
       .CsrAddrWidth(CsrAddrWidth),
@@ -855,8 +860,8 @@ module i3c
       .rst_ni(rst_ni),
 
       // Recovery CSR interface
-      .hwif_rec_i(hwif_rec_out),
-      .hwif_rec_o(hwif_rec_inp),
+      .hwif_rec_i(  /*hwif_rec_out*/),
+      .hwif_rec_o(  /*hwif_rec_inp*/),
 
       // TTI RX descriptors queue
       .csr_tti_rx_desc_queue_req_i         (csr_tti_rx_desc_queue_req),
