@@ -15,8 +15,8 @@ regfile PIORegs #(
         name = "Command issue port";
         field {
             name = "COMMAND_QUEUE_PORT";
-            sw = w;
-            hw = r;
+            sw = rw;
+            hw = rw;
         } COMMAND_DATA[31:0];
     } COMMAND_PORT @ 0x0;
     external reg {

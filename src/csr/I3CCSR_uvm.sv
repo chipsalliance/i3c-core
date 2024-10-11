@@ -1068,7 +1068,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.COMMAND_DATA = new("COMMAND_DATA");
-            this.COMMAND_DATA.configure(this, 32, 0, "WO", 0, 'h0, 0, 1, 0);
+            this.COMMAND_DATA.configure(this, 32, 0, "RW", 1, 'h0, 0, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(COMMAND_DATA_bit_cg[bt]) COMMAND_DATA_bit_cg[bt] = new();
             end

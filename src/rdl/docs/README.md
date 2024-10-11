@@ -702,7 +702,7 @@ Don't override. Generated from: I3CCSR
 
 |Bits| Identifier |Access|Reset|       Name       |
 |----|------------|------|-----|------------------|
-|31:0|COMMAND_DATA|   w  |  —  |COMMAND_QUEUE_PORT|
+|31:0|COMMAND_DATA|  rw  |  —  |COMMAND_QUEUE_PORT|
 
 ### RESPONSE_PORT register
 

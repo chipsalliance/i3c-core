@@ -139,7 +139,13 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__in_t IBI_DATA_ABORT_CTRL;
     } I3CCSR__I3CBase__in_t;
 
+    typedef struct packed {
+        logic [31:0] COMMAND_DATA;
+    } I3CCSR__PIOControl__COMMAND_PORT__fields__in_t;
+
     typedef struct packed{
+        logic rd_ack;
+        I3CCSR__PIOControl__COMMAND_PORT__fields__in_t rd_data;
         logic wr_ack;
     } I3CCSR__PIOControl__COMMAND_PORT__in_t;
 
