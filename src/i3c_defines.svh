@@ -17,6 +17,6 @@
   `define AXI_ADDR_WIDTH    12
   `define AXI_DATA_WIDTH    32
   `define AXI_USER_WIDTH    32
-  `define AXI_ID_WIDTH      16
+  `define AXI_ID_WIDTH      8
 
 `endif  // I3C_CONFIG
