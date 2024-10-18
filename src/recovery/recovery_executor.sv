@@ -6,7 +6,6 @@
     TTI data queues.
 
     FIXME: Check if cmd_len_i is valid w.r.t. cmd_cmd_i
-    FIXME: Rework latches and defaults of cases
 */
 module recovery_executor
   import i3c_pkg::*;
@@ -28,10 +27,10 @@ module recovery_executor
     output logic [15:0] res_len_o,
 
     // Response data interface
-    output logic       res_dvalid_o,
-    input  logic       res_dready_i,
-    output logic [7:0] res_data_o,
-    output logic       res_dlast_o,
+    output logic        res_dvalid_o,
+    input  logic        res_dready_i,
+    output logic [ 7:0] res_data_o,
+    output logic        res_dlast_o,
 
     // TTI RX FIFO data interface
     output logic        rx_req_o,
@@ -41,7 +40,7 @@ module recovery_executor
     output logic rx_queue_sel_o,
     output logic rx_queue_clr_o,
 
-    input logic host_abort_i,
+    input  logic host_abort_i,
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
@@ -136,10 +135,10 @@ module recovery_executor
     else state_q <= state_d;
 
   // Next state
-  always_comb
+  always_comb begin
+    state_d = state_q;
     unique case (state_q)
       Idle: begin
-        state_d = Idle;
         if (cmd_valid_i) begin
           if (cmd_error_i) state_d = Error;
           else if (!cmd_is_rd_i) state_d = CsrWrite;
@@ -148,28 +147,34 @@ module recovery_executor
       end
 
       CsrWrite: begin
-        state_d = CsrWrite;
-        if (rx_ack_i & (dcnt == 1)) state_d = Done;
+        if (rx_ack_i & (dcnt == 1))
+          state_d = Done;
       end
 
       CsrRead: begin
-        state_d = CsrReadLen;
-        if (res_ready_i) state_d = CsrReadLen;
+        if (res_ready_i)
+          state_d = CsrReadLen;
       end
 
-      CsrReadLen: state_d = CsrReadData;
+      CsrReadLen:
+        state_d = CsrReadData;
 
       CsrReadData: begin
-        state_d = CsrReadData;
-        if (host_abort_i) state_d = Error;  // FIXME: Should we make this an error ?
-        else if (res_dvalid_o & res_dready_i & (dcnt == 0)) state_d = Done;
+        if (host_abort_i)
+          state_d = Error; // FIXME: Should we make this an error ?
+        else if (res_dvalid_o & res_dready_i & (dcnt == 0))
+          state_d = Done;
       end
 
-      Error: state_d = Done;
-      Done:  state_d = Idle;
+      Error:
+        state_d = Done;
+      Done:
+        state_d = Idle;
 
-      default: state_d = Idle;
+      default:
+        state_d = Idle;
     endcase
+  end
 
   // ....................................................
 
@@ -177,19 +182,27 @@ module recovery_executor
   always_ff @(posedge clk_i)
     unique case (state_q)
       Idle:
-      if (cmd_valid_i)
-        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
-      CsrWrite: if (rx_ack_i) dcnt <= dcnt - 1;
-      CsrReadLen: dcnt <= csr_length;
-      CsrReadData: if (res_dvalid_o & res_dready_i) dcnt <= dcnt - 1;
+        if (cmd_valid_i)
+          dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
+      CsrWrite:
+        if (rx_ack_i)
+          dcnt <= dcnt - 1;
+      CsrReadLen:
+        dcnt <= csr_length;
+      CsrReadData:
+        if (res_dvalid_o & res_dready_i)
+          dcnt <= dcnt - 1;
       default: dcnt <= dcnt;
     endcase
 
   // Byte counter
   always_ff @(posedge clk_i)
     unique case (state_q)
-      Idle: bcnt <= '0;
-      CsrReadData: if (res_dvalid_o & res_dready_i) bcnt <= bcnt + 1;
+      Idle:
+        bcnt <= '0;
+      CsrReadData:
+        if (res_dvalid_o & res_dready_i)
+          bcnt <= bcnt + 1;
       default: bcnt <= bcnt;
     endcase
 
@@ -216,7 +229,7 @@ module recovery_executor
       // a malicious packet with length > CSR length is received
       CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 1);
       CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 1);
-      default: csr_sel <= csr_sel;
+      default:  csr_sel <= csr_sel;
     endcase
 
   // CSR writeable flag
@@ -230,55 +243,57 @@ module recovery_executor
     endcase
 
   // CSR length (in bytes)
-  always_comb
+  always_ff @(posedge clk_i)
     unique case (state_q)
       Idle:
       if (cmd_valid_i)
         unique case (cmd_cmd_i)
-          CMD_PROT_CAP:             csr_length = 'd15;
-          CMD_DEVICE_ID:            csr_length = 'd24;
-          CMD_DEVICE_STATUS:        csr_length = 'd8;
-          CMD_DEVICE_RESET:         csr_length = 'd3;
-          CMD_RECOVERY_CTRL:        csr_length = 'd3;
-          CMD_RECOVERY_STATUS:      csr_length = 'd2;
-          CMD_HW_STATUS:            csr_length = 'd4;
-          CMD_INDIRECT_FIFO_CTRL:   csr_length = 'd6;
-          CMD_INDIRECT_FIFO_STATUS: csr_length = 'd20;
-          default:                  csr_length = '0;
+          CMD_PROT_CAP:             csr_length <= 'd15;
+          CMD_DEVICE_ID:            csr_length <= 'd24;
+          CMD_DEVICE_STATUS:        csr_length <= 'd8;
+          CMD_DEVICE_RESET:         csr_length <= 'd3;
+          CMD_RECOVERY_CTRL:        csr_length <= 'd3;
+          CMD_RECOVERY_STATUS:      csr_length <= 'd2;
+          CMD_HW_STATUS:            csr_length <= 'd4;
+          CMD_INDIRECT_FIFO_CTRL:   csr_length <= 'd6;
+          CMD_INDIRECT_FIFO_STATUS: csr_length <= 'd20;
+
+          default: csr_length <= 'd4; // This should never happen.
         endcase
+      default: csr_length <= csr_length;
     endcase
 
-  // CSR read data mux
-  always_ff @(posedge clk_i)
-    unique case (csr_sel)
-      CSR_PROT_CAP_0:      csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
-      CSR_PROT_CAP_1:      csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
-      CSR_PROT_CAP_2:      csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
-      CSR_PROT_CAP_3:      csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_0:     csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
-      CSR_DEVICE_ID_1:     csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
-      CSR_DEVICE_ID_2:     csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
-      CSR_DEVICE_ID_3:     csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_4:     csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
-      CSR_DEVICE_ID_5:     csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
-      CSR_DEVICE_ID_6:     csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_0: csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_1: csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
-      CSR_DEVICE_RESET:    csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
-      CSR_RECOVERY_CTRL:   csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
-      CSR_RECOVERY_STATUS: csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
-      CSR_HW_STATUS:       csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
+  // CSR read data mux (registered)
+  always_ff @(posedge clk_i) unique case(csr_sel)
+    CSR_PROT_CAP_0:             csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
+    CSR_PROT_CAP_1:             csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
+    CSR_PROT_CAP_2:             csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
+    CSR_PROT_CAP_3:             csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_0:            csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
+    CSR_DEVICE_ID_1:            csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
+    CSR_DEVICE_ID_2:            csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
+    CSR_DEVICE_ID_3:            csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
+    CSR_DEVICE_ID_4:            csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
+    CSR_DEVICE_ID_5:            csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
+    CSR_DEVICE_ID_6:            csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_0:        csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
+    CSR_DEVICE_STATUS_1:        csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
+    CSR_DEVICE_RESET:           csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
+    CSR_RECOVERY_CTRL:          csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
+    CSR_RECOVERY_STATUS:        csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
+    CSR_HW_STATUS:              csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
 
-      CSR_INDIRECT_FIFO_CTRL_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_CTRL_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
-      default: csr_data <= '0;
-    endcase
+    CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
+    CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+
+    default: csr_data <= '0;
+  endcase
 
   // ....................................................
 
@@ -311,6 +326,10 @@ module recovery_executor
       default: status_protocol <= status_protocol;
     endcase
 
+  // TODO: Implement reporting other statuses
+  assign status_device_we = '0;
+  assign status_reason_we = '0;
+
   // Update status on command done
   assign status_protocol_we = (state_q == Done);
 
@@ -330,10 +349,33 @@ module recovery_executor
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
+    hwif_rec_o.PROT_CAP_0.PLACEHOLDER.we             = '0;
+    hwif_rec_o.PROT_CAP_1.PLACEHOLDER.we             = '0;
+    hwif_rec_o.PROT_CAP_2.PLACEHOLDER.we             = '0;
+    hwif_rec_o.PROT_CAP_3.PLACEHOLDER.we             = '0;
+    hwif_rec_o.DEVICE_ID_0.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_1.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_2.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_3.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_4.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_5.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_ID_6.PLACEHOLDER.we            = '0;
+    hwif_rec_o.DEVICE_STATUS_1.PLACEHOLDER.we        = '0;
+    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we           = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
+    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we          = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
+    hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.we        = '0;
+    hwif_rec_o.HW_STATUS.PLACEHOLDER.we              = '0;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+
+    // TODO: Implement update of indirect FIFO status and data
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_DATA.PLACEHOLDER.we     = '0;
   end
 
   always_comb begin
@@ -353,15 +395,14 @@ module recovery_executor
   // Transmitt valid
   always_ff @(posedge clk_i)
     unique case (state_q)
-      CsrReadLen: if (res_ready_i) res_valid_o <= 1'd1;
+      CsrReadLen:
+        if (res_ready_i)
+            res_valid_o <= 1'd1;
       default: res_valid_o <= '0;
     endcase
 
   // Transmitt length
-  always_ff @(posedge clk_i)
-    unique case (state_q)
-      CsrReadLen: if (res_ready_i) res_len_o <= csr_length;
-    endcase
+  assign res_len_o = csr_length;
 
   // Transmitt data valid
   assign res_dvalid_o = (state_q == CsrReadData);
@@ -369,8 +410,8 @@ module recovery_executor
   // Transmitt data
   always_comb
     unique case (bcnt)
-      'd0: res_data_o = csr_data[7:0];
-      'd1: res_data_o = csr_data[15:8];
+      'd0: res_data_o = csr_data[ 7: 0];
+      'd1: res_data_o = csr_data[15: 8];
       'd2: res_data_o = csr_data[23:16];
       'd3: res_data_o = csr_data[31:24];
     endcase

@@ -71,39 +71,52 @@ module recovery_receiver
     if (!rst_ni) state_q <= Idle;
     else state_q <= state_d;
 
-  always_comb
+  always_comb begin
+    state_d = state_q;
     unique case (state_q)
-      Idle: if (bus_start_i) state_d = RxCmd;
+      Idle: begin
+        if (bus_start_i) state_d = RxCmd;
+      end
 
-      RxCmd:
-      if (rx_flow) state_d = RxLenL;
-      else if (bus_stop_i) state_d = Idle;
+      RxCmd: begin
+        if (rx_flow) state_d = RxLenL;
+        else if (bus_stop_i) state_d = Idle;
+      end
 
-      RxLenL:
-      if (rx_flow) state_d = RxLenH;
-      else if (bus_stop_i) state_d = Idle;
+      RxLenL: begin
+        if (rx_flow) state_d = RxLenH;
+        else if (bus_stop_i) state_d = Idle;
+      end
 
-      RxLenH:
-      if (rx_flow) state_d = RxData;
-      else if (bus_start_i) state_d = CmdIsRd;
-      else if (bus_stop_i) state_d = Idle;
+      RxLenH: begin
+        if (rx_flow) state_d = RxData;
+        else if (bus_start_i) state_d = CmdIsRd;
+        else if (bus_stop_i) state_d = Idle;
+      end
 
-      RxData:
-      if ((data_queue_flow_i & dcnt == 1) | (dcnt == 0)) state_d = RxPec;
-      else if (bus_stop_i) state_d = Idle;
+      RxData: begin
+        if ((data_queue_flow_i & dcnt == 1) | (dcnt == 0)) state_d = RxPec;
+        else if (bus_stop_i) state_d = Idle;
+      end
 
-      RxPec:
-      if (rx_flow) state_d = Cmd;
-      else if (bus_stop_i) state_d = Idle;
+      RxPec: begin
+        if (rx_flow) state_d = Cmd;
+        else if (bus_stop_i) state_d = Idle;
+      end
 
-      CmdIsRd: state_d = Cmd;
+      CmdIsRd:
+        state_d = Cmd;
 
-      Cmd: state_d = Busy;
+      Cmd:
+        state_d = Busy;
 
-      Busy: if (cmd_done_i) state_d = Idle;
+      Busy: begin
+        if (cmd_done_i) state_d = Idle;
+      end
 
       default: state_d = Idle;
     endcase
+  end
 
   // Data ready
   always_ff @(posedge clk_i)

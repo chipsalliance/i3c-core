@@ -41,6 +41,10 @@ module recovery_transmitter
   assign data_queue_select_o = 1'b1;
   assign start_trig_o        = 1'b0;
 
+  // TODO: Implement sending TX descriptors
+  assign desc_valid_o        = '0;
+  assign desc_data_o         = '0;
+
   // Internal signals
   logic [15:0] len_q;
 
@@ -64,43 +68,39 @@ module recovery_transmitter
     else state_q <= state_d;
 
   // Next state
-  always_comb
+  always_comb begin
+    state_d = state_q;
     unique case (state_q)
       Idle: begin
-        state_d = Idle;
         if (res_valid_i) state_d = TxLenL;
       end
 
       TxLenL: begin
-        state_d = TxLenL;
         if (host_abort_i) state_d = Idle;
         else if (data_ready_i) state_d = TxLenH;
       end
 
       TxLenH: begin
-        state_d = TxLenH;
         if (host_abort_i) state_d = Idle;
         else if (data_ready_i) state_d = TxData;
       end
 
       TxData: begin
-        state_d = TxData;
         if (host_abort_i) state_d = Flush;
         else if (data_ready_i && data_valid_o) if (res_dlast_i) state_d = TxPEC;
       end
 
       TxPEC: begin
-        state_d = TxPEC;
         if (data_ready_i && data_valid_o) state_d = Idle;
       end
 
       Flush: begin
-        state_d = Flush;
         if (!res_dvalid_i) state_d = Idle;
       end
 
       default: state_d = Idle;
     endcase
+  end
 
   // ....................................................
 

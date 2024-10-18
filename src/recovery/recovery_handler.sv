@@ -627,6 +627,16 @@ module recovery_handler
 
   // ......................
 
+  logic                          send_tti_tx_desc_valid;
+  logic                          send_tti_tx_desc_ready;
+  logic [TtiTxDescDataWidth-1:0] send_tti_tx_desc_data;
+
+  // TODO: Implement a mux for TX descriptor queue on the controller side
+  // once the I3C target FSM supports descriptors
+  assign send_tti_tx_desc_ready = 1'd1;
+
+  // ......................
+
   logic exec_tti_rx_data_req;
   logic exec_tti_rx_data_ack;
   logic [TtiRxDataDataWidth-1:0] exec_tti_rx_data_data;
