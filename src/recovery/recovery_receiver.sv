@@ -1,8 +1,7 @@
 module recovery_receiver
   import i3c_pkg::*;
 #(
-    parameter int unsigned TtiRxDescDataWidth = 32,
-    parameter int unsigned TtiTxDescDataWidth = 32
+    parameter int unsigned TtiRxDescDataWidth = 32
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)

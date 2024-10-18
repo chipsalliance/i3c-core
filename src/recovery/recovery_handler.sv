@@ -162,7 +162,7 @@ module recovery_handler
   // ....................................................
 
   logic recovery_enable;
-  localparam int unsigned RecoveryMode = 'h3;
+  localparam unsigned [7:0] RecoveryMode = 'h3;
 
   assign recovery_enable = hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode;
 
@@ -229,7 +229,7 @@ module recovery_handler
   logic                          tti_tx_data_queue_empty;
   logic                          tti_tx_data_queue_rvalid;
   logic                          tti_tx_data_queue_rready;
-  logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_rdata;
+  logic [7:0]                    tti_tx_data_queue_rdata;
   logic                          tti_tx_data_queue_start_thld_trig;
   logic                          tti_tx_data_queue_ready_thld_trig;
 
@@ -736,7 +736,9 @@ module recovery_handler
   assign rx_pec_clear = ctl_bus_start_i;
 
   // Recovery packet reception handler
-  recovery_receiver xrecovery_receiver (
+  recovery_receiver # (
+      .TtiRxDescDataWidth (TtiRxDescDataWidth)
+  ) xrecovery_receiver (
       .clk_i,
       .rst_ni(rst_ni & recovery_enable),
 
@@ -806,7 +808,9 @@ module recovery_handler
   assign tx_pec_clear = ctl_bus_start_i;
 
   // Recovery packet transmitter
-  recovery_transmitter xrecovery_transmitter (
+  recovery_transmitter # (
+      .TtiTxDescDataWidth (TtiTxDescDataWidth)
+  ) xrecovery_transmitter (
       .clk_i,
       .rst_ni(rst_ni & recovery_enable),
 
