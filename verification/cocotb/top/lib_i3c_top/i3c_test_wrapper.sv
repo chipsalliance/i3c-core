@@ -2,7 +2,9 @@
 `include "i3c_defines.svh"
 
 
+`ifndef VERILATOR
 `define VERILATOR
+`endif
 /*
     This module is used only for simulation with Verilator
 */
