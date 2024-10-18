@@ -13,7 +13,7 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = hci_queues_wrapper
 
 # Set appropriate bus interface via Cocotb's PLUSARGS:
-export PLUSARGS="+FrontendBusInterface=AXI"
+override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \

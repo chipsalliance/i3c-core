@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import time
+import random
 
 import nox
 from nox_utils import VerificationTest, isCocotbSimFailure, nox_config
@@ -21,7 +23,17 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
     session.install("-r", pip_requirements_path)
     test = VerificationTest(test_group, test_type, test_name, coverage)
 
+    # Randomize seed for initialization of undefined signals in the simulation
+    random.seed(time.time_ns())
+    seed = random.randint(1, 10000)
+
+    plusargs = [
+        "+verilator+rand+reset+2",
+        f"+verilator+seed+{seed}",
+    ]
+
     with open(test.paths["log_default"], "w") as test_log:
+
         args = [
             "make",
             "-C",
@@ -29,6 +41,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             "all",
             "MODULE=" + test_name,
             "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
+            "PLUSARGS=" + " ".join(plusargs),
         ]
 
         if coverage:

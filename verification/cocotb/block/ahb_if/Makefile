@@ -10,7 +10,7 @@ SRC_DIR := $(abspath $(TEST_DIR)../../../../../src)
 TEST_FILES   = $(sort $(wildcard test_*.py))
 
 # Set appropriate bus interface via Cocotb's PLUSARGS:
-export PLUSARGS="+FrontendBusInterface=AHB"
+override PLUSARGS := $(strip +FrontendBusInterface=AHB $(PLUSARGS))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = ahb_if_wrapper
