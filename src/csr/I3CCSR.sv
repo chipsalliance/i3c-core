@@ -8313,12 +8313,12 @@ module I3CCSR (
     assign hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_ID.value = 8'h0;
     assign hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_LENGTH.value = 16'h1;
     assign hwif_out.DAT.req = decoded_reg_strb.DAT;
-    assign hwif_out.DAT.addr = decoded_addr[10:0];
+    assign hwif_out.DAT.addr = decoded_addr[9:0];
     assign hwif_out.DAT.req_is_wr = decoded_req_is_wr;
     assign hwif_out.DAT.wr_data = decoded_wr_data;
     assign hwif_out.DAT.wr_biten = decoded_wr_biten;
     assign hwif_out.DCT.req = decoded_reg_strb.DCT;
-    assign hwif_out.DCT.addr = decoded_addr[11:0];
+    assign hwif_out.DCT.addr = decoded_addr[10:0];
     assign hwif_out.DCT.req_is_wr = decoded_req_is_wr;
     assign hwif_out.DCT.wr_data = decoded_wr_data;
     assign hwif_out.DCT.wr_biten = decoded_wr_biten;
