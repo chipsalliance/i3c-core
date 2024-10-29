@@ -1764,6 +1764,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] value;
+        logic swmod;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__PLACEHOLDER__out_t;
 
     typedef struct packed{
@@ -1852,6 +1853,8 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] value;
+        logic swmod;
+        logic swacc;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__PLACEHOLDER__out_t;
 
     typedef struct packed{

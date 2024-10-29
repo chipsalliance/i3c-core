@@ -42,6 +42,10 @@ module recovery_executor
 
     input logic host_abort_i,
 
+    // Recovery status signals
+    output logic payload_available_o,
+    output logic image_activated_o,
+
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
     output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o
@@ -113,6 +117,7 @@ module recovery_executor
   logic [31:0] csr_data;
   logic [15:0] csr_length;
   logic        csr_writeable;
+  logic        csr_ff_data;
 
   // ....................................................
 
@@ -246,6 +251,11 @@ module recovery_executor
         endcase
       default: csr_length <= csr_length;
     endcase
+
+  // Set high if the command targets CMD_INDIRECT_FIFO_DATA and is a write.
+  always_ff @(posedge clk_i)
+    if ((state_q == Idle) && cmd_valid_i)
+        csr_ff_data <= (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA) && !cmd_is_rd_i;
 
   // CSR read data mux (registered)
   always_ff @(posedge clk_i)
@@ -405,5 +415,26 @@ module recovery_executor
       CsrReadData: res_dlast_o <= (dcnt == 1);
       default:     res_dlast_o <= '0;
     endcase
+
+  // ....................................................
+
+  // Payload availability logic
+  // Assety payload_available_o upon reception of a complete recovery write
+  // packet targeting CSR_INDIRECT_FIFO_DATA.
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      payload_available_o <= '0;
+    else begin
+      // "Execution" (reception) of a INDIRECT_FIFO_DATA write command complete
+      if ((state_q == Done) && csr_ff_data)
+        payload_available_o <= 1'b1;
+      // Read of INDIRECT_FIFO_DATA from HCI side.
+      if (hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc &&
+          !hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod)
+        payload_available_o <= 1'b0;
+    end
+
+  // Image activation logic.
+  assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value[23:16] == 8'h0F);
 
 endmodule

@@ -399,6 +399,9 @@ module recovery_handler
       .tx_reg_rst_data_o(tti_tx_data_queue_reg_rst_next)
   );
 
+  // Recovery data available signal.
+  assign payload_available_o = recovery_enable & !tti_rx_data_queue_empty;
+
   // IBI
   write_queue #(
 
@@ -872,6 +875,9 @@ module recovery_handler
       .rx_queue_clr_o(exec_tti_rx_queue_clr),
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
+
+      .payload_available_o (payload_available_o),
+      .image_activated_o (image_activated_o),
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o)
