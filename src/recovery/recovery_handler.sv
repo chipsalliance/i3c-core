@@ -156,7 +156,11 @@ module recovery_handler
     // ....................................................
 
     // Interrupt
-    output logic irq_o
+    output logic irq_o,
+
+    // Recovery status
+    output logic payload_available_o,
+    output logic image_activated_o
 );
 
   // ....................................................
