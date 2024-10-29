@@ -20,7 +20,7 @@ module ccc
     input logic command_data_valid_i,
 
     input logic [31:0] queue_size_reg_i,
-    output logic response_byte_o,
+    output logic [7:0] response_byte_o,
     output logic response_valid_o,
 
     output logic enter_hdr_ccc_o,
