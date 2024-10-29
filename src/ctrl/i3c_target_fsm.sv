@@ -221,7 +221,7 @@ module i3c_target_fsm
     tcount_d = tcount_q;
     if (load_tcount) begin
       unique case (tcount_sel)
-        tSetupData: tcount_d = 13'(t_r_i) + 13'(tsu_dat_i);
+        tSetupData: tcount_d = 16'(t_r_i) + 16'(tsu_dat_i);
         tHoldData:  tcount_d = 16'(thd_dat_i);
         tNoDelay:   tcount_d = 16'h0001;
         default:    tcount_d = 16'h0001;
@@ -999,7 +999,6 @@ module i3c_target_fsm
       // AddrAckHold: target pulls SDA low while SCL is pulled low
       AddrAckHold: begin
         // FIXME: WIP: Needed to increase this timing to respect setup of next push pull
-        // if (tcount_q == 16'd1) begin
         if (tcount_q == 16'd5) begin
           if (nack_transaction_q) begin
             // If the Target is set to NACK already, release SDA and wait
