@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import time
 import random
+import time
 
 import nox
 from nox_utils import VerificationTest, isCocotbSimFailure, nox_config

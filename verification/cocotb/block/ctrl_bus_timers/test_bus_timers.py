@@ -18,6 +18,7 @@ async def setup(dut):
     dut.t_bus_free_i.value = 5
     dut.t_bus_available_i.value = 10
     dut.t_bus_idle_i.value = 50
+    dut.restart_counter_i.value = 0
     await ClockCycles(dut.clk_i, 10)
 
 
@@ -33,8 +34,8 @@ async def test_bus_timers(dut: SimHandleBase):
     clk = dut.clk_i
     rst_n = dut.rst_ni
 
-    await reset_n(clk, rst_n, cycles=5)
     await setup(dut)
+    await reset_n(clk, rst_n, cycles=5)
 
     # Enable counter
     dut.enable_i.value = 1

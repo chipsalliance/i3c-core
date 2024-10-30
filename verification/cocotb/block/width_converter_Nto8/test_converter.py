@@ -62,6 +62,8 @@ async def run_test(dut):
 
     # Reset
     dut.rst_ni.value = 0
+    dut.sink_valid_i = 0
+    dut.source_ready_i = 0
     await ClockCycles(dut.clk_i, 5)
     dut.rst_ni.value = 1
 

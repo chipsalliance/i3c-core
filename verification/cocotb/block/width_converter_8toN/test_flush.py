@@ -17,6 +17,8 @@ async def test_flush(dut, count):
     # Reset
     await RisingEdge(dut.clk_i)
     dut.rst_ni.value = 0
+    dut.sink_flush_i = 0
+    dut.sink_valid_i = 0
     await RisingEdge(dut.clk_i)
     dut.rst_ni.value = 1
 

@@ -255,7 +255,7 @@ module recovery_executor
   // Set high if the command targets CMD_INDIRECT_FIFO_DATA and is a write.
   always_ff @(posedge clk_i)
     if ((state_q == Idle) && cmd_valid_i)
-        csr_ff_data <= (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA) && !cmd_is_rd_i;
+      csr_ff_data <= (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA) && !cmd_is_rd_i;
 
   // CSR read data mux (registered)
   always_ff @(posedge clk_i)
@@ -422,12 +422,10 @@ module recovery_executor
   // Assety payload_available_o upon reception of a complete recovery write
   // packet targeting CSR_INDIRECT_FIFO_DATA.
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni)
-      payload_available_o <= '0;
+    if (!rst_ni) payload_available_o <= '0;
     else begin
       // "Execution" (reception) of a INDIRECT_FIFO_DATA write command complete
-      if ((state_q == Done) && csr_ff_data)
-        payload_available_o <= 1'b1;
+      if ((state_q == Done) && csr_ff_data) payload_available_o <= 1'b1;
       // Read of INDIRECT_FIFO_DATA from HCI side.
       if (hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc &&
           !hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod)

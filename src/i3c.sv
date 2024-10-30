@@ -967,8 +967,8 @@ module i3c
       .irq_o(),  // TODO: Connect me
 
       // Recovery status signals
-      .payload_available_o (recovery_payload_available_o),
-      .image_activated_o   (recovery_image_activated_o),
+      .payload_available_o(recovery_payload_available_o),
+      .image_activated_o  (recovery_image_activated_o),
 
       // I2C/I3C bus condition detection
       .ctl_bus_start_i(bus_start | bus_rstart),  // S/Sr are both used to reset PEC
@@ -994,5 +994,57 @@ module i3c
       .sel_od_pp_i(ctrl_sel_od_pp),
       .sel_od_pp_o(sel_od_pp_o)
   );
+
+  // TODO: These write-enable signals were not combo-driven or initialized on reset.
+  // This is a placeholder driver. They require either unimplemented drivers or changes in RDL.
+  always_comb begin : missing_csr_we_inits
+    hwif_tti_inp.RESET_CONTROL.SOFT_RST.we = 0;
+    hwif_tti_inp.RESET_CONTROL.RX_DATA_RST.we = 0;
+    xhci.hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
+    xhci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
+    xhci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 0;
+    xhci.hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we = 0;
+    xhci.hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
+    xhci.hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.we = 0;
+    xhci.hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
+    xhci.hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we = 0;
+    xhci.hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = 0;
+
+    xhci.hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
+    xhci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.we = 0;
+
+    xtti.hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.RX_DESC_RST.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.SOFT_RST.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.TX_DESC_RST.we = 0;
+  end : missing_csr_we_inits
+
+  always_comb begin : other_uninit_signals
+    xcontroller.xcontroller_active.flow_fsm.dct_write_valid_hw_o = 0;
+    xcontroller.xcontroller_standby.i2c_rx_queue_wflush_o = 0;
+    xrecovery_handler.irq_o = 0;
+    xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
+    xcontroller.xcontroller_active.flow_fsm.rx_queue_wvalid_o = 0;
+    // See the TODO `in src/ctrl/flow_active.sv`
+    //xcontroller.xcontroller_active.flow_fsm.resp_queue_wvalid_o = 0;
+    xcontroller.xcontroller_active.flow_fsm.ibi_queue_wvalid_o = 0;
+    xcontroller.ibi_queue_wready_i = 0;  // Signal is defined implictly
+
+    xcontroller.xcontroller_active.flow_fsm.err.err_0 = 0;
+    xcontroller.xcontroller_active.flow_fsm.irq.irq_0 = 0;
+    // No proper zero assignment in combo block
+    //xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.command_code_valid = 0;
+  end : other_uninit_signals
 
 endmodule

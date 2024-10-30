@@ -59,6 +59,7 @@ module axi_sub_rd import axi_pkg::*; #(
     output logic [AW-1:0] addr, // Byte address
     output logic [UW-1:0] user,
     output logic [IW-1:0] id,
+    // TODO: This is undriven
     output logic          last, // Asserted with final 'dv' of a burst
     input  logic          hld,
     input  logic          err,

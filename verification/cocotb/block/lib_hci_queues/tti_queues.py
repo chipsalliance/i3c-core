@@ -16,11 +16,19 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         super().__init__(dut, "tti")
 
     async def setup(self):
-        await super()._setup(get_frontend_bus_if())
-
         # Set queue's ready to 0 (hold accepting the data)
-        self.dut.tti_tx_desc_queue_rready_i.value = 0
+        self.dut.hci_cmd_queue_rready_i.value = 0
+        self.dut.hci_tx_queue_rready_i.value = 0
         self.dut.tti_tx_queue_rready_i.value = 0
+        self.dut.tti_tx_desc_queue_rready_i.value = 0
+        self.dut.hci_rx_queue_wvalid_i.value = 0
+        self.dut.hci_ibi_queue_wvalid_i.value = 0
+        self.dut.hci_resp_queue_wvalid_i = 0
+        self.dut.tti_rx_queue_wvalid_i.value = 0
+        self.dut.tti_rx_desc_queue_wvalid_i = 0
+        self.dut.tti_ibi_queue_rready_i = 0
+
+        await super()._setup(get_frontend_bus_if())
 
     async def reset(self):
         await self._reset()

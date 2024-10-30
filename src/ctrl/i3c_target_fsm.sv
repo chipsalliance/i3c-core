@@ -525,6 +525,7 @@ module i3c_target_fsm
     event_read_cmd_received_o = 1'b0;
     ibi_fifo_rready_o = 1'b0;
     tx_host_nack_o = 1'b0;
+    command_code_valid = 0;
 
     unique case (state_q)
       // Idle: initial state, SDA is released (high), SCL is released if the
@@ -876,8 +877,7 @@ module i3c_target_fsm
     else if (state_q == AddrAckHold & (tcount_q == 16'd1) & rw_bit_q)
       // Load 1st bit to be transmitted after address ACK.
       sda_r <= output_byte[3'd7-bit_idx];
-    else if (state_q == IbiAddrSetup | state_q == TransmitSetup)
-      sda_r <= output_byte[3'd7-bit_idx];
+    else if (state_q == IbiAddrSetup | state_q == TransmitSetup) sda_r <= output_byte[3'd7-bit_idx];
     else if (state_q == TbitSetup)
       sda_r <= (ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i);
 

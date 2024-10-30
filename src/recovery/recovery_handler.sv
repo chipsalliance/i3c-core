@@ -876,8 +876,8 @@ module recovery_handler
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
-      .payload_available_o (payload_available_o),
-      .image_activated_o (image_activated_o),
+      .payload_available_o(payload_available_o),
+      .image_activated_o  (image_activated_o),
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o)

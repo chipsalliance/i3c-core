@@ -265,8 +265,8 @@ module i3c_wrapper #(
       .dct_mem_src_i (dct_mem_src),
       .dct_mem_sink_o(dct_mem_sink),
 
-      .recovery_payload_available_o (recovery_payload_available_o),
-      .recovery_image_activated_o   (recovery_image_activated_o)
+      .recovery_payload_available_o(recovery_payload_available_o),
+      .recovery_image_activated_o  (recovery_image_activated_o)
   );
 
   prim_ram_1p_adv #(

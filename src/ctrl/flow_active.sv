@@ -354,6 +354,7 @@ module flow_active
     transfer_cnt_rst = 1'b1;
     fmt_fifo_rvalid_o = 1'b0;
     fmt_flag_start_before_o = 1'b0;
+    resp_queue_wvalid_o = 1'b0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
