@@ -104,11 +104,9 @@ module recovery_receiver
         else if (bus_stop_i) state_d = Idle;
       end
 
-      CmdIsRd:
-        state_d = Cmd;
+      CmdIsRd: state_d = Cmd;
 
-      Cmd:
-        state_d = Busy;
+      Cmd: state_d = Busy;
 
       Busy: begin
         if (cmd_done_i) state_d = Idle;
