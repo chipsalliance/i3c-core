@@ -617,7 +617,7 @@ module i3c_target_fsm
         target_transmitting_o = 1'b1;
 
         // Upon transition to next state, populate the acquisition fifo
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           if (nack_transaction_q) begin
             // No need to record anything here. We already recorded the first
             // NACK'd byte in a stretch state or abandoned the transaction in
@@ -756,7 +756,7 @@ module i3c_target_fsm
         target_idle_o = 1'b0;
         sda_d = 1'b0;
         target_transmitting_o = 1'b1;
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           rx_fifo_wvalid_o = '1;
           rx_fifo_wdata_o  = input_byte;  // transfer data to rx_fifo
         end
@@ -873,11 +873,11 @@ module i3c_target_fsm
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sda_r <= 1'b1;
-    else if (state_q == AddrAckHold & (tcount_q == 20'd1) & rw_bit_q)
+    else if (state_q == AddrAckHold & (tcount_q == 16'd1) & rw_bit_q)
       // Load 1st bit to be transmitted after address ACK.
-      sda_r <= output_byte[3'(7-bit_idx)];
+      sda_r <= output_byte[3'd7-bit_idx];
     else if (state_q == IbiAddrSetup | state_q == TransmitSetup)
-      sda_r <= output_byte[3'(7-bit_idx)];
+      sda_r <= output_byte[3'd7-bit_idx];
     else if (state_q == TbitSetup)
       sda_r <= (ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i);
 
@@ -968,7 +968,7 @@ module i3c_target_fsm
         if (scl_i) begin
           // The controller is going too fast. Abandon the transaction.
           state_d = WaitForStop;
-        end else if (tcount_q == 20'd1) begin
+        end else if (tcount_q == 16'd1) begin
           if (nack_transaction_q) begin
             // We must have stretched before, and software has been notified
             // through an ACQ FIFO full event. For writes we should NACK all
@@ -999,8 +999,8 @@ module i3c_target_fsm
       // AddrAckHold: target pulls SDA low while SCL is pulled low
       AddrAckHold: begin
         // FIXME: WIP: Needed to increase this timing to respect setup of next push pull
-        // if (tcount_q == 20'd1) begin
-        if (tcount_q == 20'd5) begin
+        // if (tcount_q == 16'd1) begin
+        if (tcount_q == 16'd5) begin
           if (nack_transaction_q) begin
             // If the Target is set to NACK already, release SDA and wait
             // for a Stop. This isn't an ideal response for SMBus reads, since
@@ -1036,7 +1036,7 @@ module i3c_target_fsm
       end
       TransmitSetup: begin
         sel_od_pp_o = 1'b1;
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           state_d = TransmitPulse;
         end
       end
@@ -1050,7 +1050,7 @@ module i3c_target_fsm
       end
       TransmitHold: begin
         sel_od_pp_o = 1'b1;
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           if (bit_idx == 7) state_d = TbitWait;
           else state_d = TransmitWait;
           load_tcount = 1'b1;
@@ -1069,7 +1069,7 @@ module i3c_target_fsm
       end
       TbitSetup: begin
         sel_od_pp_o = 1'b1;
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           state_d = TbitPulse;
         end
       end
@@ -1082,7 +1082,7 @@ module i3c_target_fsm
         end
       end
       TbitHold: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           // Next data byte or wait for stop
           if ((ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i)) begin
             state_d = TransmitWaitOd;
@@ -1104,7 +1104,7 @@ module i3c_target_fsm
         end
       end
       IbiAddrSetup: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           state_d = IbiAddrPulse;
         end
       end
@@ -1116,7 +1116,7 @@ module i3c_target_fsm
         end
       end
       IbiAddrHold: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           if (bit_idx == 7) state_d = IbiAckWait;
           else state_d = IbiAddrWait;
           load_tcount = 1'b1;
@@ -1133,7 +1133,7 @@ module i3c_target_fsm
         end
       end
       IbiAckSetup: begin
-        if (tcount_q == 20'd1) state_d = IbiAckLatch;
+        if (tcount_q == 16'd1) state_d = IbiAckLatch;
       end
       IbiAckLatch: begin
         if (scl_i) begin
@@ -1145,7 +1145,7 @@ module i3c_target_fsm
         end
       end
       IbiAckHold: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           state_d = post_ack_decision_d;
         end
       end
@@ -1175,7 +1175,7 @@ module i3c_target_fsm
         if (scl_i) begin
           // The controller is going too fast. Abandon the transaction.
           state_d = WaitForStop;
-        end else if (tcount_q == 20'd1) begin
+        end else if (tcount_q == 16'd1) begin
           if (nack_transaction_q) begin
             state_d = WaitForStop;
           end else begin
@@ -1197,7 +1197,7 @@ module i3c_target_fsm
       end
       // AcquireAckHold: target pulls SDA low while SCL is pulled low
       AcquireAckHold: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           state_d = AcquireByte;
         end
       end
@@ -1242,7 +1242,7 @@ module i3c_target_fsm
         if (scl_i) begin
           // The controller is going too fast. Abandon the transaction.
           state_d = WaitForStop;
-        end else if (tcount_q == 20'd1) begin
+        end else if (tcount_q == 16'd1) begin
           if (nack_transaction_q) begin
             state_d = WaitForStop;
           end else begin
@@ -1264,7 +1264,7 @@ module i3c_target_fsm
       end
       // RsvdByteAckHold: target pulls SDA low while SCL is pulled low
       RsvdByteAckHold: begin
-        if (tcount_q == 20'd1) begin
+        if (tcount_q == 16'd1) begin
           // After this ACK we get either repeated start or CCC,
           // PostAckTBitSymbolDetect takes care of choosing the correct path
           state_d = PostAckTBitSymbolDetect;
@@ -1285,7 +1285,7 @@ module i3c_target_fsm
         if (scl_i) begin
           // The controller is going too fast. Abandon the transaction.
           state_d = WaitForStop;
-        end else if (tcount_q == 20'd1) begin
+        end else if (tcount_q == 16'd1) begin
           if (nack_transaction_q) begin
             state_d = WaitForStop;
           end else begin
