@@ -2176,7 +2176,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 #### PLACEHOLDER field
 
-
+<p>For future use, Target Mode is controlled via STBY_CR_CONTROL.</p>
 
 ### STATUS register
 
@@ -2192,7 +2192,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 #### PLACEHOLDER field
 
-
+<p>For future use, Target Mode status is in STBY_CR_STATUS.</p>
 
 ### RESET_CONTROL register
 
@@ -2259,19 +2259,19 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 #### RX_DESC_STAT field
 
-<p>There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue</p>
+<p>There is a pending Write Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue</p>
 
 #### TX_DESC_STAT field
 
-<p>There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p>
+<p>There is a pending Read Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p>
 
 #### RX_DESC_TIMEOUT field
 
-<p>Pending Read was NACK’ed, because the <code>RX_DESC_STAT</code> event was not handled in time</p>
+<p>Pending Write was NACK’ed, because the <code>RX_DESC_STAT</code> event was not handled in time</p>
 
 #### TX_DESC_TIMEOUT field
 
-<p>Pending Write was NACK’ed, because the <code>TX_DESC_STAT</code> event was not handled in time</p>
+<p>Pending Read was NACK’ed, because the <code>TX_DESC_STAT</code> event was not handled in time</p>
 
 #### TX_DATA_THLD_STAT field
 

@@ -32,7 +32,7 @@ regfile TargetTransactionInterfaceRegisters #(
         desc = "Control Register";
         field {
             name = "";
-            desc = "";
+            desc = "For future use, Target Mode is controlled via STBY_CR_CONTROL.";
             sw = rw;
             hw = rw;
             we = true;
@@ -44,7 +44,7 @@ regfile TargetTransactionInterfaceRegisters #(
         desc = "Status Register";
         field {
             name = "";
-            desc = "";
+            desc = "For future use, Target Mode status is in STBY_CR_STATUS.";
             sw = rw;
             hw = rw;
             we = true;
@@ -159,7 +159,7 @@ regfile TargetTransactionInterfaceRegisters #(
         } TX_DATA_THLD_STAT[8:8];
         field {
             name = "TX_DESC_TIMEOUT";
-            desc = "Pending Write was NACK’ed, because the `TX_DESC_STAT` event was not handled in time";
+            desc = "Pending Read was NACK’ed, because the `TX_DESC_STAT` event was not handled in time";
             sw = rw;
             hw = rw;
             woclr = true;
@@ -167,7 +167,7 @@ regfile TargetTransactionInterfaceRegisters #(
         } TX_DESC_TIMEOUT[3:3];
         field {
             name = "RX_DESC_TIMEOUT";
-            desc = "Pending Read was NACK’ed, because the `RX_DESC_STAT` event was not handled in time";
+            desc = "Pending Write was NACK’ed, because the `RX_DESC_STAT` event was not handled in time";
             sw = rw;
             hw = rw;
             woclr = true;
@@ -175,7 +175,7 @@ regfile TargetTransactionInterfaceRegisters #(
         } RX_DESC_TIMEOUT[2:2];
         field {
             name = "TX_DESC_STAT";
-            desc = "There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue";
+            desc = "There is a pending Read Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue";
             sw = rw;
             hw = rw;
             woclr = true;
@@ -183,7 +183,7 @@ regfile TargetTransactionInterfaceRegisters #(
         } TX_DESC_STAT[1:1];
         field {
             name = "RX_DESC_STAT";
-            desc = "There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue";
+            desc = "There is a pending Write Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue";
             sw = rw;
             hw = rw;
             woclr = true;
