@@ -19,6 +19,7 @@ module recovery_receiver
 
     // TTI RX data queue mux control and data flow monitor
     output logic data_queue_select_o,
+    output logic data_queue_flush_o,
     input  logic data_queue_flow_i,
 
     // Bus condition detection
@@ -130,6 +131,11 @@ module recovery_receiver
   always_ff @(posedge clk_i)
     if (!rst_ni) data_queue_select_o <= 1'b1;
     else if (state_q == RxData) data_queue_select_o <= (data_queue_flow_i & dcnt == 1);
+
+  // Data queue flush signal. Flush if data length is not divisible by 4
+  always_ff @(posedge clk_i)
+    if (!rst_ni) data_queue_flush_o <= 1'b0;
+    else data_queue_flush_o <= (state_q == Cmd) && |(len_lsb[1:0]);
 
   // Data counter
   always_ff @(posedge clk_i)

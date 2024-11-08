@@ -99,12 +99,16 @@ module i3c_wrapper #(
     input  logic sda_i,
     output logic scl_o,
     output logic sda_o,
-    output logic sel_od_pp_o
+    output logic sel_od_pp_o,
 `else
     // I3C bus IO
     inout  wire  i3c_scl_io,
-    inout  wire  i3c_sda_io
+    inout  wire  i3c_sda_io,
 `endif
+
+    // Recovery interface signals
+    output logic recovery_payload_available_o,
+    output logic recovery_image_activated_o
 
     // TODO: Add interrupts
 );
@@ -259,7 +263,10 @@ module i3c_wrapper #(
       .dat_mem_sink_o(dat_mem_sink),
 
       .dct_mem_src_i (dct_mem_src),
-      .dct_mem_sink_o(dct_mem_sink)
+      .dct_mem_sink_o(dct_mem_sink),
+
+      .recovery_payload_available_o (recovery_payload_available_o),
+      .recovery_image_activated_o   (recovery_image_activated_o)
   );
 
   prim_ram_1p_adv #(

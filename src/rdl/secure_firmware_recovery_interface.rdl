@@ -184,6 +184,8 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             hw = rw;
             we = true;
             reset = 32'h00000000;
+            onwrite = woclr;
+            swmod = true;
         } PLACEHOLDER[31:0];
     } RECOVERY_CTRL;
     reg {
@@ -305,6 +307,8 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             hw = rw;
             we = true;
             reset = 32'h00000000;
+            swacc = true;
+            swmod = true;
         } PLACEHOLDER[31:0];
     } INDIRECT_FIFO_DATA;
 };

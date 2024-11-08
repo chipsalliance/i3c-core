@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import random
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword
@@ -13,12 +14,12 @@ import cocotb
 from cocotb.triggers import Timer
 
 
-async def timeout():
-    await Timer(50, "us")
+async def timeout_task(timeout):
+    await Timer(timeout, "us")
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut):
+async def initialize(dut, timeout=50):
     """
     Common test initialization routine
     """
@@ -26,7 +27,7 @@ async def initialize(dut):
     cocotb.log.setLevel(logging.DEBUG)
 
     # Start the background timeout task
-    await cocotb.start(timeout())
+    await cocotb.start(timeout_task(timeout))
 
     # Initialize interfaces
     i3c_controller = I3cController(
@@ -199,3 +200,93 @@ async def test_recovery_read(dut):
 
     # Wait
     await Timer(2, "us")
+
+
+@cocotb.test()
+async def test_recovery_payload_available(dut):
+    """
+    Tests if payload_available gets asserted/deasserted correctly when data
+    chunks are written to INDIRECT_FIFO_DATA CSR.
+    """
+
+    payload_size = 16  # Bytes
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=50)
+    payload_available = dut.xi3c_wrapper.recovery_payload_available_o
+
+    # Check if payload available is deasserted
+    assert not bool(
+        payload_available.value
+    ), "Upon initialization payload_available should be deasserted"
+
+    # Generate random data payload. Write the payload to INDIRECT_FIFO_DATA
+    payload_data = [random.randint(0, 0xFF) for i in range(payload_size)]
+    await recovery.command_write(
+        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data
+    )
+
+    # Wait
+    await Timer(1, "us")
+
+    # Check if payload_available is asserted
+    assert bool(
+        payload_available.value
+    ), "After reception of a complete write packet targeting INDIRECT_FIFO_DATA payload_available should be asserted"
+
+    # Wait
+    await Timer(1, "us")
+
+    # Read INDIRECT_FIFO_DATA. This should deassert payload_available
+    await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+
+    # Wait
+    await Timer(1, "us")
+
+    # Check if payload available is deasserted
+    assert not bool(
+        payload_available.value
+    ), "After reading INDIRECT_FIFO_DATA over AHB/AXI payload_available should be deasserted"
+
+    # Wait
+    await Timer(2, "us")
+
+
+@cocotb.test()
+async def test_recovery_image_activated(dut):
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+    image_activated = dut.xi3c_wrapper.recovery_image_activated_o
+
+    # Check if image_activated is deasserted
+    assert not bool(
+        image_activated.value
+    ), "Upon initialization image_activated should be deasserted"
+
+    # Write 0xF to byte 2 of RECOVERY_CTRL
+    await recovery.command_write(0x5A, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF])
+
+    # Wait
+    await Timer(1, "us")
+
+    # Check if image_activated is asserted
+    assert bool(
+        image_activated.value
+    ), "Upon writing 0xF to RECOVERY_CTRL byte 2 image_activated should be asserted"
+
+    # Write 0xFF to byte 2 of RECOVERY_CTRL from the HCI side
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_CTRL.base_addr, int2dword(0xFF << 16), 4
+    )
+
+    # Wait
+    await Timer(1, "us")
+
+    # Check if image_activated is deasserted
+    assert not bool(
+        image_activated.value
+    ), "Upon writing 0xFF to RECOVERY_CTRL byte 2 image_activated should be deasserted"
+
+    # Wait
+    await Timer(1, "us")

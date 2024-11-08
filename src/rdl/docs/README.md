@@ -1335,9 +1335,9 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x3C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits| Identifier|  Access |Reset|Name|
+|----|-----------|---------|-----|----|
+|31:0|PLACEHOLDER|rw, woclr| 0x0 |    |
 
 #### PLACEHOLDER field
 

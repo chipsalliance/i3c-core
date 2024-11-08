@@ -4741,8 +4741,8 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value & ~(decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end else if(hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.next;
@@ -4759,6 +4759,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.PLACEHOLDER.swmod = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL && decoded_req_is_wr;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
@@ -5023,6 +5024,8 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && decoded_req_is_wr;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_ID.value = 8'h12;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK

@@ -156,7 +156,11 @@ module recovery_handler
     // ....................................................
 
     // Interrupt
-    output logic irq_o
+    output logic irq_o,
+
+    // Recovery status
+    output logic payload_available_o,
+    output logic image_activated_o
 );
 
   // ....................................................
@@ -395,6 +399,9 @@ module recovery_handler
       .tx_reg_rst_data_o(tti_tx_data_queue_reg_rst_next)
   );
 
+  // Recovery data available signal.
+  assign payload_available_o = recovery_enable & !tti_rx_data_queue_empty;
+
   // IBI
   write_queue #(
 
@@ -506,6 +513,7 @@ module recovery_handler
   logic [7:0] recv_tti_rx_data_data;
 
   logic       recv_tti_rx_data_queue_select;
+  logic       recv_tti_rx_data_queue_flush;
   logic       recv_tti_rx_data_queue_flow;
 
   // RX data queue
@@ -513,7 +521,7 @@ module recovery_handler
     if (recovery_enable & recv_tti_rx_data_queue_select) begin
       recv_tti_rx_data_valid                  = ctl_tti_rx_data_queue_wvalid_i;
       tti_rx_data_queue_wvalid                = '0;
-      tti_rx_data_queue_wflush                = '0;
+      tti_rx_data_queue_wflush                = recv_tti_rx_data_queue_flush;
       ctl_tti_rx_data_queue_full_o            = tti_rx_data_queue_full;
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = recv_tti_rx_data_ready;
@@ -749,6 +757,7 @@ module recovery_handler
       .data_data_i (recv_tti_rx_data_data),
 
       .data_queue_select_o(recv_tti_rx_data_queue_select),
+      .data_queue_flush_o (recv_tti_rx_data_queue_flush),
       .data_queue_flow_i  (tti_rx_data_queue_wvalid & tti_rx_data_queue_wready),
 
       .bus_start_i(ctl_bus_start_i),
@@ -866,6 +875,9 @@ module recovery_handler
       .rx_queue_clr_o(exec_tti_rx_queue_clr),
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
+
+      .payload_available_o (payload_available_o),
+      .image_activated_o (image_activated_o),
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o)

@@ -174,7 +174,11 @@ module i3c
 
     // DCT memory export interface
     input  dct_mem_src_t  dct_mem_src_i,
-    output dct_mem_sink_t dct_mem_sink_o
+    output dct_mem_sink_t dct_mem_sink_o,
+
+    // Recovery interface signals
+    output logic recovery_payload_available_o,
+    output logic recovery_image_activated_o
 
     // TODO: Add interrupts
 );
@@ -961,6 +965,10 @@ module i3c
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig),
 
       .irq_o(),  // TODO: Connect me
+
+      // Recovery status signals
+      .payload_available_o (recovery_payload_available_o),
+      .image_activated_o   (recovery_image_activated_o),
 
       // I2C/I3C bus condition detection
       .ctl_bus_start_i(bus_start | bus_rstart),  // S/Sr are both used to reset PEC
