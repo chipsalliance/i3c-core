@@ -13,7 +13,7 @@
     
     
       
-        <title>Configuring the I3C Core - I3C Core - documentation</title>
+        <title>FPGA Validation Platform - I3C Core - documentation</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuring the I3C Core
+              FPGA Validation Platform
             
           </span>
         </div>
@@ -469,20 +469,12 @@
               
   
   
-    
-  
-    
   
   
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      <a href="#" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="config.html" class="md-nav__link">
         <span class="md-ellipsis">Configuring the I3C Core</span>
       </a>
-      
     </li>
   
 
@@ -507,12 +499,91 @@
               
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="testing.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">FPGA Validation Platform</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">FPGA Validation Platform</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#devices" class="md-nav__link">
+    <span class="md-ellipsis">Devices</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#amd-zynq-ultrascale-mpsoc-zcu106-evaluation-kit" class="md-nav__link">
+    <span class="md-ellipsis">AMD Zynq Ultra<wbr>Scale+ MPSo<wbr>C ZCU106 Evaluation Kit</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nxp-i-mx-rt600-evaluation-kit" class="md-nav__link">
+    <span class="md-ellipsis">NXP i.<wbr>MX RT600 Evaluation Kit</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#antmicro-debug-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">Antmicro Debug Toolkit</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dreamsourcelab-dslogic-plus" class="md-nav__link">
+    <span class="md-ellipsis">Dream<wbr>Source<wbr>Lab DSLogic Plus</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-procedure" class="md-nav__link">
+    <span class="md-ellipsis">Test procedure</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -539,10 +610,138 @@
                   
 
 
-<h1 id="configuring-the-i3c-core">Configuring the I3C Core<a class="headerlink" href="#configuring-the-i3c-core" title="Link to this heading">¶</a></h1>
-<p>The I3C Core is configured with the <a class="reference download internal" download="" href="_downloads/29cb546405c938e81eb254da192c3bce/i3c_core_config.py"><span class="xref download myst">i3c_core_config</span></a> Python script, which reads configurations from the <code class="docutils literal notranslate"><span class="pre">i3c_core_configs.yaml</span></code> YAML file.</p>
-<p>The supported configurations can be found in the <a class="reference download internal" download="" href="_downloads/4cbf1e0840e968a3603e578833a191d4/i3c_core_configs.yaml"><span class="xref download myst">i3c_core_configs.yaml</span></a> file.</p>
-<p>More details on the usage of the tool can be found in the <span class="xref myst">README</span>.</p>
+<h1 id="fpga-validation-platform">FPGA Validation Platform<a class="headerlink" href="#fpga-validation-platform" title="Link to this heading">¶</a></h1>
+<p>This chapter describes the FPGA Validation Platform used to test the I3C Core and its integration with the Caliptra Subsystem.</p>
+<h2 id="devices">Devices<a class="headerlink" href="#devices" title="Link to this heading">¶</a></h2>
+<p>Test setup consists of:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.xilinx.com/products/boards-and-kits/zcu106.html">AMD Zynq UltraScale+ MPSoC ZCU106 Evaluation Kit</a></p></li>
+<li><p><a class="reference external" href="https://www.nxp.com/design/design-center/development-boards-and-designs/i-mx-evaluation-and-development-boards/i-mx-rt600-evaluation-kit:MIMXRT685-EVK">NXP i.MX RT600 Evaluation Kit</a></p></li>
+<li><p><a class="reference external" href="https://designer.antmicro.com/hardware/devices/debug-toolkit">Antmicro Debug Toolkit</a></p></li>
+<li><p><a class="reference external" href="https://www.dreamsourcelab.com/doc/DSLogic_Plus_Datasheet.pdf">DreamSourceLab DSLogic Plus</a></p></li>
+</ul>
+<figure class="align-default" id="test-setup">
+<img alt="" src="_images/test_setup.png" />
+<figcaption>
+<p><span class="caption-number">Figure 14 </span><span class="caption-text"><span class="caption-text">
+Test setup diagram</span><a class="headerlink" href="#test-setup" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="amd-zynq-ultrascale-mpsoc-zcu106-evaluation-kit">AMD Zynq UltraScale+ MPSoC ZCU106 Evaluation Kit<a class="headerlink" href="#amd-zynq-ultrascale-mpsoc-zcu106-evaluation-kit" title="Link to this heading">¶</a></h3>
+<p>The <a class="reference external" href="https://www.xilinx.com/products/boards-and-kits/zcu106.html">AMD Zynq UltraScale+ MPSoC ZCU106 Evaluation Kit</a> is an evaluation board, on which we implemented the I3C Core.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">I3C</span></code> bus is exposed on the J3 Prototype Header in <code class="docutils literal notranslate"><span class="pre">LVCMOS18</span></code> IO standard.</p>
+<table class="docutils data align-default" id="i3c-header-fpga">
+<caption><span class="caption-number">Table 25 </span><span class="caption-text">I3C header on the ZCU106 Evaluation Kit</span><a class="headerlink" href="#i3c-header-fpga" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Pin</strong></p></td>
+<td><p><strong>Signal</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>J3.4</p></td>
+<td><p>GND</p></td>
+</tr>
+<tr class="row-odd"><td><p>J3.8 (FPGA:L14)(L6P_AD6P_64_P)</p></td>
+<td><p>SDA</p></td>
+</tr>
+<tr class="row-even"><td><p>J3.12 (FPGA:K14)(L5P_AD14P_64_P)</p></td>
+<td><p>SCL</p></td>
+</tr>
+</tbody>
+</table>
+<div class="info admonition">
+<p class="admonition-title">Info</p>
+<p>SDA and SCL should be pulled up by external 2k<span class="math notranslate nohighlight">\(\Omega\)</span> resistors to 1.8V.</p>
+</div>
+<h3 id="nxp-i-mx-rt600-evaluation-kit">NXP i.MX RT600 Evaluation Kit<a class="headerlink" href="#nxp-i-mx-rt600-evaluation-kit" title="Link to this heading">¶</a></h3>
+<p>The <a class="reference external" href="https://www.nxp.com/design/design-center/development-boards-and-designs/i-mx-evaluation-and-development-boards/i-mx-rt600-evaluation-kit:MIMXRT685-EVK">NXP i.MX RT600 Evaluation Kit</a> is a microcontroller development board with a hardware I3C controller. This board was selected, because it is supported in <a class="reference external" href="https://docs.zephyrproject.org/latest/boards/nxp/mimxrt685_evk/doc/index.html">Zephyr</a>. A Zephyr based application was developed for the testing purposes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure the <code class="docutils literal notranslate"><span class="pre">NXP</span> <span class="pre">i.MX</span> <span class="pre">RT600</span> <span class="pre">Evaluation</span> <span class="pre">Kit</span></code>’s <code class="docutils literal notranslate"><span class="pre">VDDIO1</span></code> is set to 1.8V (<code class="docutils literal notranslate"><span class="pre">JP12</span></code> set to 1-2 position).</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">I3C</span></code> bus is exposed on <code class="docutils literal notranslate"><span class="pre">J18</span></code> header.</p>
+<table class="docutils data align-default" id="i3c-header">
+<caption><span class="caption-number">Table 26 </span><span class="caption-text">I3C header on the NXP Evaluation Kit</span><a class="headerlink" href="#i3c-header" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Pin</strong></p></td>
+<td><p><strong>Signal</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>J18.1</p></td>
+<td><p>SCL (P2_29_I3C0_SCL)</p></td>
+</tr>
+<tr class="row-odd"><td><p>J18.2</p></td>
+<td><p>SDA (P2_30_I3C0_SDA)</p></td>
+</tr>
+<tr class="row-even"><td><p>J18.3</p></td>
+<td><p>PUR (P2_31_I3C0_PUR)</p></td>
+</tr>
+<tr class="row-odd"><td><p>J18.4</p></td>
+<td><p>GND</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="antmicro-debug-toolkit">Antmicro Debug Toolkit<a class="headerlink" href="#antmicro-debug-toolkit" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://designer.antmicro.com/hardware/devices/debug-toolkit">Antmicro Debug Toolkit</a> can be connected to <a class="reference external" href="https://www.nxp.com/design/design-center/development-boards-and-designs/i-mx-evaluation-and-development-boards/i-mx-rt600-evaluation-kit:MIMXRT685-EVK">NXP i.MX RT600 Evaluation Kit</a> <code class="docutils literal notranslate"><span class="pre">J16</span></code> UART header for debug purposes, e.g. Zephyr uses it for logging purposes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Set jumper on appropriate channel voltage selector header, to select <code class="docutils literal notranslate"><span class="pre">3.3V</span></code> IO voltage.</p>
+</div>
+<h3 id="dreamsourcelab-dslogic-plus">DreamSourceLab DSLogic Plus<a class="headerlink" href="#dreamsourcelab-dslogic-plus" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://www.dreamsourcelab.com/doc/DSLogic_Plus_Datasheet.pdf">DreamSourceLab DSLogic Plus</a> is a 16 channel logic analyzer.</p>
+<p>It allows for capturing 2 channels in buffer mode at <code class="docutils literal notranslate"><span class="pre">400MS/s</span></code> for up to <code class="docutils literal notranslate"><span class="pre">335.54ms</span></code>.
+Measurement made with this tool are recorded with <code class="docutils literal notranslate"><span class="pre">2.5ns</span></code> resolution.</p>
+<h2 id="test-procedure">Test procedure<a class="headerlink" href="#test-procedure" title="Link to this heading">¶</a></h2>
+<p>After I3C initialization, the test procedure begins.
+The procedure consists of:</p>
+<p><strong>read_test</strong></p>
+<ul class="simple">
+<li><p>reading from selected I3C register</p></li>
+</ul>
+<p><strong>write_test</strong></p>
+<ul class="simple">
+<li><p>writing to the selected register</p></li>
+</ul>
+<p><strong>read_test</strong></p>
+<ul class="simple">
+<li><p>reading back from the selected register</p></li>
+</ul>
+<p><strong>ccc_test</strong></p>
+<ul class="simple">
+<li><p>reading configuration saved in controller (CONFIG)</p></li>
+<li><p>sending direct CCC:</p>
+<ul>
+<li><p>disabling events (DISEC)</p></li>
+<li><p>reading Provisioned ID (GETPID)</p></li>
+<li><p>reading Bus Characteristics Register (GETBCR)</p></li>
+<li><p>reading Device Characteristics Register (GETDCR)</p></li>
+<li><p>reading Maximum Read Length (GETMRL)</p></li>
+<li><p>reading Maximum Write Length (GETMWL)</p></li>
+<li><p>setting new dynamic address (SETNEWDA)</p></li>
+<li><p>reading device status (GETSTATUS)</p></li>
+<li><p>setting Maximum Read Length (SETMRL)</p></li>
+<li><p>setting Maximum Write Length (SETMWL)</p></li>
+<li><p>resetting dynamic address (RSTDAA broadcast)</p></li>
+<li><p>setting device’s static address as the dynamic address (SETDASA)</p></li>
+<li><p>enabling events (ENEC)</p></li>
+</ul>
+</li>
+<li><p>sending broadcast CCC:</p>
+<ul>
+<li><p>disabling events (DISEC broadcast)</p></li>
+<li><p>resetting I3C peripherals (RSTACT broadcast)</p></li>
+<li><p>resetting dynamic addresses (RSTDAA broadcast)</p></li>
+<li><p>setting static addresses as the dynamic addresses (SETAASA broadcast)</p></li>
+<li><p>setting Maximum Read Lengths (SETMRL broadcast)</p></li>
+<li><p>setting Maximum Write Lengths (SETMWL broadcast)</p></li>
+<li><p>enabling events (ENEC broadcast)</p></li>
+</ul>
+</li>
+</ul>
 
 
   <hr>
@@ -574,7 +773,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="recovery_flow.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Recovery flow" rel="prev">
+        <a href="integration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Integration with Caliptra Subsystem" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -583,26 +782,11 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Recovery flow
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="integration.html" class="md-footer__link md-footer__link--next" aria-label="Next: Integration with Caliptra Subsystem" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
               Integration with Caliptra Subsystem
             </div>
           </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
         </a>
+      
       
     </nav>
   
@@ -657,6 +841,7 @@
     
       
         <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
+        <script id="MathJax-script" src="_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>
