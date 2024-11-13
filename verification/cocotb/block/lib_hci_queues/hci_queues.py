@@ -16,16 +16,16 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
 
     async def setup(self):
         # Set queue's ready to 0 (hold accepting the data)
-        self.dut.hci_cmd_queue_rready_i.value = 0
-        self.dut.hci_tx_queue_rready_i.value = 0
-        self.dut.tti_tx_queue_rready_i.value = 0
-        self.dut.tti_tx_desc_queue_rready_i.value = 0
-        self.dut.hci_rx_queue_wvalid_i.value = 0
-        self.dut.hci_ibi_queue_wvalid_i.value = 0
-        self.dut.hci_resp_queue_wvalid_i = 0
-        self.dut.tti_rx_queue_wvalid_i.value = 0
-        self.dut.tti_rx_desc_queue_wvalid_i = 0
-        self.dut.tti_ibi_queue_rready_i = 0
+        self.dut.hci_cmd_rready_i.value = 0
+        self.dut.hci_tx_rready_i.value = 0
+        self.dut.tti_tx_rready_i.value = 0
+        self.dut.tti_tx_desc_rready_i.value = 0
+        self.dut.hci_rx_wvalid_i.value = 0
+        self.dut.hci_ibi_wvalid_i.value = 0
+        self.dut.hci_resp_wvalid_i = 0
+        self.dut.tti_rx_wvalid_i.value = 0
+        self.dut.tti_rx_desc_wvalid_i = 0
+        self.dut.tti_ibi_rready_i = 0
 
         await super()._setup(get_frontend_bus_if())
 
@@ -54,43 +54,43 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
     async def put_response_desc(self, resp: int = None, timeout: int = 20, units: str = "us"):
         if not resp:
             resp = ResponseDescriptor(4, 42, ErrorStatus.SUCCESS).to_int()
-        self.dut.hci_resp_queue_wdata_i.value = resp
-        self.dut.hci_resp_queue_wvalid_i.value = 1
+        self.dut.hci_resp_wdata_i.value = resp
+        self.dut.hci_resp_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.hci_resp_queue_wready_o, True, self.clk, timeout, units)
-        self.dut.hci_resp_queue_wvalid_i.value = 0
+        await expect_with_timeout(self.dut.hci_resp_wready_o, True, self.clk, timeout, units)
+        self.dut.hci_resp_wvalid_i.value = 0
 
     async def get_command_desc(self, timeout: int = 20, units: str = "us") -> int:
-        self.dut.hci_cmd_queue_rready_i.value = 1
+        self.dut.hci_cmd_rready_i.value = 1
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.hci_cmd_queue_rvalid_o, True, self.clk, timeout, units)
-        self.dut.hci_cmd_queue_rready_i.value = 0
-        return self.dut.hci_cmd_queue_rdata_o.value.integer
+        await expect_with_timeout(self.dut.hci_cmd_rvalid_o, True, self.clk, timeout, units)
+        self.dut.hci_cmd_rready_i.value = 0
+        return self.dut.hci_cmd_rdata_o.value.integer
 
     async def get_tx_data(self, timeout: int = 20, units: str = "us") -> int:
-        self.dut.hci_tx_queue_rready_i.value = 1
+        self.dut.hci_tx_rready_i.value = 1
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.hci_tx_queue_rvalid_o, True, self.clk, timeout, units)
-        self.dut.hci_tx_queue_rready_i.value = 0
-        return self.dut.hci_tx_queue_rdata_o.value.integer
+        await expect_with_timeout(self.dut.hci_tx_rvalid_o, True, self.clk, timeout, units)
+        self.dut.hci_tx_rready_i.value = 0
+        return self.dut.hci_tx_rdata_o.value.integer
 
     async def put_rx_data(self, rx_data: int = None, timeout: int = 20, units: str = "us"):
         if not rx_data:
             rx_data = randint(0, 2**32 - 1)
-        self.dut.hci_rx_queue_wdata_i.value = rx_data
-        self.dut.hci_rx_queue_wvalid_i.value = 1
+        self.dut.hci_rx_wdata_i.value = rx_data
+        self.dut.hci_rx_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.hci_rx_queue_wready_o, True, self.clk, timeout, units)
-        self.dut.hci_rx_queue_wvalid_i.value = 0
+        await expect_with_timeout(self.dut.hci_rx_wready_o, True, self.clk, timeout, units)
+        self.dut.hci_rx_wvalid_i.value = 0
 
     async def put_ibi_data(self, ibi_data: int = None, timeout: int = 2, units: str = "ms"):
         if not ibi_data:
             ibi_data = randint(0, 2**32 - 1)
-        self.dut.hci_ibi_queue_wdata_i.value = ibi_data
-        self.dut.hci_ibi_queue_wvalid_i.value = 1
+        self.dut.hci_ibi_wdata_i.value = ibi_data
+        self.dut.hci_ibi_wvalid_i.value = 1
         # In case ready is already set, assert valid at the next rising edge
         await RisingEdge(self.clk)
-        await expect_with_timeout(self.dut.hci_ibi_queue_wready_o, True, self.clk, timeout, units)
-        self.dut.hci_ibi_queue_wvalid_i.value = 0
+        await expect_with_timeout(self.dut.hci_ibi_wready_o, True, self.clk, timeout, units)
+        self.dut.hci_ibi_wvalid_i.value = 0

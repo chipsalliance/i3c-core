@@ -16,6 +16,12 @@ module hci
     parameter int unsigned HciTxFifoDepth   = 64,
     parameter int unsigned HciIbiFifoDepth  = 64,
 
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth  = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth   = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth   = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth  = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -26,25 +32,7 @@ module hci
     parameter int unsigned HciCmdThldWidth  = 8,
     parameter int unsigned HciRxThldWidth   = 3,
     parameter int unsigned HciTxThldWidth   = 3,
-    parameter int unsigned HciIbiThldWidth  = 8,
-
-    parameter int unsigned TtiRespFifoDepth = 64,
-    parameter int unsigned TtiCmdFifoDepth  = 64,
-    parameter int unsigned TtiRxFifoDepth   = 64,
-    parameter int unsigned TtiTxFifoDepth   = 64,
-    parameter int unsigned TtiIbiFifoDepth  = 64,
-
-    parameter int unsigned TtiRxDescDataWidth = 32,
-    parameter int unsigned TtiTxDescDataWidth = 32,
-    parameter int unsigned TtiRxDataWidth = 32,
-    parameter int unsigned TtiTxDataWidth = 32,
-    parameter int unsigned TtiIbiDataWidth = 32,
-
-    parameter int unsigned TtiRxDescThldWidth = 8,
-    parameter int unsigned TtiTxDescThldWidth = 8,
-    parameter int unsigned TtiRxThldWidth = 3,
-    parameter int unsigned TtiTxThldWidth = 3,
-    parameter int unsigned TtiIbiThldWidth = 8
+    parameter int unsigned HciIbiThldWidth  = 8
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -85,6 +73,7 @@ module hci
 
     // Response queue
     output logic hci_resp_full_o,
+    output logic [HciRespFifoDepthWidth-1:0] hci_resp_depth_o,
     output logic [HciRespThldWidth-1:0] hci_resp_ready_thld_o,
     output logic hci_resp_ready_thld_trig_o,
     output logic hci_resp_empty_o,
@@ -94,6 +83,7 @@ module hci
 
     // Command queue
     output logic hci_cmd_full_o,
+    output logic [HciCmdFifoDepthWidth-1:0] hci_cmd_depth_o,
     output logic [HciCmdThldWidth-1:0] hci_cmd_ready_thld_o,
     output logic hci_cmd_ready_thld_trig_o,
     output logic hci_cmd_empty_o,
@@ -103,6 +93,7 @@ module hci
 
     // RX queue
     output logic hci_rx_full_o,
+    output logic [HciRxFifoDepthWidth-1:0] hci_rx_depth_o,
     output logic [HciRxThldWidth-1:0] hci_rx_start_thld_o,
     output logic [HciRxThldWidth-1:0] hci_rx_ready_thld_o,
     output logic hci_rx_start_thld_trig_o,
@@ -114,6 +105,7 @@ module hci
 
     // TX queue
     output logic hci_tx_full_o,
+    output logic [HciTxFifoDepthWidth-1:0] hci_tx_depth_o,
     output logic [HciTxThldWidth-1:0] hci_tx_start_thld_o,
     output logic [HciTxThldWidth-1:0] hci_tx_ready_thld_o,
     output logic hci_tx_start_thld_trig_o,
@@ -124,13 +116,14 @@ module hci
     output logic [HciTxDataWidth-1:0] hci_tx_rdata_o,
 
     // In-band Interrupt queue
-    output logic hci_ibi_queue_full_o,
-    output logic [HciIbiThldWidth-1:0] hci_ibi_queue_ready_thld_o,
-    output logic hci_ibi_queue_ready_thld_trig_o,
-    output logic hci_ibi_queue_empty_o,
-    input logic hci_ibi_queue_wvalid_i,
-    output logic hci_ibi_queue_wready_o,
-    input logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_i,
+    output logic hci_ibi_full_o,
+    output logic [HciIbiFifoDepthWidth-1:0] hci_ibi_depth_o,
+    output logic [HciIbiThldWidth-1:0] hci_ibi_ready_thld_o,
+    output logic hci_ibi_ready_thld_trig_o,
+    output logic hci_ibi_empty_o,
+    input logic hci_ibi_wvalid_i,
+    output logic hci_ibi_wready_o,
+    input logic [HciIbiDataWidth-1:0] hci_ibi_wdata_i,
 
     // Target Transaction Interface CSRs
     output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_o,
@@ -141,24 +134,12 @@ module hci
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_i,
 
     // Controller configuration
-    output logic phy_en_o,
-    output logic [1:0] phy_mux_select_o,
-    output logic i2c_active_en_o,
-    output logic i2c_standby_en_o,
-    output logic i3c_active_en_o,
-    output logic i3c_standby_en_o,
-    output logic [19:0] t_su_dat_o,
-    output logic [19:0] t_hd_dat_o,
-    output logic [19:0] t_r_o,
-    output logic [19:0] t_f_o,
-    output logic [19:0] t_bus_free_o,
-    output logic [19:0] t_bus_idle_o,
-    output logic [19:0] t_bus_available_o,
+    output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
     input logic [7:0] rst_action_i
 );
-  I3CCSR_pkg::I3CCSR__in_t  hwif_in;
-  I3CCSR_pkg::I3CCSR__out_t hwif_out;
+
+  I3CCSR_pkg::I3CCSR__in_t hwif_in;
 
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
@@ -173,11 +154,11 @@ module hci
 
 
   // TTI CSR interface
-  assign hwif_tti_o = hwif_out.I3C_EC.TTI;
+  assign hwif_tti_o = hwif_out_o.I3C_EC.TTI;
   assign hwif_in.I3C_EC.TTI = hwif_tti_i;
 
   // Recovery CSR interface
-  assign hwif_rec_o = hwif_out.I3C_EC.SecFwRecoveryIf;
+  assign hwif_rec_o = hwif_out_o.I3C_EC.SecFwRecoveryIf;
 
   // TODO: Use this if
   assign hwif_in.I3C_EC.SecFwRecoveryIf = hwif_rec_i;
@@ -232,19 +213,19 @@ module hci
       cmd_ready_thld_we  <= '0;
       resp_ready_thld_we <= '0;
     end else begin
-      cmd_ready_thld_swmod_q <= hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
+      cmd_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
       cmd_ready_thld_we <= cmd_ready_thld_swmod_q;
-      resp_ready_thld_swmod_q <= hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
+      resp_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
       resp_ready_thld_we <= resp_ready_thld_swmod_q;
     end
   end
 
   always_comb begin : wire_hwif
     // Reset control
-    cmdrst = hwif_out.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
-    rxrst = hwif_out.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
-    txrst = hwif_out.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
-    resprst = hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
+    cmdrst = hwif_out_o.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
+    rxrst = hwif_out_o.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
+    txrst = hwif_out_o.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
+    resprst = hwif_out_o.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
 
     hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
     hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
@@ -263,28 +244,28 @@ module hci
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = resp_ready_thld_we;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = hci_cmd_ready_thld_o;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = hci_resp_ready_thld_o;
-    cmd_ready_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
-    hci_rx_start_thld_o = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
-    rx_ready_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
-    hci_tx_start_thld_o = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
-    tx_ready_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
-    resp_ready_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
+    cmd_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    hci_rx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
+    rx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
+    hci_tx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+    tx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
+    resp_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
 
     // HCI queue port handling
 
     // HCI PIOControl ports requests
-    xfer_req = hwif_out.PIOControl.RX_DATA_PORT.req | hwif_out.PIOControl.TX_DATA_PORT.req;
-    xfer_req_is_wr = hwif_out.PIOControl.RX_DATA_PORT.req_is_wr
-      | hwif_out.PIOControl.TX_DATA_PORT.req_is_wr;
+    xfer_req = hwif_out_o.PIOControl.RX_DATA_PORT.req | hwif_out_o.PIOControl.TX_DATA_PORT.req;
+    xfer_req_is_wr = hwif_out_o.PIOControl.RX_DATA_PORT.req_is_wr
+      | hwif_out_o.PIOControl.TX_DATA_PORT.req_is_wr;
 
-    cmd_req = hwif_out.PIOControl.COMMAND_PORT.req & hwif_out.PIOControl.COMMAND_PORT.req_is_wr;
+    cmd_req = hwif_out_o.PIOControl.COMMAND_PORT.req & hwif_out_o.PIOControl.COMMAND_PORT.req_is_wr;
     rx_req = xfer_req && !xfer_req_is_wr;
     tx_req = xfer_req && xfer_req_is_wr;
-    resp_req = hwif_out.PIOControl.RESPONSE_PORT.req;
+    resp_req = hwif_out_o.PIOControl.RESPONSE_PORT.req;
 
     // Reading commands from the command port
     hwif_in.PIOControl.COMMAND_PORT.wr_ack = cmd_wr_ack;
-    cmd_wr_data = hwif_out.PIOControl.COMMAND_PORT.wr_data;
+    cmd_wr_data = hwif_out_o.PIOControl.COMMAND_PORT.wr_data;
 
     // Writing data to the rx port
     hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
@@ -292,7 +273,7 @@ module hci
 
     // Reading data from the tx port
     hwif_in.PIOControl.TX_DATA_PORT.wr_ack = tx_wr_ack;
-    tx_wr_data = hwif_out.PIOControl.TX_DATA_PORT.wr_data;
+    tx_wr_data = hwif_out_o.PIOControl.TX_DATA_PORT.wr_data;
 
     // Writing response to the resp port
     hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
@@ -301,9 +282,16 @@ module hci
     // DXT
     hwif_in.DAT = dat_i;
     hwif_in.DCT = dct_i;
-    dat_o = hwif_out.DAT;
-    dct_o = hwif_out.DCT;
+    dat_o = hwif_out_o.DAT;
+    dct_o = hwif_out_o.DCT;
 
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
+    // STBY_CR_DEVICE_CHAR
+    // STBY_CR_DEVICE_PID_LO
+    // hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.we = '0;
   end : wire_hwif
 
   always_comb begin : wire_hwif_ccc
@@ -328,7 +316,7 @@ module hci
       .s_cpuif_wr_err(s_cpuif_wr_err),
 
       .hwif_in (hwif_in),
-      .hwif_out(hwif_out)
+      .hwif_out(hwif_out_o)
   );
 
   dxt #(
@@ -383,6 +371,7 @@ module hci
       .rst_ni,
 
       .rx_desc_full_o(hci_resp_full_o),
+      .rx_desc_depth_o(hci_resp_depth_o),
       .rx_desc_start_thld_trig_o(unused_rx_desc_start_thld_trig),  // Intentionally left hanging, unsupported by Response Queue
       .rx_desc_ready_thld_trig_o(hci_resp_ready_thld_trig_o),
       .rx_desc_empty_o(hci_resp_empty_o),
@@ -400,6 +389,7 @@ module hci
       .rx_desc_reg_rst_data_o(resp_reset_ctrl_next),
 
       .tx_desc_full_o(hci_cmd_full_o),
+      .tx_desc_depth_o(hci_cmd_depth_o),
       .tx_desc_start_thld_trig_o(unused_tx_desc_start_thld_trig),  // Intentionally left hanging, unsupported by Command Queue
       .tx_desc_ready_thld_trig_o(hci_cmd_ready_thld_trig_o),
       .tx_desc_empty_o(hci_cmd_empty_o),
@@ -417,6 +407,7 @@ module hci
       .tx_desc_reg_rst_data_o(cmd_reset_ctrl_next),
 
       .rx_full_o(hci_rx_full_o),
+      .rx_depth_o(hci_rx_depth_o),
       .rx_start_thld_trig_o(hci_rx_start_thld_trig_o),
       .rx_ready_thld_trig_o(hci_rx_ready_thld_trig_o),
       .rx_empty_o(hci_rx_empty_o),
@@ -434,6 +425,7 @@ module hci
       .rx_reg_rst_data_o(rx_reset_ctrl_next),
 
       .tx_full_o(hci_tx_full_o),
+      .tx_depth_o(hci_tx_depth_o),
       .tx_start_thld_trig_o(hci_tx_start_thld_trig_o),
       .tx_ready_thld_trig_o(hci_tx_ready_thld_trig_o),
       .tx_empty_o(hci_tx_empty_o),
@@ -451,45 +443,28 @@ module hci
       .tx_reg_rst_data_o(tx_reset_ctrl_next)
   );
 
-  configuration xconfiguration (
-      .clk_i,
-      .rst_ni,
-      .hwif_out,
-      .phy_en_o,
-      .phy_mux_select_o,
-      .i2c_active_en_o,
-      .i2c_standby_en_o,
-      .i3c_active_en_o,
-      .i3c_standby_en_o,
-      .t_su_dat_o,
-      .t_hd_dat_o,
-      .t_r_o,
-      .t_f_o,
-      .t_bus_free_o,
-      .t_bus_idle_o,
-      .t_bus_available_o
-  );
+
 
   // In-band Interrupt queue
-  logic hci_ibi_queue_rst;
-  logic hci_ibi_queue_rst_we;
-  logic hci_ibi_queue_rst_next;
-  logic hci_ibi_queue_req;
-  logic hci_ibi_queue_rd_ack;
+  logic hci_ibi_rst;
+  logic hci_ibi_rst_we;
+  logic hci_ibi_rst_next;
+  logic hci_ibi_req;
+  logic hci_ibi_rd_ack;
   logic unused_ibi_queue_start_thld_trig;
-  logic [HciIbiThldWidth-1:0] hci_ibi_queue_thld;
-  logic [HciIbiDataWidth-1:0] hci_ibi_queue_rd_data;
+  logic [HciIbiThldWidth-1:0] hci_ibi_thld;
+  logic [HciIbiDataWidth-1:0] hci_ibi_rd_data;
 
   always_comb begin
-    hci_ibi_queue_rst = hwif_out.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we = hci_ibi_queue_rst_we;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next = hci_ibi_queue_rst_next;
+    hci_ibi_rst = hwif_out_o.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
+    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we = hci_ibi_rst_we;
+    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next = hci_ibi_rst_next;
 
-    hci_ibi_queue_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
+    hci_ibi_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
 
-    hci_ibi_queue_req = hwif_out.PIOControl.IBI_PORT.req;
-    hwif_in.PIOControl.IBI_PORT.rd_ack = hci_ibi_queue_rd_ack;
-    hwif_in.PIOControl.IBI_PORT.rd_data = hci_ibi_queue_rd_data;
+    hci_ibi_req = hwif_out_o.PIOControl.IBI_PORT.req;
+    hwif_in.PIOControl.IBI_PORT.rd_ack = hci_ibi_rd_ack;
+    hwif_in.PIOControl.IBI_PORT.rd_data = hci_ibi_rd_data;
   end
 
   read_queue #(
@@ -502,25 +477,26 @@ module hci
       .clk_i,
       .rst_ni,
 
-      .full_o(hci_ibi_queue_full_o),
+      .full_o(hci_ibi_full_o),
+      .depth_o(hci_ibi_depth_o),
       .start_thld_trig_o(unused_ibi_queue_start_thld_trig),
-      .ready_thld_trig_o(hci_ibi_queue_ready_thld_trig_o),
-      .empty_o(hci_ibi_queue_empty_o),
-      .wvalid_i(hci_ibi_queue_wvalid_i),
-      .wready_o(hci_ibi_queue_wready_o),
-      .wdata_i(hci_ibi_queue_wdata_i),
+      .ready_thld_trig_o(hci_ibi_ready_thld_trig_o),
+      .empty_o(hci_ibi_empty_o),
+      .wvalid_i(hci_ibi_wvalid_i),
+      .wready_o(hci_ibi_wready_o),
+      .wdata_i(hci_ibi_wdata_i),
 
-      .req_i (hci_ibi_queue_req),
-      .ack_o (hci_ibi_queue_rd_ack),
-      .data_o(hci_ibi_queue_rd_data),
+      .req_i (hci_ibi_req),
+      .ack_o (hci_ibi_rd_ack),
+      .data_o(hci_ibi_rd_data),
 
       .start_thld_i('0),
-      .ready_thld_i(hci_ibi_queue_thld),
-      .ready_thld_o(hci_ibi_queue_ready_thld_o),
+      .ready_thld_i(hci_ibi_thld),
+      .ready_thld_o(hci_ibi_ready_thld_o),
 
-      .reg_rst_i(hci_ibi_queue_rst),
-      .reg_rst_we_o(hci_ibi_queue_rst_we),
-      .reg_rst_data_o(hci_ibi_queue_rst_next)
+      .reg_rst_i(hci_ibi_rst),
+      .reg_rst_we_o(hci_ibi_rst_we),
+      .reg_rst_data_o(hci_ibi_rst_next)
   );
 
 endmodule : hci

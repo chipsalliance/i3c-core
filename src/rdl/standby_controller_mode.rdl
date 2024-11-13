@@ -185,12 +185,14 @@ regfile StandbyControllerModeRegisters{
             ";
             hw   = rw;
             sw   = rw;
+            we   = true;
         } DYNAMIC_ADDR_VALID[31:31];
         field {
             name = "Device Dynamic Address";
             desc = "Contains the Host Controller Device’s Dynamic Address.";
             hw   = rw;
             sw   = rw;
+            we   = true;
         } DYNAMIC_ADDR[22:16];
         field {
             name = "Static Address is Valid";
@@ -202,12 +204,14 @@ regfile StandbyControllerModeRegisters{
             ";
             hw   = rw;
             sw   = rw;
+            we   = true;
         } STATIC_ADDR_VALID[15:15];
         field {
             name = "Device Static Address";
             desc = "This field contains the Host Controller Device’s Static Address.";
             hw   = rw;
             sw   = rw;
+            we   = true;
         } STATIC_ADDR[6:0];
     } STBY_CR_DEVICE_ADDR;
     reg {

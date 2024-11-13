@@ -176,7 +176,11 @@ reg_map = Munch.fromDict(
                 "offset": 136,
                 "RX_DATA": {"low": 0, "mask": 4294967295},
             },
-            "IBI_PORT": {"base_addr": 140, "offset": 140, "IBI_DATA": {"low": 0, "mask": 1}},
+            "IBI_PORT": {
+                "base_addr": 140,
+                "offset": 140,
+                "IBI_DATA": {"low": 0, "mask": 4294967295},
+            },
             "QUEUE_THLD_CTRL": {
                 "base_addr": 144,
                 "offset": 144,
@@ -587,6 +591,7 @@ reg_map = Munch.fromDict(
                     "RX_DESC_THLD_STAT": {"low": 11, "mask": 2048},
                     "IBI_THLD_STAT": {"low": 12, "mask": 4096},
                     "IBI_DONE": {"low": 13, "mask": 8192},
+                    "PENDING_INTERRUPT": {"low": 15, "mask": 491520},
                     "TRANSFER_ABORT_STAT": {"low": 25, "mask": 33554432},
                     "TRANSFER_ERR_STAT": {"low": 31, "mask": 2147483648},
                 },

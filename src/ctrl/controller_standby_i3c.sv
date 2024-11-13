@@ -8,12 +8,9 @@ module controller_standby_i3c
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiRxDataWidth = 8,
     parameter int unsigned TtiTxDataWidth = 8,
-    parameter int unsigned TtiIbiDataWidth = 32,
-
-    parameter int unsigned TtiRxDescThldWidth = 8,
-    parameter int unsigned TtiTxDescThldWidth = 8,
-    parameter int unsigned TtiRxThldWidth = 3,
-    parameter int unsigned TtiTxThldWidth = 3
+    parameter int unsigned TtiTxFifoDepth = 16,  // FIXME
+    localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
+    parameter int unsigned TtiIbiDataWidth = 32
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -28,43 +25,22 @@ module controller_standby_i3c
     // Target Transaction Interface
 
     // TTI: RX Descriptor
-    input logic rx_desc_queue_full_i,
-    input logic [TtiRxDescThldWidth-1:0] rx_desc_queue_ready_thld_i,
-    input logic rx_desc_queue_ready_thld_trig_i,
-    input logic rx_desc_queue_empty_i,
     output logic rx_desc_queue_wvalid_o,
-    input logic rx_desc_queue_wready_i,
     output logic [TtiRxDescDataWidth-1:0] rx_desc_queue_wdata_o,
 
     // TTI: TX Descriptor
-    input logic tx_desc_queue_full_i,
-    input logic [TtiTxDescThldWidth-1:0] tx_desc_queue_ready_thld_i,
-    input logic tx_desc_queue_ready_thld_trig_i,
-    input logic tx_desc_queue_empty_i,
     input logic tx_desc_queue_rvalid_i,
     output logic tx_desc_queue_rready_o,
     input logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
 
     // TTI: RX Data
     input logic rx_queue_full_i,
-    input logic [TtiRxThldWidth-1:0] rx_queue_start_thld_i,
-    input logic rx_queue_start_thld_trig_i,
-    input logic [TtiRxThldWidth-1:0] rx_queue_ready_thld_i,
-    input logic rx_queue_ready_thld_trig_i,
-    input logic rx_queue_empty_i,
     output logic rx_queue_wvalid_o,
-    input logic rx_queue_wready_i,
     output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
-    output logic rx_queue_wflush_o,
 
     // TTI: TX Data
-    input logic tx_queue_full_i,
-    input logic [TtiTxThldWidth-1:0] tx_queue_start_thld_i,
-    input logic tx_queue_start_thld_trig_i,
-    input logic [TtiTxThldWidth-1:0] tx_queue_ready_thld_i,
-    input logic tx_queue_ready_thld_trig_i,
-    input logic tx_queue_empty_i,
     input logic tx_queue_rvalid_i,
+    input logic [TtiTxFifoDepthWidth-1:0] tx_queue_depth_i,
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
 
@@ -85,11 +61,6 @@ module controller_standby_i3c
     output logic bus_addr_valid_o,
 
     // Configuration
-    input logic phy_en_i,
-    input logic [1:0] phy_mux_select_i,
-    input logic i2c_active_en_i,
-    input logic i2c_standby_en_i,
-    input logic i3c_active_en_i,
     input logic i3c_standby_en_i,
     input logic [19:0] t_su_dat_i,
     input logic [19:0] t_hd_dat_i,
@@ -98,210 +69,515 @@ module controller_standby_i3c
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
+    input logic [47:0] pid_i,
+    input logic [7:0] bcr_i,
+    input logic [7:0] dcr_i,
+    input logic [6:0] target_sta_addr_i,
+    input logic target_sta_addr_valid_i,
+    input logic [6:0] target_dyn_addr_i,
+    input logic target_dyn_addr_valid_i,
+    input logic [6:0] target_ibi_addr_i,
+    input logic target_ibi_addr_valid_i,
+    input logic [6:0] target_hot_join_addr_i,
+    input logic [63:0] daa_unique_response_i,
 
     output logic [7:0] rst_action_o,
     output logic tx_host_nack_o
 );
-  // TODO: Set TTI descriptor outputs
-  always_comb begin
-    rx_desc_queue_wvalid_o = 1'b0;
-    rx_desc_queue_wdata_o  = '0;
-    tx_desc_queue_rready_o = 1'b0;
-  end
+  logic i3c_standby_en;
+  assign i3c_standby_en = i3c_standby_en_i;
 
-  logic [1:0] transfer_type;
-  logic rx_byte_valid;
-  logic [7:0] rx_byte;
-  logic rx_byte_ready;
-  logic tx_byte_valid;
-  logic [7:0] tx_byte;
-  logic tx_byte_ready;
+  // Bus events detection
+  logic bus_start_det;
+  logic bus_rstart_det;
+  logic bus_stop_det;
+  logic bus_timeout;
+  logic scl_negedge;
+  logic scl_posedge;
+  logic sda_negedge;
+  logic sda_posedge;
 
-  logic start_detect;
-  logic stop_detect;
+  // Target control signals
+  logic target_idle;
+  logic target_transmitting;
+
+  // Bus TX flow
+  logic bus_tx_req_err;
+  logic bus_tx_done;
+  logic bus_tx_idle;
+  logic bus_tx_req_byte;
+  logic bus_tx_req_bit;
+  logic [7:0] bus_tx_req_value;
+  logic bus_tx_sel_od_pp;
+
+  logic fsm_bus_tx_req_err;
+  logic fsm_bus_tx_done;
+  logic fsm_bus_tx_idle;
+  logic fsm_bus_tx_req_byte;
+  logic fsm_bus_tx_req_bit;
+  logic [7:0] fsm_bus_tx_req_value;
+  logic fsm_bus_tx_sel_od_pp;
+
+  logic ccc_bus_tx_req_err;
+  logic ccc_bus_tx_done;
+  logic ccc_bus_tx_idle;
+  logic ccc_bus_tx_req_byte;
+  logic ccc_bus_tx_req_bit;
+  logic [7:0] ccc_bus_tx_req_value;
+  logic ccc_bus_tx_sel_od_pp;
+
+  // Bus RX flow
+  logic bus_rx_req_bit;
+  logic bus_rx_req_byte;
+  logic bus_rx_done;
+  logic bus_rx_idle;
+  logic [7:0] bus_rx_data;
+  logic bus_rx_error;
+
+  logic fsm_bus_rx_req_bit;
+  logic fsm_bus_rx_req_byte;
+  logic fsm_bus_rx_done;
+  logic fsm_bus_rx_idle;
+  logic [7:0] fsm_bus_rx_data;
+  logic fsm_bus_rx_error;
+
+  logic ccc_bus_rx_req_bit;
+  logic ccc_bus_rx_req_byte;
+  logic ccc_bus_rx_done;
+  logic ccc_bus_rx_idle;
+  logic [7:0] ccc_bus_rx_data;
+  logic ccc_bus_rx_error;
+
+  // TX Queue interface
+  logic tx_fifo_rvalid;
+  logic tx_fifo_rready;
+  logic [7:0] tx_fifo_rdata;
+  logic tx_host_nack;
+
+  // RX Queue interface
+  logic rx_fifo_wvalid;
+  logic [7:0] rx_fifo_wdata;
+  logic rx_fifo_wready;
+  logic rx_last_byte;
+  logic tx_last_byte;
+
+  // IBI Queue interface
+  logic ibi_fifo_rvalid;
+  logic ibi_fifo_rready;
+  logic [31:0] ibi_fifo_rdata;
+  logic ibi_last_byte;
+
+  // Bus events notifications
+  logic event_target_nack;
+  logic event_cmd_complete;
+  logic event_unexp_stop;
+  logic event_tx_arbitration_lost;
+  logic event_tx_bus_timeout;
+  logic event_read_cmd_received;
+
+  // Special bus patterns
   logic target_reset_detect;
-
-  logic is_in_hdr_mode;
   logic hdr_exit_detect;
+  logic is_in_hdr_mode;
 
-  flow_standby_i3c xflow_standby_i3c (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .enable_i(i3c_standby_en_i),
-      .rx_queue_full_i(rx_queue_full_i),
-      .rx_queue_empty_i(rx_queue_empty_i),
-      .rx_queue_wvalid_o(rx_queue_wvalid_o),
-      .rx_queue_wready_i(rx_queue_wready_i),
-      .rx_queue_wdata_o(rx_queue_wdata_o),
-      .rx_queue_wflush_o(rx_queue_wflush_o),
+  // SubFSMs status
+  logic is_ibi_done;
 
-      .tx_queue_full_i  (tx_queue_full_i),
-      .tx_queue_empty_i (tx_queue_empty_i),
-      .tx_queue_rvalid_i(tx_queue_rvalid_i),
-      .tx_queue_rready_o(tx_queue_rready_o),
-      .tx_queue_rdata_i (tx_queue_rdata_i),
+  logic [7:0] ccc;
+  logic ccc_valid;
+  logic is_ccc_done;
+  logic is_hotjoin_done;
 
-      .transfer_start_i(start_detect),  // Repeated start is not filtered from this signal
-      .transfer_stop_i(stop_detect),
-      .transfer_type_i(transfer_type),
-      .rx_byte_valid_i(rx_byte_valid),
-      .rx_byte_i(rx_byte),
-      .rx_byte_ready_o(rx_byte_ready),
-      .tx_byte_valid_o(tx_byte_valid),
-      .tx_byte_o(tx_byte),
-      .tx_byte_ready_i(tx_byte_ready)
-  );
+  logic parity_err;
 
-  logic i3c_bus_arbitration_lost_i;
-  logic i3c_bus_timeout_i;
-  logic i3c_target_idle_o;
-  logic i3c_target_transmitting_o;
+  // Bus monitor
+  logic scl_stable_low;
+  logic scl_stable_high;
 
-  // TODO: Handle
-  always_comb begin
-    i3c_bus_arbitration_lost_i = '0;
-    i3c_bus_timeout_i = '0;
-  end
-
-  logic i3c_event_target_nack_o;
-  logic i3c_event_cmd_complete_o;
-  logic i3c_event_unexp_stop_o;
-  logic i3c_event_tx_arbitration_lost_o;
-  logic i3c_event_tx_bus_timeout_o;
-  logic i3c_event_read_cmd_received_o;
-
-  // Target FSM <--> DAA
-  logic [6:0] bus_addr;
-  logic bus_rnw;
-  logic bus_addr_match;
-  logic bus_addr_valid;
-  logic is_sta_addr_match;
-  logic is_dyn_addr_match;
-  logic is_i3c_rsvd_addr_match;
-  logic is_any_addr_match;
-  // TODO: Connect to CSR
-  logic [31:0] stby_cr_device_addr_reg;
-  logic [31:0] stby_cr_device_char_reg;
-  logic [31:0] stby_cr_device_pid_lo_reg;
-  logic [63:0] daa_unique_response;
-  // Valid, rsvd, dynamic addr, valid, rsvd, static addr
-  assign stby_cr_device_addr_reg   = {1'b1, 8'h00, 7'h5A, 1'b1, 8'h00, 7'h22};
-  assign stby_cr_device_char_reg   = '0;
-  assign stby_cr_device_pid_lo_reg = '0;
-  // Effective address for IBIs
-  logic [6:0] target_address;
-  // end: Target FSM <--> DAA
-
+  //
+  logic rx_overflow_err;
+  logic bus_error;
   logic bus_busy;
   logic bus_free;
   logic bus_idle;
   logic bus_available;
 
-  i3c_target_fsm xi3c_target_fsm (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .target_enable_i(i3c_standby_en_i),
-      .scl_i(ctrl_scl_i),
-      .scl_o(ctrl_scl_o),
-      .sda_i(ctrl_sda_i),
-      .sda_o(ctrl_sda_o),
-      .sel_od_pp_o(phy_sel_od_pp_o),
-      .bus_start_det_i(start_detect),
-      .bus_stop_detect_i(stop_detect),
-      .bus_arbitration_lost_i(i3c_bus_arbitration_lost_i),
-      .bus_timeout_i(i3c_bus_timeout_i),
-      .bus_rstart_det_o(rstart_detect),
-      .target_idle_o(i3c_target_idle_o),
-      .target_transmitting_o(i3c_target_transmitting_o),
-      .tx_fifo_rvalid_i(tx_byte_valid),
-      .tx_fifo_rready_o(tx_byte_ready),
-      .tx_fifo_rdata_i(tx_byte),
-      .tx_host_nack_o(tx_host_nack_o),
-      .rx_fifo_wvalid_o(rx_byte_valid),
-      .rx_fifo_wdata_o(rx_byte),
-      .rx_fifo_wready_i(rx_byte_ready),
-      .ibi_fifo_rvalid_i(ibi_queue_rvalid_i),
-      .ibi_fifo_rready_o(ibi_queue_rready_o),
-      // FIXME: Here we connect 32-bit data to 8-bit input. This is ok for now as we send MDB byte only.
-      .ibi_fifo_rdata_i(ibi_queue_rdata_i),
-      .ibi_address_i(target_address),
-      .transfer_type_o(transfer_type),
-      .t_r_i(t_r_i),
-      .t_f_i(t_f_i),
-      .tsu_dat_i(t_su_dat_i),
-      .thd_dat_i(t_hd_dat_i),
-      .is_sta_addr_match(is_sta_addr_match),
-      .is_dyn_addr_match(is_dyn_addr_match),
-      .bus_addr(bus_addr),
-      .bus_rnw(bus_rnw),
-      .bus_addr_match(bus_addr_match),
-      .bus_addr_valid(bus_addr_valid),
-      .is_i3c_rsvd_addr_match(is_i3c_rsvd_addr_match),
-      .is_any_addr_match(is_any_addr_match),
-      .event_target_nack_o(i3c_event_target_nack_o),
-      .event_cmd_complete_o(i3c_event_cmd_complete_o),
-      .event_unexp_stop_o(i3c_event_unexp_stop_o),
-      .event_tx_arbitration_lost_o(i3c_event_tx_arbitration_lost_o),
-      .event_tx_bus_timeout_o(i3c_event_tx_bus_timeout_o),
-      .event_read_cmd_received_o(i3c_event_read_cmd_received_o),
-      .rst_action_o(rst_action_o),
-      .is_in_hdr_mode_o(is_in_hdr_mode),
-      .hdr_exit_detect_i(hdr_exit_detect)
+  // CCCs
+  logic enec;
+  logic disec;
+  logic entas0, entas1, entas2, entas3;
+  logic rstdaa, entdaa;
+  logic set_mwl, set_mrl;
+  logic [15:0] mwl, mrl;
+  logic ent_tm;
+  logic [7:0] tm;
+  logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
+  logic set_dasa;
+  logic [7:0] rst_action;  // FIXME: Why CCC and FSM has rst_action as output?
+  logic set_newda;
+  logic [6:0] newda;
+  logic [15:0] get_mwl;
+  logic [15:0] get_mrl;
+  logic [47:0] get_pid;
+  logic [7:0] get_bcr;
+  logic [7:0] get_dcr;
+  logic [15:0] get_status_fmt1;
+  logic get_acccr;
+  logic set_brgtgt;
+  logic get_mxds;
+
+  // Drive all unused inputs here
+  always_comb begin
+    // FIXME: IBI module will drive scl
+    ctrl_scl_o = '1;
+  end
+
+  typedef enum logic [1:0] {
+    Fsm,
+    Ccc,
+    Ibi
+  } xfer_mux_sel_e;
+
+  // Mux Rx/Tx between
+  // 0 - Target FSM
+  // 1 - CCC
+  // 2 - IBI
+  xfer_mux_sel_e xfer_mux_sel;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      xfer_mux_sel <= Fsm;
+    end else begin
+      if (ccc_valid) xfer_mux_sel <= Ccc;
+      else if (is_ccc_done) xfer_mux_sel <= Fsm;
+    end
+  end
+
+
+  always_comb begin
+    ccc_bus_tx_req_err = '0;
+    ccc_bus_tx_done    = '0;
+    ccc_bus_tx_idle    = '0;
+    fsm_bus_tx_req_err = '0;
+    fsm_bus_tx_done    = '0;
+    fsm_bus_tx_idle    = '0;
+    bus_tx_req_byte    = '0;
+    bus_tx_req_bit     = '0;
+    bus_tx_req_value   = '0;
+    bus_tx_sel_od_pp   = '0;
+    bus_rx_req_bit     = '0;
+    bus_rx_req_byte    = '0;
+    fsm_bus_rx_done    = '0;
+    fsm_bus_rx_idle    = '0;
+    fsm_bus_rx_data    = '0;
+    fsm_bus_rx_error   = '0;
+    ccc_bus_rx_done    = '0;
+    ccc_bus_rx_idle    = '0;
+    ccc_bus_rx_data    = '0;
+    ccc_bus_rx_error   = '0;
+
+    unique case (xfer_mux_sel)
+      Fsm: begin
+        fsm_bus_tx_req_err = bus_tx_req_err;
+        fsm_bus_tx_done    = bus_tx_done;
+        fsm_bus_tx_idle    = bus_tx_idle;
+        bus_tx_req_byte    = fsm_bus_tx_req_byte;
+        bus_tx_req_bit     = fsm_bus_tx_req_bit;
+        bus_tx_req_value   = fsm_bus_tx_req_value;
+        bus_tx_sel_od_pp   = fsm_bus_tx_sel_od_pp;
+
+        bus_rx_req_bit     = fsm_bus_rx_req_bit;
+        bus_rx_req_byte    = fsm_bus_rx_req_byte;
+        fsm_bus_rx_done    = bus_rx_done;
+        fsm_bus_rx_idle    = bus_rx_idle;
+        fsm_bus_rx_data    = bus_rx_data;
+        fsm_bus_rx_error   = bus_rx_error;
+      end
+      Ccc: begin
+        ccc_bus_tx_req_err = bus_tx_req_err;
+        ccc_bus_tx_done    = bus_tx_done;
+        ccc_bus_tx_idle    = bus_tx_idle;
+        bus_tx_req_byte    = ccc_bus_tx_req_byte;
+        bus_tx_req_bit     = ccc_bus_tx_req_bit;
+        bus_tx_req_value   = ccc_bus_tx_req_value;
+        bus_tx_sel_od_pp   = ccc_bus_tx_sel_od_pp;
+
+        bus_rx_req_bit     = ccc_bus_rx_req_bit;
+        bus_rx_req_byte    = ccc_bus_rx_req_byte;
+        ccc_bus_rx_done    = bus_rx_done;
+        ccc_bus_rx_idle    = bus_rx_idle;
+        ccc_bus_rx_data    = bus_rx_data;
+        ccc_bus_rx_error   = bus_rx_error;
+      end
+      Ibi: begin
+      end
+      default: ;
+    endcase
+  end
+
+  i3c_target_fsm #(
+      .RxDataWidth (8),
+      .TxDataWidth (8),
+      .IbiDataWidth(32)
+  ) u_i3c_target_fsm (
+      .clk_i,
+      .rst_ni,
+      .target_enable_i      (i3c_standby_en),
+      .bus_start_det_i      (bus_start_det),
+      .bus_rstart_det_i     (bus_rstart_det),
+      .bus_stop_det_i       (bus_stop_det),
+      .bus_timeout_i        (bus_timeout),
+      .target_idle_o        (target_idle),
+      .target_transmitting_o(target_transmitting),
+      .bus_tx_req_err_i     (fsm_bus_tx_req_err),
+      .bus_tx_done_i        (fsm_bus_tx_done),
+      .bus_tx_idle_i        (fsm_bus_tx_idle),
+      .bus_tx_req_byte_o    (fsm_bus_tx_req_byte),
+      .bus_tx_req_bit_o     (fsm_bus_tx_req_bit),
+      .bus_tx_req_value_o   (fsm_bus_tx_req_value),
+      .bus_tx_sel_od_pp_o   (fsm_bus_tx_sel_od_pp),
+      .bus_rx_req_bit_o     (fsm_bus_rx_req_bit),
+      .bus_rx_req_byte_o    (fsm_bus_rx_req_byte),
+      .bus_rx_done_i        (fsm_bus_rx_done),
+      .bus_rx_idle_i        (fsm_bus_rx_idle),
+      .bus_rx_data_i        (fsm_bus_rx_data),
+      .bus_rx_error_i       (fsm_bus_rx_error),
+
+      .tx_fifo_rvalid_i           (tx_fifo_rvalid),
+      .tx_fifo_rready_o           (tx_fifo_rready),
+      .tx_fifo_rdata_i            (tx_fifo_rdata),
+      .tx_host_nack_o             (tx_host_nack),
+      .tx_last_byte_i             (tx_last_byte),
+      .rx_fifo_wvalid_o           (rx_fifo_wvalid),
+      .rx_fifo_wdata_o            (rx_fifo_wdata),
+      .rx_fifo_wready_i           (rx_fifo_wready),
+      .rx_last_byte_o             (rx_last_byte),
+      .ibi_fifo_rvalid_i          (ibi_fifo_rvalid),
+      .ibi_fifo_rready_o          (ibi_fifo_rready),
+      .ibi_fifo_rdata_i           (ibi_fifo_rdata),
+      .ibi_last_byte_i            (ibi_last_byte),
+      .target_sta_address_i       (target_sta_addr_i),
+      .target_sta_address_valid_i (target_sta_addr_valid_i),
+      .target_dyn_address_i       (target_dyn_addr_i),
+      .target_dyn_address_valid_i (target_dyn_addr_valid_i),
+      .target_ibi_address_i       (target_ibi_addr_i),
+      .target_ibi_address_valid_i (target_ibi_addr_valid_i),
+      .event_target_nack_o        (event_target_nack),
+      .event_cmd_complete_o       (event_cmd_complete),
+      .event_unexp_stop_o         (event_unexp_stop),
+      .event_tx_arbitration_lost_o(event_tx_arbitration_lost),
+      .event_tx_bus_timeout_o     (event_tx_bus_timeout),
+      .event_read_cmd_received_o  (event_read_cmd_received),
+      .target_reset_detect_i      (target_reset_detect),
+      .rst_action_o,
+      .hdr_exit_detect_i          (hdr_exit_detect),
+      .is_in_hdr_mode_o           (is_in_hdr_mode),
+      .is_ibi_done_i              (is_ibi_done),
+      .ccc_o                      (ccc),
+      .ccc_valid_o                (ccc_valid),
+      .is_ccc_done_i              (is_ccc_done),
+      .is_hotjoin_done_i          (is_hotjoin_done),
+      .last_addr_o                (bus_addr_o),
+      .last_addr_valid_o          (bus_addr_valid_o),
+      .scl_negedge_i              (scl_negedge),
+      .scl_posedge_i              (scl_posedge),
+      .sda_negedge_i              (sda_negedge),
+      .sda_posedge_i              (sda_posedge),
+      .parity_err_o               (parity_err),
+      .rx_overflow_err_o          (rx_overflow_err)
   );
 
-  bus_monitor xbus_monitor (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .enable_i(i3c_standby_en_i),
-      .scl_i(ctrl_scl_i),
-      .sda_i(ctrl_sda_i),
-      .t_hd_dat_i(t_hd_dat_i),
-      .t_r_i(t_r_i),
-      .t_f_i(t_f_i),
-      .start_detect_o(start_detect),
-      .stop_detect_o(stop_detect),
-      .is_in_hdr_mode_i(is_in_hdr_mode),
-      .hdr_exit_detect_o(hdr_exit_detect),
+  ccc u_ccc (
+      .clk_i,
+      .rst_ni,
+      .ccc_i                     (ccc),
+      .ccc_valid_i               (ccc_valid),
+      .done_fsm_o                (is_ccc_done),
+      .bus_start_det_i           (bus_start_det),
+      .bus_stop_det_i            (bus_stop_det),
+      .bus_tx_done_i             (ccc_bus_tx_done),
+      .bus_tx_req_byte_o         (ccc_bus_tx_req_byte),
+      .bus_tx_req_bit_o          (ccc_bus_tx_req_bit),
+      .bus_tx_req_value_o        (ccc_bus_tx_req_value),
+      .bus_rx_data_i             (ccc_bus_rx_data),
+      .bus_rx_done_i             (ccc_bus_rx_done),
+      .bus_rx_req_bit_o          (ccc_bus_rx_req_bit),
+      .bus_rx_req_byte_o         (ccc_bus_rx_req_byte),
+      .target_sta_address_i      (target_sta_addr_i),
+      .target_sta_address_valid_i(target_sta_addr_valid_i),
+      .target_dyn_address_i      (target_dyn_addr_i),
+      .target_dyn_address_valid_i(target_dyn_addr_valid_i),
+      .enec_o                    (enec),
+      .disec_o                   (disec),
+      .entas0_o                  (entas0),
+      .entas1_o                  (entas1),
+      .entas2_o                  (entas2),
+      .entas3_o                  (entas3),
+      .rstdaa_o                  (rstdaa),
+      .entdaa_o                  (entdaa),
+      .set_mwl_o                 (set_mwl),
+      .mwl_o                     (mwl),
+      .set_mrl_o                 (set_mrl),
+      .mrl_o                     (mrl),
+      .ent_tm_o                  (ent_tm),
+      .tm_o                      (tm),
+      .ent_hdr_0_o               (ent_hdr_0),
+      .ent_hdr_1_o               (ent_hdr_1),
+      .ent_hdr_2_o               (ent_hdr_2),
+      .ent_hdr_3_o               (ent_hdr_3),
+      .ent_hdr_4_o               (ent_hdr_4),
+      .ent_hdr_5_o               (ent_hdr_5),
+      .ent_hdr_6_o               (ent_hdr_6),
+      .ent_hdr_7_o               (ent_hdr_7),
+      .set_dasa_o                (set_dasa),
+      .rst_action_o              (rst_action),
+      .set_newda_o               (set_newda),
+      .newda_o                   (newda),
+      .get_mwl_i                 (get_mwl),
+      .get_mrl_i                 (get_mrl),
+      .get_pid_i                 (get_pid),
+      .get_bcr_i                 (get_bcr),
+      .get_dcr_i                 (get_dcr),
+      .get_status_fmt1_i         (get_status_fmt1),
+      .get_acccr_i               (get_acccr),
+      .set_brgtgt_o              (set_brgtgt),
+      .get_mxds_i                (get_mxds)
+  );
+
+  bus_tx_flow u_bus_tx_flow (
+      .clk_i,
+      .rst_ni,
+      .t_r_i,
+      .t_su_dat_i,
+      .t_hd_dat_i,
+      .scl_negedge_i   (scl_negedge),
+      .scl_posedge_i   (scl_posedge),
+      .scl_stable_low_i(scl_stable_low),
+      .req_byte_i      (bus_tx_req_byte),
+      .req_bit_i       (bus_tx_req_bit),
+      .req_value_i     (bus_tx_req_value),
+      .bus_tx_done_o   (bus_tx_done),
+      .bus_tx_idle_o   (bus_tx_idle),
+      .req_error_o     (bus_tx_req_err),
+      .bus_error_o     (bus_error),
+      .sel_od_pp_i     (bus_tx_sel_od_pp),
+      .sel_od_pp_o     (phy_sel_od_pp_o),
+      .sda_o           (ctrl_sda_o)
+  );
+
+  bus_rx_flow u_bus_rx_flow (
+      .clk_i,
+      .rst_ni,
+      .scl_posedge_i    (scl_posedge),
+      .scl_stable_high_i(scl_stable_high),
+      .sda_i            (ctrl_sda_i),
+      .rx_req_bit_i     (bus_rx_req_bit),
+      .rx_req_byte_i    (bus_rx_req_byte),
+      .rx_data_o        (bus_rx_data),
+      .rx_done_o        (bus_rx_done),
+      .rx_idle_o        (bus_rx_idle),
+      .error_o          (bus_rx_error)
+  );
+
+  bus_monitor u_bus_monitor (
+      .clk_i,
+      .rst_ni,
+      .enable_i             (i3c_standby_en),
+      .scl_i                (ctrl_scl_i),
+      .sda_i                (ctrl_sda_i),
+      .t_hd_dat_i,
+      .t_r_i,
+      .t_f_i,
+      .scl_negedge_o        (scl_negedge),
+      .scl_posedge_o        (scl_posedge),
+      .sda_negedge_o        (sda_negedge),
+      .sda_posedge_o        (sda_posedge),
+      .scl_stable_low_o     (scl_stable_low),
+      .scl_stable_high_o    (scl_stable_high),
+      .start_det_o          (bus_start_det),
+      .rstart_det_o         (bus_rstart_det),
+      .stop_det_o           (bus_stop_det),
+      .is_in_hdr_mode_i     (is_in_hdr_mode),
+      .hdr_exit_detect_o    (hdr_exit_detect),
       .target_reset_detect_o(target_reset_detect)
   );
 
-  bus_timers xbus_timers (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .enable_i(i3c_standby_en_i),
-      .restart_counter_i(stop_detect),
-      .t_bus_free_i(t_bus_free_i),
-      .t_bus_idle_i(t_bus_idle_i),
+  bus_timers u_bus_timers (
+      .clk_i,
+      .rst_ni,
+      .enable_i         (i3c_standby_en),
+      .restart_counter_i(bus_stop_det),
+      .t_bus_free_i     (t_bus_free_i),
+      .t_bus_idle_i     (t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
-      .bus_busy_o(bus_busy),
-      .bus_free_o(bus_free),
-      .bus_idle_o(bus_idle),
-      .bus_available_o(bus_available)
+      .bus_busy_o       (bus_busy),
+      .bus_free_o       (bus_free),
+      .bus_idle_o       (bus_idle),
+      .bus_available_o  (bus_available)
   );
 
-  daa xdaa (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .bus_addr(bus_addr),
-      .bus_addr_valid(bus_addr_valid),
-      .is_sta_addr_match_o(is_sta_addr_match),
-      .is_dyn_addr_match_o(is_dyn_addr_match),
-      .is_i3c_rsvd_addr_match_o(is_i3c_rsvd_addr_match),
-      .is_any_addr_match_o(is_any_addr_match),
-      .stby_cr_device_addr_reg(stby_cr_device_addr_reg),
-      .stby_cr_device_char_reg(stby_cr_device_char_reg),
-      .stby_cr_device_pid_lo_reg(stby_cr_device_pid_lo_reg),
-      .daa_unique_response(daa_unique_response),
-      .target_address_o(target_address)
+  descriptor_rx #(
+      .TtiRxDescDataWidth(TtiRxDescDataWidth),
+      .TtiRxDataWidth    (TtiRxDataWidth)
+  ) u_descriptor_rx (
+      .clk_i                     (clk_i),
+      .rst_ni                    (rst_ni),
+      .tti_rx_desc_queue_wvalid_o(rx_desc_queue_wvalid_o),
+      .tti_rx_desc_queue_wdata_o (rx_desc_queue_wdata_o),
+      .tti_rx_queue_full_i       (rx_queue_full_i),
+      .tti_rx_queue_wvalid_o     (rx_queue_wvalid_o),
+      .tti_rx_queue_wdata_o      (rx_queue_wdata_o),
+      .rx_byte_i                 (rx_fifo_wdata),
+      .rx_byte_last_i            (rx_last_byte),
+      .rx_byte_valid_i           (rx_fifo_wvalid),
+      .rx_byte_ready_o           (rx_fifo_wready),
+      .rx_byte_err_i             ('0)                       // FIXME
   );
+
+  descriptor_tx #(
+      .TtiTxDescDataWidth(TtiTxDescDataWidth),
+      .TtiTxDataWidth    (TtiTxDataWidth),
+      .TtiTxDataDepth    (TtiTxFifoDepthWidth)
+  ) u_descriptor_tx (
+      .clk_i                     (clk_i),
+      .rst_ni                    (rst_ni),
+      .tti_tx_desc_queue_rvalid_i(tx_desc_queue_rvalid_i),
+      .tti_tx_desc_queue_rready_o(tx_desc_queue_rready_o),
+      .tti_tx_desc_queue_rdata_i (tx_desc_queue_rdata_i),
+      .tti_tx_queue_rvalid_i     (tx_queue_rvalid_i),
+      .tti_tx_queue_depth_i      (tx_queue_depth_i),
+      .tti_tx_queue_rready_o     (tx_queue_rready_o),
+      .tti_tx_queue_rdata_i      (tx_queue_rdata_i),
+      .tx_byte_o                 (tx_fifo_rdata),
+      .tx_byte_last_o            (tx_last_byte),
+      .tx_byte_valid_o           (tx_fifo_rvalid),
+      .tx_byte_ready_i           (tx_fifo_rready),
+      .tx_byte_err_i             (tx_host_nack)
+  );
+
+  descriptor_ibi #(
+      .TtiIbiDataWidth(TtiIbiDataWidth)
+  ) u_descriptor_ibi (
+      .clk_i             (clk_i),
+      .rst_ni            (rst_ni),
+      .ibi_queue_full_i  (ibi_queue_full_i),
+      .ibi_queue_empty_i (ibi_queue_empty_i),
+      .ibi_queue_rvalid_i(ibi_queue_rvalid_i),
+      .ibi_queue_rready_o(ibi_queue_rready_o),
+      .ibi_queue_rdata_i (ibi_queue_rdata_i),
+      .ibi_fifo_rvalid_o (ibi_fifo_rvalid),
+      .ibi_fifo_rready_i (ibi_fifo_rready),
+      .ibi_fifo_rdata_o  (ibi_fifo_rdata),
+      .ibi_last_o        (ibi_last_byte),
+      .ibi_err_i         ('0)                   // FIXME
+  );
+
+
+  assign tx_host_nack_o = tx_host_nack;
 
   // Expose bus condition detection
-  assign bus_start_o = start_detect;
-  assign bus_rstart_o = rstart_detect;
-  assign bus_stop_o = stop_detect;
-
-  // Expose the received address + RnW bit
-  assign bus_addr_o = {bus_addr, bus_rnw};
-  assign bus_addr_valid_o = bus_addr_match;
+  assign bus_start_o = bus_start_det;
+  assign bus_rstart_o = bus_rstart_det;
+  assign bus_stop_o = bus_stop_det;
 
 endmodule

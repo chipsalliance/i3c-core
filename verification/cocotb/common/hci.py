@@ -209,19 +209,19 @@ class HCIBaseTestInterface:
         await RisingEdge(self.clk)
 
     def get_empty(self, queue: str):
-        return getattr(self.dut, f"{self.if_name}_{queue}_queue_empty_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_empty_o").value
 
     def get_full(self, queue: str):
-        return getattr(self.dut, f"{self.if_name}_{queue}_queue_full_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_full_o").value
 
     def get_thld(self, queue: str, type: str):
         assert type in ["start", "ready"]
-        return getattr(self.dut, f"{self.if_name}_{queue}_queue_{type}_thld_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_{type}_thld_o").value
 
     def get_thld_status(self, queue: str, type: str):
         assert type in ["start", "ready"]
         assert queue in self.supported_queues
-        return getattr(self.dut, f"{self.if_name}_{queue}_queue_{type}_thld_trig_o").value
+        return getattr(self.dut, f"{self.if_name}_{queue}_{type}_thld_trig_o").value
 
     # Helper functions to fetch / put data to either side
     # of the queues

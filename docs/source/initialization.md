@@ -94,6 +94,12 @@ I3C_EC.SOCMGMTIF.T_HD_DAT_REG = 0xA
 I3C_EC.SOCMGMTIF.T_SU_DAT_REG =  0xA
 ```
 
+Configure the static address to a desired value and set valid bit:
+```
+I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR = <value>
+I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID = 0x1
+```
+
 Enable Standby Configuration:
 ```
 I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT = 0x2

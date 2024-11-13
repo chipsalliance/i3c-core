@@ -14,6 +14,12 @@ module hci_queues_wrapper
     parameter int unsigned HciTxFifoDepth   = 64,
     parameter int unsigned HciIbiFifoDepth  = 64,
 
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -26,11 +32,17 @@ module hci_queues_wrapper
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRespFifoDepth = 64,
-    parameter int unsigned TtiCmdFifoDepth  = 64,
-    parameter int unsigned TtiRxFifoDepth   = 64,
-    parameter int unsigned TtiTxFifoDepth   = 64,
-    parameter int unsigned TtiIbiFifoDepth  = 64,
+    parameter int unsigned TtiRxDescFifoDepth = 64,
+    parameter int unsigned TtiTxDescFifoDepth = 64,
+    parameter int unsigned TtiRxDataFifoDepth = 64,
+    parameter int unsigned TtiTxDataFifoDepth = 64,
+    parameter int unsigned TtiIbiFifoDepth = 64,
+
+    localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
+    localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
+    localparam int unsigned TtiRxDataFifoDepthWidth = $clog2(TtiRxDataFifoDepth + 1),
+    localparam int unsigned TtiTxDataFifoDepthWidth = $clog2(TtiTxDataFifoDepth + 1),
+    localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
 
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
@@ -64,104 +76,125 @@ module hci_queues_wrapper
 
     // HCI queues (FSM side)
     // Response queue
-    output logic [HciRespThldWidth-1:0] hci_resp_queue_ready_thld_o,
-    output logic hci_resp_queue_full_o,
-    output logic hci_resp_queue_ready_thld_trig_o,
-    output logic hci_resp_queue_empty_o,
-    input logic hci_resp_queue_wvalid_i,
-    output logic hci_resp_queue_wready_o,
-    input logic [HciRespDataWidth-1:0] hci_resp_queue_wdata_i,
+    output logic [HciRespThldWidth-1:0] hci_resp_ready_thld_o,
+    output logic hci_resp_full_o,
+    output logic [HciRespFifoDepthWidth-1:0] hci_resp_depth_o,
+    output logic hci_resp_ready_thld_trig_o,
+    output logic hci_resp_empty_o,
+    input logic hci_resp_wvalid_i,
+    output logic hci_resp_wready_o,
+    input logic [HciRespDataWidth-1:0] hci_resp_wdata_i,
 
     // Command queue
-    output logic [HciCmdThldWidth-1:0] hci_cmd_queue_ready_thld_o,
-    output logic hci_cmd_queue_full_o,
-    output logic hci_cmd_queue_ready_thld_trig_o,
-    output logic hci_cmd_queue_empty_o,
-    output logic hci_cmd_queue_rvalid_o,
-    input logic hci_cmd_queue_rready_i,
-    output logic [HciCmdDataWidth-1:0] hci_cmd_queue_rdata_o,
+    output logic [HciCmdThldWidth-1:0] hci_cmd_ready_thld_o,
+    output logic hci_cmd_full_o,
+    output logic [HciCmdFifoDepthWidth-1:0] hci_cmd_depth_o,
+    output logic hci_cmd_ready_thld_trig_o,
+    output logic hci_cmd_empty_o,
+    output logic hci_cmd_rvalid_o,
+    input logic hci_cmd_rready_i,
+    output logic [HciCmdDataWidth-1:0] hci_cmd_rdata_o,
 
     // RX queue
-    output logic [HciRxThldWidth-1:0] hci_rx_queue_start_thld_o,
-    output logic [HciRxThldWidth-1:0] hci_rx_queue_ready_thld_o,
-    output logic hci_rx_queue_full_o,
-    output logic hci_rx_queue_start_thld_trig_o,
-    output logic hci_rx_queue_ready_thld_trig_o,
-    output logic hci_rx_queue_empty_o,
-    input logic hci_rx_queue_wvalid_i,
-    output logic hci_rx_queue_wready_o,
-    input logic [HciRxDataWidth-1:0] hci_rx_queue_wdata_i,
+    output logic [HciRxThldWidth-1:0] hci_rx_start_thld_o,
+    output logic [HciRxThldWidth-1:0] hci_rx_ready_thld_o,
+    output logic hci_rx_full_o,
+    output logic [HciRxFifoDepthWidth-1:0] hci_rx_depth_o,
+    output logic hci_rx_start_thld_trig_o,
+    output logic hci_rx_ready_thld_trig_o,
+    output logic hci_rx_empty_o,
+    input logic hci_rx_wvalid_i,
+    output logic hci_rx_wready_o,
+    input logic [HciRxDataWidth-1:0] hci_rx_wdata_i,
 
     // TX queue
-    output logic [HciTxThldWidth-1:0] hci_tx_queue_start_thld_o,
-    output logic [HciTxThldWidth-1:0] hci_tx_queue_ready_thld_o,
-    output logic hci_tx_queue_full_o,
-    output logic hci_tx_queue_start_thld_trig_o,
-    output logic hci_tx_queue_ready_thld_trig_o,
-    output logic hci_tx_queue_empty_o,
-    output logic hci_tx_queue_rvalid_o,
-    input logic hci_tx_queue_rready_i,
-    output logic [HciTxDataWidth-1:0] hci_tx_queue_rdata_o,
+    output logic [HciTxThldWidth-1:0] hci_tx_start_thld_o,
+    output logic [HciTxThldWidth-1:0] hci_tx_ready_thld_o,
+    output logic hci_tx_full_o,
+    output logic [HciTxFifoDepthWidth-1:0] hci_tx_depth_o,
+    output logic hci_tx_start_thld_trig_o,
+    output logic hci_tx_ready_thld_trig_o,
+    output logic hci_tx_empty_o,
+    output logic hci_tx_rvalid_o,
+    input logic hci_tx_rready_i,
+    output logic [HciTxDataWidth-1:0] hci_tx_rdata_o,
 
-    output logic hci_ibi_queue_full_o,
-    output logic [HciIbiThldWidth-1:0] hci_ibi_queue_ready_thld_o,
-    output logic hci_ibi_queue_ready_thld_trig_o,
-    output logic hci_ibi_queue_empty_o,
-    input logic hci_ibi_queue_wvalid_i,
-    output logic hci_ibi_queue_wready_o,
-    input logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_i,
+    output logic hci_ibi_full_o,
+    output logic [HciIbiFifoDepthWidth-1:0] hci_ibi_depth_o,
+    output logic [HciIbiThldWidth-1:0] hci_ibi_ready_thld_o,
+    output logic hci_ibi_ready_thld_trig_o,
+    output logic hci_ibi_empty_o,
+    input logic hci_ibi_wvalid_i,
+    output logic hci_ibi_wready_o,
+    input logic [HciIbiDataWidth-1:0] hci_ibi_wdata_i,
 
 
     // Target Transaction Interface
     // RX descriptors queue
-    output logic tti_rx_desc_queue_full_o,
-    output logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_o,
-    output logic tti_rx_desc_queue_ready_thld_trig_o,
-    output logic tti_rx_desc_queue_empty_o,
-    input logic tti_rx_desc_queue_wvalid_i,
-    output logic tti_rx_desc_queue_wready_o,
-    input logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata_i,
+    output logic tti_rx_desc_full_o,
+    output logic [TtiRxDescFifoDepthWidth-1:0] tti_rx_desc_depth_o,
+    output logic [TtiRxDescThldWidth-1:0] tti_rx_desc_ready_thld_o,
+    output logic tti_rx_desc_ready_thld_trig_o,
+    output logic tti_rx_desc_empty_o,
+    input logic tti_rx_desc_wvalid_i,
+    output logic tti_rx_desc_wready_o,
+    input logic [TtiRxDescDataWidth-1:0] tti_rx_desc_wdata_i,
 
     // TX descriptors queue
-    output logic tti_tx_desc_queue_full_o,
-    output logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_o,
-    output logic tti_tx_desc_queue_ready_thld_trig_o,
-    output logic tti_tx_desc_queue_empty_o,
-    output logic tti_tx_desc_queue_rvalid_o,
-    input logic tti_tx_desc_queue_rready_i,
-    output logic [TtiRxDescDataWidth-1:0] tti_tx_desc_queue_rdata_o,
+    output logic tti_tx_desc_full_o,
+    output logic [TtiTxDescFifoDepthWidth-1:0] tti_tx_desc_depth_o,
+    output logic [TtiTxDescThldWidth-1:0] tti_tx_desc_ready_thld_o,
+    output logic tti_tx_desc_ready_thld_trig_o,
+    output logic tti_tx_desc_empty_o,
+    output logic tti_tx_desc_rvalid_o,
+    input logic tti_tx_desc_rready_i,
+    output logic [TtiRxDescDataWidth-1:0] tti_tx_desc_rdata_o,
 
     // RX queue
-    output logic tti_rx_queue_full_o,
-    output logic [TtiRxThldWidth-1:0] tti_rx_queue_start_thld_o,
-    output logic [TtiRxThldWidth-1:0] tti_rx_queue_ready_thld_o,
-    output logic tti_rx_queue_start_thld_trig_o,
-    output logic tti_rx_queue_ready_thld_trig_o,
-    output logic tti_rx_queue_empty_o,
-    input logic tti_rx_queue_wvalid_i,
-    output logic tti_rx_queue_wready_o,
-    input logic [7:0] tti_rx_queue_wdata_i,
+    output logic tti_rx_full_o,
+    output logic [TtiRxDataFifoDepthWidth-1:0] tti_rx_depth_o,
+    output logic [TtiRxThldWidth-1:0] tti_rx_start_thld_o,
+    output logic [TtiRxThldWidth-1:0] tti_rx_ready_thld_o,
+    output logic tti_rx_start_thld_trig_o,
+    output logic tti_rx_ready_thld_trig_o,
+    output logic tti_rx_empty_o,
+    input logic tti_rx_wvalid_i,
+    output logic tti_rx_wready_o,
+    input logic [7:0] tti_rx_wdata_i,
 
     // TX queue
-    output logic tti_tx_queue_full_o,
-    output logic [TtiTxThldWidth-1:0] tti_tx_queue_start_thld_o,
-    output logic [TtiTxThldWidth-1:0] tti_tx_queue_ready_thld_o,
-    output logic tti_tx_queue_start_thld_trig_o,
-    output logic tti_tx_queue_ready_thld_trig_o,
-    output logic tti_tx_queue_empty_o,
-    output logic tti_tx_queue_rvalid_o,
-    input logic tti_tx_queue_rready_i,
-    output logic [7:0] tti_tx_queue_rdata_o,
+    output logic tti_tx_full_o,
+    output logic [TtiTxDataFifoDepthWidth-1:0] tti_tx_depth_o,
+    output logic [TtiTxThldWidth-1:0] tti_tx_start_thld_o,
+    output logic [TtiTxThldWidth-1:0] tti_tx_ready_thld_o,
+    output logic tti_tx_start_thld_trig_o,
+    output logic tti_tx_ready_thld_trig_o,
+    input logic tti_tx_host_nack_i,
+    output logic tti_tx_empty_o,
+    output logic tti_tx_rvalid_o,
+    input logic tti_tx_rready_i,
+    output logic [7:0] tti_tx_rdata_o,
 
     // In-band Interrupt Queue
-    output logic tti_ibi_queue_full_o,
-    output logic [TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld_o,
-    output logic tti_ibi_queue_ready_thld_trig_o,
-    input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_wr_data_i,
-    output logic tti_ibi_queue_empty_o,
-    output logic tti_ibi_queue_rvalid_o,
-    input logic tti_ibi_queue_rready_i,
-    output logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_o
+    output logic tti_ibi_full_o,
+    output logic [TtiIbiFifoDepthWidth-1:0] tti_ibi_depth_o,
+    output logic [TtiIbiThldWidth-1:0] tti_ibi_ready_thld_o,
+    output logic tti_ibi_ready_thld_trig_o,
+    input logic [TtiIbiDataWidth-1:0] tti_ibi_wr_data_i,
+    output logic tti_ibi_empty_o,
+    output logic tti_ibi_rvalid_o,
+    input logic tti_ibi_rready_i,
+    output logic [TtiIbiDataWidth-1:0] tti_ibi_rdata_o,
+
+    input logic [7:0] rst_action_i,
+
+    // S/Sr and P bus condition
+    input logic bus_start_i,
+    input logic bus_stop_i,
+
+    // Received I2C/I3C address along with RnW# bit
+    input logic [7:0] bus_addr_i,
+    input logic bus_addr_valid_i
 );
 
   // I3C SW CSR IF
@@ -178,7 +211,7 @@ module hci_queues_wrapper
   logic s_cpuif_wr_ack;
   logic s_cpuif_wr_err;
 
-  logic tti_rx_queue_wflush;
+  logic tti_rx_wflush;
 
   ahb_if #(
       .AhbDataWidth(`AHB_DATA_WIDTH),
@@ -230,11 +263,13 @@ module hci_queues_wrapper
   logic [19:0] unused_t_bus_available_o;
 
   // HCI
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
+  I3CCSR_pkg::I3CCSR__out_t unused_hwif_out;
+
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t hwif_tti_inp;
 
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t hwif_rec_inp;
 
   hci #(
       .HciRespFifoDepth,
@@ -251,92 +286,26 @@ module hci_queues_wrapper
       .HciCmdThldWidth,
       .HciRxThldWidth,
       .HciTxThldWidth,
-      .HciIbiThldWidth,
-      .TtiRespFifoDepth,
-      .TtiCmdFifoDepth,
-      .TtiRxFifoDepth,
-      .TtiTxFifoDepth,
-      .TtiIbiFifoDepth,
-      .TtiRxDescDataWidth,
-      .TtiTxDescDataWidth,
-      .TtiRxDataWidth,
-      .TtiTxDataWidth,
-      .TtiIbiDataWidth,
-      .TtiRxDescThldWidth,
-      .TtiTxDescThldWidth,
-      .TtiRxThldWidth,
-      .TtiTxThldWidth,
-      .TtiIbiThldWidth
+      .HciIbiThldWidth
   ) hci (
       .clk_i(hclk),
       .rst_ni(hreset_n),
-      .s_cpuif_req(s_cpuif_req),
-      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
-      .s_cpuif_addr(s_cpuif_addr),
-      .s_cpuif_wr_data(s_cpuif_wr_data),
-      .s_cpuif_wr_biten(s_cpuif_wr_biten),
-      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
-      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
-      .s_cpuif_rd_ack(s_cpuif_rd_ack),
-      .s_cpuif_rd_err(s_cpuif_rd_err),
-      .s_cpuif_rd_data(s_cpuif_rd_data),
-      .s_cpuif_wr_ack(s_cpuif_wr_ack),
-      .s_cpuif_wr_err(s_cpuif_wr_err),
 
-      .hwif_tti_o(hwif_tti_out),
-      .hwif_tti_i(hwif_tti_inp),
+      // I3C SW CSR access interface
+      .s_cpuif_req,
+      .s_cpuif_req_is_wr,
+      .s_cpuif_addr,
+      .s_cpuif_wr_data,
+      .s_cpuif_wr_biten,
+      .s_cpuif_req_stall_wr,
+      .s_cpuif_req_stall_rd,
+      .s_cpuif_rd_ack,
+      .s_cpuif_rd_err,
+      .s_cpuif_rd_data,
+      .s_cpuif_wr_ack,
+      .s_cpuif_wr_err,
 
-      .hwif_rec_o(hwif_rec_out),
-      .hwif_rec_i(hwif_rec_inp),
-
-      // HCI Response queue
-      .hci_resp_full_o(hci_resp_queue_full_o),
-      .hci_resp_ready_thld_o(hci_resp_queue_ready_thld_o),
-      .hci_resp_ready_thld_trig_o(hci_resp_queue_ready_thld_trig_o),
-      .hci_resp_empty_o(hci_resp_queue_empty_o),
-      .hci_resp_wvalid_i(hci_resp_queue_wvalid_i),
-      .hci_resp_wready_o(hci_resp_queue_wready_o),
-      .hci_resp_wdata_i(hci_resp_queue_wdata_i),
-
-      // HCI Command queue
-      .hci_cmd_full_o(hci_cmd_queue_full_o),
-      .hci_cmd_ready_thld_o(hci_cmd_queue_ready_thld_o),
-      .hci_cmd_ready_thld_trig_o(hci_cmd_queue_ready_thld_trig_o),
-      .hci_cmd_empty_o(hci_cmd_queue_empty_o),
-      .hci_cmd_rvalid_o(hci_cmd_queue_rvalid_o),
-      .hci_cmd_rready_i(hci_cmd_queue_rready_i),
-      .hci_cmd_rdata_o(hci_cmd_queue_rdata_o),
-
-      // HCI RX queue
-      .hci_rx_full_o(hci_rx_queue_full_o),
-      .hci_rx_start_thld_o(hci_rx_queue_start_thld_o),
-      .hci_rx_ready_thld_o(hci_rx_queue_ready_thld_o),
-      .hci_rx_start_thld_trig_o(hci_rx_queue_start_thld_trig_o),
-      .hci_rx_ready_thld_trig_o(hci_rx_queue_ready_thld_trig_o),
-      .hci_rx_empty_o(hci_rx_queue_empty_o),
-      .hci_rx_wvalid_i(hci_rx_queue_wvalid_i),
-      .hci_rx_wready_o(hci_rx_queue_wready_o),
-      .hci_rx_wdata_i(hci_rx_queue_wdata_i),
-
-      // HCI TX queue
-      .hci_tx_full_o(hci_tx_queue_full_o),
-      .hci_tx_start_thld_o(hci_tx_queue_start_thld_o),
-      .hci_tx_ready_thld_o(hci_tx_queue_ready_thld_o),
-      .hci_tx_start_thld_trig_o(hci_tx_queue_start_thld_trig_o),
-      .hci_tx_ready_thld_trig_o(hci_tx_queue_ready_thld_trig_o),
-      .hci_tx_empty_o(hci_tx_queue_empty_o),
-      .hci_tx_rvalid_o(hci_tx_queue_rvalid_o),
-      .hci_tx_rready_i(hci_tx_queue_rready_i),
-      .hci_tx_rdata_o(hci_tx_queue_rdata_o),
-
-      .hci_ibi_queue_full_o,
-      .hci_ibi_queue_ready_thld_o,
-      .hci_ibi_queue_ready_thld_trig_o,
-      .hci_ibi_queue_empty_o,
-      .hci_ibi_queue_wvalid_i,
-      .hci_ibi_queue_wready_o,
-      .hci_ibi_queue_wdata_i,
-
+      // DAT <-> Controller interface
       .dat_read_valid_hw_i('0),
       .dat_index_hw_i('0),
       .dat_rdata_hw_o(unused_dat_rdata_hw),
@@ -353,17 +322,72 @@ module hci_queues_wrapper
       .dct_mem_src_i ('0),
       .dct_mem_sink_o(unused_dct_mem_sink),
 
-      .phy_en_o(unused_phy_en_o),
-      .phy_mux_select_o(unused_phy_mux_select_o),
-      .i2c_active_en_o(unused_i2c_active_en_o),
-      .i2c_standby_en_o(unused_i2c_standby_en_o),
-      .i3c_active_en_o(unused_i3c_active_en_o),
-      .i3c_standby_en_o(unused_i3c_standby_en_o),
-      .t_hd_dat_o(unused_t_hd_dat_o),
-      .t_r_o(unused_t_r_o),
-      .t_bus_free_o(unused_t_bus_free_o),
-      .t_bus_idle_o(unused_t_bus_idle_o),
-      .t_bus_available_o(unused_t_bus_available_o)
+      // Response queue
+      .hci_resp_full_o,
+      .hci_resp_depth_o,
+      .hci_resp_ready_thld_o,
+      .hci_resp_ready_thld_trig_o,
+      .hci_resp_empty_o,
+      .hci_resp_wvalid_i,
+      .hci_resp_wready_o,
+      .hci_resp_wdata_i,
+
+      // Command queue
+      .hci_cmd_full_o,
+      .hci_cmd_depth_o,
+      .hci_cmd_ready_thld_o,
+      .hci_cmd_ready_thld_trig_o,
+      .hci_cmd_empty_o,
+      .hci_cmd_rvalid_o,
+      .hci_cmd_rready_i,
+      .hci_cmd_rdata_o,
+
+      // RX queue
+      .hci_rx_full_o,
+      .hci_rx_depth_o,
+      .hci_rx_start_thld_o,
+      .hci_rx_ready_thld_o,
+      .hci_rx_start_thld_trig_o,
+      .hci_rx_ready_thld_trig_o,
+      .hci_rx_empty_o,
+      .hci_rx_wvalid_i,
+      .hci_rx_wready_o,
+      .hci_rx_wdata_i,
+
+      // TX queue
+      .hci_tx_full_o,
+      .hci_tx_depth_o,
+      .hci_tx_start_thld_o,
+      .hci_tx_ready_thld_o,
+      .hci_tx_start_thld_trig_o,
+      .hci_tx_ready_thld_trig_o,
+      .hci_tx_empty_o,
+      .hci_tx_rvalid_o,
+      .hci_tx_rready_i,
+      .hci_tx_rdata_o,
+
+      // In-band Interrupt queue
+      .hci_ibi_full_o,
+      .hci_ibi_depth_o,
+      .hci_ibi_ready_thld_o,
+      .hci_ibi_ready_thld_trig_o,
+      .hci_ibi_empty_o,
+      .hci_ibi_wvalid_i,
+      .hci_ibi_wready_o,
+      .hci_ibi_wdata_i,
+
+      // Target Transaction Interface CSRs
+      .hwif_tti_o(hwif_tti_out),
+      .hwif_tti_i(hwif_tti_inp),
+
+      // Recovery interface CSRs
+      .hwif_rec_o(hwif_rec_out),
+      .hwif_rec_i(hwif_rec_inp),
+
+      // Controller configuration
+      .hwif_out_o(unused_hwif_out),
+
+      .rst_action_i
   );
 
   // TTI
@@ -487,6 +511,13 @@ module hci_queues_wrapper
       .hwif_rec_i(hwif_rec_out),
       .hwif_rec_o(hwif_rec_inp),
 
+      // Interrupt
+      .irq_o(irq),
+
+      // Recovery status
+      .payload_available_o(payload_available),
+      .image_activated_o(image_activated),
+
       // ...........................
       // TTI CSR interface
 
@@ -541,58 +572,72 @@ module hci_queues_wrapper
       .csr_tti_ibi_queue_reg_rst_we_o  (csr_tti_ibi_queue_reg_rst_we),
       .csr_tti_ibi_queue_reg_rst_data_o(csr_tti_ibi_queue_reg_rst_data),
 
+    // S/Sr and P bus condition
+      .ctl_bus_start_i(bus_start_i),
+      .ctl_bus_stop_i(bus_stop_i),
+
+    // Received I2C/I3C address along with RnW# bit
+      .ctl_bus_addr_i(bus_addr_i),
+      .ctl_bus_addr_valid_i(bus_addr_valid_i),
+
       // ...........................
       // TTI controller interface
 
       // TTI RX descriptors queue
-      .ctl_tti_rx_desc_queue_full_o(tti_rx_desc_queue_full_o),
-      .ctl_tti_rx_desc_queue_empty_o(tti_rx_desc_queue_empty_o),
-      .ctl_tti_rx_desc_queue_wvalid_i(tti_rx_desc_queue_wvalid_i),
-      .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_queue_wready_o),
-      .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_queue_wdata_i),
-      .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_queue_ready_thld_o),
-      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_queue_ready_thld_trig_o),
+      .ctl_tti_rx_desc_queue_full_o(tti_rx_desc_full_o),
+      .ctl_tti_rx_desc_queue_depth_o(tti_rx_desc_depth_o),
+      .ctl_tti_rx_desc_queue_empty_o(tti_rx_desc_empty_o),
+      .ctl_tti_rx_desc_queue_wvalid_i(tti_rx_desc_wvalid_i),
+      .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_wready_o),
+      .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_wdata_i),
+      .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_ready_thld_o),
+      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig_o),
 
       // TTI TX descriptors queue
-      .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_queue_full_o),
-      .ctl_tti_tx_desc_queue_empty_o(tti_tx_desc_queue_empty_o),
-      .ctl_tti_tx_desc_queue_rvalid_o(tti_tx_desc_queue_rvalid_o),
-      .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_queue_rready_i),
-      .ctl_tti_tx_desc_queue_rdata_o(tti_tx_desc_queue_rdata_o),
-      .ctl_tti_tx_desc_queue_ready_thld_o(tti_tx_desc_queue_ready_thld_o),
-      .ctl_tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_queue_ready_thld_trig_o),
+      .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_full_o),
+      .ctl_tti_tx_desc_queue_depth_o(tti_tx_desc_depth_o),
+      .ctl_tti_tx_desc_queue_empty_o(tti_tx_desc_empty_o),
+      .ctl_tti_tx_desc_queue_rvalid_o(tti_tx_desc_rvalid_o),
+      .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_rready_i),
+      .ctl_tti_tx_desc_queue_rdata_o(tti_tx_desc_rdata_o),
+      .ctl_tti_tx_desc_queue_ready_thld_o(tti_tx_desc_ready_thld_o),
+      .ctl_tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_ready_thld_trig_o),
 
       // TTI RX data queue
-      .ctl_tti_rx_data_queue_full_o(tti_rx_queue_full_o),
-      .ctl_tti_rx_data_queue_empty_o(tti_rx_queue_empty_o),
-      .ctl_tti_rx_data_queue_wvalid_i(tti_rx_queue_wvalid_i),
-      .ctl_tti_rx_data_queue_wready_o(tti_rx_queue_wready_o),
-      .ctl_tti_rx_data_queue_wdata_i(tti_rx_queue_wdata_i),
-      .ctl_tti_rx_data_queue_wflush_i(tti_rx_queue_wflush),
-      .ctl_tti_rx_data_queue_start_thld_o(tti_rx_queue_start_thld_o),
-      .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_queue_start_thld_trig_o),
-      .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_queue_ready_thld_o),
-      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_queue_ready_thld_trig_o),
+      .ctl_tti_rx_data_queue_full_o(tti_rx_full_o),
+      .ctl_tti_rx_data_queue_depth_o(tti_rx_depth_o),
+      .ctl_tti_rx_data_queue_empty_o(tti_rx_empty_o),
+      .ctl_tti_rx_data_queue_wvalid_i(tti_rx_wvalid_i),
+      .ctl_tti_rx_data_queue_wready_o(tti_rx_wready_o),
+      .ctl_tti_rx_data_queue_wdata_i(tti_rx_wdata_i),
+      .ctl_tti_rx_data_queue_wflush_i(tti_rx_wflush),
+      .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
+      .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
+      .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
+      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX data queue
-      .ctl_tti_tx_data_queue_full_o(tti_tx_queue_full_o),
-      .ctl_tti_tx_data_queue_empty_o(tti_tx_queue_empty_o),
-      .ctl_tti_tx_data_queue_rvalid_o(tti_tx_queue_rvalid_o),
-      .ctl_tti_tx_data_queue_rready_i(tti_tx_queue_rready_i),
-      .ctl_tti_tx_data_queue_rdata_o(tti_tx_queue_rdata_o),
-      .ctl_tti_tx_data_queue_start_thld_o(tti_tx_queue_start_thld_o),
-      .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_queue_start_thld_trig_o),
-      .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_queue_ready_thld_o),
-      .ctl_tti_tx_data_queue_ready_thld_trig_o(tti_tx_queue_ready_thld_trig_o),
+      .ctl_tti_tx_data_queue_full_o(tti_tx_full_o),
+      .ctl_tti_tx_data_queue_depth_o(tti_tx_depth_o),
+      .ctl_tti_tx_data_queue_empty_o(tti_tx_empty_o),
+      .ctl_tti_tx_data_queue_rvalid_o(tti_tx_rvalid_o),
+      .ctl_tti_tx_data_queue_rready_i(tti_tx_rready_i),
+      .ctl_tti_tx_data_queue_rdata_o(tti_tx_rdata_o),
+      .ctl_tti_tx_data_queue_start_thld_o(tti_tx_start_thld_o),
+      .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_start_thld_trig_o),
+      .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_ready_thld_o),
+      .ctl_tti_tx_data_queue_ready_thld_trig_o(tti_tx_ready_thld_trig_o),
+      .ctl_tti_tx_host_nack_i(tti_tx_host_nack_i),
 
       // TTI In-band Interrupt (IBI) queue
-      .ctl_tti_ibi_queue_full_o(tti_ibi_queue_full_o),
-      .ctl_tti_ibi_queue_empty_o(tti_ibi_queue_empty_o),
-      .ctl_tti_ibi_queue_rvalid_o(tti_ibi_queue_rvalid_o),
-      .ctl_tti_ibi_queue_rready_i(tti_ibi_queue_rready_i),
-      .ctl_tti_ibi_queue_rdata_o(tti_ibi_queue_rdata_o),
-      .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_queue_ready_thld_o),
-      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_queue_ready_thld_trig_o)
+      .ctl_tti_ibi_queue_full_o(tti_ibi_full_o),
+      .ctl_tti_ibi_queue_depth_o(tti_ibi_depth_o),
+      .ctl_tti_ibi_queue_empty_o(tti_ibi_empty_o),
+      .ctl_tti_ibi_queue_rvalid_o(tti_ibi_rvalid_o),
+      .ctl_tti_ibi_queue_rready_i(tti_ibi_rready_i),
+      .ctl_tti_ibi_queue_rdata_o(tti_ibi_rdata_o),
+      .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_ready_thld_o),
+      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig_o)
   );
 
    // TODO: These write-enable signals were not combo-driven or initialized on reset.
@@ -633,7 +678,7 @@ module hci_queues_wrapper
   always_comb begin : other_uninit_signals
     xrecovery_handler.irq_o = 0;
     xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
-    tti_rx_queue_wflush = 0;
+    tti_rx_wflush = 0;
   end : other_uninit_signals
 
 endmodule

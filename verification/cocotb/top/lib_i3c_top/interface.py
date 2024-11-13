@@ -22,6 +22,8 @@ class I3CTopTestInterface:
         self.rst_n = self.busIf.rst_n
         self.read_csr = self.busIf.read_csr
         self.write_csr = self.busIf.write_csr
+        self.read_csr_field = self.busIf.read_csr_field
+        self.write_csr_field = self.busIf.write_csr_field
 
     async def setup(self):
         await self.busIf.register_test_interfaces()

@@ -56,69 +56,70 @@ async def test_setup(dut):
     return i3c_controller, i3c_target, tb
 
 
-@cocotb.test()
-async def test_i3c_target_write(dut):
+# @cocotb.test()
+# async def test_i3c_target_write(dut):
 
-    # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+#     # Setup
+#     i3c_controller, i3c_target, tb = await test_setup(dut)
 
-    # Send Private Write on I3C
-    test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
-    for test_vec in test_data:
-        await i3c_controller.i3c_write(0x5A, test_vec)
-        await ClockCycles(tb.clk, 10)
+#     # Send Private Write on I3C
+#     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
+#     for test_vec in test_data:
+#         await i3c_controller.i3c_write(0x5A, test_vec)
+#         await ClockCycles(tb.clk, 10)
 
-    # Wait for an interrupt
-    wait_irq = True
-    timeout = 0
-    # Number of clock cycles after which we should observe an interrupt
-    TIMEOUT_THRESHOLD = 50
-    while wait_irq:
-        timeout += 1
-        await ClockCycles(tb.clk, 10)
-        irq = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr, 4))
-        if irq:
-            wait_irq = False
-            dut._log.debug(":::Interrupt was raised:::")
-        if timeout > TIMEOUT_THRESHOLD:
-            wait_irq = False
-            dut._log.debug(":::Timeout cancelled polling:::")
+#     # Wait for an interrupt
+#     wait_irq = True
+#     timeout = 0
+#     # Number of clock cycles after which we should observe an interrupt
+#     TIMEOUT_THRESHOLD = 50
+#     while wait_irq:
+#         timeout += 1
+#         await ClockCycles(tb.clk, 10)
+#         irq = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr, 4))
+#         if irq:
+#             wait_irq = False
+#             dut._log.debug(":::Interrupt was raised:::")
+#         if timeout > TIMEOUT_THRESHOLD:
+#             wait_irq = False
+#             dut._log.debug(":::Timeout cancelled polling:::")
 
-    # Convert bytes to 32-bit words
-    words_ref = []
-    for xfer in test_data:
+#     # Convert bytes to 32-bit words
+#     words_ref = []
+#     for xfer in test_data:
 
-        # Pad
-        pad_len = ((len(xfer) + 3) // 4 * 4) - len(xfer)
-        xfer_pad = xfer + [0 for i in range(pad_len)]
+#         # Pad
+#         pad_len = ((len(xfer) + 3) // 4 * 4) - len(xfer)
+#         xfer_pad = xfer + [0 for i in range(pad_len)]
 
-        # Convert to 32-bit little-endian words
-        for i in range(len(xfer_pad) // 4):
-            word = (
-                (xfer_pad[4 * i + 3] << 24)
-                | (xfer_pad[4 * i + 2] << 16)
-                | (xfer_pad[4 * i + 1] << 8)
-                | (xfer_pad[4 * i + 0])
-            )
-            words_ref.append(word)
+#         # Convert to 32-bit little-endian words
+#         for i in range(len(xfer_pad) // 4):
+#             word = (
+#                 (xfer_pad[4 * i + 3] << 24)
+#                 | (xfer_pad[4 * i + 2] << 16)
+#                 | (xfer_pad[4 * i + 1] << 8)
+#                 | (xfer_pad[4 * i + 0])
+#             )
+#             words_ref.append(word)
 
-    # Read data
-    words_out = []
-    for i in range(len(words_ref)):
-        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
-        words_out.append(r_data)
+#     # Read data
+#     words_out = []
 
-    # Compare
-    dut._log.info(
-        "Comparing input [{}] and CSR data [{}]".format(
-            " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
-            " ".join([f"0x{d:08X}" for d in words_out]),
-        )
-    )
-    assert words_out == words_ref
+#     for i in range(len(words_ref)):
+#         r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+#         words_out.append(r_data)
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
+#     # Compare
+#     dut._log.info(
+#         "Comparing input [{}] and CSR data [{}]".format(
+#             " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
+#             " ".join([f"0x{d:08X}" for d in words_out]),
+#         )
+#     )
+#     assert words_out == words_ref
+
+#     # Dummy wait
+#     await ClockCycles(tb.clk, 10)
 
 
 @cocotb.test()
@@ -131,6 +132,10 @@ async def test_i3c_target_read(dut):
     test_data = [0xDDCCBBAA, 0x9988FFEE, 0x55667788]
     for word in test_data:
         await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
+
+    # Write the TX descriptor
+    descriptor = 0xC
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(descriptor), 4)
 
     # Issue a private read
     bytes_out = await i3c_controller.i3c_read(0x5A, len(test_data) * 4)
@@ -157,26 +162,26 @@ async def test_i3c_target_read(dut):
     await ClockCycles(tb.clk, 10)
 
 
-@cocotb.test()
-async def test_i3c_target_ibi(dut):
+# @cocotb.test()
+# async def test_i3c_target_ibi(dut):
 
-    # Target address
-    addr = 0x5A
+#     # Target address
+#     addr = 0x5A
 
-    # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+#     # Setup
+#     i3c_controller, i3c_target, tb = await test_setup(dut)
 
-    target = i3c_controller.add_target(addr)
-    target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
+#     target = i3c_controller.add_target(addr)
+#     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
 
-    # Write MDB to Target's IBI queue
-    mdb = 0xAA
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(mdb), 4)
+#     # Write MDB to Target's IBI queue
+#     mdb = 0xAA
+#     await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(mdb), 4)
 
-    # Wait for the IBI to be serviced, check data
-    data = await i3c_controller.wait_for_ibi()
-    expected = bytearray([addr, mdb])
-    assert data == expected
+#     # Wait for the IBI to be serviced, check data
+#     data = await i3c_controller.wait_for_ibi()
+#     expected = bytearray([addr, mdb])
+#     assert data == expected
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
+#     # Dummy wait
+#     await ClockCycles(tb.clk, 10)

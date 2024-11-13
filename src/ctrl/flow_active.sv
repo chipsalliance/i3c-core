@@ -61,8 +61,8 @@ module flow_active
 
     // In-band Interrupt queue
     input logic ibi_queue_full_i,
-    input logic [HciIbiThldWidth-1:0] ibi_queue_thld_i,
-    input logic ibi_queue_above_thld_i,
+    input logic [HciIbiThldWidth-1:0] ibi_queue_ready_thld_i,
+    input logic ibi_queue_ready_thld_trig_i,
     input logic ibi_queue_empty_i,
     output logic ibi_queue_wvalid_o,
     input logic ibi_queue_wready_i,
@@ -107,6 +107,22 @@ module flow_active
     output i3c_err_t err,
     output i3c_irq_t irq
 );
+
+  typedef enum logic [3:0] {
+    Idle = 4'd0,
+    WaitForCmd = 4'd1,
+    FetchDAT = 4'd2,
+    I2CWriteImmediate = 4'd3,
+    I3CWriteImmediate = 4'd4,
+    FetchTxData = 4'd5,
+    FetchRxData = 4'd6,
+    InitI2CWrite = 4'd7,
+    InitI2CRead = 4'd8,
+    StallWrite = 4'd9,
+    StallRead = 4'd10,
+    IssueCmd = 4'd11,
+    WriteResp = 4'd12
+  } flow_fsm_state_e;
 
   // TODO: Set BytesBeforeImmData from the HC_CONTROL.IBA_INCLUDE
   localparam int unsigned BytesBeforeImmData = 1;  // 1 if IBA is disabled, otherwise 2

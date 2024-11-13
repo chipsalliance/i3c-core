@@ -7,6 +7,10 @@ module queues #(
     parameter int unsigned RxDescFifoDepth = 256,
     parameter int unsigned TxFifoDepth = 64,
     parameter int unsigned RxFifoDepth = 64,
+    localparam int unsigned TxDescFifoDepthWidth = $clog2(TxDescFifoDepth + 1),
+    localparam int unsigned RxDescFifoDepthWidth = $clog2(RxDescFifoDepth + 1),
+    localparam int unsigned TxFifoDepthWidth = $clog2(TxFifoDepth + 1),
+    localparam int unsigned RxFifoDepthWidth = $clog2(RxFifoDepth + 1),
 
     parameter int unsigned TxDescFifoDataWidth = 64,
     parameter int unsigned RxDescFifoDataWidth = 32,
@@ -23,6 +27,7 @@ module queues #(
 
     // Response FIFO: status / control
     output logic rx_desc_full_o,
+    output logic [RxDescFifoDepthWidth-1:0] rx_desc_depth_o,
     output logic rx_desc_start_thld_trig_o,
     output logic rx_desc_ready_thld_trig_o,
     output logic rx_desc_empty_o,
@@ -41,6 +46,7 @@ module queues #(
 
     // Direct FIFO read control
     output logic tx_desc_full_o,
+    output logic [TxDescFifoDepthWidth-1:0] tx_desc_depth_o,
     output logic tx_desc_start_thld_trig_o,
     output logic tx_desc_ready_thld_trig_o,
     output logic tx_desc_empty_o,
@@ -59,6 +65,7 @@ module queues #(
 
     // RX FIFO
     output logic rx_full_o,
+    output logic [RxFifoDepthWidth-1:0] rx_depth_o,
     output logic rx_start_thld_trig_o,
     output logic rx_ready_thld_trig_o,
     output logic rx_empty_o,
@@ -77,6 +84,7 @@ module queues #(
 
     // TX FIFO: status / control
     output logic tx_full_o,
+    output logic [TxFifoDepthWidth-1:0] tx_depth_o,
     output logic tx_start_thld_trig_o,
     output logic tx_ready_thld_trig_o,
     output logic tx_empty_o,
@@ -104,6 +112,7 @@ module queues #(
       .clk_i,
       .rst_ni,
       .full_o(rx_desc_full_o),
+      .depth_o(rx_desc_depth_o),
       .start_thld_trig_o(rx_desc_start_thld_trig_o),
       .ready_thld_trig_o(rx_desc_ready_thld_trig_o),
       .empty_o(rx_desc_empty_o),
@@ -132,6 +141,7 @@ module queues #(
       .clk_i,
       .rst_ni,
       .full_o(tx_desc_full_o),
+      .depth_o(tx_desc_depth_o),
       .start_thld_trig_o(tx_desc_start_thld_trig_o),
       .ready_thld_trig_o(tx_desc_ready_thld_trig_o),
       .empty_o(tx_desc_empty_o),
@@ -159,6 +169,7 @@ module queues #(
       .clk_i,
       .rst_ni,
       .full_o(rx_full_o),
+      .depth_o(rx_depth_o),
       .start_thld_trig_o(rx_start_thld_trig_o),
       .ready_thld_trig_o(rx_ready_thld_trig_o),
       .empty_o(rx_empty_o),
@@ -187,6 +198,7 @@ module queues #(
       .clk_i,
       .rst_ni,
       .full_o(tx_full_o),
+      .depth_o(tx_depth_o),
       .start_thld_trig_o(tx_start_thld_trig_o),
       .ready_thld_trig_o(tx_ready_thld_trig_o),
       .empty_o(tx_empty_o),

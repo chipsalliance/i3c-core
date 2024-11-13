@@ -3,7 +3,7 @@
 /*
     Bus width converter from N-bit to 8-bit where N is a multiple of 8.
 
-    The module implements data width coverter to be used between TTI TX queue
+    The module implements data width converter to be used between TTI TX queue
     and I3C target FSM to send 8-bit data over the bus.
 */
 
@@ -34,7 +34,7 @@ module width_converter_Nto8 #(
   // Byte counter
   logic [$clog2(Bytes):0] bcnt;
 
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
       if ((bcnt == '0) & sink_valid_i & sink_ready_o) bcnt <= Bytes;
@@ -48,7 +48,7 @@ module width_converter_Nto8 #(
   // Data register
   logic [Width-1:0] sreg;
 
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
       if ((bcnt == '0) & sink_valid_i & sink_ready_o) sreg <= sink_data_i;

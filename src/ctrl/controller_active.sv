@@ -4,6 +4,18 @@ module controller_active
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
+    parameter int unsigned HciRespFifoDepth = 64,
+    parameter int unsigned HciCmdFifoDepth  = 64,
+    parameter int unsigned HciRxFifoDepth   = 64,
+    parameter int unsigned HciTxFifoDepth   = 64,
+    parameter int unsigned HciIbiFifoDepth  = 64,
+
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth  = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth   = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth   = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth  = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -29,6 +41,7 @@ module controller_active
     // HCI queues
     // Command FIFO
     input logic cmd_queue_full_i,
+    input logic [HciCmdFifoDepthWidth-1:0] cmd_queue_depth_i,
     input logic [HciCmdThldWidth-1:0] cmd_queue_ready_thld_i,
     input logic cmd_queue_ready_thld_trig_i,
     input logic cmd_queue_empty_i,
@@ -37,6 +50,7 @@ module controller_active
     input logic [HciCmdDataWidth-1:0] cmd_queue_rdata_i,
     // RX FIFO
     input logic rx_queue_full_i,
+    input logic [HciRxFifoDepthWidth-1:0] rx_queue_depth_i,
     input logic [HciRxThldWidth-1:0] rx_queue_start_thld_i,
     input logic rx_queue_start_thld_trig_i,
     input logic [HciRxThldWidth-1:0] rx_queue_ready_thld_i,
@@ -47,6 +61,7 @@ module controller_active
     output logic [HciRxDataWidth-1:0] rx_queue_wdata_o,
     // TX FIFO
     input logic tx_queue_full_i,
+    input logic [HciTxFifoDepthWidth-1:0] tx_queue_depth_i,
     input logic [HciTxThldWidth-1:0] tx_queue_start_thld_i,
     input logic tx_queue_start_thld_trig_i,
     input logic [HciTxThldWidth-1:0] tx_queue_ready_thld_i,
@@ -57,6 +72,7 @@ module controller_active
     input logic [HciTxDataWidth-1:0] tx_queue_rdata_i,
     // Response FIFO
     input logic resp_queue_full_i,
+    input logic [HciRespFifoDepthWidth-1:0] resp_queue_depth_i,
     input logic [HciRespThldWidth-1:0] resp_queue_ready_thld_i,
     input logic resp_queue_ready_thld_trig_i,
     input logic resp_queue_empty_i,
@@ -66,8 +82,9 @@ module controller_active
 
     // In-band Interrupt queue
     input logic ibi_queue_full_i,
-    input logic [HciIbiThldWidth-1:0] ibi_queue_thld_i,
-    input logic ibi_queue_above_thld_i,
+    input logic [HciIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
+    input logic [HciIbiThldWidth-1:0] ibi_queue_ready_thld_i,
+    input logic ibi_queue_ready_thld_trig_i,
     input logic ibi_queue_empty_i,
     output logic ibi_queue_wvalid_o,
     input logic ibi_queue_wready_i,
@@ -160,8 +177,8 @@ module controller_active
       .resp_queue_wready_i,
       .resp_queue_wdata_o,
       .ibi_queue_full_i,
-      .ibi_queue_thld_i,
-      .ibi_queue_above_thld_i,
+      .ibi_queue_ready_thld_i,
+      .ibi_queue_ready_thld_trig_i,
       .ibi_queue_empty_i,
       .ibi_queue_wvalid_o,
       .ibi_queue_wready_i,
@@ -194,6 +211,15 @@ module controller_active
       .irq
   );
 
+  logic unused_host_idle_o;
+  logic unused_event_nak_o;
+  logic unused_event_unhandled_nak_timeout_o;
+  logic unused_event_scl_interference_o;
+  logic unused_event_sda_interference_o;
+  logic unused_event_stretch_timeout_o;
+  logic unused_event_sda_unstable_o;
+  logic unused_event_cmd_complete_o;
+
   i2c_controller_fsm i2c_fsm (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -218,7 +244,7 @@ module controller_active
       .unhandled_nak_timeout_i(unhandled_nak_timeout),
       .rx_fifo_wvalid_o(rx_fifo_wvalid),
       .rx_fifo_wdata_o(rx_fifo_wdata),
-      .host_idle_o(),
+      .host_idle_o(unused_host_idle_o),
 
       // TODO: Use calculated timing values
       // TODO: Expose as programmable feature
@@ -242,13 +268,13 @@ module controller_active
       .host_nack_handler_timeout_en_i('0),
 
       // TODO: Handle bus events
-      .event_nak_o(),
-      .event_unhandled_nak_timeout_o(),
-      .event_scl_interference_o(),
-      .event_sda_interference_o(),
-      .event_stretch_timeout_o(),
-      .event_sda_unstable_o(),
-      .event_cmd_complete_o()
+      .event_nak_o(unused_event_nak_o),
+      .event_unhandled_nak_timeout_o(unused_event_unhandled_nak_timeout_o),
+      .event_scl_interference_o(unused_event_scl_interference_o),
+      .event_sda_interference_o(unused_event_sda_interference_o),
+      .event_stretch_timeout_o(unused_event_stretch_timeout_o),
+      .event_sda_unstable_o(unused_event_sda_unstable_o),
+      .event_cmd_complete_o(unused_event_cmd_complete_o)
   );
 
   // TODO: Handle i3c waveform

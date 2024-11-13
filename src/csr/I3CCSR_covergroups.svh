@@ -638,7 +638,7 @@
 
     endgroup
     covergroup I3CCSR__PIOControl__IBI_PORT_fld_cg with function sample(
-    input bit [1-1:0] IBI_DATA
+    input bit [32-1:0] IBI_DATA
     );
         option.per_instance = 1;
         IBI_DATA_cp : coverpoint IBI_DATA;
@@ -2000,6 +2000,7 @@
     input bit [1-1:0] RX_DESC_THLD_STAT,
     input bit [1-1:0] IBI_THLD_STAT,
     input bit [1-1:0] IBI_DONE,
+    input bit [4-1:0] PENDING_INTERRUPT,
     input bit [1-1:0] TRANSFER_ABORT_STAT,
     input bit [1-1:0] TRANSFER_ERR_STAT
     );
@@ -2014,6 +2015,7 @@
         RX_DESC_THLD_STAT_cp : coverpoint RX_DESC_THLD_STAT;
         IBI_THLD_STAT_cp : coverpoint IBI_THLD_STAT;
         IBI_DONE_cp : coverpoint IBI_DONE;
+        PENDING_INTERRUPT_cp : coverpoint PENDING_INTERRUPT;
         TRANSFER_ABORT_STAT_cp : coverpoint TRANSFER_ABORT_STAT;
         TRANSFER_ERR_STAT_cp : coverpoint TRANSFER_ERR_STAT;
 

@@ -73,8 +73,9 @@ async def test_bus_monitor(dut: SimHandleBase):
 
     dut.enable_i.value = 1
     for test_vec in test_data:
-        t_detect_start = cocotb.start_soon(count_high_cycles(clk, dut.start_detect_o, e_terminate))
-        t_detect_stop = cocotb.start_soon(count_high_cycles(clk, dut.stop_detect_o, e_terminate))
+        t_detect_start = cocotb.start_soon(count_high_cycles(clk, dut.start_det_o, e_terminate))
+        t_detect_rstart = cocotb.start_soon(count_high_cycles(clk, dut.rstart_det_o, e_terminate))
+        t_detect_stop = cocotb.start_soon(count_high_cycles(clk, dut.stop_det_o, e_terminate))
 
         cocotb.log.info("Private Write {")
         cocotb.log.info(f"\tAddr: {test_addr}")
@@ -89,7 +90,11 @@ async def test_bus_monitor(dut: SimHandleBase):
 
         num_starts = t_detect_start.result()
         cocotb.log.info(f"STARTs detected: {num_starts}")
-        assert num_starts == 2
+        assert num_starts == 1
+
+        num_rstarts = t_detect_rstart.result()
+        cocotb.log.info(f"rSTARTs detected: {num_rstarts}")
+        assert num_rstarts == 1
 
         num_stops = t_detect_stop.result()
         cocotb.log.info(f"STOPs detected: {num_stops}")
