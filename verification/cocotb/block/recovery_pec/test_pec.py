@@ -36,6 +36,10 @@ async def run_test(dut):
     clock = Clock(dut.clk_i, 1, "ns")
     await cocotb.start(clock.start())
 
+    dut.rst_ni.value = 0
+    dut.valid_i = 0
+    dut.init_i = 0
+
     # Deassert reset
     await ClockCycles(dut.clk_i, 5)
     dut.rst_ni.value = 1
