@@ -882,8 +882,6 @@ module i3c_target_fsm
       sda_r <= (ibi_handling & ibi_fifo_rvalid_i) | (~ibi_handling & tx_fifo_rvalid_i);
 
   // Conditional state transition
-  // TODO: Fix latch
-  // verilator lint_off LATCH
   always_comb begin : state_functions
     state_d = state_q;
     load_tcount = 1'b0;
@@ -892,6 +890,7 @@ module i3c_target_fsm
     enter_hdr_after_stop_clr = 1'b0;
     bus_rstart_det_o = 1'b0;
     sel_od_pp_o = 1'b0;
+    defining_byte_valid = 1'b0;
     unique case (state_q)
       // Idle: initial state, SDA and SCL are released (high)
       Idle: begin
@@ -1367,7 +1366,6 @@ module i3c_target_fsm
       end
     end
   end
-  // verilator lint_on LATCH
 
   // Signal the DAA module to perform addres check
   always_ff @(posedge clk_i or negedge rst_ni)

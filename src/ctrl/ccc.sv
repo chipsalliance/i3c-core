@@ -38,6 +38,7 @@ module ccc
   logic       defining_byte_valid;
   logic [7:0] command_data;
   logic       clear_command_code;
+  logic [7:0] rst_action;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_latch_inputs
     if (~rst_ni) begin
@@ -45,6 +46,7 @@ module ccc
       defining_byte <= '0;
       defining_byte_valid <= '0;
       command_data <= '0;
+      rst_action <= '0;
     end else begin
       if (clear_command_code) begin
         command_code <= '0;
@@ -54,6 +56,7 @@ module ccc
       defining_byte <= defining_byte_valid_i ? defining_byte_i : defining_byte;
       defining_byte_valid <= defining_byte_valid_i;
       command_data <= command_data_valid_i ? command_data_i : command_data;
+      rst_action <= write_reset_action ? defining_byte : rst_action;
     end
   end
 
@@ -67,11 +70,12 @@ module ccc
   assign rx_data_buffer_size = queue_size_reg_i[23:16];
   assign ibi_status_size = queue_size_reg_i[15:8];
   assign cr_queue_size = queue_size_reg_i[7:0];
+  assign rst_action_o = rst_action;
 
   // Decode CCC
   logic is_direct_cmd = command_code[7];  // 0 - BCast, 1 - Direct
 
-
+  logic write_reset_action;
 
   always_comb begin
     response_valid_o = '0;
@@ -81,6 +85,7 @@ module ccc
     command_min_bytes_o = '0;
     command_max_bytes_o = '0;
     clear_command_code = '0;
+    write_reset_action = '0;
     unique case (command_code)
       // Idle: Wait for command appearance in the Command Queue
       `I3C_DIRECT_GETMRL: begin
@@ -99,7 +104,7 @@ module ccc
         command_min_bytes_o = '1;
         command_max_bytes_o = '1;
         if (defining_byte_valid) begin
-          rst_action_o = defining_byte;
+          write_reset_action = '1;
         end
       end
       default: ;
