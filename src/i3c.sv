@@ -48,6 +48,12 @@ module i3c
                                                 ? (8 * `IBI_FIFO_DEPTH)
                                                 : (`IBI_FIFO_DEPTH),
 
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -60,13 +66,18 @@ module i3c
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRespFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned TtiCmdFifoDepth = `CMD_FIFO_DEPTH,
+    parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
+    parameter int unsigned TtiTxDescFifoDepth = `CMD_FIFO_DEPTH,
     parameter int unsigned TtiRxFifoDepth = `RX_FIFO_DEPTH,
     parameter int unsigned TtiTxFifoDepth = `TX_FIFO_DEPTH,
     parameter int unsigned TtiIbiFifoDepth = (`IBI_FIFO_EXT_SIZE)
                                                 ? (8 * `IBI_FIFO_DEPTH)
                                                 : (`IBI_FIFO_DEPTH),
+    localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
+    localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
+    localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
+    localparam int unsigned TtiRxFifoDepthWidth = $clog2(TtiRxFifoDepth + 1),
+    localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
 
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
@@ -199,6 +210,7 @@ module i3c
 
   // Response queue
   logic                        hci_resp_queue_full;
+  logic [HciRespFifoDepthWidth-1:0] hci_resp_queue_depth;
   logic [HciRespThldWidth-1:0] hci_resp_queue_ready_thld;
   logic                        hci_resp_queue_ready_thld_trig;
   logic                        hci_resp_queue_empty;
@@ -208,6 +220,7 @@ module i3c
 
   // Command queue
   logic                        hci_cmd_queue_full;
+  logic [ HciCmdFifoDepthWidth-1:0] hci_cmd_queue_depth;
   logic [ HciCmdThldWidth-1:0] hci_cmd_queue_ready_thld;
   logic                        hci_cmd_queue_ready_thld_trig;
   logic                        hci_cmd_queue_empty;
@@ -217,6 +230,7 @@ module i3c
 
   // RX queue
   logic                        hci_rx_queue_full;
+  logic [  HciRxFifoDepthWidth-1:0] hci_rx_queue_depth;
   logic [  HciRxThldWidth-1:0] hci_rx_queue_start_thld;
   logic                        hci_rx_queue_start_thld_trig;
   logic [  HciRxThldWidth-1:0] hci_rx_queue_ready_thld;
@@ -228,6 +242,7 @@ module i3c
 
   // TX queue
   logic                        hci_tx_queue_full;
+  logic [  HciTxFifoDepthWidth-1:0] hci_tx_queue_depth;
   logic [  HciTxThldWidth-1:0] hci_tx_queue_start_thld;
   logic                        hci_tx_queue_start_thld_trig;
   logic [  HciTxThldWidth-1:0] hci_tx_queue_ready_thld;
@@ -238,17 +253,18 @@ module i3c
   logic [  HciTxDataWidth-1:0] hci_tx_queue_rdata;
 
   // IBI queue
-  logic                        ibi_queue_full;
-  logic [ HciIbiThldWidth-1:0] ibi_queue_ready_thld;
-  logic                        ibi_queue_ready_thld_trig;
-  logic                        ibi_queue_empty;
-  logic                        ibi_queue_wvalid;
-  logic                        ibi_queue_wready;
-  logic [ HciIbiDataWidth-1:0] ibi_queue_wdata;
+  logic                        hci_ibi_queue_full;
+  logic [ HciIbiFifoDepthWidth-1:0] hci_ibi_queue_depth;
+  logic [ HciIbiThldWidth-1:0] hci_ibi_queue_ready_thld;
+  logic                        hci_ibi_queue_ready_thld_trig;
+  logic                        hci_ibi_queue_empty;
+  logic                        hci_ibi_queue_wvalid;
+  logic                        hci_ibi_queue_wready;
+  logic [ HciIbiDataWidth-1:0] hci_ibi_queue_wdata;
 
   // TODO: Handle
-  assign ibi_queue_wdata  = '0;
-  assign ibi_queue_wvalid = 1'b1;
+  assign hci_ibi_queue_wdata  = '0;
+  assign hci_ibi_queue_wvalid = 1'b1;
 
   // DAT <-> Controller interface
   logic                          dat_read_valid_hw;
@@ -264,6 +280,7 @@ module i3c
 
   // TTI RX descriptors queue
   logic                          tti_tx_desc_queue_full;
+  logic [TtiRxDescFifoDepthWidth-1:0] tti_tx_desc_queue_depth;
   logic [TtiRxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld;
   logic                          tti_tx_desc_queue_ready_thld_trig;
   logic                          tti_tx_desc_queue_empty;
@@ -273,6 +290,7 @@ module i3c
 
   // TTI TX descriptors queue
   logic                          tti_rx_desc_queue_full;
+  logic [TtiTxDescFifoDepthWidth-1:0] tti_rx_desc_queue_depth;
   logic [TtiTxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld;
   logic                          tti_rx_desc_queue_ready_thld_trig;
   logic                          tti_rx_desc_queue_empty;
@@ -282,6 +300,7 @@ module i3c
 
   // TTI RX queue
   logic                          tti_rx_queue_full;
+  logic [    TtiRxFifoDepthWidth-1:0] tti_rx_queue_depth;
   logic [    TtiRxThldWidth-1:0] tti_rx_queue_start_thld;
   logic                          tti_rx_queue_start_thld_trig;
   logic [    TtiRxThldWidth-1:0] tti_rx_queue_ready_thld;
@@ -294,6 +313,7 @@ module i3c
 
   // TTI TX queue
   logic                          tti_tx_queue_full;
+  logic [    TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth;
   logic [    TtiTxThldWidth-1:0] tti_tx_queue_start_thld;
   logic                          tti_tx_queue_start_thld_trig;
   logic [    TtiTxThldWidth-1:0] tti_tx_queue_ready_thld;
@@ -307,6 +327,7 @@ module i3c
 
   // In-band Interrupt queue
   logic                          tti_ibi_queue_full;
+  logic [   TtiIbiFifoDepthWidth-1:0] tti_ibi_queue_depth;
   logic [   TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld;
   logic                          tti_ibi_queue_ready_thld_trig;
   logic [   TtiIbiDataWidth-1:0] tti_ibi_queue_wr_data;
@@ -442,6 +463,9 @@ module i3c
   logic [19:0] t_bus_free;
   logic [19:0] t_bus_idle;
   logic [19:0] t_bus_available;
+  logic [31:0] stby_cr_device_addr_reg;
+  logic [31:0] stby_cr_device_char_reg;
+  logic [31:0] stby_cr_device_pid_lo_reg;
 
   logic bus_start;
   logic bus_rstart;
@@ -467,6 +491,7 @@ module i3c
       // HCI Response queue
       .hci_resp_queue_empty_i(hci_resp_queue_empty),
       .hci_resp_queue_full_i(hci_resp_queue_full),
+      .hci_resp_queue_depth_i(hci_resp_queue_depth),
       .hci_resp_queue_ready_thld_i(hci_resp_queue_ready_thld),
       .hci_resp_queue_ready_thld_trig_i(hci_resp_queue_ready_thld_trig),
       .hci_resp_queue_wvalid_o(hci_resp_queue_wvalid),
@@ -476,6 +501,7 @@ module i3c
       // HCI Command queue
       .hci_cmd_queue_empty_i(hci_cmd_queue_empty),
       .hci_cmd_queue_full_i(hci_cmd_queue_full),
+      .hci_cmd_queue_depth_i(hci_cmd_queue_depth),
       .hci_cmd_queue_ready_thld_i(hci_cmd_queue_ready_thld),
       .hci_cmd_queue_ready_thld_trig_i(hci_cmd_queue_ready_thld_trig),
       .hci_cmd_queue_rvalid_i(hci_cmd_queue_rvalid),
@@ -485,6 +511,7 @@ module i3c
       // HCI RX queue
       .hci_rx_queue_empty_i(hci_rx_queue_empty),
       .hci_rx_queue_full_i(hci_rx_queue_full),
+      .hci_rx_queue_depth_i(hci_rx_queue_depth),
       .hci_rx_queue_start_thld_i(hci_rx_queue_start_thld),
       .hci_rx_queue_start_thld_trig_i(hci_rx_queue_start_thld_trig),
       .hci_rx_queue_ready_thld_i(hci_rx_queue_ready_thld),
@@ -496,6 +523,7 @@ module i3c
       // HCI TX queue
       .hci_tx_queue_empty_i(hci_tx_queue_empty),
       .hci_tx_queue_full_i(hci_tx_queue_full),
+      .hci_tx_queue_depth_i(hci_tx_queue_depth),
       .hci_tx_queue_start_thld_i(hci_tx_queue_start_thld),
       .hci_tx_queue_start_thld_trig_i(hci_tx_queue_start_thld_trig),
       .hci_tx_queue_ready_thld_i(hci_tx_queue_ready_thld),
@@ -504,8 +532,19 @@ module i3c
       .hci_tx_queue_rready_o(hci_tx_queue_rready),
       .hci_tx_queue_rdata_i(hci_tx_queue_rdata),
 
+      // In-band Interrut queue
+      .hci_ibi_queue_full_i(hci_ibi_queue_full),
+      .hci_ibi_queue_depth_i(hci_ibi_queue_depth),
+      .hci_ibi_queue_ready_thld_i(hci_ibi_queue_ready_thld),
+      .hci_ibi_queue_ready_thld_trig_i(hci_ibi_queue_ready_thld_trig),
+      .hci_ibi_queue_empty_i(hci_ibi_queue_empty),
+      .hci_ibi_queue_wvalid_o(hci_ibi_queue_wvalid),
+      .hci_ibi_queue_wready_i(hci_ibi_queue_wready),
+      .hci_ibi_queue_wdata_o(hci_ibi_queue_wdata),
+
       // TTI: RX Descriptor
       .tti_rx_desc_queue_full_i(tti_rx_desc_queue_full),
+      .tti_rx_desc_queue_depth_i(tti_rx_desc_queue_depth),
       .tti_rx_desc_queue_ready_thld_i(tti_rx_desc_queue_ready_thld),
       .tti_rx_desc_queue_ready_thld_trig_i(tti_rx_desc_queue_ready_thld_trig),
       .tti_rx_desc_queue_empty_i(tti_rx_desc_queue_empty),
@@ -515,6 +554,7 @@ module i3c
 
       // TTI: RX Data
       .tti_rx_queue_full_i(tti_rx_queue_full),
+      .tti_rx_queue_depth_i(tti_rx_queue_depth),
       .tti_rx_queue_start_thld_i(tti_rx_queue_start_thld),
       .tti_rx_queue_start_thld_trig_i(tti_rx_queue_start_thld_trig),
       .tti_rx_queue_ready_thld_i(tti_rx_queue_ready_thld),
@@ -527,6 +567,7 @@ module i3c
 
       // TTI: TX Descriptor
       .tti_tx_desc_queue_full_i(tti_tx_desc_queue_full),
+      .tti_tx_desc_queue_depth_i(tti_tx_desc_queue_depth),
       .tti_tx_desc_queue_ready_thld_i(tti_tx_desc_queue_ready_thld),
       .tti_tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig),
       .tti_tx_desc_queue_empty_i(tti_tx_desc_queue_empty),
@@ -536,6 +577,7 @@ module i3c
 
       // TTI: TX Data
       .tti_tx_queue_full_i(tti_tx_queue_full),
+      .tti_tx_queue_depth_i(tti_tx_queue_depth),
       .tti_tx_queue_start_thld_i(tti_tx_queue_start_thld),
       .tti_tx_queue_start_thld_trig_i(tti_tx_queue_start_thld_trig),
       .tti_tx_queue_ready_thld_i(tti_tx_queue_ready_thld),
@@ -547,13 +589,14 @@ module i3c
       .tti_tx_host_nack_o(tti_tx_host_nack),
 
       // TTI: In-band Interrupt queue
-      .ibi_queue_full_i(tti_ibi_queue_full),
-      .ibi_queue_thld_i(tti_ibi_queue_ready_thld),
-      .ibi_queue_above_thld_i(tti_ibi_queue_ready_thld_trig),
-      .ibi_queue_empty_i(tti_ibi_queue_empty),
-      .ibi_queue_rvalid_i(tti_ibi_queue_rvalid),
-      .ibi_queue_rready_o(tti_ibi_queue_rready),
-      .ibi_queue_rdata_i(tti_ibi_queue_rdata),
+      .tti_ibi_queue_full_i(tti_ibi_queue_full),
+      .tti_ibi_queue_depth_i(tti_ibi_queue_depth),
+      .tti_ibi_queue_ready_thld_i(tti_ibi_queue_ready_thld),
+      .tti_ibi_queue_ready_thld_trig_i(tti_ibi_queue_ready_thld_trig),
+      .tti_ibi_queue_empty_i(tti_ibi_queue_empty),
+      .tti_ibi_queue_rvalid_i(tti_ibi_queue_rvalid),
+      .tti_ibi_queue_rready_o(tti_ibi_queue_rready),
+      .tti_ibi_queue_rdata_i(tti_ibi_queue_rdata),
 
       // I2C/I3C bus condition detection
       .bus_start_o (bus_start),
@@ -597,6 +640,9 @@ module i3c
       .t_bus_free_i(t_bus_free),
       .t_bus_idle_i(t_bus_idle),
       .t_bus_available_i(t_bus_available),
+      .stby_cr_device_addr_reg_i(stby_cr_device_addr_reg),
+      .stby_cr_device_char_reg_i(stby_cr_device_char_reg),
+      .stby_cr_device_pid_lo_reg_i(stby_cr_device_pid_lo_reg),
 
       .rst_action_o(rst_action)
   );
@@ -626,20 +672,7 @@ module i3c
       .HciRespThldWidth(HciRespThldWidth),
       .HciCmdThldWidth(HciCmdThldWidth),
       .HciRxThldWidth(HciRxThldWidth),
-      .HciTxThldWidth(HciTxThldWidth),
-      .TtiRespFifoDepth(TtiRespFifoDepth),
-      .TtiCmdFifoDepth(TtiCmdFifoDepth),
-      .TtiRxFifoDepth(TtiRxFifoDepth),
-      .TtiTxFifoDepth(TtiTxFifoDepth),
-      .TtiIbiFifoDepth(TtiIbiFifoDepth),
-      .TtiRxDescDataWidth(TtiRxDescDataWidth),
-      .TtiTxDescDataWidth(TtiTxDescDataWidth),
-      .TtiRxDataWidth(TtiRxDataWidth),
-      .TtiTxDataWidth(TtiTxDataWidth),
-      .TtiRxDescThldWidth(TtiRxDescThldWidth),
-      .TtiTxDescThldWidth(TtiTxDescThldWidth),
-      .TtiRxThldWidth(TtiRxThldWidth),
-      .TtiTxThldWidth(TtiTxThldWidth)
+      .HciTxThldWidth(HciTxThldWidth)
   ) xhci (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -680,6 +713,7 @@ module i3c
 
       // HCI Response queue
       .hci_resp_full_o(hci_resp_queue_full),
+      .hci_resp_depth_o(hci_resp_queue_depth),
       .hci_resp_ready_thld_o(hci_resp_queue_ready_thld),
       .hci_resp_ready_thld_trig_o(hci_resp_queue_ready_thld_trig),
       .hci_resp_empty_o(hci_resp_queue_empty),
@@ -689,6 +723,7 @@ module i3c
 
       // HCI Command queue
       .hci_cmd_full_o(hci_cmd_queue_full),
+      .hci_cmd_depth_o(hci_cmd_queue_depth),
       .hci_cmd_ready_thld_o(hci_cmd_queue_ready_thld),
       .hci_cmd_ready_thld_trig_o(hci_cmd_queue_ready_thld_trig),
       .hci_cmd_empty_o(hci_cmd_queue_empty),
@@ -698,6 +733,7 @@ module i3c
 
       // HCI RX queue
       .hci_rx_full_o(hci_rx_queue_full),
+      .hci_rx_depth_o(hci_rx_queue_depth),
       .hci_rx_start_thld_o(hci_rx_queue_start_thld),
       .hci_rx_start_thld_trig_o(hci_rx_queue_start_thld_trig),
       .hci_rx_ready_thld_o(hci_rx_queue_ready_thld),
@@ -709,6 +745,7 @@ module i3c
 
       // HCI TX queue
       .hci_tx_full_o(hci_tx_queue_full),
+      .hci_tx_depth_o(hci_tx_queue_depth),
       .hci_tx_start_thld_o(hci_tx_queue_start_thld),
       .hci_tx_start_thld_trig_o(hci_tx_queue_start_thld_trig),
       .hci_tx_ready_thld_o(hci_tx_queue_ready_thld),
@@ -718,13 +755,14 @@ module i3c
       .hci_tx_rready_i(hci_tx_queue_rready),
       .hci_tx_rdata_o(hci_tx_queue_rdata),
 
-      .hci_ibi_queue_full_o(ibi_queue_full),
-      .hci_ibi_queue_ready_thld_o(ibi_queue_ready_thld),
-      .hci_ibi_queue_ready_thld_trig_o(ibi_queue_ready_thld_trig),
-      .hci_ibi_queue_empty_o(ibi_queue_empty),
-      .hci_ibi_queue_wvalid_i(ibi_queue_wvalid),
-      .hci_ibi_queue_wready_o(ibi_queue_wready),
-      .hci_ibi_queue_wdata_i(ibi_queue_wdata),
+      .hci_ibi_queue_full_o(hci_ibi_queue_full),
+      .hci_ibi_queue_depth_o(hci_ibi_queue_depth),
+      .hci_ibi_queue_ready_thld_o(hci_ibi_queue_ready_thld),
+      .hci_ibi_queue_ready_thld_trig_o(hci_ibi_queue_ready_thld_trig),
+      .hci_ibi_queue_empty_o(hci_ibi_queue_empty),
+      .hci_ibi_queue_wvalid_i(hci_ibi_queue_wvalid),
+      .hci_ibi_queue_wready_o(hci_ibi_queue_wready),
+      .hci_ibi_queue_wdata_i(hci_ibi_queue_wdata),
 
       .phy_en_o(phy_en),
       .phy_mux_select_o(phy_mux_select),
@@ -739,6 +777,9 @@ module i3c
       .t_bus_free_o(t_bus_free),
       .t_bus_idle_o(t_bus_idle),
       .t_bus_available_o(t_bus_available),
+      .stby_cr_device_addr_reg_o(stby_cr_device_addr_reg),
+      .stby_cr_device_char_reg_o(stby_cr_device_char_reg),
+      .stby_cr_device_pid_lo_reg_o(stby_cr_device_pid_lo_reg),
 
       .rst_action_i(rst_action)
   );
@@ -854,7 +895,23 @@ module i3c
   );
 
   // Recovery handler
-  recovery_handler xrecovery_handler (
+  recovery_handler #(
+      .TtiRxDescDataWidth,
+      .TtiRxDescThldWidth,
+      .TtiRxDescFifoDepth,
+      .TtiTxDescDataWidth,
+      .TtiTxDescThldWidth,
+      .TtiTxDescFifoDepth,
+      .TtiRxDataDataWidth(TtiRxDataWidth),
+      .TtiRxDataThldWidth(TtiRxThldWidth),
+      .TtiRxDataFifoDepth(TtiRxFifoDepth),
+      .TtiTxDataDataWidth(TtiTxDataWidth),
+      .TtiTxDataThldWidth(TtiTxThldWidth),
+      .TtiTxDataFifoDepth(TtiTxFifoDepth),
+      .TtiIbiDataWidth,
+      .TtiIbiThldWidth,
+      .TtiIbiFifoDepth
+  ) xrecovery_handler (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
@@ -915,6 +972,7 @@ module i3c
 
       // TTI RX descriptors queue
       .ctl_tti_rx_desc_queue_full_o(tti_rx_desc_queue_full),
+      .ctl_tti_rx_desc_queue_depth_o(tti_rx_desc_queue_depth),
       .ctl_tti_rx_desc_queue_empty_o(tti_rx_desc_queue_empty),
       .ctl_tti_rx_desc_queue_wvalid_i(tti_rx_desc_queue_wvalid),
       .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_queue_wready),
@@ -924,6 +982,7 @@ module i3c
 
       // TTI TX descriptors queue
       .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_queue_full),
+      .ctl_tti_tx_desc_queue_depth_o(tti_tx_desc_queue_depth),
       .ctl_tti_tx_desc_queue_empty_o(tti_tx_desc_queue_empty),
       .ctl_tti_tx_desc_queue_rvalid_o(tti_tx_desc_queue_rvalid),
       .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_queue_rready),
@@ -933,6 +992,7 @@ module i3c
 
       // TTI RX data queue
       .ctl_tti_rx_data_queue_full_o(tti_rx_queue_full),
+      .ctl_tti_rx_data_queue_depth_o(tti_rx_queue_depth),
       .ctl_tti_rx_data_queue_empty_o(tti_rx_queue_empty),
       .ctl_tti_rx_data_queue_wvalid_i(tti_rx_queue_wvalid),
       .ctl_tti_rx_data_queue_wready_o(tti_rx_queue_wready),
@@ -945,6 +1005,7 @@ module i3c
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_queue_full),
+      .ctl_tti_tx_data_queue_depth_o(tti_tx_queue_depth),
       .ctl_tti_tx_data_queue_empty_o(tti_tx_queue_empty),
       .ctl_tti_tx_data_queue_rvalid_o(tti_tx_queue_rvalid),
       .ctl_tti_tx_data_queue_rready_i(tti_tx_queue_rready),
@@ -957,6 +1018,7 @@ module i3c
 
       // TTI In-band Interrupt (IBI) queue
       .ctl_tti_ibi_queue_full_o(tti_ibi_queue_full),
+      .ctl_tti_ibi_queue_depth_o(tti_ibi_queue_depth),
       .ctl_tti_ibi_queue_empty_o(tti_ibi_queue_empty),
       .ctl_tti_ibi_queue_rvalid_o(tti_ibi_queue_rvalid),
       .ctl_tti_ibi_queue_rready_i(tti_ibi_queue_rready),
@@ -1039,7 +1101,6 @@ module i3c
     // See the TODO `in src/ctrl/flow_active.sv`
     //xcontroller.xcontroller_active.flow_fsm.resp_queue_wvalid_o = 0;
     xcontroller.xcontroller_active.flow_fsm.ibi_queue_wvalid_o = 0;
-    xcontroller.ibi_queue_wready_i = 0;  // Signal is defined implictly
 
     xcontroller.xcontroller_active.flow_fsm.err.err_0 = 0;
     xcontroller.xcontroller_active.flow_fsm.irq.irq_0 = 0;

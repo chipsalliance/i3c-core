@@ -4,6 +4,18 @@ module controller_active
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
+    parameter int unsigned HciRespFifoDepth = 64,
+    parameter int unsigned HciCmdFifoDepth = 64,
+    parameter int unsigned HciRxFifoDepth = 64,
+    parameter int unsigned HciTxFifoDepth = 64,
+    parameter int unsigned HciIbiFifoDepth = 64,
+
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -29,6 +41,7 @@ module controller_active
     // HCI queues
     // Command FIFO
     input logic cmd_queue_full_i,
+    input logic [HciCmdFifoDepthWidth-1:0] cmd_queue_depth_i,
     input logic [HciCmdThldWidth-1:0] cmd_queue_ready_thld_i,
     input logic cmd_queue_ready_thld_trig_i,
     input logic cmd_queue_empty_i,
@@ -37,6 +50,7 @@ module controller_active
     input logic [HciCmdDataWidth-1:0] cmd_queue_rdata_i,
     // RX FIFO
     input logic rx_queue_full_i,
+    input logic [HciRxFifoDepthWidth-1:0] rx_queue_depth_i,
     input logic [HciRxThldWidth-1:0] rx_queue_start_thld_i,
     input logic rx_queue_start_thld_trig_i,
     input logic [HciRxThldWidth-1:0] rx_queue_ready_thld_i,
@@ -47,6 +61,7 @@ module controller_active
     output logic [HciRxDataWidth-1:0] rx_queue_wdata_o,
     // TX FIFO
     input logic tx_queue_full_i,
+    input logic [HciTxFifoDepthWidth-1:0] tx_queue_depth_i,
     input logic [HciTxThldWidth-1:0] tx_queue_start_thld_i,
     input logic tx_queue_start_thld_trig_i,
     input logic [HciTxThldWidth-1:0] tx_queue_ready_thld_i,
@@ -57,6 +72,7 @@ module controller_active
     input logic [HciTxDataWidth-1:0] tx_queue_rdata_i,
     // Response FIFO
     input logic resp_queue_full_i,
+    input logic [HciRespFifoDepthWidth-1:0] resp_queue_depth_i,
     input logic [HciRespThldWidth-1:0] resp_queue_ready_thld_i,
     input logic resp_queue_ready_thld_trig_i,
     input logic resp_queue_empty_i,
@@ -66,8 +82,9 @@ module controller_active
 
     // In-band Interrupt queue
     input logic ibi_queue_full_i,
-    input logic [HciIbiThldWidth-1:0] ibi_queue_thld_i,
-    input logic ibi_queue_above_thld_i,
+    input logic [HciIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
+    input logic [HciIbiThldWidth-1:0] ibi_queue_ready_thld_i,
+    input logic ibi_queue_ready_thld_trig_i,
     input logic ibi_queue_empty_i,
     output logic ibi_queue_wvalid_o,
     input logic ibi_queue_wready_i,
@@ -160,8 +177,8 @@ module controller_active
       .resp_queue_wready_i,
       .resp_queue_wdata_o,
       .ibi_queue_full_i,
-      .ibi_queue_thld_i,
-      .ibi_queue_above_thld_i,
+      .ibi_queue_ready_thld_i,
+      .ibi_queue_ready_thld_trig_i,
       .ibi_queue_empty_i,
       .ibi_queue_wvalid_o,
       .ibi_queue_wready_i,

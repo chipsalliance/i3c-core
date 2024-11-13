@@ -24,7 +24,10 @@ module configuration (
     // Bus timers
     output logic [19:0] t_bus_free_o,
     output logic [19:0] t_bus_idle_o,
-    output logic [19:0] t_bus_available_o
+    output logic [19:0] t_bus_available_o,
+    output logic [31:0] stby_cr_device_addr_reg_o,
+    output logic [31:0] stby_cr_device_char_reg_o,
+    output logic [31:0] stby_cr_device_pid_lo_reg_o
 );
 
   // Mode of operation
@@ -64,7 +67,6 @@ module configuration (
   assign pio_abort = hwif_out.PIOControl.PIO_CONTROL.ABORT.value;
   assign pio_rs = hwif_out.PIOControl.PIO_CONTROL.RS.value;
 
-  // TODO: Assert that these 4 are not 1 at the same time
   assign i2c_active_en_o = 1'b0;
   assign i2c_standby_en_o = 1'b0;
 
@@ -91,5 +93,8 @@ module configuration (
   assign t_bus_free_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value);
   assign t_bus_idle_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value);
   assign t_bus_available_o = 20'(hwif_out.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value);
+  assign stby_cr_device_addr_reg_o = hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR;
+  assign stby_cr_device_char_reg_o = hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR;
+  assign stby_cr_device_pid_lo_reg_o = hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO;
 
 endmodule

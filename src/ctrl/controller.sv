@@ -12,6 +12,18 @@ module controller
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
 
+    parameter int unsigned HciRespFifoDepth = 64,
+    parameter int unsigned HciCmdFifoDepth = 64,
+    parameter int unsigned HciRxFifoDepth = 64,
+    parameter int unsigned HciTxFifoDepth = 64,
+    parameter int unsigned HciIbiFifoDepth = 64,
+
+    localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
+    localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
+    localparam int unsigned HciTxFifoDepthWidth = $clog2(HciTxFifoDepth + 1),
+    localparam int unsigned HciRxFifoDepthWidth = $clog2(HciRxFifoDepth + 1),
+    localparam int unsigned HciIbiFifoDepthWidth = $clog2(HciIbiFifoDepth + 1),
+
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -23,6 +35,18 @@ module controller
     parameter int unsigned HciRxThldWidth   = 3,
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
+
+    parameter int unsigned TtiRxDescFifoDepth = 64,
+    parameter int unsigned TtiTxDescFifoDepth = 64,
+    parameter int unsigned TtiRxFifoDepth = 64,
+    parameter int unsigned TtiTxFifoDepth = 64,
+    parameter int unsigned TtiIbiFifoDepth = 64,
+
+    localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
+    localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
+    localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
+    localparam int unsigned TtiRxFifoDepthWidth = $clog2(TtiRxFifoDepth + 1),
+    localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
 
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiTxDescDataWidth = 32,
@@ -49,6 +73,7 @@ module controller
     // HCI queues
     // Command FIFO
     input logic hci_cmd_queue_full_i,
+    input logic [HciCmdFifoDepthWidth-1:0] hci_cmd_queue_depth_i,
     input logic [HciCmdThldWidth-1:0] hci_cmd_queue_ready_thld_i,
     input logic hci_cmd_queue_ready_thld_trig_i,
     input logic hci_cmd_queue_empty_i,
@@ -57,6 +82,7 @@ module controller
     input logic [HciCmdDataWidth-1:0] hci_cmd_queue_rdata_i,
     // RX FIFO
     input logic hci_rx_queue_full_i,
+    input logic [HciRxFifoDepthWidth-1:0] hci_rx_queue_depth_i,
     input logic [HciRxThldWidth-1:0] hci_rx_queue_start_thld_i,
     input logic hci_rx_queue_start_thld_trig_i,
     input logic [HciRxThldWidth-1:0] hci_rx_queue_ready_thld_i,
@@ -67,6 +93,7 @@ module controller
     output logic [HciRxDataWidth-1:0] hci_rx_queue_wdata_o,
     // TX FIFO
     input logic hci_tx_queue_full_i,
+    input logic [HciTxFifoDepthWidth-1:0] hci_tx_queue_depth_i,
     input logic [HciTxThldWidth-1:0] hci_tx_queue_start_thld_i,
     input logic hci_tx_queue_start_thld_trig_i,
     input logic [HciTxThldWidth-1:0] hci_tx_queue_ready_thld_i,
@@ -77,6 +104,7 @@ module controller
     input logic [HciTxDataWidth-1:0] hci_tx_queue_rdata_i,
     // Response FIFO
     input logic hci_resp_queue_full_i,
+    input logic [HciRespFifoDepthWidth-1:0] hci_resp_queue_depth_i,
     input logic [HciRespThldWidth-1:0] hci_resp_queue_ready_thld_i,
     input logic hci_resp_queue_ready_thld_trig_i,
     input logic hci_resp_queue_empty_i,
@@ -84,10 +112,21 @@ module controller
     input logic hci_resp_queue_wready_i,
     output logic [HciRespDataWidth-1:0] hci_resp_queue_wdata_o,
 
+    // In-band Interrupt queue
+    input logic hci_ibi_queue_full_i,
+    input logic [HciIbiFifoDepthWidth-1:0] hci_ibi_queue_depth_i,
+    input logic [HciIbiThldWidth-1:0] hci_ibi_queue_ready_thld_i,
+    input logic hci_ibi_queue_ready_thld_trig_i,
+    input logic hci_ibi_queue_empty_i,
+    output logic hci_ibi_queue_wvalid_o,
+    input logic hci_ibi_queue_wready_i,
+    output logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_o,
+
     // Target Transaction Interface
 
     // TTI: RX Descriptor
     input logic tti_rx_desc_queue_full_i,
+    input logic [TtiRxDescFifoDepthWidth-1:0] tti_rx_desc_queue_depth_i,
     input logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_i,
     input logic tti_rx_desc_queue_ready_thld_trig_i,
     input logic tti_rx_desc_queue_empty_i,
@@ -97,6 +136,7 @@ module controller
 
     // TTI: TX Descriptor
     input logic tti_tx_desc_queue_full_i,
+    input logic [TtiTxDescFifoDepthWidth-1:0] tti_tx_desc_queue_depth_i,
     input logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_i,
     input logic tti_tx_desc_queue_ready_thld_trig_i,
     input logic tti_tx_desc_queue_empty_i,
@@ -106,6 +146,7 @@ module controller
 
     // TTI: RX Data
     input logic tti_rx_queue_full_i,
+    input logic [TtiRxFifoDepthWidth-1:0] tti_rx_queue_depth_i,
     input logic [TtiRxThldWidth-1:0] tti_rx_queue_start_thld_i,
     input logic tti_rx_queue_start_thld_trig_i,
     input logic [TtiRxThldWidth-1:0] tti_rx_queue_ready_thld_i,
@@ -118,6 +159,7 @@ module controller
 
     // TTI: TX Data
     input logic tti_tx_queue_full_i,
+    input logic [TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth_i,
     input logic [TtiTxThldWidth-1:0] tti_tx_queue_start_thld_i,
     input logic tti_tx_queue_start_thld_trig_i,
     input logic [TtiTxThldWidth-1:0] tti_tx_queue_ready_thld_i,
@@ -128,14 +170,15 @@ module controller
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
     output logic tti_tx_host_nack_o,
 
-    // In-band Interrupt queue
-    input logic ibi_queue_full_i,
-    input logic [HciIbiThldWidth-1:0] ibi_queue_thld_i,
-    input logic ibi_queue_above_thld_i,
-    input logic ibi_queue_empty_i,
-    input logic ibi_queue_rvalid_i,
-    output logic ibi_queue_rready_o,
-    input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
+    // TTI: In-band Interrupt queue
+    input logic tti_ibi_queue_full_i,
+    input logic [TtiIbiFifoDepthWidth-1:0] tti_ibi_queue_depth_i,
+    input logic [TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld_i,
+    input logic tti_ibi_queue_ready_thld_trig_i,
+    input logic tti_ibi_queue_empty_i,
+    input logic tti_ibi_queue_rvalid_i,
+    output logic tti_ibi_queue_rready_o,
+    input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_i,
 
     // DAT <-> Controller interface
     output logic             dat_read_valid_hw_o,
@@ -179,6 +222,9 @@ module controller
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
+    input logic [31:0] stby_cr_device_addr_reg_i,
+    input logic [31:0] stby_cr_device_char_reg_i,
+    input logic [31:0] stby_cr_device_pid_lo_reg_i,
 
     output logic [7:0] rst_action_o
 );
@@ -209,6 +255,7 @@ module controller
       .ctrl_sda_o(ctrl_sda_o[0:1]),
       .phy_sel_od_pp_o(ctrl_sel_od_pp_i[0:1]),
       .cmd_queue_full_i(hci_cmd_queue_full_i),
+      .cmd_queue_depth_i(hci_cmd_queue_depth_i),
       .cmd_queue_ready_thld_i(hci_cmd_queue_ready_thld_i),
       .cmd_queue_ready_thld_trig_i(hci_cmd_queue_ready_thld_trig_i),
       .cmd_queue_empty_i(hci_cmd_queue_empty_i),
@@ -216,6 +263,7 @@ module controller
       .cmd_queue_rready_o(hci_cmd_queue_rready_o),
       .cmd_queue_rdata_i(hci_cmd_queue_rdata_i),
       .rx_queue_full_i(hci_rx_queue_full_i),
+      .rx_queue_depth_i(hci_rx_queue_depth_i),
       .rx_queue_start_thld_i(hci_rx_queue_start_thld_i),
       .rx_queue_start_thld_trig_i(hci_rx_queue_start_thld_trig_i),
       .rx_queue_ready_thld_i(hci_rx_queue_ready_thld_i),
@@ -225,6 +273,7 @@ module controller
       .rx_queue_wready_i(hci_rx_queue_wready_i),
       .rx_queue_wdata_o(hci_rx_queue_wdata_o),
       .tx_queue_full_i(hci_tx_queue_full_i),
+      .tx_queue_depth_i(hci_tx_queue_depth_i),
       .tx_queue_start_thld_i(hci_tx_queue_start_thld_i),
       .tx_queue_start_thld_trig_i(hci_tx_queue_start_thld_trig_i),
       .tx_queue_ready_thld_i(hci_tx_queue_ready_thld_i),
@@ -234,19 +283,21 @@ module controller
       .tx_queue_rready_o(hci_tx_queue_rready_o),
       .tx_queue_rdata_i(hci_tx_queue_rdata_i),
       .resp_queue_full_i(hci_resp_queue_full_i),
+      .resp_queue_depth_i(hci_resp_queue_depth_i),
       .resp_queue_ready_thld_i(hci_resp_queue_ready_thld_i),
       .resp_queue_ready_thld_trig_i(hci_resp_queue_ready_thld_trig_i),
       .resp_queue_empty_i(hci_resp_queue_empty_i),
       .resp_queue_wvalid_o(hci_resp_queue_wvalid_o),
       .resp_queue_wready_i(hci_resp_queue_wready_i),
       .resp_queue_wdata_o(hci_resp_queue_wdata_o),
-      .ibi_queue_full_i(ibi_queue_full_i),
-      .ibi_queue_thld_i(ibi_queue_thld_i),
-      .ibi_queue_above_thld_i(ibi_queue_above_thld_i),
-      .ibi_queue_empty_i(ibi_queue_empty_i),
-      .ibi_queue_wvalid_o(ibi_queue_wvalid_o),
-      .ibi_queue_wready_i(ibi_queue_wready_i),
-      .ibi_queue_wdata_o(ibi_queue_wdata_o),
+      .ibi_queue_full_i(hci_ibi_queue_full_i),
+      .ibi_queue_depth_i(hci_ibi_queue_depth_i),
+      .ibi_queue_ready_thld_i(hci_ibi_queue_ready_thld_i),
+      .ibi_queue_ready_thld_trig_i(hci_ibi_queue_ready_thld_trig_i),
+      .ibi_queue_empty_i(hci_ibi_queue_empty_i),
+      .ibi_queue_wvalid_o(hci_ibi_queue_wvalid_o),
+      .ibi_queue_wready_i(hci_ibi_queue_wready_i),
+      .ibi_queue_wdata_o(hci_ibi_queue_wdata_o),
       .dat_read_valid_hw_o(dat_read_valid_hw_o),
       .dat_index_hw_o(dat_index_hw_o),
       .dat_rdata_hw_i(dat_rdata_hw_i),
@@ -283,6 +334,7 @@ module controller
       .ctrl_sda_o(ctrl_sda_o[2:3]),
       .phy_sel_od_pp_o(ctrl_sel_od_pp_i[2:3]),
       .rx_desc_queue_full_i(tti_rx_desc_queue_full_i),
+      .rx_desc_queue_depth_i(tti_rx_desc_queue_depth_i),
       .rx_desc_queue_ready_thld_i(tti_rx_desc_queue_ready_thld_i),
       .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_queue_ready_thld_trig_i),
       .rx_desc_queue_empty_i(tti_rx_desc_queue_empty_i),
@@ -290,6 +342,7 @@ module controller
       .rx_desc_queue_wready_i(tti_rx_desc_queue_wready_i),
       .rx_desc_queue_wdata_o(tti_rx_desc_queue_wdata_o),
       .tx_desc_queue_full_i(tti_tx_desc_queue_full_i),
+      .tx_desc_queue_depth_i(tti_tx_desc_queue_depth_i),
       .tx_desc_queue_ready_thld_i(tti_tx_desc_queue_ready_thld_i),
       .tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig_i),
       .tx_desc_queue_empty_i(tti_tx_desc_queue_empty_i),
@@ -297,6 +350,7 @@ module controller
       .tx_desc_queue_rready_o(tti_tx_desc_queue_rready_o),
       .tx_desc_queue_rdata_i(tti_tx_desc_queue_rdata_i),
       .rx_queue_full_i(tti_rx_queue_full_i),
+      .rx_queue_depth_i(tti_rx_queue_depth_i),
       .rx_queue_start_thld_i(tti_rx_queue_start_thld_i),
       .rx_queue_start_thld_trig_i(tti_rx_queue_start_thld_trig_i),
       .rx_queue_ready_thld_i(tti_rx_queue_ready_thld_i),
@@ -307,6 +361,7 @@ module controller
       .rx_queue_wdata_o(tti_rx_queue_wdata_o),
       .rx_queue_wflush_o(tti_rx_queue_wflush_o),
       .tx_queue_full_i(tti_tx_queue_full_i),
+      .tx_queue_depth_i(tti_tx_queue_depth_i),
       .tx_queue_start_thld_i(tti_tx_queue_start_thld_i),
       .tx_queue_start_thld_trig_i(tti_tx_queue_start_thld_trig_i),
       .tx_queue_ready_thld_i(tti_tx_queue_ready_thld_i),
@@ -320,11 +375,14 @@ module controller
       .bus_stop_o(bus_stop_o),
       .bus_addr_o(bus_addr_o),
       .bus_addr_valid_o(bus_addr_valid_o),
-      .ibi_queue_full_i,
-      .ibi_queue_empty_i,
-      .ibi_queue_rvalid_i,
-      .ibi_queue_rready_o,
-      .ibi_queue_rdata_i,
+      .ibi_queue_full_i(tti_ibi_queue_full_i),
+      .ibi_queue_depth_i(tti_ibi_queue_depth_i),
+      .ibi_queue_ready_thld_i(tti_ibi_queue_ready_thld_i),
+      .ibi_queue_ready_thld_trig_i(tti_ibi_queue_ready_thld_trig_i),
+      .ibi_queue_empty_i(tti_ibi_queue_empty_i),
+      .ibi_queue_rvalid_i(tti_ibi_queue_rvalid_i),
+      .ibi_queue_rready_o(tti_ibi_queue_rready_o),
+      .ibi_queue_rdata_i(tti_ibi_queue_rdata_i),
       .phy_en_i(phy_en_i),
       .phy_mux_select_i(phy_mux_select_i),
       .i2c_active_en_i(i2c_active_en_i),
@@ -338,6 +396,9 @@ module controller
       .t_bus_free_i(t_bus_free_i),
       .t_bus_idle_i(t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
+      .stby_cr_device_addr_reg_i,
+      .stby_cr_device_char_reg_i,
+      .stby_cr_device_pid_lo_reg_i,
       .rst_action_o(rst_action_o),
       .tx_host_nack_o(tti_tx_host_nack_o)
   );

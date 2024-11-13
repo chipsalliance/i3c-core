@@ -155,6 +155,14 @@ regfile TargetTransactionInterfaceRegisters #(
             reset = 1'b0;
         } TRANSFER_ABORT_STAT[25:25];
         field {
+            name = "PENDING_INTERRUPT";
+            desc = "Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.";
+            sw = r;
+            hw = rw;
+            we = true;
+            reset = 4'd0;
+        } PENDING_INTERRUPT[18:15];
+        field {
             name = "IBI_DONE";
             desc = "IBI is done, check LAST_IBI_STATUS for result.";
             sw = rw;

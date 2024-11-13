@@ -23,6 +23,7 @@ module read_queue #(
 
     // Direct FIFO write control
     output logic full_o,
+    output logic [FifoDepthWidth-1:0] depth_o,
     output logic start_thld_trig_o,
     output logic ready_thld_trig_o,
     output logic empty_o,

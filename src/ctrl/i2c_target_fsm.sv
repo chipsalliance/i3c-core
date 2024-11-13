@@ -599,13 +599,13 @@ module i2c_target_fsm
   assign nack_timeout = nack_timeout_en_i && stretch_active_cnt >= nack_timeout_i;
 
   // TODO: Reenable stretching
-  //// Stretch Tx phase when:
-  //// 1. When there is no data to return to host
-  //// 2. When the acq_fifo contains any entry other than a singular start condition
-  ////    read command.
-  ////
-  //// Only the fifo depth is checked here, because stretch_tx is only evaluated by the
-  //// fsm on the read path. This means a read start byte has already been deposited.
+  // Stretch Tx phase when:
+  // 1. When there is no data to return to host
+  // 2. When the acq_fifo contains any entry other than a singular start condition
+  //    read command.
+  //
+  // Only the fifo depth is checked here, because stretch_tx is only evaluated by the
+  // fsm on the read path. This means a read start byte has already been deposited.
   //assign stretch_tx   = ~tx_fifo_rvalid_i | (acq_fifo_depth_i > AcqFifoDepthWidth'(1'b1));
   assign stretch_tx   = 0;
 
