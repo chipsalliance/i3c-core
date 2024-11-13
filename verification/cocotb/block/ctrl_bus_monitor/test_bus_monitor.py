@@ -34,6 +34,7 @@ async def count_high_cycles(clk, sig, e_terminate):
         await RisingEdge(clk)
     return num_det
 
+
 def create_default_controller(dut: SimHandleBase) -> I3cController:
     return I3cController(
         sda_i=None,
@@ -162,11 +163,9 @@ async def test_target_reset_detection(dut: SimHandleBase):
     cocotb.log.info("Performing basic target reset test with no configuration")
 
     e_terminate = cocotb.triggers.Event()
-    t_detect_target_reset = cocotb.start_soon(count_high_cycles(
-        dut.clk_i,
-        dut.target_reset_detect_o,
-        e_terminate
-    ))
+    t_detect_target_reset = cocotb.start_soon(
+        count_high_cycles(dut.clk_i, dut.target_reset_detect_o, e_terminate)
+    )
     await i3c_controller.target_reset()
 
     await ClockCycles(dut.clk_i, 32)
