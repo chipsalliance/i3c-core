@@ -11,6 +11,9 @@ introduction
 :maxdepth: 2
 
 top
+controller_interfaces
+controller_standby
+controller_phy
 dv
 ci_queues
 timings
