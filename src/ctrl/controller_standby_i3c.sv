@@ -173,7 +173,6 @@ module controller_standby_i3c
   // Target FSM <--> DAA
   logic [6:0] bus_addr;
   logic bus_rnw;
-  logic bus_addr_match;
   logic bus_addr_valid;
   logic is_sta_addr_match;
   logic is_dyn_addr_match;
@@ -197,6 +196,18 @@ module controller_standby_i3c
   logic bus_idle;
   logic bus_available;
 
+  logic scl_negedge;
+  logic scl_posedge;
+  logic sda_negedge;
+  logic sda_posedge;
+  logic scl_stable_low;
+  logic bus_req_err;
+  logic bus_write_done;
+  logic bus_write_idle;
+  logic bus_req_byte;
+  logic bus_req_bit;
+  logic bus_req_value;
+
   i3c_target_fsm xi3c_target_fsm (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -213,6 +224,12 @@ module controller_standby_i3c
       .bus_rstart_det_o(rstart_detect),
       .target_idle_o(i3c_target_idle_o),
       .target_transmitting_o(i3c_target_transmitting_o),
+      .bus_req_err_i(),
+      .bus_write_done_i(),
+      .bus_write_idle_i(),
+      .bus_req_byte_o(),
+      .bus_req_bit_o(),
+      .bus_req_value_o(),
       .tx_fifo_rvalid_i(tx_byte_valid),
       .tx_fifo_rready_o(tx_byte_ready),
       .tx_fifo_rdata_i(tx_byte),
@@ -230,14 +247,13 @@ module controller_standby_i3c
       .t_f_i(t_f_i),
       .tsu_dat_i(t_su_dat_i),
       .thd_dat_i(t_hd_dat_i),
-      .is_sta_addr_match(is_sta_addr_match),
-      .is_dyn_addr_match(is_dyn_addr_match),
-      .bus_addr(bus_addr),
-      .bus_rnw(bus_rnw),
-      .bus_addr_match(bus_addr_match),
-      .bus_addr_valid(bus_addr_valid),
-      .is_i3c_rsvd_addr_match(is_i3c_rsvd_addr_match),
-      .is_any_addr_match(is_any_addr_match),
+      .is_sta_addr_match_i(is_sta_addr_match),
+      .is_dyn_addr_match_i(is_dyn_addr_match),
+      .bus_addr_o(bus_addr),
+      .bus_rnw_o(bus_rnw),
+      .bus_addr_valid_o(bus_addr_valid),
+      .is_i3c_rsvd_addr_match_i(is_i3c_rsvd_addr_match),
+      .is_any_addr_match_i(is_any_addr_match),
       .event_target_nack_o(i3c_event_target_nack_o),
       .event_cmd_complete_o(i3c_event_cmd_complete_o),
       .event_unexp_stop_o(i3c_event_unexp_stop_o),
@@ -246,7 +262,33 @@ module controller_standby_i3c
       .event_read_cmd_received_o(i3c_event_read_cmd_received_o),
       .rst_action_o(rst_action_o),
       .is_in_hdr_mode_o(is_in_hdr_mode),
-      .hdr_exit_detect_i(hdr_exit_detect)
+      .hdr_exit_detect_i(hdr_exit_detect),
+      .scl_negedge_i(scl_negedge),
+      .scl_posedge_i(scl_posedge),
+      .sda_negedge_i(sda_negedge),
+      .sda_posedge_i(sda_posedge)
+  );
+
+  bus_write_flow xbus_write_flow (
+      .clk_i,
+      .rst_ni,
+      .t_r_i,
+      .t_su_dat_i,
+      .t_hd_dat_i,
+      .scl_negedge_i(scl_negedge),
+      .scl_posedge_i(scl_posedge),
+      .scl_stable_low_i(scl_stable_low),
+      .req_byte_i(bus_req_byte),
+      .req_bit_i(bus_req_bit),
+      .req_value_i(bus_req_value),
+      .abort_i('0),
+      .bus_write_done_o(bus_write_done),
+      .bus_write_idle_o(bus_write_idle),
+      .req_error_o(bus_req_err),
+      .bus_error_o(),
+      .sel_od_pp_i('0),
+      .sel_od_pp_o(),
+      .sda_o()
   );
 
   bus_monitor xbus_monitor (
@@ -258,6 +300,11 @@ module controller_standby_i3c
       .t_hd_dat_i(t_hd_dat_i),
       .t_r_i(t_r_i),
       .t_f_i(t_f_i),
+      .scl_negedge_o(scl_negedge),
+      .scl_posedge_o(scl_posedge),
+      .sda_negedge_o(sda_negedge),
+      .sda_posedge_o(sda_posedge),
+      .scl_stable_low_o(scl_stable_low),
       .start_detect_o(start_detect),
       .stop_detect_o(stop_detect),
       .is_in_hdr_mode_i(is_in_hdr_mode),
@@ -302,6 +349,6 @@ module controller_standby_i3c
 
   // Expose the received address + RnW bit
   assign bus_addr_o = {bus_addr, bus_rnw};
-  assign bus_addr_valid_o = bus_addr_match;
+  assign bus_addr_valid_o = bus_addr_valid & (is_sta_addr_match | is_dyn_addr_match);
 
 endmodule

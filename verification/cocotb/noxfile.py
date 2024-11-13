@@ -99,6 +99,45 @@ def axi_adapter_verify(session, test_group, test_name, coverage):
     verify_block(session, test_group, test_name, coverage)
 
 
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["bus_rx_flow"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_bus_rx_flow",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def bus_rx_flow_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["bus_tx"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_bus_tx",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def bus_tx_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["bus_tx_flow"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_bus_tx_flow",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def bus_tx_flow_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+
 @nox.session(tags=["tests", "ahb"])
 @nox.parametrize("test_group", ["hci_queues_ahb"])
 @nox.parametrize(
@@ -192,6 +231,7 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
         "test_recovery",
         "test_enter_exit_hdr_mode",
         "test_target_reset",
+        "test_ccc",
     ],
 )
 @nox.parametrize("coverage", coverage_types)

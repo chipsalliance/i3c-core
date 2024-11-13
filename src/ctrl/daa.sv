@@ -14,7 +14,6 @@ module daa
 
     // Check bus_addr for matching address
     input logic [6:0] bus_addr,
-    input logic bus_addr_valid,
     output logic is_sta_addr_match_o,
     output logic is_dyn_addr_match_o,
     output logic is_i3c_rsvd_addr_match_o,
@@ -61,21 +60,11 @@ module daa
   assign dcr = stby_cr_device_char_reg[23:16];
   assign daa_unique_response = {pid, bcr, dcr};
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) begin
-      is_sta_addr_match_o <= '0;
-      is_dyn_addr_match_o <= '0;
-      is_i3c_rsvd_addr_match_o <= '0;
-      is_any_addr_match_o <= '0;
-    end else begin
-      if (bus_addr_valid) begin
-        is_sta_addr_match_o <= is_sta_addr_match;
-        is_dyn_addr_match_o <= is_dyn_addr_match;
-        is_i3c_rsvd_addr_match_o <= is_i3c_rsvd_addr_match;
-        is_any_addr_match_o <= is_any_addr_match;
-      end
-    end
-  end
+  // Outputs
+  assign  is_sta_addr_match_o = is_sta_addr_match;
+  assign  is_dyn_addr_match_o = is_dyn_addr_match;
+  assign  is_i3c_rsvd_addr_match_o = is_i3c_rsvd_addr_match;
+  assign  is_any_addr_match_o = is_any_addr_match;
 
   // Effective target address
   // When dynamic address is not set the static address is used. In the other

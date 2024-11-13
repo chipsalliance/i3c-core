@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
+/*
+  Detect that signal line_i is stable and HIGH for at
+  least delay_count_i cycles.
+*/
 module stable_high_detector
   import controller_pkg::*;
 #(

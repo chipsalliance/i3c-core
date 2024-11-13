@@ -166,8 +166,7 @@ package I3CCSR_pkg;
     } I3CCSR__PIOControl__RX_DATA_PORT__in_t;
 
     typedef struct packed {
-        logic IBI_DATA;
-        logic [30:0] _reserved_31_1;
+        logic [31:0] IBI_DATA;
     } I3CCSR__PIOControl__IBI_PORT__fields__in_t;
 
     typedef struct packed{
@@ -1029,6 +1028,11 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__in_t;
 
     typedef struct packed{
+        logic [3:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__in_t;
+
+    typedef struct packed{
         logic next;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__in_t;
 
@@ -1047,6 +1051,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_THLD_STAT__in_t RX_DESC_THLD_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_THLD_STAT__in_t IBI_THLD_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__in_t IBI_DONE;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__in_t PENDING_INTERRUPT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__in_t TRANSFER_ABORT_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__in_t TRANSFER_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__in_t;
@@ -2506,6 +2511,10 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__out_t;
 
     typedef struct packed{
+        logic [3:0] value;
+    } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__out_t;
+
+    typedef struct packed{
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__out_t;
 
@@ -2524,6 +2533,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_THLD_STAT__out_t RX_DESC_THLD_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_THLD_STAT__out_t IBI_THLD_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__out_t IBI_DONE;
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__out_t PENDING_INTERRUPT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__out_t TRANSFER_ABORT_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__out_t TRANSFER_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__out_t;
