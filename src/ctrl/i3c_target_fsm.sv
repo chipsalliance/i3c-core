@@ -177,6 +177,8 @@ module i3c_target_fsm
                             // by a later address read
   logic tbit_after_byte_d;
 
+  logic tbit_after_byte_write;
+
   // IBI
   logic ibi_handling;  // Asserted when an IBI is transmitter
   logic ibi_payload;  // Asserted when data from IBI queue is transmitter
@@ -274,7 +276,7 @@ module i3c_target_fsm
     if (!rst_ni) begin
       tbit_after_byte_q <= 1'b0;
     end else begin
-      tbit_after_byte_q <= tbit_after_byte_d;
+      tbit_after_byte_q <= tbit_after_byte_write ? tbit_after_byte_d : tbit_after_byte_q;
     end
   end
 
@@ -525,7 +527,9 @@ module i3c_target_fsm
     event_read_cmd_received_o = 1'b0;
     ibi_fifo_rready_o = 1'b0;
     tx_host_nack_o = 1'b0;
-    command_code_valid = 0;
+    // TODO: Move this somewhere else - these are not a state outputs
+    command_code_valid = 1'b0;
+    restart_det_d = 1'b0;
 
     unique case (state_q)
       // Idle: initial state, SDA is released (high), SCL is released if the
@@ -891,6 +895,8 @@ module i3c_target_fsm
     bus_rstart_det_o = 1'b0;
     sel_od_pp_o = 1'b0;
     defining_byte_valid = 1'b0;
+    tbit_after_byte_d = 1'b0;
+    tbit_after_byte_write = 1'b0;
     unique case (state_q)
       // Idle: initial state, SDA and SCL are released (high)
       Idle: begin
@@ -942,6 +948,7 @@ module i3c_target_fsm
             // We assume here that dynamic address takes precedence over the
             // static address since sections 5.1.2 and 5.1.2.1.1 hint at this
             // interpretation but it's not explicitly written anywhere
+            tbit_after_byte_write = 1'b1;
             if (is_dyn_addr_match) begin
               state_d = AddrAckWait;
               tbit_after_byte_d = 1'b1;
