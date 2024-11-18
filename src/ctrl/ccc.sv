@@ -81,7 +81,6 @@ module ccc
     response_valid_o = '0;
     response_byte_o = '0;
     enter_hdr_ccc_o = '0;
-    rst_action_o = '0;
     command_min_bytes_o = '0;
     command_max_bytes_o = '0;
     clear_command_code = '0;

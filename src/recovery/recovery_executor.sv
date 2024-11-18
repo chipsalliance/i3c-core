@@ -119,6 +119,10 @@ module recovery_executor
   logic        csr_writeable;
   logic        csr_ff_data;
 
+  logic payload_available_d, payload_available_q;
+  logic payload_available_write;
+  assign payload_available_o = payload_available_q;
+
   // ....................................................
 
   // FSM
@@ -419,18 +423,26 @@ module recovery_executor
   // ....................................................
 
   // Payload availability logic
-  // Assety payload_available_o upon reception of a complete recovery write
+  // Assert payload_available_o upon reception of a complete recovery write
   // packet targeting CSR_INDIRECT_FIFO_DATA.
-  always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) payload_available_o <= '0;
-    else begin
-      // "Execution" (reception) of a INDIRECT_FIFO_DATA write command complete
-      if ((state_q == Done) && csr_ff_data) payload_available_o <= 1'b1;
-      // Read of INDIRECT_FIFO_DATA from HCI side.
-      if (hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc &&
-          !hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod)
-        payload_available_o <= 1'b0;
+  always_comb begin : payload_available
+    payload_available_d = 1'b0;
+    payload_available_write = 1'b0;
+    if ((state_q == Done) && csr_ff_data) begin
+      payload_available_d = 1'b1;
+      payload_available_write = 1'b1;
     end
+    if (hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc &&
+        !hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod) begin
+      payload_available_d = 1'b0;
+      payload_available_write = 1'b1;
+    end
+  end : payload_available
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      payload_available_q <= '0;
+    else
+      payload_available_q <= payload_available_write ? payload_available_d : payload_available_q;
 
   // Image activation logic.
   assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value[23:16] == 8'h0F);
