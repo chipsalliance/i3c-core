@@ -148,25 +148,29 @@ module recovery_receiver
 
   // Command header & PEC capture
   always_ff @(posedge clk_i) begin
-    unique case (state_q)
-      RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
-      RxLenL: if (rx_flow) len_lsb <= data_data_i;
-      RxLenH: if (rx_flow) len_msb <= data_data_i;
-      RxPec:  if (rx_flow) pec_recv <= data_data_i;
+    if (!rst_ni) begin
+      pec_recv <= 0;
+    end else begin
+      unique case (state_q)
+        RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
+        RxLenL: if (rx_flow) len_lsb <= data_data_i;
+        RxLenH: if (rx_flow) len_msb <= data_data_i;
+        RxPec:  if (rx_flow) pec_recv <= data_data_i;
 
-      CmdIsRd: begin
-        len_lsb  <= '0;
-        len_msb  <= '0;
-        pec_recv <= len_lsb;
-      end
+        CmdIsRd: begin
+          len_lsb  <= '0;
+          len_msb  <= '0;
+          pec_recv <= len_lsb;
+        end
 
-      default: begin
-        cmd_cmd_o <= cmd_cmd_o;
-        len_lsb   <= len_lsb;
-        len_msb   <= len_msb;
-        pec_recv  <= pec_recv;
-      end
-    endcase
+        default: begin
+          cmd_cmd_o <= cmd_cmd_o;
+          len_lsb   <= len_lsb;
+          len_msb   <= len_msb;
+          pec_recv  <= pec_recv;
+        end
+      endcase
+    end
   end
 
   // PEC enable
@@ -174,11 +178,15 @@ module recovery_receiver
 
   // PEC capture
   always_ff @(posedge clk_i)
-    unique case (state_q)
-      RxPec:   if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
-      RxLenL:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
-      default: pec_calc <= pec_calc;
-    endcase
+    if (!rst_ni) begin
+      pec_calc <= 0;
+    end else begin
+      unique case (state_q)
+        RxPec:   if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
+        RxLenL:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
+        default: pec_calc <= pec_calc;
+      endcase
+    end
 
   // PEC comparator
   assign pec_match = !(|(pec_calc ^ pec_recv));
