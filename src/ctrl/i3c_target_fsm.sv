@@ -166,6 +166,10 @@ module i3c_target_fsm
   logic enter_hdr_after_stop;
   logic enter_hdr_after_stop_clr;
 
+  logic is_in_hdr_mode_d, is_in_hdr_mode_q;
+  logic is_in_hdr_mode_write;
+  assign is_in_hdr_mode_o = is_in_hdr_mode_q;
+
   logic [1:0] command_min_bytes;  // minimum number of bytes expected after a CCC read/write
   logic [1:0] command_max_bytes;  // maximum number of bytes expected after a CCC read/write
 
@@ -279,6 +283,13 @@ module i3c_target_fsm
       tbit_after_byte_q <= tbit_after_byte_write ? tbit_after_byte_d : tbit_after_byte_q;
     end
   end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : hdr_mode_state
+    if (!rst_ni)
+      is_in_hdr_mode_q <= 0;
+    else
+      is_in_hdr_mode_q <= is_in_hdr_mode_write ? is_in_hdr_mode_d : is_in_hdr_mode_q;
+  end : hdr_mode_state
 
   // Bit counter on the target side
   assign bit_ack = (bit_idx == 4'd8);  // ack
@@ -527,6 +538,7 @@ module i3c_target_fsm
     event_read_cmd_received_o = 1'b0;
     ibi_fifo_rready_o = 1'b0;
     tx_host_nack_o = 1'b0;
+
     // TODO: Move this somewhere else - these are not a state outputs
     command_code_valid = 1'b0;
     restart_det_d = 1'b0;
@@ -817,11 +829,8 @@ module i3c_target_fsm
         end
       end
 
-      IdleHDR: begin
-        is_in_hdr_mode_o = 1'b1;
-      end
-
-      // default
+      // TODO: Remove if unneeded - this construct easily devolves into unintended latches.
+      // Give default values BEFORE the case block.
       default: begin
         target_idle_o = 1'b1;
         sda_d = 1'b1;
@@ -833,7 +842,6 @@ module i3c_target_fsm
         event_cmd_complete_o = 1'b0;
         xact_for_us_d = 1'b0;
         nack_transaction_d = 1'b0;
-        is_in_hdr_mode_o = 1'b0;
       end
     endcase  // unique case (state_q)
 
@@ -897,6 +905,9 @@ module i3c_target_fsm
     defining_byte_valid = 1'b0;
     tbit_after_byte_d = 1'b0;
     tbit_after_byte_write = 1'b0;
+    is_in_hdr_mode_d = 1'b0;
+    is_in_hdr_mode_write = 1'b0;
+
     unique case (state_q)
       // Idle: initial state, SDA and SCL are released (high)
       Idle: begin
@@ -905,6 +916,9 @@ module i3c_target_fsm
         if (ibi_fifo_rvalid_i) state_d = AcquireIbiStart;
         // The bus is idle. Waiting for a Start.
         post_ack_decision_d = Idle;
+
+        is_in_hdr_mode_d = 1'b0;
+        is_in_hdr_mode_write = 1'b1;
       end
       // AcquireIbiStart:
       AcquireIbiStart: begin
@@ -1331,6 +1345,8 @@ module i3c_target_fsm
         if (hdr_exit_detect_i) begin
           state_d = Idle;
         end
+        is_in_hdr_mode_d = 1'b1;
+        is_in_hdr_mode_write = 1'b1;
       end
 
       // AcquireRStart: hold for the end of the Repeated Start condition
@@ -1353,7 +1369,7 @@ module i3c_target_fsm
     // When a start is detected, always go to the acquire start state.
     // Differences in repeated start / start handling are done in the
     // other FSM.
-    if (!is_in_hdr_mode_o) begin
+    if (!is_in_hdr_mode_q) begin
       if (!target_idle && !target_enable_i) begin
         // If the target function is currently not idle but target_enable is suddenly dropped,
         // (maybe because the host locked up and we want to cycle back to an initial state),
