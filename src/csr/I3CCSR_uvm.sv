@@ -3671,9 +3671,11 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg IBI_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg IBI_RETRY_NUM_bit_cg[3];
         I3CCSR__I3C_EC__TTI__CONTROL_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field IBI_EN;
+        rand uvm_reg_field IBI_RETRY_NUM;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__CONTROL");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3685,10 +3687,13 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_EN = new("IBI_EN");
+            this.IBI_EN.configure(this, 1, 12, "RW", 0, 'h1, 1, 1, 0);
+            this.IBI_RETRY_NUM = new("IBI_RETRY_NUM");
+            this.IBI_RETRY_NUM.configure(this, 3, 13, "RO", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(IBI_EN_bit_cg[bt]) IBI_EN_bit_cg[bt] = new();
+                foreach(IBI_RETRY_NUM_bit_cg[bt]) IBI_RETRY_NUM_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3701,9 +3706,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__TTI__STATUS_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__TTI__STATUS_bit_cg LAST_IBI_STATUS_bit_cg[2];
         I3CCSR__I3C_EC__TTI__STATUS_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field LAST_IBI_STATUS;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__STATUS");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3715,10 +3720,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.LAST_IBI_STATUS = new("LAST_IBI_STATUS");
+            this.LAST_IBI_STATUS.configure(this, 2, 14, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(LAST_IBI_STATUS_bit_cg[bt]) LAST_IBI_STATUS_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3795,6 +3800,7 @@ package I3CCSR_uvm;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TX_DESC_THLD_STAT_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg RX_DESC_THLD_STAT_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg IBI_THLD_STAT_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg IBI_DONE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TRANSFER_ABORT_STAT_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TRANSFER_ERR_STAT_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_fld_cg fld_cg;
@@ -3807,6 +3813,7 @@ package I3CCSR_uvm;
         rand uvm_reg_field TX_DESC_THLD_STAT;
         rand uvm_reg_field RX_DESC_THLD_STAT;
         rand uvm_reg_field IBI_THLD_STAT;
+        rand uvm_reg_field IBI_DONE;
         rand uvm_reg_field TRANSFER_ABORT_STAT;
         rand uvm_reg_field TRANSFER_ERR_STAT;
 
@@ -3838,6 +3845,8 @@ package I3CCSR_uvm;
             this.RX_DESC_THLD_STAT.configure(this, 1, 11, "RO", 1, 'h0, 1, 1, 0);
             this.IBI_THLD_STAT = new("IBI_THLD_STAT");
             this.IBI_THLD_STAT.configure(this, 1, 12, "RO", 1, 'h0, 1, 1, 0);
+            this.IBI_DONE = new("IBI_DONE");
+            this.IBI_DONE.configure(this, 1, 13, "W1C", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT = new("TRANSFER_ABORT_STAT");
             this.TRANSFER_ABORT_STAT.configure(this, 1, 25, "W1C", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ERR_STAT = new("TRANSFER_ERR_STAT");
@@ -3852,6 +3861,7 @@ package I3CCSR_uvm;
                 foreach(TX_DESC_THLD_STAT_bit_cg[bt]) TX_DESC_THLD_STAT_bit_cg[bt] = new();
                 foreach(RX_DESC_THLD_STAT_bit_cg[bt]) RX_DESC_THLD_STAT_bit_cg[bt] = new();
                 foreach(IBI_THLD_STAT_bit_cg[bt]) IBI_THLD_STAT_bit_cg[bt] = new();
+                foreach(IBI_DONE_bit_cg[bt]) IBI_DONE_bit_cg[bt] = new();
                 foreach(TRANSFER_ABORT_STAT_bit_cg[bt]) TRANSFER_ABORT_STAT_bit_cg[bt] = new();
                 foreach(TRANSFER_ERR_STAT_bit_cg[bt]) TRANSFER_ERR_STAT_bit_cg[bt] = new();
             end
@@ -3866,17 +3876,31 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg RX_DESC_STAT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TX_DESC_STAT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg RX_DESC_TIMEOUT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TX_DESC_TIMEOUT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TX_DATA_THLD_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg RX_DATA_THLD_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TX_DESC_THLD_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg RX_DESC_THLD_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg IBI_THLD_STAT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg IBI_DONE_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TRANSFER_ABORT_STAT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TRANSFER_ERR_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg fld_cg;
+        rand uvm_reg_field RX_DESC_STAT_EN;
+        rand uvm_reg_field TX_DESC_STAT_EN;
+        rand uvm_reg_field RX_DESC_TIMEOUT_EN;
+        rand uvm_reg_field TX_DESC_TIMEOUT_EN;
         rand uvm_reg_field TX_DATA_THLD_STAT_EN;
         rand uvm_reg_field RX_DATA_THLD_STAT_EN;
         rand uvm_reg_field TX_DESC_THLD_STAT_EN;
         rand uvm_reg_field RX_DESC_THLD_STAT_EN;
         rand uvm_reg_field IBI_THLD_STAT_EN;
+        rand uvm_reg_field IBI_DONE_EN;
+        rand uvm_reg_field TRANSFER_ABORT_STAT_EN;
+        rand uvm_reg_field TRANSFER_ERR_STAT_EN;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3888,22 +3912,43 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
+            this.RX_DESC_STAT_EN = new("RX_DESC_STAT_EN");
+            this.RX_DESC_STAT_EN.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_STAT_EN = new("TX_DESC_STAT_EN");
+            this.TX_DESC_STAT_EN.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_TIMEOUT_EN = new("RX_DESC_TIMEOUT_EN");
+            this.RX_DESC_TIMEOUT_EN.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_TIMEOUT_EN = new("TX_DESC_TIMEOUT_EN");
+            this.TX_DESC_TIMEOUT_EN.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
             this.TX_DATA_THLD_STAT_EN = new("TX_DATA_THLD_STAT_EN");
-            this.TX_DATA_THLD_STAT_EN.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_THLD_STAT_EN.configure(this, 1, 8, "RW", 1, 'h0, 1, 1, 0);
             this.RX_DATA_THLD_STAT_EN = new("RX_DATA_THLD_STAT_EN");
-            this.RX_DATA_THLD_STAT_EN.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_THLD_STAT_EN.configure(this, 1, 9, "RW", 1, 'h0, 1, 1, 0);
             this.TX_DESC_THLD_STAT_EN = new("TX_DESC_THLD_STAT_EN");
-            this.TX_DESC_THLD_STAT_EN.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD_STAT_EN.configure(this, 1, 10, "RW", 1, 'h0, 1, 1, 0);
             this.RX_DESC_THLD_STAT_EN = new("RX_DESC_THLD_STAT_EN");
-            this.RX_DESC_THLD_STAT_EN.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD_STAT_EN.configure(this, 1, 11, "RW", 1, 'h0, 1, 1, 0);
             this.IBI_THLD_STAT_EN = new("IBI_THLD_STAT_EN");
-            this.IBI_THLD_STAT_EN.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_THLD_STAT_EN.configure(this, 1, 12, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_DONE_EN = new("IBI_DONE_EN");
+            this.IBI_DONE_EN.configure(this, 1, 13, "RW", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ABORT_STAT_EN = new("TRANSFER_ABORT_STAT_EN");
+            this.TRANSFER_ABORT_STAT_EN.configure(this, 1, 25, "RW", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ERR_STAT_EN = new("TRANSFER_ERR_STAT_EN");
+            this.TRANSFER_ERR_STAT_EN.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(RX_DESC_STAT_EN_bit_cg[bt]) RX_DESC_STAT_EN_bit_cg[bt] = new();
+                foreach(TX_DESC_STAT_EN_bit_cg[bt]) TX_DESC_STAT_EN_bit_cg[bt] = new();
+                foreach(RX_DESC_TIMEOUT_EN_bit_cg[bt]) RX_DESC_TIMEOUT_EN_bit_cg[bt] = new();
+                foreach(TX_DESC_TIMEOUT_EN_bit_cg[bt]) TX_DESC_TIMEOUT_EN_bit_cg[bt] = new();
                 foreach(TX_DATA_THLD_STAT_EN_bit_cg[bt]) TX_DATA_THLD_STAT_EN_bit_cg[bt] = new();
                 foreach(RX_DATA_THLD_STAT_EN_bit_cg[bt]) RX_DATA_THLD_STAT_EN_bit_cg[bt] = new();
                 foreach(TX_DESC_THLD_STAT_EN_bit_cg[bt]) TX_DESC_THLD_STAT_EN_bit_cg[bt] = new();
                 foreach(RX_DESC_THLD_STAT_EN_bit_cg[bt]) RX_DESC_THLD_STAT_EN_bit_cg[bt] = new();
                 foreach(IBI_THLD_STAT_EN_bit_cg[bt]) IBI_THLD_STAT_EN_bit_cg[bt] = new();
+                foreach(IBI_DONE_EN_bit_cg[bt]) IBI_DONE_EN_bit_cg[bt] = new();
+                foreach(TRANSFER_ABORT_STAT_EN_bit_cg[bt]) TRANSFER_ABORT_STAT_EN_bit_cg[bt] = new();
+                foreach(TRANSFER_ERR_STAT_EN_bit_cg[bt]) TRANSFER_ERR_STAT_EN_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -3916,17 +3961,31 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg RX_DESC_STAT_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TX_DESC_STAT_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg RX_DESC_TIMEOUT_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TX_DESC_TIMEOUT_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TX_DATA_THLD_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg RX_DATA_THLD_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TX_DESC_THLD_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg RX_DESC_THLD_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg IBI_THLD_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg IBI_DONE_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TRANSFER_ABORT_STAT_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TRANSFER_ERR_STAT_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg fld_cg;
+        rand uvm_reg_field RX_DESC_STAT_FORCE;
+        rand uvm_reg_field TX_DESC_STAT_FORCE;
+        rand uvm_reg_field RX_DESC_TIMEOUT_FORCE;
+        rand uvm_reg_field TX_DESC_TIMEOUT_FORCE;
         rand uvm_reg_field TX_DATA_THLD_FORCE;
         rand uvm_reg_field RX_DATA_THLD_FORCE;
         rand uvm_reg_field TX_DESC_THLD_FORCE;
         rand uvm_reg_field RX_DESC_THLD_FORCE;
         rand uvm_reg_field IBI_THLD_FORCE;
+        rand uvm_reg_field IBI_DONE_FORCE;
+        rand uvm_reg_field TRANSFER_ABORT_STAT_FORCE;
+        rand uvm_reg_field TRANSFER_ERR_STAT_FORCE;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3938,22 +3997,43 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
+            this.RX_DESC_STAT_FORCE = new("RX_DESC_STAT_FORCE");
+            this.RX_DESC_STAT_FORCE.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_STAT_FORCE = new("TX_DESC_STAT_FORCE");
+            this.TX_DESC_STAT_FORCE.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_TIMEOUT_FORCE = new("RX_DESC_TIMEOUT_FORCE");
+            this.RX_DESC_TIMEOUT_FORCE.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_TIMEOUT_FORCE = new("TX_DESC_TIMEOUT_FORCE");
+            this.TX_DESC_TIMEOUT_FORCE.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
             this.TX_DATA_THLD_FORCE = new("TX_DATA_THLD_FORCE");
-            this.TX_DATA_THLD_FORCE.configure(this, 1, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DATA_THLD_FORCE.configure(this, 1, 8, "RW", 1, 'h0, 1, 1, 0);
             this.RX_DATA_THLD_FORCE = new("RX_DATA_THLD_FORCE");
-            this.RX_DATA_THLD_FORCE.configure(this, 1, 1, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DATA_THLD_FORCE.configure(this, 1, 9, "RW", 1, 'h0, 1, 1, 0);
             this.TX_DESC_THLD_FORCE = new("TX_DESC_THLD_FORCE");
-            this.TX_DESC_THLD_FORCE.configure(this, 1, 2, "RW", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_THLD_FORCE.configure(this, 1, 10, "RW", 1, 'h0, 1, 1, 0);
             this.RX_DESC_THLD_FORCE = new("RX_DESC_THLD_FORCE");
-            this.RX_DESC_THLD_FORCE.configure(this, 1, 3, "RW", 1, 'h0, 1, 1, 0);
+            this.RX_DESC_THLD_FORCE.configure(this, 1, 11, "RW", 1, 'h0, 1, 1, 0);
             this.IBI_THLD_FORCE = new("IBI_THLD_FORCE");
-            this.IBI_THLD_FORCE.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_THLD_FORCE.configure(this, 1, 12, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_DONE_FORCE = new("IBI_DONE_FORCE");
+            this.IBI_DONE_FORCE.configure(this, 1, 13, "RW", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ABORT_STAT_FORCE = new("TRANSFER_ABORT_STAT_FORCE");
+            this.TRANSFER_ABORT_STAT_FORCE.configure(this, 1, 25, "RW", 1, 'h0, 1, 1, 0);
+            this.TRANSFER_ERR_STAT_FORCE = new("TRANSFER_ERR_STAT_FORCE");
+            this.TRANSFER_ERR_STAT_FORCE.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(RX_DESC_STAT_FORCE_bit_cg[bt]) RX_DESC_STAT_FORCE_bit_cg[bt] = new();
+                foreach(TX_DESC_STAT_FORCE_bit_cg[bt]) TX_DESC_STAT_FORCE_bit_cg[bt] = new();
+                foreach(RX_DESC_TIMEOUT_FORCE_bit_cg[bt]) RX_DESC_TIMEOUT_FORCE_bit_cg[bt] = new();
+                foreach(TX_DESC_TIMEOUT_FORCE_bit_cg[bt]) TX_DESC_TIMEOUT_FORCE_bit_cg[bt] = new();
                 foreach(TX_DATA_THLD_FORCE_bit_cg[bt]) TX_DATA_THLD_FORCE_bit_cg[bt] = new();
                 foreach(RX_DATA_THLD_FORCE_bit_cg[bt]) RX_DATA_THLD_FORCE_bit_cg[bt] = new();
                 foreach(TX_DESC_THLD_FORCE_bit_cg[bt]) TX_DESC_THLD_FORCE_bit_cg[bt] = new();
                 foreach(RX_DESC_THLD_FORCE_bit_cg[bt]) RX_DESC_THLD_FORCE_bit_cg[bt] = new();
                 foreach(IBI_THLD_FORCE_bit_cg[bt]) IBI_THLD_FORCE_bit_cg[bt] = new();
+                foreach(IBI_DONE_FORCE_bit_cg[bt]) IBI_DONE_FORCE_bit_cg[bt] = new();
+                foreach(TRANSFER_ABORT_STAT_FORCE_bit_cg[bt]) TRANSFER_ABORT_STAT_FORCE_bit_cg[bt] = new();
+                foreach(TRANSFER_ERR_STAT_FORCE_bit_cg[bt]) TRANSFER_ERR_STAT_FORCE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();

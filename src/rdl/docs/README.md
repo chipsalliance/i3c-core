@@ -2170,13 +2170,26 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>Control Register</p>
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|  Identifier |Access|Reset|     Name    |
+|-----|-------------|------|-----|-------------|
+|  12 |    IBI_EN   |  rw  | 0x1 |    IBI_EN   |
+|15:13|IBI_RETRY_NUM|   r  | 0x0 |IBI_RETRY_NUM|
 
-#### PLACEHOLDER field
+#### IBI_EN field
 
-<p>For future use, Target Mode is controlled via STBY_CR_CONTROL.</p>
+<p>Enable the IBI queue servicing.</p>
+<p>Values:</p>
+<p>0x0 - Device will not service the IBI queue.</p>
+<p>0x1 - Device will send IBI requests onto the bus, if possible.</p>
+
+#### IBI_RETRY_NUM field
+
+<p>Number of times the Target Device will try to request an IBI before giving up.</p>
+<p>Values:</p>
+<p>0x0 - Device will never retry.</p>
+<p>0x1-0x6 - Device will retry this many times.</p>
+<p>0x7 - Device will retry indefinitely until the Active Controller sets
+DISINT bit in the DISEC command.</p>
 
 ### STATUS register
 
@@ -2186,13 +2199,20 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>Status Register</p>
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|   Identifier  |Access|Reset|      Name     |
+|-----|---------------|------|-----|---------------|
+|15:14|LAST_IBI_STATUS|  rw  | 0x0 |LAST_IBI_STATUS|
 
-#### PLACEHOLDER field
+#### LAST_IBI_STATUS field
 
-<p>For future use, Target Mode status is in STBY_CR_STATUS.</p>
+<p>Status of last IBI. Should be read after IBI_DONE interrupt.</p>
+<p>Values:</p>
+<p>00 - Success: IBI was transmitted and ACK'd by the Active Controller.
+01 - Failure: Active Controller NACK'd the IBI before any data was sent.
+The Target Device will retry sending the IBI once.
+10 - Failure: Active Controller NACK'd the IBI after partial data was sent.
+Part of data in the IBI queue is considered corrupted and will be discarded.
+11 - Failure: IBI was terminated after 1 retry.</p>
 
 ### RESET_CONTROL register
 
@@ -2254,6 +2274,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 | 10 | TX_DESC_THLD_STAT |    r    | 0x0 | TX_DESC_THLD_STAT |
 | 11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
 | 12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
+| 13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
 | 25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
 | 31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 
@@ -2293,6 +2314,10 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code>TTI_IBI_THLD</code></p>
 
+#### IBI_DONE field
+
+<p>IBI is done, check LAST_IBI_STATUS for result.</p>
+
 #### TRANSFER_ABORT_STAT field
 
 <p>Bus aborted transaction</p>
@@ -2309,13 +2334,36 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>Interrupt Enable</p>
 
-|Bits|     Identifier     |Access|Reset|        Name        |
-|----|--------------------|------|-----|--------------------|
-|  0 |TX_DATA_THLD_STAT_EN|  rw  | 0x0 |TX_DATA_THLD_STAT_EN|
-|  1 |RX_DATA_THLD_STAT_EN|  rw  | 0x0 |RX_DATA_THLD_STAT_EN|
-|  2 |TX_DESC_THLD_STAT_EN|  rw  | 0x0 |TX_DESC_THLD_STAT_EN|
-|  3 |RX_DESC_THLD_STAT_EN|  rw  | 0x0 |RX_DESC_THLD_STAT_EN|
-|  4 |  IBI_THLD_STAT_EN  |  rw  | 0x0 |  IBI_THLD_STAT_EN  |
+|Bits|      Identifier      |Access|Reset|         Name         |
+|----|----------------------|------|-----|----------------------|
+|  0 |    RX_DESC_STAT_EN   |  rw  | 0x0 |    RX_DESC_STAT_EN   |
+|  1 |    TX_DESC_STAT_EN   |  rw  | 0x0 |    TX_DESC_STAT_EN   |
+|  2 |  RX_DESC_TIMEOUT_EN  |  rw  | 0x0 |  RX_DESC_TIMEOUT_EN  |
+|  3 |  TX_DESC_TIMEOUT_EN  |  rw  | 0x0 |  TX_DESC_TIMEOUT_EN  |
+|  8 | TX_DATA_THLD_STAT_EN |  rw  | 0x0 | TX_DATA_THLD_STAT_EN |
+|  9 | RX_DATA_THLD_STAT_EN |  rw  | 0x0 | RX_DATA_THLD_STAT_EN |
+| 10 | TX_DESC_THLD_STAT_EN |  rw  | 0x0 | TX_DESC_THLD_STAT_EN |
+| 11 | RX_DESC_THLD_STAT_EN |  rw  | 0x0 | RX_DESC_THLD_STAT_EN |
+| 12 |   IBI_THLD_STAT_EN   |  rw  | 0x0 |   IBI_THLD_STAT_EN   |
+| 13 |      IBI_DONE_EN     |  rw  | 0x0 |      IBI_DONE_EN     |
+| 25 |TRANSFER_ABORT_STAT_EN|  rw  | 0x0 |TRANSFER_ABORT_STAT_EN|
+| 31 | TRANSFER_ERR_STAT_EN |  rw  | 0x0 | TRANSFER_ERR_STAT_EN |
+
+#### RX_DESC_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>RX_DESC_STAT_EN</code></p>
+
+#### TX_DESC_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_STAT_EN</code></p>
+
+#### RX_DESC_TIMEOUT_EN field
+
+<p>Enables the corresponding interrupt bit <code>RX_DESC_TIMEOUT_EN</code></p>
+
+#### TX_DESC_TIMEOUT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_TIMEOUT_EN</code></p>
 
 #### TX_DATA_THLD_STAT_EN field
 
@@ -2337,6 +2385,18 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>Enables the corresponding interrupt bit <code>TTI_IBI_THLD_STAT</code></p>
 
+#### IBI_DONE_EN field
+
+<p>Enables the corresponding interrupt bit <code>IBI_DONE</code></p>
+
+#### TRANSFER_ABORT_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT</code></p>
+
+#### TRANSFER_ERR_STAT_EN field
+
+<p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT</code></p>
+
 ### INTERRUPT_FORCE register
 
 - Absolute Address: 0x1D8
@@ -2345,13 +2405,36 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 <p>Interrupt Force</p>
 
-|Bits|    Identifier    |Access|Reset|       Name       |
-|----|------------------|------|-----|------------------|
-|  0 |TX_DATA_THLD_FORCE|  rw  | 0x0 |TX_DATA_THLD_FORCE|
-|  1 |RX_DATA_THLD_FORCE|  rw  | 0x0 |RX_DATA_THLD_FORCE|
-|  2 |TX_DESC_THLD_FORCE|  rw  | 0x0 |TX_DESC_THLD_FORCE|
-|  3 |RX_DESC_THLD_FORCE|  rw  | 0x0 |RX_DESC_THLD_FORCE|
-|  4 |  IBI_THLD_FORCE  |  rw  | 0x0 |  IBI_THLD_FORCE  |
+|Bits|        Identifier       |Access|Reset|           Name          |
+|----|-------------------------|------|-----|-------------------------|
+|  0 |    RX_DESC_STAT_FORCE   |  rw  | 0x0 |    RX_DESC_STAT_FORCE   |
+|  1 |    TX_DESC_STAT_FORCE   |  rw  | 0x0 |    TX_DESC_STAT_FORCE   |
+|  2 |  RX_DESC_TIMEOUT_FORCE  |  rw  | 0x0 |  RX_DESC_TIMEOUT_FORCE  |
+|  3 |  TX_DESC_TIMEOUT_FORCE  |  rw  | 0x0 |  TX_DESC_TIMEOUT_FORCE  |
+|  8 |    TX_DATA_THLD_FORCE   |  rw  | 0x0 |    TX_DATA_THLD_FORCE   |
+|  9 |    RX_DATA_THLD_FORCE   |  rw  | 0x0 |    RX_DATA_THLD_FORCE   |
+| 10 |    TX_DESC_THLD_FORCE   |  rw  | 0x0 |    TX_DESC_THLD_FORCE   |
+| 11 |    RX_DESC_THLD_FORCE   |  rw  | 0x0 |    RX_DESC_THLD_FORCE   |
+| 12 |      IBI_THLD_FORCE     |  rw  | 0x0 |      IBI_THLD_FORCE     |
+| 13 |      IBI_DONE_FORCE     |  rw  | 0x0 |      IBI_DONE_FORCE     |
+| 25 |TRANSFER_ABORT_STAT_FORCE|  rw  | 0x0 |TRANSFER_ABORT_STAT_FORCE|
+| 31 | TRANSFER_ERR_STAT_FORCE |  rw  | 0x0 | TRANSFER_ERR_STAT_FORCE |
+
+#### RX_DESC_STAT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>RX_DESC_STAT_FORCE</code></p>
+
+#### TX_DESC_STAT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_STAT_FORCE</code></p>
+
+#### RX_DESC_TIMEOUT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>RX_DESC_TIMEOUT_FORCE</code></p>
+
+#### TX_DESC_TIMEOUT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_TIMEOUT_FORCE</code></p>
 
 #### TX_DATA_THLD_FORCE field
 
@@ -2372,6 +2455,18 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 #### IBI_THLD_FORCE field
 
 <p>Forces the corresponding interrupt bit <code>TTI_IBI_THLD_STAT</code> to be set to 1</p>
+
+#### IBI_DONE_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>IBI_DONE_FORCE</code></p>
+
+#### TRANSFER_ABORT_STAT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT_FORCE</code></p>
+
+#### TRANSFER_ERR_STAT_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT_FORCE</code></p>
 
 ### RX_DESC_QUEUE_PORT register
 

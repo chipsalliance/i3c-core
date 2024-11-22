@@ -1918,10 +1918,12 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__CONTROL_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] IBI_EN,
+    input bit [3-1:0] IBI_RETRY_NUM
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        IBI_EN_cp : coverpoint IBI_EN;
+        IBI_RETRY_NUM_cp : coverpoint IBI_RETRY_NUM;
 
     endgroup
 
@@ -1938,10 +1940,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__STATUS_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [2-1:0] LAST_IBI_STATUS
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        LAST_IBI_STATUS_cp : coverpoint LAST_IBI_STATUS;
 
     endgroup
 
@@ -1997,6 +1999,7 @@
     input bit [1-1:0] TX_DESC_THLD_STAT,
     input bit [1-1:0] RX_DESC_THLD_STAT,
     input bit [1-1:0] IBI_THLD_STAT,
+    input bit [1-1:0] IBI_DONE,
     input bit [1-1:0] TRANSFER_ABORT_STAT,
     input bit [1-1:0] TRANSFER_ERR_STAT
     );
@@ -2010,6 +2013,7 @@
         TX_DESC_THLD_STAT_cp : coverpoint TX_DESC_THLD_STAT;
         RX_DESC_THLD_STAT_cp : coverpoint RX_DESC_THLD_STAT;
         IBI_THLD_STAT_cp : coverpoint IBI_THLD_STAT;
+        IBI_DONE_cp : coverpoint IBI_DONE;
         TRANSFER_ABORT_STAT_cp : coverpoint TRANSFER_ABORT_STAT;
         TRANSFER_ERR_STAT_cp : coverpoint TRANSFER_ERR_STAT;
 
@@ -2028,18 +2032,32 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg with function sample(
+    input bit [1-1:0] RX_DESC_STAT_EN,
+    input bit [1-1:0] TX_DESC_STAT_EN,
+    input bit [1-1:0] RX_DESC_TIMEOUT_EN,
+    input bit [1-1:0] TX_DESC_TIMEOUT_EN,
     input bit [1-1:0] TX_DATA_THLD_STAT_EN,
     input bit [1-1:0] RX_DATA_THLD_STAT_EN,
     input bit [1-1:0] TX_DESC_THLD_STAT_EN,
     input bit [1-1:0] RX_DESC_THLD_STAT_EN,
-    input bit [1-1:0] IBI_THLD_STAT_EN
+    input bit [1-1:0] IBI_THLD_STAT_EN,
+    input bit [1-1:0] IBI_DONE_EN,
+    input bit [1-1:0] TRANSFER_ABORT_STAT_EN,
+    input bit [1-1:0] TRANSFER_ERR_STAT_EN
     );
         option.per_instance = 1;
+        RX_DESC_STAT_EN_cp : coverpoint RX_DESC_STAT_EN;
+        TX_DESC_STAT_EN_cp : coverpoint TX_DESC_STAT_EN;
+        RX_DESC_TIMEOUT_EN_cp : coverpoint RX_DESC_TIMEOUT_EN;
+        TX_DESC_TIMEOUT_EN_cp : coverpoint TX_DESC_TIMEOUT_EN;
         TX_DATA_THLD_STAT_EN_cp : coverpoint TX_DATA_THLD_STAT_EN;
         RX_DATA_THLD_STAT_EN_cp : coverpoint RX_DATA_THLD_STAT_EN;
         TX_DESC_THLD_STAT_EN_cp : coverpoint TX_DESC_THLD_STAT_EN;
         RX_DESC_THLD_STAT_EN_cp : coverpoint RX_DESC_THLD_STAT_EN;
         IBI_THLD_STAT_EN_cp : coverpoint IBI_THLD_STAT_EN;
+        IBI_DONE_EN_cp : coverpoint IBI_DONE_EN;
+        TRANSFER_ABORT_STAT_EN_cp : coverpoint TRANSFER_ABORT_STAT_EN;
+        TRANSFER_ERR_STAT_EN_cp : coverpoint TRANSFER_ERR_STAT_EN;
 
     endgroup
 
@@ -2056,18 +2074,32 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg with function sample(
+    input bit [1-1:0] RX_DESC_STAT_FORCE,
+    input bit [1-1:0] TX_DESC_STAT_FORCE,
+    input bit [1-1:0] RX_DESC_TIMEOUT_FORCE,
+    input bit [1-1:0] TX_DESC_TIMEOUT_FORCE,
     input bit [1-1:0] TX_DATA_THLD_FORCE,
     input bit [1-1:0] RX_DATA_THLD_FORCE,
     input bit [1-1:0] TX_DESC_THLD_FORCE,
     input bit [1-1:0] RX_DESC_THLD_FORCE,
-    input bit [1-1:0] IBI_THLD_FORCE
+    input bit [1-1:0] IBI_THLD_FORCE,
+    input bit [1-1:0] IBI_DONE_FORCE,
+    input bit [1-1:0] TRANSFER_ABORT_STAT_FORCE,
+    input bit [1-1:0] TRANSFER_ERR_STAT_FORCE
     );
         option.per_instance = 1;
+        RX_DESC_STAT_FORCE_cp : coverpoint RX_DESC_STAT_FORCE;
+        TX_DESC_STAT_FORCE_cp : coverpoint TX_DESC_STAT_FORCE;
+        RX_DESC_TIMEOUT_FORCE_cp : coverpoint RX_DESC_TIMEOUT_FORCE;
+        TX_DESC_TIMEOUT_FORCE_cp : coverpoint TX_DESC_TIMEOUT_FORCE;
         TX_DATA_THLD_FORCE_cp : coverpoint TX_DATA_THLD_FORCE;
         RX_DATA_THLD_FORCE_cp : coverpoint RX_DATA_THLD_FORCE;
         TX_DESC_THLD_FORCE_cp : coverpoint TX_DESC_THLD_FORCE;
         RX_DESC_THLD_FORCE_cp : coverpoint RX_DESC_THLD_FORCE;
         IBI_THLD_FORCE_cp : coverpoint IBI_THLD_FORCE;
+        IBI_DONE_FORCE_cp : coverpoint IBI_DONE_FORCE;
+        TRANSFER_ABORT_STAT_FORCE_cp : coverpoint TRANSFER_ABORT_STAT_FORCE;
+        TRANSFER_ERR_STAT_FORCE_cp : coverpoint TRANSFER_ERR_STAT_FORCE;
 
     endgroup
 

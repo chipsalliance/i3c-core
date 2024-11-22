@@ -31,25 +31,57 @@ regfile TargetTransactionInterfaceRegisters #(
         name = "TTI Control";
         desc = "Control Register";
         field {
-            name = "";
-            desc = "For future use, Target Mode is controlled via STBY_CR_CONTROL.";
+            name = "IBI_RETRY_NUM";
+            desc = "Number of times the Target Device will try to request an IBI before giving up.
+
+            Values:
+
+            0x0 - Device will never retry.
+
+            0x1-0x6 - Device will retry this many times.
+
+            0x7 - Device will retry indefinitely until the Active Controller sets
+            DISINT bit in the DISEC command.
+            ";
+            sw = r;
+            hw = r;
+            reset = 3'b000;
+        } IBI_RETRY_NUM[15:13];
+        field {
+            name = "IBI_EN";
+            desc = "Enable the IBI queue servicing.
+
+            Values:
+
+            0x0 - Device will not service the IBI queue.
+
+            0x1 - Device will send IBI requests onto the bus, if possible.
+            ";
             sw = rw;
-            hw = rw;
-            we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            hw = r;
+            reset = 1'b1;
+        } IBI_EN[12:12];
     } CONTROL;
     reg {
         name = "TTI Status";
         desc = "Status Register";
         field {
-            name = "";
-            desc = "For future use, Target Mode status is in STBY_CR_STATUS.";
+            name = "LAST_IBI_STATUS";
+            desc = "Status of last IBI. Should be read after IBI_DONE interrupt.
+
+            Values:
+
+            00 - Success: IBI was transmitted and ACK'd by the Active Controller.
+            01 - Failure: Active Controller NACK'd the IBI before any data was sent.
+            The Target Device will retry sending the IBI once.
+            10 - Failure: Active Controller NACK'd the IBI after partial data was sent.
+            Part of data in the IBI queue is considered corrupted and will be discarded.
+            11 - Failure: IBI was terminated after 1 retry.
+            ";
             sw = rw;
-            hw = rw;
-            we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            hw = r;
+            reset = 2'b00;
+        } LAST_IBI_STATUS[15:14];
     } STATUS;
     reg {
         name = "TTI Queue Reset Control";
@@ -123,6 +155,14 @@ regfile TargetTransactionInterfaceRegisters #(
             reset = 1'b0;
         } TRANSFER_ABORT_STAT[25:25];
         field {
+            name = "IBI_DONE";
+            desc = "IBI is done, check LAST_IBI_STATUS for result.";
+            sw = rw;
+            hw = rw;
+            woclr = true;
+            reset = 1'b0;
+        } IBI_DONE[13:13];
+        field {
             name = "IBI_THLD_STAT";
             desc = "TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`";
             sw = r;
@@ -194,79 +234,177 @@ regfile TargetTransactionInterfaceRegisters #(
         name = "TTI Interrupt Enable";
         desc = "Interrupt Enable";
         field {
+            name = "TRANSFER_ERR_STAT_EN";
+            desc = "Enables the corresponding interrupt bit `TRANSFER_ERR_STAT`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TRANSFER_ERR_STAT_EN[31:31];
+        field {
+            name = "TRANSFER_ABORT_STAT_EN";
+            desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TRANSFER_ABORT_STAT_EN[25:25];
+        field {
+            name = "IBI_DONE_EN";
+            desc = "Enables the corresponding interrupt bit `IBI_DONE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } IBI_DONE_EN[13:13];
+        field {
             name = "IBI_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_IBI_THLD_STAT`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } IBI_THLD_STAT_EN[4:4];
+        } IBI_THLD_STAT_EN[12:12];
         field {
             name = "RX_DESC_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } RX_DESC_THLD_STAT_EN[3:3];
+        } RX_DESC_THLD_STAT_EN[11:11];
         field {
             name = "TX_DESC_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } TX_DESC_THLD_STAT_EN[2:2];
+        } TX_DESC_THLD_STAT_EN[10:10];
         field {
             name = "RX_DATA_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } RX_DATA_THLD_STAT_EN[1:1];
+        } RX_DATA_THLD_STAT_EN[9:9];
         field {
             name = "TX_DATA_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } TX_DATA_THLD_STAT_EN[0:0];
+        } TX_DATA_THLD_STAT_EN[8:8];
+        field {
+            name = "TX_DESC_TIMEOUT_EN";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_TIMEOUT_EN`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TX_DESC_TIMEOUT_EN[3:3];
+        field {
+            name = "RX_DESC_TIMEOUT_EN";
+            desc = "Enables the corresponding interrupt bit `RX_DESC_TIMEOUT_EN`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } RX_DESC_TIMEOUT_EN[2:2];
+        field {
+            name = "TX_DESC_STAT_EN";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_STAT_EN`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TX_DESC_STAT_EN[1:1];
+        field {
+            name = "RX_DESC_STAT_EN";
+            desc = "Enables the corresponding interrupt bit `RX_DESC_STAT_EN`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } RX_DESC_STAT_EN[0:0];
     } INTERRUPT_ENABLE;
     reg {
         name = "TTI Interrupt Force";
         desc = "Interrupt Force";
+        field {
+            name = "TRANSFER_ERR_STAT_FORCE";
+            desc = "Enables the corresponding interrupt bit `TRANSFER_ERR_STAT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TRANSFER_ERR_STAT_FORCE[31:31];
+        field {
+            name = "TRANSFER_ABORT_STAT_FORCE";
+            desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TRANSFER_ABORT_STAT_FORCE[25:25];
+        field {
+            name = "IBI_DONE_FORCE";
+            desc = "Enables the corresponding interrupt bit `IBI_DONE_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } IBI_DONE_FORCE[13:13];
         field {
             name = "IBI_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_IBI_THLD_STAT` to be set to 1";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } IBI_THLD_FORCE[4:4];
+        } IBI_THLD_FORCE[12:12];
         field {
             name = "RX_DESC_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT` to be set to `1`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } RX_DESC_THLD_FORCE[3:3];
+        } RX_DESC_THLD_FORCE[11:11];
         field {
             name = "TX_DESC_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT` to be set to `1`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } TX_DESC_THLD_FORCE[2:2];
+        } TX_DESC_THLD_FORCE[10:10];
         field {
             name = "RX_DATA_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT` to be set to `1`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } RX_DATA_THLD_FORCE[1:1];
+        } RX_DATA_THLD_FORCE[9:9];
         field {
             name = "TX_DATA_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT` to be set to `1`";
             sw = rw;
             hw = rw;
             reset = 1'b0;
-        } TX_DATA_THLD_FORCE[0:0];
+        } TX_DATA_THLD_FORCE[8:8];
+        field {
+            name = "TX_DESC_TIMEOUT_FORCE";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_TIMEOUT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TX_DESC_TIMEOUT_FORCE[3:3];
+        field {
+            name = "RX_DESC_TIMEOUT_FORCE";
+            desc = "Enables the corresponding interrupt bit `RX_DESC_TIMEOUT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } RX_DESC_TIMEOUT_FORCE[2:2];
+        field {
+            name = "TX_DESC_STAT_FORCE";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_STAT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } TX_DESC_STAT_FORCE[1:1];
+        field {
+            name = "RX_DESC_STAT_FORCE";
+            desc = "Enables the corresponding interrupt bit `RX_DESC_STAT_FORCE`";
+            sw = rw;
+            hw = rw;
+            reset = 1'b0;
+        } RX_DESC_STAT_FORCE[0:0];
     } INTERRUPT_FORCE;
     external reg {
         name = "TTI RX Descriptor Queue Port";

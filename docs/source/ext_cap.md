@@ -275,8 +275,29 @@ The Active Controller can attempt mitigating such a situation by reading Target 
 ##### In-Band Interrupts
 
 The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.
-The IBI Status Descriptor should be compliant with section "8.6 IBI Status Descriptor" of the MIPI I3C HCI specification v1.2.
-If the IBI requires more data to be sent than it is allowed in a single chunk, it should be split into multiple IBI transfers with the `LAST_STATUS` IBI Descriptor field set to `0`, unless it is the last one.
+
+:::{figure-md} fig-ext-cap-ibi
+![IBI Queue](img/ext_cap_ibi.png)
+
+IBI Queue: partially filled with 3 interrupts.
+:::
+
+In order to request an IBI, first the software should read the IBI queue size and set the queue threshold accordingly.
+Next, the interrupts should be enabled and an IBI descriptor with data can be written to the IBI_DATA_PORT.
+If, at this time, the IBI_THLD_STAT bit is set, then software should not attempt to write another IBI Descriptor into the queue.
+Software should wait until the IBI_THLD_STAT is cleared by hardware.
+The Target device will not try to send the IBI onto the I3C Bus until the bus is in the Available state.
+Also, it will read the IBI descriptor and wait until the IBI queue has all required data entries*.
+After meeting these conditions, the IBI will be driven onto the bus.
+The Target device will raise the IBI_DONE interrupt to notify that the IBI is finished.
+The software should read the LAST_IBI_STATUS to determine if the IBI ended successfully or was rejected.
+In case of failure, if the data integrity was not violated, the IBI will be retried once automatically.
+
+:::{figure-md} fig-ext-cap-ibi-timing
+![IBI Queue](img/ext_cap_ibi_timing.png)
+
+IBI Timing Diagram: send an IBI.
+:::
 
 #### Register Interface
 
@@ -772,38 +793,61 @@ The status fields are either R/W1C (write 1 to clear), or else are cleared based
     Interrupt triggers when 2{sup}`N+1` TX Buffer DWORD entries are available.
 :::
 
-#### Target Transaction Interface TX Descriptor
+#### Data Structures (descriptors)
 
-:::{list-table} *Target Transaction Interface TX Descriptor*
+The TX Descriptor is 32-bit wide and has the following format:
+
+:::{list-table} *Target Transaction Interface TX Descriptor Format*
 :name: tab-tti-target-transaction-interface-tx-descriptor
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
+:widths: 30 30 40
+* - **Field Name**
+  - **Position (Size [bits])**
   - **Description**
-* - 16 [31:16]
-  - TBD
-  - TBD
-  - TBD
-  - TBD
+* - DATA_LENGTH
+  - [15:0] (16)
+  - Number of data bytes in the TX Transaction.
 :::
 
-#### Target Transaction Interface RX Descriptor
+The RX Descriptor is 32-bit wide and has the following format:
 
-:::{list-table} *Target Transaction Interface RX Descriptor*
+:::{list-table} *Target Transaction Interface RX Descriptor Format*
 :name: tab-tti-target-transaction-interface-rx-descriptor
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
+:widths: 30 30 40
+* - **Field Name**
+  - **Position (Size [bits])**
   - **Description**
-* - 16 [31:16]
-  - TBD
-  - TBD
-  - TBD
-  - TBD
+* - ERROR
+  - [31:28] (4)
+  - Error occurred during this transaction. Software should read
+  and discard data from the RX Queue.
+
+    Values:
+
+    0x0: Success
+
+    0x1: Generic error
+
+    0x2-0xF: Reserved, will be used to determine type of error.
+* - DATA_LENGTH
+  - [15:0] (16)
+  - Number of data bytes in the RX Transaction.
+:::
+
+The IBI Descriptor is 32-bit wide and has the following format:
+
+:::{list-table} *Target Transaction Interface IBI Descriptor Format*
+:name: tab-tti-target-transaction-interface-ibi-descriptor
+:widths: 30 30 40
+
+* - **Field Name**
+  - **Position (Size [bits])**
+  - **Description**
+* - MDB
+  - [31:24] (8)
+  - Mandatory Data Byte. This field is valid if BCR[2] is set.
+* - DATA_LENGTH
+  - [7:0] (8)
+  - Number of data bytes in the IBI.
 :::
 
 #### TTI Queues
