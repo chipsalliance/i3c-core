@@ -669,15 +669,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#target-transaction-interface-tx-descriptor" class="md-nav__link">
-    <span class="md-ellipsis">Target Transaction Interface TX Descriptor</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#target-transaction-interface-rx-descriptor" class="md-nav__link">
-    <span class="md-ellipsis">Target Transaction Interface RX Descriptor</span>
+  <a href="#data-structures-descriptors" class="md-nav__link">
+    <span class="md-ellipsis">Data Structures <wbr>(descriptors)</span>
   </a>
   
 </li>
@@ -1187,9 +1180,29 @@ After the transaction ends, a TTI RX Descriptor is generated and pushed to the T
 <p>If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
 The Active Controller can attempt mitigating such a situation by reading Target queue size from the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending a big chunk of data.</p>
 <h5 id="in-band-interrupts">In-Band Interrupts<a class="headerlink" href="#in-band-interrupts" title="Link to this heading">¶</a></h5>
-<p>The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.
-The IBI Status Descriptor should be compliant with section “8.6 IBI Status Descriptor” of the MIPI I3C HCI specification v1.2.
-If the IBI requires more data to be sent than it is allowed in a single chunk, it should be split into multiple IBI transfers with the <code class="docutils literal notranslate"><span class="pre">LAST_STATUS</span></code> IBI Descriptor field set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, unless it is the last one.</p>
+<p>The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.</p>
+<figure class="align-default" id="fig-ext-cap-ibi">
+<img alt="IBI Queue" src="_images/ext_cap_ibi.png" />
+<figcaption>
+<p><span class="caption-number">Figure 8 </span><span class="caption-text"><span class="caption-text">
+IBI Queue: partially filled with 3 interrupts.</span><a class="headerlink" href="#fig-ext-cap-ibi" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>In order to request an IBI, first the software should read the IBI queue size and set the queue threshold accordingly.
+Next, the interrupts should be enabled and an IBI descriptor with data can be written to the IBI_DATA_PORT.
+If, at this time, the IBI_THLD_STAT bit is set, then software should not attempt to write another IBI Descriptor into the queue.
+Software should wait until the IBI_THLD_STAT is cleared by hardware.
+The Target device will not try to send the IBI onto the I3C Bus until the bus is in the Available state.
+Also, it will read the IBI descriptor and wait until the IBI queue has all required data entries*.
+After meeting these conditions, the IBI will be driven onto the bus.
+The Target device will raise the IBI_DONE interrupt to notify that the IBI is finished.
+The software should read the LAST_IBI_STATUS to determine if the IBI ended successfully or was rejected.
+In case of failure, if the data integrity was not violated, the IBI will be retried once automatically.</p>
+<figure class="align-default" id="fig-ext-cap-ibi-timing">
+<img alt="IBI Queue" src="_images/ext_cap_ibi_timing.png" />
+<figcaption>
+<p><span class="caption-number">Figure 9 </span><span class="caption-text"><span class="caption-text">
+IBI Timing Diagram: send an IBI.</span><a class="headerlink" href="#fig-ext-cap-ibi-timing" title="Permalink to this image">¶</a></figcaption>
+</figure>
 <h4 id="register-interface">Register Interface<a class="headerlink" href="#register-interface" title="Link to this heading">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">TTI_EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">TTI_SECTION_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
@@ -1856,53 +1869,75 @@ Interrupt triggers when 2<sup>N+1</sup> TX Buffer DWORD entries are available.</
 </tr>
 </tbody>
 </table>
-<h4 id="target-transaction-interface-tx-descriptor">Target Transaction Interface TX Descriptor<a class="headerlink" href="#target-transaction-interface-tx-descriptor" title="Link to this heading">¶</a></h4>
+<h4 id="data-structures-descriptors">Data Structures (descriptors)<a class="headerlink" href="#data-structures-descriptors" title="Link to this heading">¶</a></h4>
+<p>The TX Descriptor is 32-bit wide and has the following format:</p>
 <table class="docutils data align-default" id="tab-tti-target-transaction-interface-tx-descriptor">
-<caption><span class="caption-number">Table 22 </span><span class="caption-text"><em>Target Transaction Interface TX Descriptor</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-tx-descriptor" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 22 </span><span class="caption-text"><em>Target Transaction Interface TX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-tx-descriptor" title="Link to this table">¶</a></caption>
 <colgroup>
-<col style="width: 10.0%" />
 <col style="width: 30.0%" />
-<col style="width: 13.0%" />
-<col style="width: 9.0%" />
-<col style="width: 38.0%" />
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
-<td><p><strong>Field Name</strong></p></td>
-<td><p><strong>Memory Access</strong></p></td>
-<td><p><strong>Reset Value</strong></p></td>
+<tr class="row-odd"><td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Position (Size [bits])</strong></p></td>
 <td><p><strong>Description</strong></p></td>
 </tr>
-<tr class="row-even"><td><p>16 [31:16]</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
+<tr class="row-even"><td><p>DATA_LENGTH</p></td>
+<td><p>[15:0] (16)</p></td>
+<td><p>Number of data bytes in the TX Transaction.</p></td>
 </tr>
 </tbody>
 </table>
-<h4 id="target-transaction-interface-rx-descriptor">Target Transaction Interface RX Descriptor<a class="headerlink" href="#target-transaction-interface-rx-descriptor" title="Link to this heading">¶</a></h4>
+<p>The RX Descriptor is 32-bit wide and has the following format:</p>
 <table class="docutils data align-default" id="tab-tti-target-transaction-interface-rx-descriptor">
-<caption><span class="caption-number">Table 23 </span><span class="caption-text"><em>Target Transaction Interface RX Descriptor</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-rx-descriptor" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 23 </span><span class="caption-text"><em>Target Transaction Interface RX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-rx-descriptor" title="Link to this table">¶</a></caption>
 <colgroup>
-<col style="width: 10.0%" />
 <col style="width: 30.0%" />
-<col style="width: 13.0%" />
-<col style="width: 9.0%" />
-<col style="width: 38.0%" />
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>Size [bits]</strong></p></td>
-<td><p><strong>Field Name</strong></p></td>
-<td><p><strong>Memory Access</strong></p></td>
-<td><p><strong>Reset Value</strong></p></td>
+<tr class="row-odd"><td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Position (Size [bits])</strong></p></td>
 <td><p><strong>Description</strong></p></td>
 </tr>
-<tr class="row-even"><td><p>16 [31:16]</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
-<td><p>TBD</p></td>
+<tr class="row-even"><td><p>ERROR</p></td>
+<td><p>[31:28] (4)</p></td>
+<td><p>Error occurred during this transaction. Software should read
+and discard data from the RX Queue.</p>
+<p>Values:</p>
+<p>0x0: Success</p>
+<p>0x1: Generic error</p>
+<p>0x2-0xF: Reserved, will be used to determine type of error.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>DATA_LENGTH</p></td>
+<td><p>[15:0] (16)</p></td>
+<td><p>Number of data bytes in the RX Transaction.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The IBI Descriptor is 32-bit wide and has the following format:</p>
+<table class="docutils data align-default" id="tab-tti-target-transaction-interface-ibi-descriptor">
+<caption><span class="caption-number">Table 24 </span><span class="caption-text"><em>Target Transaction Interface IBI Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-ibi-descriptor" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Field Name</strong></p></td>
+<td><p><strong>Position (Size [bits])</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>MDB</p></td>
+<td><p>[31:24] (8)</p></td>
+<td><p>Mandatory Data Byte. This field is valid if BCR[2] is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DATA_LENGTH</p></td>
+<td><p>[7:0] (8)</p></td>
+<td><p>Number of data bytes in the IBI.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1973,7 +2008,7 @@ Software-issued reset of the queues contents is also possible.</p>
   <small>
     
       Last update:
-      2024-11-22
+      2024-11-25
     
   </small>
 </div>
