@@ -84,3 +84,27 @@ The Secondary Controller Initialization process requires additional steps (in ad
 ```{note}
 The specification states that the order of these operations has to be adjusted based on the initial desired operation, as well as supported handoff procedures.
 ```
+
+## Minimal configuration
+
+Configure timing registers:
+```
+I3C_EC.SOCMGMTIF.T_R_REG = 0x2
+I3C_EC.SOCMGMTIF.T_HD_DAT_REG = 0xA
+I3C_EC.SOCMGMTIF.T_SU_DAT_REG =  0xA
+```
+
+Enable Standby Configuration:
+```
+I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT = 0x2
+```
+
+Enable Target Transaction Interface:
+```
+I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.TARGET_XACT_ENABLE = 0x1
+```
+
+Enable PHY:
+```
+I3CBASE.HC_CONTROL.BUS_ENABLE = 0x1
+```
