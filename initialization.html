@@ -32,7 +32,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -395,6 +395,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#minimal-configuration" class="md-nav__link">
+    <span class="md-ellipsis">Minimal configuration</span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -702,6 +709,25 @@ After that, the controller will evaluate the capabilities limited by the softwar
 <p class="admonition-title">Note</p>
 <p>The specification states that the order of these operations has to be adjusted based on the initial desired operation, as well as supported handoff procedures.</p>
 </div>
+<h2 id="minimal-configuration">Minimal configuration<a class="headerlink" href="#minimal-configuration" title="Link to this heading">¶</a></h2>
+<p>Configure timing registers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">I3C_EC</span><span class="o">.</span><span class="n">SOCMGMTIF</span><span class="o">.</span><span class="n">T_R_REG</span> <span class="o">=</span> <span class="mh">0x2</span>
+<span class="n">I3C_EC</span><span class="o">.</span><span class="n">SOCMGMTIF</span><span class="o">.</span><span class="n">T_HD_DAT_REG</span> <span class="o">=</span> <span class="mh">0xA</span>
+<span class="n">I3C_EC</span><span class="o">.</span><span class="n">SOCMGMTIF</span><span class="o">.</span><span class="n">T_SU_DAT_REG</span> <span class="o">=</span>  <span class="mh">0xA</span>
+</code></pre></div>
+</div>
+<p>Enable Standby Configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">I3C_EC</span><span class="o">.</span><span class="n">STDBYCTRLMODE</span><span class="o">.</span><span class="n">STBY_CR_CONTROL</span><span class="o">.</span><span class="n">STBY_CR_ENABLE_INIT</span> <span class="o">=</span> <span class="mh">0x2</span>
+</code></pre></div>
+</div>
+<p>Enable Target Transaction Interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">I3C_EC</span><span class="o">.</span><span class="n">STDBYCTRLMODE</span><span class="o">.</span><span class="n">STBY_CR_CONTROL</span><span class="o">.</span><span class="n">TARGET_XACT_ENABLE</span> <span class="o">=</span> <span class="mh">0x1</span>
+</code></pre></div>
+</div>
+<p>Enable PHY:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">I3CBASE</span><span class="o">.</span><span class="n">HC_CONTROL</span><span class="o">.</span><span class="n">BUS_ENABLE</span> <span class="o">=</span> <span class="mh">0x1</span>
+</code></pre></div>
+</div>
 
 
   <hr>
@@ -709,7 +735,7 @@ After that, the controller will evaluate the capabilities limited by the softwar
   <small>
     
       Last update:
-      2024-12-03
+      2024-12-09
     
   </small>
 </div>
@@ -815,7 +841,7 @@ After that, the controller will evaluate the capabilities limited by the softwar
     <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
+        <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
     
   </body>
 </html>
