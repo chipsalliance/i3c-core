@@ -2,18 +2,22 @@ stages:
   - build
   - deploy
 
-image: $CI_DOCS_DOCKER_IMAGE
-
 build:
   stage: build
-  tags: ['ace-x86_64']
   variables:
     GIT_SUBMODULE_STRATEGY: normal
+  image: debian:bookworm
+  before_script:
+    - apt-get update
+    - apt-get install python3-venv python3-pip python3 -y
+    - cd docs/
+    - python3 -m venv .venv/
+    - source .venv/bin/activate
+    - pip3 install -r requirements.txt
   script:
     - cd docs/
-    - pip3 install -r requirements.txt
-    - make html latexpdf
-    - cp build/latex/*.pdf build/html/
+    - source .venv/bin/activate
+    - make html
     - tar cf $CI_DOCS_ARCHIVE -C build/html/ .
     - mv $CI_DOCS_ARCHIVE build ..
   artifacts:
@@ -24,6 +28,7 @@ build:
 deploy:
   variables:
     GIT_STRATEGY: none
+  image: $CI_DOCS_DOCKER_IMAGE
   dependencies:
     - build
   stage: deploy
