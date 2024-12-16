@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt -qqy update && sudo apt -qqy --no-install-recommends install help2man libfl-dev
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install help2man libfl-dev make g++ git bison flex gperf \
+                                                        libreadline-dev libbz2-dev autoconf python3-sphinx \
+                                                        python3-docopt
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -24,6 +27,17 @@ jobs:
       - name: Install Pyenv
         run: |
           ./install.sh
+
+      - name: Build Icarus
+        run: |
+          git clone https://github.com/steveicarus/iverilog.git
+          cd iverilog
+          git checkout 06077ed026b4d8498d9129a6acfb0b44d0b51f18
+          sh autoconf.sh
+          ./configure
+          make -j$(nproc)
+          sudo make install
+          iverilog -V
 
       - name: Build Verilator
         run: |
