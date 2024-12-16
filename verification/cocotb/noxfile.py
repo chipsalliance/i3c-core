@@ -123,8 +123,7 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage):
         "test_clear",
         "test_empty",
         "test_read_write_ports",
-# TODO: reenable test
-#       "test_threshold",
+        "test_threshold",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
