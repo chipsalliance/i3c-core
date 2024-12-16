@@ -242,24 +242,23 @@ def ctrl_bus_monitor_verify(session, test_group, test_name, coverage):
     verify_block(session, test_group, test_name, coverage)
 
 
-# TODO: Install iverilog in CI and reenable
-# @nox.session(tags=["tests", "ahb", "axi"])
-# @nox.parametrize("test_group", ["i3c_phy_io"])
-# @nox.parametrize(
-#     "simulator",
-#     [
-#         "icarus",
-#     ],
-# )
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_drivers",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# def i3c_phy_io_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["i3c_phy_io"])
+@nox.parametrize(
+    "simulator",
+    [
+        "icarus",
+    ],
+)
+@nox.parametrize(
+    "test_name",
+    [
+        "test_drivers",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def i3c_phy_io_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(reuse_venv=True)
