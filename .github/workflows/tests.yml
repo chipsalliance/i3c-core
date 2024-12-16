@@ -1,0 +1,42 @@
+name: Run Tests
+
+on:
+  push:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: "noninteractive"
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt -qqy update && sudo apt -qqy --no-install-recommends install help2man libfl-dev
+
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Get Submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Install Pyenv
+        run: |
+          ./install.sh
+
+      - name: Build Verilator
+        run: |
+          git clone https://github.com/verilator/verilator -b v5.024
+          cd verilator
+          autoconf
+          ./configure
+          make -j$(nproc)
+          sudo make install
+          verilator --version
+
+      - name: Run Tests
+        run: |
+          make install-uvm
+          source activate.sh
+          make tests
