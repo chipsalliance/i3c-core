@@ -150,6 +150,7 @@ module i3c_target_fsm #(
   logic rx_data_byte_valid;
   logic [TxDataWidth-1:0] tx_data_byte;
   logic tx_data_byte_valid;
+  logic tx_last_byte;
 
   // State definitions
   // We can go to CCC secondary FSM after {S|SR,Byte,ACK,First bit}
@@ -295,6 +296,22 @@ module i3c_target_fsm #(
   // consumed from the FIFO, but we might cancel TxPReadData if Rstart occurs.
   assign tx_fifo_rready_o = (state_q != TxPReadData) & (state_d == TxPReadData);
 
+  always_ff @(posedge clk_i or negedge rst_ni) begin : set_last_byte_in_xfer
+    if (~rst_ni) begin
+      tx_last_byte <= '0;
+    end else begin
+      if (bus_tx_done_i & bus_tx_req_bit_o) tx_last_byte <= tx_last_byte_i;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : capture_tx_data_from_queue
+    if (~rst_ni) begin
+      tx_data_byte <= '0;
+    end else begin
+      if (tx_fifo_rready_o | tx_last_byte) tx_data_byte <= tx_fifo_rdata_i;
+    end
+  end
+
   // State outputs
   always_comb begin : state_outputs
     bus_rx_req_bit_o = '0;
@@ -358,13 +375,11 @@ module i3c_target_fsm #(
       end
       TxPReadData: begin
         bus_tx_req_byte_o  = 1'b1;
-        bus_tx_req_value_o = tx_fifo_rdata_i;
+        bus_tx_req_value_o = tx_data_byte;
       end
       TxPReadTbit: begin
         bus_tx_req_bit_o   = 1'b1;
-        // FIXME: Try to send always T-bit==1 so that we can get to the end of 1 frame
-        // bus_tx_req_value_o = {7'h0, tx_fifo_rvalid_i};
-        bus_tx_req_value_o = {7'h0, 1'b1};
+        bus_tx_req_value_o = {7'h0, ~tx_last_byte};
       end
       Wait: begin
         nack_transaction_d = 1'b1;
@@ -460,7 +475,7 @@ module i3c_target_fsm #(
       end
       TxPReadTbit: begin
         if (tx_tbit_done)
-          if (tx_fifo_rvalid_i) state_d = TxPReadData;
+          if (tx_fifo_rvalid_i | tx_last_byte_i) state_d = TxPReadData;
           else state_d = Wait;
       end
 
