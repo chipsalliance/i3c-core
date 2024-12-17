@@ -196,39 +196,6 @@ The term "TX" is used to denote instances in which the software performs a write
 The term "RX" is used to denote instances in which the software performs a read to respond to an I3C Bus Write transaction
 :::
 
-#### Motivation and design choices (informative)
-
-* Width of the interface
-    * This TTI will be integrated in an SoC with 64b AXI as the System Bus
-    * CSRs in the I3C HCI specification are 32b wide, so it makes sense to use the same width
-    * Each System Bus read could potentially hold 2 CSRs
-        * **Recommended** Do not use the upper half of the word
-        * **Optimized** Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)
-    * TTI Queues will also be 32b wide for the same reason
-* Communication scenarios with I3C Devices
-    * When a valid I3C frame appears and the `RnW` bit is set to Read, then Device has a timing constraint on providing valid data
-        * Typically, this is not a problem for simple sensors, which can prepopulate data
-        * Problem for a SoC
-            * Unknown response latency over System Bus
-            * Unknown ISR processing latency
-        * I2C solves this issue by using Clock Stretching by Target
-            * Prohibited by I3C Basic Specification
-        * I3C allows the Controller to stretch Clock (Section 5.1.2.5, I3C Basic)
-            * Does not alleviate Target side timing issues
-    * There are 2 designs which are considered here to increase robustness
-        * Write-first approach: Before each Read from this Device, a Write is issued to inform Target to prepare the payload
-            * Timing issue may still appear, but the timing budget is larger by a factor of (transfer length / bit length)
-        * Write-first Expect-IBI: Reads are only performed based on an IBI with Pending Read Notification (Section 5.1.6.2.2, I3C Basic).
-          Reads occur only when the Target Device has valid data, completely solves the timing issue, assuming that data length does not exceed buffer length.
-
-#### Boot
-
-The Target Device boots with bus operation disabled as per description of the `STBY_CR_ENABLE_INT` field in the `STBY_CR_CONTROL` register (section 7.7.11.1)
-
-#### Initialization
-
-The software is responsible for setting the `TARGET_XACT_ENABLE` bit in the `STBY_CR_CONTROL` register.
-
 #### Operation
 
 TTI is used to handle generic Read-Type and Write-Type transactions sent by the Active Controller on the I3C bus.
@@ -247,10 +214,6 @@ There are 5 queues to communicate between the bus and the register interface:
 After the Bus Read Transaction is acknowledged by the Target Device, it performs a write to the Interrupt Register to inform software of a pending read transaction.
 Software writes the response data to the TX queue and the TX descriptor to the TTI TX Descriptor queue.
 
-:::{note}
-Writing a large chunk of data into the TX queue and then writing the TX Descriptor can be too slow.
-It is permissible to write 32b data to the TX queue, then writing the TX descriptor, then filling the queue with the rest of the data.
-:::
 
 :::{note}
 If 2 consecutive long writes (252B) to the TX buffer occur, then:
@@ -265,9 +228,26 @@ If 2 consecutive long writes (252B) to the TX buffer occur, then:
 
 ##### Bus Write Transaction
 
-The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the `R/W` bit is set to `1`.
+The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the `RnW` bit is set to `0`.
 The Target Device writes incoming bytes to the TTI RX Data Queue.
 After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.
+Then, interrupt `RX_DESC_STAT` is raised.
+
+:::{figure-md} fig-ext-cap-pwrite-timing
+![IBI Queue](img/ext_cap_pwrite_timing.png)
+
+Private Write timing diagram
+:::
+
+During the Private Write transaction, an error can be caused by:
+* bit flip, which will be detected by the parity bit
+* lack of space in the RX queue (overrun)
+
+:::{figure-md} fig-ext-cap-pwrite-overrun
+![IBI Queue](img/ext_cap_pwrite_overrun.png)
+
+Private Write timing diagram: Parity bit error or RX Queue overrun scenario
+:::
 
 If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
 The Active Controller can attempt mitigating such a situation by reading Target queue size from the `TTI_QUEUE_SIZE` register before sending a big chunk of data.

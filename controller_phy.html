@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Core - documentation</title>
+        <title>Physical Layer - I3C Core - documentation</title>
       
     
     
@@ -71,7 +71,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Core - documentation
+              Physical Layer
             
           </span>
         </div>
@@ -190,7 +190,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     I3C Core - documentation
@@ -220,12 +220,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -290,12 +292,84 @@
               
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="controller_phy.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Physical Layer</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">Physical Layer</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phy" class="md-nav__link">
+    <span class="md-ellipsis">PHY</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-phy-layer" class="md-nav__link">
+    <span class="md-ellipsis">Common PHY Layer</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common PHY Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sda-and-scl-lines-5-1-3-1" class="md-nav__link">
+    <span class="md-ellipsis">SDA and SCL lines <wbr>(5.<wbr>1.<wbr>3.<wbr>1)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clock-synchronization-5-1-7" class="md-nav__link">
+    <span class="md-ellipsis">Clock synchronization <wbr>(5.<wbr>1.<wbr>7)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mixed-i2c-and-i3c-bus-5-1-1-2-3" class="md-nav__link">
+    <span class="md-ellipsis">Mixed I2C and I3C Bus <wbr>(5.<wbr>1.<wbr>1.<wbr>2.<wbr>3)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -574,106 +648,69 @@
                   
 
 
-<h1 id="i3c-core-documentation">I3C Core - documentation<a class="headerlink" href="#i3c-core-documentation" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-</ul>
+<h1 id="physical-layer">Physical Layer<a class="headerlink" href="#physical-layer" title="Link to this heading">¶</a></h1>
+<p>This chapter provides a description of the PHY logic.</p>
+<h2 id="phy">PHY<a class="headerlink" href="#phy" title="Link to this heading">¶</a></h2>
+<h2 id="common-phy-layer">Common PHY Layer<a class="headerlink" href="#common-phy-layer" title="Link to this heading">¶</a></h2>
+<p>The PHY is responsible for controlling external bus signals (SDA, SCL) and synchronizing them with an internal clock. It should also support bus arbitration.
+The <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/index.html">I2C Core</a> from the OpenTitan project can be used as a reference design for basic features of the PHY.</p>
+<figure class="align-default" id="i3c-phy">
+<img alt="" src="_images/i3c_phy.png" />
+<figcaption>
+<p><span class="caption-number">Figure 7 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the I3C PHY Layer</span><a class="headerlink" href="#i3c-phy" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="sda-and-scl-lines-5-1-3-1">SDA and SCL lines (5.1.3.1)<a class="headerlink" href="#sda-and-scl-lines-5-1-3-1" title="Link to this heading">¶</a></h3>
+<p>Both I2C and I3C datasheets specify that SDA and SCL lines should be bidirectional, connected to an active Open Drain class Pull-Up.
+Bus lines should be HIGH unless any device ties them to the GROUND.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In addition to the active Open Drain class Pull-Up, a High-Keeper is also required on the Bus.
+The High-Keeper on the Bus should be strong enough to prevent system leakage from pulling SDA, and sometimes SCL, Low.
+The High-Keeper on the Bus should also be weak enough for a Target with the minimum I<sub>OL</sub> PHY to be able to pull SDA, SCL, or both Low within the Minimum t<sub>DIG_L</sub> period.</p>
+<p>The High-Keeper should be implemented during the physical design.
+PHY driver strength modeling will not be performed in this project.
+Base Controller will be delivered without the High-Keeper, however, it may become a configuration option later on.</p>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Hardware Design and Verification</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="top.html">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="top.html#top-level">Top level</a></li>
-<li class="toctree-l2"><a class="reference internal" href="top.html#legacy-i2c-mode">Legacy I2C Mode</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_interfaces.html">Controller Interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#control-and-status-registers">Control and Status Registers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#system-bus">System Bus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#host-controller-interface-hci">Host Controller Interface (HCI)</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_standby.html">Standby Controller</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_standby.html#id1">Standby Controller</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_phy.html">Physical Layer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#phy">PHY</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#common-phy-layer">Common PHY Layer</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dv.html">Design verification</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dv.html#verification-plan">Verification plan</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ci_queues.html">Controller Interface Queues</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ci_queues.html#queue-threshold">Queue threshold</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="timings.html">Electrical and timing specifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#clock-speed-and-oversampling">Clock speed and oversampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#open-drain-vs-push-pull-configuration">Open-drain vs Push-pull configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#rise-and-fall-times">Rise and fall times</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#timing-control-registers">Timing control registers</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Programmer's Reference Manual</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="initialization.html">Boot and Initialization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#boot">Boot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#primary-controller-initialization">Primary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#secondary-controller-initialization">Secondary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#minimal-configuration">Minimal configuration</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="normal_operation.html">Normal operation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#data-transfers">Data transfers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#in-band-interrupts-ibi-handling">In-band interrupts (IBI) handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#interrupts">Interrupts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#address-assignment">Address Assignment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#linux-kernel">Linux Kernel</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Extended Capabilities and Recovery Flow</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ext_cap.html">Specification for I3C Vendor-Specific Extended Capabilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#security">Security</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#extended-capabilities">Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#vendor-specific-extended-capabilities">Vendor-specific Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#ideas-for-the-future-informative">Ideas for the future (informative)</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="recovery_flow.html">Recovery flow</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler">Recovery handler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#csr-access-via-i3c">CSR access via I3C</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler-operation">Recovery handler operation</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Integrating the I3C Core</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="config.html">Configuring the I3C Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration with Caliptra Subsystem</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#caliptra-subsystem">Caliptra Subsystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#controller-interface-test">Controller Interface test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#interrupts">Interrupts</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">FPGA Validation Platform</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#devices">Devices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#test-procedure">Test procedure</a></li>
-</ul>
-</li>
-</ul>
+<p>Each bus line must be capable of switching between 4 logic states:</p>
+<ol class="arabic simple">
+<li><p>No Pull-Up (High-Z)</p></li>
+<li><p>High-Keeper Pull-Up</p></li>
+<li><p>Open Drain Pull-Up</p></li>
+<li><p>Assert LOW</p></li>
+</ol>
+<p>The OpenTitan I2C Core implements a <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/doc/theory_of_operation.html#virtual-open-drain">Virtual Open Drain</a> functionality which seems like a good solution for implementing the desired behavior on FPGA devices, while at the same time keeping it easy to use in silicon chips. Each bus line consists of 3 lines:</p>
+<ol class="arabic simple">
+<li><p>Signal input (<code class="docutils literal notranslate"><span class="pre">scl_i</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_i</span></code>) - external input from the bus lines.</p></li>
+<li><p>Signal output (<code class="docutils literal notranslate"><span class="pre">scl_o</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_o</span></code>) - internal signal, it is tied to the GROUND.</p></li>
+<li><p>Signal output enable (<code class="docutils literal notranslate"><span class="pre">scl_en_o</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_en_o</span></code>) - internal signal enable, controlled by the core FSM.</p></li>
+</ol>
+<p>This interface makes it easy to construct tri-state buffers.
+The controller will never assert the external bus lines HIGH, since it is assumed that these lines are pulled up to V<sub>dd</sub> externally.
+Switching from output to input is enough to achieve signals asserted HIGH.</p>
+<p>Verilator does not natively support <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> states and their handling is explained in the <a class="reference external" href="https://verilator.org/guide/latest/languages.html?highlight=tristate#tri-inout">official documentation</a>.
+Cocotb requires a wrapper to interact properly with an <code class="docutils literal notranslate"><span class="pre">inout</span></code>, which is described in <a class="reference external" href="https://github.com/cocotb/cocotb/discussions/3506">Cocotb discussion #3506</a>.
+Considering these limitations, PHY is being tested functionally using Cocotb and tri-state logic.
+Additionally, there is an RTL testbench run in Verilator and Icarus simulators that checks whether High-Z is set properly on I3C bus lines when the controller requests a high bus state.</p>
+<h3 id="clock-synchronization-5-1-7">Clock synchronization (5.1.7)<a class="headerlink" href="#clock-synchronization-5-1-7" title="Link to this heading">¶</a></h3>
+<p>While the Legacy I2C protocol requires clock synchronization between each master and bus, I3C does not need such mechanism due to the handoff procedure.
+If the currently active Controller wants to pass Controller privileges to another device, it should run the handoff procedure and then it will issue a <code class="docutils literal notranslate"><span class="pre">GETACCR</span></code> command followed by a STOP condition, if the handoff was successful.
+After such an operation, the active Controller will release control of the SCL line, therefore releasing control of the I3C Bus to the selected Secondary Controller.</p>
+<p>However, signals read from the I3C bus clock domain must be synchronized to the system clock domain before they are used internally.
+As a reference, OpenTitan uses a 24MHz system clock to oversample data through <a class="reference external" href="https://github.com/lowRISC/opentitan/blob/master/hw/ip/i2c/rtl/i2c_core.sv#L390-L409">two flip flops</a>.</p>
+<h3 id="mixed-i2c-and-i3c-bus-5-1-1-2-3">Mixed I2C and I3C Bus (5.1.1.2.3)<a class="headerlink" href="#mixed-i2c-and-i3c-bus-5-1-1-2-3" title="Link to this heading">¶</a></h3>
+<p>This project aims to create an I3C Primary Controller, which means that we want to support all possible configurations specified by the I3C Bus specification:</p>
+<ol class="arabic simple">
+<li><p><strong>Pure Bus</strong>: Only I3C Devices are present on the Bus.</p></li>
+<li><p><strong>Mixed Fast Bus</strong>: Both I3C Devices and Legacy I2C Devices are present on the Bus, in a way that the
+Legacy I2C Devices are restricted to the ones that are generally permissible (i.e., Target-only, and no
+Target clock stretching), and have a true I2C 50 ns Spike Filter on SCL. (I.e., I2C Devices that do not ‘see’ the SCL line as High when the High duration is less than 50 ns, across all temperatures and processes.)</p></li>
+<li><p><strong>Mixed Slow/Limited Bus</strong>: Both I3C Devices and Legacy I2C Devices are present on the Bus, in a way that the Legacy I2C Devices are restricted to the ones that are generally permissible (i.e., Target-only, and no Target clock stretching), but do not have a true I2C 50 ns Spike Filter on SCL.</p></li>
+</ol>
+<p>While the Mixed Fast Bus configuration can operate on both I2C and I3C protocols simultaneously (with certain speed limitations), Mixed Slow/Limited Bus is based on downgrading the whole bus performance to the Legacy I2C protocol.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Mixed Fast Bus scenario relies on the fact that Legacy I2C Devices are expected to support Legacy Virtual Register (LVR) through their <strong>software drivers</strong>.</p>
 </div>
 
 
@@ -705,15 +742,30 @@
     
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
+        
+        <a href="controller_standby.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Standby Controller" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Standby Controller
+            </div>
+          </div>
+        </a>
+      
       
         
-        <a href="introduction.html" class="md-footer__link md-footer__link--next" aria-label="Next: Introduction" rel="next">
+        <a href="dv.html" class="md-footer__link md-footer__link--next" aria-label="Next: Design verification" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Introduction
+              Design verification
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -774,7 +826,6 @@
     
       
         <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
-        <script id="MathJax-script" src="_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

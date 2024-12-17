@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Core - documentation</title>
+        <title>Controller Interfaces - I3C Core - documentation</title>
       
     
     
@@ -71,7 +71,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Core - documentation
+              Controller Interfaces
             
           </span>
         </div>
@@ -190,7 +190,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     I3C Core - documentation
@@ -220,12 +220,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -260,12 +262,124 @@
               
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="controller_interfaces.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Controller Interfaces</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">Controller Interfaces</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#control-and-status-registers" class="md-nav__link">
+    <span class="md-ellipsis">Control and Status Registers</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#system-bus" class="md-nav__link">
+    <span class="md-ellipsis">System Bus</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="System Bus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axi-communication" class="md-nav__link">
+    <span class="md-ellipsis">AXI communication</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ahb-communication" class="md-nav__link">
+    <span class="md-ellipsis">AHB communication</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-controller-interface-hci" class="md-nav__link">
+    <span class="md-ellipsis">Host Controller Interface <wbr>(HCI)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Host Controller Interface (HCI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queues" class="md-nav__link">
+    <span class="md-ellipsis">Queues</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dat-dct" class="md-nav__link">
+    <span class="md-ellipsis">DAT &amp; DCT</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAT &amp; DCT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device-address-table-dat" class="md-nav__link">
+    <span class="md-ellipsis">Device Address Table <wbr>(DAT)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-characteristic-table-dct" class="md-nav__link">
+    <span class="md-ellipsis">Device Characteristic Table <wbr>(DCT)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -574,107 +688,124 @@
                   
 
 
-<h1 id="i3c-core-documentation">I3C Core - documentation<a class="headerlink" href="#i3c-core-documentation" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
+<h1 id="controller-interfaces">Controller Interfaces<a class="headerlink" href="#controller-interfaces" title="Link to this heading">¶</a></h1>
+<p>This chapter provides a description of the interfaces, which can be accessed over the AMBA bus.</p>
+<p>All interfaces are implemented by sets of Control and Status Registers.
+The I3C Core implements:</p>
+<ul class="simple">
+<li><p>the Host Controller Interface</p></li>
+<li><p>the Vendor-Specific Extended Capabilities Interface</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li><p>Controller Config</p></li>
+<li><p>Standby Controller Mode</p></li>
+<li><p>Secure Firmware Recovery</p></li>
+<li><p>Target Transaction Interface</p></li>
+<li><p>SoC Management Interface</p></li>
 </ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Hardware Design and Verification</span></p>
+</li>
+</ul>
+<h2 id="control-and-status-registers">Control and Status Registers<a class="headerlink" href="#control-and-status-registers" title="Link to this heading">¶</a></h2>
+<p>CSRs are implemented from the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/rdl">SystemRDL description</a> using the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/csr">generated SV files</a>.
+All CSRs are 32-bit wide.</p>
+<h2 id="system-bus">System Bus<a class="headerlink" href="#system-bus" title="Link to this heading">¶</a></h2>
+<p>The I3C Core provides options to use either AXI or AHB as the system bus.</p>
+<h3 id="axi-communication">AXI communication<a class="headerlink" href="#axi-communication" title="Link to this heading">¶</a></h3>
+<p>The AXI adapter provides an AXI frontend to integrate the I3C controller with the designated system.
+The implementation is derived from Caliptra’s implementation of the AXI subordinate, which is being developed on <a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/tree/cwhitehead-msft-gen2-axi-modules">this branch</a>.</p>
+<h3 id="ahb-communication">AHB communication<a class="headerlink" href="#ahb-communication" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/chipsalliance/caliptra-rtl/blob/9c815c335a92901b27458271a885b2128e51e687/src/libs/rtl/ahb_to_reg_adapter.sv#L24">The AHB adapter</a> provides an AHB frontend to integrate the I3C controller with the designated system.
+The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification IHI0033A.</p>
+<p>As of now, only the non-sequential transfer mode is supported.</p>
+<p>The AHB-Lite interface is compliant with the Caliptra system and parameterizable. See [configuring the I3C Core] for more details.</p>
+<p>If any of the parameters <code class="docutils literal notranslate"><span class="pre">haddress</span></code> or <code class="docutils literal notranslate"><span class="pre">hwdata</span></code> exceed 32-bits, then only the lowest 32-bits of the channel will be accounted for.</p>
+<h2 id="host-controller-interface-hci">Host Controller Interface (HCI)<a class="headerlink" href="#host-controller-interface-hci" title="Link to this heading">¶</a></h2>
+<p>The HCI defines the CSR layout and how the host should interact with them to trigger desired I3C functions.
+The I3C core uses the PIO mode, meaning that all interaction between the core and the host happens through CSRs (as opposed to the DMA mode where there’s a separate path for the core to access memory).</p>
+<figure class="align-default" id="hci">
+<img alt="" src="_images/hci.png" />
+<figcaption>
+<p><span class="caption-number">Figure 3 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the Controller Interface</span><a class="headerlink" href="#hci" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>CI defines several CSR regions:</p>
+<ul class="simple">
+<li><p>Controller Capabilities and Operation registers</p></li>
+<li><p>PIO access registers</p></li>
+<li><p>DAT table</p></li>
+<li><p>DCT table</p></li>
+<li><p>Linked list of Extended Capabilities</p></li>
+</ul>
+<p>The Device Address Table (DAT) stores per-device entries containing their addresses.
+When issuing a transaction, a command contains an index to this table.</p>
+<p>The Device Characteristic Table (DCT) is read-only (for software) and gets populated by the controller core during I3C bus initialization.</p>
+<p>The PIO CSR region contains registers used to access Command, Read, Write and Response Queue.
+See section “7.5 PIO Mode Registers (PIO_BASE +)” of the HCI specification.</p>
+<h3 id="queues">Queues<a class="headerlink" href="#queues" title="Link to this heading">¶</a></h3>
+<p>CI queues facilitate communication between software-issued requests and the I3C controller logic.
+Each request is issued through appropriate ports of the PIO Control register file.
+The data is then collected from those ports and enqueued on appropriate queues.
+The CI then issues enqueued commands to the I3C controller logic and fetches transaction responses (if present).</p>
+<p>The queues are divided according to their purpose:</p>
+<ul class="simple">
+<li><p>Command queue</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="top.html">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="top.html#top-level">Top level</a></li>
-<li class="toctree-l2"><a class="reference internal" href="top.html#legacy-i2c-mode">Legacy I2C Mode</a></li>
+<li><p>64-bit wide</p></li>
+<li><p>Enqueues to-be-issued command descriptors</p></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="controller_interfaces.html">Controller Interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#control-and-status-registers">Control and Status Registers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#system-bus">System Bus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#host-controller-interface-hci">Host Controller Interface (HCI)</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_standby.html">Standby Controller</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_standby.html#id1">Standby Controller</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_phy.html">Physical Layer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#phy">PHY</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#common-phy-layer">Common PHY Layer</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dv.html">Design verification</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dv.html#verification-plan">Verification plan</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ci_queues.html">Controller Interface Queues</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ci_queues.html#queue-threshold">Queue threshold</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="timings.html">Electrical and timing specifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#clock-speed-and-oversampling">Clock speed and oversampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#open-drain-vs-push-pull-configuration">Open-drain vs Push-pull configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#rise-and-fall-times">Rise and fall times</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#timing-control-registers">Timing control registers</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Programmer's Reference Manual</span></p>
+<li><p>RX - Read queue</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="initialization.html">Boot and Initialization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#boot">Boot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#primary-controller-initialization">Primary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#secondary-controller-initialization">Secondary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#minimal-configuration">Minimal configuration</a></li>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues data to be read by the host controller</p></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="normal_operation.html">Normal operation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#data-transfers">Data transfers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#in-band-interrupts-ibi-handling">In-band interrupts (IBI) handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#interrupts">Interrupts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#address-assignment">Address Assignment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#linux-kernel">Linux Kernel</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Extended Capabilities and Recovery Flow</span></p>
+<li><p>TX - Write queue</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ext_cap.html">Specification for I3C Vendor-Specific Extended Capabilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#security">Security</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#extended-capabilities">Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#vendor-specific-extended-capabilities">Vendor-specific Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#ideas-for-the-future-informative">Ideas for the future (informative)</a></li>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues data written by the host controller</p></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="recovery_flow.html">Recovery flow</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler">Recovery handler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#csr-access-via-i3c">CSR access via I3C</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler-operation">Recovery handler operation</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Integrating the I3C Core</span></p>
+<li><p>Response queue</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="config.html">Configuring the I3C Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration with Caliptra Subsystem</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#caliptra-subsystem">Caliptra Subsystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#controller-interface-test">Controller Interface test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#interrupts">Interrupts</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">FPGA Validation Platform</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#devices">Devices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#test-procedure">Test procedure</a></li>
+<li><p>32-bit wide</p></li>
+<li><p>Enqueues response descriptors of previously issued and completed commands</p></li>
 </ul>
 </li>
 </ul>
-</div>
+<p>Both command and response descriptors are addressed with the index to the DAT table entry (as opposed to being directly-addressed).</p>
+<p>Command descriptors are fixed to 64-bit (2-DWORD).
+Response descriptors are fixed to 32-bit (1-DWORD).</p>
+<p>For details, see the <a class="reference internal" href="ci_queues.html#controller-interface-queues"><span class="std std-ref">Controller Interface Queues</span></a> section.</p>
+<h3 id="dat-dct">DAT &amp; DCT<a class="headerlink" href="#dat-dct" title="Link to this heading">¶</a></h3>
+<p>To increase flexibility of the design, both DAT and DCT tables are instantiated as memories external from the I3C Core.
+Access paths to these memories are routed through the Controller Interface module directly to the underlying DAT/DCT access logic.
+Such an approach ensures a very convenient way of replacing memory models for specific target architecture.</p>
+<figure class="align-default" id="id1">
+<img alt="" src="_images/dat_dct.png" />
+<figcaption>
+<p><span class="caption-number">Figure 4 </span><span class="caption-text"><span class="caption-text">
+Block diagram of DAT and DCT connections</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h4 id="device-address-table-dat">Device Address Table (DAT)<a class="headerlink" href="#device-address-table-dat" title="Link to this heading">¶</a></h4>
+<p>The Controller should perform initial I3C Bus enumeration after initialization.
+During this process, the software driver should assign a static address for each device that is prior known on the bus.
+Additionally, for every Dynamic Addressing capable Device, a dynamic address will be set for each valid DAT entry, as part of the Dynamic Address Assignment process.
+Once the DAT is set up, devices can be assigned dynamic addresses in the following ways:</p>
+<ul class="simple">
+<li><p><strong>SETDASA</strong> (direct) and <strong>SETAASA</strong> (broadcast) to assign a dynamic address based on a static address,</p></li>
+<li><p><strong>ENTDAA</strong> to enter dynamic address assignment procedure.</p></li>
+</ul>
+<p>After bus initialization, the DAT is not affected by physically removing the device from the bus and can be updated by sending the <strong>SETNEWDA</strong> (set new dynamic address) CCC or the <strong>SETGRPA</strong> (set group address) CCC.</p>
+<p>Dynamically addressed I3C targets with their DAT entries can be reset by sending the <strong>RSTDAA</strong> command on the bus.
+Assigned groups of addresses can be cleared by sending <strong>RSTGRPA</strong>.</p>
+<p>In case the I3C Controller enters standby mode by passing the active controller role to another device, there is no requirement (on hardware) to keep the DAT table up-to-date.
+However, when the I3C Controller transitions back to the Active Controller role, it should receive the <strong>DEFTGTS</strong> CCC that provides states of all targets present on the bus.
+The software driver should then update the DAT table.</p>
+<p>Since the DAT memory is writable from software, it must support single 32-bit word masked access so that the software can write data without overwriting the whole table entry.</p>
+<h4 id="device-characteristic-table-dct">Device Characteristic Table (DCT)<a class="headerlink" href="#device-characteristic-table-dct" title="Link to this heading">¶</a></h4>
+<p>During dynamic address assignment, each target device on the bus must report its BCR, DCR and PID, which are then saved in the Device Characteristic Table.
+The only I3C command that modifies the content of the DCT is <strong>ENTDAA</strong>.
+From the software point of view, DCT memory is read only and should never be written to.</p>
 
 
   <hr>
@@ -705,15 +836,30 @@
     
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
+        
+        <a href="top.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Overview
+            </div>
+          </div>
+        </a>
+      
       
         
-        <a href="introduction.html" class="md-footer__link md-footer__link--next" aria-label="Next: Introduction" rel="next">
+        <a href="controller_standby.html" class="md-footer__link md-footer__link--next" aria-label="Next: Standby Controller" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Introduction
+              Standby Controller
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -774,7 +920,6 @@
     
       
         <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
-        <script id="MathJax-script" src="_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

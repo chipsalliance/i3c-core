@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Core - documentation</title>
+        <title>Standby Controller - I3C Core - documentation</title>
       
     
     
@@ -71,7 +71,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-header__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Core - documentation
+              Standby Controller
             
           </span>
         </div>
@@ -190,7 +190,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
+    <a href="index.html" title="I3C Core - documentation" class="md-nav__button md-logo" aria-label="I3C Core - documentation" data-md-component="logo">
       <img src="_static/white.svg" alt="logo">
     </a>
     I3C Core - documentation
@@ -220,12 +220,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -275,12 +277,63 @@
               
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="controller_standby.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Standby Controller</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">Standby Controller</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    <span class="md-ellipsis">Standby Controller</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Standby Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bus-arbitration-5-1-2-2-1" class="md-nav__link">
+    <span class="md-ellipsis">Bus arbitration <wbr>(5.<wbr>1.<wbr>2.<wbr>2.<wbr>1)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -574,106 +627,45 @@
                   
 
 
-<h1 id="i3c-core-documentation">I3C Core - documentation<a class="headerlink" href="#i3c-core-documentation" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-</ul>
+<h1 id="standby-controller">Standby Controller<a class="headerlink" href="#standby-controller" title="Link to this heading">¶</a></h1>
+<p>This chapter provides a description of the Standby Controller logic.</p>
+<h2 id="id1">Standby Controller<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Main part of the system.</p>
+<figure class="align-default" id="i3c-ctrl">
+<img alt="" src="_images/i3c_ctrl.png" />
+<figcaption>
+<p><span class="caption-number">Figure 5 </span><span class="caption-text"><span class="caption-text">
+Block diagram of the I3C Controller</span><a class="headerlink" href="#i3c-ctrl" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>When the I3C Core acts as an Active Controller, it follows the flow presented in <a class="reference internal" href="#i3c-flow-fsm"><span class="std std-numref">Figure 6</span></a>.</p>
+<figure class="align-default" id="i3c-flow-fsm">
+<img alt="" src="_images/i3c_flow_fsm.png" />
+<figcaption>
+<p><span class="caption-number">Figure 6 </span><span class="caption-text"><span class="caption-text">
+FSM: Active Controller</span><a class="headerlink" href="#i3c-flow-fsm" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="bus-arbitration-5-1-2-2-1">Bus arbitration (5.1.2.2.1)<a class="headerlink" href="#bus-arbitration-5-1-2-2-1" title="Link to this heading">¶</a></h3>
+<p>In an I3C (or multi-master I2C) system, it is possible that multiple devices connected to the bus will try to take over the bus control at the same time.
+An arbitration process must occur to resolve access.
+All devices that are concurrently transmitting an address follow the same rules:</p>
+<ol class="arabic">
+<li><p>If the current bit to transmit is a 0, then the Device will drive SDA Low after the falling edge of SCL and hold Low until the next falling edge of SCL.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other Devices may also be driving SDA Low, but that is acceptable.</p>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Hardware Design and Verification</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="top.html">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="top.html#top-level">Top level</a></li>
-<li class="toctree-l2"><a class="reference internal" href="top.html#legacy-i2c-mode">Legacy I2C Mode</a></li>
+</li>
+<li><p>If the current bit to transmit is a 1, then the Device will not drive SDA, but rather High-Z SDA on the falling edge of SCL.</p>
+<ul class="simple">
+<li><p>Additionally, the Device will monitor the SDA on the rising edge of SCL to determine whether another Device has driven SDA Low.</p></li>
+<li><p>If another Device has driven the SDA Low, then the Device has “<em>lost</em>” the Arbitration and will not further participate in this Address Header.
+That is, the Device will not transmit any more bits, but may wait for a future START (but not a Repeated START).</p></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="controller_interfaces.html">Controller Interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#control-and-status-registers">Control and Status Registers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#system-bus">System Bus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_interfaces.html#host-controller-interface-hci">Host Controller Interface (HCI)</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_standby.html">Standby Controller</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_standby.html#id1">Standby Controller</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="controller_phy.html">Physical Layer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#phy">PHY</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controller_phy.html#common-phy-layer">Common PHY Layer</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dv.html">Design verification</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dv.html#verification-plan">Verification plan</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ci_queues.html">Controller Interface Queues</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ci_queues.html#queue-threshold">Queue threshold</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="timings.html">Electrical and timing specifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#clock-speed-and-oversampling">Clock speed and oversampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#open-drain-vs-push-pull-configuration">Open-drain vs Push-pull configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#rise-and-fall-times">Rise and fall times</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timings.html#timing-control-registers">Timing control registers</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Programmer's Reference Manual</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="initialization.html">Boot and Initialization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#boot">Boot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#primary-controller-initialization">Primary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#secondary-controller-initialization">Secondary Controller Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="initialization.html#minimal-configuration">Minimal configuration</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="normal_operation.html">Normal operation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#data-transfers">Data transfers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#in-band-interrupts-ibi-handling">In-band interrupts (IBI) handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#interrupts">Interrupts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#address-assignment">Address Assignment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normal_operation.html#linux-kernel">Linux Kernel</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Extended Capabilities and Recovery Flow</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ext_cap.html">Specification for I3C Vendor-Specific Extended Capabilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#security">Security</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#extended-capabilities">Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#vendor-specific-extended-capabilities">Vendor-specific Extended Capabilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ext_cap.html#ideas-for-the-future-informative">Ideas for the future (informative)</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="recovery_flow.html">Recovery flow</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler">Recovery handler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#csr-access-via-i3c">CSR access via I3C</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler-operation">Recovery handler operation</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Integrating the I3C Core</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="config.html">Configuring the I3C Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration with Caliptra Subsystem</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#caliptra-subsystem">Caliptra Subsystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#controller-interface-test">Controller Interface test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="integration.html#interrupts">Interrupts</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">FPGA Validation Platform</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#devices">Devices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#test-procedure">Test procedure</a></li>
-</ul>
-</li>
-</ul>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Section 5.1.2.2.2 of the I3C specification describes possible arbitration enhancements.</p>
 </div>
 
 
@@ -705,15 +697,30 @@
     
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
+        
+        <a href="controller_interfaces.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Controller Interfaces" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Controller Interfaces
+            </div>
+          </div>
+        </a>
+      
       
         
-        <a href="introduction.html" class="md-footer__link md-footer__link--next" aria-label="Next: Introduction" rel="next">
+        <a href="controller_phy.html" class="md-footer__link md-footer__link--next" aria-label="Next: Physical Layer" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Introduction
+              Physical Layer
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -774,7 +781,6 @@
     
       
         <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
-        <script id="MathJax-script" src="_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

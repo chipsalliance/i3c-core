@@ -249,7 +249,52 @@
   
     <li class="md-nav__item">
       <a href="top.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C Controller</span>
+        <span class="md-ellipsis">Overview</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_interfaces.html" class="md-nav__link">
+        <span class="md-ellipsis">Controller Interfaces</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_standby.html" class="md-nav__link">
+        <span class="md-ellipsis">Standby Controller</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_phy.html" class="md-nav__link">
+        <span class="md-ellipsis">Physical Layer</span>
       </a>
     </li>
   
@@ -501,27 +546,6 @@
   
     <nav class="md-nav" aria-label="Target Transaction Interface (ID=0xC4)">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#motivation-and-design-choices-informative" class="md-nav__link">
-    <span class="md-ellipsis">Motivation and design choices <wbr>(informative)</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#boot" class="md-nav__link">
-    <span class="md-ellipsis">Boot</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#initialization" class="md-nav__link">
-    <span class="md-ellipsis">Initialization</span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#operation" class="md-nav__link">
@@ -1080,62 +1104,6 @@ This specification is meant for Standby Controllers which are capable of operati
 <p class="admonition-title">Note</p>
 <p>The term “RX” is used to denote instances in which the software performs a read to respond to an I3C Bus Write transaction</p>
 </div>
-<h4 id="motivation-and-design-choices-informative">Motivation and design choices (informative)<a class="headerlink" href="#motivation-and-design-choices-informative" title="Link to this heading">¶</a></h4>
-<ul class="simple">
-<li><p>Width of the interface</p>
-<ul>
-<li><p>This TTI will be integrated in an SoC with 64b AXI as the System Bus</p></li>
-<li><p>CSRs in the I3C HCI specification are 32b wide, so it makes sense to use the same width</p></li>
-<li><p>Each System Bus read could potentially hold 2 CSRs</p>
-<ul>
-<li><p><strong>Recommended</strong> Do not use the upper half of the word</p></li>
-<li><p><strong>Optimized</strong> Read 2 CSRs (this specification does not define how to handle region boundaries and resulting errors)</p></li>
-</ul>
-</li>
-<li><p>TTI Queues will also be 32b wide for the same reason</p></li>
-</ul>
-</li>
-<li><p>Communication scenarios with I3C Devices</p>
-<ul>
-<li><p>When a valid I3C frame appears and the <code class="docutils literal notranslate"><span class="pre">RnW</span></code> bit is set to Read, then Device has a timing constraint on providing valid data</p>
-<ul>
-<li><p>Typically, this is not a problem for simple sensors, which can prepopulate data</p></li>
-<li><p>Problem for a SoC</p>
-<ul>
-<li><p>Unknown response latency over System Bus</p></li>
-<li><p>Unknown ISR processing latency</p></li>
-</ul>
-</li>
-<li><p>I2C solves this issue by using Clock Stretching by Target</p>
-<ul>
-<li><p>Prohibited by I3C Basic Specification</p></li>
-</ul>
-</li>
-<li><p>I3C allows the Controller to stretch Clock (Section 5.1.2.5, I3C Basic)</p>
-<ul>
-<li><p>Does not alleviate Target side timing issues</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>There are 2 designs which are considered here to increase robustness</p>
-<ul>
-<li><p>Write-first approach: Before each Read from this Device, a Write is issued to inform Target to prepare the payload</p>
-<ul>
-<li><p>Timing issue may still appear, but the timing budget is larger by a factor of (transfer length / bit length)</p></li>
-</ul>
-</li>
-<li><p>Write-first Expect-IBI: Reads are only performed based on an IBI with Pending Read Notification (Section 5.1.6.2.2, I3C Basic).
-Reads occur only when the Target Device has valid data, completely solves the timing issue, assuming that data length does not exceed buffer length.</p></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="boot">Boot<a class="headerlink" href="#boot" title="Link to this heading">¶</a></h4>
-<p>The Target Device boots with bus operation disabled as per description of the <code class="docutils literal notranslate"><span class="pre">STBY_CR_ENABLE_INT</span></code> field in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register (section 7.7.11.1)</p>
-<h4 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h4>
-<p>The software is responsible for setting the <code class="docutils literal notranslate"><span class="pre">TARGET_XACT_ENABLE</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL</span></code> register.</p>
 <h4 id="operation">Operation<a class="headerlink" href="#operation" title="Link to this heading">¶</a></h4>
 <p>TTI is used to handle generic Read-Type and Write-Type transactions sent by the Active Controller on the I3C bus.
 In this mode, software is responsible for servicing TX and RX queues based on the interrupt signals.</p>
@@ -1150,11 +1118,6 @@ In this mode, software is responsible for servicing TX and RX queues based on th
 <h5 id="bus-read-transaction">Bus Read Transaction<a class="headerlink" href="#bus-read-transaction" title="Link to this heading">¶</a></h5>
 <p>After the Bus Read Transaction is acknowledged by the Target Device, it performs a write to the Interrupt Register to inform software of a pending read transaction.
 Software writes the response data to the TX queue and the TX descriptor to the TTI TX Descriptor queue.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Writing a large chunk of data into the TX queue and then writing the TX Descriptor can be too slow.
-It is permissible to write 32b data to the TX queue, then writing the TX descriptor, then filling the queue with the rest of the data.</p>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If 2 consecutive long writes (252B) to the TX buffer occur, then:</p>
@@ -1174,9 +1137,27 @@ It is permissible to write 32b data to the TX queue, then writing the TX descrip
 </ul>
 </div>
 <h5 id="bus-write-transaction">Bus Write Transaction<a class="headerlink" href="#bus-write-transaction" title="Link to this heading">¶</a></h5>
-<p>The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the <code class="docutils literal notranslate"><span class="pre">R/W</span></code> bit is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>.
+<p>The Bus Write Transaction is acknowledged by the Device if the transaction address matches the Device address and the <code class="docutils literal notranslate"><span class="pre">RnW</span></code> bit is set to <code class="docutils literal notranslate"><span class="pre">0</span></code>.
 The Target Device writes incoming bytes to the TTI RX Data Queue.
-After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.</p>
+After the transaction ends, a TTI RX Descriptor is generated and pushed to the TTI RX Descriptor Queue for the software access.
+Then, interrupt <code class="docutils literal notranslate"><span class="pre">RX_DESC_STAT</span></code> is raised.</p>
+<figure class="align-default" id="fig-ext-cap-pwrite-timing">
+<img alt="IBI Queue" src="_images/ext_cap_pwrite_timing.png" />
+<figcaption>
+<p><span class="caption-number">Figure 8 </span><span class="caption-text"><span class="caption-text">
+Private Write timing diagram</span><a class="headerlink" href="#fig-ext-cap-pwrite-timing" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>During the Private Write transaction, an error can be caused by:</p>
+<ul class="simple">
+<li><p>bit flip, which will be detected by the parity bit</p></li>
+<li><p>lack of space in the RX queue (overrun)</p></li>
+</ul>
+<figure class="align-default" id="fig-ext-cap-pwrite-overrun">
+<img alt="IBI Queue" src="_images/ext_cap_pwrite_overrun.png" />
+<figcaption>
+<p><span class="caption-number">Figure 9 </span><span class="caption-text"><span class="caption-text">
+Private Write timing diagram: Parity bit error or RX Queue overrun scenario</span><a class="headerlink" href="#fig-ext-cap-pwrite-overrun" title="Permalink to this image">¶</a></figcaption>
+</figure>
 <p>If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
 The Active Controller can attempt mitigating such a situation by reading Target queue size from the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending a big chunk of data.</p>
 <h5 id="in-band-interrupts">In-Band Interrupts<a class="headerlink" href="#in-band-interrupts" title="Link to this heading">¶</a></h5>
@@ -1184,7 +1165,7 @@ The Active Controller can attempt mitigating such a situation by reading Target 
 <figure class="align-default" id="fig-ext-cap-ibi">
 <img alt="IBI Queue" src="_images/ext_cap_ibi.png" />
 <figcaption>
-<p><span class="caption-number">Figure 8 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 10 </span><span class="caption-text"><span class="caption-text">
 IBI Queue: partially filled with 3 interrupts.</span><a class="headerlink" href="#fig-ext-cap-ibi" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>In order to request an IBI, first the software should read the IBI queue size and set the queue threshold accordingly.
@@ -1200,7 +1181,7 @@ In case of failure, if the data integrity was not violated, the IBI will be retr
 <figure class="align-default" id="fig-ext-cap-ibi-timing">
 <img alt="IBI Queue" src="_images/ext_cap_ibi_timing.png" />
 <figcaption>
-<p><span class="caption-number">Figure 9 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 11 </span><span class="caption-text"><span class="caption-text">
 IBI Timing Diagram: send an IBI.</span><a class="headerlink" href="#fig-ext-cap-ibi-timing" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <h4 id="register-interface">Register Interface<a class="headerlink" href="#register-interface" title="Link to this heading">¶</a></h4>

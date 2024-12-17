@@ -249,7 +249,52 @@
   
     <li class="md-nav__item">
       <a href="top.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C Controller</span>
+        <span class="md-ellipsis">Overview</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_interfaces.html" class="md-nav__link">
+        <span class="md-ellipsis">Controller Interfaces</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_standby.html" class="md-nav__link">
+        <span class="md-ellipsis">Standby Controller</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_phy.html" class="md-nav__link">
+        <span class="md-ellipsis">Physical Layer</span>
       </a>
     </li>
   
@@ -683,14 +728,14 @@ The I3C core responds with a NACK when the FIFO is full.</p></li>
 <figure class="align-default" id="id1">
 <img alt="" src="_images/recovery_handler.png" />
 <figcaption>
-<p><span class="caption-number">Figure 10 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 12 </span><span class="caption-text"><span class="caption-text">
 Recovery handler</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>The architecture of the Recovery Handler module is shown in the block diagram below:</p>
 <figure class="align-default" id="recovery-handler-bd">
 <img alt="" src="_images/recovery_handler_bd.png" />
 <figcaption>
-<p><span class="caption-number">Figure 11 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 13 </span><span class="caption-text"><span class="caption-text">
 Recovery handler architecture</span><a class="headerlink" href="#recovery-handler-bd" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>The module’s backend is connected directly to the controller’s TTI interface.
@@ -708,7 +753,7 @@ The frontend is connected to I3C core CSRs accessible by software.</p>
 <figure class="align-default" id="id2">
 <img alt="" src="_images/i3c_csr_wr.png" />
 <figcaption>
-<p><span class="caption-number">Figure 12 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 14 </span><span class="caption-text"><span class="caption-text">
 CSR write</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>The Recovery Initiator sends a command byte, followed by 16-bit payload length LSB and MSB bytes using I3C private transfers.
@@ -718,7 +763,7 @@ Each transfer ends with an additional byte containing a Packet Error Code (PEC) 
 <figure class="align-default" id="id3">
 <img alt="" src="_images/i3c_csr_rd.png" />
 <figcaption>
-<p><span class="caption-number">Figure 13 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 15 </span><span class="caption-text"><span class="caption-text">
 CSR read</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>For CSR read, the Recovery Initiator sends only the command byte and PEC checksum.
