@@ -75,11 +75,6 @@ jobs:
       - name: Get Submodules
         run: git submodule update --init --recursive
 
-      - name: Install Python Packages
-        run: |
-          export I3C_ROOT_DIR=`pwd`
-          pip3 install -r requirements.txt
-
       - name: Install Pyenv
         run: ./install.sh
 
