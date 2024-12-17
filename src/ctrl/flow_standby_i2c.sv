@@ -21,38 +21,21 @@ module flow_standby_i2c
     output logic [TxFifoWidth-1:0] tx_fifo_rdata_o,
 
     // TTI
-    // TODO: refactor fifo to queue
-    //input logic [TtiCmdThldWidth-1:0] cmd_fifo_thld_i,
-    //input logic cmd_fifo_full_i,
-    //input logic cmd_fifo_apch_thld_i,
-    //input logic cmd_fifo_empty_i,
     input i3c_tti_command_desc_t cmd_fifo_rdata_i,
     input logic cmd_fifo_rvalid_i,
     output logic cmd_fifo_rready_o,
 
     // FIFO
-    //input logic [TtiCmdThldWidth-1:0] response_fifo_thld_i,
-    //input logic response_fifo_full_i,
-    //input logic response_fifo_apch_thld_i,
-    //input logic response_fifo_empty_i,
     output i3c_response_desc_t response_fifo_wdata_o,
     output logic response_fifo_wvalid_o,
     input logic response_fifo_wready_i,
 
     // TX FIFO
-    //input logic [TtiTxThldWidth-1:0] tx_fifo_thld_i,
-    //input logic tx_fifo_full_i,
-    //input logic tx_fifo_apch_thld_i,
-    //input logic tx_fifo_empty_i,
     input logic [31:0] tx_fifo_rdata_i,
     input logic tx_fifo_rvalid_i,
     output logic tx_fifo_rready_o,
 
     // RX FIFO
-    //input logic [TtiRxThldWidth-1:0] resp_fifo_thld_i,
-    //input logic resp_fifo_full_i,
-    //input logic resp_fifo_apch_thld_i,
-    //input logic resp_fifo_empty_i,
     output logic [31:0] rx_fifo_wdata_o,
     output logic rx_fifo_wvalid_o,
     input logic rx_fifo_wready_i,

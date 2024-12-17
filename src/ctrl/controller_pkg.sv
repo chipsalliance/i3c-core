@@ -56,23 +56,6 @@ package controller_pkg;
   // To raise interrupts
   typedef struct packed {logic irq_0;} i3c_irq_t;
 
-  // Communication flow FSM
-  typedef enum logic [3:0] {
-    Idle = 4'd0,
-    WaitForCmd = 4'd1,
-    FetchDAT = 4'd2,
-    I2CWriteImmediate = 4'd3,
-    I3CWriteImmediate = 4'd4,
-    FetchTxData = 4'd5,
-    FetchRxData = 4'd6,
-    InitI2CWrite = 4'd7,
-    InitI2CRead = 4'd8,
-    StallWrite = 4'd9,
-    StallRead = 4'd10,
-    IssueCmd = 4'd11,
-    WriteResp = 4'd12
-  } flow_fsm_state_e;
-
   typedef enum logic {
     Write = 1'b0,
     Read  = 1'b1

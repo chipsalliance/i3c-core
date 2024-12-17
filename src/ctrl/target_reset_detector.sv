@@ -32,15 +32,14 @@ module target_reset_detector
   target_reset_detector_state_e state_q, state_d;
 
   always_comb begin
+    if ((state_q == AwaitPattern) & (sda_transition_count_q < 4'he))
+      count_sda_transition_en = (sda_posedge & (sda_transition_count_q != 0)) | sda_negedge;
+    else count_sda_transition_en = 0;
     if (scl_high) sda_transition_count_d = 4'h0;
     else
       sda_transition_count_d = count_sda_transition_en ?
                                   sda_transition_count_q + 4'h1 :
                                   sda_transition_count_q;
-
-    if ((state_q == AwaitPattern) & (sda_transition_count_q < 4'he))
-      count_sda_transition_en = (sda_posedge & (sda_transition_count_q != 0)) | sda_negedge;
-    else count_sda_transition_en = 0;
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : target_reset_sda_transition_counter
