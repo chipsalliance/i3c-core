@@ -139,7 +139,7 @@ module recovery_executor
   state_e state_d, state_q;
 
   // State transition
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) state_q <= Idle;
     else state_q <= state_d;
 

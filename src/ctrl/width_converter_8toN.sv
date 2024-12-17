@@ -37,7 +37,7 @@ module width_converter_8toN #(
   // Byte counter
   logic [$clog2(Bytes):0] bcnt;
 
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
       if ((bcnt != '0) & sink_flush_i) bcnt <= Bytes;
@@ -52,7 +52,7 @@ module width_converter_8toN #(
   // Data register
   logic [Width-1:0] sreg;
 
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
       if ((bcnt != Bytes) & sink_valid_i & sink_ready_o) sreg[bcnt*8+:8] <= sink_data_i;

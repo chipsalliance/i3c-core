@@ -68,7 +68,7 @@ module recovery_receiver
   state_e state_q, state_d;
 
   // State transition
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) state_q <= Idle;
     else state_q <= state_d;
 
@@ -118,7 +118,7 @@ module recovery_receiver
   end
 
   // Data ready
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_ready_o <= '0;
     else
       unique case (state_q)
@@ -128,12 +128,12 @@ module recovery_receiver
       endcase
 
   // Data queue mux select
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_queue_select_o <= 1'b1;
     else if (state_q == RxData) data_queue_select_o <= (data_queue_flow_i & dcnt == 1);
 
   // Data queue flush signal. Flush if data length is not divisible by 4
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_queue_flush_o <= 1'b0;
     else data_queue_flush_o <= (state_q == Cmd) && |(len_lsb[1:0]);
 
@@ -147,7 +147,7 @@ module recovery_receiver
     endcase
 
   // Command header & PEC capture
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       pec_recv <= 0;
     end else begin
@@ -177,7 +177,7 @@ module recovery_receiver
   assign pec_enable_o = (data_queue_select_o) ? rx_flow : data_queue_flow_i;
 
   // PEC capture
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin
       pec_calc <= 0;
     end else begin
@@ -192,7 +192,7 @@ module recovery_receiver
   assign pec_match = !(|(pec_calc ^ pec_recv));
 
   // Command interface
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin
       cmd_valid_o <= '0;
       cmd_is_rd_o <= '0;
