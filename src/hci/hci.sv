@@ -141,24 +141,12 @@ module hci
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_i,
 
     // Controller configuration
-    output logic phy_en_o,
-    output logic [1:0] phy_mux_select_o,
-    output logic i2c_active_en_o,
-    output logic i2c_standby_en_o,
-    output logic i3c_active_en_o,
-    output logic i3c_standby_en_o,
-    output logic [19:0] t_su_dat_o,
-    output logic [19:0] t_hd_dat_o,
-    output logic [19:0] t_r_o,
-    output logic [19:0] t_f_o,
-    output logic [19:0] t_bus_free_o,
-    output logic [19:0] t_bus_idle_o,
-    output logic [19:0] t_bus_available_o,
+    output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
     input logic [7:0] rst_action_i
 );
-  I3CCSR_pkg::I3CCSR__in_t  hwif_in;
-  I3CCSR_pkg::I3CCSR__out_t hwif_out;
+
+  I3CCSR_pkg::I3CCSR__in_t hwif_in;
 
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
@@ -173,11 +161,11 @@ module hci
 
 
   // TTI CSR interface
-  assign hwif_tti_o = hwif_out.I3C_EC.TTI;
+  assign hwif_tti_o = hwif_out_o.I3C_EC.TTI;
   assign hwif_in.I3C_EC.TTI = hwif_tti_i;
 
   // Recovery CSR interface
-  assign hwif_rec_o = hwif_out.I3C_EC.SecFwRecoveryIf;
+  assign hwif_rec_o = hwif_out_o.I3C_EC.SecFwRecoveryIf;
 
   // TODO: Use this if
   assign hwif_in.I3C_EC.SecFwRecoveryIf = hwif_rec_i;
@@ -232,19 +220,19 @@ module hci
       cmd_ready_thld_we  <= '0;
       resp_ready_thld_we <= '0;
     end else begin
-      cmd_ready_thld_swmod_q <= hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
+      cmd_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
       cmd_ready_thld_we <= cmd_ready_thld_swmod_q;
-      resp_ready_thld_swmod_q <= hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
+      resp_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
       resp_ready_thld_we <= resp_ready_thld_swmod_q;
     end
   end
 
   always_comb begin : wire_hwif
     // Reset control
-    cmdrst = hwif_out.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
-    rxrst = hwif_out.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
-    txrst = hwif_out.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
-    resprst = hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
+    cmdrst = hwif_out_o.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
+    rxrst = hwif_out_o.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
+    txrst = hwif_out_o.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
+    resprst = hwif_out_o.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
 
     hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
     hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
@@ -263,28 +251,28 @@ module hci
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = resp_ready_thld_we;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = hci_cmd_ready_thld_o;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = hci_resp_ready_thld_o;
-    cmd_ready_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
-    hci_rx_start_thld_o = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
-    rx_ready_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
-    hci_tx_start_thld_o = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
-    tx_ready_thld = hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
-    resp_ready_thld = hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
+    cmd_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    hci_rx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
+    rx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
+    hci_tx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+    tx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
+    resp_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
 
     // HCI queue port handling
 
     // HCI PIOControl ports requests
-    xfer_req = hwif_out.PIOControl.RX_DATA_PORT.req | hwif_out.PIOControl.TX_DATA_PORT.req;
-    xfer_req_is_wr = hwif_out.PIOControl.RX_DATA_PORT.req_is_wr
-      | hwif_out.PIOControl.TX_DATA_PORT.req_is_wr;
+    xfer_req = hwif_out_o.PIOControl.RX_DATA_PORT.req | hwif_out_o.PIOControl.TX_DATA_PORT.req;
+    xfer_req_is_wr = hwif_out_o.PIOControl.RX_DATA_PORT.req_is_wr
+      | hwif_out_o.PIOControl.TX_DATA_PORT.req_is_wr;
 
-    cmd_req = hwif_out.PIOControl.COMMAND_PORT.req & hwif_out.PIOControl.COMMAND_PORT.req_is_wr;
+    cmd_req = hwif_out_o.PIOControl.COMMAND_PORT.req & hwif_out_o.PIOControl.COMMAND_PORT.req_is_wr;
     rx_req = xfer_req && !xfer_req_is_wr;
     tx_req = xfer_req && xfer_req_is_wr;
-    resp_req = hwif_out.PIOControl.RESPONSE_PORT.req;
+    resp_req = hwif_out_o.PIOControl.RESPONSE_PORT.req;
 
     // Reading commands from the command port
     hwif_in.PIOControl.COMMAND_PORT.wr_ack = cmd_wr_ack;
-    cmd_wr_data = hwif_out.PIOControl.COMMAND_PORT.wr_data;
+    cmd_wr_data = hwif_out_o.PIOControl.COMMAND_PORT.wr_data;
 
     // Writing data to the rx port
     hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
@@ -292,7 +280,7 @@ module hci
 
     // Reading data from the tx port
     hwif_in.PIOControl.TX_DATA_PORT.wr_ack = tx_wr_ack;
-    tx_wr_data = hwif_out.PIOControl.TX_DATA_PORT.wr_data;
+    tx_wr_data = hwif_out_o.PIOControl.TX_DATA_PORT.wr_data;
 
     // Writing response to the resp port
     hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
@@ -301,9 +289,16 @@ module hci
     // DXT
     hwif_in.DAT = dat_i;
     hwif_in.DCT = dct_i;
-    dat_o = hwif_out.DAT;
-    dct_o = hwif_out.DCT;
+    dat_o = hwif_out_o.DAT;
+    dct_o = hwif_out_o.DCT;
 
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
+    // STBY_CR_DEVICE_CHAR
+    // STBY_CR_DEVICE_PID_LO
+    // hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.we = '0;
   end : wire_hwif
 
   always_comb begin : wire_hwif_ccc
@@ -328,7 +323,7 @@ module hci
       .s_cpuif_wr_err(s_cpuif_wr_err),
 
       .hwif_in (hwif_in),
-      .hwif_out(hwif_out)
+      .hwif_out(hwif_out_o)
   );
 
   dxt #(
