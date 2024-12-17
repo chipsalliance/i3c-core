@@ -56,6 +56,12 @@ ifeq ($(SIM), verilator)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
 endif
 
+ifeq ($(SIM), vcs)
+    COMPILE_ARGS += +define+VERILATOR
+
+    EXTRA_ARGS += -full64
+endif
+
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 10ps
 
