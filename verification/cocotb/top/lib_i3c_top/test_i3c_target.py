@@ -8,6 +8,7 @@ from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
+from math import ceil
 import cocotb
 from cocotb.triggers import ClockCycles, Timer
 
@@ -103,20 +104,38 @@ async def test_i3c_target_write(dut):
             words_ref.append(word)
 
     # Read data
-    words_out = []
+    recv_data = []
+    for test_vec in test_data:
+        recv_xfer = []
+        # Read RX descriptor
+        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+        desc_len = r_data & 0xffff
+        assert len(test_vec) == desc_len, "Incorrect number of bytes in RX descriptor"
+        remainder = desc_len % 4
+        err_stat = r_data >> 28
+        assert err_stat == 0, "Unexpected error detected"
 
-    for i in range(len(words_ref)):
-        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
-        words_out.append(r_data)
+        # Read RX data
+        data_len = ceil(desc_len / 4)
+        for _ in range(data_len):
+            r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+            for k in range(4):
+                recv_xfer.append((r_data >> (k * 8)) & 0xFF)
+
+        # Remove entries that are outside of the data length
+        if remainder:
+            for k in range(4 - remainder):
+                recv_xfer.pop()
+        recv_data.append(recv_xfer)
 
     # Compare
     dut._log.info(
-        "Comparing input [{}] and CSR data [{}]".format(
+        "Comparing input [{}] and RX data [{}]".format(
             " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
-            " ".join([f"0x{d:08X}" for d in words_out]),
+            " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in recv_data]),
         )
     )
-    assert words_out == words_ref
+    assert test_data == recv_data
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
