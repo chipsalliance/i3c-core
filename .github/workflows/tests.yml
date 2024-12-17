@@ -54,3 +54,30 @@ jobs:
           make install-uvm
           source activate.sh
           make tests
+
+  another_tests:
+    name: Another
+    runs-on: [ self-hosted, Linux, X64, gcp-custom-runners ]
+    container: centos:8
+    env:
+      GHA_EXTERNAL_DISK: additional-tools
+    steps:
+      - name: Install dependencies
+        run: |
+          sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+          sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+          yum update -y
+          yum install -y git tar wget libnsl bc time make gcc gcc-c++ perl python3 python3-pip zlib-devel \
+          openssl-devel xz-devel sqlite-devel libffi-devel ncurses-devel bzip2-devel
+
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Get Submodules
+        run: git submodule update --init --recursive
+
+      - name: Install Pyenv
+        run: ./install.sh
+
+      - name: Run Tests
+        run: _secret_run_i3c_tests

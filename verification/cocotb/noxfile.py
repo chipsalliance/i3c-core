@@ -34,6 +34,9 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
         f"+verilator+seed+{seed}",
     ]
 
+    if not simulator:
+        simulator = os.getenv("SIMULATOR")
+
     with open(test.paths["log_default"], "w") as test_log:
 
         args = [
