@@ -150,7 +150,7 @@ module i3c_target_fsm #(
   logic rx_data_byte_valid;
   logic [TxDataWidth-1:0] tx_data_byte;
   logic tx_data_byte_valid;
-  logic tx_last_byte;
+  logic tx_end_xfer;
 
   // State definitions
   // We can go to CCC secondary FSM after {S|SR,Byte,ACK,First bit}
@@ -298,9 +298,9 @@ module i3c_target_fsm #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : set_last_byte_in_xfer
     if (~rst_ni) begin
-      tx_last_byte <= '0;
+      tx_end_xfer <= '0;
     end else begin
-      if (bus_tx_done_i & bus_tx_req_bit_o) tx_last_byte <= tx_last_byte_i;
+      if (bus_tx_done_i & bus_tx_req_bit_o) tx_end_xfer <= tx_last_byte_i;
     end
   end
 
@@ -308,7 +308,7 @@ module i3c_target_fsm #(
     if (~rst_ni) begin
       tx_data_byte <= '0;
     end else begin
-      if (tx_fifo_rready_o | tx_last_byte) tx_data_byte <= tx_fifo_rdata_i;
+      if (tx_fifo_rready_o | tx_end_xfer) tx_data_byte <= tx_fifo_rdata_i;
     end
   end
 
@@ -328,6 +328,7 @@ module i3c_target_fsm #(
     is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;
+    ccc_valid_o = '0;
 
     case (state_q)
       Idle: ;
@@ -379,7 +380,7 @@ module i3c_target_fsm #(
       end
       TxPReadTbit: begin
         bus_tx_req_bit_o   = 1'b1;
-        bus_tx_req_value_o = {7'h0, ~tx_last_byte};
+        bus_tx_req_value_o = {7'h0, ~tx_end_xfer};
       end
       Wait: begin
         nack_transaction_d = 1'b1;
@@ -475,8 +476,12 @@ module i3c_target_fsm #(
       end
       TxPReadTbit: begin
         if (tx_tbit_done)
-          if (tx_fifo_rvalid_i | tx_last_byte_i) state_d = TxPReadData;
-          else state_d = Wait;
+          // Continue transfer if FIFO is not empty or if it's the last byte
+          if (tx_fifo_rvalid_i | (tx_last_byte_i & ~tx_end_xfer))
+            state_d = TxPReadData;
+          // Wait for START or STOP if it was the last byte already
+          else
+            state_d = Wait;
       end
 
       Wait: begin

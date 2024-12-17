@@ -2,6 +2,7 @@
 
 import logging
 from math import ceil
+from random import randint
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword
@@ -85,24 +86,6 @@ async def test_i3c_target_write(dut):
             wait_irq = False
             dut._log.debug(":::Timeout cancelled polling:::")
 
-    # Convert bytes to 32-bit words
-    words_ref = []
-    for xfer in test_data:
-
-        # Pad
-        pad_len = ((len(xfer) + 3) // 4 * 4) - len(xfer)
-        xfer_pad = xfer + [0 for i in range(pad_len)]
-
-        # Convert to 32-bit little-endian words
-        for i in range(len(xfer_pad) // 4):
-            word = (
-                (xfer_pad[4 * i + 3] << 24)
-                | (xfer_pad[4 * i + 2] << 16)
-                | (xfer_pad[4 * i + 1] << 8)
-                | (xfer_pad[4 * i + 0])
-            )
-            words_ref.append(word)
-
     # Read data
     recv_data = []
     for test_vec in test_data:
@@ -141,46 +124,50 @@ async def test_i3c_target_write(dut):
     await ClockCycles(tb.clk, 10)
 
 
-# FIXME: Test fails with multiple transactions, because converterNto8
-# does not clear its data after reading from it
 @cocotb.test(skip=True)
 async def test_i3c_target_read(dut):
+    TEST_LENGTH = 3
+    MAX_DATA_LEN = 10
 
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
-    # Write data to TTI TX FIFO
-    test_data = [0xDDCCBBAA, 0x9988FFEE, 0x55667788]
-    for word in test_data:
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
-
-    # Write the TX descriptor
-    descriptor = 0xC
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(descriptor), 4)
-
-    # Issue a private read
-    bytes_out = await i3c_controller.i3c_read(0x5A, len(test_data) * 4)
-    bytes_out = list(bytes_out)
-
-    # Convert reference data into bytes (little-endian)
-    bytes_ref = []
-    for word in test_data:
-        bytes_ref.append(word & 0xFF)
-        bytes_ref.append((word >> 8) & 0xFF)
-        bytes_ref.append((word >> 16) & 0xFF)
-        bytes_ref.append((word >> 24) & 0xFF)
-
-    # Compare
-    dut._log.info(
-        "Comparing input [{}] and CSR data [{}]".format(
-            " ".join([f"0x{d:02X}" for d in bytes_out]),
-            " ".join([f"0x{d:02X}" for d in bytes_ref]),
+    for _ in range(TEST_LENGTH):
+        data_len = randint(4, MAX_DATA_LEN)
+        test_data = [randint(0, 255) for _ in range(data_len)]
+        dut._log.info(
+            "Generated data: [{}]".format(
+                " ".join("".join(f"0x{d:02X}") + " " for d in test_data),
+            )
         )
-    )
-    assert bytes_out == bytes_ref
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
+        # Write data to TTI TX FIFO
+        for i in range(0, len(test_data), 4):
+            await tb.write_csr(
+                tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, test_data[i : i + 4], 4
+            )
+
+        # Write the TX descriptor
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_len), 4
+        )
+
+        # Issue a private read
+        recv_data = await i3c_controller.i3c_read(0x5A, len(test_data))
+        recv_data = list(recv_data)
+
+        # Compare
+        dut._log.info(
+            "Comparing input [ {}] and CSR data [ {}]".format(
+                "".join("".join(f"0x{d:02X}") + " " for d in test_data),
+                "".join("".join(f"0x{d:02X}") + " " for d in recv_data),
+            )
+        )
+        assert test_data == recv_data
+
+        # Dummy wait
+        await ClockCycles(tb.clk, 100)
+    await ClockCycles(tb.clk, 100)
 
 
 # FIXME: Reenable after implementation

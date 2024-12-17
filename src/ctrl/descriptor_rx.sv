@@ -38,7 +38,7 @@ module descriptor_rx #(
     // TTI: RX Data
     input logic tti_rx_queue_full_i,
     output logic tti_rx_queue_wvalid_o,
-    output logic tti_rx_queue_wflush_o,
+    output logic tti_rx_queue_flush_o,
     output logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_o,
 
     // Interface to the target FSM
@@ -97,6 +97,6 @@ module descriptor_rx #(
   assign rx_descriptor = {rx_error, {12{1'b0}}, byte_counter_q};
   assign tti_rx_desc_queue_wdata_o = rx_descriptor;
   assign tti_rx_desc_queue_wvalid_o = transfer_ended_q;
-  assign tti_rx_queue_wflush_o = transfer_ended_q;
+  assign tti_rx_queue_flush_o = transfer_ended_q;
 
 endmodule

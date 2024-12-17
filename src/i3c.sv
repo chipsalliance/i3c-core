@@ -305,7 +305,7 @@ module i3c
   logic                               tti_rx_wvalid;
   logic                               tti_rx_wready;
   logic [                        7:0] tti_rx_wdata;
-  logic                               tti_rx_wflush;
+  logic                               tti_rx_flush;
 
   // TTI TX queue
   logic                               tti_tx_full;
@@ -318,6 +318,7 @@ module i3c
   logic                               tti_tx_rvalid;
   logic                               tti_tx_rready;
   logic [                        7:0] tti_tx_rdata;
+  logic                               tti_tx_flush;
 
   logic                               tti_tx_host_nack;
 
@@ -561,7 +562,7 @@ module i3c
       .tti_rx_queue_wvalid_o(tti_rx_wvalid),
       .tti_rx_queue_wready_i(tti_rx_wready),
       .tti_rx_queue_wdata_o(tti_rx_wdata),
-      .tti_rx_queue_wflush_o(tti_rx_wflush),
+      .tti_rx_queue_flush_o(tti_rx_flush),
 
       // TTI: TX Descriptor
       .tti_tx_desc_queue_full_i(tti_tx_desc_full),
@@ -584,6 +585,7 @@ module i3c
       .tti_tx_queue_rvalid_i(tti_tx_rvalid),
       .tti_tx_queue_rready_o(tti_tx_rready),
       .tti_tx_queue_rdata_i(tti_tx_rdata),
+      .tti_tx_queue_flush_o(tti_tx_flush),
       .tti_tx_host_nack_o(tti_tx_host_nack),
 
       // TTI: In-band Interrupt queue
@@ -958,7 +960,7 @@ module i3c
       .ctl_tti_rx_data_queue_wvalid_i(tti_rx_wvalid),
       .ctl_tti_rx_data_queue_wready_o(tti_rx_wready),
       .ctl_tti_rx_data_queue_wdata_i(tti_rx_wdata),
-      .ctl_tti_rx_data_queue_wflush_i(tti_rx_wflush),
+      .ctl_tti_rx_data_queue_flush_i(tti_rx_flush),
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld),
@@ -971,6 +973,7 @@ module i3c
       .ctl_tti_tx_data_queue_rvalid_o(tti_tx_rvalid),
       .ctl_tti_tx_data_queue_rready_i(tti_tx_rready),
       .ctl_tti_tx_data_queue_rdata_o(tti_tx_rdata),
+      .ctl_tti_tx_data_queue_flush_i(tti_tx_flush),
       .ctl_tti_tx_data_queue_start_thld_o(tti_tx_start_thld),
       .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_start_thld_trig),
       .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_ready_thld),
@@ -1020,7 +1023,7 @@ module i3c
 
   always_comb begin : other_uninit_signals
     xcontroller.xcontroller_active.flow_fsm.dct_write_valid_hw_o = 0;
-    xcontroller.xcontroller_standby.i2c_rx_queue_wflush_o = 0;
+    xcontroller.xcontroller_standby.i2c_rx_queue_flush_o = 0;
     xrecovery_handler.irq_o = 0;
     xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
     xcontroller.xcontroller_active.flow_fsm.rx_queue_wvalid_o = 0;

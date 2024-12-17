@@ -39,12 +39,13 @@ module descriptor_tx #(
 );
 
   logic [31:0] tx_descriptor;
-  logic [15:0] byte_counter;
+  logic [15:0] byte_counter, byte_counter_q;
   logic [15:0] data_len;
   logic [15:0] data_len_words;
   logic descriptor_valid;
   logic tx_start;
   logic tx_pending;
+  logic tx_end;
 
   assign tti_tx_desc_queue_rready_o = ~descriptor_valid && tti_tx_desc_queue_rvalid_i;
 
@@ -53,7 +54,8 @@ module descriptor_tx #(
       descriptor_valid <= '0;
       tx_descriptor <= '0;
     end else begin
-      if (tti_tx_desc_queue_rready_o) begin
+      if (tx_end) descriptor_valid <= '0;
+      else if (tti_tx_desc_queue_rready_o) begin
         tx_descriptor <= tti_tx_desc_queue_rdata_i;
         descriptor_valid <= '1;
       end
@@ -80,8 +82,10 @@ module descriptor_tx #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_byte_counter
     if (!rst_ni) begin
-      byte_counter <= '0;
+      byte_counter_q <= '0;
+      byte_counter   <= '0;
     end else begin
+      byte_counter_q <= byte_counter;
       if (tx_start) begin
         byte_counter <= data_len;
       end else if (tti_tx_queue_rready_o) begin
@@ -92,6 +96,7 @@ module descriptor_tx #(
     end
   end
 
+  assign tx_end = (byte_counter == 16'h1 && byte_counter_q == 16'h2);
   assign tx_byte_valid_o = tx_pending && tti_tx_queue_rvalid_i;
   assign tx_byte_last_o = byte_counter == 16'd1;
   assign tx_byte_o = tti_tx_queue_rdata_i;

@@ -20,7 +20,8 @@ module width_converter_Nto8 #(
 
     output logic       source_valid_o,
     input  logic       source_ready_i,
-    output logic [7:0] source_data_o
+    output logic [7:0] source_data_o,
+    input  logic       source_flush_i
 );
 
   // Ensure that Width is divisible by 8
@@ -37,7 +38,8 @@ module width_converter_Nto8 #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
-      if ((bcnt == '0) & sink_valid_i & sink_ready_o) bcnt <= Bytes;
+      if ((bcnt != '0) & source_flush_i) bcnt <= '0;
+      else if ((bcnt == '0) & sink_valid_i & sink_ready_o) bcnt <= Bytes;
       else if ((bcnt != '0) & source_valid_o & source_ready_i) bcnt <= bcnt - 1;
     end
 

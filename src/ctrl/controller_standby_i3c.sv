@@ -36,7 +36,7 @@ module controller_standby_i3c
     // TTI: RX Data
     input logic rx_queue_full_i,
     output logic rx_queue_wvalid_o,
-    output logic rx_queue_wflush_o,
+    output logic rx_queue_flush_o,
     output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
 
     // TTI: TX Data
@@ -44,6 +44,7 @@ module controller_standby_i3c
     input logic [TtiTxFifoDepthWidth-1:0] tx_queue_depth_i,
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
+    output logic tx_queue_flush_o,
 
     // TTI: In-band-interrupt queue
     input logic ibi_queue_full_i,
@@ -527,7 +528,7 @@ module controller_standby_i3c
       .tti_rx_desc_queue_wdata_o (rx_desc_queue_wdata_o),
       .tti_rx_queue_full_i       (rx_queue_full_i),
       .tti_rx_queue_wvalid_o     (rx_queue_wvalid_o),
-      .tti_rx_queue_wflush_o     (rx_queue_wflush_o),
+      .tti_rx_queue_flush_o      (rx_queue_flush_o),
       .tti_rx_queue_wdata_o      (rx_queue_wdata_o),
       .rx_byte_i                 (rx_fifo_wdata),
       .rx_byte_last_i            (rx_last_byte),
@@ -582,4 +583,5 @@ module controller_standby_i3c
   assign bus_rstart_o = bus_rstart_det;
   assign bus_stop_o = bus_stop_det;
 
+  assign tx_queue_flush_o = bus_stop_det;
 endmodule
