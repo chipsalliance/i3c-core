@@ -56,7 +56,7 @@ jobs:
           make tests
 
   another_tests:
-    name: Another tests
+    name: Another
     runs-on: [ self-hosted, Linux, X64, gcp-custom-runners ]
     container: centos:8
     env:
