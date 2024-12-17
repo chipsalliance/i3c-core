@@ -4,7 +4,7 @@ package i3c_pkg;
   `include "i3c_defines.svh"
   `include "ccc.svh"
   `define I3C_RSVD_ADDR 7'h7E
-  `define I3C_RSVD_BYTE 8'hFE
+  `define I3C_RSVD_BYTE 8'hFC
 
   localparam int unsigned RespErrIdWidth = 4;
   localparam int unsigned DatAw = $clog2(`DAT_DEPTH);

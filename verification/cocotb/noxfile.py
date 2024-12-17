@@ -231,6 +231,7 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
         "test_recovery",
         "test_enter_exit_hdr_mode",
         "test_target_reset",
+        "test_ccc",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
@@ -277,6 +278,19 @@ def ctrl_bus_timers_verify(session, test_group, test_name, coverage):
 )
 @nox.parametrize("coverage", coverage_types)
 def ctrl_bus_monitor_verify(session, test_group, test_name, coverage):
+    verify_block(session, test_group, test_name, coverage)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["i3c_target_fsm"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_i3c_target_fsm",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+def i3c_target_fsm_verify(session, test_group, test_name, coverage):
     verify_block(session, test_group, test_name, coverage)
 
 

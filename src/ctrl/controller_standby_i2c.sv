@@ -89,6 +89,17 @@ module controller_standby_i2c
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
+    input logic [47:0] pid_i,
+    input logic [7:0] bcr_i,
+    input logic [7:0] dcr_i,
+    input logic [6:0] target_sta_addr_i,
+    input logic target_sta_addr_valid_i,
+    input logic [6:0] target_dyn_addr_i,
+    input logic target_dyn_addr_valid_i,
+    input logic [6:0] target_ibi_addr_i,
+    input logic target_ibi_addr_valid_i,
+    input logic [6:0] target_hot_join_addr_i,
+    input logic [63:0] daa_unique_response_i,
 
     output logic tx_host_nack_o
 );
@@ -142,6 +153,13 @@ module controller_standby_i2c
       .err_o(err)
   );
 
+  logic unused_target_idle_o;
+  logic unused_target_sr_p_cond_o;
+  logic unused_event_target_nack_o;
+  logic unused_event_cmd_complete_o;
+  logic unused_event_tx_stretch_o;
+  logic unused_event_unexp_stop_o;
+  logic unused_event_host_timeout_o;
 
   i2c_target_fsm #(
       .AcqFifoDepth(AcqFifoDepth)
@@ -177,13 +195,13 @@ module controller_standby_i2c
       .target_mask1_i(0),
       // Others
       .target_enable_i(i2c_standby_en_i),
-      .target_idle_o(),
-      .target_sr_p_cond_o(),
-      .event_target_nack_o(),
-      .event_cmd_complete_o(),
-      .event_tx_stretch_o(),
-      .event_unexp_stop_o(),
-      .event_host_timeout_o()
+      .target_idle_o(unused_target_idle_o),
+      .target_sr_p_cond_o(unused_target_sr_p_cond_o),
+      .event_target_nack_o(unused_event_target_nack_o),
+      .event_cmd_complete_o(unused_event_cmd_complete_o),
+      .event_tx_stretch_o(unused_event_tx_stretch_o),
+      .event_unexp_stop_o(unused_event_unexp_stop_o),
+      .event_host_timeout_o(unused_event_host_timeout_o)
   );
 
   // TODO: Temporarily set here to always use OD. Verify this connection

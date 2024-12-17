@@ -88,6 +88,20 @@ class FrontBusTestInterface:
         """Send a write request & await transfer to finish."""
         raise NotImplementedError
 
+    async def write_csr_field(self, reg_addr, field, data) -> None:
+        """Read -> modify -> write CSR"""
+        value = bytes2int(await self.read_csr(reg_addr))
+        value = value & ~field.mask
+        value = value | (data << field.low)
+        await self.write_csr(reg_addr, int2bytes(value))
+
+    async def read_csr_field(self, reg_addr, field) -> int:
+        """Read -> modify -> write CSR"""
+        value = bytes2int(await self.read_csr(reg_addr))
+        value = value & field.mask
+        value = value >> field.low
+        return value
+
 
 # Generic ahb2csr test interface
 class AHBTestInterface(FrontBusTestInterface):

@@ -62,12 +62,9 @@ module bus_timers
     end
   end
 
-  assign bus_free_o = bus_state_counter > (t_bus_free_i - 1'b1);
-  assign bus_idle_o = bus_state_counter > (t_bus_idle_i - 1'b1);
-  assign bus_available_o = bus_state_counter > (t_bus_available_i - 1'b1);
+  assign bus_free_o = bus_state_counter > {12'b0, (t_bus_free_i - 1'b1)};
+  assign bus_idle_o = bus_state_counter > {12'b0, (t_bus_idle_i - 1'b1)};
+  assign bus_available_o = bus_state_counter > {12'b0, (t_bus_available_i - 1'b1)};
   assign bus_busy_o = ~(bus_free_o | bus_idle_o | bus_available_o);
 
 endmodule
-
-
-

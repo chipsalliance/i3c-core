@@ -220,8 +220,8 @@ module recovery_executor
 
       // FIXME: This will overflow resulting on overwriting unwanted CSRs if
       // a malicious packet with length > CSR length is received
-      CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 1);
-      CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 1);
+      CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 8'd1);
+      CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 8'd1);
       default: csr_sel <= csr_sel;
     endcase
 
@@ -439,10 +439,8 @@ module recovery_executor
     end
   end : payload_available
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni)
-      payload_available_q <= '0;
-    else
-      payload_available_q <= payload_available_write ? payload_available_d : payload_available_q;
+    if (!rst_ni) payload_available_q <= '0;
+    else payload_available_q <= payload_available_write ? payload_available_d : payload_available_q;
 
   // Image activation logic.
   assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value[23:16] == 8'h0F);

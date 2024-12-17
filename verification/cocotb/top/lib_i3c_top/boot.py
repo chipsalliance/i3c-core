@@ -21,16 +21,6 @@ async def _write_csr(tb, register, value):
     await tb.write_csr(register, data, 4)
 
 
-async def _write_csr_field(tb, reg_addr, field, data):
-    """
-    Read -> modify -> write CSR
-    """
-    value = await _read_csr(tb, reg_addr)
-    value = value & ~field.mask
-    value = value | (data << field.low)
-    await _write_csr(tb, reg_addr, value)
-
-
 @dataclass
 class core_configuration:
     dat_offset: int
@@ -210,24 +200,33 @@ async def umbrella_stby_init(tb):
     """
 
     # Boot in standby mode
-    await _write_csr_field(
-        tb,
+    await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT,
         2,
     )
 
+    # Set static address and valid
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
+        0x5A,
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
+        0x1,
+    )
+
     # Enable Target Interface
-    await _write_csr_field(
-        tb,
+    await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.TARGET_XACT_ENABLE,
         1,
     )
 
     # Enable bus
-    await _write_csr_field(
-        tb,
+    await tb.write_csr_field(
         tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
         tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
         1,

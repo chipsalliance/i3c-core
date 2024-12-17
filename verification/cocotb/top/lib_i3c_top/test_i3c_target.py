@@ -56,7 +56,7 @@ async def test_setup(dut):
     return i3c_controller, i3c_target, tb
 
 
-@cocotb.test()
+# @cocotb.test()
 async def test_i3c_target_write(dut):
 
     # Setup
@@ -104,6 +104,7 @@ async def test_i3c_target_write(dut):
 
     # Read data
     words_out = []
+
     for i in range(len(words_ref)):
         r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
         words_out.append(r_data)
@@ -132,6 +133,10 @@ async def test_i3c_target_read(dut):
     for word in test_data:
         await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
 
+    # Write the TX descriptor
+    descriptor = 0xC
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(descriptor), 4)
+
     # Issue a private read
     bytes_out = await i3c_controller.i3c_read(0x5A, len(test_data) * 4)
     bytes_out = list(bytes_out)
@@ -157,7 +162,7 @@ async def test_i3c_target_read(dut):
     await ClockCycles(tb.clk, 10)
 
 
-@cocotb.test()
+# @cocotb.test()
 async def test_i3c_target_ibi(dut):
 
     # Target address

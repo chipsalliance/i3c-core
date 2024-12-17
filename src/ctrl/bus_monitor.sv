@@ -25,15 +25,26 @@ module bus_monitor
     input logic [19:0] t_r_i,       // Rise time
     input logic [19:0] t_f_i,       // Fall time
 
+    // SCL/SDA edge transitions
+    output logic scl_negedge_o,
+    output logic scl_posedge_o,
+    output logic sda_negedge_o,
+    output logic sda_posedge_o,
+
+    // SCL stable states
+    output logic scl_stable_low_o,
+    output logic scl_stable_high_o,
+
     // TODO: Refactor signals to `state_detected` to clarify purpose
-    output logic start_detect_o,  // Module detected START or REPEATED START condition
-    output logic stop_detect_o,   // Module detected STOP condition
+    output logic start_det_o,   // Module detected START condition
+    output logic rstart_det_o,  // Module detected REPEATED START condition
+    output logic stop_det_o,    // Module detected STOP condition
 
     input logic is_in_hdr_mode_i,  // Module is in HDR mode
     output logic hdr_exit_detect_o,     // Detected HDR exit condition (see: 5.2.1.1.1 of the base spec)
     output logic target_reset_detect_o  // Detected Target Reset condtition
 );
-  logic enable, enable_q;
+  logic enable;
 
   logic scl_negedge_i;
   logic scl_posedge_i;
@@ -55,14 +66,15 @@ module bus_monitor
   logic stop_det_trigger, stop_det_pending;
   logic stop_det;  // indicates stop is detected on the bus
   // Stop / Start detection counter
-  logic [13:0] ctrl_det_count;
+  logic [19:0] ctrl_det_count;
 
   // FFs for HDR exit condition detection
   logic [4:0] hdr_exit_det_count;
   logic hdr_exit_det_pending;
   logic hdr_exit_det_trigger;
-  logic detected_hdr_exit;
   logic hdr_exit_det;
+
+  logic rstart_detection_en;
 
   assign enable = enable_i;
 
@@ -130,14 +142,6 @@ module bus_monitor
       .stable_o(scl_stable_low)
   );
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      enable_q <= 1'b0;
-    end else begin
-      enable_q <= enable;
-    end
-  end
-
   // SDA and SCL at the previous clock edge
   logic scl_i_q, sda_i_q;
   always_ff @(posedge clk_i or negedge rst_ni) begin : bus_prev
@@ -163,21 +167,6 @@ module bus_monitor
   assign simultaneous_negedge = sda_negedge && scl_negedge;
 
   // Start and Stop detection
-
-  // Note that this counter combines Start and Stop detection into one
-  // counter. A controller-only reset scenario could end up with a Stop
-  // following shortly after a Start, with the requisite setup time not
-  // observed.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      ctrl_det_count <= '0;
-    end else if (start_det_trigger || stop_det_trigger) begin
-      ctrl_det_count <= 14'd1;
-    end else if (start_det_pending || stop_det_pending) begin
-      ctrl_det_count <= ctrl_det_count + 1'b1;
-    end
-  end
-
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       start_det_pending <= 1'b0;
@@ -198,12 +187,24 @@ module bus_monitor
     end
   end
 
+  // START/Repeated START distinction
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      rstart_detection_en <= '0;
+    end else begin
+      if (stop_det) begin
+        rstart_detection_en <= '0;
+      end else if (start_det) begin
+        rstart_detection_en <= '1;
+      end
+    end
+  end
+
   // exit HDR detection
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      hdr_exit_det_count <= 5'b10000;
+      hdr_exit_det_count   <= 5'b10000;
       hdr_exit_det_pending <= 1'b0;
-      detected_hdr_exit <= 1'b0;
     end else if (hdr_exit_det_trigger) begin
       hdr_exit_det_pending <= 1'b1;
     end else if (!enable || stop_det) begin
@@ -219,14 +220,15 @@ module bus_monitor
 
   // (Repeated) Start condition detection by target
   assign start_det_trigger = enable & scl_stable_high & sda_negedge & !simultaneous_negedge;
-  assign start_det = enable & start_det_pending & (ctrl_det_count >= 14'(t_hd_dat_i));
+  assign start_det = enable & start_det_pending;
 
   // Stop condition detection by target
   assign stop_det_trigger = enable & scl_stable_high & sda_posedge & !simultaneous_posedge;
-  assign stop_det = enable & stop_det_pending & (ctrl_det_count >= 14'(t_hd_dat_i));
+  assign stop_det = enable & stop_det_pending;
 
-  assign start_detect_o = start_det;
-  assign stop_detect_o = stop_det;
+  assign start_det_o = start_det & ~rstart_detection_en;
+  assign rstart_det_o = start_det & rstart_detection_en;
+  assign stop_det_o = stop_det;
   assign hdr_exit_detect_o = hdr_exit_det;
 
   target_reset_detector target_reset_detector (
@@ -242,4 +244,11 @@ module bus_monitor
       .stop_detected_i(stop_det),
       .target_reset_detect_o
   );
+  assign scl_negedge_o = scl_negedge;
+  assign scl_posedge_o = scl_posedge;
+  assign sda_negedge_o = sda_negedge;
+  assign sda_posedge_o = sda_posedge;
+
+  assign scl_stable_low_o = scl_stable_low;
+  assign scl_stable_high_o = scl_stable_high;
 endmodule
