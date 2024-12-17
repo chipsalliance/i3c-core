@@ -7,22 +7,27 @@ module recovery_handler
     parameter int unsigned TtiRxDescDataWidth = 32,
     parameter int unsigned TtiRxDescThldWidth = 8,
     parameter int unsigned TtiRxDescFifoDepth = 64,
+    localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
 
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiTxDescThldWidth = 8,
     parameter int unsigned TtiTxDescFifoDepth = 64,
+    localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
 
     parameter int unsigned TtiRxDataDataWidth = 32,
     parameter int unsigned TtiRxDataThldWidth = 3,
     parameter int unsigned TtiRxDataFifoDepth = 64,
+    localparam int unsigned TtiRxDataFifoDepthWidth = $clog2(TtiRxDataFifoDepth + 1),
 
     parameter int unsigned TtiTxDataDataWidth = 32,
     parameter int unsigned TtiTxDataThldWidth = 3,
     parameter int unsigned TtiTxDataFifoDepth = 64,
+    localparam int unsigned TtiTxDataFifoDepthWidth = $clog2(TtiTxDataFifoDepth + 1),
 
     parameter int unsigned TtiIbiDataWidth = 32,
     parameter int unsigned TtiIbiThldWidth = 8,
     parameter int unsigned TtiIbiFifoDepth = 64,
+    localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
 
     parameter int unsigned CsrDataWidth = 32
 
@@ -34,55 +39,60 @@ module recovery_handler
     // TTI interface (controller side)
 
     // RX Descriptor queue
-    output logic                          ctl_tti_rx_desc_queue_full_o,
-    output logic                          ctl_tti_rx_desc_queue_empty_o,
-    input  logic                          ctl_tti_rx_desc_queue_wvalid_i,
-    output logic                          ctl_tti_rx_desc_queue_wready_o,
-    input  logic [TtiRxDescDataWidth-1:0] ctl_tti_rx_desc_queue_wdata_i,
-    output logic [TtiRxDescThldWidth-1:0] ctl_tti_rx_desc_queue_ready_thld_o,
-    output logic                          ctl_tti_rx_desc_queue_ready_thld_trig_o,
+    output logic                               ctl_tti_rx_desc_queue_full_o,
+    output logic [TtiRxDescFifoDepthWidth-1:0] ctl_tti_rx_desc_queue_depth_o,
+    output logic                               ctl_tti_rx_desc_queue_empty_o,
+    input  logic                               ctl_tti_rx_desc_queue_wvalid_i,
+    output logic                               ctl_tti_rx_desc_queue_wready_o,
+    input  logic [     TtiRxDescDataWidth-1:0] ctl_tti_rx_desc_queue_wdata_i,
+    output logic [     TtiRxDescThldWidth-1:0] ctl_tti_rx_desc_queue_ready_thld_o,
+    output logic                               ctl_tti_rx_desc_queue_ready_thld_trig_o,
 
     // TX Descriptor queue
-    output logic                          ctl_tti_tx_desc_queue_full_o,
-    output logic                          ctl_tti_tx_desc_queue_empty_o,
-    output logic                          ctl_tti_tx_desc_queue_rvalid_o,
-    input  logic                          ctl_tti_tx_desc_queue_rready_i,
-    output logic [TtiTxDescDataWidth-1:0] ctl_tti_tx_desc_queue_rdata_o,
-    output logic [TtiTxDescThldWidth-1:0] ctl_tti_tx_desc_queue_ready_thld_o,
-    output logic                          ctl_tti_tx_desc_queue_ready_thld_trig_o,
+    output logic                               ctl_tti_tx_desc_queue_full_o,
+    output logic [TtiTxDescFifoDepthWidth-1:0] ctl_tti_tx_desc_queue_depth_o,
+    output logic                               ctl_tti_tx_desc_queue_empty_o,
+    output logic                               ctl_tti_tx_desc_queue_rvalid_o,
+    input  logic                               ctl_tti_tx_desc_queue_rready_i,
+    output logic [     TtiTxDescDataWidth-1:0] ctl_tti_tx_desc_queue_rdata_o,
+    output logic [     TtiTxDescThldWidth-1:0] ctl_tti_tx_desc_queue_ready_thld_o,
+    output logic                               ctl_tti_tx_desc_queue_ready_thld_trig_o,
 
     // RX Data queue
-    output logic                          ctl_tti_rx_data_queue_full_o,
-    output logic                          ctl_tti_rx_data_queue_empty_o,
-    input  logic                          ctl_tti_rx_data_queue_wvalid_i,
-    output logic                          ctl_tti_rx_data_queue_wready_o,
-    input  logic [                   7:0] ctl_tti_rx_data_queue_wdata_i,
-    input  logic                          ctl_tti_rx_data_queue_wflush_i,
-    output logic [TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_start_thld_o,
-    output logic                          ctl_tti_rx_data_queue_start_thld_trig_o,
-    output logic [TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_ready_thld_o,
-    output logic                          ctl_tti_rx_data_queue_ready_thld_trig_o,
+    output logic                               ctl_tti_rx_data_queue_full_o,
+    output logic [TtiRxDataFifoDepthWidth-1:0] ctl_tti_rx_data_queue_depth_o,
+    output logic                               ctl_tti_rx_data_queue_empty_o,
+    input  logic                               ctl_tti_rx_data_queue_wvalid_i,
+    output logic                               ctl_tti_rx_data_queue_wready_o,
+    input  logic [                        7:0] ctl_tti_rx_data_queue_wdata_i,
+    input  logic                               ctl_tti_rx_data_queue_wflush_i,
+    output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_start_thld_o,
+    output logic                               ctl_tti_rx_data_queue_start_thld_trig_o,
+    output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_ready_thld_o,
+    output logic                               ctl_tti_rx_data_queue_ready_thld_trig_o,
 
     // TX Data queue
-    output logic                          ctl_tti_tx_data_queue_full_o,
-    output logic                          ctl_tti_tx_data_queue_empty_o,
-    output logic                          ctl_tti_tx_data_queue_rvalid_o,
-    input  logic                          ctl_tti_tx_data_queue_rready_i,
-    output logic [                   7:0] ctl_tti_tx_data_queue_rdata_o,
-    output logic [TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_start_thld_o,
-    output logic                          ctl_tti_tx_data_queue_start_thld_trig_o,
-    output logic [TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_ready_thld_o,
-    output logic                          ctl_tti_tx_data_queue_ready_thld_trig_o,
-    input  logic                          ctl_tti_tx_host_nack_i,
+    output logic                               ctl_tti_tx_data_queue_full_o,
+    output logic [TtiTxDataFifoDepthWidth-1:0] ctl_tti_tx_data_queue_depth_o,
+    output logic                               ctl_tti_tx_data_queue_empty_o,
+    output logic                               ctl_tti_tx_data_queue_rvalid_o,
+    input  logic                               ctl_tti_tx_data_queue_rready_i,
+    output logic [                        7:0] ctl_tti_tx_data_queue_rdata_o,
+    output logic [     TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_start_thld_o,
+    output logic                               ctl_tti_tx_data_queue_start_thld_trig_o,
+    output logic [     TtiTxDataThldWidth-1:0] ctl_tti_tx_data_queue_ready_thld_o,
+    output logic                               ctl_tti_tx_data_queue_ready_thld_trig_o,
+    input  logic                               ctl_tti_tx_host_nack_i,
 
     // In-band Interrupt (IBI) queue
-    output logic                       ctl_tti_ibi_queue_full_o,
-    output logic                       ctl_tti_ibi_queue_empty_o,
-    output logic                       ctl_tti_ibi_queue_rvalid_o,
-    input  logic                       ctl_tti_ibi_queue_rready_i,
-    output logic [TtiIbiDataWidth-1:0] ctl_tti_ibi_queue_rdata_o,
-    output logic [TtiIbiThldWidth-1:0] ctl_tti_ibi_queue_ready_thld_o,
-    output logic                       ctl_tti_ibi_queue_ready_thld_trig_o,
+    output logic                            ctl_tti_ibi_queue_full_o,
+    output logic [TtiIbiFifoDepthWidth-1:0] ctl_tti_ibi_queue_depth_o,
+    output logic                            ctl_tti_ibi_queue_empty_o,
+    output logic                            ctl_tti_ibi_queue_rvalid_o,
+    input  logic                            ctl_tti_ibi_queue_rready_i,
+    output logic [     TtiIbiDataWidth-1:0] ctl_tti_ibi_queue_rdata_o,
+    output logic [     TtiIbiThldWidth-1:0] ctl_tti_ibi_queue_ready_thld_o,
+    output logic                            ctl_tti_ibi_queue_ready_thld_trig_o,
 
     // S/Sr and P bus condition
     input logic ctl_bus_start_i,
@@ -175,6 +185,7 @@ module recovery_handler
 
   // RX descriptor
   logic                          tti_rx_desc_queue_full;
+  logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_depth;
   logic                          unused_tti_rx_desc_start_thld_trig;
   logic                          tti_rx_desc_queue_empty;
   logic                          tti_rx_desc_queue_wvalid;
@@ -193,6 +204,7 @@ module recovery_handler
 
   // TX descriptor
   logic                          tti_tx_desc_queue_full;
+  logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_depth;
   logic                          tti_tx_desc_queue_empty;
   logic                          tti_tx_desc_queue_rvalid;
   logic                          tti_tx_desc_queue_rready;
@@ -210,6 +222,7 @@ module recovery_handler
 
   // RX Data queue
   logic                          tti_rx_data_queue_full;
+  logic [TtiRxDataThldWidth-1:0] tti_rx_data_queue_depth;
   logic                          tti_rx_data_queue_empty;
   logic                          tti_rx_data_queue_wvalid;
   logic                          tti_rx_data_queue_wready;
@@ -230,6 +243,7 @@ module recovery_handler
 
   // TX Data queue
   logic                          tti_tx_data_queue_full;
+  logic [TtiTxDataThldWidth-1:0] tti_tx_data_queue_depth;
   logic                          tti_tx_data_queue_empty;
   logic                          tti_tx_data_queue_rvalid;
   logic                          tti_tx_data_queue_rready;
@@ -326,6 +340,7 @@ module recovery_handler
 
       // RX descriptor queue
       .rx_desc_full_o(tti_rx_desc_queue_full),
+      .rx_desc_depth_o(tti_rx_desc_queue_depth),
       .rx_desc_start_thld_trig_o(unused_tti_rx_desc_start_thld_trig),  // Intentionally left hanging, unsupported by TTI RX Desc Queue
       .rx_desc_ready_thld_trig_o(tti_rx_desc_queue_ready_thld_trig),
       .rx_desc_empty_o(tti_rx_desc_queue_empty),
@@ -345,6 +360,7 @@ module recovery_handler
 
       // TX descriptor queue
       .tx_desc_full_o(tti_tx_desc_queue_full),
+      .tx_desc_depth_o(tti_tx_desc_queue_depth),
       .tx_desc_start_thld_trig_o(unused_tx_desc_start_thld_trig),  // Intentionally left hanging, unsupported by TTI TX Desc Queue
       .tx_desc_ready_thld_trig_o(tti_tx_desc_queue_ready_thld_trig),
       .tx_desc_empty_o(tti_tx_desc_queue_empty),
@@ -364,6 +380,7 @@ module recovery_handler
 
       // RX data queue
       .rx_full_o(tti_rx_data_queue_full),
+      .rx_depth_o(tti_rx_data_queue_depth),
       .rx_start_thld_trig_o(tti_rx_data_queue_start_thld_trig),
       .rx_ready_thld_trig_o(tti_rx_data_queue_ready_thld_trig),
       .rx_empty_o(tti_rx_data_queue_empty),
@@ -382,6 +399,7 @@ module recovery_handler
 
       // TX data queue
       .tx_full_o(tti_tx_data_queue_full),
+      .tx_depth_o(tti_tx_data_queue_depth),
       .tx_start_thld_trig_o(tti_tx_data_queue_start_thld_trig),
       .tx_ready_thld_trig_o(tti_tx_data_queue_ready_thld_trig),
       .tx_empty_o(tti_tx_data_queue_empty),
@@ -400,7 +418,7 @@ module recovery_handler
   );
 
   // Recovery data available signal.
-  assign payload_available_o = recovery_enable & !tti_rx_data_queue_empty;
+  // assign payload_available_o = recovery_enable & !tti_rx_data_queue_empty;
 
   // IBI
   write_queue #(
@@ -418,6 +436,7 @@ module recovery_handler
       .rst_ni,
 
       .full_o(ctl_tti_ibi_queue_full_o),
+      .depth_o(ctl_tti_ibi_queue_depth_o),
       .start_thld_trig_o(unused_ibi_queue_start_thld_trig),
       .ready_thld_trig_o(ctl_tti_ibi_queue_ready_thld_trig_o),
       .empty_o(ctl_tti_ibi_queue_empty_o),
@@ -465,6 +484,7 @@ module recovery_handler
       recv_tti_rx_desc_valid                  = ctl_tti_rx_desc_queue_wvalid_i;
       tti_rx_desc_queue_wvalid                = '0;
       ctl_tti_rx_desc_queue_full_o            = '0;
+      ctl_tti_rx_desc_queue_depth_o           = '0;
       ctl_tti_rx_desc_queue_empty_o           = '0;
       ctl_tti_rx_desc_queue_wready_o          = recv_tti_rx_desc_ready;
       ctl_tti_rx_desc_queue_ready_thld_trig_o = '0;
@@ -472,6 +492,7 @@ module recovery_handler
       recv_tti_rx_desc_valid                  = '0;
       tti_rx_desc_queue_wvalid                = ctl_tti_rx_desc_queue_wvalid_i;
       ctl_tti_rx_desc_queue_full_o            = tti_rx_desc_queue_full;
+      ctl_tti_rx_desc_queue_depth_o           = tti_rx_desc_queue_depth;
       ctl_tti_rx_desc_queue_empty_o           = tti_rx_desc_queue_empty;
       ctl_tti_rx_desc_queue_wready_o          = tti_rx_desc_queue_wready;
       ctl_tti_rx_desc_queue_ready_thld_trig_o = tti_rx_desc_queue_ready_thld_trig;
@@ -489,6 +510,7 @@ module recovery_handler
     if (recovery_enable) begin
       tti_tx_desc_queue_rready                = '0;
       ctl_tti_tx_desc_queue_full_o            = '0;
+      ctl_tti_tx_desc_queue_depth_o           = '0;
       ctl_tti_tx_desc_queue_empty_o           = '0;
       ctl_tti_tx_desc_queue_rvalid_o          = '0;
       ctl_tti_tx_desc_queue_rdata_o           = '0;
@@ -496,6 +518,7 @@ module recovery_handler
     end else begin
       tti_tx_desc_queue_rready                = ctl_tti_tx_desc_queue_rready_i;
       ctl_tti_tx_desc_queue_full_o            = tti_tx_desc_queue_full;
+      ctl_tti_tx_desc_queue_depth_o           = tti_tx_desc_queue_depth;
       ctl_tti_tx_desc_queue_empty_o           = tti_tx_desc_queue_empty;
       ctl_tti_tx_desc_queue_rvalid_o          = tti_tx_desc_queue_rvalid;
       ctl_tti_tx_desc_queue_rdata_o           = tti_tx_desc_queue_rdata;
@@ -523,6 +546,7 @@ module recovery_handler
       tti_rx_data_queue_wvalid                = '0;
       tti_rx_data_queue_wflush                = recv_tti_rx_data_queue_flush;
       ctl_tti_rx_data_queue_full_o            = tti_rx_data_queue_full;
+      ctl_tti_rx_data_queue_depth_o           = tti_rx_data_queue_depth;
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = recv_tti_rx_data_ready;
       ctl_tti_rx_data_queue_start_thld_trig_o = '0;
@@ -532,6 +556,7 @@ module recovery_handler
       tti_rx_data_queue_wvalid                = ctl_tti_rx_data_queue_wvalid_i;
       tti_rx_data_queue_wflush                = ctl_tti_rx_data_queue_wflush_i;
       ctl_tti_rx_data_queue_full_o            = tti_rx_data_queue_full;
+      ctl_tti_rx_data_queue_depth_o           = tti_rx_data_queue_depth;
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = tti_rx_data_queue_wready;
       ctl_tti_rx_data_queue_start_thld_trig_o = tti_rx_data_queue_start_thld_trig;
@@ -561,6 +586,7 @@ module recovery_handler
       tti_tx_data_queue_rready                = '0;
       send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
       ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
+      ctl_tti_tx_data_queue_depth_o           = tti_tx_data_queue_depth;
       ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
       ctl_tti_tx_data_queue_rvalid_o          = send_tti_tx_data_valid;
       ctl_tti_tx_data_queue_rdata_o           = send_tti_tx_data_data;
@@ -570,6 +596,7 @@ module recovery_handler
       tti_tx_data_queue_rready                = ctl_tti_tx_data_queue_rready_i;
       send_tti_tx_data_ready                  = '0;
       ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
+      ctl_tti_tx_data_queue_depth_o           = tti_tx_data_queue_depth;
       ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
       ctl_tti_tx_data_queue_rvalid_o          = tti_tx_data_queue_rvalid;
       ctl_tti_tx_data_queue_rdata_o           = tti_tx_data_queue_rdata;

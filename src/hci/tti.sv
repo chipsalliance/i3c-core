@@ -86,8 +86,6 @@ module tti
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
   logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
 
-  // TODO: Connect queue soft resets
-
   always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
     if (!rst_ni) begin
       tx_desc_ready_thld_swmod_q <= '0;

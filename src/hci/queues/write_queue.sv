@@ -24,6 +24,7 @@ module write_queue #(
 
     // Direct FIFO read control
     output logic full_o,
+    output logic [FifoDepthWidth-1:0] depth_o,
     output logic start_thld_trig_o,
     output logic ready_thld_trig_o,
     output logic empty_o,
@@ -63,10 +64,13 @@ module write_queue #(
     end
   end
 
+  // FIXME: Unused rst
   assign rst = ~rst_ni | reg_rst_i;
 
   assign fifo_clr = reg_rst_i;
   assign reg_rst_data_o = 1'b0;
+
+  assign depth_o = fifo_depth;
 
   always_comb begin : trigger_threshold
     empty_o = ~|fifo_depth;
