@@ -742,7 +742,16 @@ Don't override. Generated from: I3CCSR
 
 |Bits|Identifier|Access|Reset|  Name  |
 |----|----------|------|-----|--------|
-|  0 | IBI_DATA |   r  |  —  |IBI_DATA|
+|31:0| IBI_DATA |   r  |  —  |IBI_DATA|
+
+#### IBI_DATA field
+
+<p>Data Read from IBI Data Buffer.</p>
+<p>The IBI Port is mapped to the IBI Data Queue.
+IBI Data is always aligned to a 4-byte boundary and then put into the IBI Queue.
+If the incoming data is not aligned to a 4-byte boundary,
+then there will be extra (unused) bytes at the end of the transferred IBI data.
+This can be determined from the value of field DATA_LENGTH in the IBI Status Descriptor.</p>
 
 ### QUEUE_THLD_CTRL register
 
@@ -2263,20 +2272,21 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 
 <p>Interrupt Status</p>
 
-|Bits|     Identifier    |  Access |Reset|        Name       |
-|----|-------------------|---------|-----|-------------------|
-|  0 |    RX_DESC_STAT   |rw, woclr| 0x0 |    RX_DESC_STAT   |
-|  1 |    TX_DESC_STAT   |rw, woclr| 0x0 |    TX_DESC_STAT   |
-|  2 |  RX_DESC_TIMEOUT  |rw, woclr| 0x0 |  RX_DESC_TIMEOUT  |
-|  3 |  TX_DESC_TIMEOUT  |rw, woclr| 0x0 |  TX_DESC_TIMEOUT  |
-|  8 | TX_DATA_THLD_STAT |    r    | 0x0 | TX_DATA_THLD_STAT |
-|  9 | RX_DATA_THLD_STAT |    r    | 0x0 | RX_DATA_THLD_STAT |
-| 10 | TX_DESC_THLD_STAT |    r    | 0x0 | TX_DESC_THLD_STAT |
-| 11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
-| 12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
-| 13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
-| 25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
-| 31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
+| Bits|     Identifier    |  Access |Reset|        Name       |
+|-----|-------------------|---------|-----|-------------------|
+|  0  |    RX_DESC_STAT   |rw, woclr| 0x0 |    RX_DESC_STAT   |
+|  1  |    TX_DESC_STAT   |rw, woclr| 0x0 |    TX_DESC_STAT   |
+|  2  |  RX_DESC_TIMEOUT  |rw, woclr| 0x0 |  RX_DESC_TIMEOUT  |
+|  3  |  TX_DESC_TIMEOUT  |rw, woclr| 0x0 |  TX_DESC_TIMEOUT  |
+|  8  | TX_DATA_THLD_STAT |    r    | 0x0 | TX_DATA_THLD_STAT |
+|  9  | RX_DATA_THLD_STAT |    r    | 0x0 | RX_DATA_THLD_STAT |
+|  10 | TX_DESC_THLD_STAT |    r    | 0x0 | TX_DESC_THLD_STAT |
+|  11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
+|  12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
+|  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
+|18:15| PENDING_INTERRUPT |    r    | 0x0 | PENDING_INTERRUPT |
+|  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
+|  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 
 #### RX_DESC_STAT field
 
@@ -2317,6 +2327,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 #### IBI_DONE field
 
 <p>IBI is done, check LAST_IBI_STATUS for result.</p>
+
+#### PENDING_INTERRUPT field
+
+<p>Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.</p>
 
 #### TRANSFER_ABORT_STAT field
 

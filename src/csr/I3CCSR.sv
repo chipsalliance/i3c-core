@@ -1337,6 +1337,10 @@ module I3CCSR (
                         logic load_next;
                     } IBI_DONE;
                     struct packed{
+                        logic [3:0] next;
+                        logic load_next;
+                    } PENDING_INTERRUPT;
+                    struct packed{
                         logic next;
                         logic load_next;
                     } TRANSFER_ABORT_STAT;
@@ -2407,6 +2411,9 @@ module I3CCSR (
                     struct packed{
                         logic value;
                     } IBI_DONE;
+                    struct packed{
+                        logic [3:0] value;
+                    } PENDING_INTERRUPT;
                     struct packed{
                         logic value;
                     } TRANSFER_ABORT_STAT;
@@ -5453,7 +5460,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value & ~decoded_wr_biten[6:0]) | (decoded_wr_data[6:0] & decoded_wr_biten[6:0]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
             load_next_c = '1;
         end
@@ -5476,7 +5483,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
             load_next_c = '1;
         end
@@ -5499,7 +5506,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value & ~decoded_wr_biten[22:16]) | (decoded_wr_data[22:16] & decoded_wr_biten[22:16]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
             load_next_c = '1;
         end
@@ -5522,7 +5529,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value & ~decoded_wr_biten[31:31]) | (decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
             load_next_c = '1;
         end
@@ -7288,6 +7295,27 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
+    always_comb begin
+        automatic logic [3:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
+        load_next_c = '0;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value <= 4'h0;
+        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.load_next) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT
     always_comb begin
         automatic logic [0:0] next_c;
@@ -9153,7 +9181,9 @@ module I3CCSR (
     assign readback_array[78][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value : '0;
     assign readback_array[78][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value : '0;
     assign readback_array[78][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value : '0;
-    assign readback_array[78][24:14] = '0;
+    assign readback_array[78][14:14] = '0;
+    assign readback_array[78][18:15] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value : '0;
+    assign readback_array[78][24:19] = '0;
     assign readback_array[78][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
     assign readback_array[78][30:26] = '0;
     assign readback_array[78][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value : '0;

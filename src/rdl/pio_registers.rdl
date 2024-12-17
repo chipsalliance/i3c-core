@@ -47,9 +47,16 @@ regfile PIORegs #(
         name = "IBI descriptor access port";
         field {
             name = "IBI_DATA";
+            desc="Data Read from IBI Data Buffer.
+
+                The IBI Port is mapped to the IBI Data Queue.
+                IBI Data is always aligned to a 4-byte boundary and then put into the IBI Queue.
+                If the incoming data is not aligned to a 4-byte boundary,
+                then there will be extra (unused) bytes at the end of the transferred IBI data.
+                This can be determined from the value of field DATA_LENGTH in the IBI Status Descriptor.";
             sw = r;
             hw = w;
-        } IBI_DATA;
+        } IBI_DATA[31:0];
     } IBI_PORT @ 0xC;
     reg {
         name = "The Queue Threshold Control register for the Command Queue, the Response Queue, and the IBI Queue";
