@@ -25,9 +25,15 @@ module configuration (
     output logic [19:0] t_bus_idle_o,
     output logic [19:0] t_bus_available_o,
 
+    output logic [15:0] get_mwl_o,  // Get Max Write Length
+    output logic [15:0] get_mrl_o,  // Get Max Read Length
+    output logic [15:0] get_status_fmt1_o,  // Get Status Format 1
+
     output logic [47:0] pid_o,  // Target ID
     output logic [ 7:0] bcr_o,  // Bus Characteristics Register
     output logic [ 7:0] dcr_o,  // Device Characteristics Register
+
+
 
     // Output effective target address (static or dynamic)
     output logic [6:0] target_sta_addr_o,
@@ -116,6 +122,15 @@ module configuration (
   assign target_dyn_addr_valid_o =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
   assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
+
+  assign get_mwl_o = '1;
+  assign get_mrl_o = '1;
+  assign get_status_fmt1_o = {
+    8'h00,  // Vendor-specific meaning
+    2'b11,  // Unable to do Handoff
+    hwif_out_i.I3C_EC.TTI.STATUS.PROTOCOL_ERROR,
+    hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
+  };
 
   assign pid_o = {
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value,

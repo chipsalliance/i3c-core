@@ -2336,19 +2336,21 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(PROTOCOL_ERROR_bit_cg[bt]) this.PROTOCOL_ERROR_bit_cg[bt].sample(data[13 + bt]);
             foreach(LAST_IBI_STATUS_bit_cg[bt]) this.LAST_IBI_STATUS_bit_cg[bt].sample(data[14 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[15:14]/*LAST_IBI_STATUS*/   );
+            this.fld_cg.sample( data[13:13]/*PROTOCOL_ERROR*/  ,  data[15:14]/*LAST_IBI_STATUS*/   );
         end
     endfunction
 
     function void I3CCSR__I3C_EC__TTI__STATUS::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(PROTOCOL_ERROR_bit_cg[bt]) this.PROTOCOL_ERROR_bit_cg[bt].sample(PROTOCOL_ERROR.get_mirrored_value() >> bt);
             foreach(LAST_IBI_STATUS_bit_cg[bt]) this.LAST_IBI_STATUS_bit_cg[bt].sample(LAST_IBI_STATUS.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( LAST_IBI_STATUS.get_mirrored_value()   );
+            this.fld_cg.sample( PROTOCOL_ERROR.get_mirrored_value()  ,  LAST_IBI_STATUS.get_mirrored_value()   );
         end
     endfunction
 

@@ -3706,8 +3706,10 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
+        I3CCSR__I3C_EC__TTI__STATUS_bit_cg PROTOCOL_ERROR_bit_cg[1];
         I3CCSR__I3C_EC__TTI__STATUS_bit_cg LAST_IBI_STATUS_bit_cg[2];
         I3CCSR__I3C_EC__TTI__STATUS_fld_cg fld_cg;
+        rand uvm_reg_field PROTOCOL_ERROR;
         rand uvm_reg_field LAST_IBI_STATUS;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__STATUS");
@@ -3720,9 +3722,12 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
+            this.PROTOCOL_ERROR = new("PROTOCOL_ERROR");
+            this.PROTOCOL_ERROR.configure(this, 1, 13, "RO", 1, 'h0, 1, 1, 0);
             this.LAST_IBI_STATUS = new("LAST_IBI_STATUS");
             this.LAST_IBI_STATUS.configure(this, 2, 14, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(PROTOCOL_ERROR_bit_cg[bt]) PROTOCOL_ERROR_bit_cg[bt] = new();
                 foreach(LAST_IBI_STATUS_bit_cg[bt]) LAST_IBI_STATUS_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
@@ -3850,7 +3855,7 @@ package I3CCSR_uvm;
             this.IBI_DONE = new("IBI_DONE");
             this.IBI_DONE.configure(this, 1, 13, "W1C", 1, 'h0, 1, 1, 0);
             this.PENDING_INTERRUPT = new("PENDING_INTERRUPT");
-            this.PENDING_INTERRUPT.configure(this, 4, 15, "RO", 1, 'h0, 1, 1, 0);
+            this.PENDING_INTERRUPT.configure(this, 4, 15, "RW", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT = new("TRANSFER_ABORT_STAT");
             this.TRANSFER_ABORT_STAT.configure(this, 1, 25, "W1C", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ERR_STAT = new("TRANSFER_ERR_STAT");

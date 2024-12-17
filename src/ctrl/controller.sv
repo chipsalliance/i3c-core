@@ -228,6 +228,9 @@ module controller
   logic [19:0] t_bus_free;
   logic [19:0] t_bus_idle;
   logic [19:0] t_bus_available;
+  logic [15:0] get_mwl;
+  logic [15:0] get_mrl;
+  logic [15:0] get_status_fmt1;
   logic [47:0] pid;
   logic [7:0] bcr;
   logic [7:0] dcr;
@@ -256,7 +259,7 @@ module controller
     sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];
   end
 
-  configuration u_configuration (
+  configuration xconfiguration (
       .hwif_out_i             (hwif_out_i),
       .phy_en_o               (phy_en),
       .phy_mux_select_o       (phy_mux_select),
@@ -271,6 +274,9 @@ module controller
       .t_bus_free_o           (t_bus_free),
       .t_bus_idle_o           (t_bus_idle),
       .t_bus_available_o      (t_bus_available),
+      .get_mwl_o              (get_mwl),
+      .get_mrl_o              (get_mrl),
+      .get_status_fmt1_o      (get_status_fmt1),
       .pid_o                  (pid),
       .bcr_o                  (bcr),
       .dcr_o                  (dcr),
@@ -437,6 +443,9 @@ module controller
       .t_bus_free_i(t_bus_free),
       .t_bus_idle_i(t_bus_idle),
       .t_bus_available_i(t_bus_available),
+      .get_mwl_i(get_mwl),
+      .get_mrl_i(get_mrl),
+      .get_status_fmt1_i(get_status_fmt1),
       .pid_i(pid),
       .bcr_i(bcr),
       .dcr_i(dcr),

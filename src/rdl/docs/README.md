@@ -2210,7 +2210,17 @@ DISINT bit in the DISEC command.</p>
 
 | Bits|   Identifier  |Access|Reset|      Name     |
 |-----|---------------|------|-----|---------------|
+|  13 | PROTOCOL_ERROR|   r  | 0x0 | PROTOCOL_ERROR|
 |15:14|LAST_IBI_STATUS|  rw  | 0x0 |LAST_IBI_STATUS|
+
+#### PROTOCOL_ERROR field
+
+<p>Protocol error occurred in the past. This field can only be reset
+by the Controller, if it issues the GETSTATUS CCC.</p>
+<p>Values:</p>
+<p>0 - no error occurred</p>
+<p>1 - generic protocol error occurred in the past. It will be set until reception
+of the next GETSTATUS command.</p>
 
 #### LAST_IBI_STATUS field
 
@@ -2284,7 +2294,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 |  11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
 |  12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
 |  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
-|18:15| PENDING_INTERRUPT |    r    | 0x0 | PENDING_INTERRUPT |
+|18:15| PENDING_INTERRUPT |    rw   | 0x0 | PENDING_INTERRUPT |
 |  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
 |  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 

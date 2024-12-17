@@ -1265,6 +1265,10 @@ module I3CCSR (
                 } CONTROL;
                 struct packed{
                     struct packed{
+                        logic next;
+                        logic load_next;
+                    } PROTOCOL_ERROR;
+                    struct packed{
                         logic [1:0] next;
                         logic load_next;
                     } LAST_IBI_STATUS;
@@ -2356,6 +2360,9 @@ module I3CCSR (
                     } IBI_EN;
                 } CONTROL;
                 struct packed{
+                    struct packed{
+                        logic value;
+                    } PROTOCOL_ERROR;
                     struct packed{
                         logic [1:0] value;
                     } LAST_IBI_STATUS;
@@ -6897,6 +6904,27 @@ module I3CCSR (
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.IBI_EN.value = field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value;
     assign hwif_out.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value = 3'h0;
+    // Field: I3CCSR.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.next = next_c;
+        field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.load_next) begin
+            field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value <= field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value = field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value;
     // Field: I3CCSR.I3C_EC.TTI.STATUS.LAST_IBI_STATUS
     always_comb begin
         automatic logic [1:0] next_c;
@@ -7293,7 +7321,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
         load_next_c = '0;
-        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~decoded_wr_biten[18:15]) | (decoded_wr_data[18:15] & decoded_wr_biten[18:15]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
             load_next_c = '1;
         end
@@ -9151,7 +9182,8 @@ module I3CCSR (
     assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
     assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? 3'h0 : '0;
     assign readback_array[75][31:16] = '0;
-    assign readback_array[76][13:0] = '0;
+    assign readback_array[76][12:0] = '0;
+    assign readback_array[76][13:13] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
     assign readback_array[76][15:14] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
     assign readback_array[76][31:16] = '0;
     assign readback_array[77][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;

@@ -99,6 +99,7 @@ module ccc
 
     // Bus Monitor interface
     input logic bus_start_det_i,
+    input logic bus_rstart_det_i,
     input logic bus_stop_det_i,
 
     // Bus TX interface
@@ -291,6 +292,7 @@ module ccc
   typedef enum logic [7:0] {
     Idle,
     WaitCCC,
+    WaitForStart,
     RxTbit,
     RxByte,
     RxDirectDefByteTbit,
@@ -353,10 +355,10 @@ module ccc
         state_d = WaitCCC;
       end
       WaitCCC: begin
-        if (ccc_valid_i) state_d = RxTbit;
+        if (ccc_valid_i) state_d = WaitForStart;
       end
-      RxTbit: begin
-        if (bus_rx_done_i) state_d = RxByte;
+      WaitForStart: begin
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
       end
       RxByte: begin
         if (bus_start_det_i) state_d = RxDirectAddr;
@@ -495,7 +497,8 @@ module ccc
     if (~rst_ni) begin
       tx_data_id <= '0;
     end else begin
-      if (state_q == TxData && bus_tx_done_i) tx_data_id <= tx_data_id - 1'b1;
+      if (state_q == TxDirectAddrAck) tx_data_id <= tx_data_id_init;
+      else if (state_q == TxData && bus_tx_done_i) tx_data_id <= tx_data_id - 1'b1;
       else if (state_q == RxTbit) tx_data_id <= tx_data_id_init;
       else tx_data_id <= tx_data_id;
     end

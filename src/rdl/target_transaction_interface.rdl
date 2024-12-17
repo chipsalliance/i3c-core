@@ -82,6 +82,22 @@ regfile TargetTransactionInterfaceRegisters #(
             hw = r;
             reset = 2'b00;
         } LAST_IBI_STATUS[15:14];
+        field {
+            name = "PROTOCOL_ERROR";
+            desc = "Protocol error occurred in the past. This field can only be reset
+            by the Controller, if it issues the GETSTATUS CCC.
+
+            Values:
+
+            0 - no error occurred
+
+            1 - generic protocol error occurred in the past. It will be set until reception
+            of the next GETSTATUS command.
+            ";
+            sw = r;
+            hw = rw;
+            reset = 1'b0;
+        } PROTOCOL_ERROR[13:13];
     } STATUS;
     reg {
         name = "TTI Queue Reset Control";
@@ -157,7 +173,7 @@ regfile TargetTransactionInterfaceRegisters #(
         field {
             name = "PENDING_INTERRUPT";
             desc = "Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.";
-            sw = r;
+            sw = rw;
             hw = rw;
             we = true;
             reset = 4'd0;

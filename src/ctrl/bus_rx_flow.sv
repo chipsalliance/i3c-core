@@ -67,7 +67,7 @@ module bus_rx_flow (
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : update_bit_counter
     if (~rst_ni) begin
-      bit_counter <= '0;
+      bit_counter <= 4'h7;
     end else begin
       if (bit_counter_en) begin
         if (rx_done) bit_counter <= bit_counter - 1;

@@ -312,6 +312,17 @@ module i3c_target_fsm #(
     end
   end
 
+  // Logic for latching CCC code
+  logic [7:0] ccc_code;
+  logic ccc_code_valid;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_CCC_code
+    if (~rst_ni) begin
+      ccc_o <= '0;
+    end else begin
+      if (ccc_code_valid) ccc_o <= ccc_code;
+    end
+  end
+
   // State outputs
   always_comb begin : state_outputs
     bus_rx_req_bit_o = '0;
@@ -328,7 +339,10 @@ module i3c_target_fsm #(
     is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;
-    ccc_valid_o = '0;
+    ccc_valid_o = 1'b0;
+    ccc_code = '0;
+    ccc_code_valid = 1'b0;
+
 
     case (state_q)
       Idle: ;
@@ -351,6 +365,10 @@ module i3c_target_fsm #(
           bus_addr_valid = 1'b1;
           bus_addr_d = bus_rx_data_i[7:1];
           bus_rnw_d = bus_rx_data_i[0];
+          // If we got CCC, this is the Command Code, we need to latch it for
+          // the CCC FSM
+          ccc_code = bus_rx_data_i;
+          ccc_code_valid = 1'b1;
         end
       end
       RxSByteRepeated: begin
@@ -392,8 +410,10 @@ module i3c_target_fsm #(
       end
 
       DoCCC: begin
+        ccc_valid_o = 1'b1;
       end
       DoneCCC: begin
+        ccc_valid_o = 1'b0;
       end
 
       DoRstAction: begin

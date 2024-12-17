@@ -71,6 +71,9 @@ module controller_standby_i3c
     input logic [19:0] t_bus_free_i,
     input logic [19:0] t_bus_idle_i,
     input logic [19:0] t_bus_available_i,
+    input logic [15:0] get_mwl_i,
+    input logic [15:0] get_mrl_i,
+    input logic [15:0] get_status_fmt1_i,
     input logic [47:0] pid_i,
     input logic [7:0] bcr_i,
     input logic [7:0] dcr_i,
@@ -218,12 +221,6 @@ module controller_standby_i3c
   logic [7:0] rst_action;  // FIXME: Why CCC and FSM has rst_action as output?
   logic set_newda;
   logic [6:0] newda;
-  logic [15:0] get_mwl;
-  logic [15:0] get_mrl;
-  logic [47:0] get_pid;
-  logic [7:0] get_bcr;
-  logic [7:0] get_dcr;
-  logic [15:0] get_status_fmt1;
   logic get_acccr;
   logic set_brgtgt;
   logic get_mxds;
@@ -321,7 +318,7 @@ module controller_standby_i3c
       .RxDataWidth (8),
       .TxDataWidth (8),
       .IbiDataWidth(32)
-  ) u_i3c_target_fsm (
+  ) xi3c_target_fsm (
       .clk_i,
       .rst_ni,
       .target_enable_i      (i3c_standby_en),
@@ -389,13 +386,14 @@ module controller_standby_i3c
       .rx_overflow_err_o          (rx_overflow_err)
   );
 
-  ccc u_ccc (
+  ccc xccc (
       .clk_i,
       .rst_ni,
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),
       .bus_start_det_i           (bus_start_det),
+      .bus_rstart_det_i          (bus_rstart_det),
       .bus_stop_det_i            (bus_stop_det),
       .bus_tx_done_i             (ccc_bus_tx_done),
       .bus_tx_req_byte_o         (ccc_bus_tx_req_byte),
@@ -435,18 +433,18 @@ module controller_standby_i3c
       .rst_action_o              (rst_action),
       .set_newda_o               (set_newda),
       .newda_o                   (newda),
-      .get_mwl_i                 (get_mwl),
-      .get_mrl_i                 (get_mrl),
-      .get_pid_i                 (get_pid),
-      .get_bcr_i                 (get_bcr),
-      .get_dcr_i                 (get_dcr),
-      .get_status_fmt1_i         (get_status_fmt1),
+      .get_mwl_i                 (get_mwl_i),
+      .get_mrl_i                 (get_mrl_i),
+      .get_pid_i                 (pid_i),
+      .get_bcr_i                 (bcr_i),
+      .get_dcr_i                 (dcr_i),
+      .get_status_fmt1_i         (get_status_fmt1_i),
       .get_acccr_i               (get_acccr),
       .set_brgtgt_o              (set_brgtgt),
       .get_mxds_i                (get_mxds)
   );
 
-  bus_tx_flow u_bus_tx_flow (
+  bus_tx_flow xbus_tx_flow (
       .clk_i,
       .rst_ni,
       .t_r_i,
@@ -467,7 +465,7 @@ module controller_standby_i3c
       .sda_o           (ctrl_sda_o)
   );
 
-  bus_rx_flow u_bus_rx_flow (
+  bus_rx_flow xbus_rx_flow (
       .clk_i,
       .rst_ni,
       .scl_posedge_i    (scl_posedge),
@@ -481,7 +479,7 @@ module controller_standby_i3c
       .error_o          (bus_rx_error)
   );
 
-  bus_monitor u_bus_monitor (
+  bus_monitor xbus_monitor (
       .clk_i,
       .rst_ni,
       .enable_i             (i3c_standby_en),
@@ -504,7 +502,7 @@ module controller_standby_i3c
       .target_reset_detect_o(target_reset_detect)
   );
 
-  bus_timers u_bus_timers (
+  bus_timers xbus_timers (
       .clk_i,
       .rst_ni,
       .enable_i         (i3c_standby_en),
@@ -521,7 +519,7 @@ module controller_standby_i3c
   descriptor_rx #(
       .TtiRxDescDataWidth(TtiRxDescDataWidth),
       .TtiRxDataWidth    (TtiRxDataWidth)
-  ) u_descriptor_rx (
+  ) xdescriptor_rx (
       .clk_i                     (clk_i),
       .rst_ni                    (rst_ni),
       .tti_rx_desc_queue_wvalid_o(rx_desc_queue_wvalid_o),
@@ -541,7 +539,7 @@ module controller_standby_i3c
       .TtiTxDescDataWidth(TtiTxDescDataWidth),
       .TtiTxDataWidth    (TtiTxDataWidth),
       .TtiTxDataDepth    (TtiTxFifoDepthWidth)
-  ) u_descriptor_tx (
+  ) xdescriptor_tx (
       .clk_i                     (clk_i),
       .rst_ni                    (rst_ni),
       .tti_tx_desc_queue_rvalid_i(tx_desc_queue_rvalid_i),
@@ -560,7 +558,7 @@ module controller_standby_i3c
 
   descriptor_ibi #(
       .TtiIbiDataWidth(TtiIbiDataWidth)
-  ) u_descriptor_ibi (
+  ) xdescriptor_ibi (
       .clk_i             (clk_i),
       .rst_ni            (rst_ni),
       .ibi_queue_full_i  (ibi_queue_full_i),
