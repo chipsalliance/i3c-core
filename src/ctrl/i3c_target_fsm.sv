@@ -546,10 +546,6 @@ module i3c_target_fsm #(
   assign event_tx_bus_timeout_o = '0;
   assign event_read_cmd_received_o = '0;
 
-  // During a host issued read, a stop was received without first seeing a nack.
-  // This may be harmless but is technically illegal behavior, notify software.
-  assign event_unexp_stop_o = target_enable_i & ~bus_tx_idle_i;
-
   // Record each transaction that gets NACK'd.
   assign event_target_nack_o = !nack_transaction_q && nack_transaction_d;
 
