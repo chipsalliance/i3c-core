@@ -195,72 +195,72 @@ module i3c
 );
 
   // I3C SW CSR IF
-  logic                             s_cpuif_req;
-  logic                             s_cpuif_req_is_wr;
-  logic [         CsrAddrWidth-1:0] s_cpuif_addr;
-  logic [         CsrDataWidth-1:0] s_cpuif_wr_data;
-  logic [         CsrDataWidth-1:0] s_cpuif_wr_biten;
-  logic                             s_cpuif_req_stall_wr;
-  logic                             s_cpuif_req_stall_rd;
-  logic                             s_cpuif_rd_ack;
-  logic                             s_cpuif_rd_err;
-  logic [         CsrDataWidth-1:0] s_cpuif_rd_data;
-  logic                             s_cpuif_wr_ack;
-  logic                             s_cpuif_wr_err;
+  logic                               s_cpuif_req;
+  logic                               s_cpuif_req_is_wr;
+  logic [           CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [           CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [           CsrDataWidth-1:0] s_cpuif_wr_biten;
+  logic                               s_cpuif_req_stall_wr;
+  logic                               s_cpuif_req_stall_rd;
+  logic                               s_cpuif_rd_ack;
+  logic                               s_cpuif_rd_err;
+  logic [           CsrDataWidth-1:0] s_cpuif_rd_data;
+  logic                               s_cpuif_wr_ack;
+  logic                               s_cpuif_wr_err;
 
   // Response queue
-  logic                             hci_resp_full;
-  logic [HciRespFifoDepthWidth-1:0] hci_resp_depth;
-  logic [     HciRespThldWidth-1:0] hci_resp_ready_thld;
-  logic                             hci_resp_ready_thld_trig;
-  logic                             hci_resp_empty;
-  logic                             hci_resp_wvalid;
-  logic                             hci_resp_wready;
-  logic [     HciRespDataWidth-1:0] hci_resp_wdata;
+  logic                               hci_resp_full;
+  logic [  HciRespFifoDepthWidth-1:0] hci_resp_depth;
+  logic [       HciRespThldWidth-1:0] hci_resp_ready_thld;
+  logic                               hci_resp_ready_thld_trig;
+  logic                               hci_resp_empty;
+  logic                               hci_resp_wvalid;
+  logic                               hci_resp_wready;
+  logic [       HciRespDataWidth-1:0] hci_resp_wdata;
 
   // Command queue
-  logic                             hci_cmd_full;
-  logic [ HciCmdFifoDepthWidth-1:0] hci_cmd_depth;
-  logic [      HciCmdThldWidth-1:0] hci_cmd_ready_thld;
-  logic                             hci_cmd_ready_thld_trig;
-  logic                             hci_cmd_empty;
-  logic                             hci_cmd_rvalid;
-  logic                             hci_cmd_rready;
-  logic [      HciCmdDataWidth-1:0] hci_cmd_rdata;
+  logic                               hci_cmd_full;
+  logic [   HciCmdFifoDepthWidth-1:0] hci_cmd_depth;
+  logic [        HciCmdThldWidth-1:0] hci_cmd_ready_thld;
+  logic                               hci_cmd_ready_thld_trig;
+  logic                               hci_cmd_empty;
+  logic                               hci_cmd_rvalid;
+  logic                               hci_cmd_rready;
+  logic [        HciCmdDataWidth-1:0] hci_cmd_rdata;
 
   // RX queue
-  logic                             hci_rx_full;
-  logic [  HciRxFifoDepthWidth-1:0] hci_rx_depth;
-  logic [       HciRxThldWidth-1:0] hci_rx_start_thld;
-  logic                             hci_rx_start_thld_trig;
-  logic [       HciRxThldWidth-1:0] hci_rx_ready_thld;
-  logic                             hci_rx_ready_thld_trig;
-  logic                             hci_rx_empty;
-  logic                             hci_rx_wvalid;
-  logic                             hci_rx_wready;
-  logic [       HciRxDataWidth-1:0] hci_rx_wdata;
+  logic                               hci_rx_full;
+  logic [    HciRxFifoDepthWidth-1:0] hci_rx_depth;
+  logic [         HciRxThldWidth-1:0] hci_rx_start_thld;
+  logic                               hci_rx_start_thld_trig;
+  logic [         HciRxThldWidth-1:0] hci_rx_ready_thld;
+  logic                               hci_rx_ready_thld_trig;
+  logic                               hci_rx_empty;
+  logic                               hci_rx_wvalid;
+  logic                               hci_rx_wready;
+  logic [         HciRxDataWidth-1:0] hci_rx_wdata;
 
   // TX queue
-  logic                             hci_tx_full;
-  logic [  HciTxFifoDepthWidth-1:0] hci_tx_depth;
-  logic [       HciTxThldWidth-1:0] hci_tx_start_thld;
-  logic                             hci_tx_start_thld_trig;
-  logic [       HciTxThldWidth-1:0] hci_tx_ready_thld;
-  logic                             hci_tx_ready_thld_trig;
-  logic                             hci_tx_empty;
-  logic                             hci_tx_rvalid;
-  logic                             hci_tx_rready;
-  logic [       HciTxDataWidth-1:0] hci_tx_rdata;
+  logic                               hci_tx_full;
+  logic [    HciTxFifoDepthWidth-1:0] hci_tx_depth;
+  logic [         HciTxThldWidth-1:0] hci_tx_start_thld;
+  logic                               hci_tx_start_thld_trig;
+  logic [         HciTxThldWidth-1:0] hci_tx_ready_thld;
+  logic                               hci_tx_ready_thld_trig;
+  logic                               hci_tx_empty;
+  logic                               hci_tx_rvalid;
+  logic                               hci_tx_rready;
+  logic [         HciTxDataWidth-1:0] hci_tx_rdata;
 
   // IBI queue
-  logic                             hci_ibi_full;
-  logic [ HciIbiFifoDepthWidth-1:0] hci_ibi_depth;
-  logic [      HciIbiThldWidth-1:0] hci_ibi_ready_thld;
-  logic                             hci_ibi_ready_thld_trig;
-  logic                             hci_ibi_empty;
-  logic                             hci_ibi_wvalid;
-  logic                             hci_ibi_wready;
-  logic [      HciIbiDataWidth-1:0] hci_ibi_wdata;
+  logic                               hci_ibi_full;
+  logic [   HciIbiFifoDepthWidth-1:0] hci_ibi_depth;
+  logic [        HciIbiThldWidth-1:0] hci_ibi_ready_thld;
+  logic                               hci_ibi_ready_thld_trig;
+  logic                               hci_ibi_empty;
+  logic                               hci_ibi_wvalid;
+  logic                               hci_ibi_wready;
+  logic [        HciIbiDataWidth-1:0] hci_ibi_wdata;
 
   // DAT <-> Controller interface
   logic                               dat_read_valid_hw;

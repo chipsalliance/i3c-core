@@ -17,12 +17,6 @@ TOPLEVEL     = axi_adapter_wrapper
 
 VERILOG_SOURCES  = \
     $(SRC_DIR)/i3c_pkg.sv \
-    $(SRC_DIR)/libs/axi/skidbuffer.v \
-    $(SRC_DIR)/libs/axi/axi_sub_arb.sv \
-    $(SRC_DIR)/libs/axi/axi_sub_rd.sv \
-    $(SRC_DIR)/libs/axi/axi_sub_wr.sv \
-    $(SRC_DIR)/libs/axi/axi_addr.v \
-    $(SRC_DIR)/libs/axi/axi_sub.sv \
     $(SRC_DIR)/libs/axi/axi_pkg.sv \
     $(SRC_DIR)/libs/axi/axi_if.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
