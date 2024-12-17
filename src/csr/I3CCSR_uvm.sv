@@ -2895,7 +2895,7 @@ package I3CCSR_uvm;
             this.DYNAMIC_ADDR = new("DYNAMIC_ADDR");
             this.DYNAMIC_ADDR.configure(this, 7, 16, "RW", 1, 'h0, 0, 1, 0);
             this.DYNAMIC_ADDR_VALID = new("DYNAMIC_ADDR_VALID");
-            this.DYNAMIC_ADDR_VALID.configure(this, 1, 31, "RW", 1, 'h0, 0, 1, 0);
+            this.DYNAMIC_ADDR_VALID.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(STATIC_ADDR_bit_cg[bt]) STATIC_ADDR_bit_cg[bt] = new();
                 foreach(STATIC_ADDR_VALID_bit_cg[bt]) STATIC_ADDR_VALID_bit_cg[bt] = new();
