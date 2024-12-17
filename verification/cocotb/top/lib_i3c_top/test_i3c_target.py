@@ -56,7 +56,7 @@ async def test_setup(dut):
     return i3c_controller, i3c_target, tb
 
 
-# @cocotb.test()
+@cocotb.test()
 async def test_i3c_target_write(dut):
 
     # Setup

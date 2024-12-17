@@ -295,6 +295,7 @@ module controller_standby
       .rx_queue_full_i(rx_queue_full_i),
       .rx_queue_wvalid_o(i3c_rx_queue_wvalid_o),
       .rx_queue_wdata_o(i3c_rx_queue_wdata_o),
+      .rx_queue_wflush_o(i3c_rx_queue_wflush_o),
       .tx_queue_rvalid_i(tx_queue_rvalid_i),
       .tx_queue_depth_i(tx_queue_depth_i),
       .tx_queue_rready_o(i3c_tx_queue_rready_o),
