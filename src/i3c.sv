@@ -262,10 +262,6 @@ module i3c
   logic                             hci_ibi_wready;
   logic [      HciIbiDataWidth-1:0] hci_ibi_wdata;
 
-  // TODO: Handle
-  assign hci_ibi_wdata  = '0;
-  assign hci_ibi_wvalid = 1'b1;
-
   // DAT <-> Controller interface
   logic                               dat_read_valid_hw;
   logic [     $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
