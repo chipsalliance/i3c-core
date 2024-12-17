@@ -68,6 +68,7 @@ jobs:
           sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
           yum update -y
           yum install -y libnsl bc time make gcc gcc-c++ perl python39
+
       - name: Setup repository
         uses: actions/checkout@v4
 
@@ -79,5 +80,10 @@ jobs:
         run: |
           ./install.sh
 
-      - name: Run Tests:
+      - name: Setup Tests
+        run: |
+          make install-uvm
+          source activate.sh
+
+      - name: Run Tests
           run: _secret_run_i3c_tests
