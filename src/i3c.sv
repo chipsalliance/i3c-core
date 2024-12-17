@@ -870,21 +870,12 @@ module i3c
 
   // Recovery handler
   recovery_handler #(
-      .TtiRxDescDataWidth,
-      .TtiRxDescThldWidth,
-      .TtiRxDescFifoDepth,
-      .TtiTxDescDataWidth,
-      .TtiTxDescThldWidth,
-      .TtiTxDescFifoDepth,
       .TtiRxDataDataWidth(TtiRxDataWidth),
       .TtiRxDataThldWidth(TtiRxThldWidth),
       .TtiRxDataFifoDepth(TtiRxFifoDepth),
       .TtiTxDataDataWidth(TtiTxDataWidth),
       .TtiTxDataThldWidth(TtiTxThldWidth),
-      .TtiTxDataFifoDepth(TtiTxFifoDepth),
-      .TtiIbiDataWidth,
-      .TtiIbiThldWidth,
-      .TtiIbiFifoDepth
+      .TtiTxDataFifoDepth(TtiTxFifoDepth)
   ) xrecovery_handler (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
