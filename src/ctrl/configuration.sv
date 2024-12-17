@@ -110,25 +110,25 @@ module configuration (
 
 
   assign target_sta_addr_valid_o =
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID;
-  assign target_sta_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR;
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
+  assign target_sta_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
 
   assign target_dyn_addr_valid_o =
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID;
-  assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR;
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
+  assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
 
   assign pid_o = {
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI,
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value,
     1'b0,
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value
   };
 
   assign bcr_o = {
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED,
-    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value,
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value
   };
 
-  assign dcr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR;
+  assign dcr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
   assign daa_unique_response_o = {pid_o, bcr_o, dcr_o};
 
   assign target_ibi_addr_o = target_dyn_addr_valid_o ? target_dyn_addr_o : target_sta_addr_o;
