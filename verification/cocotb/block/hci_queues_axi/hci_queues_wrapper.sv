@@ -322,6 +322,7 @@ module hci_queues_wrapper
   logic [19:0] unused_t_bus_available_o;
 
   logic tti_rx_flush;
+  logic tti_tx_flush;
 
   // HCI
   I3CCSR_pkg::I3CCSR__out_t unused_hwif_out;
@@ -691,6 +692,7 @@ module hci_queues_wrapper
       .ctl_tti_tx_data_queue_rvalid_o(tti_tx_rvalid_o),
       .ctl_tti_tx_data_queue_rready_i(tti_tx_rready_i),
       .ctl_tti_tx_data_queue_rdata_o(tti_tx_rdata_o),
+      .ctl_tti_tx_data_queue_flush_i(tti_tx_flush),
       .ctl_tti_tx_data_queue_start_thld_o(tti_tx_start_thld_o),
       .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_start_thld_trig_o),
       .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_ready_thld_o),
@@ -718,17 +720,13 @@ module hci_queues_wrapper
     hci.hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
     hci.hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.we = 0;
     hci.hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
 
     hci.hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.we = 0;
 
     xtti.hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
@@ -743,6 +741,7 @@ module hci_queues_wrapper
     xrecovery_handler.irq_o = 0;
     xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
     tti_rx_flush = 0;
+    tti_tx_flush = 0;
   end : other_uninit_signals
 
 endmodule

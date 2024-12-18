@@ -174,19 +174,15 @@ module axi_adapter_wrapper
     hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
     hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.we = 0;
     hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
     hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we = 0;
     hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
 
     hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.we = 0;
 
     hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = 0;
     hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we = 0;
