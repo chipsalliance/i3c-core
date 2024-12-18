@@ -124,7 +124,7 @@ async def test_i3c_target_write(dut):
     await ClockCycles(tb.clk, 10)
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_i3c_target_read(dut):
     TEST_LENGTH = 3
     MAX_DATA_LEN = 10

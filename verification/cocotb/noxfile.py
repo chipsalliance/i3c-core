@@ -234,41 +234,41 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage, simulator):
 # def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
 #     verify_block(session, test_group, test_name, coverage, simulator)
 
-# FIXME
-# @nox.session(tags=["tests", "ahb"])
-# @nox.parametrize("test_group", ["i3c_ahb"])
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_i3c_target",
-#         "test_recovery",
-#         "test_enter_exit_hdr_mode",
-#         "test_target_reset",
-#         "test_ccc",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
-#     verify_top(session, test_group, test_name, coverage, simulator)
+
+@nox.session(tags=["tests", "ahb"])
+@nox.parametrize("test_group", ["i3c_ahb"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_i3c_target",
+        # "test_recovery",
+        # "test_enter_exit_hdr_mode",
+        # "test_target_reset",
+        # "test_ccc",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
 
 
-# @nox.session(tags=["tests", "axi"])
-# @nox.parametrize("test_group", ["i3c_axi"])
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_i3c_target",
-#         "test_recovery",
-#         "test_enter_exit_hdr_mode",
-#         "test_target_reset",
-#         "test_ccc",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
-#     verify_top(session, test_group, test_name, coverage, simulator)
+@nox.session(tags=["tests", "axi"])
+@nox.parametrize("test_group", ["i3c_axi"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_i3c_target",
+        # "test_recovery",
+        # "test_enter_exit_hdr_mode",
+        # "test_target_reset",
+        # "test_ccc",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
