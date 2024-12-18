@@ -52,6 +52,7 @@ endif
 ifeq ($(SIM), vcs)
     COMPILE_ARGS += +define+VERILATOR
     COMPILE_ARGS += +libext+.sv +libext+.v
+    COMPILE_ARGS += +warn=noIWNF,noPCWM-W
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
 endif
 
