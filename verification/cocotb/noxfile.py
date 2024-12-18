@@ -347,6 +347,7 @@ def test_lint(session: nox.Session) -> None:
     "test_name",
     [
         "test_converter",
+        "test_flush",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
