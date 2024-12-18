@@ -2891,7 +2891,7 @@ package I3CCSR_uvm;
             this.STATIC_ADDR = new("STATIC_ADDR");
             this.STATIC_ADDR.configure(this, 7, 0, "RW", 1, 'h0, 1, 1, 0);
             this.STATIC_ADDR_VALID = new("STATIC_ADDR_VALID");
-            this.STATIC_ADDR_VALID.configure(this, 1, 15, "RW", 1, 'h1, 1, 1, 0);
+            this.STATIC_ADDR_VALID.configure(this, 1, 15, "RW", 1, 'h0, 1, 1, 0);
             this.DYNAMIC_ADDR = new("DYNAMIC_ADDR");
             this.DYNAMIC_ADDR.configure(this, 7, 16, "RW", 1, 'h0, 1, 1, 0);
             this.DYNAMIC_ADDR_VALID = new("DYNAMIC_ADDR_VALID");

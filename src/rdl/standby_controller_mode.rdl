@@ -203,7 +203,7 @@ regfile StandbyControllerModeRegisters{
             hw   = rw;
             sw   = rw;
             we   = true;
-            reset = 1'b1;
+            reset = 1'b0;
         } STATIC_ADDR_VALID[15:15];
         field {
             name = "Device Static Address";
