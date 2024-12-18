@@ -53,6 +53,11 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += +define+VERILATOR
     COMPILE_ARGS += +libext+.sv +libext+.v
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
+
+    COMPILE_ARGS += -debug_access
+    COMPILE_ARGS += -top dump_vcd
+    VERILOG_SOURCES += $(I3C_ROOT)/verification/cocotb/common/dump_vcd.sv
+    SIM_ARGS += +dumpon
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
