@@ -50,7 +50,7 @@ module axi_adapter_wrapper
     output logic                    awready,
 
     input  logic [AxiDataWidth-1:0] wdata,
-    input  logic [             3:0] wstrb,
+    input  logic [             7:0] wstrb,
     input  logic                    wlast,
     input  logic                    wvalid,
     output logic                    wready,
