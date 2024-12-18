@@ -133,7 +133,7 @@ class VerificationTest:
     def rename_default(self, dest: str):
         source = self.paths[f"{dest}_default"]
         if not os.path.isfile(source):
-            print(f"Warning!  Can't find file to rename: {source}")   
+            print(f"Warning!  Can't find file to rename: {source}")
             return
         os.rename(source, self.paths[dest])
 
