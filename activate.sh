@@ -28,3 +28,5 @@ python --version
 pip install --upgrade pip
 python -m pip install -r "$(pwd)"/requirements.txt
 pyenv rehash
+
+set +e
