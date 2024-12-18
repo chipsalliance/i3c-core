@@ -20,8 +20,8 @@ module i3c_phy_io_wrapper (
     input  logic sel_od_pp_i,
 
     // I3C bus IO
-    inout  logic scl_io,
-    inout  logic sda_io
+    inout  wire scl_io,
+    inout  wire sda_io
 );
 
     logic scl_phy2io;
