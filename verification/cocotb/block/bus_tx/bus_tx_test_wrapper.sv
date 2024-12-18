@@ -6,10 +6,10 @@ module bus_tx_test_wrapper (
     input scl_i,  // Additional signal for SCL bus mock
 
     // I3C bus timings
-    input logic [12:0] t_r_i,      // rise time of both SDA and SCL in clock units
+    input logic [19:0] t_r_i,      // rise time of both SDA and SCL in clock units
     input logic [12:0] t_f_i,      // rise time of both SDA and SCL in clock units
-    input logic [12:0] t_su_dat_i,  // data setup time in clock units
-    input logic [12:0] t_hd_dat_i,  // data hold time in clock units
+    input logic [19:0] t_su_dat_i,  // data setup time in clock units
+    input logic [19:0] t_hd_dat_i,  // data hold time in clock units
 
     input logic drive_i,  // Driving the bus, it should neve come later than (t_low-t_hd_dat) after
     // SCL falling edge if SCL is in stable LOW state
