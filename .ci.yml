@@ -1,8 +1,12 @@
+include:
+  - project: repositories/chipsalliance-ci-scripts
+    file: i3c-core.yaml
+
 stages:
   - build
   - deploy
 
-build:
+build_docs:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: normal
@@ -26,13 +30,12 @@ build:
       - $CI_DOCS_ARCHIVE
 
 deploy:
+  image: $CI_DOCS_DOCKER_IMAGE
+  dependencies: [build_docs]
+  stage: deploy
+  tags: [docs]
   variables:
     GIT_STRATEGY: none
-  image: $CI_DOCS_DOCKER_IMAGE
-  dependencies:
-    - build
-  stage: deploy
-  tags: ['docs']
   script: echo 'Deploying docs'
   artifacts:
     paths:
