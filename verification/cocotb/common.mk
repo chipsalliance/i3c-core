@@ -51,8 +51,8 @@ endif
 
 ifeq ($(SIM), vcs)
     COMPILE_ARGS += +define+VERILATOR
-
-    EXTRA_ARGS += -full64
+    COMPILE_ARGS += +libext+.sv +libext+.v
+    COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
