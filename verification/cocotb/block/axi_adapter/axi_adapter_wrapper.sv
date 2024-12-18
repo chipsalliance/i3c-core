@@ -50,7 +50,7 @@ module axi_adapter_wrapper
     output logic                    awready,
 
     input  logic [AxiDataWidth-1:0] wdata,
-    input  logic [             7:0] wstrb,
+    input  logic [             3:0] wstrb,
     input  logic                    wlast,
     input  logic                    wvalid,
     output logic                    wready,
@@ -73,6 +73,9 @@ module axi_adapter_wrapper
   logic [CsrDataWidth-1:0] s_cpuif_rd_data;
   logic                    s_cpuif_wr_ack;
   logic                    s_cpuif_wr_err;
+  logic                    wstrb_i;
+
+  assign wstrb_i = {4'b0000, wstrb};
 
   axi_adapter #(
       .AxiDataWidth(AxiDataWidth),
@@ -113,7 +116,7 @@ module axi_adapter_wrapper
       .awready_o(awready),
 
       .wdata_i (wdata),
-      .wstrb_i (wstrb),
+      .wstrb_i (wstrb_i),
       .wlast_i (wlast),
       .wvalid_i(wvalid),
       .wready_o(wready),
