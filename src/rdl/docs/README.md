@@ -1661,9 +1661,9 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 | Bits|    Identifier    |Access|Reset|          Name          |
 |-----|------------------|------|-----|------------------------|
-| 6:0 |    STATIC_ADDR   |  rw  |  —  |  Device Static Address |
-|  15 | STATIC_ADDR_VALID|  rw  |  —  | Static Address is Valid|
-|22:16|   DYNAMIC_ADDR   |  rw  |  —  | Device Dynamic Address |
+| 6:0 |    STATIC_ADDR   |  rw  | 0x0 |  Device Static Address |
+|  15 | STATIC_ADDR_VALID|  rw  | 0x1 | Static Address is Valid|
+|22:16|   DYNAMIC_ADDR   |  rw  | 0x0 | Device Dynamic Address |
 |  31 |DYNAMIC_ADDR_VALID|  rw  | 0x0 |Dynamic Address is Valid|
 
 #### STATIC_ADDR field
