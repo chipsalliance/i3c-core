@@ -13,6 +13,8 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles, Timer
 
+TARGET_ADDRESS = 0x5A
+
 
 async def timeout_task(timeout_us=5):
     """
@@ -67,7 +69,7 @@ async def test_i3c_target_write(dut):
     # Send Private Write on I3C
     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
     for test_vec in test_data:
-        await i3c_controller.i3c_write(0x5A, test_vec)
+        await i3c_controller.i3c_write(TARGET_ADDRESS, test_vec)
         await ClockCycles(tb.clk, 10)
 
     # Wait for an interrupt
@@ -153,7 +155,7 @@ async def test_i3c_target_read(dut):
         )
 
         # Issue a private read
-        recv_data = await i3c_controller.i3c_read(0x5A, len(test_data))
+        recv_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(test_data))
         recv_data = list(recv_data)
 
         # Compare
@@ -173,14 +175,10 @@ async def test_i3c_target_read(dut):
 # FIXME: Reenable after implementation
 @cocotb.test(skip=True)
 async def test_i3c_target_ibi(dut):
-
-    # Target address
-    addr = 0x5A
-
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
-    target = i3c_controller.add_target(addr)
+    target = i3c_controller.add_target(TARGET_ADDRESS)
     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
 
     # Write MDB to Target's IBI queue
@@ -189,7 +187,7 @@ async def test_i3c_target_ibi(dut):
 
     # Wait for the IBI to be serviced, check data
     data = await i3c_controller.wait_for_ibi()
-    expected = bytearray([addr, mdb])
+    expected = bytearray([TARGET_ADDRESS, mdb])
     assert data == expected
 
     # Dummy wait
