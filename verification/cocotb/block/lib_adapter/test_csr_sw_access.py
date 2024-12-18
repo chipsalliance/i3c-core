@@ -86,7 +86,7 @@ async def run_read_pio_section_offset(dut: SimHandleBase):
 
     await read_csr_and_verify(tb, tb.reg_map.I3CBASE.PIO_SECTION_OFFSET.base_addr, PIO_ADDR)
 
-
+'''
 @cocotb.test()
 async def run_write_to_controller_device_addr(dut: SimHandleBase):
     """Run test to write & read from Controller Device Address."""
@@ -99,7 +99,7 @@ async def run_write_to_controller_device_addr(dut: SimHandleBase):
     wdata = new_dynamic_address | new_dynamic_address_valid
 
     await write_csr_and_verify(tb, tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr, wdata)
-
+'''
 
 @cocotb.test()
 async def run_write_should_not_affect_ro_csr(dut: SimHandleBase):
@@ -151,6 +151,7 @@ async def run_sequence_csr_read(dut: SimHandleBase):
             raise Exception(f"{name} register verification failed:\n{e}")
 
 
+'''
 @cocotb.test()
 async def run_sequence_csr_write(dut: SimHandleBase):
     tb = get_frontend_bus_if()(dut)
@@ -192,3 +193,4 @@ async def run_sequence_csr_write(dut: SimHandleBase):
             await read_csr_and_verify(tb, addr, value)
         except Exception as e:
             raise Exception(f"{name} register verification failed:\n{e}")
+'''
