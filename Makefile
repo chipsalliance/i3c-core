@@ -94,7 +94,7 @@ test: config ## Run single module test (use `TEST=<test_name>` flag)
 
 tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
 	$(MAKE) config CFG_NAME=axi
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi"
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi" 2>&1
 
 tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
 	$(MAKE) config CFG_NAME=ahb
