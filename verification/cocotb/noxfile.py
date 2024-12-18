@@ -18,6 +18,8 @@ pip_requirements_path = "../../requirements.txt"
 # Coverage types to collect
 coverage_types = ["all", "branch", "toggle"] if os.getenv("TEST_COVERAGE_ENABLE") else None
 
+simulators = [os.getenv("SIMULATOR", "verilator")]
+
 
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     session.install("-r", pip_requirements_path)
@@ -82,8 +84,9 @@ def verify_top(session, test_group, test_name, coverage=None, simulator=None):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def ahb_if_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def ahb_if_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "axi"])
@@ -95,8 +98,9 @@ def ahb_if_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def axi_adapter_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def axi_adapter_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -108,8 +112,9 @@ def axi_adapter_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def bus_rx_flow_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def bus_rx_flow_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -121,8 +126,9 @@ def bus_rx_flow_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def bus_tx_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def bus_tx_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -134,8 +140,9 @@ def bus_tx_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def bus_tx_flow_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def bus_tx_flow_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb"])
@@ -150,8 +157,9 @@ def bus_tx_flow_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def hci_queues_ahb_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "axi"])
@@ -166,8 +174,9 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def hci_queues_axi_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def hci_queues_axi_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 # TODO: reenable test
@@ -180,8 +189,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i2c_verify(session, test_group, test_name, coverage):
-#     verify_block(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i2c_verify(session, test_group, test_name, coverage, simulator):
+#     verify_block(session, test_group, test_name, coverage, simulator)
 
 
 # TODO: reenable i2c test after connecting configuration.sv to CSRs
@@ -194,8 +204,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i2c_controller_fsm_verify(session, test_group, test_name, coverage):
-#     verify_block(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i2c_controller_fsm_verify(session, test_group, test_name, coverage, simulator):
+#     verify_block(session, test_group, test_name, coverage, simulator)
 
 
 # TODO: fix tests
@@ -206,8 +217,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ["test_read", "test_wr_restart_rd"],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i2c_standby_controller_verify(session, test_group, test_name, coverage):
-#     verify_block(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i2c_standby_controller_verify(session, test_group, test_name, coverage, simulator):
+#     verify_block(session, test_group, test_name, coverage, simulator)
 
 
 # TODO: fix tests
@@ -218,8 +230,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ["test_mem_w", "test_mem_r"],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i2c_target_fsm_verify(session, test_group, test_name, coverage):
-#     verify_block(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
+#     verify_block(session, test_group, test_name, coverage, simulator)
 
 # FIXME
 # @nox.session(tags=["tests", "ahb"])
@@ -235,8 +248,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i3c_ahb_verify(session, test_group, test_name, coverage):
-#     verify_top(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
+#     verify_top(session, test_group, test_name, coverage, simulator)
 
 
 # @nox.session(tags=["tests", "axi"])
@@ -252,8 +266,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
 #     ],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i3c_axi_verify(session, test_group, test_name, coverage):
-#     verify_top(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
+#     verify_top(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -265,8 +280,9 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def ctrl_bus_timers_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def ctrl_bus_timers_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -278,8 +294,9 @@ def ctrl_bus_timers_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def ctrl_bus_monitor_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def ctrl_bus_monitor_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 # FIXME: This test is now just a stub
@@ -292,17 +309,16 @@ def ctrl_bus_monitor_verify(session, test_group, test_name, coverage):
 #     ],
 # )
 # @nox.parametrize("coverage", coverage_types)
-# def i3c_target_fsm_verify(session, test_group, test_name, coverage):
-#     verify_block(session, test_group, test_name, coverage)
+# @nox.parametrize("simulator", simulators)
+# def i3c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
+#     verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["i3c_phy_io"])
 @nox.parametrize(
     "simulator",
-    [
-        "icarus",
-    ],
+    ["icarus" if s == "verilator" else s for s in simulators]
 )
 @nox.parametrize(
     "test_name",
@@ -349,8 +365,9 @@ def test_lint(session: nox.Session) -> None:
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def width_converter_Nto8_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def width_converter_Nto8_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -363,8 +380,9 @@ def width_converter_Nto8_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def width_converter_8toN_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def width_converter_8toN_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
@@ -376,5 +394,6 @@ def width_converter_8toN_verify(session, test_group, test_name, coverage):
     ],
 )
 @nox.parametrize("coverage", coverage_types)
-def recovery_pec_verify(session, test_group, test_name, coverage):
-    verify_block(session, test_group, test_name, coverage)
+@nox.parametrize("simulator", simulators)
+def recovery_pec_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
