@@ -92,7 +92,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } IBI_QUEUE_RST[5:5];
         field {
             name = "RX_DATA_RST";
@@ -100,7 +100,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } RX_DATA_RST[4:4];
         field {
             name = "TX_DATA_RST";
@@ -108,7 +108,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } TX_DATA_RST[3:3];
         field {
             name = "RX_DESC_RST";
@@ -116,7 +116,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } RX_DESC_RST[2:2];
         field {
             name = "TX_DESC_RST";
@@ -124,7 +124,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } TX_DESC_RST[1:1];
         field {
             name = "SOFT_RST";
@@ -132,7 +132,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             we = true;
-            reset = 8'h00;
+            reset = 1'b0;
         } SOFT_RST[0:0];
     } RESET_CONTROL;
     reg {
