@@ -6,12 +6,6 @@ module tti
 #(
     parameter int unsigned CsrDataWidth = 32,
 
-    parameter int unsigned RxDescFifoDepth = 64,
-    parameter int unsigned TxDescFifoDepth = 64,
-    parameter int unsigned RxFifoDepth = 64,
-    parameter int unsigned TxFifoDepth = 64,
-    parameter int unsigned IbiFifoDepth = 64,
-
     parameter int unsigned RxDescDataWidth = 32,
     parameter int unsigned TxDescDataWidth = 32,
     parameter int unsigned RxDataWidth = 32,
