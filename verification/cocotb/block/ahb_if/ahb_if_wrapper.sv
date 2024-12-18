@@ -44,8 +44,8 @@ module ahb_if_wrapper
   logic                    s_cpuif_wr_err;
 
   ahb_if #(
-      .AhbDataWidth,
-      .AhbAddrWidth
+      .AhbDataWidth(AhbDataWidth),
+      .AhbAddrWidth(AhbAddrWidth)
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),

@@ -75,10 +75,10 @@ module axi_adapter_wrapper
   logic                    s_cpuif_wr_err;
 
   axi_adapter #(
-      .AxiDataWidth,
-      .AxiAddrWidth,
-      .AxiUserWidth,
-      .AxiIdWidth
+      .AxiDataWidth(AxiDataWidth),
+      .AxiAddrWidth(AxiAddrWidth),
+      .AxiUserWidth(AxiUserWidth),
+      .AxiIdWidth(AxiIdWidth)
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),

@@ -272,21 +272,21 @@ module hci_queues_wrapper
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t hwif_rec_inp;
 
   hci #(
-      .HciRespFifoDepth,
-      .HciCmdFifoDepth,
-      .HciRxFifoDepth,
-      .HciTxFifoDepth,
-      .HciIbiFifoDepth,
-      .HciRespDataWidth,
-      .HciCmdDataWidth,
-      .HciRxDataWidth,
-      .HciTxDataWidth,
-      .HciIbiDataWidth,
-      .HciRespThldWidth,
-      .HciCmdThldWidth,
-      .HciRxThldWidth,
-      .HciTxThldWidth,
-      .HciIbiThldWidth
+      .HciRespFifoDepth(HciRespFifoDepth),
+      .HciCmdFifoDepth(HciCmdFifoDepth),
+      .HciRxFifoDepth(HciRxFifoDepth),
+      .HciTxFifoDepth(HciTxFifoDepth),
+      .HciIbiFifoDepth(HciIbiFifoDepth),
+      .HciRespDataWidth(HciRespDataWidth),
+      .HciCmdDataWidth(HciCmdDataWidth),
+      .HciRxDataWidth(HciRxDataWidth),
+      .HciTxDataWidth(HciTxDataWidth),
+      .HciIbiDataWidth(HciIbiDataWidth),
+      .HciRespThldWidth(HciRespThldWidth),
+      .HciCmdThldWidth(HciCmdThldWidth),
+      .HciRxThldWidth(HciRxThldWidth),
+      .HciTxThldWidth(HciTxThldWidth),
+      .HciIbiThldWidth(HciIbiThldWidth)
   ) hci (
       .clk_i(hclk),
       .rst_ni(hreset_n),

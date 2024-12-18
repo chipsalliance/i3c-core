@@ -243,10 +243,10 @@ module hci_queues_wrapper
   logic s_cpuif_wr_err;
 
   axi_adapter #(
-      .AxiDataWidth,
-      .AxiAddrWidth,
-      .AxiUserWidth,
-      .AxiIdWidth
+      .AxiDataWidth(AxiDataWidth),
+      .AxiAddrWidth(AxiAddrWidth),
+      .AxiUserWidth(AxiUserWidth),
+      .AxiIdWidth(AxiIdWidth)
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -333,22 +333,22 @@ module hci_queues_wrapper
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t hwif_rec_inp;
 
   hci #(
-      .HciRespFifoDepth,
-      .HciCmdFifoDepth,
-      .HciRxFifoDepth,
-      .HciTxFifoDepth,
-      .HciIbiFifoDepth,
-      .HciRespDataWidth,
-      .HciCmdDataWidth,
-      .HciRxDataWidth,
-      .HciTxDataWidth,
-      .HciIbiDataWidth,
-      .HciRespThldWidth,
-      .HciCmdThldWidth,
-      .HciRxThldWidth,
-      .HciTxThldWidth,
-      .HciIbiThldWidth
-  ) hci (
+      .HciRespFifoDepth(HciRespFifoDepth),
+      .HciCmdFifoDepth(HciCmdFifoDepth),
+      .HciRxFifoDepth(HciRxFifoDepth),
+      .HciTxFifoDepth(HciTxFifoDepth),
+      .HciIbiFifoDepth(HciIbiFifoDepth),
+      .HciRespDataWidth(HciRespDataWidth),
+      .HciCmdDataWidth(HciCmdDataWidth),
+      .HciRxDataWidth(HciRxDataWidth),
+      .HciTxDataWidth(HciTxDataWidth),
+      .HciIbiDataWidth(HciIbiDataWidth),
+      .HciRespThldWidth(HciRespThldWidth),
+      .HciCmdThldWidth(HciCmdThldWidth),
+      .HciRxThldWidth(HciRxThldWidth),
+      .HciTxThldWidth(HciTxThldWidth),
+      .HciIbiThldWidth(HciIbiThldWidth)
+  ) xhci (
       .clk_i(aclk),  // clock
       .rst_ni(areset_n), // active low reset
 
