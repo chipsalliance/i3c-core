@@ -299,21 +299,6 @@ def ctrl_bus_monitor_verify(session, test_group, test_name, coverage, simulator)
     verify_block(session, test_group, test_name, coverage, simulator)
 
 
-# FIXME: This test is now just a stub
-# @nox.session(tags=["tests", "ahb", "axi"])
-# @nox.parametrize("test_group", ["i3c_target_fsm"])
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_i3c_target_fsm",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i3c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
-
-
 @nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["i3c_phy_io"])
 @nox.parametrize(
