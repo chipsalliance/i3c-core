@@ -81,7 +81,10 @@ lint-tests: ## Run lint on tests source code
 	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s lint
 
 lint-verilator:
-	verilator -Wall --lint-only -f $(I3C_ROOT_DIR)/src/i3c.f
+	verilator --timing -Wall --lint-only -f $(I3C_ROOT_DIR)/src/i3c.f
+
+build-verilator:
+	verilator --timing -Wall --binary -f $(I3C_ROOT_DIR)/src/i3c.f
 
 #
 # Tests
