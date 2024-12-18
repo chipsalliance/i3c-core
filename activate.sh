@@ -1,7 +1,5 @@
 #!/bin/env bash
 
-set -e
-
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
@@ -28,5 +26,3 @@ python --version
 pip install --upgrade pip
 python -m pip install -r "$(pwd)"/requirements.txt
 pyenv rehash
-
-set +e
