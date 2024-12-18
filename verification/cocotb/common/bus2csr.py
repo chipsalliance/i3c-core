@@ -158,6 +158,10 @@ class AHBTestInterface(FrontBusTestInterface):
         self, addr: int, data: List[int], size: int = 4, timeout: int = 1, units: str = "us"
     ) -> None:
         """Send a write request & await transfer to finish for 'timeout' in 'units'."""
+        data_len = len(data)
+        # Extend bytes to size if there's less than that
+        if data_len <= size:
+            data = data + [0 for _ in range(size - data_len)]
         # Write strobe is not supported by DUT's AHB-Lite; enable all bytes
         strb = [1 for _ in range(size)]
         self.AHBManager.write(addr, len(strb), data, strb)
