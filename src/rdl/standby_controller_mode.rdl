@@ -41,8 +41,7 @@ regfile StandbyControllerModeRegisters{
             to receive its Dynamic Address before operating in Standby Controller mode.
             ";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
             reset = 2'h0;
         } STBY_CR_ENABLE_INIT[31:30];
         field {
@@ -55,8 +54,7 @@ regfile StandbyControllerModeRegisters{
             1'b1: HANDLE_INTR: Support Defining Byte 0x02
             ";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
             reset = 1'h0;
         } RSTACT_DEFBYTE_02[20:20];
         field {
@@ -113,7 +111,7 @@ regfile StandbyControllerModeRegisters{
             sw = rw;
             hw = rw;
             we = true;
-            reset = 1'h0;
+            reset = 1'h1;
         } TARGET_XACT_ENABLE[12:12];
         field {
             name = "Ring Bundle IBI Selector for Broadcast CCC Capture";
@@ -121,8 +119,7 @@ regfile StandbyControllerModeRegisters{
             The Ring Bundle must be configured and enabled, and its IBI Ring Pair must also be initialized and ready to receive data.
             ";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
             reset = 1'h0;
         } BAST_CCC_IBI_RING[10:8];
         field {
@@ -130,9 +127,8 @@ regfile StandbyControllerModeRegisters{
             desc = "Write of 1'b1 to this field shall instruct the Secondary Controller Logic
             to attempt to send a Controller Role Request to the I3C Bus.
             ";
-            sw = rw;
-            hw = rw;
-            we = true;
+            sw = w;
+            hw = r;
             reset = 1'h0;
         } CR_REQUEST_SEND[5:5];
         field {

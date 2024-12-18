@@ -1565,9 +1565,9 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 |  2  |  ACR_FSM_OP_SELECT  |   rw   |  —  |             Active Controller Select             |
 |  3  |PRIME_ACCEPT_GETACCCR|   rw   |  —  |          Prime to Accept Controller Role         |
 |  4  |  HANDOFF_DEEP_SLEEP |rw, wset| 0x0 |                Handoff Deep Sleep                |
-|  5  |   CR_REQUEST_SEND   |   rw   | 0x0 |           Send Controller Role Request           |
+|  5  |   CR_REQUEST_SEND   |    w   | 0x0 |           Send Controller Role Request           |
 | 10:8|  BAST_CCC_IBI_RING  |   rw   | 0x0 |Ring Bundle IBI Selector for Broadcast CCC Capture|
-|  12 |  TARGET_XACT_ENABLE |   rw   | 0x0 |   Target Transaction Interface Servicing Enable  |
+|  12 |  TARGET_XACT_ENABLE |   rw   | 0x1 |   Target Transaction Interface Servicing Enable  |
 |  13 |  DAA_SETAASA_ENABLE |   rw   | 0x0 |       Dynamic Address Method Enable SETAASA      |
 |  14 |  DAA_SETDASA_ENABLE |   rw   | 0x0 |       Dynamic Address Method Enable SETDASA      |
 |  15 |  DAA_ENTDAA_ENABLE  |   rw   | 0x0 |       Dynamic Address Method Enable ENTDAA       |

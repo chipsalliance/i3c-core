@@ -525,16 +525,6 @@ package I3CCSR_pkg;
     typedef struct packed{
         logic next;
         logic we;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__CR_REQUEST_SEND__in_t;
-
-    typedef struct packed{
-        logic [2:0] next;
-        logic we;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__BAST_CCC_IBI_RING__in_t;
-
-    typedef struct packed{
-        logic next;
-        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t;
 
     typedef struct packed{
@@ -553,29 +543,15 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t;
-
-    typedef struct packed{
-        logic [1:0] next;
-        logic we;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__in_t;
-
-    typedef struct packed{
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PENDING_RX_NACK__in_t PENDING_RX_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__in_t HANDOFF_DELAY_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__in_t ACR_FSM_OP_SELECT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__in_t PRIME_ACCEPT_GETACCCR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__in_t HANDOFF_DEEP_SLEEP;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__CR_REQUEST_SEND__in_t CR_REQUEST_SEND;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__BAST_CCC_IBI_RING__in_t BAST_CCC_IBI_RING;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t TARGET_XACT_ENABLE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__in_t DAA_SETAASA_ENABLE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t DAA_SETDASA_ENABLE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t DAA_ENTDAA_ENABLE;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__in_t RSTACT_DEFBYTE_02;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__in_t STBY_CR_ENABLE_INIT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__in_t;
 
     typedef struct packed{

@@ -5268,9 +5268,6 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
-            load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next = load_next_c;
@@ -5291,9 +5288,6 @@ module I3CCSR (
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value & ~decoded_wr_biten[10:8]) | (decoded_wr_data[10:8] & decoded_wr_biten[10:8]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
             load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next = next_c;
@@ -5325,7 +5319,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= 1'h0;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= 1'h1;
         end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
         end
@@ -5412,9 +5406,6 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value & ~decoded_wr_biten[20:20]) | (decoded_wr_data[20:20] & decoded_wr_biten[20:20]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
-            load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next = load_next_c;
@@ -5435,9 +5426,6 @@ module I3CCSR (
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value & ~decoded_wr_biten[31:30]) | (decoded_wr_data[31:30] & decoded_wr_biten[31:30]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
             load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next = next_c;
@@ -9062,8 +9050,7 @@ module I3CCSR (
     assign readback_array[59][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value : '0;
     assign readback_array[59][3:3] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value : '0;
     assign readback_array[59][4:4] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value : '0;
-    assign readback_array[59][5:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value : '0;
-    assign readback_array[59][7:6] = '0;
+    assign readback_array[59][7:5] = '0;
     assign readback_array[59][10:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value : '0;
     assign readback_array[59][11:11] = '0;
     assign readback_array[59][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value : '0;
