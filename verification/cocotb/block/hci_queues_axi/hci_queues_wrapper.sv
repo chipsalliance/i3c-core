@@ -348,7 +348,7 @@ module hci_queues_wrapper
       .HciRxThldWidth(HciRxThldWidth),
       .HciTxThldWidth(HciTxThldWidth),
       .HciIbiThldWidth(HciIbiThldWidth)
-  ) xhci (
+  ) hci (
       .clk_i(aclk),  // clock
       .rst_ni(areset_n), // active low reset
 
@@ -711,8 +711,6 @@ module hci_queues_wrapper
   // TODO: These write-enable signals were not combo-driven or initialized on reset.
   // This is a placeholder driver. They require either unimplemented drivers or changes in RDL.
   always_comb begin : missing_csr_we_inits
-    hwif_tti_inp.RESET_CONTROL.SOFT_RST.we = 0;
-    hwif_tti_inp.RESET_CONTROL.RX_DATA_RST.we = 0;
     hci.hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
     hci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
     hci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 0;
@@ -727,16 +725,14 @@ module hci_queues_wrapper
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.we = 0;
-    hci.hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
-    hci.hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we = 0;
     hci.hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = 0;
 
     hci.hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
     hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.we = 0;
 
     xtti.hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
+    xtti.hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.RX_DESC_RST.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.SOFT_RST.we = 0;
