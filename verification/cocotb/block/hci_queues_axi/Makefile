@@ -15,8 +15,9 @@ TOPLEVEL     = hci_queues_wrapper
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 
-VERILOG_SOURCES  = \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
+include $(TEST_DIR)/../../caliptra_common.mk
+
+VERILOG_SOURCES += \
     $(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \

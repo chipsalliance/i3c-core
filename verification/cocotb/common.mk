@@ -14,14 +14,6 @@ $(info From common.mk, CURDIR is $(CURDIR))
 # Set pythonpath so that tests can access common modules
 export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/common
 
-# Common sources
-COMMON_SOURCES  = \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim_generic/rtl/caliptra_prim_generic_flop.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_flop_2sync.sv
-
 VERILOG_INCLUDE_DIRS= \
     $(CALIPTRA_ROOT)/src/libs/rtl \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl \

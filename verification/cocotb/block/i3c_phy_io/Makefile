@@ -13,7 +13,9 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_phy_io_wrapper
 
-VERILOG_SOURCES  = \
+include $(TEST_DIR)/../../caliptra_common.mk
+
+VERILOG_SOURCES += \
 	$(SRC_DIR)/phy/buf_od.sv \
 	$(SRC_DIR)/phy/buf_pp.sv \
 	$(SRC_DIR)/phy/bufs.sv \
