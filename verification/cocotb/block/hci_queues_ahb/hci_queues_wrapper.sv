@@ -211,7 +211,7 @@ module hci_queues_wrapper
   logic s_cpuif_wr_ack;
   logic s_cpuif_wr_err;
 
-  logic tti_rx_wflush;
+  logic tti_rx_flush;
 
   ahb_if #(
       .AhbDataWidth(`AHB_DATA_WIDTH),
@@ -610,7 +610,7 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_wvalid_i(tti_rx_wvalid_i),
       .ctl_tti_rx_data_queue_wready_o(tti_rx_wready_o),
       .ctl_tti_rx_data_queue_wdata_i(tti_rx_wdata_i),
-      .ctl_tti_rx_data_queue_wflush_i(tti_rx_wflush),
+      .ctl_tti_rx_data_queue_flush_i(tti_rx_flush),
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
@@ -674,7 +674,7 @@ module hci_queues_wrapper
   always_comb begin : other_uninit_signals
     xrecovery_handler.irq_o = 0;
     xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
-    tti_rx_wflush = 0;
+    tti_rx_flush = 0;
   end : other_uninit_signals
 
 endmodule
