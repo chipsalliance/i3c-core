@@ -279,6 +279,9 @@ module ccc
 
   logic [7:0] rx_data;
 
+  logic       last_tbit;
+  logic       last_tbit_valid;
+
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_ccc
     if (~rst_ni) begin
       command_code <= '0;
@@ -289,11 +292,22 @@ module ccc
     end
   end
 
+  assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
+    if (~rst_ni) begin
+      last_tbit <= '0;
+    end else begin
+      if (last_tbit_valid) begin
+        last_tbit <= rx_data[7];
+      end
+    end
+  end
+
   // TODO: Handle Bcast CCCs
   typedef enum logic [7:0] {
     Idle,
     WaitCCC,
-    WaitForStart,
     RxTbit,
     RxByte,
     RxDirectDefByteTbit,
@@ -356,13 +370,13 @@ module ccc
         state_d = WaitCCC;
       end
       WaitCCC: begin
-        if (ccc_valid_i) state_d = WaitForStart;
+        if (ccc_valid_i) state_d = RxTbit;
       end
-      WaitForStart: begin
-        if (bus_rstart_det_i) state_d = RxDirectAddr;
+      RxTbit: begin
+        if (bus_rx_done_i) state_d = RxByte;
       end
       RxByte: begin
-        if (bus_start_det_i) state_d = RxDirectAddr;
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
         else if (bus_rx_done_i) state_d = RxDirectDefByteTbit;
       end
       RxDirectDefByteTbit: begin
@@ -440,7 +454,7 @@ module ccc
       RxByte: begin
         bus_rx_req_bit_o  = '0;
         bus_rx_req_byte_o = '1;
-        if (bus_start_det_i) bus_rx_req_byte_o = '0;
+        if (bus_rstart_det_i) bus_rx_req_byte_o = '0;
       end
       RxDirectDefByteTbit: begin
         bus_rx_req_bit_o  = '1;
