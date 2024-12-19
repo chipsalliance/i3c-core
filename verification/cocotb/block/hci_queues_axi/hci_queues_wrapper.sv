@@ -730,11 +730,7 @@ module hci_queues_wrapper
 
     xtti.hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.RX_DESC_RST.we = 0;
     xtti.hwif_tti_o.RESET_CONTROL.SOFT_RST.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.TX_DESC_RST.we = 0;
   end : missing_csr_we_inits
 
   always_comb begin : other_uninit_signals
