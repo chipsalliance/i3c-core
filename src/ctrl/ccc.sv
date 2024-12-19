@@ -282,6 +282,11 @@ module ccc
   logic       last_tbit;
   logic       last_tbit_valid;
 
+  logic       set_dasa_valid;
+  logic [7:0] set_dasa_addr;
+  logic       set_aasa_valid;
+  logic [7:0] set_aasa_addr;
+
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_ccc
     if (~rst_ni) begin
       command_code <= '0;
@@ -579,21 +584,27 @@ module ccc
     endcase
   end
 
+  // Connect dynamic address setter mux
+  always_comb begin: dyn_addr_set_mux
+    set_dasa_valid_o = set_aasa_valid ? set_aasa_valid : set_dasa_valid;
+    set_dasa_o = set_aasa_valid ? set_aasa_addr : set_dasa_addr;
+  end
+
   // Handle DIRECT SET CCCs
   always_ff @(posedge clk_i or negedge rst_ni) begin: proc_set
     if (~rst_ni) begin
-      set_dasa_valid_o <= 1'b0;
-      set_dasa_o <= '0;
+      set_dasa_valid <= 1'b0;
+      set_dasa_addr <= '0;
     end else begin
       case (command_code)
         // setdasa has only one data byte - dynamic address
         `I3C_DIRECT_SETDASA: begin
           if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            set_dasa_o <= rx_data;
-            set_dasa_valid_o <= 1'b1;
+            set_dasa_addr <= rx_data;
+            set_dasa_valid <= 1'b1;
           end else begin
-            set_dasa_o <= '0;
-            set_dasa_valid_o <= 1'b0;
+            set_dasa_addr <= '0;
+            set_dasa_valid <= 1'b0;
           end
         end
         default: begin
@@ -603,9 +614,11 @@ module ccc
   end
 
   // Handle Broadcast CCCs
-  always_ff begin: bcast_ccc
+  always_ff @(posedge clk_i or negedge rst_ni) begin: bcast_ccc
     if (~rst_ni) begin
       rstdaa_o <= '0;
+      set_aasa_addr <= '0;
+      set_aasa_valid <= 1'b0;
     end else begin
       case(command_code)
         `I3C_BCAST_RSTDAA: begin
@@ -614,7 +627,19 @@ module ccc
           end else begin
             rstdaa_o <= '0;
           end
-      end
+        end
+        // set static address as dynamic
+        // we reuse the SETDASA path here, just set static addr as the one to
+        // be set
+        `I3C_BCAST_SETAASA: begin
+          if (state_q == HandleBroadcast) begin
+            set_aasa_addr <= target_sta_address_i;
+            set_aasa_valid <= 1'b1;
+          end else begin
+            set_aasa_addr <= '0;
+            set_aasa_valid <= 1'b0;
+          end
+        end
       default: begin
       end
       endcase
