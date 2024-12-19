@@ -123,8 +123,14 @@ module configuration (
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
   assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
 
-  assign get_mwl_o = '1;
-  assign get_mrl_o = '1;
+  logic [15:0] mwl_dword;
+  logic [15:0] mrl_dword;
+
+  assign mwl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value + 1'b1);
+  assign mrl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value + 1'b1);
+  assign get_mwl_o = mwl_dword << 2;
+  assign get_mrl_o = mrl_dword << 2;
+
   assign get_status_fmt1_o = {
     8'h00,  // Vendor-specific meaning
     2'b11,  // Unable to do Handoff

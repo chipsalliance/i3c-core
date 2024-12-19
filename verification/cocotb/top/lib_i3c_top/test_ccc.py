@@ -169,3 +169,40 @@ async def test_ccc_getdcr(dut):
     dcr = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
     dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
     assert _DCR_VALUE == dcr_value
+
+
+@cocotb.test()
+async def test_ccc_getmwl(dut):
+
+    _TXRX_QUEUE_SIZE = 2 ** (5 + 1)  # Dwords
+    _MWL_VALUE = 4 * _TXRX_QUEUE_SIZE  # Bytes
+
+    command = CCC.DIRECT.GETMWL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    [mwl_msb, mwl_lsb] = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=2)
+
+    mwl = (mwl_msb << 8) | mwl_lsb
+    assert mwl == _MWL_VALUE
+
+
+@cocotb.test()
+async def test_ccc_getmrl(dut):
+
+    _TXRX_QUEUE_SIZE = 2 ** (5 + 1)  # Dwords
+    _MRL_VALUE = 4 * _TXRX_QUEUE_SIZE  # Bytes
+    _IBI_PAYLOAD_SIZE = 255  # Bytes
+    command = CCC.DIRECT.GETMRL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    [mrl_msb, mrl_lsb, ibi_payload_size] = await i3c_controller.i3c_ccc_read(
+        ccc=command, addr=TGT_ADR, count=3
+    )
+
+    mrl = (mrl_msb << 8) | mrl_lsb
+    assert mrl == _MRL_VALUE
+    assert ibi_payload_size == _IBI_PAYLOAD_SIZE

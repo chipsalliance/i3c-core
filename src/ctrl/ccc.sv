@@ -179,7 +179,7 @@ module ccc
     // Exchange Timing Information
     // I3C_BCAST_SETXTIME
 
-    // Set Dynamic Address from Static Address 
+    // Set Dynamic Address from Static Address
     output logic [7:0] set_dasa_o,
     output logic set_dasa_valid_o,
 
@@ -560,8 +560,8 @@ module ccc
         if (tx_data_id == 8'h03) tx_data = get_mrl_i[15:8];
         else if (tx_data_id == 8'h02) tx_data = get_mrl_i[7:0];
         else if (tx_data_id == 8'h01)
-          // TODO: 5.1.9.3.6: This byte is optional
-          tx_data = '0;
+          // Maximum IBI payload size is 256 Bytes
+          tx_data = '1;
       end
       `I3C_DIRECT_GETPID: begin
         tx_data_id_init = 8'h06;
@@ -585,7 +585,7 @@ module ccc
       set_dasa_valid_o <= 1'b0;
       set_dasa_o <= '0;
     end else begin
-      case(command_code)
+      case (command_code)
         // setdasa has only one data byte - dynamic address
         `I3C_DIRECT_SETDASA: begin
           if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
@@ -595,9 +595,9 @@ module ccc
             set_dasa_o <= '0;
             set_dasa_valid_o <= 1'b0;
           end
-      end
-      default: begin
-      end
+        end
+        default: begin
+        end
       endcase
     end
   end
