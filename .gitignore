@@ -14,6 +14,7 @@ __pycache__
 *.swp
 *.sym
 *.vcd
+*.vpd
 *.xml
 build/
 configs/

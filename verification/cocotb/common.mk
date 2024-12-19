@@ -54,10 +54,9 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += +libext+.sv +libext+.v
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
 
-    COMPILE_ARGS += -debug_access
-    COMPILE_ARGS += -top dump_vcd
-    VERILOG_SOURCES += $(I3C_ROOT)/verification/cocotb/common/dump_vcd.sv
+    COMPILE_ARGS += -debug_access+all +memcbk
     SIM_ARGS += +dumpon
+    EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd 
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
@@ -69,3 +68,13 @@ ifneq ($(COVERAGE_TYPE),)
 endif
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
+
+ifeq ($(SIM), vcs)
+
+.PHONY: convert-vpd2vcd
+convert-vpd2vcd: $(COCOTB_RESULTS_FILE)
+	vpd2vcd -full64 dump.vpd dump.vcd +splitpacked
+
+all: sim convert-vpd2vcd
+
+endif
