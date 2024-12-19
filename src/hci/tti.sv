@@ -152,14 +152,59 @@ module tti
     ibi_queue_reg_rst_o     = hwif_tti_i.RESET_CONTROL.IBI_QUEUE_RST.value;
   end : wire_hwif_rst
 
-  always_comb begin : wire_int_status
-    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we   = '0;
-  end
-
   always_comb begin
     hwif_tti_o.STATUS.LAST_IBI_STATUS.next = ibi_status_i;
     hwif_tti_o.STATUS.LAST_IBI_STATUS.we = ibi_status_we_i;
   end
 
+  always_comb begin : wire_unconnected_regs
+    hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
+    hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
+
+    hwif_tti_o.STATUS.PROTOCOL_ERROR.next = '0;
+
+    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next = '0;
+
+    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.IBI_DONE_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.next = '0;
+    hwif_tti_o.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.next = '0;
+
+    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.IBI_THLD_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.IBI_DONE_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.next = '0;
+    hwif_tti_o.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.next = '0;
+
+    hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
+    hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
+  end
 endmodule : tti

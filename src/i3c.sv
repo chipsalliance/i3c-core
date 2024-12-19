@@ -1039,21 +1039,4 @@ module i3c
       .sel_od_pp_i(ctrl_sel_od_pp),
       .sel_od_pp_o(sel_od_pp_o)
   );
-
-  always_comb begin : other_uninit_signals
-    xcontroller.xcontroller_active.flow_fsm.dct_write_valid_hw_o = 0;
-    xcontroller.xcontroller_standby.i2c_rx_queue_flush_o = 0;
-    xrecovery_handler.irq_o = 0;
-    xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
-    xcontroller.xcontroller_active.flow_fsm.rx_queue_wvalid_o = 0;
-    // See the TODO `in src/ctrl/flow_active.sv`
-    //xcontroller.xcontroller_active.flow_fsm.resp_queue_wvalid_o = 0;
-    xcontroller.xcontroller_active.flow_fsm.ibi_queue_wvalid_o = 0;
-
-    xcontroller.xcontroller_active.flow_fsm.err.err_0 = 0;
-    xcontroller.xcontroller_active.flow_fsm.irq.irq_0 = 0;
-    // No proper zero assignment in combo block
-    //xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.command_code_valid = 0;
-  end : other_uninit_signals
-
 endmodule

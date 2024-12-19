@@ -192,6 +192,7 @@ module hci_queues_wrapper
     input logic tti_rx_wvalid_i,
     output logic tti_rx_wready_o,
     input logic [7:0] tti_rx_wdata_i,
+    input logic tti_rx_flush_i,
 
     // TX queue
     output logic tti_tx_full_o,
@@ -205,6 +206,7 @@ module hci_queues_wrapper
     output logic tti_tx_rvalid_o,
     input logic tti_tx_rready_i,
     output logic [7:0] tti_tx_rdata_o,
+    input logic tti_tx_flush_i,
 
     // In-band Interrupt Queue
     output logic tti_ibi_full_o,
@@ -225,7 +227,11 @@ module hci_queues_wrapper
 
     // Received I2C/I3C address along with RnW# bit
     input logic [7:0] bus_addr_i,
-    input logic bus_addr_valid_i
+    input logic bus_addr_valid_i,
+
+    output logic payload_available_o,
+    output logic image_activated_o,
+    output logic irq_o
 );
 
   // I3C SW CSR IF
@@ -320,9 +326,6 @@ module hci_queues_wrapper
   logic [19:0] unused_t_bus_free_o;
   logic [19:0] unused_t_bus_idle_o;
   logic [19:0] unused_t_bus_available_o;
-
-  logic tti_rx_flush;
-  logic tti_tx_flush;
 
   // HCI
   I3CCSR_pkg::I3CCSR__out_t unused_hwif_out;
@@ -505,13 +508,6 @@ module hci_queues_wrapper
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
 
-  // Interrupt
-  logic irq;
-
-  // Recovery status
-  logic payload_available;
-  logic image_activated;
-
   tti xtti (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -581,11 +577,11 @@ module hci_queues_wrapper
       .hwif_rec_o(hwif_rec_inp),
 
       // Interrupt
-      .irq_o(irq),
+      .irq_o(irq_o),
 
       // Recovery status
-      .payload_available_o(payload_available),
-      .image_activated_o(image_activated),
+      .payload_available_o(payload_available_o),
+      .image_activated_o(image_activated_o),
 
       // ...........................
       // TTI CSR interface
@@ -679,7 +675,7 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_wvalid_i(tti_rx_wvalid_i),
       .ctl_tti_rx_data_queue_wready_o(tti_rx_wready_o),
       .ctl_tti_rx_data_queue_wdata_i(tti_rx_wdata_i),
-      .ctl_tti_rx_data_queue_flush_i(tti_rx_flush),
+      .ctl_tti_rx_data_queue_flush_i(tti_rx_flush_i),
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
@@ -692,7 +688,7 @@ module hci_queues_wrapper
       .ctl_tti_tx_data_queue_rvalid_o(tti_tx_rvalid_o),
       .ctl_tti_tx_data_queue_rready_i(tti_tx_rready_i),
       .ctl_tti_tx_data_queue_rdata_o(tti_tx_rdata_o),
-      .ctl_tti_tx_data_queue_flush_i(tti_tx_flush),
+      .ctl_tti_tx_data_queue_flush_i(tti_tx_flush_i),
       .ctl_tti_tx_data_queue_start_thld_o(tti_tx_start_thld_o),
       .ctl_tti_tx_data_queue_start_thld_trig_o(tti_tx_start_thld_trig_o),
       .ctl_tti_tx_data_queue_ready_thld_o(tti_tx_ready_thld_o),
@@ -709,35 +705,4 @@ module hci_queues_wrapper
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_ready_thld_o),
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig_o)
   );
-
-  // TODO: These write-enable signals were not combo-driven or initialized on reset.
-  // This is a placeholder driver. They require either unimplemented drivers or changes in RDL.
-  always_comb begin : missing_csr_we_inits
-    hci.hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
-    hci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
-    hci.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 0;
-    hci.hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we = 0;
-    hci.hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
-    hci.hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
-    hci.hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
-
-    hci.hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
-
-    xtti.hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
-    xtti.hwif_tti_o.RESET_CONTROL.SOFT_RST.we = 0;
-  end : missing_csr_we_inits
-
-  always_comb begin : other_uninit_signals
-    xrecovery_handler.irq_o = 0;
-    xrecovery_handler.recv_tti_rx_data_queue_flow = 0;
-    tti_rx_flush = 0;
-    tti_tx_flush = 0;
-  end : other_uninit_signals
-
 endmodule

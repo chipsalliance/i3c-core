@@ -206,6 +206,8 @@ module controller_standby
     tx_host_nack_o = sel_i2c_i3c ? i3c_tx_host_nack_o : i2c_tx_host_nack_o;
   end
 
+  assign i2c_rx_queue_flush_o = '0;
+
   controller_standby_i2c #(
       .TtiRxDescDataWidth(TtiRxDescDataWidth),
       .TtiTxDescDataWidth(TtiTxDescDataWidth),

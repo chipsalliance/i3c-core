@@ -23,10 +23,12 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.tti_tx_desc_rready_i.value = 0
         self.dut.hci_rx_wvalid_i.value = 0
         self.dut.hci_ibi_wvalid_i.value = 0
-        self.dut.hci_resp_wvalid_i = 0
+        self.dut.hci_resp_wvalid_i.value = 0
         self.dut.tti_rx_wvalid_i.value = 0
-        self.dut.tti_rx_desc_wvalid_i = 0
-        self.dut.tti_ibi_rready_i = 0
+        self.dut.tti_rx_desc_wvalid_i.value = 0
+        self.dut.tti_ibi_rready_i.value = 0
+        self.dut.tti_rx_flush_i.value = 0
+        self.dut.tti_tx_flush_i.value = 0
 
         await super()._setup(get_frontend_bus_if())
 

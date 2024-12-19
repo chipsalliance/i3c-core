@@ -108,6 +108,12 @@ module flow_active
     output i3c_irq_t irq
 );
 
+  assign dct_write_valid_hw_o ='0;
+  assign rx_queue_wvalid_o ='0;
+  assign ibi_queue_wvalid_o ='0;
+  assign err ='0;
+  assign irq ='0;
+
   typedef enum logic [3:0] {
     Idle = 4'd0,
     WaitForCmd = 4'd1,

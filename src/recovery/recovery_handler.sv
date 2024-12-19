@@ -173,6 +173,7 @@ module recovery_handler
     output logic payload_available_o,
     output logic image_activated_o
 );
+  assign irq_o = '0;
 
   // ....................................................
 
@@ -540,7 +541,6 @@ module recovery_handler
 
   logic       recv_tti_rx_data_queue_select;
   logic       recv_tti_rx_data_queue_flush;
-  logic       recv_tti_rx_data_queue_flow;
 
   // RX data queue
   always_comb begin : R2MUX
