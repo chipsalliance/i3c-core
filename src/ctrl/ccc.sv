@@ -292,18 +292,6 @@ module ccc
     end
   end
 
-  assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
-
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
-    if (~rst_ni) begin
-      last_tbit <= '0;
-    end else begin
-      if (last_tbit_valid) begin
-        last_tbit <= rx_data[7];
-      end
-    end
-  end
-
   // TODO: Handle Bcast CCCs
   typedef enum logic [7:0] {
     Idle,
@@ -322,6 +310,19 @@ module ccc
   } state_e;
 
   state_e state_q, state_d;
+
+  assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
+    if (~rst_ni) begin
+      last_tbit <= '0;
+    end else begin
+      if (last_tbit_valid) begin
+        last_tbit <= rx_data[7];
+      end
+    end
+  end
+
 
   logic is_direct_cmd;
   assign is_direct_cmd = command_code[7];  // 0 - BCast, 1 - Direct
@@ -571,7 +572,7 @@ module ccc
   end
 
   // Handle DIRECT SET CCCs
-  always_ff begin: proc_set
+  always_ff @(posedge clk_i or negedge rst_ni) begin: proc_set
     if (~rst_ni) begin
       set_dasa_valid_o <= 1'b0;
       set_dasa_o <= '0;
