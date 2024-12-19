@@ -3,6 +3,7 @@ include:
     file: i3c-core.yaml
 
 stages:
+  - prebuild
   - build
   - deploy
 
