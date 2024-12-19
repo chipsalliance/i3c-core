@@ -640,22 +640,7 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__in_t;
 
     typedef struct packed{
-        logic [7:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__DCR__in_t;
-
-    typedef struct packed{
-        logic [4:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_VAR__in_t;
-
-    typedef struct packed{
-        logic [2:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_FIXED__in_t;
-
-    typedef struct packed{
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__in_t PID_HI;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__DCR__in_t DCR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_VAR__in_t BCR_VAR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_FIXED__in_t BCR_FIXED;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__in_t;
 
     typedef struct packed{

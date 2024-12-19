@@ -3056,11 +3056,11 @@ package I3CCSR_uvm;
             this.PID_HI = new("PID_HI");
             this.PID_HI.configure(this, 15, 1, "RW", 1, 'h0, 0, 1, 0);
             this.DCR = new("DCR");
-            this.DCR.configure(this, 8, 16, "RW", 1, 'h0, 0, 1, 0);
+            this.DCR.configure(this, 8, 16, "RW", 0, 'hbd, 1, 1, 0);
             this.BCR_VAR = new("BCR_VAR");
-            this.BCR_VAR.configure(this, 5, 24, "RW", 1, 'h0, 0, 1, 0);
+            this.BCR_VAR.configure(this, 5, 24, "RW", 0, 'h6, 1, 1, 0);
             this.BCR_FIXED = new("BCR_FIXED");
-            this.BCR_FIXED.configure(this, 3, 29, "RW", 1, 'h0, 0, 1, 0);
+            this.BCR_FIXED.configure(this, 3, 29, "RW", 0, 'h1, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PID_HI_bit_cg[bt]) PID_HI_bit_cg[bt] = new();
                 foreach(DCR_bit_cg[bt]) DCR_bit_cg[bt] = new();

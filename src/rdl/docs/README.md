@@ -1783,9 +1783,9 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 | Bits|Identifier|Access|Reset|   Name  |
 |-----|----------|------|-----|---------|
 | 15:1|  PID_HI  |  rw  |  —  |  PID_HI |
-|23:16|    DCR   |  rw  |  —  |   DCR   |
-|28:24|  BCR_VAR |  rw  |  —  | BCR_VAR |
-|31:29| BCR_FIXED|  rw  |  —  |BCR_FIXED|
+|23:16|    DCR   |  rw  | 0xBD|   DCR   |
+|28:24|  BCR_VAR |  rw  | 0x6 | BCR_VAR |
+|31:29| BCR_FIXED|  rw  | 0x1 |BCR_FIXED|
 
 #### PID_HI field
 
@@ -1793,15 +1793,35 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 #### DCR field
 
-
+<p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
 
 #### BCR_VAR field
 
-
+<p>Bus Characteristics, Variable Part.</p>
+<p>Reset value is set to 5'b00110, because this device:</p>
+<ul>
+<li>
+<p>[bit4] is not a Virtual  Target</p>
+</li>
+<li>
+<p>[bit3] is not Offline Capable</p>
+</li>
+<li>
+<p>[bit2] uses the MDB in the IBI Payload</p>
+</li>
+<li>
+<p>[bit1] is capable of IBI requests</p>
+</li>
+<li>
+<p>[bit0] has no speed limitation</p>
+</li>
+</ul>
 
 #### BCR_FIXED field
 
-
+<p>Bus Characteristics, Fixed Part.</p>
+<p>Reset value is set to 3'b001, because this device is an I3C Target,
+which supports extended capabilities</p>
 
 ### STBY_CR_DEVICE_PID_LO register
 

@@ -309,21 +309,42 @@ regfile StandbyControllerModeRegisters{
         desc = "";
         field {
             name = "BCR_FIXED";
-            desc = "";
-            hw   = rw;
+            desc = "Bus Characteristics, Fixed Part.
+
+            Reset value is set to 3'b001, because this device is an I3C Target,
+            which supports extended capabilities
+            ";
+            hw   = r;
             sw   = rw;
+            reset = 3'b001;
         } BCR_FIXED[31:29];
         field {
             name = "BCR_VAR";
-            desc = "";
-            hw   = rw;
+            desc = "Bus Characteristics, Variable Part.
+
+            Reset value is set to 5'b00110, because this device:
+
+
+            - [bit4] is not a Virtual  Target
+
+            - [bit3] is not Offline Capable
+
+            - [bit2] uses the MDB in the IBI Payload
+
+            - [bit1] is capable of IBI requests
+
+            - [bit0] has no speed limitation
+            ";
+            hw   = r;
             sw   = rw;
+            reset = 5'b00110;
         } BCR_VAR[28:24];
         field {
             name = "DCR";
-            desc = "";
-            hw   = rw;
+            desc = "Device Characteristics Register. Value represents an OCP Recovery Device.";
+            hw   = r;
             sw   = rw;
+            reset = 8'hBD;
         } DCR[23:16];
         field {
             name = "PID_HI";

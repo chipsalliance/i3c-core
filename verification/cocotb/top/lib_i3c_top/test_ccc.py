@@ -4,6 +4,7 @@ import logging
 
 from boot import boot_init
 from bus2csr import bytes2int
+from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from interface import I3CTopTestInterface
 
@@ -90,16 +91,14 @@ async def test_ccc_setdasa(dut):
         ccc=I3C_DIRECT_SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR])]
     )
     dynamic_address_reg_addr = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr
-    dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR;
-    dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID;
+    dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
+    dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
     dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
-    dynamic_address_valid = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_valid)
-    assert (
-            dynamic_address == DYNAMIC_ADDR
-    ), "Unexpected DYNAMIC ADDRESS read from the CSR"
-    assert (
-            dynamic_address_valid == 1
-    ), "New DYNAMIC ADDRESS is not set as valid"
+    dynamic_address_valid = await tb.read_csr_field(
+        dynamic_address_reg_addr, dynamic_address_reg_valid
+    )
+    assert dynamic_address == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the CSR"
+    assert dynamic_address_valid == 1, "New DYNAMIC ADDRESS is not set as valid"
 
 @cocotb.test()
 async def test_ccc_rstdaa(dut):
@@ -129,13 +128,44 @@ async def test_ccc_rstdaa(dut):
     # reset Dynamic Address
     await i3c_controller.i3c_ccc_write(ccc=I3C_DIRECT_RSTDAA)
 
-    # check if the address was reset 
+    # check if the address was reset
     dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
     dynamic_address_valid = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_valid)
     assert (
-            dynamic_address == 0 
+            dynamic_address == 0
     ), "Unexpected DYNAMIC ADDRESS read from the CSR"
     assert (
             dynamic_address_valid == 0
     ), "New DYNAMIC ADDRESS is not set as valid"
 
+
+@cocotb.test()
+async def test_ccc_getbcr(dut):
+
+    _BCR_FIXED = 0b001  # CSR reset value
+    _BCR_VAR = 0b00110  # CSR reset value
+    _BCR_VALUE = (_BCR_FIXED << 5) | _BCR_VAR
+
+    command = CCC.DIRECT.GETBCR
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    bcr = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    bcr_value = int.from_bytes(bcr, byteorder="big", signed=False)
+    assert _BCR_VALUE == bcr_value
+
+
+@cocotb.test()
+async def test_ccc_getdcr(dut):
+
+    _DCR_VALUE = 0xBD  # OCP Recovery Device
+
+    command = CCC.DIRECT.GETDCR
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    dcr = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
+    assert _DCR_VALUE == dcr_value
