@@ -89,3 +89,15 @@ async def test_ccc_setdasa(dut):
     await i3c_controller.i3c_ccc_write(
         ccc=I3C_DIRECT_SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR])]
     )
+    dynamic_address_reg_addr = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr
+    dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR;
+    dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID;
+    dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
+    dynamic_address_valid = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_valid)
+    assert (
+            dynamic_address == DYNAMIC_ADDR
+    ), "Unexpected DYNAMIC ADDRESS read from the CSR"
+    assert (
+            dynamic_address_valid == 1
+    ), "New DYNAMIC ADDRESS is not set as valid"
+
