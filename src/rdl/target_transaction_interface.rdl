@@ -43,7 +43,7 @@ regfile TargetTransactionInterfaceRegisters #(
             0x7 - Device will retry indefinitely until the Active Controller sets
             DISINT bit in the DISEC command.
             ";
-            sw = r;
+            sw = rw;
             hw = r;
             reset = 3'b000;
         } IBI_RETRY_NUM[15:13];
@@ -79,7 +79,8 @@ regfile TargetTransactionInterfaceRegisters #(
             11 - Failure: IBI was terminated after 1 retry.
             ";
             sw = rw;
-            hw = r;
+            hw = w;
+            we = true;
             reset = 2'b00;
         } LAST_IBI_STATUS[15:14];
         field {

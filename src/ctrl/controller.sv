@@ -212,6 +212,10 @@ module controller
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
 
+    // Status update signals
+    output logic [1:0] ibi_status_o,
+    output logic ibi_status_we_o,
+
     output logic [7:0] rst_action_o,
     output logic [7:0] set_dasa_o,
     output logic       set_dasa_valid_o,
@@ -245,6 +249,9 @@ module controller
   logic target_ibi_addr_valid;
   logic [6:0] target_hot_join_addr;
   logic [63:0] daa_unique_response;
+
+  logic ibi_enable;
+  logic [2:0] ibi_retry_num;
 
   // 4:1 multiplexer for signals between PHY and controllers.
   // Needed, because there are 4 controllers in the design (i2c/i3c + active/standby).
@@ -290,7 +297,9 @@ module controller
       .target_ibi_addr_o      (target_ibi_addr),
       .target_ibi_addr_valid_o(target_ibi_addr_valid),
       .target_hot_join_addr_o (target_hot_join_addr),
-      .daa_unique_response_o  (daa_unique_response)
+      .daa_unique_response_o  (daa_unique_response),
+      .ibi_enable_o           (ibi_enable),
+      .ibi_retry_num_o        (ibi_retry_num)
   );
 
 
@@ -459,13 +468,16 @@ module controller
       .target_ibi_addr_i(target_ibi_addr),
       .target_ibi_addr_valid_i(target_ibi_addr_valid),
       .target_hot_join_addr_i(target_hot_join_addr),
+      .ibi_enable_i(ibi_enable),
+      .ibi_retry_num_i(ibi_retry_num),
       .daa_unique_response_i(daa_unique_response),
       .rst_action_o(rst_action_o),
       .tx_host_nack_o(tti_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
-      .rstdaa_o(rstdaa_o)
-
+      .rstdaa_o(rstdaa_o),
+      .ibi_status_o(ibi_status_o),
+      .ibi_status_we_o(ibi_status_we_o)
   );
 
 endmodule

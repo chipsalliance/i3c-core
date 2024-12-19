@@ -10,6 +10,8 @@ module controller_standby_i3c
     parameter int unsigned TtiTxDataWidth = 8,
     parameter int unsigned TtiTxFifoDepth = 16,  // FIXME
     localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
+    parameter int unsigned TtiIbiFifoDepth = 16,
+    localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
     parameter int unsigned TtiIbiDataWidth = 32
 ) (
     input logic clk_i,
@@ -50,6 +52,7 @@ module controller_standby_i3c
     input logic ibi_queue_full_i,
     input logic ibi_queue_empty_i,
     input logic ibi_queue_rvalid_i,
+    input logic [TtiIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
     output logic ibi_queue_rready_o,
     input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
 
@@ -85,13 +88,17 @@ module controller_standby_i3c
     input logic target_ibi_addr_valid_i,
     input logic [6:0] target_hot_join_addr_i,
     input logic [63:0] daa_unique_response_i,
+    input logic ibi_enable_i,
+    input logic [2:0] ibi_retry_num_i,
 
     output logic [7:0] rst_action_o,
     output logic tx_host_nack_o,
-
     output logic [7:0] set_dasa_o,
     output logic set_dasa_valid_o,
-    output logic rstdaa_o
+    output logic rstdaa_o,
+
+    output logic [1:0] ibi_status_o,
+    output logic ibi_status_we_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -135,6 +142,14 @@ module controller_standby_i3c
   logic [7:0] ccc_bus_tx_req_value;
   logic ccc_bus_tx_sel_od_pp;
 
+  logic ibi_bus_tx_req_err;
+  logic ibi_bus_tx_done;
+  logic ibi_bus_tx_idle;
+  logic ibi_bus_tx_req_byte;
+  logic ibi_bus_tx_req_bit;
+  logic [7:0] ibi_bus_tx_req_value;
+  logic ibi_bus_tx_sel_od_pp;
+
   // Bus RX flow
   logic bus_rx_req_bit;
   logic bus_rx_req_byte;
@@ -157,6 +172,11 @@ module controller_standby_i3c
   logic [7:0] ccc_bus_rx_data;
   logic ccc_bus_rx_error;
 
+  logic ibi_bus_rx_req_bit;
+  logic ibi_bus_rx_req_byte;
+  logic ibi_bus_rx_done;
+  logic [7:0] ibi_bus_rx_data;
+
   // TX Queue interface
   logic tx_fifo_rvalid;
   logic tx_fifo_rready;
@@ -173,7 +193,7 @@ module controller_standby_i3c
   // IBI Queue interface
   logic ibi_fifo_rvalid;
   logic ibi_fifo_rready;
-  logic [31:0] ibi_fifo_rdata;
+  logic [7:0] ibi_fifo_rdata;
   logic ibi_last_byte;
 
   // Bus events notifications
@@ -190,7 +210,9 @@ module controller_standby_i3c
   logic is_in_hdr_mode;
 
   // SubFSMs status
-  logic is_ibi_done;
+  logic ibi_pending;
+  logic ibi_begin;
+  logic ibi_done;
 
   logic [7:0] ccc;
   logic ccc_valid;
@@ -230,7 +252,6 @@ module controller_standby_i3c
 
   // Drive all unused inputs here
   always_comb begin
-    // FIXME: IBI module will drive scl
     ctrl_scl_o = '1;
   end
 
@@ -247,14 +268,19 @@ module controller_standby_i3c
   xfer_mux_sel_e xfer_mux_sel;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) begin
+    if (~rst_ni)
       xfer_mux_sel <= Fsm;
-    end else begin
-      if (ccc_valid) xfer_mux_sel <= Ccc;
-      else if (is_ccc_done) xfer_mux_sel <= Fsm;
-    end
+    else if (xfer_mux_sel == Fsm)
+      unique case ({ibi_begin, ccc_valid})
+        2'b01:    xfer_mux_sel <= Ccc;
+        2'b10:    xfer_mux_sel <= Ibi;
+        default:  xfer_mux_sel <= Fsm;
+      endcase
+    else if (xfer_mux_sel == Ccc && is_ccc_done)
+      xfer_mux_sel <= Fsm;
+    else if (xfer_mux_sel == Ibi && ibi_done)
+      xfer_mux_sel <= Fsm;
   end
-
 
   always_comb begin
     ccc_bus_tx_req_err = '0;
@@ -277,6 +303,10 @@ module controller_standby_i3c
     ccc_bus_rx_idle    = '0;
     ccc_bus_rx_data    = '0;
     ccc_bus_rx_error   = '0;
+    ibi_bus_tx_req_err = '0;
+    ibi_bus_tx_done    = '0;
+    ibi_bus_tx_idle    = '0;
+    ibi_bus_rx_done    = '0;
 
     unique case (xfer_mux_sel)
       Fsm: begin
@@ -312,11 +342,29 @@ module controller_standby_i3c
         ccc_bus_rx_error   = bus_rx_error;
       end
       Ibi: begin
+        //ibi_bus_tx_req_err = bus_tx_req_err;
+        ibi_bus_tx_done    = bus_tx_done;
+        //ibi_bus_tx_idle    = bus_tx_idle;
+        bus_tx_req_byte    = ibi_bus_tx_req_byte;
+        bus_tx_req_bit     = ibi_bus_tx_req_bit;
+        bus_tx_req_value   = ibi_bus_tx_req_value;
+        bus_tx_sel_od_pp   = ibi_bus_tx_sel_od_pp;
+        bus_rx_req_byte    = ibi_bus_rx_req_byte;
+        bus_rx_req_bit     = ibi_bus_rx_req_bit;
+        ibi_bus_rx_data    = bus_rx_data;
+        ibi_bus_rx_done    = bus_rx_done;
       end
       default: ;
     endcase
   end
 
+  // Allow IBI module to pull SDA
+  logic ibi_sda;
+  logic tx_sda;
+
+  assign ctrl_sda_o = tx_sda & ibi_sda;
+
+  // Target FSM
   i3c_target_fsm #(
       .RxDataWidth (8),
       .TxDataWidth (8),
@@ -354,16 +402,10 @@ module controller_standby_i3c
       .rx_fifo_wdata_o            (rx_fifo_wdata),
       .rx_fifo_wready_i           (rx_fifo_wready),
       .rx_last_byte_o             (rx_last_byte),
-      .ibi_fifo_rvalid_i          (ibi_fifo_rvalid),
-      .ibi_fifo_rready_o          (ibi_fifo_rready),
-      .ibi_fifo_rdata_i           (ibi_fifo_rdata),
-      .ibi_last_byte_i            (ibi_last_byte),
       .target_sta_address_i       (target_sta_addr_i),
       .target_sta_address_valid_i (target_sta_addr_valid_i),
       .target_dyn_address_i       (target_dyn_addr_i),
       .target_dyn_address_valid_i (target_dyn_addr_valid_i),
-      .target_ibi_address_i       (target_ibi_addr_i),
-      .target_ibi_address_valid_i (target_ibi_addr_valid_i),
       .event_target_nack_o        (event_target_nack),
       .event_cmd_complete_o       (event_cmd_complete),
       .event_unexp_stop_o         (event_unexp_stop),
@@ -374,7 +416,10 @@ module controller_standby_i3c
       .rst_action_o,
       .hdr_exit_detect_i          (hdr_exit_detect),
       .is_in_hdr_mode_o           (is_in_hdr_mode),
-      .is_ibi_done_i              (is_ibi_done),
+      .ibi_enable_i               (ibi_enable_i),
+      .ibi_pending_i              (ibi_pending),
+      .ibi_begin_o                (ibi_begin),
+      .ibi_done_i                 (ibi_done),
       .ccc_o                      (ccc),
       .ccc_valid_o                (ccc_valid),
       .is_ccc_done_i              (is_ccc_done),
@@ -448,7 +493,51 @@ module controller_standby_i3c
       .get_mxds_i                (get_mxds)
   );
 
-  bus_tx_flow xbus_tx_flow (
+  ibi u_ibi (
+      .clk_i,
+      .rst_ni,
+
+      .ibi_retry_num_i           (ibi_retry_num_i),
+      .ibi_abort_i               (1'b0),
+      .ibi_status_o              (ibi_status_o),
+      .ibi_status_we_o           (ibi_status_we_o),
+
+      .begin_i                   (ibi_begin),
+      .done_o                    (ibi_done),
+
+      .target_ibi_addr_i,
+      .target_ibi_addr_valid_i,
+
+      .ibi_byte_valid_i          (ibi_fifo_rvalid),
+      .ibi_byte_ready_o          (ibi_fifo_rready),
+      .ibi_byte_i                (ibi_fifo_rdata),
+      .ibi_byte_last_i           (ibi_last_byte),
+      .ibi_byte_err_o            (), // FIXME
+
+      .scl_negedge_i             (scl_negedge),
+      .scl_posedge_i             (scl_posedge),
+      .bus_available_i           (bus_available),
+      .bus_stop_i                (bus_stop_det),
+
+      .bus_tx_done_i             (ibi_bus_tx_done),
+      .bus_tx_req_byte_o         (ibi_bus_tx_req_byte),
+      .bus_tx_req_bit_o          (ibi_bus_tx_req_bit),
+      .bus_tx_req_value_o        (ibi_bus_tx_req_value),
+      .bus_tx_sel_od_pp_o        (ibi_bus_tx_sel_od_pp),
+
+      .bus_rx_done_i             (ibi_bus_rx_done),
+      .bus_rx_req_byte_o         (ibi_bus_rx_req_byte),
+      .bus_rx_req_bit_o          (ibi_bus_rx_req_bit),
+      .bus_rx_req_value_i        (ibi_bus_rx_data),
+
+      .sda_o                     (ibi_sda)
+  );
+
+  // An IBI is pending as long as the descriptor_ibi has something to send to
+  // the ibi module.
+  assign ibi_pending = ibi_fifo_rvalid;
+
+  bus_tx_flow u_bus_tx_flow (
       .clk_i,
       .rst_ni,
       .t_r_i,
@@ -466,7 +555,7 @@ module controller_standby_i3c
       .bus_error_o     (bus_error),
       .sel_od_pp_i     (bus_tx_sel_od_pp),
       .sel_od_pp_o     (phy_sel_od_pp_o),
-      .sda_o           (ctrl_sda_o)
+      .sda_o           (tx_sda)
   );
 
   bus_rx_flow xbus_rx_flow (
@@ -561,22 +650,23 @@ module controller_standby_i3c
   );
 
   descriptor_ibi #(
-      .TtiIbiDataWidth(TtiIbiDataWidth)
-  ) xdescriptor_ibi (
+      .TtiIbiDataWidth(TtiIbiDataWidth),
+      .TtiIbiDataDepth(TtiIbiFifoDepthWidth)
+  ) u_descriptor_ibi (
       .clk_i             (clk_i),
       .rst_ni            (rst_ni),
       .ibi_queue_full_i  (ibi_queue_full_i),
       .ibi_queue_empty_i (ibi_queue_empty_i),
       .ibi_queue_rvalid_i(ibi_queue_rvalid_i),
+      .ibi_queue_depth_i (ibi_queue_depth_i),
       .ibi_queue_rready_o(ibi_queue_rready_o),
       .ibi_queue_rdata_i (ibi_queue_rdata_i),
-      .ibi_fifo_rvalid_o (ibi_fifo_rvalid),
-      .ibi_fifo_rready_i (ibi_fifo_rready),
-      .ibi_fifo_rdata_o  (ibi_fifo_rdata),
-      .ibi_last_o        (ibi_last_byte),
-      .ibi_err_i         ('0)                   // FIXME
+      .ibi_byte_valid_o  (ibi_fifo_rvalid),
+      .ibi_byte_ready_i  (ibi_fifo_rready),
+      .ibi_byte_o        (ibi_fifo_rdata),
+      .ibi_byte_last_o   (ibi_last_byte),
+      .ibi_byte_err_i    ('0) // FIXME
   );
-
 
   assign tx_host_nack_o = tx_host_nack;
 

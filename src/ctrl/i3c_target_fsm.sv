@@ -78,19 +78,11 @@ module i3c_target_fsm #(
     input  logic                   rx_fifo_wready_i,
     output logic                   rx_last_byte_o,
 
-    // IBI FIFO
-    input  logic                    ibi_fifo_rvalid_i,
-    output logic                    ibi_fifo_rready_o,
-    input  logic [IbiDataWidth-1:0] ibi_fifo_rdata_i,
-    input  logic                    ibi_last_byte_i,
-
-    // IBI address
+    // Target address
     input logic [6:0] target_sta_address_i,
     input logic target_sta_address_valid_i,
     input logic [6:0] target_dyn_address_i,
     input logic target_dyn_address_valid_i,
-    input logic [6:0] target_ibi_address_i,
-    input logic target_ibi_address_valid_i,
 
     output logic event_target_nack_o,  // this target sent a NACK (this is used to keep count)
     output logic event_cmd_complete_o,  // Command is complete
@@ -103,9 +95,12 @@ module i3c_target_fsm #(
     output logic [7:0] rst_action_o,
     input  logic       hdr_exit_detect_i,
     output logic       is_in_hdr_mode_o,
+    input  logic       ibi_enable_i, // TTI.CONTROL.IBI_EN
 
     // Interfacing with IBI subFSMs
-    input logic is_ibi_done_i,
+    input  logic ibi_pending_i,
+    output logic ibi_begin_o,
+    input  logic ibi_done_i,
 
     // Interfacing with CCC subFSMs
     output logic [7:0] ccc_o,
@@ -133,9 +128,6 @@ module i3c_target_fsm #(
 
   // Target specific variables
   logic nack_transaction_q, nack_transaction_d;
-  logic is_ibi_pending;
-
-  assign is_ibi_pending = ibi_fifo_rvalid_i;
 
   // Latch whether this transaction is to be NACK'd.
   always_ff @(posedge clk_i or negedge rst_ni) begin : clk_nack_transaction
@@ -331,7 +323,6 @@ module i3c_target_fsm #(
     bus_tx_req_bit_o = '0;
     bus_tx_req_value_o = 8'h1;
     tx_host_nack_o = '0;
-    ibi_fifo_rready_o = '0;
     bus_addr_d = '0;
     bus_addr_valid = '0;
     bus_rnw_d = '0;
@@ -339,13 +330,15 @@ module i3c_target_fsm #(
     is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;
+    ibi_begin_o = '0;
     ccc_valid_o = 1'b0;
     ccc_code = '0;
     ccc_code_valid = 1'b0;
 
-
     case (state_q)
-      Idle: ;
+      Idle:
+        ibi_begin_o = target_enable_i && !target_reset_detect_i &&
+                      ibi_enable_i && ibi_pending_i;
       RxFByte: begin
         bus_rx_req_byte_o = ~bus_start_det;
         if (bus_rx_done_i) begin
@@ -435,7 +428,8 @@ module i3c_target_fsm #(
           state_d = target_reset_detect_i ? DoRstAction :
           // TODO: Add flow for Hot-Join
           // do_hot_join        ? DoHotJoin :
-          is_ibi_pending ? DoIBI : bus_start_det ? RxFByte : Idle;
+          (ibi_pending_i && ibi_enable_i) ? DoIBI :
+           bus_start_det                  ? RxFByte : Idle;
       end
       RxFByte: begin
         if (bus_rx_done_i) begin
@@ -510,7 +504,7 @@ module i3c_target_fsm #(
       end
 
       DoIBI: begin
-        if (is_ibi_done_i) state_d = DoneIBI;
+        if (ibi_done_i) state_d = DoneIBI;
       end
       DoneIBI: begin
         state_d = Idle;

@@ -33,8 +33,6 @@ module configuration (
     output logic [ 7:0] bcr_o,  // Bus Characteristics Register
     output logic [ 7:0] dcr_o,  // Device Characteristics Register
 
-
-
     // Output effective target address (static or dynamic)
     output logic [6:0] target_sta_addr_o,
     output logic target_sta_addr_valid_o,
@@ -47,7 +45,11 @@ module configuration (
     output logic [6:0] target_hot_join_addr_o,
 
     // Response for ENTDAA
-    output logic [63:0] daa_unique_response_o
+    output logic [63:0] daa_unique_response_o,
+
+    // Target IBI
+    output logic ibi_enable_o,
+    output logic [2:0] ibi_retry_num_o
 );
 
   // Mode of operation
@@ -156,5 +158,9 @@ module configuration (
   assign target_ibi_addr_valid_o = target_sta_addr_valid_o || target_dyn_addr_valid_o;
 
   assign target_hot_join_addr_o = 7'h02;
+
+  // Configuration: Target IBI
+  assign ibi_enable_o    = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
+  assign ibi_retry_num_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
 
 endmodule

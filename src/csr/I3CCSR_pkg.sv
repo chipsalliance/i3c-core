@@ -918,7 +918,13 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t;
 
     typedef struct packed{
+        logic [1:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__in_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t PROTOCOL_ERROR;
+        I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__in_t LAST_IBI_STATUS;
     } I3CCSR__I3C_EC__TTI__STATUS__in_t;
 
     typedef struct packed{
@@ -2408,12 +2414,7 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__out_t;
 
     typedef struct packed{
-        logic [1:0] value;
-    } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__out_t;
-
-    typedef struct packed{
         I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__out_t PROTOCOL_ERROR;
-        I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__out_t LAST_IBI_STATUS;
     } I3CCSR__I3C_EC__TTI__STATUS__out_t;
 
     typedef struct packed{

@@ -3690,7 +3690,7 @@ package I3CCSR_uvm;
             this.IBI_EN = new("IBI_EN");
             this.IBI_EN.configure(this, 1, 12, "RW", 0, 'h1, 1, 1, 0);
             this.IBI_RETRY_NUM = new("IBI_RETRY_NUM");
-            this.IBI_RETRY_NUM.configure(this, 3, 13, "RO", 0, 'h0, 1, 1, 0);
+            this.IBI_RETRY_NUM.configure(this, 3, 13, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(IBI_EN_bit_cg[bt]) IBI_EN_bit_cg[bt] = new();
                 foreach(IBI_RETRY_NUM_bit_cg[bt]) IBI_RETRY_NUM_bit_cg[bt] = new();
@@ -3725,7 +3725,7 @@ package I3CCSR_uvm;
             this.PROTOCOL_ERROR = new("PROTOCOL_ERROR");
             this.PROTOCOL_ERROR.configure(this, 1, 13, "RO", 1, 'h0, 1, 1, 0);
             this.LAST_IBI_STATUS = new("LAST_IBI_STATUS");
-            this.LAST_IBI_STATUS.configure(this, 2, 14, "RW", 0, 'h0, 1, 1, 0);
+            this.LAST_IBI_STATUS.configure(this, 2, 14, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PROTOCOL_ERROR_bit_cg[bt]) PROTOCOL_ERROR_bit_cg[bt] = new();
                 foreach(LAST_IBI_STATUS_bit_cg[bt]) LAST_IBI_STATUS_bit_cg[bt] = new();

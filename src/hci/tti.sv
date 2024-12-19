@@ -74,7 +74,11 @@ module tti
     output logic [IbiThldWidth-1:0] ibi_queue_ready_thld_o,
     output logic                    ibi_queue_reg_rst_o,
     input  logic                    ibi_queue_reg_rst_we_i,
-    input  logic                    ibi_queue_reg_rst_data_i
+    input  logic                    ibi_queue_reg_rst_data_i,
+
+    // IBI status
+    input logic [1:0] ibi_status_i,
+    input logic ibi_status_we_i
 );
 
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
@@ -136,6 +140,8 @@ module tti
     ibi_queue_req_o = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
     ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
     hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
+    hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = ibi_queue_reg_rst_we_i;
+    hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.next = ibi_queue_reg_rst_data_i;
   end : wire_hwif_xfer
 
   always_comb begin : wire_hwif_rst
@@ -149,6 +155,11 @@ module tti
   always_comb begin : wire_int_status
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we   = '0;
+  end
+
+  always_comb begin
+    hwif_tti_o.STATUS.LAST_IBI_STATUS.next = ibi_status_i;
+    hwif_tti_o.STATUS.LAST_IBI_STATUS.we = ibi_status_we_i;
   end
 
 endmodule : tti

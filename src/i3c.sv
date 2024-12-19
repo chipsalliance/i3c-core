@@ -477,6 +477,10 @@ module i3c
 
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
+  // Status
+  logic [1:0] ibi_status;
+  logic ibi_status_we;
+
   controller #(
       .DatAw(DatAw),
       .DctAw(DctAw)
@@ -631,6 +635,9 @@ module i3c
       .err(),  // TODO: Handle errors
       .irq(),  // TODO: Handle interrupts
       .hwif_out_i(hwif_out),
+
+      .ibi_status_o (ibi_status),
+      .ibi_status_we_o (ibi_status_we),
 
       .rst_action_o(rst_action),
       .set_dasa_o(set_dasa),
@@ -872,7 +879,10 @@ module i3c
       .ibi_queue_ready_thld_o  (csr_tti_ibi_ready_thld),
       .ibi_queue_reg_rst_o     (csr_tti_ibi_reg_rst),
       .ibi_queue_reg_rst_we_i  (csr_tti_ibi_reg_rst_we),
-      .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data)
+      .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data),
+
+      .ibi_status_i (ibi_status),
+      .ibi_status_we_i (ibi_status_we)
   );
 
   // Recovery handler

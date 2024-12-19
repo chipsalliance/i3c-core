@@ -1262,6 +1262,10 @@ module I3CCSR (
                         logic next;
                         logic load_next;
                     } IBI_EN;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } IBI_RETRY_NUM;
                 } CONTROL;
                 struct packed{
                     struct packed{
@@ -2358,6 +2362,9 @@ module I3CCSR (
                     struct packed{
                         logic value;
                     } IBI_EN;
+                    struct packed{
+                        logic [2:0] value;
+                    } IBI_RETRY_NUM;
                 } CONTROL;
                 struct packed{
                     struct packed{
@@ -6897,7 +6904,27 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.IBI_EN.value = field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value;
-    assign hwif_out.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value = 3'h0;
+    // Field: I3CCSR.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value & ~decoded_wr_biten[15:13]) | (decoded_wr_data[15:13] & decoded_wr_biten[15:13]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.next = next_c;
+        field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value <= 3'h0;
+        end else if(field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.load_next) begin
+            field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value <= field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value = field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
     // Field: I3CCSR.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
     always_comb begin
         automatic logic [0:0] next_c;
@@ -6928,6 +6955,9 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.STATUS && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value & ~decoded_wr_biten[15:14]) | (decoded_wr_data[15:14] & decoded_wr_biten[15:14]);
             load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
+            load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next = next_c;
         field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.load_next = load_next_c;
@@ -6939,7 +6969,6 @@ module I3CCSR (
             field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
         end
     end
-    assign hwif_out.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value = field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value;
     // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.SOFT_RST
     always_comb begin
         automatic logic [0:0] next_c;
@@ -9174,7 +9203,7 @@ module I3CCSR (
     assign readback_array[74][31:24] = '0;
     assign readback_array[75][11:0] = '0;
     assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
-    assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? 3'h0 : '0;
+    assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
     assign readback_array[75][31:16] = '0;
     assign readback_array[76][12:0] = '0;
     assign readback_array[76][13:13] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;

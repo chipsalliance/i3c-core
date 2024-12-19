@@ -60,6 +60,28 @@ async def test_setup(dut):
     return i3c_controller, i3c_target, tb
 
 
+def format_ibi_data(mdb, data):
+    """
+    Given MDB and a list of data bytes (can be empty) prepare a sequence of
+    32-bit words to be written to the TTI IBI queue.
+    """
+    count = (len(data) + 3) // 4
+    words = [0 for i in range(count)]
+
+    i = 0
+    j = 0
+    for d in data:
+        words[j] |= d << (8 * i)
+
+        i = i + 1
+        if i == 4:
+            i = 0
+            j = j + 1
+
+    descr = (mdb << 24) | len(data)
+    return [descr] + words
+
+
 @cocotb.test()
 async def test_i3c_target_write(dut):
 
@@ -172,23 +194,235 @@ async def test_i3c_target_read(dut):
     await ClockCycles(tb.clk, 100)
 
 
-# FIXME: Reenable after implementation
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_i3c_target_ibi(dut):
+    """
+    IBI test. Sends an IBI with no data and then subsequently IBIs with
+    different data lengths. Expects the controller to ACK all of them and
+    return correctly received data.
+    """
+
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
     target = i3c_controller.add_target(TARGET_ADDRESS)
     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
 
-    # Write MDB to Target's IBI queue
-    mdb = 0xAA
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(mdb), 4)
+    result = True
+
+    # Enable IBI ACK-ing
+    i3c_controller.enable_ibi(True)
+
+    # Write descriptor to the TTI IBI queue. No IBI data
+    mdb  = 0xAA
+    data = []
+    ibi_data = format_ibi_data(mdb, data)
+    dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
 
     # Wait for the IBI to be serviced, check data
-    data = await i3c_controller.wait_for_ibi()
-    expected = bytearray([TARGET_ADDRESS, mdb])
-    assert data == expected
+    response = await i3c_controller.wait_for_ibi()
+    expected = bytearray([TARGET_ADDRESS, mdb] + data)
+    if response != expected:
+        dut._log.critical(
+            "IBI MDB/data mismatch! tgt: [ {}] ctl: [ {}]".format(
+                "".join("".join(f"0x{d:02X}") + " " for d in expected),
+                "".join("".join(f"0x{d:02X}") + " " for d in response),
+            )
+        )
+        result = False
+
+    # Check LAST_IBI_STATUS
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
+    last_ibi_status = (status & (3 << 14)) >> 14
+    expected_status = 0
+    if last_ibi_status != expected_status:
+        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        result = False
+
+    await ClockCycles(tb.clk, 50)
+
+    # Write descriptor to the TTI IBI queue with some data. Check different
+    # data lengths to exercise 32-bit to 8-bit conversion that happens inside
+    # IBI module
+    payload = [0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xCA]
+
+    for lnt in [4, 5, 6, 7, 8]:
+
+        mdb  = 0xAA
+        data = payload[:lnt+1]
+        ibi_data = format_ibi_data(mdb, data)
+        dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+        for word in ibi_data:
+            await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+        # Wait for the IBI to be serviced, check data
+        response = await i3c_controller.wait_for_ibi()
+        expected = bytearray([TARGET_ADDRESS, mdb] + data)
+        if response != expected:
+            dut._log.critical(
+                "IBI MDB/data mismatch! tgt: [ {}] ctl: [ {}]".format(
+                    "".join("".join(f"0x{d:02X}") + " " for d in expected),
+                    "".join("".join(f"0x{d:02X}") + " " for d in response),
+                )
+            )
+            result = False
+
+        # Check LAST_IBI_STATUS
+        status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
+        last_ibi_status = (status & (3 << 14)) >> 14
+        expected_status = 0
+        if last_ibi_status != expected_status:
+            dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+            result = False
+
+        await ClockCycles(tb.clk, 50)
+
+    # Report the test result
+    assert result
+
+
+@cocotb.test()
+async def test_i3c_target_ibi_retry(dut):
+    """
+    Disables IBI ACK-ing in controller, sends an IBI, waits some time for the
+    target to retry IBI transmission, re-enables IBI-acking, waits until the
+    IBI gets serviced, check if IBI data was received correctly.
+    """
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+
+    # Enable indefinite IBI retries
+    #  TTI.CONTROL.IBI_EN        = 1
+    #  TTI.CONTROL.IBI_RETRY_NUM = 7 (means indefinite)
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.CONTROL.base_addr, int2dword(0x0000F000), 4)
+
+    target = i3c_controller.add_target(TARGET_ADDRESS)
+    target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
+
+    result = True
+
+    # Disable IBI ACK-ing
+    i3c_controller.enable_ibi(False)
+
+    # Write descriptor to the TTI IBI queue
+    mdb  = 0xAA
+    data = [0xBE, 0xEF]
+    ibi_data = format_ibi_data(mdb, data)
+    dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+    # Wait for some time so that the target gets a change to retry IBI
+    # transmission
+    await Timer(5, "us")
+
+    # Check LAST_IBI_STATUS
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
+    last_ibi_status = (status & (3 << 14)) >> 14
+    expected_status = 3
+    if last_ibi_status != expected_status:
+        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        result = False
+
+    # Re-enable IBI ACK-ing
+    i3c_controller.enable_ibi(True)
+
+    # Wait for the IBI to be serviced, check data
+    response = await i3c_controller.wait_for_ibi()
+    expected = bytearray([TARGET_ADDRESS, mdb] + data)
+    if response != expected:
+        dut._log.critical(
+            "IBI MDB/data mismatch! tgt: [ {}] ctl: [ {}]".format(
+                "".join("".join(f"0x{d:02X}") + " " for d in expected),
+                "".join("".join(f"0x{d:02X}") + " " for d in response),
+            )
+        )
+        result = False
+
+    # Check LAST_IBI_STATUS
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
+    last_ibi_status = (status & (3 << 14)) >> 14
+    expected_status = 0
+    if last_ibi_status != expected_status:
+        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        result = False
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
+
+    # Report the test result
+    assert result
+
+
+@cocotb.test()
+async def test_i3c_target_ibi_data(dut):
+    """
+    Set a limit on how many IBI data bytes the controller may accept. Issue
+    an IBI with more data and check if it gets serviced correctly. Finally
+    issue yet another IBI to check if target logic flushed the remaining data
+    correctly.
+    """
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+
+    target = i3c_controller.add_target(TARGET_ADDRESS)
+    target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
+
+    result = True
+
+    # Limit IBI data count that the controller can accept
+    i3c_controller.set_max_ibi_data_len(6)
+
+    # Write descriptor to the TTI IBI queue
+    mdb  = 0xAA
+    data = [0xCA, 0xFE, 0xBA, 0xCA, 0xAA, 0xBB, 0xCC, 0xDD]
+    ibi_data = format_ibi_data(mdb, data)
+    dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+    # Wait for the IBI to be serviced, check data
+    response = await i3c_controller.wait_for_ibi()
+    expected = bytearray([TARGET_ADDRESS, mdb] + data[:6])
+    if response != expected:
+        dut._log.critical(
+            "IBI MDB/data mismatch! tgt: [ {}] ctl: [ {}]".format(
+                "".join("".join(f"0x{d:02X}") + " " for d in expected),
+                "".join("".join(f"0x{d:02X}") + " " for d in response),
+            )
+        )
+        result = False
+
+    # Wait
+    await ClockCycles(tb.clk, 50)
+
+    # Do another IBI to check if remaining data from the TTI IBI queue got
+    # flushed correctly.
+    mdb  = 0xAA
+    data = [0x11, 0x22, 0x33]
+    ibi_data = format_ibi_data(mdb, data)
+    dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+    # Wait for the IBI to be serviced, check data
+    response = await i3c_controller.wait_for_ibi()
+    expected = bytearray([TARGET_ADDRESS, mdb] + data)
+    if response != expected:
+        dut._log.critical(
+            "IBI MDB/data mismatch! tgt: [ {}] ctl: [ {}]".format(
+                "".join("".join(f"0x{d:02X}") + " " for d in expected),
+                "".join("".join(f"0x{d:02X}") + " " for d in response),
+            )
+        )
+        result = False
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
+
+    # Report the test result
+    assert result

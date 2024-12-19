@@ -2202,7 +2202,7 @@ which supports extended capabilities</p>
 | Bits|  Identifier |Access|Reset|     Name    |
 |-----|-------------|------|-----|-------------|
 |  12 |    IBI_EN   |  rw  | 0x1 |    IBI_EN   |
-|15:13|IBI_RETRY_NUM|   r  | 0x0 |IBI_RETRY_NUM|
+|15:13|IBI_RETRY_NUM|  rw  | 0x0 |IBI_RETRY_NUM|
 
 #### IBI_EN field
 

@@ -133,12 +133,17 @@ module controller_standby
     input logic target_ibi_addr_valid_i,
     input logic [6:0] target_hot_join_addr_i,
     input logic [63:0] daa_unique_response_i,
+    input logic ibi_enable_i,
+    input logic [2:0] ibi_retry_num_i,
 
     output logic [7:0] rst_action_o,
     output logic tx_host_nack_o,
     output logic [7:0] set_dasa_o,
     output logic set_dasa_valid_o,
-    output logic rstdaa_o
+    output logic rstdaa_o,
+
+    output logic [1:0] ibi_status_o,
+    output logic ibi_status_we_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -287,6 +292,7 @@ module controller_standby
       .TtiTxDescDataWidth(TtiTxDescDataWidth),
       .TtiRxDataWidth(TtiRxDataWidth),
       .TtiTxDataWidth(TtiTxDataWidth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth),
       .TtiIbiDataWidth(TtiIbiDataWidth),
       .TtiTxFifoDepth(TtiTxFifoDepth)
   ) xcontroller_standby_i3c (
@@ -314,6 +320,7 @@ module controller_standby
       .ibi_queue_full_i(ibi_queue_full_i),
       .ibi_queue_empty_i(ibi_queue_empty_i),
       .ibi_queue_rvalid_i(ibi_queue_rvalid_i),
+      .ibi_queue_depth_i(ibi_queue_depth_i),
       .ibi_queue_rready_o(i3c_ibi_queue_rready_o),
       .ibi_queue_rdata_i(ibi_queue_rdata_i),
       .bus_start_o(i3c_bus_start_o),
@@ -342,12 +349,16 @@ module controller_standby
       .target_ibi_addr_i(target_ibi_addr_i),
       .target_ibi_addr_valid_i(target_ibi_addr_valid_i),
       .target_hot_join_addr_i(target_hot_join_addr_i),
+      .ibi_enable_i(ibi_enable_i),
+      .ibi_retry_num_i(ibi_retry_num_i),
       .daa_unique_response_i(daa_unique_response_i),
       .rst_action_o(rst_action_o),
       .tx_host_nack_o(i3c_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
-      .rstdaa_o(rstdaa_o)
+      .rstdaa_o(rstdaa_o),
+      .ibi_status_o(ibi_status_o),
+      .ibi_status_we_o(ibi_status_we_o)
   );
 
 endmodule
