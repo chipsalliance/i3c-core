@@ -136,7 +136,9 @@ module hci
     // Controller configuration
     output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
-    input logic [7:0] rst_action_i
+    input logic [7:0] rst_action_i,
+    input logic [7:0] set_dasa_i,
+    input logic       set_dasa_valid_i
 );
 
   I3CCSR_pkg::I3CCSR__in_t hwif_in;
@@ -289,6 +291,9 @@ module hci
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
+
+    // Addresses
+
     // STBY_CR_DEVICE_CHAR
     // STBY_CR_DEVICE_PID_LO
     // hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.we = '0;
@@ -297,6 +302,13 @@ module hci
   always_comb begin : wire_hwif_ccc
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_i;
   end : wire_hwif_ccc
+
+  always_comb begin: wire_address_setting
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = set_dasa_valid_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = set_dasa_i;
+  end
 
   I3CCSR i3c_csr (
       .clk(clk_i),

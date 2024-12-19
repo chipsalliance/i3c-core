@@ -179,8 +179,9 @@ module ccc
     // Exchange Timing Information
     // I3C_BCAST_SETXTIME
 
-    // Set All Addresses to Static Addresses
-    output logic set_dasa_o,
+    // Set Dynamic Address from Static Address 
+    output logic [7:0] set_dasa_o,
+    output logic set_dasa_valid_o,
 
     // Target Reset Action
     // I3C_BCAST_RSTACT
@@ -555,6 +556,29 @@ module ccc
     endcase
   end
 
+  // Handle DIRECT SET CCCs
+  always_ff begin: proc_set
+    if (~rst_ni) begin
+      set_dasa_valid_o <= 1'b0;
+      set_dasa_o <= '0;
+    end else begin
+      case(command_code)
+        // setdasa has only one data byte - dynamic address
+        `I3C_DIRECT_SETDASA: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            set_dasa_o <= rx_data;
+            set_dasa_valid_o <= 1'b1;
+          end else begin
+            set_dasa_o <= '0;
+            set_dasa_valid_o <= 1'b0;
+          end
+      end
+      default: begin
+      end
+      endcase
+    end
+  end
+
 
   // FIXME: Implement outputs
   assign set_brgtgt_o = '0;
@@ -580,7 +604,6 @@ module ccc
   assign ent_hdr_5_o = '0;
   assign ent_hdr_6_o = '0;
   assign ent_hdr_7_o = '0;
-  assign set_dasa_o = '0;
   assign rst_action_o = '0;
   assign set_newda_o = '0;
   assign newda_o = '0;

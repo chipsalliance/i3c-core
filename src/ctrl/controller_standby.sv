@@ -135,7 +135,9 @@ module controller_standby
     input logic [63:0] daa_unique_response_i,
 
     output logic [7:0] rst_action_o,
-    output logic tx_host_nack_o
+    output logic tx_host_nack_o,
+    output logic [7:0] set_dasa_o,
+    output logic set_dasa_valid_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -341,7 +343,9 @@ module controller_standby
       .target_hot_join_addr_i(target_hot_join_addr_i),
       .daa_unique_response_i(daa_unique_response_i),
       .rst_action_o(rst_action_o),
-      .tx_host_nack_o(i3c_tx_host_nack_o)
+      .tx_host_nack_o(i3c_tx_host_nack_o),
+      .set_dasa_o(set_dasa_o),
+      .set_dasa_valid_o(set_dasa_valid_o)
   );
 
 endmodule

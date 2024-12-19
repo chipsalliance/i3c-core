@@ -212,7 +212,9 @@ module controller
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
 
-    output logic [7:0] rst_action_o
+    output logic [7:0] rst_action_o,
+    output logic [7:0] set_dasa_o,
+    output logic       set_dasa_valid_o
 );
 
   logic phy_en;
@@ -458,7 +460,10 @@ module controller
       .target_hot_join_addr_i(target_hot_join_addr),
       .daa_unique_response_i(daa_unique_response),
       .rst_action_o(rst_action_o),
-      .tx_host_nack_o(tti_tx_host_nack_o)
+      .tx_host_nack_o(tti_tx_host_nack_o),
+      .set_dasa_o(set_dasa_o),
+      .set_dasa_valid_o(set_dasa_valid_o)
+
   );
 
 endmodule

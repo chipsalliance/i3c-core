@@ -87,7 +87,10 @@ module controller_standby_i3c
     input logic [63:0] daa_unique_response_i,
 
     output logic [7:0] rst_action_o,
-    output logic tx_host_nack_o
+    output logic tx_host_nack_o,
+
+    output logic [7:0] set_dasa_o,
+    output logic set_dasa_valid_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -217,7 +220,6 @@ module controller_standby_i3c
   logic ent_tm;
   logic [7:0] tm;
   logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
-  logic set_dasa;
   logic [7:0] rst_action;  // FIXME: Why CCC and FSM has rst_action as output?
   logic set_newda;
   logic [6:0] newda;
@@ -429,7 +431,8 @@ module controller_standby_i3c
       .ent_hdr_5_o               (ent_hdr_5),
       .ent_hdr_6_o               (ent_hdr_6),
       .ent_hdr_7_o               (ent_hdr_7),
-      .set_dasa_o                (set_dasa),
+      .set_dasa_o                (set_dasa_o),
+      .set_dasa_valid_o          (set_dasa_valid_o),
       .rst_action_o              (rst_action),
       .set_newda_o               (set_newda),
       .newda_o                   (newda),

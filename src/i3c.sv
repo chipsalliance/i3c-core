@@ -471,6 +471,8 @@ module i3c
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
   logic [7:0] rst_action;
+  logic [7:0] set_dasa;
+  logic set_dasa_valid;
 
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
@@ -629,7 +631,9 @@ module i3c
       .irq(),  // TODO: Handle interrupts
       .hwif_out_i(hwif_out),
 
-      .rst_action_o(rst_action)
+      .rst_action_o(rst_action),
+      .set_dasa_o(set_dasa),
+      .set_dasa_valid_o(set_dasa_valid)
   );
 
   // HCI
@@ -753,7 +757,9 @@ module i3c
 
       .hwif_out_o(hwif_out),
 
-      .rst_action_i(rst_action)
+      .rst_action_i(rst_action),
+      .set_dasa_i(set_dasa),
+      .set_dasa_valid_i(set_dasa_valid)
   );
 
   // TTI RX Descriptor queue
