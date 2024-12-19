@@ -40,10 +40,15 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
         ]
         if simulator == "verilator":
-            args.append("PLUSARGS=" + " ".join([
-                "+verilator+rand+reset+2",
-                f"+verilator+seed+{seed}",
-            ]))
+            args.append(
+                "PLUSARGS="
+                + " ".join(
+                    [
+                        "+verilator+rand+reset+2",
+                        f"+verilator+seed+{seed}",
+                    ]
+                )
+            )
         if coverage:
             args.append("COVERAGE_TYPE=" + coverage)
 

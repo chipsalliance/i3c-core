@@ -5,7 +5,6 @@ import logging
 from boot import boot_init
 from bus2csr import bytes2int
 from cocotbext_i3c.i3c_controller import I3cController
-from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
@@ -87,6 +86,6 @@ async def test_ccc_setdasa(dut):
     I3C_DIRECT_SETDASA = 0x87
     i3c_controller, i3c_target, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
-    status = await i3c_controller.i3c_ccc_write(
+    await i3c_controller.i3c_ccc_write(
         ccc=I3C_DIRECT_SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR])]
     )

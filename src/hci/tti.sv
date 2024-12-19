@@ -146,4 +146,9 @@ module tti
     ibi_queue_reg_rst_o     = hwif_tti_i.RESET_CONTROL.IBI_QUEUE_RST.value;
   end : wire_hwif_rst
 
+  always_comb begin : wire_int_status
+    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
+    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we   = '0;
+  end
+
 endmodule : tti
