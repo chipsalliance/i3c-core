@@ -77,7 +77,7 @@ async def get_status(dut):
 
     # RS
     await ClockCycles(dut.clk_i, 5)
-    await cycle(dut.clk_i, dut.bus_start_det_i)
+    await cycle(dut.clk_i, dut.bus_rstart_det_i)
 
     # Target Address
     await rx_byte(dut, 0x5B)
@@ -85,7 +85,7 @@ async def get_status(dut):
     # ACK
     await tx_bit(dut)
 
-    # BCR
+    # RX Bytes
     last_byte = False
     status = []
     while not last_byte:
