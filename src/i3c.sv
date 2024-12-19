@@ -473,6 +473,7 @@ module i3c
   logic [7:0] rst_action;
   logic [7:0] set_dasa;
   logic set_dasa_valid;
+  logic rstdaa;
 
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
@@ -633,7 +634,8 @@ module i3c
 
       .rst_action_o(rst_action),
       .set_dasa_o(set_dasa),
-      .set_dasa_valid_o(set_dasa_valid)
+      .set_dasa_valid_o(set_dasa_valid),
+      .rstdaa_o(rstdaa)
   );
 
   // HCI
@@ -759,7 +761,8 @@ module i3c
 
       .rst_action_i(rst_action),
       .set_dasa_i(set_dasa),
-      .set_dasa_valid_i(set_dasa_valid)
+      .set_dasa_valid_i(set_dasa_valid),
+      .rstdaa_i(rstdaa)
   );
 
   // TTI RX Descriptor queue

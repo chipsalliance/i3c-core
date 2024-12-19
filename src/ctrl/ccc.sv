@@ -306,6 +306,7 @@ module ccc
     RxDataTbit,
     TxData,
     TxDataTbit,
+    HandleBroadcast,
     DoneCCC
   } state_e;
 
@@ -374,7 +375,11 @@ module ccc
         if (ccc_valid_i) state_d = RxTbit;
       end
       RxTbit: begin
-        if (bus_rx_done_i) state_d = RxByte;
+        if (bus_rx_done_i) begin
+          // broadcast CCCs
+          if (~is_direct_cmd) state_d = HandleBroadcast;
+          else state_d = RxByte;
+        end
       end
       RxByte: begin
         if (bus_rstart_det_i) state_d = RxDirectAddr;
@@ -422,6 +427,9 @@ module ccc
         if (bus_tx_done_i)
           if (tx_data_done) state_d = RxDirectAddr;
           else state_d = TxData;
+      end
+      HandleBroadcast: begin
+        state_d = DoneCCC;
       end
       DoneCCC: begin
         state_d = Idle;
@@ -594,6 +602,24 @@ module ccc
     end
   end
 
+  // Handle Broadcast CCCs
+  always_ff begin: bcast_ccc
+    if (~rst_ni) begin
+      rstdaa_o <= '0;
+    end else begin
+      case(command_code)
+        `I3C_BCAST_RSTDAA: begin
+          if (state_q == HandleBroadcast) begin
+            rstdaa_o <= '1;
+          end else begin
+            rstdaa_o <= '0;
+          end
+      end
+      default: begin
+      end
+      endcase
+    end
+  end
 
   // FIXME: Implement outputs
   assign set_brgtgt_o = '0;
@@ -603,7 +629,6 @@ module ccc
   assign entas1_o = '0;
   assign entas2_o = '0;
   assign entas3_o = '0;
-  assign rstdaa_o = '0;
   assign entdaa_o = '0;
   assign set_mwl_o = '0;
   assign mwl_o = '0;

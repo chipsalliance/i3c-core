@@ -214,7 +214,8 @@ module controller
 
     output logic [7:0] rst_action_o,
     output logic [7:0] set_dasa_o,
-    output logic       set_dasa_valid_o
+    output logic       set_dasa_valid_o,
+    output logic       rstdaa_o
 );
 
   logic phy_en;
@@ -462,7 +463,8 @@ module controller
       .rst_action_o(rst_action_o),
       .tx_host_nack_o(tti_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
-      .set_dasa_valid_o(set_dasa_valid_o)
+      .set_dasa_valid_o(set_dasa_valid_o),
+      .rstdaa_o(rstdaa_o)
 
   );
 

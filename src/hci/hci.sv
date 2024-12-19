@@ -138,7 +138,8 @@ module hci
 
     input logic [7:0] rst_action_i,
     input logic [7:0] set_dasa_i,
-    input logic       set_dasa_valid_i
+    input logic       set_dasa_valid_i,
+    input logic       rstdaa_i
 );
 
   I3CCSR_pkg::I3CCSR__in_t hwif_in;
@@ -304,10 +305,10 @@ module hci
   end : wire_hwif_ccc
 
   always_comb begin: wire_address_setting
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = set_dasa_valid_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = set_dasa_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i | rstdaa_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i | rstdaa_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = rstdaa_i ? '0: set_dasa_valid_i;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = rstdaa_i ? 1'b0 : set_dasa_i;
   end
 
   I3CCSR i3c_csr (

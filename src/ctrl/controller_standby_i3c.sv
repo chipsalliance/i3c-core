@@ -90,7 +90,8 @@ module controller_standby_i3c
     output logic tx_host_nack_o,
 
     output logic [7:0] set_dasa_o,
-    output logic set_dasa_valid_o
+    output logic set_dasa_valid_o,
+    output logic rstdaa_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -214,7 +215,7 @@ module controller_standby_i3c
   logic enec;
   logic disec;
   logic entas0, entas1, entas2, entas3;
-  logic rstdaa, entdaa;
+  logic entdaa;
   logic set_mwl, set_mrl;
   logic [15:0] mwl, mrl;
   logic ent_tm;
@@ -415,7 +416,7 @@ module controller_standby_i3c
       .entas1_o                  (entas1),
       .entas2_o                  (entas2),
       .entas3_o                  (entas3),
-      .rstdaa_o                  (rstdaa),
+      .rstdaa_o                  (rstdaa_o),
       .entdaa_o                  (entdaa),
       .set_mwl_o                 (set_mwl),
       .mwl_o                     (mwl),
