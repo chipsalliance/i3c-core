@@ -29,11 +29,6 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
     random.seed(time.time_ns())
     seed = random.randint(1, 10000)
 
-    plusargs = [
-        "+verilator+rand+reset+2",
-        f"+verilator+seed+{seed}",
-    ]
-
     with open(test.paths["log_default"], "w") as test_log:
 
         args = [
@@ -43,9 +38,12 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             "all",
             "MODULE=" + test_name,
             "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
-            "PLUSARGS=" + " ".join(plusargs),
         ]
-
+        if simulator == "verilator":
+            args.append("PLUSARGS=" + " ".join([
+                "+verilator+rand+reset+2",
+                f"+verilator+seed+{seed}",
+            ]))
         if coverage:
             args.append("COVERAGE_TYPE=" + coverage)
 
