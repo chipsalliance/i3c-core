@@ -84,4 +84,4 @@ jobs:
         run: ./install.sh
 
       - name: Run Tests
-        run: _secret_run_i3c_tests
+        run: _secret_run_i3c_tests 2>&1
