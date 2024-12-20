@@ -9,7 +9,7 @@ BUILD_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
 BUILD_ARGS += -debug_access+all +memcbk -timescale=1ns/1ps
 
 SIM_ARGS += +dumpon
-EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd
+EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd +warn=noLINX_KRNL
 
 .PHONY: all vcs-build vcs-sim clean
 all: vcs-sim
