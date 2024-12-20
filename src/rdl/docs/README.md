@@ -1780,16 +1780,16 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 
 
-| Bits|Identifier|Access|Reset|   Name  |
-|-----|----------|------|-----|---------|
-| 15:1|  PID_HI  |  rw  |  —  |  PID_HI |
-|23:16|    DCR   |  rw  | 0xBD|   DCR   |
-|28:24|  BCR_VAR |  rw  | 0x6 | BCR_VAR |
-|31:29| BCR_FIXED|  rw  | 0x1 |BCR_FIXED|
+| Bits|Identifier|Access| Reset|   Name  |
+|-----|----------|------|------|---------|
+| 15:1|  PID_HI  |  rw  |0x7FFF|  PID_HI |
+|23:16|    DCR   |  rw  | 0xBD |   DCR   |
+|28:24|  BCR_VAR |  rw  |  0x6 | BCR_VAR |
+|31:29| BCR_FIXED|  rw  |  0x1 |BCR_FIXED|
 
 #### PID_HI field
 
-
+<p>High part of the 48-bit Target Device Provisioned ID.</p>
 
 #### DCR field
 
@@ -1831,13 +1831,13 @@ which supports extended capabilities</p>
 
 
 
-|Bits|Identifier|Access|Reset| Name |
-|----|----------|------|-----|------|
-|31:0|  PID_LO  |  rw  |  —  |PID_LO|
+|Bits|Identifier|Access|  Reset | Name |
+|----|----------|------|--------|------|
+|31:0|  PID_LO  |  rw  |0x5A00A5|PID_LO|
 
 #### PID_LO field
 
-
+<p>Low part of the 48-bit Target Device Provisioned ID.</p>
 
 ### STBY_CR_INTR_STATUS register
 

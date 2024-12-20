@@ -636,8 +636,8 @@ module i3c
       .irq(),  // TODO: Handle interrupts
       .hwif_out_i(hwif_out),
 
-      .ibi_status_o (ibi_status),
-      .ibi_status_we_o (ibi_status_we),
+      .ibi_status_o(ibi_status),
+      .ibi_status_we_o(ibi_status_we),
 
       .rst_action_o(rst_action),
       .set_dasa_o(set_dasa),
@@ -881,8 +881,8 @@ module i3c
       .ibi_queue_reg_rst_we_i  (csr_tti_ibi_reg_rst_we),
       .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data),
 
-      .ibi_status_i (ibi_status),
-      .ibi_status_we_i (ibi_status_we)
+      .ibi_status_i(ibi_status),
+      .ibi_status_we_i(ibi_status_we)
   );
 
   // Recovery handler

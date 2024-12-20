@@ -214,7 +214,7 @@ async def test_i3c_target_ibi(dut):
     i3c_controller.enable_ibi(True)
 
     # Write descriptor to the TTI IBI queue. No IBI data
-    mdb  = 0xAA
+    mdb = 0xAA
     data = []
     ibi_data = format_ibi_data(mdb, data)
     dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
@@ -238,7 +238,9 @@ async def test_i3c_target_ibi(dut):
     last_ibi_status = (status & (3 << 14)) >> 14
     expected_status = 0
     if last_ibi_status != expected_status:
-        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        dut._log.critical(
+            f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
+        )
         result = False
 
     await ClockCycles(tb.clk, 50)
@@ -250,8 +252,8 @@ async def test_i3c_target_ibi(dut):
 
     for lnt in [4, 5, 6, 7, 8]:
 
-        mdb  = 0xAA
-        data = payload[:lnt+1]
+        mdb = 0xAA
+        data = payload[: lnt + 1]
         ibi_data = format_ibi_data(mdb, data)
         dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
         for word in ibi_data:
@@ -274,7 +276,9 @@ async def test_i3c_target_ibi(dut):
         last_ibi_status = (status & (3 << 14)) >> 14
         expected_status = 0
         if last_ibi_status != expected_status:
-            dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+            dut._log.critical(
+                f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
+            )
             result = False
 
         await ClockCycles(tb.clk, 50)
@@ -308,7 +312,7 @@ async def test_i3c_target_ibi_retry(dut):
     i3c_controller.enable_ibi(False)
 
     # Write descriptor to the TTI IBI queue
-    mdb  = 0xAA
+    mdb = 0xAA
     data = [0xBE, 0xEF]
     ibi_data = format_ibi_data(mdb, data)
     dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
@@ -324,7 +328,9 @@ async def test_i3c_target_ibi_retry(dut):
     last_ibi_status = (status & (3 << 14)) >> 14
     expected_status = 3
     if last_ibi_status != expected_status:
-        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        dut._log.critical(
+            f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
+        )
         result = False
 
     # Re-enable IBI ACK-ing
@@ -347,7 +353,9 @@ async def test_i3c_target_ibi_retry(dut):
     last_ibi_status = (status & (3 << 14)) >> 14
     expected_status = 0
     if last_ibi_status != expected_status:
-        dut._log.critical(f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}")
+        dut._log.critical(
+            f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
+        )
         result = False
 
     # Dummy wait
@@ -378,7 +386,7 @@ async def test_i3c_target_ibi_data(dut):
     i3c_controller.set_max_ibi_data_len(6)
 
     # Write descriptor to the TTI IBI queue
-    mdb  = 0xAA
+    mdb = 0xAA
     data = [0xCA, 0xFE, 0xBA, 0xCA, 0xAA, 0xBB, 0xCC, 0xDD]
     ibi_data = format_ibi_data(mdb, data)
     dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
@@ -402,7 +410,7 @@ async def test_i3c_target_ibi_data(dut):
 
     # Do another IBI to check if remaining data from the TTI IBI queue got
     # flushed correctly.
-    mdb  = 0xAA
+    mdb = 0xAA
     data = [0x11, 0x22, 0x33]
     ibi_data = format_ibi_data(mdb, data)
     dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))

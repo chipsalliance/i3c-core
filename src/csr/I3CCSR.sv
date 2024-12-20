@@ -5769,16 +5769,14 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value & ~decoded_wr_biten[15:1]) | (decoded_wr_data[15:1] & decoded_wr_biten[15:1]);
             load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
-            load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next = load_next_c;
     end
-
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= 15'h7fff;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
         end
     end
@@ -5855,16 +5853,14 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
-            load_next_c = '1;
         end
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next = load_next_c;
     end
-
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= 32'h5a00a5;
+        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
         end
     end

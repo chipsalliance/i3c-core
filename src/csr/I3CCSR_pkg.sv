@@ -636,22 +636,6 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t;
 
     typedef struct packed{
-        logic [14:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__in_t PID_HI;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__PID_LO__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__PID_LO__in_t PID_LO;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__in_t;
-
-    typedef struct packed{
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__in_t;
 
@@ -901,8 +885,6 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__in_t STBY_CR_CAPABILITIES;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__in_t __rsvd_0;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t STBY_CR_STATUS;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__in_t STBY_CR_DEVICE_CHAR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__in_t STBY_CR_DEVICE_PID_LO;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__in_t STBY_CR_INTR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1__in_t __rsvd_1;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__in_t STBY_CR_INTR_SIGNAL_ENABLE;

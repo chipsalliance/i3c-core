@@ -24,7 +24,9 @@ addrmap I3CCSR #(
     bit tti_tx_desc_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_rx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_tx_fifo_size = 0x5, // 64 DWORDs by default
-    bit tti_ibi_fifo_size = 0x5 // 64 DWORDs by default
+    bit tti_ibi_fifo_size = 0x5, // 64 DWORDs by default
+    bit pid_hi = 0x7FFF, // Vendor-specific values
+    bit pid_lo = 0x005A00A5 // Vendor-specific values, test value
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
     BaseRegs #(
@@ -86,6 +88,8 @@ addrmap I3CCSR #(
         .tti_tx_desc_fifo_size(tti_tx_desc_fifo_size),
         .tti_rx_fifo_size(tti_rx_fifo_size),
         .tti_tx_fifo_size(tti_tx_fifo_size),
-        .tti_ibi_fifo_size(tti_ibi_fifo_size)
+        .tti_ibi_fifo_size(tti_ibi_fifo_size),
+        .pid_hi(pid_hi),
+        .pid_lo(pid_lo)
     ) I3C_EC @ EC_offset;
 };

@@ -181,3 +181,11 @@ Calitpra specifies required interface for interrupts which consists of two aggre
   - There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue
   - **Notification**
 :::
+
+## Target Device Provisioned ID
+
+The integrator should update `pid_hi` parameter in the `src/rdl/registers.rdl` to valid MIPI Manufacturer ID:
+
+```
+  bit pid_hi = 0xFF, // Vendor-specific values
+```

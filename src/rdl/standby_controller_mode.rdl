@@ -1,7 +1,10 @@
 // I3C controller register map based on MIPI HCI 1.2
 
 
-regfile StandbyControllerModeRegisters{
+regfile StandbyControllerModeRegisters#(
+    bit pid_hi,
+    bit pid_lo
+){
     name = "Standby Controller Mode";
     default regwidth = 32;
     reg {
@@ -348,9 +351,10 @@ regfile StandbyControllerModeRegisters{
         } DCR[23:16];
         field {
             name = "PID_HI";
-            desc = "";
-            hw   = rw;
+            desc = "High part of the 48-bit Target Device Provisioned ID.";
+            hw   = r;
             sw   = rw;
+            reset = pid_hi;
         } PID_HI[15:1];
     } STBY_CR_DEVICE_CHAR;
     reg {
@@ -358,9 +362,10 @@ regfile StandbyControllerModeRegisters{
         desc = "";
         field {
             name = "PID_LO";
-            desc = "";
-            hw   = rw;
+            desc = "Low part of the 48-bit Target Device Provisioned ID.";
+            hw   = r;
             sw   = rw;
+            reset = pid_lo;
         } PID_LO[31:0];
     } STBY_CR_DEVICE_PID_LO;
     reg {

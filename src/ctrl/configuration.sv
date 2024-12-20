@@ -160,7 +160,7 @@ module configuration (
   assign target_hot_join_addr_o = 7'h02;
 
   // Configuration: Target IBI
-  assign ibi_enable_o    = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
+  assign ibi_enable_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
   assign ibi_retry_num_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
 
 endmodule

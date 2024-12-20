@@ -3054,7 +3054,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.PID_HI = new("PID_HI");
-            this.PID_HI.configure(this, 15, 1, "RW", 1, 'h0, 0, 1, 0);
+            this.PID_HI.configure(this, 15, 1, "RW", 0, 'h7fff, 1, 1, 0);
             this.DCR = new("DCR");
             this.DCR.configure(this, 8, 16, "RW", 0, 'hbd, 1, 1, 0);
             this.BCR_VAR = new("BCR_VAR");
@@ -3093,7 +3093,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.PID_LO = new("PID_LO");
-            this.PID_LO.configure(this, 32, 0, "RW", 1, 'h0, 0, 1, 0);
+            this.PID_LO.configure(this, 32, 0, "RW", 0, 'h5a00a5, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PID_LO_bit_cg[bt]) PID_LO_bit_cg[bt] = new();
             end
