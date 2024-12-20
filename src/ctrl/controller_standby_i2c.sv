@@ -178,21 +178,21 @@ module controller_standby_i2c
       .acq_fifo_wvalid_o(acq_fifo_valid_int),
       .acq_fifo_depth_i(acq_fifo_depth_int),
       .acq_fifo_wready_o(acq_fifo_ready_int),
-      .acq_fifo_rdata_i(1),  // This is only used for assertions by OpenTitan
+      .acq_fifo_rdata_i('1),  // This is only used for assertions by OpenTitan
       // Timing setup
       // TODO: Use calculated timing values
       .t_r_i(16'd1),
       .tsu_dat_i(16'd1),
       .thd_dat_i(16'd1),
-      .host_timeout_i(0),
-      .nack_timeout_i(0),
-      .nack_timeout_en_i(0),
+      .host_timeout_i('0),
+      .nack_timeout_i('0),
+      .nack_timeout_en_i('0),
       // Addressing setup
       // TODO: Make it configurable
-      .target_address0_i('h0c),
-      .target_mask0_i('h7f),
-      .target_address1_i(0),
-      .target_mask1_i(0),
+      .target_address0_i(7'h0c),
+      .target_mask0_i(7'h7f),
+      .target_address1_i('0),
+      .target_mask1_i('0),
       // Others
       .target_enable_i(i2c_standby_en_i),
       .target_idle_o(unused_target_idle_o),

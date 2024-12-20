@@ -230,7 +230,7 @@ module controller_active
 
       // These should be controlled by the flow FSM
       // TODO: reconnect to flow fsm once configuration.sv is connected properly to CSRs
-      .host_enable_i(0),
+      .host_enable_i('0),
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),
       .fmt_fifo_rready_o(fmt_fifo_rready),
