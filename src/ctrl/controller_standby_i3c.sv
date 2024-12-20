@@ -651,6 +651,7 @@ module controller_standby_i3c
       .tti_tx_queue_depth_i      (tx_queue_depth_i),
       .tti_tx_queue_rready_o     (tx_queue_rready_o),
       .tti_tx_queue_rdata_i      (tx_queue_rdata_i),
+      .tx_queue_flush_o          (tx_queue_flush_o),
       .tx_byte_o                 (tx_fifo_rdata),
       .tx_byte_last_o            (tx_last_byte),
       .tx_byte_valid_o           (tx_fifo_rvalid),
@@ -684,5 +685,4 @@ module controller_standby_i3c
   assign bus_rstart_o = bus_rstart_det;
   assign bus_stop_o = bus_stop_det;
 
-  assign tx_queue_flush_o = bus_stop_det;
 endmodule

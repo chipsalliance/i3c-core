@@ -434,3 +434,91 @@ async def test_i3c_target_ibi_data(dut):
 
     # Report the test result
     assert result
+
+
+
+@cocotb.test()
+async def test_i3c_target_writes_and_reads(dut):
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+
+    tx_data_len = 16
+    tx_test_data = [randint(0, 255) for _ in range(tx_data_len)]
+
+    # Write data to TTI TX FIFO
+    for i in range(0, len(tx_test_data), 4):
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, tx_test_data[i : i + 4], 4
+        )
+
+    # Write the TX descriptor
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(tx_data_len), 4
+    )
+
+    # Send Private Write on I3C
+    test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
+    for test_vec in test_data:
+        await i3c_controller.i3c_write(TARGET_ADDRESS, test_vec)
+        await ClockCycles(tb.clk, 10)
+
+    # Wait for an interrupt
+    wait_irq = True
+    timeout = 0
+    # Number of clock cycles after which we should observe an interrupt
+    TIMEOUT_THRESHOLD = 50
+    while wait_irq:
+        timeout += 1
+        await ClockCycles(tb.clk, 10)
+        irq = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr, 4))
+        if irq:
+            wait_irq = False
+            dut._log.debug(":::Interrupt was raised:::")
+        if timeout > TIMEOUT_THRESHOLD:
+            wait_irq = False
+            dut._log.debug(":::Timeout cancelled polling:::")
+
+    # Read data
+    recv_data = []
+    for test_vec in test_data:
+        recv_xfer = []
+        # Read RX descriptor
+        r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+        desc_len = r_data & 0xFFFF
+        assert len(test_vec) == desc_len, "Incorrect number of bytes in RX descriptor"
+        remainder = desc_len % 4
+        err_stat = r_data >> 28
+        assert err_stat == 0, "Unexpected error detected"
+
+        # Read RX data
+        data_len = ceil(desc_len / 4)
+        for _ in range(data_len):
+            r_data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+            for k in range(4):
+                recv_xfer.append((r_data >> (k * 8)) & 0xFF)
+
+        # Remove entries that are outside of the data length
+        if remainder:
+            for k in range(4 - remainder):
+                recv_xfer.pop()
+        recv_data.append(recv_xfer)
+
+    # Compare
+    dut._log.info(
+        "Comparing input [{}] and RX data [{}]".format(
+            " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in test_data]),
+            " ".join(["[ " + " ".join([f"0x{d:02X}" for d in s]) + " ]" for s in recv_data]),
+        )
+    )
+    assert test_data == recv_data
+
+
+    # Issue a private read
+    recv_data = await i3c_controller.i3c_read(TARGET_ADDRESS, 16)
+    recv_data = list(recv_data)
+
+    assert tx_test_data == recv_data
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)

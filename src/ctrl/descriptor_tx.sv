@@ -29,6 +29,7 @@ module descriptor_tx #(
     input logic [TtiTxDataDepth-1:0] tti_tx_queue_depth_i,
     output logic tti_tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
+    output logic tx_queue_flush_o,
 
     // Interface to the target FSM
     output logic [7:0] tx_byte_o,
@@ -96,10 +97,11 @@ module descriptor_tx #(
     end
   end
 
-  assign tx_end = (byte_counter == 16'h1 && byte_counter_q == 16'h2);
+  assign tx_end = (byte_counter == 16'h1 && tx_byte_ready_i);
   assign tx_byte_valid_o = tx_pending && tti_tx_queue_rvalid_i;
   assign tx_byte_last_o = byte_counter == 16'd1;
   assign tx_byte_o = tti_tx_queue_rdata_i;
   assign tti_tx_queue_rready_o = tx_byte_valid_o && tx_byte_ready_i;
 
+  assign tx_queue_flush_o = tx_end;
 endmodule
