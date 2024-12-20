@@ -610,6 +610,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#target-device-provisioned-id" class="md-nav__link">
+    <span class="md-ellipsis">Target Device Provisioned ID</span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -859,6 +866,11 @@ The software test executes read/write operations on different configurations of 
 </tr>
 </tbody>
 </table>
+<h2 id="target-device-provisioned-id">Target Device Provisioned ID<a class="headerlink" href="#target-device-provisioned-id" title="Link to this heading">¶</a></h2>
+<p>The integrator should update <code class="docutils literal notranslate"><span class="pre">pid_hi</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">src/rdl/registers.rdl</span></code> to valid MIPI Manufacturer ID:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  <span class="n">bit</span> <span class="n">pid_hi</span> <span class="o">=</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="o">//</span> <span class="n">Vendor</span><span class="o">-</span><span class="n">specific</span> <span class="n">values</span>
+</code></pre></div>
+</div>
 
 
   <hr>
@@ -866,7 +878,7 @@ The software test executes read/write operations on different configurations of 
   <small>
     
       Last update:
-      2024-12-19
+      2024-12-20
     
   </small>
 </div>
