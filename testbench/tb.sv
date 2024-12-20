@@ -185,10 +185,4 @@ initial begin
         $finish("Testbench passsed.");
 end
 
-initial
-begin
-    $dumpfile("dump.vcd");
-    $dumpvars(0,tb);
-end
-
 endmodule

@@ -41,3 +41,4 @@ vcs_work/
 venv/
 verification/tools/i3c_defines.svh
 work/
+ucli.key
