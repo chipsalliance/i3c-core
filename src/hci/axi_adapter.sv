@@ -41,11 +41,11 @@ module axi_adapter #(
     input  logic                    awvalid_i,
     output logic                    awready_o,
 
-    input  logic [AxiDataWidth-1:0] wdata_i,
-    input  logic [             7:0] wstrb_i,
-    input  logic                    wlast_i,
-    input  logic                    wvalid_i,
-    output logic                    wready_o,
+    input  logic [  AxiDataWidth-1:0] wdata_i,
+    input  logic [AxiDataWidth/8-1:0] wstrb_i,
+    input  logic                      wlast_i,
+    input  logic                      wvalid_i,
+    output logic                      wready_o,
 
     output logic [           1:0] bresp_o,
     output logic [AxiIdWidth-1:0] bid_o,
