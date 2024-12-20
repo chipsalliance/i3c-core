@@ -75,7 +75,7 @@ module descriptor_tx #(
     end else begin
       if (tx_start) begin
         tx_pending <= '1;
-      end else if (tx_byte_last_o) begin
+      end else if (tx_end) begin
         tx_pending <= '0;
       end
     end
