@@ -31,12 +31,12 @@ module flow_standby_i2c
     input logic response_fifo_wready_i,
 
     // TX FIFO
-    input logic [31:0] tx_fifo_rdata_i,
+    input logic [7:0] tx_fifo_rdata_i,
     input logic tx_fifo_rvalid_i,
     output logic tx_fifo_rready_o,
 
     // RX FIFO
-    output logic [31:0] rx_fifo_wdata_o,
+    output logic [7:0] rx_fifo_wdata_o,
     output logic rx_fifo_wvalid_o,
     input logic rx_fifo_wready_i,
 
@@ -88,7 +88,7 @@ module flow_standby_i2c
   logic pop_command_from_tti;
   logic pop_data_from_tti;
 
-  assign rx_fifo_wdata_o = {fifo_buf[3][7:0], fifo_buf[2][7:0], fifo_buf[1][7:0], fifo_buf[0][7:0]};
+  assign rx_fifo_wdata_o = fifo_buf[0][7:0];
   assign byte_count = transaction_byte_count[1:0];
 
   assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
@@ -128,9 +128,6 @@ module flow_standby_i2c
         if (pop_data_from_tti) begin
           // TODO(verilator) fails to consftify loop variable for AstSelExtract
           fifo_buf[0] <= {AcqData, tx_fifo_rdata_i[7:0]};
-          fifo_buf[1] <= {AcqData, tx_fifo_rdata_i[15:8]};
-          fifo_buf[2] <= {AcqData, tx_fifo_rdata_i[23:16]};
-          fifo_buf[3] <= {AcqData, tx_fifo_rdata_i[31:24]};
         end
       end
     end
