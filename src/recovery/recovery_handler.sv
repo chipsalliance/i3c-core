@@ -186,7 +186,7 @@ module recovery_handler
 
   // RX descriptor
   logic                          tti_rx_desc_queue_full;
-  logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_depth;
+  logic [TtiRxDescFifoDepthWidth-1:0] tti_rx_desc_queue_depth;
   logic                          unused_tti_rx_desc_start_thld_trig;
   logic                          tti_rx_desc_queue_empty;
   logic                          tti_rx_desc_queue_wvalid;
@@ -205,7 +205,7 @@ module recovery_handler
 
   // TX descriptor
   logic                          tti_tx_desc_queue_full;
-  logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_depth;
+  logic [TtiTxDescFifoDepthWidth-1:0] tti_tx_desc_queue_depth;
   logic                          tti_tx_desc_queue_empty;
   logic                          tti_tx_desc_queue_rvalid;
   logic                          tti_tx_desc_queue_rready;
@@ -223,7 +223,7 @@ module recovery_handler
 
   // RX Data queue
   logic                          tti_rx_data_queue_full;
-  logic [TtiRxDataThldWidth-1:0] tti_rx_data_queue_depth;
+  logic [TtiRxDataFifoDepthWidth-1:0] tti_rx_data_queue_depth;
   logic                          tti_rx_data_queue_empty;
   logic                          tti_rx_data_queue_wvalid;
   logic                          tti_rx_data_queue_wready;
@@ -244,11 +244,11 @@ module recovery_handler
 
   // TX Data queue
   logic                          tti_tx_data_queue_full;
-  logic [TtiTxDataThldWidth-1:0] tti_tx_data_queue_depth;
+  logic [TtiTxDataFifoDepthWidth-1:0] tti_tx_data_queue_depth;
   logic                          tti_tx_data_queue_empty;
   logic                          tti_tx_data_queue_rvalid;
   logic                          tti_tx_data_queue_rready;
-  logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_rdata;
+  logic [                   7:0] tti_tx_data_queue_rdata;
   logic                          tti_tx_data_queue_flush;
   logic                          tti_tx_data_queue_start_thld_trig;
   logic                          tti_tx_data_queue_ready_thld_trig;
