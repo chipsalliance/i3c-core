@@ -26,12 +26,14 @@ engineering-notation==0.10.0
 executing==2.0.1
 filelock==3.15.4
 find_libpython==0.4.0
+flake8>=7
 git-me-the-url==2.1.0
 gitdb==4.0.11
 GitPython==3.1.43
 iniconfig==2.0.0
 ipykernel==6.29.4
 ipython==8.25.0
+isort>=5
 jedi==0.19.1
 Jinja2==3.1.3
 jsonschema==4.22.0
