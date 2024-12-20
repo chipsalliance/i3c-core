@@ -167,7 +167,10 @@ i3c_wrapper #(
     .sda_i(bus_sda),
     .scl_o(scl_i),
     .sda_o(sda_i),
-    .sel_od_pp_o(sel_od_pp)
+    .sel_od_pp_o(sel_od_pp),
+
+    .recovery_payload_available_o(),
+    .recovery_image_activated_o()
 );
 
 always begin
