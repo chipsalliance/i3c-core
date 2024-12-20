@@ -56,13 +56,6 @@ module read_queue #(
 
   logic [FifoDepthWidth-1:0] empty_entries;
 
-  initial begin
-    if (ThldIsPow == LimitReadyThld) begin
-      $warning("Configuration with both `ThldIsPow` and `LimitReadyThld` enabled or disabled",
-               "is not tested and might result in unexpected behavior.");
-    end
-  end
-
   assign rst = ~rst_ni | reg_rst_i;
 
   assign fifo_clr = reg_rst_i;

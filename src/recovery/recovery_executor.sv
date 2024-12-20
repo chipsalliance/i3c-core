@@ -411,6 +411,7 @@ module recovery_executor
       'd1: res_data_o = csr_data[15:8];
       'd2: res_data_o = csr_data[23:16];
       'd3: res_data_o = csr_data[31:24];
+      default: res_data_o = '0;
     endcase
 
   // Transmitt data last
