@@ -227,7 +227,9 @@ module controller
 
     output logic disec_ibi_o,
     output logic disec_crr_o,
-    output logic disec_hj_o
+    output logic disec_hj_o,
+
+    output logic err_o
 );
 
   logic phy_en;
@@ -491,7 +493,8 @@ module controller
       .disec_crr_o(disec_crr_o),
       .disec_hj_o(disec_hj_o),
       .ibi_status_o(ibi_status_o),
-      .ibi_status_we_o(ibi_status_we_o)
+      .ibi_status_we_o(ibi_status_we_o),
+      .err_o
   );
 
 endmodule

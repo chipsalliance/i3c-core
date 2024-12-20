@@ -234,6 +234,7 @@ module ccc
     // TODO: Bit 5: connect to protocol error
     // TODO: Bits 3:0: connect to number of pending interrupts
     input logic [15:0] get_status_fmt1_i,
+    output logic get_status_done_o,
     // TODO: GETSTATUS: Format 2
 
     // Get Accept Controller Role
@@ -266,7 +267,6 @@ module ccc
 
   // Data structure for any CCC
   logic [7:0] command_code;
-  // logic       command_code_valid;
   // logic [7:0] defining_byte;
   // logic       defining_byte_valid;
   // logic [7:0] subcommand_byte;
@@ -290,6 +290,22 @@ module ccc
   logic [7:0] set_dasa_addr;
   logic       set_aasa_valid;
   logic [7:0] set_aasa_addr;
+
+  logic       get_status_in_progress;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : report_get_status_done
+    if (~rst_ni) begin
+      get_status_in_progress <= '0;
+      get_status_done_o <= '0;
+    end else begin
+      if (done_fsm_o) get_status_in_progress <= 1'b0;
+      else if ((command_code == `I3C_DIRECT_GETSTATUS) && ccc_valid_i)
+        get_status_in_progress <= 1'b1;
+
+      if (get_status_in_progress & done_fsm_o) get_status_done_o <= 1'b1;
+      else get_status_done_o <= 1'b0;
+    end
+  end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_ccc
     if (~rst_ni) begin

@@ -151,7 +151,9 @@ module controller_standby
     output logic disec_hj_o,
 
     output logic [1:0] ibi_status_o,
-    output logic ibi_status_we_o
+    output logic ibi_status_we_o,
+
+    output logic err_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -212,6 +214,18 @@ module controller_standby
     ibi_queue_rready_o = sel_i2c_i3c ? i3c_ibi_queue_rready_o : '0;
 
     tx_host_nack_o = sel_i2c_i3c ? i3c_tx_host_nack_o : i2c_tx_host_nack_o;
+  end
+
+  logic parity_err;
+  logic get_status_done;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      err_o <= '0;
+    end else begin
+      if (parity_err) err_o <= 1'b1;
+      if (get_status_done) err_o <= 1'b0;
+    end
   end
 
   assign i2c_rx_queue_flush_o = '0;
@@ -374,7 +388,9 @@ module controller_standby
       .disec_hj_o(disec_hj_o),
       .rstdaa_o(rstdaa_o),
       .ibi_status_o(ibi_status_o),
-      .ibi_status_we_o(ibi_status_we_o)
+      .ibi_status_we_o(ibi_status_we_o),
+      .get_status_done_o(get_status_done),
+      .parity_err_o(parity_err)
   );
 
 endmodule

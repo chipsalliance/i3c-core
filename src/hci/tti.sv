@@ -86,7 +86,9 @@ module tti
 
     input logic disec_ibi_i,
     input logic disec_crr_i,
-    input logic disec_hj_i
+    input logic disec_hj_i,
+
+    input logic err_i
 );
 
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
@@ -178,8 +180,6 @@ module tti
     hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
 
-    hwif_tti_o.STATUS.PROTOCOL_ERROR.next = '0;
-
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = '0;
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.next = '0;
@@ -224,4 +224,6 @@ module tti
     hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
     hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
   end
+
+  assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
 endmodule : tti

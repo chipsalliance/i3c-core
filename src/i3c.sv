@@ -488,6 +488,8 @@ module i3c
   logic [1:0] ibi_status;
   logic ibi_status_we;
 
+  logic controller_error;
+
   controller #(
       .DatAw(DatAw),
       .DctAw(DctAw)
@@ -656,7 +658,9 @@ module i3c
       .enec_hj_o  (enec_hj),
       .disec_ibi_o(disec_ibi),
       .disec_crr_o(disec_crr),
-      .disec_hj_o (disec_hj)
+      .disec_hj_o (disec_hj),
+
+      .err_o(controller_error)
   );
 
   // HCI
@@ -903,7 +907,9 @@ module i3c
       .enec_hj_i  (enec_hj),
       .disec_ibi_i(disec_ibi),
       .disec_crr_i(disec_crr),
-      .disec_hj_i (disec_hj)
+      .disec_hj_i (disec_hj),
+
+      .err_i(controller_error)
   );
 
   // Recovery handler

@@ -106,7 +106,11 @@ module controller_standby_i3c
     output logic disec_hj_o,
 
     output logic [1:0] ibi_status_o,
-    output logic ibi_status_we_o
+    output logic ibi_status_we_o,
+
+    output logic get_status_done_o,
+
+    output logic parity_err_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -226,8 +230,6 @@ module controller_standby_i3c
   logic ccc_valid;
   logic is_ccc_done;
   logic is_hotjoin_done;
-
-  logic parity_err;
 
   // Bus monitor
   logic scl_stable_low;
@@ -435,7 +437,7 @@ module controller_standby_i3c
       .scl_posedge_i              (scl_posedge),
       .sda_negedge_i              (sda_negedge),
       .sda_posedge_i              (sda_posedge),
-      .parity_err_o               (parity_err),
+      .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err)
   );
 
@@ -499,7 +501,8 @@ module controller_standby_i3c
       .get_status_fmt1_i         (get_status_fmt1_i),
       .get_acccr_i               (get_acccr),
       .set_brgtgt_o              (set_brgtgt),
-      .get_mxds_i                (get_mxds)
+      .get_mxds_i                (get_mxds),
+      .get_status_done_o
   );
 
   ibi u_ibi (
