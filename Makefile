@@ -72,13 +72,13 @@ config-print: ## Print configuration name, filename and RDL arguments
 lint: lint-rtl lint-tests ## Run RTL and tests lint
 
 lint-check: lint-rtl ## Run RTL lint and check lint on tests source code without fixing errors
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s test_lint
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s test_lint --no-venv
 
 lint-rtl: ## Run lint on RTL source code
 	$(SHELL) $(TOOL_DIR)/verible-scripts/run.sh
 
 lint-tests: ## Run lint on tests source code
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s lint
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s lint --no-venv
 
 lint-verilator:
 	verilator --timing -Wall --lint-only -f $(I3C_ROOT_DIR)/src/i3c.f
@@ -90,7 +90,7 @@ build-verilator:
 # Tests
 #
 test: config ## Run single module test (use `TEST=<test_name>` flag)
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)_verify
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)_verify --no-venv
 
 tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
 	$(MAKE) config CFG_NAME=axi
@@ -104,25 +104,25 @@ tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB an
 
 # TODO: Enable full coverage flow
 tests-coverage: ## Run all verification/block/* RTL tests with coverage
-	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 $(PYTHON) -m nox -R -k "verify"
+	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 $(PYTHON) -m nox -R -k "verify" --no-venv
 
 test-i3c-vip-uvm: config ## Run single I3C VIP UVM test with nox (use 'TEST=<i3c_driver|i3c_monitor>' flag)
-	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST) --no-venv
 
 tests-i3c-vip-uvm: config ## Run all I3C VIP UVM tests with nox
-	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_verify_uvm"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_verify_uvm" --no-venv
 
 tests-i3c-vip-uvm-debug: config ## Run debugging I3C VIP UVM tests with nox
-	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -t "uvm_debug_tests"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -t "uvm_debug_tests" --no-venv
 
 tests-uvm: config ## Run all I3C Core UVM tests with nox
-	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_verify_uvm"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_verify_uvm" --no-venv
 
 tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
-	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_uvm_debug_tests"
+	cd $(UVM_VERIF_DIR) && $(PYTHON) -m nox -R -s "i3c_core_uvm_debug_tests" --no-venv
 
 tests-tool: ## Run all tool tests
-	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify"
+	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify" --no-venv
 
 #
 # Utilities

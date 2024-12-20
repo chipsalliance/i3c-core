@@ -38,7 +38,7 @@ def verify_uvm(
     extra_make_args=[],
     coverage=None,
 ):
-    session.install("-r", pipRequirementsPath)
+    # session.install("-r", pipRequirementsPath)
     root_dir = setup_root_dir()
 
     make_targets = ["config", simulator]
