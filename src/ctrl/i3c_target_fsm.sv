@@ -95,7 +95,7 @@ module i3c_target_fsm #(
     output logic [7:0] rst_action_o,
     input  logic       hdr_exit_detect_i,
     output logic       is_in_hdr_mode_o,
-    input  logic       ibi_enable_i, // TTI.CONTROL.IBI_EN
+    input  logic       ibi_enable_i,           // TTI.CONTROL.IBI_EN
 
     // Interfacing with IBI subFSMs
     input  logic ibi_pending_i,
@@ -337,8 +337,7 @@ module i3c_target_fsm #(
 
     case (state_q)
       Idle:
-        ibi_begin_o = target_enable_i && !target_reset_detect_i &&
-                      ibi_enable_i && ibi_pending_i;
+      ibi_begin_o = target_enable_i && !target_reset_detect_i && ibi_enable_i && ibi_pending_i;
       RxFByte: begin
         bus_rx_req_byte_o = ~bus_start_det;
         if (bus_rx_done_i) begin
@@ -428,8 +427,7 @@ module i3c_target_fsm #(
           state_d = target_reset_detect_i ? DoRstAction :
           // TODO: Add flow for Hot-Join
           // do_hot_join        ? DoHotJoin :
-          (ibi_pending_i && ibi_enable_i) ? DoIBI :
-           bus_start_det                  ? RxFByte : Idle;
+          (ibi_pending_i && ibi_enable_i) ? DoIBI : bus_start_det ? RxFByte : Idle;
       end
       RxFByte: begin
         if (bus_rx_done_i) begin

@@ -1918,10 +1918,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__CONTROL_fld_cg with function sample(
+    input bit [1-1:0] HJ_EN,
+    input bit [1-1:0] CRR_EN,
     input bit [1-1:0] IBI_EN,
     input bit [3-1:0] IBI_RETRY_NUM
     );
         option.per_instance = 1;
+        HJ_EN_cp : coverpoint HJ_EN;
+        CRR_EN_cp : coverpoint CRR_EN;
         IBI_EN_cp : coverpoint IBI_EN;
         IBI_RETRY_NUM_cp : coverpoint IBI_RETRY_NUM;
 

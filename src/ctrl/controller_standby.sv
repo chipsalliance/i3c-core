@@ -142,6 +142,14 @@ module controller_standby
     output logic set_dasa_valid_o,
     output logic rstdaa_o,
 
+    output logic enec_ibi_o,
+    output logic enec_crr_o,
+    output logic enec_hj_o,
+
+    output logic disec_ibi_o,
+    output logic disec_crr_o,
+    output logic disec_hj_o,
+
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o
 );
@@ -358,6 +366,12 @@ module controller_standby
       .tx_host_nack_o(i3c_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
+      .enec_ibi_o(enec_ibi_o),
+      .enec_crr_o(enec_crr_o),
+      .enec_hj_o(enec_hj_o),
+      .disec_ibi_o(disec_ibi_o),
+      .disec_crr_o(disec_crr_o),
+      .disec_hj_o(disec_hj_o),
       .rstdaa_o(rstdaa_o),
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o)

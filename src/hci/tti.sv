@@ -78,7 +78,15 @@ module tti
 
     // IBI status
     input logic [1:0] ibi_status_i,
-    input logic ibi_status_we_i
+    input logic ibi_status_we_i,
+
+    input logic enec_ibi_i,
+    input logic enec_crr_i,
+    input logic enec_hj_i,
+
+    input logic disec_ibi_i,
+    input logic disec_crr_i,
+    input logic disec_hj_i
 );
 
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
@@ -154,7 +162,16 @@ module tti
 
   always_comb begin
     hwif_tti_o.STATUS.LAST_IBI_STATUS.next = ibi_status_i;
-    hwif_tti_o.STATUS.LAST_IBI_STATUS.we = ibi_status_we_i;
+    hwif_tti_o.STATUS.LAST_IBI_STATUS.we   = ibi_status_we_i;
+  end
+
+  always_comb begin : wire_enec_disec
+    hwif_tti_o.CONTROL.IBI_EN.we = enec_ibi_i | disec_ibi_i;
+    hwif_tti_o.CONTROL.IBI_EN.next = enec_ibi_i;
+    hwif_tti_o.CONTROL.CRR_EN.we = enec_crr_i | disec_crr_i;
+    hwif_tti_o.CONTROL.CRR_EN.next = enec_crr_i;
+    hwif_tti_o.CONTROL.HJ_EN.we = enec_hj_i | disec_hj_i;
+    hwif_tti_o.CONTROL.HJ_EN.next = enec_hj_i;
   end
 
   always_comb begin : wire_unconnected_regs

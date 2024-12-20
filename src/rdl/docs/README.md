@@ -2201,8 +2201,24 @@ which supports extended capabilities</p>
 
 | Bits|  Identifier |Access|Reset|     Name    |
 |-----|-------------|------|-----|-------------|
+|  10 |    HJ_EN    |  rw  | 0x1 |    HJ_EN    |
+|  11 |    CRR_EN   |  rw  | 0x0 |    CRR_EN   |
 |  12 |    IBI_EN   |  rw  | 0x1 |    IBI_EN   |
 |15:13|IBI_RETRY_NUM|  rw  | 0x0 |IBI_RETRY_NUM|
+
+#### HJ_EN field
+
+<p>Enable Hot-Join capability.</p>
+<p>Values:</p>
+<p>0x0 - Device is allowed to attempt Hot-Join.</p>
+<p>0x1 - Device is not allowed to attempt Hot-Join.</p>
+
+#### CRR_EN field
+
+<p>Enable Controller Role Request.</p>
+<p>Values:</p>
+<p>0x0 - Device is allowed to perform Controller Role Request.</p>
+<p>0x1 - Device is not allowed to perform Controller Role Request.</p>
 
 #### IBI_EN field
 

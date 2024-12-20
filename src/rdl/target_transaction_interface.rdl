@@ -58,9 +58,40 @@ regfile TargetTransactionInterfaceRegisters #(
             0x1 - Device will send IBI requests onto the bus, if possible.
             ";
             sw = rw;
-            hw = r;
+            hw = rw;
+            we = true;
             reset = 1'b1;
         } IBI_EN[12:12];
+        field {
+            name = "CRR_EN";
+            desc = "Enable Controller Role Request.
+
+            Values:
+
+            0x0 - Device is allowed to perform Controller Role Request.
+
+            0x1 - Device is not allowed to perform Controller Role Request.
+            ";
+            sw = rw;
+            hw = rw;
+            we = true;
+            reset = 1'b0;
+        } CRR_EN[11:11];
+        field {
+            name = "HJ_EN";
+            desc = "Enable Hot-Join capability.
+
+            Values:
+
+            0x0 - Device is allowed to attempt Hot-Join.
+
+            0x1 - Device is not allowed to attempt Hot-Join.
+            ";
+            sw = rw;
+            hw = rw;
+            we = true;
+            reset = 1'b1;
+        } HJ_EN[10:10];
     } CONTROL;
     reg {
         name = "TTI Status";

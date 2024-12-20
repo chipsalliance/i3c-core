@@ -1261,6 +1261,14 @@ module I3CCSR (
                     struct packed{
                         logic next;
                         logic load_next;
+                    } HJ_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } CRR_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
                     } IBI_EN;
                     struct packed{
                         logic [2:0] next;
@@ -2359,6 +2367,12 @@ module I3CCSR (
             } StdbyCtrlMode;
             struct packed{
                 struct packed{
+                    struct packed{
+                        logic value;
+                    } HJ_EN;
+                    struct packed{
+                        logic value;
+                    } CRR_EN;
                     struct packed{
                         logic value;
                     } IBI_EN;
@@ -6879,6 +6893,54 @@ module I3CCSR (
     assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
+    // Field: I3CCSR.I3C_EC.TTI.CONTROL.HJ_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value & ~decoded_wr_biten[10:10]) | (decoded_wr_data[10:10] & decoded_wr_biten[10:10]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.CONTROL.HJ_EN.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.CONTROL.HJ_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.CONTROL.HJ_EN.next = next_c;
+        field_combo.I3C_EC.TTI.CONTROL.HJ_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value <= 1'h1;
+        end else if(field_combo.I3C_EC.TTI.CONTROL.HJ_EN.load_next) begin
+            field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value <= field_combo.I3C_EC.TTI.CONTROL.HJ_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.CONTROL.HJ_EN.value = field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.CONTROL.CRR_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value & ~decoded_wr_biten[11:11]) | (decoded_wr_data[11:11] & decoded_wr_biten[11:11]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.CONTROL.CRR_EN.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.CONTROL.CRR_EN.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.CONTROL.CRR_EN.next = next_c;
+        field_combo.I3C_EC.TTI.CONTROL.CRR_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value <= 1'h0;
+        end else if(field_combo.I3C_EC.TTI.CONTROL.CRR_EN.load_next) begin
+            field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value <= field_combo.I3C_EC.TTI.CONTROL.CRR_EN.next;
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.CONTROL.CRR_EN.value = field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value;
     // Field: I3CCSR.I3C_EC.TTI.CONTROL.IBI_EN
     always_comb begin
         automatic logic [0:0] next_c;
@@ -6887,6 +6949,9 @@ module I3CCSR (
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.TTI.CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.CONTROL.IBI_EN.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.CONTROL.IBI_EN.next;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.CONTROL.IBI_EN.next = next_c;
@@ -9197,7 +9262,9 @@ module I3CCSR (
     assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
     assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
     assign readback_array[74][31:24] = '0;
-    assign readback_array[75][11:0] = '0;
+    assign readback_array[75][9:0] = '0;
+    assign readback_array[75][10:10] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value : '0;
+    assign readback_array[75][11:11] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value : '0;
     assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
     assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
     assign readback_array[75][31:16] = '0;

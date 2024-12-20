@@ -3671,9 +3671,13 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
+        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg HJ_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__CONTROL_bit_cg CRR_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__CONTROL_bit_cg IBI_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__CONTROL_bit_cg IBI_RETRY_NUM_bit_cg[3];
         I3CCSR__I3C_EC__TTI__CONTROL_fld_cg fld_cg;
+        rand uvm_reg_field HJ_EN;
+        rand uvm_reg_field CRR_EN;
         rand uvm_reg_field IBI_EN;
         rand uvm_reg_field IBI_RETRY_NUM;
 
@@ -3687,11 +3691,17 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
+            this.HJ_EN = new("HJ_EN");
+            this.HJ_EN.configure(this, 1, 10, "RW", 1, 'h1, 1, 1, 0);
+            this.CRR_EN = new("CRR_EN");
+            this.CRR_EN.configure(this, 1, 11, "RW", 1, 'h0, 1, 1, 0);
             this.IBI_EN = new("IBI_EN");
-            this.IBI_EN.configure(this, 1, 12, "RW", 0, 'h1, 1, 1, 0);
+            this.IBI_EN.configure(this, 1, 12, "RW", 1, 'h1, 1, 1, 0);
             this.IBI_RETRY_NUM = new("IBI_RETRY_NUM");
             this.IBI_RETRY_NUM.configure(this, 3, 13, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(HJ_EN_bit_cg[bt]) HJ_EN_bit_cg[bt] = new();
+                foreach(CRR_EN_bit_cg[bt]) CRR_EN_bit_cg[bt] = new();
                 foreach(IBI_EN_bit_cg[bt]) IBI_EN_bit_cg[bt] = new();
                 foreach(IBI_RETRY_NUM_bit_cg[bt]) IBI_RETRY_NUM_bit_cg[bt] = new();
             end

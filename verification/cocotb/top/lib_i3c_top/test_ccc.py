@@ -244,3 +244,51 @@ async def test_ccc_getpid(dut):
 
     assert pid_hi == _PID_HI
     assert pid_lo == _PID_LO
+
+
+async def read_target_events(tb):
+
+    reg = tb.reg_map.I3C_EC.TTI.CONTROL.base_addr
+    ibi_en_field = tb.reg_map.I3C_EC.TTI.CONTROL.IBI_EN
+    crr_en_field = tb.reg_map.I3C_EC.TTI.CONTROL.CRR_EN
+    hj_en_field = tb.reg_map.I3C_EC.TTI.CONTROL.HJ_EN
+
+    ibi_en = await tb.read_csr_field(reg, ibi_en_field)
+    crr_en = await tb.read_csr_field(reg, crr_en_field)
+    hj_en = await tb.read_csr_field(reg, hj_en_field)
+
+    return (ibi_en, crr_en, hj_en)
+
+
+@cocotb.test()
+async def test_ccc_enec_disec(dut):
+
+    command_enec = CCC.DIRECT.ENEC
+    command_disec = CCC.DIRECT.DISEC
+
+    _EVENT_TOGGLE_BYTE = 0b00001011
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Read default values
+    event_en = await read_target_events(tb)
+    assert event_en == (1, 0, 1)
+
+    # Disable all target events
+    await i3c_controller.i3c_ccc_write(
+        ccc=command_disec, directed_data=[(TGT_ADR, [_EVENT_TOGGLE_BYTE])]
+    )
+
+    # Read disabled values
+    event_en = await read_target_events(tb)
+    assert event_en == (0, 0, 0)
+
+    # Enable all target events
+    await i3c_controller.i3c_ccc_write(
+        ccc=command_enec, directed_data=[(TGT_ADR, [_EVENT_TOGGLE_BYTE])]
+    )
+
+    # Read enabled values
+    event_en = await read_target_events(tb)
+    assert event_en == (1, 1, 1)

@@ -128,10 +128,14 @@ module ccc
     //
 
     // Enable Target event driven interrupts
-    output logic enec_o,
+    output logic enec_ibi_o,
+    output logic enec_crr_o,
+    output logic enec_hj_o,
 
     // Disable Target event driven interrupts
-    output logic disec_o,
+    output logic disec_ibi_o,
+    output logic disec_crr_o,
+    output logic disec_hj_o,
 
     // Set Activity state 0-3
     output logic entas0_o,
@@ -585,25 +589,25 @@ module ccc
   end
 
   // Connect dynamic address setter mux
-  always_comb begin: dyn_addr_set_mux
+  always_comb begin : dyn_addr_set_mux
     set_dasa_valid_o = set_aasa_valid ? set_aasa_valid : set_dasa_valid;
     set_dasa_o = set_aasa_valid ? set_aasa_addr : set_dasa_addr;
   end
 
   // Handle DIRECT SET CCCs
-  always_ff @(posedge clk_i or negedge rst_ni) begin: proc_set
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set
     if (~rst_ni) begin
       set_dasa_valid <= 1'b0;
-      set_dasa_addr <= '0;
+      set_dasa_addr  <= '0;
     end else begin
       case (command_code)
         // setdasa has only one data byte - dynamic address
         `I3C_DIRECT_SETDASA: begin
           if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            set_dasa_addr <= rx_data;
+            set_dasa_addr  <= rx_data;
             set_dasa_valid <= 1'b1;
           end else begin
-            set_dasa_addr <= '0;
+            set_dasa_addr  <= '0;
             set_dasa_valid <= 1'b0;
           end
         end
@@ -613,14 +617,15 @@ module ccc
     end
   end
 
+
   // Handle Broadcast CCCs
-  always_ff @(posedge clk_i or negedge rst_ni) begin: bcast_ccc
+  always_ff @(posedge clk_i or negedge rst_ni) begin : bcast_ccc
     if (~rst_ni) begin
       rstdaa_o <= '0;
       set_aasa_addr <= '0;
       set_aasa_valid <= 1'b0;
     end else begin
-      case(command_code)
+      case (command_code)
         `I3C_BCAST_RSTDAA: begin
           if (state_q == HandleBroadcast) begin
             rstdaa_o <= '1;
@@ -633,23 +638,78 @@ module ccc
         // be set
         `I3C_BCAST_SETAASA: begin
           if (state_q == HandleBroadcast) begin
-            set_aasa_addr <= target_sta_address_i;
+            set_aasa_addr  <= target_sta_address_i;
             set_aasa_valid <= 1'b1;
           end else begin
-            set_aasa_addr <= '0;
+            set_aasa_addr  <= '0;
             set_aasa_valid <= 1'b0;
           end
         end
-      default: begin
-      end
+        default: begin
+        end
       endcase
     end
   end
 
+  logic enec_ibi;
+  logic enec_crr;
+  logic enec_hj;
+
+  logic disec_ibi;
+  logic disec_crr;
+  logic disec_hj;
+
+  // Handle DIRECT ENEC/DISEC
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_enec_disec
+    if (~rst_ni) begin
+      enec_ibi  <= '0;
+      enec_crr  <= '0;
+      enec_hj   <= '0;
+      disec_ibi <= '0;
+      disec_crr <= '0;
+      disec_hj  <= '0;
+    end else begin
+      case (command_code)
+        `I3C_DIRECT_ENEC: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            enec_ibi <= rx_data[0];
+            enec_crr <= rx_data[1];
+            enec_hj  <= rx_data[3];
+          end else begin
+            enec_ibi <= '0;
+            enec_crr <= '0;
+            enec_hj  <= '0;
+          end
+        end
+        `I3C_DIRECT_DISEC: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            disec_ibi <= rx_data[0];
+            disec_crr <= rx_data[1];
+            disec_hj  <= rx_data[3];
+          end else begin
+            disec_ibi <= '0;
+            disec_crr <= '0;
+            disec_hj  <= '0;
+          end
+        end
+        default: begin
+        end
+      endcase
+    end
+  end
+
+  // Enable Target event driven interrupts
+  assign enec_ibi_o = enec_ibi;
+  assign enec_crr_o = enec_crr;
+  assign enec_hj_o = enec_hj;
+
+  // Disable Target event driven interrupts
+  assign disec_ibi_o = disec_ibi;
+  assign disec_crr_o = disec_crr;
+  assign disec_hj_o = disec_hj;
+
   // FIXME: Implement outputs
   assign set_brgtgt_o = '0;
-  assign enec_o = '0;
-  assign disec_o = '0;
   assign entas0_o = '0;
   assign entas1_o = '0;
   assign entas2_o = '0;

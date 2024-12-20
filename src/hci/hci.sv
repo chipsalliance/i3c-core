@@ -293,7 +293,7 @@ module hci
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_i;
   end : wire_hwif_ccc
 
-  always_comb begin: wire_address_setting
+  always_comb begin : wire_address_setting
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i | rstdaa_i;
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i | rstdaa_i;
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = rstdaa_i ? '0: set_dasa_valid_i;

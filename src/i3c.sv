@@ -475,6 +475,13 @@ module i3c
   logic set_dasa_valid;
   logic rstdaa;
 
+  logic enec_ibi;
+  logic enec_crr;
+  logic enec_hj;
+  logic disec_ibi;
+  logic disec_crr;
+  logic disec_hj;
+
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   // Status
@@ -642,7 +649,14 @@ module i3c
       .rst_action_o(rst_action),
       .set_dasa_o(set_dasa),
       .set_dasa_valid_o(set_dasa_valid),
-      .rstdaa_o(rstdaa)
+      .rstdaa_o(rstdaa),
+
+      .enec_ibi_o (enec_ibi),
+      .enec_crr_o (enec_crr),
+      .enec_hj_o  (enec_hj),
+      .disec_ibi_o(disec_ibi),
+      .disec_crr_o(disec_crr),
+      .disec_hj_o (disec_hj)
   );
 
   // HCI
@@ -882,7 +896,14 @@ module i3c
       .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data),
 
       .ibi_status_i(ibi_status),
-      .ibi_status_we_i(ibi_status_we)
+      .ibi_status_we_i(ibi_status_we),
+
+      .enec_ibi_i (enec_ibi),
+      .enec_crr_i (enec_crr),
+      .enec_hj_i  (enec_hj),
+      .disec_ibi_i(disec_ibi),
+      .disec_crr_i(disec_crr),
+      .disec_hj_i (disec_hj)
   );
 
   // Recovery handler

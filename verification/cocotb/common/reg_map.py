@@ -560,6 +560,8 @@ reg_map = Munch.fromDict(
                 "CONTROL": {
                     "base_addr": 452,
                     "offset": 452,
+                    "HJ_EN": {"low": 10, "mask": 1024},
+                    "CRR_EN": {"low": 11, "mask": 2048},
                     "IBI_EN": {"low": 12, "mask": 4096},
                     "IBI_RETRY_NUM": {"low": 13, "mask": 57344},
                 },

@@ -186,87 +186,87 @@ module recovery_handler
   // TTI Queues
 
   // RX descriptor
-  logic                          tti_rx_desc_queue_full;
+  logic                               tti_rx_desc_queue_full;
   logic [TtiRxDescFifoDepthWidth-1:0] tti_rx_desc_queue_depth;
-  logic                          unused_tti_rx_desc_start_thld_trig;
-  logic                          tti_rx_desc_queue_empty;
-  logic                          tti_rx_desc_queue_wvalid;
-  logic                          tti_rx_desc_queue_wready;
-  logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata;
-  logic                          tti_rx_desc_queue_ready_thld_trig;
+  logic                               unused_tti_rx_desc_start_thld_trig;
+  logic                               tti_rx_desc_queue_empty;
+  logic                               tti_rx_desc_queue_wvalid;
+  logic                               tti_rx_desc_queue_wready;
+  logic [     TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata;
+  logic                               tti_rx_desc_queue_ready_thld_trig;
 
-  logic                          tti_rx_desc_queue_req;
-  logic                          tti_rx_desc_queue_ack;
-  logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_data;
-  logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_i;
-  logic [TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_o;
-  logic                          tti_rx_desc_queue_reg_rst;
-  logic                          tti_rx_desc_queue_reg_rst_we;
-  logic                          tti_rx_desc_queue_reg_rst_data;
+  logic                               tti_rx_desc_queue_req;
+  logic                               tti_rx_desc_queue_ack;
+  logic [     TtiRxDescDataWidth-1:0] tti_rx_desc_queue_data;
+  logic [     TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_i;
+  logic [     TtiRxDescThldWidth-1:0] tti_rx_desc_queue_ready_thld_o;
+  logic                               tti_rx_desc_queue_reg_rst;
+  logic                               tti_rx_desc_queue_reg_rst_we;
+  logic                               tti_rx_desc_queue_reg_rst_data;
 
   // TX descriptor
-  logic                          tti_tx_desc_queue_full;
+  logic                               tti_tx_desc_queue_full;
   logic [TtiTxDescFifoDepthWidth-1:0] tti_tx_desc_queue_depth;
-  logic                          tti_tx_desc_queue_empty;
-  logic                          tti_tx_desc_queue_rvalid;
-  logic                          tti_tx_desc_queue_rready;
-  logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata;
-  logic                          tti_tx_desc_queue_ready_thld_trig;
+  logic                               tti_tx_desc_queue_empty;
+  logic                               tti_tx_desc_queue_rvalid;
+  logic                               tti_tx_desc_queue_rready;
+  logic [     TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata;
+  logic                               tti_tx_desc_queue_ready_thld_trig;
 
-  logic                          tti_tx_desc_queue_req;
-  logic                          tti_tx_desc_queue_ack;
-  logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_data;
-  logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_i;
-  logic [TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_o;
-  logic                          tti_tx_desc_queue_reg_rst;
-  logic                          tti_tx_desc_queue_reg_rst_we;
-  logic                          tti_tx_desc_queue_reg_rst_data;
+  logic                               tti_tx_desc_queue_req;
+  logic                               tti_tx_desc_queue_ack;
+  logic [     TtiTxDescDataWidth-1:0] tti_tx_desc_queue_data;
+  logic [     TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_i;
+  logic [     TtiTxDescThldWidth-1:0] tti_tx_desc_queue_ready_thld_o;
+  logic                               tti_tx_desc_queue_reg_rst;
+  logic                               tti_tx_desc_queue_reg_rst_we;
+  logic                               tti_tx_desc_queue_reg_rst_data;
 
   // RX Data queue
-  logic                          tti_rx_data_queue_full;
+  logic                               tti_rx_data_queue_full;
   logic [TtiRxDataFifoDepthWidth-1:0] tti_rx_data_queue_depth;
-  logic                          tti_rx_data_queue_empty;
-  logic                          tti_rx_data_queue_wvalid;
-  logic                          tti_rx_data_queue_wready;
-  logic [                   7:0] tti_rx_data_queue_wdata;
-  logic                          tti_rx_data_queue_flush;  // For data width conv.
-  logic                          tti_rx_data_queue_start_thld_trig;
-  logic                          tti_rx_data_queue_ready_thld_trig;
+  logic                               tti_rx_data_queue_empty;
+  logic                               tti_rx_data_queue_wvalid;
+  logic                               tti_rx_data_queue_wready;
+  logic [                        7:0] tti_rx_data_queue_wdata;
+  logic                               tti_rx_data_queue_flush;  // For data width conv.
+  logic                               tti_rx_data_queue_start_thld_trig;
+  logic                               tti_rx_data_queue_ready_thld_trig;
 
-  logic                          tti_rx_data_queue_req;
-  logic                          tti_rx_data_queue_ack;
-  logic [TtiRxDataDataWidth-1:0] tti_rx_data_queue_data;
-  logic [TtiRxDataThldWidth-1:0] tti_rx_data_queue_start_thld;
-  logic [TtiRxDataThldWidth-1:0] tti_rx_data_queue_ready_thld_i;
-  logic [TtiRxDataThldWidth-1:0] tti_rx_data_queue_ready_thld_o;
-  logic                          tti_rx_data_queue_reg_rst;
-  logic                          tti_rx_data_queue_reg_rst_we;
-  logic                          tti_rx_data_queue_reg_rst_next;
+  logic                               tti_rx_data_queue_req;
+  logic                               tti_rx_data_queue_ack;
+  logic [     TtiRxDataDataWidth-1:0] tti_rx_data_queue_data;
+  logic [     TtiRxDataThldWidth-1:0] tti_rx_data_queue_start_thld;
+  logic [     TtiRxDataThldWidth-1:0] tti_rx_data_queue_ready_thld_i;
+  logic [     TtiRxDataThldWidth-1:0] tti_rx_data_queue_ready_thld_o;
+  logic                               tti_rx_data_queue_reg_rst;
+  logic                               tti_rx_data_queue_reg_rst_we;
+  logic                               tti_rx_data_queue_reg_rst_next;
 
   // TX Data queue
-  logic                          tti_tx_data_queue_full;
+  logic                               tti_tx_data_queue_full;
   logic [TtiTxDataFifoDepthWidth-1:0] tti_tx_data_queue_depth;
-  logic                          tti_tx_data_queue_empty;
-  logic                          tti_tx_data_queue_rvalid;
-  logic                          tti_tx_data_queue_rready;
-  logic [                   7:0] tti_tx_data_queue_rdata;
-  logic                          tti_tx_data_queue_flush;
-  logic                          tti_tx_data_queue_start_thld_trig;
-  logic                          tti_tx_data_queue_ready_thld_trig;
+  logic                               tti_tx_data_queue_empty;
+  logic                               tti_tx_data_queue_rvalid;
+  logic                               tti_tx_data_queue_rready;
+  logic [                        7:0] tti_tx_data_queue_rdata;
+  logic                               tti_tx_data_queue_flush;
+  logic                               tti_tx_data_queue_start_thld_trig;
+  logic                               tti_tx_data_queue_ready_thld_trig;
 
-  logic                          tti_tx_data_queue_req;
-  logic                          tti_tx_data_queue_ack;
-  logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_data;
-  logic [TtiTxDataThldWidth-1:0] tti_tx_data_queue_start_thld;
-  logic [TtiTxDataThldWidth-1:0] tti_tx_data_queue_ready_thld_i;
-  logic [TtiTxDataThldWidth-1:0] tti_tx_data_queue_ready_thld_o;
-  logic                          tti_tx_data_queue_reg_rst;
-  logic                          tti_tx_data_queue_reg_rst_we;
-  logic                          tti_tx_data_queue_reg_rst_next;
+  logic                               tti_tx_data_queue_req;
+  logic                               tti_tx_data_queue_ack;
+  logic [     TtiTxDataDataWidth-1:0] tti_tx_data_queue_data;
+  logic [     TtiTxDataThldWidth-1:0] tti_tx_data_queue_start_thld;
+  logic [     TtiTxDataThldWidth-1:0] tti_tx_data_queue_ready_thld_i;
+  logic [     TtiTxDataThldWidth-1:0] tti_tx_data_queue_ready_thld_o;
+  logic                               tti_tx_data_queue_reg_rst;
+  logic                               tti_tx_data_queue_reg_rst_we;
+  logic                               tti_tx_data_queue_reg_rst_next;
 
   // IBI
-  logic                          tti_ibi_queue_req;
-  logic                          tti_ibi_queue_ack;
+  logic                               tti_ibi_queue_req;
+  logic                               tti_ibi_queue_ack;
 
   // Unused
   logic

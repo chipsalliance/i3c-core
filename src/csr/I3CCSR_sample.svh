@@ -2309,21 +2309,25 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(HJ_EN_bit_cg[bt]) this.HJ_EN_bit_cg[bt].sample(data[10 + bt]);
+            foreach(CRR_EN_bit_cg[bt]) this.CRR_EN_bit_cg[bt].sample(data[11 + bt]);
             foreach(IBI_EN_bit_cg[bt]) this.IBI_EN_bit_cg[bt].sample(data[12 + bt]);
             foreach(IBI_RETRY_NUM_bit_cg[bt]) this.IBI_RETRY_NUM_bit_cg[bt].sample(data[13 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[12:12]/*IBI_EN*/  ,  data[15:13]/*IBI_RETRY_NUM*/   );
+            this.fld_cg.sample( data[10:10]/*HJ_EN*/  ,  data[11:11]/*CRR_EN*/  ,  data[12:12]/*IBI_EN*/  ,  data[15:13]/*IBI_RETRY_NUM*/   );
         end
     endfunction
 
     function void I3CCSR__I3C_EC__TTI__CONTROL::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(HJ_EN_bit_cg[bt]) this.HJ_EN_bit_cg[bt].sample(HJ_EN.get_mirrored_value() >> bt);
+            foreach(CRR_EN_bit_cg[bt]) this.CRR_EN_bit_cg[bt].sample(CRR_EN.get_mirrored_value() >> bt);
             foreach(IBI_EN_bit_cg[bt]) this.IBI_EN_bit_cg[bt].sample(IBI_EN.get_mirrored_value() >> bt);
             foreach(IBI_RETRY_NUM_bit_cg[bt]) this.IBI_RETRY_NUM_bit_cg[bt].sample(IBI_RETRY_NUM.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( IBI_EN.get_mirrored_value()  ,  IBI_RETRY_NUM.get_mirrored_value()   );
+            this.fld_cg.sample( HJ_EN.get_mirrored_value()  ,  CRR_EN.get_mirrored_value()  ,  IBI_EN.get_mirrored_value()  ,  IBI_RETRY_NUM.get_mirrored_value()   );
         end
     endfunction
 

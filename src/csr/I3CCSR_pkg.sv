@@ -897,6 +897,27 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__in_t;
+
+    typedef struct packed{
+        logic next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__in_t;
+
+    typedef struct packed{
+        logic next;
+        logic we;
+    } I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__in_t HJ_EN;
+        I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__in_t CRR_EN;
+        I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__in_t IBI_EN;
+    } I3CCSR__I3C_EC__TTI__CONTROL__in_t;
+
+    typedef struct packed{
+        logic next;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t;
 
     typedef struct packed{
@@ -1195,6 +1216,7 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__in_t;
 
     typedef struct packed{
+        I3CCSR__I3C_EC__TTI__CONTROL__in_t CONTROL;
         I3CCSR__I3C_EC__TTI__STATUS__in_t STATUS;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__in_t RESET_CONTROL;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__in_t INTERRUPT_STATUS;
@@ -2380,6 +2402,14 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic value;
+    } I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__out_t;
+
+    typedef struct packed{
+        logic value;
     } I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__out_t;
 
     typedef struct packed{
@@ -2387,6 +2417,8 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__CONTROL__IBI_RETRY_NUM__out_t;
 
     typedef struct packed{
+        I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__out_t HJ_EN;
+        I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__out_t CRR_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__out_t IBI_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__IBI_RETRY_NUM__out_t IBI_RETRY_NUM;
     } I3CCSR__I3C_EC__TTI__CONTROL__out_t;
