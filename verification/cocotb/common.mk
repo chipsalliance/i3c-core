@@ -56,7 +56,7 @@ ifeq ($(SIM), vcs)
 
     COMPILE_ARGS += -debug_access+all +memcbk
     SIM_ARGS += +dumpon
-    EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd 
+    EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns

@@ -436,7 +436,6 @@ async def test_i3c_target_ibi_data(dut):
     assert result
 
 
-
 @cocotb.test()
 async def test_i3c_target_writes_and_reads(dut):
 
@@ -448,9 +447,7 @@ async def test_i3c_target_writes_and_reads(dut):
 
     # Write data to TTI TX FIFO
     for i in range(0, len(tx_test_data), 4):
-        await tb.write_csr(
-            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, tx_test_data[i : i + 4], 4
-        )
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, tx_test_data[i : i + 4], 4)
 
     # Write the TX descriptor
     await tb.write_csr(
@@ -513,7 +510,6 @@ async def test_i3c_target_writes_and_reads(dut):
     )
     assert test_data == recv_data
 
-
     # Issue a private read
     recv_data = await i3c_controller.i3c_read(TARGET_ADDRESS, 16)
     recv_data = list(recv_data)
@@ -522,3 +518,57 @@ async def test_i3c_target_writes_and_reads(dut):
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
+
+
+@cocotb.test()
+async def test_i3c_target_pwrite_err_detection(dut):
+    I3C_DIRECT_GETSTATUS = 0x90
+    TRANSFER_LENGTH = 4
+    LOOPS = 2
+    PROTOCOL_ERR_LOW = 4
+
+    # Setup
+    i3c_controller, _, tb = await test_setup(dut)
+
+    for _ in range(LOOPS):
+        # Check error status
+        err_status = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+        )
+        assert err_status == 0, "Unexpected error detected"
+
+        # Read target status to ensure there's no error
+        status = await i3c_controller.i3c_ccc_read(
+            ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
+        )
+        status = int.from_bytes(status, byteorder="big", signed=False)
+        assert (
+            (status >> PROTOCOL_ERR_LOW) & 1
+        ) == 0, "GETSTATUS reported unexpected Protocol Error"
+
+        # Send Private Write on I3C
+        test_data = [randint(0, 255) for _ in range(TRANSFER_LENGTH)]
+        await i3c_controller.i3c_write(TARGET_ADDRESS, test_data, inject_tbit_err=True)
+        await ClockCycles(tb.clk, 10)
+
+        # Check error status
+        err_status = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+        )
+        assert err_status == 1, "Expected error was not detected"
+
+        # Read target status to clear error
+        status = await i3c_controller.i3c_ccc_read(
+            ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
+        )
+        status = int.from_bytes(status, byteorder="big", signed=False)
+        assert ((status >> PROTOCOL_ERR_LOW) & 1) == 1, "GETSTATUS did not report Protocol Error"
+
+        # Check error status
+        err_status = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+        )
+        assert err_status == 0, "Unexpected error detected"
+        await ClockCycles(tb.clk, 100)
+
+    await ClockCycles(tb.clk, 100)
