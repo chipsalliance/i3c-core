@@ -471,7 +471,7 @@ module i3c
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
   logic [7:0] rst_action;
-  logic [7:0] set_dasa;
+  logic [6:0] set_dasa;
   logic set_dasa_valid;
   logic rstdaa;
 

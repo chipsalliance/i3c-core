@@ -43,7 +43,6 @@ async def test_setup(dut):
 
 @cocotb.test()
 async def test_ccc_getstatus(dut):
-    I3C_DIRECT_GETSTATUS = 0x90
     PENDING_INTERRUPT = 7
     PENDING_INTERRUPT_MASK = 0b1111
 
@@ -67,7 +66,7 @@ async def test_ccc_getstatus(dut):
         pending_interrupt == PENDING_INTERRUPT
     ), "Unexpected pending interrupt value read from CSR"
 
-    status = await i3c_controller.i3c_ccc_read(ccc=I3C_DIRECT_GETSTATUS, addr=TGT_ADR, count=2)
+    status = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=TGT_ADR, count=2)
     print("status", status)
     pending_interrupt = (
         int.from_bytes(status, byteorder="big", signed=False) & PENDING_INTERRUPT_MASK
@@ -84,15 +83,16 @@ async def test_ccc_setdasa(dut):
 
     STATIC_ADDR = 0x5A
     DYNAMIC_ADDR = 0x52
-    I3C_DIRECT_SETDASA = 0x87
     i3c_controller, i3c_target, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
     await i3c_controller.i3c_ccc_write(
-        ccc=I3C_DIRECT_SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR])]
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
     )
-    dynamic_address_reg_addr = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr
-    dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
-    dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
+    dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
+    dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
+    dynamic_address_reg_valid = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
+    )
     dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
     dynamic_address_valid = await tb.read_csr_field(
         dynamic_address_reg_addr, dynamic_address_reg_valid
@@ -105,12 +105,13 @@ async def test_ccc_setdasa(dut):
 async def test_ccc_rstdaa(dut):
 
     DYNAMIC_ADDR = 0x52
-    I3C_DIRECT_RSTDAA = 0x06
     i3c_controller, i3c_target, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
-    dynamic_address_reg_addr = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr
-    dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
-    dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
+    dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
+    dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
+    dynamic_address_reg_valid = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
+    )
 
     # set dynamic address CSR
     await tb.write_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value, DYNAMIC_ADDR)
@@ -125,7 +126,7 @@ async def test_ccc_rstdaa(dut):
     assert dynamic_address_valid == 1, "New DYNAMIC ADDRESS is not set as valid"
 
     # reset Dynamic Address
-    await i3c_controller.i3c_ccc_write(ccc=I3C_DIRECT_RSTDAA)
+    await i3c_controller.i3c_ccc_write(ccc=CCC.BCAST.RSTDAA)
 
     # check if the address was reset
     dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
@@ -212,7 +213,7 @@ async def test_ccc_setaasa(dut):
     I3C_BCAST_SETAASA = 0x29
     i3c_controller, i3c_target, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
-    dynamic_address_reg_addr = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr
+    dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
     dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
 

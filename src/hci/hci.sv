@@ -137,7 +137,7 @@ module hci
     output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
     input logic [7:0] rst_action_i,
-    input logic [7:0] set_dasa_i,
+    input logic [6:0] set_dasa_i,
     input logic       set_dasa_valid_i,
     input logic       rstdaa_i
 );
@@ -294,10 +294,11 @@ module hci
   end : wire_hwif_ccc
 
   always_comb begin : wire_address_setting
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i | rstdaa_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i | rstdaa_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = rstdaa_i ? '0: set_dasa_valid_i;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = rstdaa_i ? 1'b0 : set_dasa_i;
+    // Target address
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i | rstdaa_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = rstdaa_i ? '0: set_dasa_valid_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i | rstdaa_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = rstdaa_i ? 1'b0 : set_dasa_i;
   end
 
   I3CCSR i3c_csr (
@@ -502,8 +503,6 @@ module hci
   );
 
   always_comb begin : wire_unconnected_regs
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next = '0;
@@ -570,6 +569,10 @@ module hci
 
     hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = '0;
 
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
+    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
     hwif_in.I3CBase.HC_CONTROL.RESUME.we = '0;
     hwif_in.I3CBase.HC_CONTROL.RESUME.next = '0;
     hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = '0;

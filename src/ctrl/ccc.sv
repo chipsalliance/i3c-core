@@ -184,7 +184,7 @@ module ccc
     // I3C_BCAST_SETXTIME
 
     // Set Dynamic Address from Static Address
-    output logic [7:0] set_dasa_o,
+    output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
 
     // Target Reset Action
@@ -287,9 +287,9 @@ module ccc
   logic       last_tbit_valid;
 
   logic       set_dasa_valid;
-  logic [7:0] set_dasa_addr;
+  logic [6:0] set_dasa_addr;
   logic       set_aasa_valid;
-  logic [7:0] set_aasa_addr;
+  logic [6:0] set_aasa_addr;
 
   logic       get_status_in_progress;
 
@@ -357,6 +357,8 @@ module ccc
   assign is_byte_rsvd_addr = rx_data == {7'h7E, 1'b0};
 
   logic is_byte_our_addr;
+
+  logic [7:0] rx_data_count;
 
   always_comb begin : addr_matching
     if (target_dyn_address_valid_i) begin
@@ -541,7 +543,6 @@ module ccc
   end
 
   // GET interface handler
-
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_data_id
     if (~rst_ni) begin
       tx_data_id <= '0;
@@ -550,6 +551,17 @@ module ccc
       else if (state_q == TxData && bus_tx_done_i) tx_data_id <= tx_data_id - 1'b1;
       else if (state_q == RxTbit) tx_data_id <= tx_data_id_init;
       else tx_data_id <= tx_data_id;
+    end
+  end
+
+  // GET data counter
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      rx_data_count <= '0;
+    end else if (state_q == WaitCCC && ccc_valid_i) begin
+      rx_data_count <= '0;
+    end else if (state_q == RxDataTbit && bus_rx_done_i) begin
+      rx_data_count <= rx_data_count + 1'b1;
     end
   end
 
@@ -619,8 +631,8 @@ module ccc
       case (command_code)
         // setdasa has only one data byte - dynamic address
         `I3C_DIRECT_SETDASA: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            set_dasa_addr  <= rx_data;
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr && rx_data_count == 8'd0) begin
+            set_dasa_addr  <= rx_data[7:1];
             set_dasa_valid <= 1'b1;
           end else begin
             set_dasa_addr  <= '0;

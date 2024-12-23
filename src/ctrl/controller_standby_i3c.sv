@@ -93,7 +93,7 @@ module controller_standby_i3c
 
     output logic [7:0] rst_action_o,
     output logic tx_host_nack_o,
-    output logic [7:0] set_dasa_o,
+    output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic rstdaa_o,
 
