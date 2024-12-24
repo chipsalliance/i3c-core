@@ -259,6 +259,8 @@ module controller
   logic target_ibi_addr_valid;
   logic [6:0] target_hot_join_addr;
   logic [63:0] daa_unique_response;
+  logic set_mwl, set_mrl;
+  logic [15:0] mwl, mrl;
 
   logic ibi_enable;
   logic [2:0] ibi_retry_num;
@@ -280,6 +282,8 @@ module controller
   end
 
   configuration xconfiguration (
+      .clk_i                  (clk_i),
+      .rst_ni                 (rst_ni),
       .hwif_out_i             (hwif_out_i),
       .phy_en_o               (phy_en),
       .phy_mux_select_o       (phy_mux_select),
@@ -309,7 +313,11 @@ module controller
       .target_hot_join_addr_o (target_hot_join_addr),
       .daa_unique_response_o  (daa_unique_response),
       .ibi_enable_o           (ibi_enable),
-      .ibi_retry_num_o        (ibi_retry_num)
+      .ibi_retry_num_o        (ibi_retry_num),
+      .set_mwl_i              (set_mwl),
+      .set_mrl_i              (set_mrl),
+      .mwl_i                  (mwl),
+      .mrl_i                  (mrl)
   );
 
 
@@ -494,7 +502,11 @@ module controller
       .disec_hj_o(disec_hj_o),
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o),
-      .err_o
+      .err_o,
+      .set_mwl_o(set_mwl),
+      .set_mrl_o(set_mrl),
+      .mwl_o(mwl),
+      .mrl_o(mrl)
   );
 
 endmodule

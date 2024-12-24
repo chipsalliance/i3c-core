@@ -5,6 +5,9 @@
 */
 
 module configuration (
+    input  logic clk_i,
+    input  logic rst_ni,
+
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
 
     output logic phy_en_o,
@@ -49,7 +52,12 @@ module configuration (
 
     // Target IBI
     output logic ibi_enable_o,
-    output logic [2:0] ibi_retry_num_o
+    output logic [2:0] ibi_retry_num_o,
+
+    input  logic set_mwl_i,
+    input  logic set_mrl_i,
+    input  logic [15:0] mwl_i,
+    input  logic [15:0] mrl_i
 );
 
   // Mode of operation
@@ -130,8 +138,18 @@ module configuration (
 
   assign mwl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value + 1'b1);
   assign mrl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value + 1'b1);
-  assign get_mwl_o = mwl_dword << 2;
-  assign get_mrl_o = mrl_dword << 2;
+
+  always @(posedge clk_i or negedge rst_ni) begin : mrl_mwl
+    if (~rst_ni) begin
+      get_mwl_o <= mwl_dword << 2;
+      get_mrl_o <= mrl_dword << 2;
+    end else begin
+      if (set_mwl_i)
+        get_mwl_o <= mwl_i;
+      if (set_mrl_i)
+        get_mrl_o <= mrl_i;
+    end
+  end
 
   assign get_status_fmt1_o = {
     8'h00,  // Vendor-specific meaning

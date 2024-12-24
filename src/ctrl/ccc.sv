@@ -331,7 +331,6 @@ module ccc
     RxDataTbit,
     TxData,
     TxDataTbit,
-    HandleBroadcast,
     DoneCCC
   } state_e;
 
@@ -348,7 +347,6 @@ module ccc
       end
     end
   end
-
 
   logic is_direct_cmd;
   assign is_direct_cmd = command_code[7];  // 0 - BCast, 1 - Direct
@@ -404,7 +402,7 @@ module ccc
       RxTbit: begin
         if (bus_rx_done_i) begin
           // broadcast CCCs
-          if (~is_direct_cmd) state_d = HandleBroadcast;
+          if (~is_direct_cmd) state_d = RxData;
           else state_d = RxByte;
         end
       end
@@ -454,9 +452,6 @@ module ccc
         if (bus_tx_done_i)
           if (tx_data_done) state_d = RxDirectAddr;
           else state_d = TxData;
-      end
-      HandleBroadcast: begin
-        state_d = DoneCCC;
       end
       DoneCCC: begin
         state_d = Idle;
@@ -623,7 +618,7 @@ module ccc
   end
 
   // Handle DIRECT SET CCCs
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct
     if (~rst_ni) begin
       set_dasa_valid <= 1'b0;
       set_dasa_addr  <= '0;
@@ -635,7 +630,6 @@ module ccc
             set_dasa_addr  <= rx_data[7:1];
             set_dasa_valid <= 1'b1;
           end else begin
-            set_dasa_addr  <= '0;
             set_dasa_valid <= 1'b0;
           end
         end
@@ -645,8 +639,54 @@ module ccc
     end
   end
 
+  // Handle Broadcast/Direct SET CCCs
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct_bcast
+    if (~rst_ni) begin
+      set_mrl_o <= 1'b0;
+      mrl_o     <= '0;
+      set_mwl_o <= 1'b0;
+      mwl_o     <= '0;
+    end else begin
+      case (command_code)
+        // setmwl
+        `I3C_DIRECT_SETMWL, `I3C_BCAST_SETMWL: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            if (rx_data_count == 8'd0) begin
+                mwl_o[15:8] <= rx_data;
+                set_mwl_o   <= 1'b0;
+            end else if (rx_data_count == 8'd1) begin
+                mwl_o[ 7:0] <= rx_data;
+                set_mwl_o   <= 1'b1;
+            end else begin
+                set_mwl_o   <= 1'b0;
+            end
+          end else begin
+            set_mwl_o <= 1'b0;
+          end
+        end
+        // setmrl
+        `I3C_DIRECT_SETMRL, `I3C_BCAST_SETMRL: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            if (rx_data_count == 8'd0) begin
+                mrl_o[15:8] <= rx_data;
+                set_mrl_o   <= 1'b0;
+            end else if (rx_data_count == 8'd1) begin
+                mrl_o[ 7:0] <= rx_data;
+                set_mrl_o   <= 1'b1;
+            end else begin
+                set_mrl_o   <= 1'b0;
+            end
+          end else begin
+            set_mrl_o <= 1'b0;
+          end
+        end
+        default: begin
+        end
+      endcase
+    end
+  end
 
-  // Handle Broadcast CCCs
+  // Handle Broadcast CCCs without data
   always_ff @(posedge clk_i or negedge rst_ni) begin : bcast_ccc
     if (~rst_ni) begin
       rstdaa_o <= '0;
@@ -655,7 +695,7 @@ module ccc
     end else begin
       case (command_code)
         `I3C_BCAST_RSTDAA: begin
-          if (state_q == HandleBroadcast) begin
+          if (state_q == RxTbit && bus_rx_done_i) begin
             rstdaa_o <= '1;
           end else begin
             rstdaa_o <= '0;
@@ -665,11 +705,10 @@ module ccc
         // we reuse the SETDASA path here, just set static addr as the one to
         // be set
         `I3C_BCAST_SETAASA: begin
-          if (state_q == HandleBroadcast) begin
+          if (state_q == RxTbit && bus_rx_done_i) begin
             set_aasa_addr  <= target_sta_address_i;
             set_aasa_valid <= 1'b1;
           end else begin
-            set_aasa_addr  <= '0;
             set_aasa_valid <= 1'b0;
           end
         end
@@ -703,10 +742,6 @@ module ccc
             enec_ibi <= rx_data[0];
             enec_crr <= rx_data[1];
             enec_hj  <= rx_data[3];
-          end else begin
-            enec_ibi <= '0;
-            enec_crr <= '0;
-            enec_hj  <= '0;
           end
         end
         `I3C_DIRECT_DISEC: begin
@@ -714,10 +749,6 @@ module ccc
             disec_ibi <= rx_data[0];
             disec_crr <= rx_data[1];
             disec_hj  <= rx_data[3];
-          end else begin
-            disec_ibi <= '0;
-            disec_crr <= '0;
-            disec_hj  <= '0;
           end
         end
         default: begin
@@ -743,10 +774,6 @@ module ccc
   assign entas2_o = '0;
   assign entas3_o = '0;
   assign entdaa_o = '0;
-  assign set_mwl_o = '0;
-  assign mwl_o = '0;
-  assign set_mrl_o = '0;
-  assign mrl_o = '0;
   assign ent_tm_o = '0;
   assign tm_o = '0;
   assign ent_hdr_0_o = '0;

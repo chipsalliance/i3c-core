@@ -293,3 +293,80 @@ async def test_ccc_enec_disec(dut):
     # Read enabled values
     event_en = await read_target_events(tb)
     assert event_en == (1, 1, 1)
+
+
+@cocotb.test()
+async def test_ccc_setmwl_direct(dut):
+
+    command = CCC.DIRECT.SETMWL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send direct SETMWL
+    mwl_msb = 0xAB
+    mwl_lsb = 0xCD
+    await i3c_controller.i3c_ccc_write(ccc=command, directed_data=[(TGT_ADR, [mwl_msb, mwl_lsb])])
+
+    # Check if MWL got written
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xconfiguration.get_mwl_o.value
+    mwl = (mwl_msb << 8) | mwl_lsb
+    assert mwl == int(sig)
+
+
+@cocotb.test()
+async def test_ccc_setmrl_direct(dut):
+
+    command = CCC.DIRECT.SETMRL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send direct SETMRL
+    mrl_msb = 0xAB
+    mrl_lsb = 0xCD
+    await i3c_controller.i3c_ccc_write(ccc=command, directed_data=[(TGT_ADR, [mrl_msb, mrl_lsb])])
+
+    # Check if MRL got written
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xconfiguration.get_mrl_o.value
+    mrl = (mrl_msb << 8) | mrl_lsb
+    assert mrl == int(sig)
+
+
+@cocotb.test()
+async def test_ccc_setmwl_bcast(dut):
+
+    command = CCC.BCAST.SETMWL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send direct SETMWL
+    mwl_msb = 0xAB
+    mwl_lsb = 0xCD
+    await i3c_controller.i3c_ccc_write(ccc=command, broadcast_data=[mwl_msb, mwl_lsb])
+
+    # Check if MWL got written
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xconfiguration.get_mwl_o.value
+    mwl = (mwl_msb << 8) | mwl_lsb
+    assert mwl == int(sig)
+
+
+@cocotb.test()
+async def test_ccc_setmrl_bcast(dut):
+
+    command = CCC.BCAST.SETMRL
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send direct SETMRL
+    mrl_msb = 0xAB
+    mrl_lsb = 0xCD
+    await i3c_controller.i3c_ccc_write(ccc=command, broadcast_data=[mrl_msb, mrl_lsb])
+
+    # Check if MRL got written
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xconfiguration.get_mrl_o.value
+    mrl = (mrl_msb << 8) | mrl_lsb
+    assert mrl == int(sig)
+

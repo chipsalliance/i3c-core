@@ -150,6 +150,11 @@ module controller_standby
     output logic disec_crr_o,
     output logic disec_hj_o,
 
+    output logic set_mwl_o,
+    output logic set_mrl_o,
+    output logic [15:0] mwl_o,
+    output logic [15:0] mrl_o,
+
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o,
 
@@ -386,6 +391,10 @@ module controller_standby
       .disec_ibi_o(disec_ibi_o),
       .disec_crr_o(disec_crr_o),
       .disec_hj_o(disec_hj_o),
+      .set_mwl_o(set_mwl_o),
+      .set_mrl_o(set_mrl_o),
+      .mwl_o(mwl_o),
+      .mrl_o(mrl_o),
       .rstdaa_o(rstdaa_o),
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o),

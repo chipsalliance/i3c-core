@@ -105,6 +105,11 @@ module controller_standby_i3c
     output logic disec_crr_o,
     output logic disec_hj_o,
 
+    output logic set_mwl_o,
+    output logic set_mrl_o,
+    output logic [15:0] mwl_o,
+    output logic [15:0] mrl_o,
+
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o,
 
@@ -246,8 +251,6 @@ module controller_standby_i3c
   // CCCs
   logic entas0, entas1, entas2, entas3;
   logic entdaa;
-  logic set_mwl, set_mrl;
-  logic [15:0] mwl, mrl;
   logic ent_tm;
   logic [7:0] tm;
   logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
@@ -474,10 +477,10 @@ module controller_standby_i3c
       .entas3_o                  (entas3),
       .rstdaa_o                  (rstdaa_o),
       .entdaa_o                  (entdaa),
-      .set_mwl_o                 (set_mwl),
-      .mwl_o                     (mwl),
-      .set_mrl_o                 (set_mrl),
-      .mrl_o                     (mrl),
+      .set_mwl_o                 (set_mwl_o),
+      .mwl_o                     (mwl_o),
+      .set_mrl_o                 (set_mrl_o),
+      .mrl_o                     (mrl_o),
       .ent_tm_o                  (ent_tm),
       .tm_o                      (tm),
       .ent_hdr_0_o               (ent_hdr_0),
