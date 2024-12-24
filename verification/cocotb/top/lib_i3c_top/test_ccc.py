@@ -401,3 +401,35 @@ async def test_ccc_setmrl_bcast(dut):
     mrl = (mrl_msb << 8) | mrl_lsb
     assert mrl == int(sig)
 
+@cocotb.test()
+async def test_ccc_rstact_direct(dut):
+
+    command = CCC.DIRECT.RSTACT
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send directed RSTACT
+    rst_action = 0xAA
+    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action, directed_data=[(TGT_ADR, [])])
+
+    # Check if reset action got stored correctly in the logic
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_r;
+    assert rst_action == int(sig)
+
+
+@cocotb.test()
+async def test_ccc_rstact_bcast(dut):
+
+    command = CCC.BCAST.RSTACT
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Send broadcast RSTACT
+    rst_action = 0xAA
+    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action)
+
+    # Check if reset action got stored correctly in the logic
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_r;
+    assert rst_action == int(sig)
