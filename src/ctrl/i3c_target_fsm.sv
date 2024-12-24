@@ -487,7 +487,8 @@ module i3c_target_fsm #(
         else if (bus_tx_done_i) state_d = TxPReadTbit;
       end
       TxPReadTbit: begin
-        if (tx_tbit_done)
+        if (bus_start_det) state_d = RxFByte;
+        else if (tx_tbit_done)
           // Continue transfer if FIFO is not empty or if it's the last byte
           if (tx_fifo_rvalid_i | (tx_last_byte_i & ~tx_end_xfer))
             state_d = TxPReadData;
