@@ -92,7 +92,6 @@ module i3c_target_fsm #(
     output logic event_read_cmd_received_o,  // A read awaits confirmation for TX FIFO release
 
     input  logic       target_reset_detect_i,
-    output logic [7:0] rst_action_o,
     input  logic       hdr_exit_detect_i,
     output logic       is_in_hdr_mode_o,
     input  logic       ibi_enable_i,           // TTI.CONTROL.IBI_EN
@@ -326,7 +325,6 @@ module i3c_target_fsm #(
     bus_addr_d = '0;
     bus_addr_valid = '0;
     bus_rnw_d = '0;
-    rst_action_o = '0;
     is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;

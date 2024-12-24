@@ -92,6 +92,7 @@ module controller_standby_i3c
     input logic [2:0] ibi_retry_num_i,
 
     output logic [7:0] rst_action_o,
+    output logic rst_action_valid_o,
     output logic tx_host_nack_o,
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
@@ -254,7 +255,8 @@ module controller_standby_i3c
   logic ent_tm;
   logic [7:0] tm;
   logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
-  logic [7:0] rst_action;  // FIXME: Why CCC and FSM has rst_action as output?
+  logic [7:0] rst_action;
+  logic rst_action_valid;
   logic set_newda;
   logic [6:0] newda;
   logic get_acccr;
@@ -423,7 +425,6 @@ module controller_standby_i3c
       .event_tx_bus_timeout_o     (event_tx_bus_timeout),
       .event_read_cmd_received_o  (event_read_cmd_received),
       .target_reset_detect_i      (target_reset_detect),
-      .rst_action_o,
       .hdr_exit_detect_i          (hdr_exit_detect),
       .is_in_hdr_mode_o           (is_in_hdr_mode),
       .ibi_enable_i               (ibi_enable_i),
@@ -494,6 +495,7 @@ module controller_standby_i3c
       .set_dasa_o                (set_dasa_o),
       .set_dasa_valid_o          (set_dasa_valid_o),
       .rst_action_o              (rst_action),
+      .rst_action_valid_o        (rst_action_valid),
       .set_newda_o               (set_newda),
       .newda_o                   (newda),
       .get_mwl_i                 (get_mwl_i),
@@ -683,6 +685,15 @@ module controller_standby_i3c
       .ibi_byte_last_o   (ibi_last_byte),
       .ibi_byte_err_i    ('0)                   // FIXME
   );
+
+  // TODO: Add reset pattern detector
+  logic [7:0] rst_action_r;
+  always @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni)
+      rst_action_r <= '0;
+    else if (rst_action_valid)
+      rst_action_r <= rst_action;
+  end
 
   assign tx_host_nack_o = tx_host_nack;
 
