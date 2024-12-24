@@ -639,6 +639,14 @@ module ccc
     end
   end
 
+  logic enec_ibi;
+  logic enec_crr;
+  logic enec_hj;
+
+  logic disec_ibi;
+  logic disec_crr;
+  logic disec_hj;
+
   // Handle Broadcast/Direct SET CCCs
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct_bcast
     if (~rst_ni) begin
@@ -646,6 +654,12 @@ module ccc
       mrl_o     <= '0;
       set_mwl_o <= 1'b0;
       mwl_o     <= '0;
+      enec_ibi  <= '0;
+      enec_crr  <= '0;
+      enec_hj   <= '0;
+      disec_ibi <= '0;
+      disec_crr <= '0;
+      disec_hj  <= '0;
     end else begin
       case (command_code)
         // setmwl
@@ -680,6 +694,26 @@ module ccc
             set_mrl_o <= 1'b0;
           end
         end
+        // enec
+        `I3C_DIRECT_ENEC, `I3C_BCAST_ENEC: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            if (rx_data_count == 8'd0) begin
+              enec_ibi <= rx_data[0];
+              enec_crr <= rx_data[1];
+              enec_hj  <= rx_data[3];
+            end
+          end
+        end
+        // disec
+        `I3C_DIRECT_DISEC, `I3C_BCAST_DISEC: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+            if (rx_data_count == 8'd0) begin
+              disec_ibi <= rx_data[0];
+              disec_crr <= rx_data[1];
+              disec_hj  <= rx_data[3];
+            end
+          end
+        end
         default: begin
         end
       endcase
@@ -710,45 +744,6 @@ module ccc
             set_aasa_valid <= 1'b1;
           end else begin
             set_aasa_valid <= 1'b0;
-          end
-        end
-        default: begin
-        end
-      endcase
-    end
-  end
-
-  logic enec_ibi;
-  logic enec_crr;
-  logic enec_hj;
-
-  logic disec_ibi;
-  logic disec_crr;
-  logic disec_hj;
-
-  // Handle DIRECT ENEC/DISEC
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_enec_disec
-    if (~rst_ni) begin
-      enec_ibi  <= '0;
-      enec_crr  <= '0;
-      enec_hj   <= '0;
-      disec_ibi <= '0;
-      disec_crr <= '0;
-      disec_hj  <= '0;
-    end else begin
-      case (command_code)
-        `I3C_DIRECT_ENEC: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            enec_ibi <= rx_data[0];
-            enec_crr <= rx_data[1];
-            enec_hj  <= rx_data[3];
-          end
-        end
-        `I3C_DIRECT_DISEC: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            disec_ibi <= rx_data[0];
-            disec_crr <= rx_data[1];
-            disec_hj  <= rx_data[3];
           end
         end
         default: begin

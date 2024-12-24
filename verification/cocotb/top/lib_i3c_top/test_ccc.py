@@ -262,7 +262,7 @@ async def read_target_events(tb):
 
 
 @cocotb.test()
-async def test_ccc_enec_disec(dut):
+async def test_ccc_enec_disec_direct(dut):
 
     command_enec = CCC.DIRECT.ENEC
     command_disec = CCC.DIRECT.DISEC
@@ -294,6 +294,37 @@ async def test_ccc_enec_disec(dut):
     event_en = await read_target_events(tb)
     assert event_en == (1, 1, 1)
 
+
+@cocotb.test()
+async def test_ccc_enec_disec_bcast(dut):
+
+    command_enec = CCC.BCAST.ENEC
+    command_disec = CCC.BCAST.DISEC
+
+    _EVENT_TOGGLE_BYTE = 0b00001011
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Read default values
+    event_en = await read_target_events(tb)
+    assert event_en == (1, 0, 1)
+
+    # Disable all target events
+    await i3c_controller.i3c_ccc_write(
+        ccc=command_disec, broadcast_data=[_EVENT_TOGGLE_BYTE])
+
+    # Read disabled values
+    event_en = await read_target_events(tb)
+    assert event_en == (0, 0, 0)
+
+    # Enable all target events
+    await i3c_controller.i3c_ccc_write(
+        ccc=command_enec, broadcast_data=[_EVENT_TOGGLE_BYTE])
+
+    # Read enabled values
+    event_en = await read_target_events(tb)
+    assert event_en == (1, 1, 1)
 
 @cocotb.test()
 async def test_ccc_setmwl_direct(dut):
