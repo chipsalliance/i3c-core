@@ -136,10 +136,12 @@ module hci
     // Controller configuration
     output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
-    input logic [7:0] rst_action_i,
     input logic [6:0] set_dasa_i,
     input logic       set_dasa_valid_i,
-    input logic       rstdaa_i
+    input logic       rstdaa_i,
+
+    input logic [7:0] rst_action_i,
+    input logic rst_action_valid_i
 );
 
   I3CCSR_pkg::I3CCSR__in_t hwif_in;
@@ -289,9 +291,9 @@ module hci
     dct_o = hwif_out_o.DCT;
   end : wire_hwif
 
-  always_comb begin : wire_hwif_ccc
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_i;
-  end : wire_hwif_ccc
+  always_comb begin : wire_hwif_rstact
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_valid_i ? rst_action_i : '0;
+  end
 
   always_comb begin : wire_address_setting
     // Target address
@@ -566,6 +568,7 @@ module hci
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.we = '0;
 
     hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = '0;
 

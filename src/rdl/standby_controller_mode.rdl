@@ -390,10 +390,14 @@ regfile StandbyControllerModeRegisters#(
             sw   = rw;
         } CCC_PARAM_MODIFIED_STAT[17:17];
         field {
-            name = "";
-            desc = "";
+            name = "Secondary Controller Operation Reset Action";
+            desc = "The Host Controller shall write 1'b1 to this field to indicate that the
+                    Secondary Controller received a RSTACT CCC from the Active Controller, followed
+                    by the Target Reset Pattern.";
             hw   = rw;
+            we   = true;
             sw   = rw;
+            reset = 1'b0;
         } STBY_CR_OP_RSTACT_STAT[16:16];
         field {
             name = "";
@@ -462,7 +466,8 @@ regfile StandbyControllerModeRegisters#(
     } __rsvd_1;
     reg {
         name = "Standby Controller Interrupt Signal Enable";
-        desc = "";
+        desc = "When set to 1'b1, and the corresponding interrupt status field is set in register
+                STBY_CR_INTR_STATUS, the Host Controller shall assert an interrupt to the Host.";
         field {
             name = "";
             desc = "";
@@ -485,7 +490,9 @@ regfile StandbyControllerModeRegisters#(
             name = "";
             desc = "";
             hw   = rw;
+            we   = true;
             sw   = rw;
+            reset = 1'b0;
         } STBY_CR_OP_RSTACT_SIGNAL_EN[16:16];
         field {
             name = "";
@@ -544,7 +551,9 @@ regfile StandbyControllerModeRegisters#(
     } STBY_CR_INTR_SIGNAL_ENABLE;
     reg {
         name = "Standby Controller Interrupt Force";
-        desc = "";
+        desc = "For software testing, when set to 1'b1, forces the corresponding interrupt
+                to be sent to the Host, if the corresponding fields are set in register
+                STBY_CR_INTR_SIGNAL_ENABLE";
         field {
             name = "";
             desc = "";
@@ -564,10 +573,11 @@ regfile StandbyControllerModeRegisters#(
             sw   = rw;
         } CCC_PARAM_MODIFIED_FORCE[17:17];
         field {
-            name = "";
+            name = "    ";
             desc = "";
             hw   = rw;
-            sw   = rw;
+            we   = true;
+            sw   = w;
         } STBY_CR_OP_RSTACT_FORCE[16:16];
         field {
             name = "";
@@ -620,28 +630,43 @@ regfile StandbyControllerModeRegisters#(
         name = "Standby Controller CCC Configuration RSTACT";
         desc = "";
         field {
-            name = "";
-            desc = "";
+            name = "Reset Dynamic Address after Target Reset";
+            desc = "If set to 1'b1, then the Secondary Controller Logic must clear its Dynamic
+                    Address in register STBY_CR_DEVICE_ADDR after receiving
+                    a Target Reset Pattern that followed a Broadcast or Direct SET RSTACT CCC sent
+                    to the Dynamic Address, with Defining Byte 0x01 or 0x02.
+                    Requires support for Dynamic Address Assignment with at least one supported
+                    method, such as the ENTDAA CCC, with field DAA_ENTDAA_ENABLE set to 1'b1 in
+                    register STBY_CR_CONTROL.
+                    If field ACR_FSM_OP_SELECT in register STBY_CR_CONTROL is set to 1'b1, then
+                    this field shall be cleared (i.e., readiness to accept the Controller Role
+                    shall be revoked) with this Target Reset Pattern.";
             hw   = rw;
+            we   = true;
             sw   = rw;
+            reset = 1'b1;
         } RESET_DYNAMIC_ADDR[31:31];
         field {
-            name = "";
-            desc = "";
+            name = "Time to Reset Target";
+            desc = "For Direct GET CCC, this field is returned for Defining Byte 0x82.";
             hw   = rw;
             sw   = rw;
+            reset = 1'b0;
         } RESET_TIME_TARGET[23:16];
         field {
-            name = "";
-            desc = "";
+            name = "Time to Reset Peripheral";
+            desc = "For Direct GET CCC, this field is returned for Defining Byte 0x81.";
             hw   = rw;
             sw   = rw;
+            reset = 1'b0;
         } RESET_TIME_PERIPHERAL[15:8];
         field {
-            name = "";
-            desc = "";
+            name = "Defining Byte of the RSTACT CCC";
+            desc = "Contains the Defining Byte received with the last Direct SET CCC sent by the Active Controller.";
             hw   = rw;
-            sw   = rw;
+            we   = true;
+            sw   = r;
+            reset = 1'b0;
         } RST_ACTION[7:0];
     } STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
     reg {

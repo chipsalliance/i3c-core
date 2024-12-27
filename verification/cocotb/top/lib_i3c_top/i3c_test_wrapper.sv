@@ -97,7 +97,11 @@ module i3c_test_wrapper #(
 
     // I3C Bus signals
     output logic bus_sda,
-    output logic bus_scl
+    output logic bus_scl,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o
 );
 
 logic clk_i;
@@ -194,9 +198,11 @@ i3c_wrapper xi3c_wrapper (
     .sda_i(bus_sda),
     .scl_o(scl_i[2]),
     .sda_o(sda_i[2]),
-    .sel_od_pp_o(sel_od_pp)
+    .sel_od_pp_o(sel_od_pp),
 
-
+    .peripheral_reset_o,
+    .peripheral_reset_done_i,
+    .escalated_reset_o
 );
 
 endmodule

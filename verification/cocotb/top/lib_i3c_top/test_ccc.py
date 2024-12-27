@@ -5,6 +5,7 @@ import logging
 from boot import boot_init
 from bus2csr import bytes2int
 from ccc import CCC
+from cocotbext_i3c.common import I3cTargetResetAction
 from cocotbext_i3c.i3c_controller import I3cController
 from interface import I3CTopTestInterface
 
@@ -311,20 +312,19 @@ async def test_ccc_enec_disec_bcast(dut):
     assert event_en == (1, 0, 1)
 
     # Disable all target events
-    await i3c_controller.i3c_ccc_write(
-        ccc=command_disec, broadcast_data=[_EVENT_TOGGLE_BYTE])
+    await i3c_controller.i3c_ccc_write(ccc=command_disec, broadcast_data=[_EVENT_TOGGLE_BYTE])
 
     # Read disabled values
     event_en = await read_target_events(tb)
     assert event_en == (0, 0, 0)
 
     # Enable all target events
-    await i3c_controller.i3c_ccc_write(
-        ccc=command_enec, broadcast_data=[_EVENT_TOGGLE_BYTE])
+    await i3c_controller.i3c_ccc_write(ccc=command_enec, broadcast_data=[_EVENT_TOGGLE_BYTE])
 
     # Read enabled values
     event_en = await read_target_events(tb)
     assert event_en == (1, 1, 1)
+
 
 @cocotb.test()
 async def test_ccc_setmwl_direct(dut):
@@ -401,9 +401,9 @@ async def test_ccc_setmrl_bcast(dut):
     mrl = (mrl_msb << 8) | mrl_lsb
     assert mrl == int(sig)
 
+
 @cocotb.test()
 async def test_ccc_rstact_direct(dut):
-
     command = CCC.DIRECT.RSTACT
 
     i3c_controller, _, tb = await test_setup(dut)
@@ -411,16 +411,31 @@ async def test_ccc_rstact_direct(dut):
 
     # Send directed RSTACT
     rst_action = 0xAA
-    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action, directed_data=[(TGT_ADR, [])])
+    await i3c_controller.i3c_ccc_write(
+        ccc=command,
+        defining_byte=rst_action,
+        directed_data=[
+            (TGT_ADR, []),
+        ],
+        stop=False,
+    )
 
-    # Check if reset action got stored correctly in the logic
-    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_r;
+    # Check if reset action got stored correctly in the logic after Target Reset Pattern
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_o
+    assert int(sig) == 0
+    await i3c_controller.send_target_reset_pattern()
     assert rst_action == int(sig)
+    await i3c_controller.send_stop()
+
+    # Start new frame and reset target with reset action set to peripheral reset
+    await i3c_controller.target_reset(I3cTargetResetAction.RESET_PERIPHERAL_ONLY)
+    assert dut.peripheral_reset_o == 1
+    assert dut.escalated_reset_o == 0
+    await ClockCycles(tb.clk, 50)
 
 
 @cocotb.test()
 async def test_ccc_rstact_bcast(dut):
-
     command = CCC.BCAST.RSTACT
 
     i3c_controller, _, tb = await test_setup(dut)
@@ -428,8 +443,17 @@ async def test_ccc_rstact_bcast(dut):
 
     # Send broadcast RSTACT
     rst_action = 0xAA
-    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action)
+    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action, stop=False)
 
-    # Check if reset action got stored correctly in the logic
-    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_r;
+    # Check if reset action got stored correctly in the logic after Target Reset Pattern
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_o
+    assert int(sig) == 0
+    await i3c_controller.send_target_reset_pattern()
     assert rst_action == int(sig)
+    await i3c_controller.send_stop()
+
+    # Start new frame and reset target with reset action set to peripheral reset
+    await i3c_controller.target_reset(I3cTargetResetAction.RESET_WHOLE_TARGET)
+    assert dut.peripheral_reset_o == 0
+    assert dut.escalated_reset_o == 1
+    await ClockCycles(tb.clk, 50)

@@ -91,10 +91,10 @@ module i3c_target_fsm #(
     output logic event_tx_bus_timeout_o,  // Bus timed out during a read transfer
     output logic event_read_cmd_received_o,  // A read awaits confirmation for TX FIFO release
 
-    input  logic       target_reset_detect_i,
-    input  logic       hdr_exit_detect_i,
-    output logic       is_in_hdr_mode_o,
-    input  logic       ibi_enable_i,           // TTI.CONTROL.IBI_EN
+    input  logic target_reset_detect_i,
+    input  logic hdr_exit_detect_i,
+    output logic is_in_hdr_mode_o,
+    input  logic ibi_enable_i,           // TTI.CONTROL.IBI_EN
 
     // Interfacing with IBI subFSMs
     input  logic ibi_pending_i,
@@ -531,9 +531,8 @@ module i3c_target_fsm #(
       end
     endcase
 
-    // Bypass state transition for Target Reset Pattern and HDR Exit Pattern
-    if (target_reset_detect_i) state_d = DoRstAction;
-    else if (hdr_exit_detect_i) state_d = DoHdrExit;
+    // Bypass state transition for HDR Exit Pattern
+    if (hdr_exit_detect_i) state_d = DoHdrExit;
   end
 
   // Synchronous state transition

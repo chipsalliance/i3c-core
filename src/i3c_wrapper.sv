@@ -108,7 +108,11 @@ module i3c_wrapper #(
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
-    output logic recovery_image_activated_o
+    output logic recovery_image_activated_o,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o
 
     // TODO: Add interrupts
 );
@@ -266,7 +270,11 @@ module i3c_wrapper #(
       .dct_mem_sink_o(dct_mem_sink),
 
       .recovery_payload_available_o(recovery_payload_available_o),
-      .recovery_image_activated_o  (recovery_image_activated_o)
+      .recovery_image_activated_o  (recovery_image_activated_o),
+
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o
   );
 
   prim_ram_1p_adv #(

@@ -217,6 +217,7 @@ module controller
     output logic ibi_status_we_o,
 
     output logic [7:0] rst_action_o,
+    output logic       rst_action_valid_o,
     output logic [6:0] set_dasa_o,
     output logic       set_dasa_valid_o,
     output logic       rstdaa_o,
@@ -228,6 +229,10 @@ module controller
     output logic disec_ibi_o,
     output logic disec_crr_o,
     output logic disec_hj_o,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o,
 
     output logic err_o
 );
@@ -489,11 +494,12 @@ module controller
       .ibi_enable_i(ibi_enable),
       .ibi_retry_num_i(ibi_retry_num),
       .daa_unique_response_i(daa_unique_response),
-      .rst_action_o(rst_action_o),
       .tx_host_nack_o(tti_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
       .rstdaa_o(rstdaa_o),
+      .rst_action_o,
+      .rst_action_valid_o,
       .enec_ibi_o(enec_ibi_o),
       .enec_crr_o(enec_crr_o),
       .enec_hj_o(enec_hj_o),
@@ -506,7 +512,10 @@ module controller
       .set_mwl_o(set_mwl),
       .set_mrl_o(set_mrl),
       .mwl_o(mwl),
-      .mrl_o(mrl)
+      .mrl_o(mrl),
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o
   );
 
 endmodule

@@ -249,7 +249,7 @@ module ccc
 
     // Get Max Data Speed
     // I3C_DIRECT_GETMXDS
-    input logic get_mxds_i
+    input logic get_mxds_i,
 
     // (formerly GETHDRCAPS) Get Optional Feature Capabilities
     // I3C_DIRECT_GETCAPS
@@ -265,7 +265,14 @@ module ccc
 
     // Get Exchange Timing Information
     // I3C_DIRECT_GETXTIME
+
+    input  logic target_reset_detect_i,
+    input  logic peripheral_reset_done_i,
+    output logic rstact_armed_o,
+    output logic escalate_reset_o
 );
+  logic [7:0] rst_action;
+  logic       rst_action_valid;
 
   // Data structure for any CCC
   logic [7:0] command_code;
@@ -323,18 +330,12 @@ module ccc
   logic have_defining_byte;
   always_comb begin : defining_byte_ccc
     case (command_code)
-      `I3C_BCAST_ENDXFER:
-        have_defining_byte = 1'b1;
-      `I3C_BCAST_RSTACT:
-        have_defining_byte = 1'b1;
-      `I3C_BCAST_MLANE:
-        have_defining_byte = 1'b1;
-      `I3C_DIRECT_ENDXFER:
-        have_defining_byte = 1'b1;
-      `I3C_DIRECT_RSTACT:
-        have_defining_byte = 1'b1;
-      default:
-        have_defining_byte = '0;
+      `I3C_BCAST_ENDXFER: have_defining_byte = 1'b1;
+      `I3C_BCAST_RSTACT: have_defining_byte = 1'b1;
+      `I3C_BCAST_MLANE: have_defining_byte = 1'b1;
+      `I3C_DIRECT_ENDXFER: have_defining_byte = 1'b1;
+      `I3C_DIRECT_RSTACT: have_defining_byte = 1'b1;
+      default: have_defining_byte = '0;
     endcase
   end
 
@@ -373,8 +374,7 @@ module ccc
 
   logic [7:0] defining_byte;
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_defining_byte
-    if (~rst_ni)
-      defining_byte <= '0;
+    if (~rst_ni) defining_byte <= '0;
     else if (state_q == RxDefByte && bus_rx_done_i) begin
       defining_byte <= bus_rx_data_i;
     end
@@ -438,12 +438,10 @@ module ccc
       RxTbit: begin
         if (bus_rx_done_i) begin
           // have defining byte
-          if (have_defining_byte)
-            state_d = RxDefByte;
+          if (have_defining_byte) state_d = RxDefByte;
           else begin
             // broadcast CCCs
-            if (~is_direct_cmd)
-              state_d = RxData;
+            if (~is_direct_cmd) state_d = RxData;
             // direct CCCs
             else
               state_d = RxByte;
@@ -451,14 +449,12 @@ module ccc
         end
       end
       RxDefByte: begin
-        if (bus_rx_done_i)
-          state_d = RxDefByteTbit;
+        if (bus_rx_done_i) state_d = RxDefByteTbit;
       end
       RxDefByteTbit: begin
         if (bus_rx_done_i) begin
           // broadcast CCCs
-          if (~is_direct_cmd)
-            state_d = RxData;
+          if (~is_direct_cmd) state_d = RxData;
           // direct CCCs
           else
             state_d = RxByte;
@@ -692,7 +688,8 @@ module ccc
       case (command_code)
         // setdasa has only one data byte - dynamic address
         `I3C_DIRECT_SETDASA: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr && rx_data_count == 8'd0) begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr &&
+              rx_data_count == 8'd0) begin
             set_dasa_addr  <= rx_data[7:1];
             set_dasa_valid <= 1'b1;
           end else begin
@@ -716,31 +713,30 @@ module ccc
   // Handle Broadcast/Direct SET CCCs
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct_bcast
     if (~rst_ni) begin
-      set_mrl_o <= 1'b0;
-      mrl_o     <= '0;
-      set_mwl_o <= 1'b0;
-      mwl_o     <= '0;
-      enec_ibi  <= '0;
-      enec_crr  <= '0;
-      enec_hj   <= '0;
-      disec_ibi <= '0;
-      disec_crr <= '0;
-      disec_hj  <= '0;
-      rst_action_valid_o <= 1'b0;
-      rst_action_o       <= '0;
+      set_mrl_o        <= 1'b0;
+      mrl_o            <= '0;
+      set_mwl_o        <= 1'b0;
+      mwl_o            <= '0;
+      enec_ibi         <= '0;
+      enec_crr         <= '0;
+      enec_hj          <= '0;
+      disec_ibi        <= '0;
+      disec_crr        <= '0;
+      disec_hj         <= '0;
+      rst_action_valid <= 1'b0;
     end else begin
       case (command_code)
         // setmwl
         `I3C_DIRECT_SETMWL, `I3C_BCAST_SETMWL: begin
           if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
             if (rx_data_count == 8'd0) begin
-                mwl_o[15:8] <= rx_data;
-                set_mwl_o   <= 1'b0;
+              mwl_o[15:8] <= rx_data;
+              set_mwl_o   <= 1'b0;
             end else if (rx_data_count == 8'd1) begin
-                mwl_o[ 7:0] <= rx_data;
-                set_mwl_o   <= 1'b1;
+              mwl_o[7:0] <= rx_data;
+              set_mwl_o  <= 1'b1;
             end else begin
-                set_mwl_o   <= 1'b0;
+              set_mwl_o <= 1'b0;
             end
           end else begin
             set_mwl_o <= 1'b0;
@@ -750,13 +746,13 @@ module ccc
         `I3C_DIRECT_SETMRL, `I3C_BCAST_SETMRL: begin
           if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
             if (rx_data_count == 8'd0) begin
-                mrl_o[15:8] <= rx_data;
-                set_mrl_o   <= 1'b0;
+              mrl_o[15:8] <= rx_data;
+              set_mrl_o   <= 1'b0;
             end else if (rx_data_count == 8'd1) begin
-                mrl_o[ 7:0] <= rx_data;
-                set_mrl_o   <= 1'b1;
+              mrl_o[7:0] <= rx_data;
+              set_mrl_o  <= 1'b1;
             end else begin
-                set_mrl_o   <= 1'b0;
+              set_mrl_o <= 1'b0;
             end
           end else begin
             set_mrl_o <= 1'b0;
@@ -785,19 +781,17 @@ module ccc
         // rstact (direct)
         `I3C_DIRECT_RSTACT: begin
           if (command_valid && is_byte_our_addr) begin
-            rst_action_o       <= defining_byte;
-            rst_action_valid_o <= 1'b1;
+            rst_action_valid <= 1'b1;
           end else begin
-            rst_action_valid_o <= 1'b0;
+            rst_action_valid <= 1'b0;
           end
         end
         // rstact (broadcast)
         `I3C_BCAST_RSTACT: begin
           if (state_q == RxDefByteTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
-            rst_action_o       <= defining_byte;
-            rst_action_valid_o <= 1'b1;
+            rst_action_valid <= 1'b1;
           end else begin
-            rst_action_valid_o <= 1'b0;
+            rst_action_valid <= 1'b0;
           end
         end
         default: begin
@@ -835,6 +829,53 @@ module ccc
         default: begin
         end
       endcase
+    end
+  end
+
+  logic rstact_armed;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : rst_action_internal
+    if (~rst_ni) begin
+      rstact_armed <= '0;
+      rst_action <= '0;
+    end else begin
+      if (rst_action_valid) begin
+        rstact_armed <= 1'b1;
+        rst_action   <= defining_byte;
+      end
+
+      if (bus_start_det_i) begin
+        rstact_armed <= '0;
+        rst_action   <= '0;
+      end
+    end
+  end
+
+  assign rstact_armed_o = rstact_armed;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : rst_action_outputs
+    if (~rst_ni) begin
+      rst_action_valid_o <= '0;
+      rst_action_o <= '0;
+    end else begin
+      if (rstact_armed & target_reset_detect_i) begin
+        rst_action_valid_o <= 1'b1;
+        rst_action_o <= rst_action;
+      end
+
+      if (bus_start_det_i) begin
+        rst_action_valid_o <= '0;
+        rst_action_o <= '0;
+      end
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : choose_reset_type
+    if (~rst_ni) begin
+      escalate_reset_o <= '0;
+    end else begin
+      if (peripheral_reset_done_i) escalate_reset_o <= '1;
+      if (command_code inside {`I3C_DIRECT_RSTACT, `I3C_BCAST_RSTACT, `I3C_DIRECT_GETSTATUS} &
+          ccc_valid_i)
+        escalate_reset_o <= '0;
     end
   end
 

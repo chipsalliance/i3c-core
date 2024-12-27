@@ -189,7 +189,11 @@ module i3c
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
-    output logic recovery_image_activated_o
+    output logic recovery_image_activated_o,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o
 
     // TODO: Add interrupts
 );
@@ -470,7 +474,6 @@ module i3c
 
   logic [7:0] rx_bus_addr;
   logic rx_bus_addr_valid;
-  logic [7:0] rst_action;
   logic [6:0] set_dasa;
   logic set_dasa_valid;
   logic rstdaa;
@@ -481,6 +484,9 @@ module i3c
   logic disec_ibi;
   logic disec_crr;
   logic disec_hj;
+
+  logic [7:0] rst_action;
+  logic rst_action_valid;
 
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
@@ -648,10 +654,12 @@ module i3c
       .ibi_status_o(ibi_status),
       .ibi_status_we_o(ibi_status_we),
 
-      .rst_action_o(rst_action),
       .set_dasa_o(set_dasa),
       .set_dasa_valid_o(set_dasa_valid),
       .rstdaa_o(rstdaa),
+
+      .rst_action_o(rst_action),
+      .rst_action_valid_o(rst_action_valid),
 
       .enec_ibi_o (enec_ibi),
       .enec_crr_o (enec_crr),
@@ -659,6 +667,10 @@ module i3c
       .disec_ibi_o(disec_ibi),
       .disec_crr_o(disec_crr),
       .disec_hj_o (disec_hj),
+
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o,
 
       .err_o(controller_error)
   );
@@ -784,10 +796,12 @@ module i3c
 
       .hwif_out_o(hwif_out),
 
-      .rst_action_i(rst_action),
       .set_dasa_i(set_dasa),
       .set_dasa_valid_i(set_dasa_valid),
-      .rstdaa_i(rstdaa)
+      .rstdaa_i(rstdaa),
+
+      .rst_action_i(rst_action),
+      .rst_action_valid_i(rst_action_valid)
   );
 
   // TTI RX Descriptor queue

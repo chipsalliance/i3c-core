@@ -136,11 +136,12 @@ module controller_standby
     input logic ibi_enable_i,
     input logic [2:0] ibi_retry_num_i,
 
-    output logic [7:0] rst_action_o,
     output logic tx_host_nack_o,
     output logic [7:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic rstdaa_o,
+    output logic [7:0] rst_action_o,
+    output logic rst_action_valid_o,
 
     output logic enec_ibi_o,
     output logic enec_crr_o,
@@ -157,6 +158,10 @@ module controller_standby
 
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o,
 
     output logic err_o
 );
@@ -381,10 +386,11 @@ module controller_standby
       .ibi_enable_i(ibi_enable_i),
       .ibi_retry_num_i(ibi_retry_num_i),
       .daa_unique_response_i(daa_unique_response_i),
-      .rst_action_o(rst_action_o),
       .tx_host_nack_o(i3c_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
+      .rst_action_o,
+      .rst_action_valid_o,
       .enec_ibi_o(enec_ibi_o),
       .enec_crr_o(enec_crr_o),
       .enec_hj_o(enec_hj_o),
@@ -399,7 +405,10 @@ module controller_standby
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o),
       .get_status_done_o(get_status_done),
-      .parity_err_o(parity_err)
+      .parity_err_o(parity_err),
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o
   );
 
 endmodule

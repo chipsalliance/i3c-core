@@ -5,8 +5,8 @@
 */
 
 module configuration (
-    input  logic clk_i,
-    input  logic rst_ni,
+    input logic clk_i,
+    input logic rst_ni,
 
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
 
@@ -54,10 +54,10 @@ module configuration (
     output logic ibi_enable_o,
     output logic [2:0] ibi_retry_num_o,
 
-    input  logic set_mwl_i,
-    input  logic set_mrl_i,
-    input  logic [15:0] mwl_i,
-    input  logic [15:0] mrl_i
+    input logic set_mwl_i,
+    input logic set_mrl_i,
+    input logic [15:0] mwl_i,
+    input logic [15:0] mrl_i
 );
 
   // Mode of operation
@@ -144,10 +144,8 @@ module configuration (
       get_mwl_o <= mwl_dword << 2;
       get_mrl_o <= mrl_dword << 2;
     end else begin
-      if (set_mwl_i)
-        get_mwl_o <= mwl_i;
-      if (set_mrl_i)
-        get_mrl_o <= mrl_i;
+      if (set_mwl_i) get_mwl_o <= mwl_i;
+      if (set_mrl_i) get_mrl_o <= mrl_i;
     end
   end
 

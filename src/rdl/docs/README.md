@@ -1847,21 +1847,21 @@ which supports extended capabilities</p>
 
 
 
-|Bits|        Identifier        |Access|Reset|Name|
-|----|--------------------------|------|-----|----|
-|  0 |ACR_HANDOFF_OK_REMAIN_STAT|  rw  |  —  |    |
-|  1 |ACR_HANDOFF_OK_PRIMED_STAT|  rw  |  —  |    |
-|  2 | ACR_HANDOFF_ERR_FAIL_STAT|  rw  |  —  |    |
-|  3 |  ACR_HANDOFF_ERR_M3_STAT |  rw  |  —  |    |
-| 10 |     CRR_RESPONSE_STAT    |  rw  |  —  |    |
-| 11 |   STBY_CR_DYN_ADDR_STAT  |  rw  |  —  |    |
-| 12 |STBY_CR_ACCEPT_NACKED_STAT|  rw  |  —  |    |
-| 13 |  STBY_CR_ACCEPT_OK_STAT  |  rw  |  —  |    |
-| 14 |  STBY_CR_ACCEPT_ERR_STAT |  rw  |  —  |    |
-| 16 |  STBY_CR_OP_RSTACT_STAT  |  rw  |  —  |    |
-| 17 |  CCC_PARAM_MODIFIED_STAT |  rw  |  —  |    |
-| 18 |  CCC_UNHANDLED_NACK_STAT |  rw  |  —  |    |
-| 19 | CCC_FATAL_RSTDAA_ERR_STAT|  rw  |  —  |    |
+|Bits|        Identifier        |Access|Reset|                    Name                   |
+|----|--------------------------|------|-----|-------------------------------------------|
+|  0 |ACR_HANDOFF_OK_REMAIN_STAT|  rw  |  —  |                                           |
+|  1 |ACR_HANDOFF_OK_PRIMED_STAT|  rw  |  —  |                                           |
+|  2 | ACR_HANDOFF_ERR_FAIL_STAT|  rw  |  —  |                                           |
+|  3 |  ACR_HANDOFF_ERR_M3_STAT |  rw  |  —  |                                           |
+| 10 |     CRR_RESPONSE_STAT    |  rw  |  —  |                                           |
+| 11 |   STBY_CR_DYN_ADDR_STAT  |  rw  |  —  |                                           |
+| 12 |STBY_CR_ACCEPT_NACKED_STAT|  rw  |  —  |                                           |
+| 13 |  STBY_CR_ACCEPT_OK_STAT  |  rw  |  —  |                                           |
+| 14 |  STBY_CR_ACCEPT_ERR_STAT |  rw  |  —  |                                           |
+| 16 |  STBY_CR_OP_RSTACT_STAT  |  rw  | 0x0 |Secondary Controller Operation Reset Action|
+| 17 |  CCC_PARAM_MODIFIED_STAT |  rw  |  —  |                                           |
+| 18 |  CCC_UNHANDLED_NACK_STAT |  rw  |  —  |                                           |
+| 19 | CCC_FATAL_RSTDAA_ERR_STAT|  rw  |  —  |                                           |
 
 #### ACR_HANDOFF_OK_REMAIN_STAT field
 
@@ -1901,7 +1901,9 @@ which supports extended capabilities</p>
 
 #### STBY_CR_OP_RSTACT_STAT field
 
-
+<p>The Host Controller shall write 1'b1 to this field to indicate that the
+Secondary Controller received a RSTACT CCC from the Active Controller, followed
+by the Target Reset Pattern.</p>
 
 #### CCC_PARAM_MODIFIED_STAT field
 
@@ -1937,7 +1939,8 @@ which supports extended capabilities</p>
 - Base Offset: 0x28
 - Size: 0x4
 
-
+<p>When set to 1'b1, and the corresponding interrupt status field is set in register
+STBY_CR_INTR_STATUS, the Host Controller shall assert an interrupt to the Host.</p>
 
 |Bits|           Identifier          |Access|Reset|Name|
 |----|-------------------------------|------|-----|----|
@@ -1950,7 +1953,7 @@ which supports extended capabilities</p>
 | 12 |STBY_CR_ACCEPT_NACKED_SIGNAL_EN|  rw  |  —  |    |
 | 13 |  STBY_CR_ACCEPT_OK_SIGNAL_EN  |  rw  |  —  |    |
 | 14 |  STBY_CR_ACCEPT_ERR_SIGNAL_EN |  rw  |  —  |    |
-| 16 |  STBY_CR_OP_RSTACT_SIGNAL_EN  |  rw  |  —  |    |
+| 16 |  STBY_CR_OP_RSTACT_SIGNAL_EN  |  rw  | 0x0 |    |
 | 17 |  CCC_PARAM_MODIFIED_SIGNAL_EN |  rw  |  —  |    |
 | 18 |  CCC_UNHANDLED_NACK_SIGNAL_EN |  rw  |  —  |    |
 | 19 | CCC_FATAL_RSTDAA_ERR_SIGNAL_EN|  rw  |  —  |    |
@@ -2013,7 +2016,9 @@ which supports extended capabilities</p>
 - Base Offset: 0x2C
 - Size: 0x4
 
-
+<p>For software testing, when set to 1'b1, forces the corresponding interrupt
+to be sent to the Host, if the corresponding fields are set in register
+STBY_CR_INTR_SIGNAL_ENABLE</p>
 
 |Bits|         Identifier        |Access|Reset|Name|
 |----|---------------------------|------|-----|----|
@@ -2022,7 +2027,7 @@ which supports extended capabilities</p>
 | 12 |STBY_CR_ACCEPT_NACKED_FORCE|  rw  |  —  |    |
 | 13 |  STBY_CR_ACCEPT_OK_FORCE  |  rw  |  —  |    |
 | 14 |  STBY_CR_ACCEPT_ERR_FORCE |  rw  |  —  |    |
-| 16 |  STBY_CR_OP_RSTACT_FORCE  |  rw  |  —  |    |
+| 16 |  STBY_CR_OP_RSTACT_FORCE  |   w  |  —  |    |
 | 17 |  CCC_PARAM_MODIFIED_FORCE |  rw  |  —  |    |
 | 18 |  CCC_UNHANDLED_NACK_FORCE |  rw  |  —  |    |
 | 19 | CCC_FATAL_RSTDAA_ERR_FORCE|  rw  |  —  |    |
@@ -2092,28 +2097,37 @@ which supports extended capabilities</p>
 
 
 
-| Bits|      Identifier     |Access|Reset|Name|
-|-----|---------------------|------|-----|----|
-| 7:0 |      RST_ACTION     |  rw  |  —  |    |
-| 15:8|RESET_TIME_PERIPHERAL|  rw  |  —  |    |
-|23:16|  RESET_TIME_TARGET  |  rw  |  —  |    |
-|  31 |  RESET_DYNAMIC_ADDR |  rw  |  —  |    |
+| Bits|      Identifier     |Access|Reset|                  Name                  |
+|-----|---------------------|------|-----|----------------------------------------|
+| 7:0 |      RST_ACTION     |   r  | 0x0 |     Defining Byte of the RSTACT CCC    |
+| 15:8|RESET_TIME_PERIPHERAL|  rw  | 0x0 |        Time to Reset Peripheral        |
+|23:16|  RESET_TIME_TARGET  |  rw  | 0x0 |          Time to Reset Target          |
+|  31 |  RESET_DYNAMIC_ADDR |  rw  | 0x1 |Reset Dynamic Address after Target Reset|
 
 #### RST_ACTION field
 
-
+<p>Contains the Defining Byte received with the last Direct SET CCC sent by the Active Controller.</p>
 
 #### RESET_TIME_PERIPHERAL field
 
-
+<p>For Direct GET CCC, this field is returned for Defining Byte 0x81.</p>
 
 #### RESET_TIME_TARGET field
 
-
+<p>For Direct GET CCC, this field is returned for Defining Byte 0x82.</p>
 
 #### RESET_DYNAMIC_ADDR field
 
-
+<p>If set to 1'b1, then the Secondary Controller Logic must clear its Dynamic
+Address in register STBY_CR_DEVICE_ADDR after receiving
+a Target Reset Pattern that followed a Broadcast or Direct SET RSTACT CCC sent
+to the Dynamic Address, with Defining Byte 0x01 or 0x02.
+Requires support for Dynamic Address Assignment with at least one supported
+method, such as the ENTDAA CCC, with field DAA_ENTDAA_ENABLE set to 1'b1 in
+register STBY_CR_CONTROL.
+If field ACR_FSM_OP_SELECT in register STBY_CR_CONTROL is set to 1'b1, then
+this field shall be cleared (i.e., readiness to accept the Controller Role
+shall be revoked) with this Target Reset Pattern.</p>
 
 ### __rsvd_2 register
 

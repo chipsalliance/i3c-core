@@ -673,6 +673,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__in_t;
 
     typedef struct packed{
@@ -749,6 +750,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__in_t;
 
     typedef struct packed{
@@ -801,6 +803,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__in_t;
 
     typedef struct packed{
@@ -842,6 +845,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [7:0] next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__in_t;
 
     typedef struct packed{
@@ -854,6 +858,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__in_t;
 
     typedef struct packed{

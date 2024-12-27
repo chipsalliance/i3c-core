@@ -116,7 +116,11 @@ module controller_standby_i3c
 
     output logic get_status_done_o,
 
-    output logic parity_err_o
+    output logic parity_err_o,
+
+    output logic peripheral_reset_o,
+    input  logic peripheral_reset_done_i,
+    output logic escalated_reset_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -255,13 +259,14 @@ module controller_standby_i3c
   logic ent_tm;
   logic [7:0] tm;
   logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
-  logic [7:0] rst_action;
-  logic rst_action_valid;
   logic set_newda;
   logic [6:0] newda;
   logic get_acccr;
   logic set_brgtgt;
   logic get_mxds;
+
+  logic escalate_reset;
+  logic rstact_armed;
 
   // Drive all unused inputs here
   always_comb begin
@@ -494,8 +499,8 @@ module controller_standby_i3c
       .ent_hdr_7_o               (ent_hdr_7),
       .set_dasa_o                (set_dasa_o),
       .set_dasa_valid_o          (set_dasa_valid_o),
-      .rst_action_o              (rst_action),
-      .rst_action_valid_o        (rst_action_valid),
+      .rst_action_o,
+      .rst_action_valid_o,
       .set_newda_o               (set_newda),
       .newda_o                   (newda),
       .get_mwl_i                 (get_mwl_i),
@@ -507,7 +512,11 @@ module controller_standby_i3c
       .get_acccr_i               (get_acccr),
       .set_brgtgt_o              (set_brgtgt),
       .get_mxds_i                (get_mxds),
-      .get_status_done_o
+      .get_status_done_o,
+      .target_reset_detect_i     (target_reset_detect),
+      .peripheral_reset_done_i,
+      .rstact_armed_o            (rstact_armed),
+      .escalate_reset_o          (escalate_reset)
   );
 
   ibi u_ibi (
@@ -686,15 +695,6 @@ module controller_standby_i3c
       .ibi_byte_err_i    ('0)                   // FIXME
   );
 
-  // TODO: Add reset pattern detector
-  logic [7:0] rst_action_r;
-  always @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni)
-      rst_action_r <= '0;
-    else if (rst_action_valid)
-      rst_action_r <= rst_action;
-  end
-
   assign tx_host_nack_o = tx_host_nack;
 
   // Expose bus condition detection
@@ -702,4 +702,10 @@ module controller_standby_i3c
   assign bus_rstart_o = bus_rstart_det;
   assign bus_stop_o = bus_stop_det;
 
+  // Reset peripheral for reset action 0x1 or when we receive 1st Target Reset Pattern
+  assign peripheral_reset_o = ((rst_action_o == 8'h1) & rst_action_valid_o) |
+                              (target_reset_detect & ~escalate_reset & ~rstact_armed);
+  // Escalate reset for reset action 0x2 or when we receive 2nd Target Reset Pattern
+  assign escalated_reset_o = ((rst_action_o == 8'h2) & rst_action_valid_o) |
+                             (target_reset_detect & escalate_reset & ~rstact_armed);
 endmodule
