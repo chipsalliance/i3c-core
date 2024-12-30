@@ -107,6 +107,7 @@ module ccc
     output logic bus_tx_req_byte_o,
     output logic bus_tx_req_bit_o,
     output logic [7:0] bus_tx_req_value_o,
+    output logic bus_tx_sel_od_pp_o,
 
     // Bus RX interface
     input logic [7:0] bus_rx_data_i,
@@ -523,6 +524,7 @@ module ccc
     bus_tx_req_byte_o = '0;
     bus_tx_req_bit_o = '0;
     bus_tx_req_value_o = '0;
+    bus_tx_sel_od_pp_o = '0;
 
     done_fsm_o = '0;
     unique case (state_q)
@@ -560,7 +562,7 @@ module ccc
       TxDirectAddrAck: begin
         bus_tx_req_byte_o  = '0;
         bus_tx_req_bit_o   = '1;
-        bus_tx_req_value_o = '0;
+        bus_tx_req_value_o = {7'h00, ~is_byte_our_addr};
       end
       RxSubCmdByte: begin
       end
@@ -576,11 +578,13 @@ module ccc
         bus_tx_req_byte_o  = '1;
         bus_tx_req_bit_o   = '0;
         bus_tx_req_value_o = tx_data;
+        bus_tx_sel_od_pp_o = '1;
       end
       TxDataTbit: begin
         bus_tx_req_byte_o  = '0;
         bus_tx_req_bit_o   = '1;
         bus_tx_req_value_o = {7'h00, ~tx_data_done};
+        bus_tx_sel_od_pp_o = '1;
       end
       DoneCCC: begin
         done_fsm_o = '1;

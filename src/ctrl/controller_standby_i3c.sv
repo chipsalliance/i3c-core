@@ -463,6 +463,7 @@ module controller_standby_i3c
       .bus_tx_req_byte_o         (ccc_bus_tx_req_byte),
       .bus_tx_req_bit_o          (ccc_bus_tx_req_bit),
       .bus_tx_req_value_o        (ccc_bus_tx_req_value),
+      .bus_tx_sel_od_pp_o        (ccc_bus_tx_sel_od_pp),
       .bus_rx_data_i             (ccc_bus_rx_data),
       .bus_rx_done_i             (ccc_bus_rx_done),
       .bus_rx_req_bit_o          (ccc_bus_rx_req_bit),
