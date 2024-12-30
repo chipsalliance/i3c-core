@@ -35,6 +35,8 @@ async def test_setup(dut):
     dut.scl_sim_target_i = 1
     i3c_target = None
 
+    dut.peripheral_reset_done_i.value = 0
+
     tb = I3CTopTestInterface(dut)
     await tb.setup()
     await ClockCycles(tb.clk, 50)
