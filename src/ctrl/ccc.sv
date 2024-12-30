@@ -356,6 +356,8 @@ module ccc
     RxDataTbit,
     TxData,
     TxDataTbit,
+    WaitForBusCond,
+    WaitForStop,
     DoneCCC
   } state_e;
 
@@ -477,12 +479,12 @@ module ccc
       end
       TxDirectAddrAck: begin
         if (bus_tx_done_i) begin
-          if (is_byte_rsvd_addr) state_d = DoneCCC;
+          if (is_byte_rsvd_addr) state_d = WaitForStop;
           else if (is_byte_our_addr && command_rnw) state_d = TxData;
           else if (is_byte_our_addr && ~command_rnw) begin
             if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
             else state_d = RxData;
-          end
+          end else state_d = WaitForBusCond;
         end
       end
 
@@ -492,7 +494,7 @@ module ccc
       end
 
       RxData: begin
-        if (bus_start_det_i) state_d = RxDirectAddr;
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
         else if (bus_rx_done_i) state_d = RxDataTbit;
       end
       RxDataTbit: begin
@@ -500,13 +502,19 @@ module ccc
       end
 
       TxData: begin
-        if (bus_start_det_i) state_d = RxDirectAddr;
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
         else if (bus_tx_done_i) state_d = TxDataTbit;
       end
       TxDataTbit: begin
         if (bus_tx_done_i)
-          if (tx_data_done) state_d = RxDirectAddr;
+          if (tx_data_done) state_d = WaitForBusCond;
           else state_d = TxData;
+      end
+      WaitForBusCond: begin
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
+      end
+      WaitForStop: begin
+        state_d = WaitForStop; // Bus stop always goes to DoneCCC
       end
       DoneCCC: begin
         state_d = Idle;
@@ -569,6 +577,7 @@ module ccc
       RxData: begin
         bus_rx_req_bit_o  = '0;
         bus_rx_req_byte_o = '1;
+        if (bus_rstart_det_i) bus_rx_req_byte_o = '0;
       end
       RxDataTbit: begin
         bus_rx_req_bit_o  = '1;
@@ -620,6 +629,8 @@ module ccc
     if (~rst_ni) begin
       rx_data_count <= '0;
     end else if (state_q == WaitCCC && ccc_valid_i) begin
+      rx_data_count <= '0;
+    end else if (state_q == RxDirectAddr && bus_rx_done_i) begin
       rx_data_count <= '0;
     end else if (state_q == RxDataTbit && bus_rx_done_i) begin
       rx_data_count <= rx_data_count + 1'b1;
