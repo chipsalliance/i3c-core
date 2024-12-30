@@ -836,7 +836,7 @@ module ccc
   always_ff @(posedge clk_i or negedge rst_ni) begin : rst_action_internal
     if (~rst_ni) begin
       rstact_armed <= '0;
-      rst_action <= '0;
+      rst_action   <= '0;
     end else begin
       if (rst_action_valid) begin
         rstact_armed <= 1'b1;

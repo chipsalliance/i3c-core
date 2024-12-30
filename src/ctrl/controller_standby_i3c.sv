@@ -702,10 +702,30 @@ module controller_standby_i3c
   assign bus_rstart_o = bus_rstart_det;
   assign bus_stop_o = bus_stop_det;
 
+  logic peripheral_reset;
+  logic escalated_reset;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : register_peripheral_reset
+    if (~rst_ni) begin
+      peripheral_reset_o <= '0;
+    end else begin
+      if (peripheral_reset) peripheral_reset_o <= 1'b1;
+      if (peripheral_reset_done_i) peripheral_reset_o <= '0;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : register_escalated_reset
+    if (~rst_ni) begin
+      escalated_reset_o <= '0;
+    end else begin
+      if (escalated_reset) escalated_reset_o <= 1'b1;
+    end
+  end
+
   // Reset peripheral for reset action 0x1 or when we receive 1st Target Reset Pattern
-  assign peripheral_reset_o = ((rst_action_o == 8'h1) & rst_action_valid_o) |
+  assign peripheral_reset = ((rst_action_o == 8'h1) & rst_action_valid_o) |
                               (target_reset_detect & ~escalate_reset & ~rstact_armed);
   // Escalate reset for reset action 0x2 or when we receive 2nd Target Reset Pattern
-  assign escalated_reset_o = ((rst_action_o == 8'h2) & rst_action_valid_o) |
+  assign escalated_reset = ((rst_action_o == 8'h2) & rst_action_valid_o) |
                              (target_reset_detect & escalate_reset & ~rstact_armed);
 endmodule
