@@ -22,7 +22,7 @@ simulators = [os.getenv("SIMULATOR", "verilator")]
 
 
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
-    #session.install("-r", pip_requirements_path)
+    # session.install("-r", pip_requirements_path)
     test = VerificationTest(test_group, test_type, test_name, coverage)
 
     # Randomize seed for initialization of undefined signals in the simulation
@@ -246,7 +246,7 @@ def hci_queues_axi_verify(session, test_group, test_name, coverage, simulator):
         "test_i3c_target",
         # "test_recovery",
         # "test_enter_exit_hdr_mode",
-        # "test_target_reset",
+        "test_target_reset",
         "test_ccc",
     ],
 )
@@ -264,7 +264,7 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
         "test_i3c_target",
         # "test_recovery",
         # "test_enter_exit_hdr_mode",
-        # "test_target_reset",
+        "test_target_reset",
         "test_ccc",
     ],
 )
@@ -319,9 +319,9 @@ def i3c_phy_io_verify(session, test_group, test_name, coverage, simulator):
 @nox.session(reuse_venv=True)
 def lint(session: nox.Session) -> None:
     """Options are defined in pyproject.toml and .flake8 files"""
-    #session.install("isort")
-    #session.install("flake8")
-    #session.install("black")
+    # session.install("isort")
+    # session.install("flake8")
+    # session.install("black")
     session.run("isort", ".", "../../tools")
     # Specify config for black explicitly since it gets "lost" when calling black with multiple
     # paths
@@ -331,9 +331,9 @@ def lint(session: nox.Session) -> None:
 
 @nox.session()
 def test_lint(session: nox.Session) -> None:
-    #session.install("isort")
-    #session.install("flake8")
-    #session.install("black")
+    # session.install("isort")
+    # session.install("flake8")
+    # session.install("black")
     session.run("isort", "--check", ".", "../../tools")
     # Specify config for black explicitly since it gets "lost" when calling black with multiple
     # paths
