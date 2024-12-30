@@ -69,7 +69,8 @@ async def test_ccc_getstatus(dut):
         pending_interrupt == PENDING_INTERRUPT
     ), "Unexpected pending interrupt value read from CSR"
 
-    status = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=TGT_ADR, count=2)
+    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=TGT_ADR, count=2)
+    status = responses[0][1]
     print("status", status)
     pending_interrupt = (
         int.from_bytes(status, byteorder="big", signed=False) & PENDING_INTERRUPT_MASK
@@ -152,7 +153,8 @@ async def test_ccc_getbcr(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    bcr = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    bcr = responses[0][1]
     bcr_value = int.from_bytes(bcr, byteorder="big", signed=False)
     assert _BCR_VALUE == bcr_value
 
@@ -167,7 +169,8 @@ async def test_ccc_getdcr(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    dcr = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
+    dcr = responses[0][1]
     dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
     assert _DCR_VALUE == dcr_value
 
@@ -183,7 +186,8 @@ async def test_ccc_getmwl(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    [mwl_msb, mwl_lsb] = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=2)
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=2)
+    [mwl_msb, mwl_lsb] = responses[0][1]
 
     mwl = (mwl_msb << 8) | mwl_lsb
     assert mwl == _MWL_VALUE
@@ -200,9 +204,10 @@ async def test_ccc_getmrl(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    [mrl_msb, mrl_lsb, ibi_payload_size] = await i3c_controller.i3c_ccc_read(
+    responses = await i3c_controller.i3c_ccc_read(
         ccc=command, addr=TGT_ADR, count=3
     )
+    [mrl_msb, mrl_lsb, ibi_payload_size] = responses[0][1]
 
     mrl = (mrl_msb << 8) | mrl_lsb
     assert mrl == _MRL_VALUE
@@ -242,7 +247,8 @@ async def test_ccc_getpid(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    pid = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=6)
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=6)
+    pid = responses[0][1]
     pid_hi = int.from_bytes(pid[0:2], byteorder="big", signed=False)
     pid_lo = int.from_bytes(pid[2:6], byteorder="big", signed=False)
 
@@ -459,3 +465,88 @@ async def test_ccc_rstact_bcast(dut):
     assert dut.peripheral_reset_o == 0
     assert dut.escalated_reset_o == 1
     await ClockCycles(tb.clk, 50)
+
+
+@cocotb.test()
+async def test_ccc_direct_multiple_wr(dut):
+    """
+    Send a sequence of multiple directed SETMWL CCCs. The first and last have
+    non-matching address. The two middle ones set MWL to different values.
+    Verify that the target responded to correct addresses and executed both
+    CCCs.
+    """
+
+    command = CCC.DIRECT.SETMWL
+    result = True
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    cccs = [
+        (TGT_ADR - 1, (0x00, 0xA0)),
+        (TGT_ADR,     (0x00, 0xA1)),
+        (TGT_ADR,     (0x00, 0xA2)),
+        (TGT_ADR + 1, (0x00, 0xA3)),
+    ]
+
+    # Send CCCs
+    acks = await i3c_controller.i3c_ccc_write(ccc=command, directed_data=cccs)
+
+    # Check if correct address was ACK-ed
+    if acks != [False, True, True, False]:
+        dut._log.error(f"Incorrect multiple directed CCC ACKs: {acks}")
+        result = False
+
+    # Check if MWL got written
+    sig = dut.xi3c_wrapper.i3c.xcontroller.xconfiguration.get_mwl_o.value
+    mwl = 0xA2
+    if mwl != int(sig):
+        dut._log.error(f"Written MWL mismatch ({mwl} vs. {int(sig)})")
+        result = False
+
+    assert result
+
+
+@cocotb.test()
+async def test_ccc_direct_multiple_rd(dut):
+    """
+    Send SETMWL CCC. Then send multiple directed GETMWL CCCs to thee different
+    addresses. Only the one for the target should contain ACK with correct
+    MWL content.
+    """
+
+    result = True
+
+    i3c_controller, _, tb = await test_setup(dut)
+    await ClockCycles(tb.clk, 50)
+
+    # Set MWL in the target
+    acks = await i3c_controller.i3c_ccc_write(ccc=CCC.DIRECT.SETMWL,
+        directed_data=[(TGT_ADR, (0x00, 0x55))])
+    if acks != [True]:
+        dut._log.error("Initial SETMWL failed")
+        assert False
+
+    await ClockCycles(tb.clk, 50)
+
+    # Issue multiple directed GETMWL
+    addrs = [TGT_ADR - 1, TGT_ADR, TGT_ADR, TGT_ADR + 1]
+    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETMWL,
+        addr=addrs, count=2)
+
+    # Check ACKs
+    acks = [r[0] for r in responses]
+    if acks != [False, True, True, False]:
+        dut._log.error(f"Incorrect multiple directed CCC ACKs: {acks}")
+        result = False
+
+    # Check received MWL data
+    for i, ack in enumerate(acks):
+        if ack:
+            data = responses[i][1]
+            mwl = data[1] | (data[0] << 8)
+            if mwl != 0x55:
+                dut._log.error(f"Written and received MWL mismatch ({mwl} vs. 0x55) for CCC #{i}")
+                result = False
+
+    assert result

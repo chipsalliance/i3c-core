@@ -538,9 +538,10 @@ async def test_i3c_target_pwrite_err_detection(dut):
         assert err_status == 0, "Unexpected error detected"
 
         # Read target status to ensure there's no error
-        status = await i3c_controller.i3c_ccc_read(
+        result = await i3c_controller.i3c_ccc_read(
             ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
         )
+        status = result[0][1]
         status = int.from_bytes(status, byteorder="big", signed=False)
         assert (
             (status >> PROTOCOL_ERR_LOW) & 1
@@ -558,9 +559,10 @@ async def test_i3c_target_pwrite_err_detection(dut):
         assert err_status == 1, "Expected error was not detected"
 
         # Read target status to clear error
-        status = await i3c_controller.i3c_ccc_read(
+        result = await i3c_controller.i3c_ccc_read(
             ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
         )
+        status = result[0][1]
         status = int.from_bytes(status, byteorder="big", signed=False)
         assert ((status >> PROTOCOL_ERR_LOW) & 1) == 1, "GETSTATUS did not report Protocol Error"
 
