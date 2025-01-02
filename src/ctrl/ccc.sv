@@ -387,7 +387,7 @@ module ccc
   assign is_direct_cmd = command_code[7];  // 0 - BCast, 1 - Direct
 
   logic is_byte_rsvd_addr;
-  assign is_byte_rsvd_addr = rx_data == {7'h7E, 1'b0};
+  assign is_byte_rsvd_addr = (rx_data == {7'h7E, 1'b0}) | (command_addr == 7'h7E);
 
   logic is_byte_our_addr;
 
