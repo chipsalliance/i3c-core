@@ -570,7 +570,7 @@ module ccc
       TxDirectAddrAck: begin
         bus_tx_req_byte_o  = '0;
         bus_tx_req_bit_o   = '1;
-        bus_tx_req_value_o = {7'h00, ~is_byte_our_addr};
+        bus_tx_req_value_o = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr)};
       end
       RxSubCmdByte: begin
       end
