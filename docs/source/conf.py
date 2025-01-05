@@ -45,7 +45,7 @@ sphinx_immaterial_override_builtin_admonitions = False
 numfig = True
 
 # If you need to add extensions just add to those lists
-extensions = default_extensions
+extensions = default_extensions + ['sphinx.ext.extlinks']
 myst_enable_extensions = default_myst_enable_extensions
 myst_fence_as_directive = default_myst_fence_as_directive
 
@@ -81,3 +81,7 @@ html_title = project
     latex_logo,
     latex_additional_files
 ) = antmicro_latex(basic_filename, authors, project)
+
+extlinks = {
+    "rdl-docs": ("https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#%s", "%s")
+}

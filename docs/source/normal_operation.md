@@ -10,8 +10,8 @@ Our implementation supports PIO mode only.
 
 According to "6.8.1 Transfers in PIO mode" and "6.12.1 PIO Mode" sections of the HCI spec, the driver issues transfers to the core in the following manner:
 
- - If data is to be transmitted to a device, the driver writes it to the Tx data queue by writing to the [XFER_DATA_PORT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register) register. Some commands allow providing data as the immediate payload - for those no data needs to be written to the Tx queue.
- - The driver writes a command descriptor to the command queue port by writing the [COMMAND_PORT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#command_port-register) register.
+ - If data is to be transmitted to a device, the driver writes it to the Tx data queue by writing to the {rdl-docs}`XFER_DATA_PORT <xfer_data_port-register>` register. Some commands allow providing data as the immediate payload - for those no data needs to be written to the Tx queue.
+ - The driver writes a command descriptor to the command queue port by writing the {rdl-docs}`COMMAND_PORT <command_port-register>` register.
  - The controller executes the transfer. To indicate transfer completion the core may report an interrupt.
  - Once the transfer is complete, the driver reads command status from the response queue and the received data (if any) from the Rx data queue.
 
@@ -21,15 +21,15 @@ Collecting responses and received data:
    - When a transfer is successful and the `wroc` field is set in the corresponding command descriptor.
    - When a read transfer is successful (denoted by the `rnw` field).
    - When a transfer generates an error (e.g. a short read request with the `short_read_err` field set).
- - Driver can fetch the response descriptor by issuing a read from the [RESPONSE_PORT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#response_port-register) register.
-   - Reaching the response threshold is indicated with the [RESP_READY_STAT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready-field) field by the controller when [RESP_READY_STAT_EN](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_ready_en-field) is set.
-   A threshold interrupt is raised in accordance to [RESP_BUF_THLD](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#resp_buf-field).
+ - Driver can fetch the response descriptor by issuing a read from the {rdl-docs}`RESPONSE_PORT <response_port-register>` register.
+   - Reaching the response threshold is indicated with the {rdl-docs}`RESP_READY_STAT <resp_ready-field>` field by the controller when {rdl-docs}`RESP_READY_STAT_EN <resp_ready_en-field>` is set.
+   A threshold interrupt is raised in accordance to {rdl-docs}`RESP_BUF_THLD <resp_buf-field>`.
    - In case of a read request when no response is available, the controller raises an error on the frontend bus interface (AHB / AXI).
    - Upon a successful read from the `RESPONSE_PORT`, the driver is to decode the response in accordance to the [response descriptor](#response-descriptor) definition and verify the `tid`.
    The `tid` should match the `tid` of a previously enqueued command.
- - Received transfer data can be obtained by the driver via a read from the [XFER_DATA_PORT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#xfer_data_port-register) register.
-   - Reaching the received data threshold is indicated by the controller with the [TX_THLD_STAT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold-field) interrupt if [RX_THLD_STAT_EN](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_threshold_en-field) is set.
-   The RX threshold can be set via [RX_BUF_THLD](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#rx_buf-field).
+ - Received transfer data can be obtained by the driver via a read from the {rdl-docs}`XFER_DATA_PORT <xfer_data_port-register>` register.
+   - Reaching the received data threshold is indicated by the controller with the {rdl-docs}`TX_THLD_STAT <rx_threshold-field>` interrupt if {rdl-docs}`RX_THLD_STAT_EN <rx_threshold_en-field>` is set.
+   The RX threshold can be set via {rdl-docs}`RX_BUF_THLD <rx_buf-field>`.
    - In case of a read when no RX data is available, the controller raises an error on the frontend bus interface (AHB / AXI).
 
 Note that the `XFER_DATA_PORT` register is dual-purpose - when writing data is passed to the Tx queue, and when reading data is fetched from the Rx queue.
@@ -232,28 +232,28 @@ Section "8.4 Command Descriptor" describes in detail the format of commands for 
 
 IBI are interrupts reported by I3C devices via in-band signaling on the bus (section "6.9.1 IBI Handling in PIO Mode"):
 
- - When the controller receives IBI from a target device, it stores it in the IBI queue. Once the queue occupancy exceeds the threshold set by `IBI_STATUS_THLD_STAT` of the [QUEUE_THLD_CTRL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#queue_thld_ctrl-register) register, an interrupt is triggered.
- - IBI descriptors can then be read from the IBI data queue via the [IBI_PORT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_port-register) register.
+ - When the controller receives IBI from a target device, it stores it in the IBI queue. Once the queue occupancy exceeds the threshold set by `IBI_STATUS_THLD_STAT` of the {rdl-docs}`QUEUE_THLD_CTRL <queue_thld_ctrl-register>` register, an interrupt is triggered.
+ - IBI descriptors can then be read from the IBI data queue via the {rdl-docs}`IBI_PORT <ibi_port-register>` register.
 
 IBI status descriptor structure is described in "8.6 IBI Status Descriptor" chapter of the spec.
 
 ## Interrupts
 
-Events related to transfers trigger certain interrupts in the core that are signaled to the host. Individual interrupt signals can be enabled or disabled via the [PIO_INTR_SIGNAL_ENABLE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register) register.
+Events related to transfers trigger certain interrupts in the core that are signaled to the host. Individual interrupt signals can be enabled or disabled via the {rdl-docs}`PIO_INTR_SIGNAL_ENABLE <pio_intr_signal_enable-register>` register.
 
-Interrupts status can be read from the [PIO_INTR_STATUS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register) register.
+Interrupts status can be read from the {rdl-docs}`PIO_INTR_STATUS <pio_intr_status_enable-register>` register.
 
-Interrupts related to Tx and Rx data queues, namely `TX_THLD_SIGNAL_EN` and `RX_THLD_SIGNAL_EN`, are triggered when queue occupancy rises above / falls below a certain threshold. These thresholds are controlled by fields of the [DATA_BUFFER_THLD_CTRL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#data_buffer_thld_ctrl-register) register:
+Interrupts related to Tx and Rx data queues, namely `TX_THLD_SIGNAL_EN` and `RX_THLD_SIGNAL_EN`, are triggered when queue occupancy rises above / falls below a certain threshold. These thresholds are controlled by fields of the {rdl-docs}`DATA_BUFFER_THLD_CTRL <data_buffer_thld_ctrl-register>` register:
   - `RX_BUF_THLD` for the receive queue,
   - `TX_BUF_THLD` for the transmit queue.
 
-For command, response and IBI queues the register [QUEUE_THLD_CTRL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#queue_thld_ctrl-register) defines thresholds for interrupt triggering:
+For command, response and IBI queues the register {rdl-docs}`QUEUE_THLD_CTRL <queue_thld_ctrl-register>` defines thresholds for interrupt triggering:
   - `IBI_STATUS_THLD` for IBI status queue,
   - `IBI_DATA_THLD` for IBI data queue,
   - `RESP_BUF_THLD` and `CMD_EMPTY_BUF_THLD` for command response queue.
 
 
-There's also the [PIO_INTR_FORCE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_force-register) register that allows force triggering certain interrupts for debugging purposes.
+There's also the {rdl-docs}`PIO_INTR_FORCE <pio_intr_force-register>` register that allows force triggering certain interrupts for debugging purposes.
 
 ## Address Assignment
 
@@ -261,7 +261,7 @@ There's also the [PIO_INTR_FORCE](https://github.com/chipsalliance/i3c-core-rdl/
 
 #### Device Attach, Enumeration, and Initialization
 
-The Controller assigns a dynamic address for each device on the I3C Bus. For devices with static addresses, the dynamic address is equal to the static address. Each device must have its entry in the Device Address Table (DAT) before initiating dynamic address assignment. Each DAT entry must contain a field value in either [STATIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field) (if it is known) or [DYNAMIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field).
+The Controller assigns a dynamic address for each device on the I3C Bus. For devices with static addresses, the dynamic address is equal to the static address. Each device must have its entry in the Device Address Table (DAT) before initiating dynamic address assignment. Each DAT entry must contain a field value in either {rdl-docs}`STATIC_ADDRESS <static_addr-field>` (if it is known) or {rdl-docs}`DYNAMIC_ADDRESS <dynamic_adr-field>`.
 Once the DAT table is set up, the software driver should follow at least one of the following scenarios (while keeping the order):
 1. Send the `SETDASA` CCC to assign a static address for a chosen device  or send the `SETAASA` CCC to assign a static address for all devices with known static address.
 2. Send `ENTDAA` CCC to initiate the procedure of dynamic address assignment for all devices configured in DAT.
@@ -269,7 +269,7 @@ Once the DAT table is set up, the software driver should follow at least one of 
 After finishing the `ENTDAA` process, the Device Characteristic Table (DCT) will be updated with values read from the devices configured on the I3C Bus.
 
 The initial bus enumeration process should be performed in the following order:
-1. Check sizes of DAT and DCT by reading [DAT_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register) and [DCT_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register).
+1. Check sizes of DAT and DCT by reading {rdl-docs}`DAT_SECTION_OFFSET <dat_section_offset-register>` and {rdl-docs}`DCT_SECTION_OFFSET <dct_section_offset-register>`.
 2. Set up DAT entries for devices with static addresses and send the `SETDASA`/`SETAASA` CCC.
 3. Set up DAT entries for devices with dynamic addresses and send the `ENTDAA` CCC.
 4. If any I3C device needs to change the dynamic address, send the `SETNEWDA` CCC to assign a new address and ensure there is no error on the bus.
@@ -294,7 +294,7 @@ Since there can be an offline capable device, it might not respond to directed c
 
 The context of a device on the bus is realized through the DAT and the DCT tables. The DCT table is transient and can be significantly smaller than the DAT, since it is only used during the address assignment procedure (`ENTDAA`). The software should copy contents of a DCT entry to the internal driver context, on a per-device basis.
 
-The software can disable the Controller Role Request (CRR) and In-Band Interrupt (IBI) for each device in their respective DAT entries. If either CRR or IBI should be re-enabled, the driver should modify the [CRR_REJECT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#crr_reject-field)/[IBI_REJECT](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ibi_reject-field) field in DAT and send the `ENEC` CCC to such a device.
+The software can disable the Controller Role Request (CRR) and In-Band Interrupt (IBI) for each device in their respective DAT entries. If either CRR or IBI should be re-enabled, the driver should modify the {rdl-docs}`CRR_REJECT <crr_reject-field>`/{rdl-docs}`IBI_REJECT <ibi_reject-field>` field in DAT and send the `ENEC` CCC to such a device.
 
 If IBIs were disabled using the target IBI credit mechanism, and the target's credit counter is zero, then the Host Controller will automatically re-enable IBIs for that Target using the `ENEC` CCC, after the software writes to that Target’s `TARGET_CREDIT_N` register.
 
@@ -303,15 +303,15 @@ If IBIs were disabled using the target IBI credit mechanism, and the target's cr
 #### Dynamic Address Assignment with ENTDAA
 
 Each I3C target device that supports the ENTDAA procedure and that has not been assigned static addresses should have assigned a dynamic address during the Dynamic Address Assignment procedure based on the DAT table entry. For each DAT entry, software should:
-* Set the [DEVICE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dev-field) field to indicate the Device’s type
-* Set the [DYNAMIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field) field to indicate the Device’s preferred Dynamic Address
+* Set the {rdl-docs}`DEVICE <dev-field>` field to indicate the Device’s type
+* Set the {rdl-docs}`DYNAMIC_ADDRESS <dynamic_adr-field>` field to indicate the Device’s preferred Dynamic Address
 
 After DAT configuration, the software should:
 1. Enqueue one or more Command Descriptors of Address Assignment Command type for the `ENTDAA` CCC, using the steps listed in Section 8.4.1.1
 2. Wait for a response and ensure that the response descriptor indicates a successful result
-3. For each successful response: read the [PID](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pid_hi-field), [BCR](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#bcr-field) and [DCR](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dcr-field) values from the appropriate fields of the indicated entries in the DCT for the assigned Dynamic Address(es) as part of the `ENTDAA` process:
+3. For each successful response: read the {rdl-docs}`PID <pid_hi-field>`, {rdl-docs}`BCR <bcr-field>` and {rdl-docs}`DCR <dcr-field>` values from the appropriate fields of the indicated entries in the DCT for the assigned Dynamic Address(es) as part of the `ENTDAA` process:
     A. Note that these values are transient, so software must read them and save them internally before performing subsequent Address Assignment commands with the `ENTDAA` CCC
-    B. Each DCT entry for a successful assignment with the `ENTDAA` modal flow should have the same value in the [DYNAMIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_addr-field-1) field as the corresponding  [DYNAMIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field) DAT entry that was used for the I3C Device to which this address was assigned
+    B. Each DCT entry for a successful assignment with the `ENTDAA` modal flow should have the same value in the {rdl-docs}`DYNAMIC_ADDRESS <dynamic_addr-field-1>` field as the corresponding  {rdl-docs}`DYNAMIC_ADDRESS <dynamic_adr-field>` DAT entry that was used for the I3C Device to which this address was assigned
 
 If the address assignment command completes with **NACK**, it means one of following:
 * There are no I3C devices available to participate
@@ -320,9 +320,9 @@ If the address assignment command completes with **NACK**, it means one of follo
 
 #### Using Static Addresses
 
-For each I3C target device with a known address and each I2C target device, software will write this address to the [STATIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#static_addr-field) field  of the respective DAT table entry. For each such DAT entry, the software will:
-* Set the [DEVICE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dev-field) field to indicate the Device’s type
-* Set the [DYNAMIC_ADDRESS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dynamic_adr-field) field to indicate the Device’s preferred Dynamic Address
+For each I3C target device with a known address and each I2C target device, software will write this address to the {rdl-docs}`STATIC_ADDRESS <static_addr-field>` field  of the respective DAT table entry. For each such DAT entry, the software will:
+* Set the {rdl-docs}`DEVICE <dev-field>` field to indicate the Device’s type
+* Set the {rdl-docs}`DYNAMIC_ADDRESS <dynamic_adr-field>` field to indicate the Device’s preferred Dynamic Address
 
 After DAT configuration, the software will:
 1. For I3C devices configured with the `SETDASA` CCC:

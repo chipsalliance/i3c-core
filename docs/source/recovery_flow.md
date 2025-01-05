@@ -3,7 +3,7 @@
 The recovery flow is implemented according to the OCP Secure Firmware Recovery standard v1.1-rc3.
 In recovery mode, the I3C Core acts as an I3C Target Device.
 In the Recovery Mode the Recovery Initiator Device (e.g. BMC) is primarily responsible for streaming the Firmware Recovery Image to the I3C Core.
-In order to facilitate this process, the I3C Core implements CSRs as specified in the [Secure Firmware Recovery Interface](ext_cap.md#secure-firmware-recovery-interface-id-0xc0).
+In order to facilitate this process, the I3C Core implements CSRs as specified in the [Secure Firmware Recovery Interface](ext_cap.md#secure-firmware-recovery-interface---0xc0).
 The firmware is responsible for implementing the recovery flow and transferring firmware data to the program memory.
 
 The recovery flow adheres to the following steps:
