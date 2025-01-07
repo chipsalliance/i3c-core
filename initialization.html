@@ -654,7 +654,7 @@
 <li><p>The device is ready for normal operation</p></li>
 </ul>
 <h2 id="primary-controller-initialization">Primary Controller Initialization<a class="headerlink" href="#primary-controller-initialization" title="Link to this heading">¶</a></h2>
-<p>The following section details the initialization process on the software driver side, in compliance with the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>:</p>
+<p>The following section details the initialization process on the software driver side, in compliance with the <a class="reference internal" href="introduction.html#term-I3C-HCI-spec" title="I3C HCI spec (glossary term)"><span class="xref std std-term">I3C HCI spec</span></a>:</p>
 <ul class="simple">
 <li><p>“6.1.1 Host Controller Initialization” in the PIO mode</p></li>
 <li><p>“6.17.1.1 Secondary Controller Initialization”</p></li>
@@ -662,19 +662,19 @@
 <p>The following process is described under the assumption that the controller has undergone software- or hardware-issued reset prior to the initialization, so that all the registers and internal FSMs are in the default state.</p>
 <p>To initialize the controller, the software is expected to perform the following steps:</p>
 <ol class="arabic simple">
-<li><p>Verify the value of the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hci_version-register">HCI_VERSION</a> register at the <code class="docutils literal notranslate"><span class="pre">I3CBase</span></code> address.
+<li><p>Verify the value of the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#hci_version-register">HCI_VERSION</a> register at the <code class="docutils literal notranslate"><span class="pre">I3CBase</span></code> address.
 The controller is compliant with MIPI HCI v1.2 and therefore the <code class="docutils literal notranslate"><span class="pre">HCI_VERSION</span></code> should read <code class="docutils literal notranslate"><span class="pre">0x120</span></code></p></li>
 <li><p>Evaluate DAT &amp; DCT table offsets:</p>
 <ul class="simple">
-<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register">DAT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x30</span></code></p></li>
-<li><p>The <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register">DCT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x34</span></code></p></li>
+<li><p>The <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#dat_section_offset-register">DAT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x30</span></code></p></li>
+<li><p>The <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#dct_section_offset-register">DCT_SECTION_OFFSET</a> register defined at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x34</span></code></p></li>
 <li><p>Both <code class="docutils literal notranslate"><span class="pre">DAT_SECTION_OFFSET</span></code> and <code class="docutils literal notranslate"><span class="pre">DCT_SECTION_OFFSET</span></code> contain the corresponding table offset, number of entries &amp; table size</p></li>
 <li><p>HCI spec permits to require the driver to allocate the DAT &amp; DCT table, in which case the <code class="docutils literal notranslate"><span class="pre">TABLE_OFFSET</span></code> would read 0. This specific controller implementation allocates both DAT and DCT tables in the registers</p></li>
 </ul>
 </li>
 <li><p>Evaluate <code class="docutils literal notranslate"><span class="pre">PIO_SECTION_OFFSET</span></code>:</p>
 <ul class="simple">
-<li><p>Read <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_section_offset-register">PIO_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span>&#160; <span class="pre">+</span> <span class="pre">0x3c</span></code>, the <code class="docutils literal notranslate"><span class="pre">section_offset</span></code> field points to the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file">PIOControl register file</a> that contains command, transfer, response and IBI ports as well as PIO control registers</p></li>
+<li><p>Read <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_section_offset-register">PIO_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span>&#160; <span class="pre">+</span> <span class="pre">0x3c</span></code>, the <code class="docutils literal notranslate"><span class="pre">section_offset</span></code> field points to the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#piocontrol-register-file">PIOControl register file</a> that contains command, transfer, response and IBI ports as well as PIO control registers</p></li>
 <li><p>This specific controller implements the PIO mode capability. If it’s not supported, <code class="docutils literal notranslate"><span class="pre">SECTION_OFFSET</span></code> will read 0</p></li>
 </ul>
 </li>
@@ -684,7 +684,7 @@ The controller is compliant with MIPI HCI v1.2 and therefore the <code class="do
 <li><p>It stores controller capabilities such as scatter-gather, scheduled commands, combo transfers, IBI data abort, command size</p></li>
 </ul>
 </li>
-<li><p>Extended capabilities evaluation via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ext_caps_section_offset-register">EXT_CAPS_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x40</span></code></p>
+<li><p>Extended capabilities evaluation via <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#ext_caps_section_offset-register">EXT_CAPS_SECTION_OFFSET</a> at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x40</span></code></p>
 <ul class="simple">
 <li><p>Evaluate the linked list of Extended Capability structures, until the end of the linked list (i.e., an instance of the <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> register with the <code class="docutils literal notranslate"><span class="pre">0x00</span></code> value in the <code class="docutils literal notranslate"><span class="pre">CAP_ID</span></code> field)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">EXT_OFFSET</span></code> will read <code class="docutils literal notranslate"><span class="pre">0x0</span></code> if the extended capabilities are not supported</p></li>
@@ -694,18 +694,18 @@ The controller is compliant with MIPI HCI v1.2 and therefore the <code class="do
 <ul class="simple">
 <li><p>The command, data buffer and IBI status queue sizes can be obtained through the <code class="docutils literal notranslate"><span class="pre">QUEUE_SIZE</span></code> register at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x18</span></code></p></li>
 <li><p>The response queue size is defined at <code class="docutils literal notranslate"><span class="pre">ALT_QUEUE_SIZE</span></code> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x1C</span></code> when the size of the command queue is not equal to the size of the response queue (which is the case for this host controller)</p></li>
-<li><p>both are contained within <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file">PIOControl register file</a></p></li>
+<li><p>both are contained within <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#piocontrol-register-file">PIOControl register file</a></p></li>
 </ul>
 </li>
 <li><p>Enable the host controller:</p>
 <ul class="simple">
-<li><p>Ensure the <code class="docutils literal notranslate"><span class="pre">MODE_SELECTOR</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register is set to <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (PIO mode)</p></li>
-<li><p>Set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register</p></li>
+<li><p>Ensure the <code class="docutils literal notranslate"><span class="pre">MODE_SELECTOR</span></code> field in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#hc_control-register">HC_CONTROL</a> register is set to <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (PIO mode)</p></li>
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> field in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#hc_control-register">HC_CONTROL</a> register</p></li>
 </ul>
 </li>
 <li><p>Enable controller interrupts:</p>
 <ul class="simple">
-<li><p>Set fields for the status interrupts to be enabled in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status_enable-register">INTR_STATUS_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x24</span></code>; the following status interrupts can be set:</p>
+<li><p>Set fields for the status interrupts to be enabled in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#intr_status_enable-register">INTR_STATUS_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x24</span></code>; the following status interrupts can be set:</p>
 <ul>
 <li><p>Scheduled command missed tick</p></li>
 <li><p>Controller command sequence stall / timeout</p></li>
@@ -713,19 +713,19 @@ The controller is compliant with MIPI HCI v1.2 and therefore the <code class="do
 <li><p>Controller internal error</p></li>
 </ul>
 </li>
-<li><p>Upon writing <code class="docutils literal notranslate"><span class="pre">1'b1</span></code>, the interrupt will be reported in <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register">STATUS_REGISTER</a></p></li>
-<li><p>Setting the fields in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_signal_enable-register">INTR_SIGNAL_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x28</span></code> will result in not only reporting the interrupt in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register">STATUS_REGISTER</a> register but will also deliver an interrupt condition to the host (interrupt trigger)</p></li>
+<li><p>Upon writing <code class="docutils literal notranslate"><span class="pre">1'b1</span></code>, the interrupt will be reported in <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#intr_status-register">STATUS_REGISTER</a></p></li>
+<li><p>Setting the fields in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#intr_signal_enable-register">INTR_SIGNAL_ENABLE</a> register at <code class="docutils literal notranslate"><span class="pre">I3CBase</span> <span class="pre">+</span> <span class="pre">0x28</span></code> will result in not only reporting the interrupt in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#intr_status-register">STATUS_REGISTER</a> register but will also deliver an interrupt condition to the host (interrupt trigger)</p></li>
 </ul>
 </li>
 <li><p>Enable and start PIO queues:</p>
 <ul class="simple">
-<li><p>Enable PIO interrupts via <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register">PIO_INTR_STATUS_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register">PIO_INTR_SIGNAL_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code>; enabling fields in the status register will cause the interrupts to be reported via the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status-register">PIO_INTR_STATUS</a> register, additionally enabling interrupts in <code class="docutils literal notranslate"><span class="pre">PIO_INTR_SIGNAL_ENABLE</span></code> will cause an event for the host controller</p></li>
-<li><p>Enable queues by setting the <code class="docutils literal notranslate"><span class="pre">ENABLE</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a> register</p></li>
-<li><p>Start PIO queues by setting the <code class="docutils literal notranslate"><span class="pre">RS</span></code> field in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register">PIO_CONTROL</a> register</p></li>
+<li><p>Enable PIO interrupts via <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_intr_status_enable-register">PIO_INTR_STATUS_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code> and <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_intr_signal_enable-register">PIO_INTR_SIGNAL_ENABLE</a> at <code class="docutils literal notranslate"><span class="pre">PIO_OFFSET</span> <span class="pre">+</span> <span class="pre">0x20</span></code>; enabling fields in the status register will cause the interrupts to be reported via the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_intr_status-register">PIO_INTR_STATUS</a> register, additionally enabling interrupts in <code class="docutils literal notranslate"><span class="pre">PIO_INTR_SIGNAL_ENABLE</span></code> will cause an event for the host controller</p></li>
+<li><p>Enable queues by setting the <code class="docutils literal notranslate"><span class="pre">ENABLE</span></code> field in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_control-register">PIO_CONTROL</a> register</p></li>
+<li><p>Start PIO queues by setting the <code class="docutils literal notranslate"><span class="pre">RS</span></code> field in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#pio_control-register">PIO_CONTROL</a> register</p></li>
 </ul>
 </li>
 </ol>
-<p>The host control will expose its register map and will await the driver to set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> bit in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register">HC_CONTROL</a> register.
+<p>The host control will expose its register map and will await the driver to set the <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> bit in the <a class="extlink-rdl-docs reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/rdl/docs/README.md#hc_control-register">HC_CONTROL</a> register.
 After that, the controller will evaluate the capabilities limited by the software and initialize internal queues &amp; resources accordingly.</p>
 <h2 id="secondary-controller-initialization">Secondary Controller Initialization<a class="headerlink" href="#secondary-controller-initialization" title="Link to this heading">¶</a></h2>
 <p>The Secondary Controller Initialization process requires additional steps (in addition to the previous steps):</p>
@@ -785,7 +785,7 @@ After that, the controller will evaluate the capabilities limited by the softwar
   <small>
     
       Last update:
-      2025-01-02
+      2025-01-07
     
   </small>
 </div>

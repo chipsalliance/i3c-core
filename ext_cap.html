@@ -499,8 +499,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#standby-controller-mode-id-0x12" class="md-nav__link">
-    <span class="md-ellipsis">Standby Controller Mode <wbr>(ID=0x12)</span>
+  <a href="#standby-controller-mode-0x12" class="md-nav__link">
+    <span class="md-ellipsis">Standby Controller Mode -<wbr> 0x12</span>
   </a>
   
 </li>
@@ -519,32 +519,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#controller-config-id-0x02" class="md-nav__link">
-    <span class="md-ellipsis">Controller Config <wbr>(ID=0x02)</span>
+  <a href="#controller-config-0x02" class="md-nav__link">
+    <span class="md-ellipsis">Controller Config -<wbr> 0x02</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#secure-firmware-recovery-interface-id-0xc0" class="md-nav__link">
-    <span class="md-ellipsis">Secure Firmware Recovery Interface <wbr>(ID=0x<wbr>C0)</span>
+  <a href="#secure-firmware-recovery-interface-0xc0" class="md-nav__link">
+    <span class="md-ellipsis">Secure Firmware Recovery Interface -<wbr> 0x<wbr>C0</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#soc-management-interface-id-0xc1" class="md-nav__link">
-    <span class="md-ellipsis">So<wbr>C Management Interface <wbr>(ID=0x<wbr>C1)</span>
+  <a href="#soc-management-interface-0xc1" class="md-nav__link">
+    <span class="md-ellipsis">So<wbr>C Management Interface -<wbr> 0x<wbr>C1</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#target-transaction-interface-id-0xc4" class="md-nav__link">
-    <span class="md-ellipsis">Target Transaction Interface <wbr>(ID=0x<wbr>C4)</span>
+  <a href="#target-transaction-interface-0xc4" class="md-nav__link">
+    <span class="md-ellipsis">Target Transaction Interface -<wbr> 0x<wbr>C4</span>
   </a>
   
-    <nav class="md-nav" aria-label="Target Transaction Interface (ID=0xC4)">
+    <nav class="md-nav" aria-label="Target Transaction Interface - 0xC4">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -855,7 +855,7 @@
 
 
 <h1 id="specification-for-i3c-vendor-specific-extended-capabilities">Specification for I3C Vendor-Specific Extended Capabilities<a class="headerlink" href="#specification-for-i3c-vendor-specific-extended-capabilities" title="Link to this heading">¶</a></h1>
-<p>This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
+<p>This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the <a class="reference internal" href="introduction.html#term-I3C-HCI-spec" title="I3C HCI spec (glossary term)"><span class="xref std std-term">I3C HCI spec</span></a>.</p>
 <h2 id="security">Security<a class="headerlink" href="#security" title="Link to this heading">¶</a></h2>
 <p>The original HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
 This mechanism is unacceptable for the Recovery Mode as memory offsets must be known at synthesis time.
@@ -865,8 +865,8 @@ Implementation based on this specification should provide a list of known memory
 <p>In order to increase security of the solution, the offsets are provided, so software may choose to skip the discovery mechanism. This specification is compliant with the original specification, so the mechanism of discovery can still be used, if needed.</p>
 </div>
 <h2 id="extended-capabilities">Extended Capabilities<a class="headerlink" href="#extended-capabilities" title="Link to this heading">¶</a></h2>
-<h3 id="standby-controller-mode-id-0x12">Standby Controller Mode (ID=0x12)<a class="headerlink" href="#standby-controller-mode-id-0x12" title="Link to this heading">¶</a></h3>
-<p>The Standby Controller Mode follows the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>:</p>
+<h3 id="standby-controller-mode-0x12">Standby Controller Mode - 0x12<a class="headerlink" href="#standby-controller-mode-0x12" title="Link to this heading">¶</a></h3>
+<p>The Standby Controller Mode follows the <a class="reference internal" href="introduction.html#term-I3C-HCI-spec" title="I3C HCI spec (glossary term)"><span class="xref std std-term">I3C HCI spec</span></a>:</p>
 <ul class="simple">
 <li><p>Chapter 6 Theory of Operation</p>
 <ul>
@@ -922,9 +922,9 @@ Implementation based on this specification should provide a list of known memory
 </tr>
 </tbody>
 </table>
-<h3 id="controller-config-id-0x02">Controller Config (ID=0x02)<a class="headerlink" href="#controller-config-id-0x02" title="Link to this heading">¶</a></h3>
-<p>The Controller Config Capability follows section 7.7.3 of the <a class="reference internal" href="introduction.html#spec-i3c-hci"><span class="std std-ref">I3C HCI Specification</span></a>.</p>
-<h3 id="secure-firmware-recovery-interface-id-0xc0">Secure Firmware Recovery Interface (ID=0xC0)<a class="headerlink" href="#secure-firmware-recovery-interface-id-0xc0" title="Link to this heading">¶</a></h3>
+<h3 id="controller-config-0x02">Controller Config - 0x02<a class="headerlink" href="#controller-config-0x02" title="Link to this heading">¶</a></h3>
+<p>The Controller Config Capability follows section 7.7.3 of the <a class="reference internal" href="introduction.html#term-I3C-HCI-spec" title="I3C HCI spec (glossary term)"><span class="xref std std-term">I3C HCI spec</span></a>.</p>
+<h3 id="secure-firmware-recovery-interface-0xc0">Secure Firmware Recovery Interface - 0xC0<a class="headerlink" href="#secure-firmware-recovery-interface-0xc0" title="Link to this heading">¶</a></h3>
 <p>This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and the I3C Target Recovery Specification.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
@@ -1021,7 +1021,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 </tr>
 </tbody>
 </table>
-<h3 id="soc-management-interface-id-0xc1">SoC Management Interface (ID=0xC1)<a class="headerlink" href="#soc-management-interface-id-0xc1" title="Link to this heading">¶</a></h3>
+<h3 id="soc-management-interface-0xc1">SoC Management Interface - 0xC1<a class="headerlink" href="#soc-management-interface-0xc1" title="Link to this heading">¶</a></h3>
 <p>The SoC Management Interface is provided to enable additional configuration capabilities to the system integrator, e.g. programmability of PHY Devices.</p>
 <p>Features may include programmability of:</p>
 <ul class="simple">
@@ -1093,7 +1093,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 </table>
 <p>Details of the operation are implementation specific.
 It is permissible to implement all registers as generic RW registers.</p>
-<h3 id="target-transaction-interface-id-0xc4">Target Transaction Interface (ID=0xC4)<a class="headerlink" href="#target-transaction-interface-id-0xc4" title="Link to this heading">¶</a></h3>
+<h3 id="target-transaction-interface-0xc4">Target Transaction Interface - 0xC4<a class="headerlink" href="#target-transaction-interface-0xc4" title="Link to this heading">¶</a></h3>
 <p>The Target Transaction Interface (TTI) provides additional registers and queues to enable data flow for Devices configured in the Target Mode.
 This specification is meant for Standby Controllers which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the <code class="docutils literal notranslate"><span class="pre">Target_XACT_SUPPORT</span></code> field of <code class="docutils literal notranslate"><span class="pre">STBY_CR_CAPABILITIES</span></code>.</p>
 <div class="admonition note">
@@ -1989,7 +1989,7 @@ Software-issued reset of the queues contents is also possible.</p>
   <small>
     
       Last update:
-      2025-01-02
+      2025-01-07
     
   </small>
 </div>

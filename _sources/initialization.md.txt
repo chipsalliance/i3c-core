@@ -19,7 +19,8 @@ We propose the following boot sequence:
 
 ## Primary Controller Initialization
 
-The following section details the initialization process on the software driver side, in compliance with the [I3C HCI Specification](introduction.md#spec-i3c-hci):
+The following section details the initialization process on the software driver side, in compliance with the {term}`I3C HCI spec`:
+
 * "6.1.1 Host Controller Initialization" in the PIO mode
 * "6.17.1.1 Secondary Controller Initialization"
 
@@ -27,43 +28,43 @@ The following process is described under the assumption that the controller has 
 
 To initialize the controller, the software is expected to perform the following steps:
 
-1. Verify the value of the [HCI_VERSION](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hci_version-register) register at the `I3CBase` address.
+1. Verify the value of the {rdl-docs}`HCI_VERSION <hci_version-register>` register at the `I3CBase` address.
 The controller is compliant with MIPI HCI v1.2 and therefore the `HCI_VERSION` should read `0x120`
 1. Evaluate DAT & DCT table offsets:
-    *  The [DAT_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dat_section_offset-register) register defined at `I3CBase + 0x30`
-    *  The [DCT_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#dct_section_offset-register) register defined at `I3CBase + 0x34`
+    *  The {rdl-docs}`DAT_SECTION_OFFSET <dat_section_offset-register>` register defined at `I3CBase + 0x30`
+    *  The {rdl-docs}`DCT_SECTION_OFFSET <dct_section_offset-register>` register defined at `I3CBase + 0x34`
     *  Both `DAT_SECTION_OFFSET` and `DCT_SECTION_OFFSET` contain the corresponding table offset, number of entries & table size
     *  HCI spec permits to require the driver to allocate the DAT & DCT table, in which case the `TABLE_OFFSET` would read 0. This specific controller implementation allocates both DAT and DCT tables in the registers
 1. Evaluate `PIO_SECTION_OFFSET`:
-    * Read [PIO_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_section_offset-register) at `I3CBase  + 0x3c`, the `section_offset` field points to the [PIOControl register file](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file) that contains command, transfer, response and IBI ports as well as PIO control registers
+    * Read {rdl-docs}`PIO_SECTION_OFFSET <pio_section_offset-register>` at `I3CBase  + 0x3c`, the `section_offset` field points to the {rdl-docs}`PIOControl register file <piocontrol-register-file>` that contains command, transfer, response and IBI ports as well as PIO control registers
     * This specific controller implements the PIO mode capability. If it's not supported, `SECTION_OFFSET` will read 0
 1. Evaluate `RING_HEADERS_SECTION_OFFSET`, the `SECTION_OFFSET` should read `0x0` as this controller doesn't support the DMA mode
 1. Evaluate the `HC_CAPABILITIES` register at `I3CBase + 0xC`:
     * It stores controller capabilities such as scatter-gather, scheduled commands, combo transfers, IBI data abort, command size
-1. Extended capabilities evaluation via [EXT_CAPS_SECTION_OFFSET](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#ext_caps_section_offset-register) at `I3CBase + 0x40`
+1. Extended capabilities evaluation via {rdl-docs}`EXT_CAPS_SECTION_OFFSET <ext_caps_section_offset-register>` at `I3CBase + 0x40`
     * Evaluate the linked list of Extended Capability structures, until the end of the linked list (i.e., an instance of the `EXTCAP_HEADER` register with the `0x00` value in the `CAP_ID` field)
     * `EXT_OFFSET` will read `0x0` if the extended capabilities are not supported
 1. Setup the threshold for the HCI queues (in the internal/private software data structures):
     * The command, data buffer and IBI status queue sizes can be obtained through the `QUEUE_SIZE` register at `PIO_OFFSET + 0x18`
     * The response queue size is defined at `ALT_QUEUE_SIZE` at `PIO_OFFSET + 0x1C` when the size of the command queue is not equal to the size of the response queue (which is the case for this host controller)
-    * both are contained within [PIOControl register file](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#piocontrol-register-file)
+    * both are contained within {rdl-docs}`PIOControl register file <piocontrol-register-file>`
 1. Enable the host controller:
-     * Ensure the `MODE_SELECTOR` field in the [HC_CONTROL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register) register is set to `0x1` (PIO mode)
-     * Set the `BUS_ENABLE` field in the [HC_CONTROL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register) register
+     * Ensure the `MODE_SELECTOR` field in the {rdl-docs}`HC_CONTROL <hc_control-register>` register is set to `0x1` (PIO mode)
+     * Set the `BUS_ENABLE` field in the {rdl-docs}`HC_CONTROL <hc_control-register>` register
 1. Enable controller interrupts:
-      * Set fields for the status interrupts to be enabled in the [INTR_STATUS_ENABLE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status_enable-register) register at `I3CBase + 0x24`; the following status interrupts can be set:
+      * Set fields for the status interrupts to be enabled in the {rdl-docs}`INTR_STATUS_ENABLE <intr_status_enable-register>` register at `I3CBase + 0x24`; the following status interrupts can be set:
         * Scheduled command missed tick
         * Controller command sequence stall / timeout
         * Controller canceled transaction sequence
         * Controller internal error
-      * Upon writing `1'b1`, the interrupt will be reported in [STATUS_REGISTER](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register)
-      * Setting the fields in the [INTR_SIGNAL_ENABLE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_signal_enable-register) register at `I3CBase + 0x28` will result in not only reporting the interrupt in the [STATUS_REGISTER](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#intr_status-register) register but will also deliver an interrupt condition to the host (interrupt trigger)
+      * Upon writing `1'b1`, the interrupt will be reported in {rdl-docs}`STATUS_REGISTER <intr_status-register>`
+      * Setting the fields in the {rdl-docs}`INTR_SIGNAL_ENABLE <intr_signal_enable-register>` register at `I3CBase + 0x28` will result in not only reporting the interrupt in the {rdl-docs}`STATUS_REGISTER <intr_status-register>` register but will also deliver an interrupt condition to the host (interrupt trigger)
 1.  Enable and start PIO queues:
-    * Enable PIO interrupts via [PIO_INTR_STATUS_ENABLE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status_enable-register) at `PIO_OFFSET + 0x20` and [PIO_INTR_SIGNAL_ENABLE](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_signal_enable-register) at `PIO_OFFSET + 0x20`; enabling fields in the status register will cause the interrupts to be reported via the [PIO_INTR_STATUS](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_intr_status-register) register, additionally enabling interrupts in `PIO_INTR_SIGNAL_ENABLE` will cause an event for the host controller
-    * Enable queues by setting the `ENABLE` field in the [PIO_CONTROL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register) register
-    * Start PIO queues by setting the `RS` field in the [PIO_CONTROL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#pio_control-register) register
+    * Enable PIO interrupts via {rdl-docs}`PIO_INTR_STATUS_ENABLE <pio_intr_status_enable-register>` at `PIO_OFFSET + 0x20` and {rdl-docs}`PIO_INTR_SIGNAL_ENABLE <pio_intr_signal_enable-register>` at `PIO_OFFSET + 0x20`; enabling fields in the status register will cause the interrupts to be reported via the {rdl-docs}`PIO_INTR_STATUS <pio_intr_status-register>` register, additionally enabling interrupts in `PIO_INTR_SIGNAL_ENABLE` will cause an event for the host controller
+    * Enable queues by setting the `ENABLE` field in the {rdl-docs}`PIO_CONTROL <pio_control-register>` register
+    * Start PIO queues by setting the `RS` field in the {rdl-docs}`PIO_CONTROL <pio_control-register>` register
 
-The host control will expose its register map and will await the driver to set the `BUS_ENABLE` bit in the [HC_CONTROL](https://github.com/chipsalliance/i3c-core-rdl/blob/main/src/csr/documentation.md#hc_control-register) register.
+The host control will expose its register map and will await the driver to set the `BUS_ENABLE` bit in the {rdl-docs}`HC_CONTROL <hc_control-register>` register.
 After that, the controller will evaluate the capabilities limited by the software and initialize internal queues & resources accordingly.
 
 ## Secondary Controller Initialization

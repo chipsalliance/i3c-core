@@ -214,9 +214,39 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Introduction</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">Introduction</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reference-documents" class="md-nav__link">
+    <span class="md-ellipsis">Reference documents</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -583,8 +613,9 @@
 
 
 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
-<p>This document describes the open source I3C Basic controller.
-The scope of the project includes:</p>
+<p>This document describes the open source I3C Basic controller developed as part of the Caliptra project within CHIPS Alliance.
+.</p>
+<p>The scope of the project includes:</p>
 <ul class="simple">
 <li><p>Secondary Controller Mode</p></li>
 <li><p>Active Controller Mode</p></li>
@@ -594,12 +625,16 @@ The scope of the project includes:</p>
 <p class="admonition-title">Note</p>
 <p>Secondary Controller Mode with generic TX/RX transfers can serve the same role as an I3C Target Device with support for Legacy I2C communication.</p>
 </div>
+<h2 id="reference-documents">Reference documents<a class="headerlink" href="#reference-documents" title="Link to this heading">¶</a></h2>
 <p>The I3C Core provides a Controller Interface which is developed in compliance with:</p>
-<ul class="simple">
-<li><p><a name="spec-i3c-basic"></a>MIPI Alliance Specification for I3C Basic, Version 1.1.1</p></li>
-<li><p><a name="spec-i3c-hci"></a>MIPI Alliance Specification for I3C HCI, Version 1.2</p></li>
-<li><p><a name="spec-i3c-tcri"></a>MIPI Alliance Specification for I3C TCRI, Version 1.0</p></li>
-</ul>
+<dl class="simple glossary">
+<dt id="term-I3C-basic-spec">I3C basic spec<a class="headerlink" href="#term-I3C-basic-spec" title="Link to this term">¶</a></dt><dd><p>MIPI Alliance Specification for I3C Basic, Version 1.1.1</p>
+</dd>
+<dt id="term-I3C-HCI-spec">I3C HCI spec<a class="headerlink" href="#term-I3C-HCI-spec" title="Link to this term">¶</a></dt><dd><p>MIPI Alliance Specification for I3C HCI, Version 1.2</p>
+</dd>
+<dt id="term-I3C-TCRI-spec">I3C TCRI spec<a class="headerlink" href="#term-I3C-TCRI-spec" title="Link to this term">¶</a></dt><dd><p>MIPI Alliance Specification for I3C TCRI, Version 1.0</p>
+</dd>
+</dl>
 <p>The specification documents can be obtained directly from the <a class="reference external" href="https://www.mipi.org/specifications/i3c-hci">MIPI website</a>, however, a login with a MIPI Alliance account is required.</p>
 <p>Some terminology of the MIPI Alliance Specifications carry over to this documentation and requires additional context:</p>
 <ul class="simple">
@@ -616,7 +651,7 @@ The scope of the project includes:</p>
   <small>
     
       Last update:
-      2025-01-02
+      2025-01-07
     
   </small>
 </div>

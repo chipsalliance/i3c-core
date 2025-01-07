@@ -1,6 +1,6 @@
 # Specification for I3C Vendor-Specific Extended Capabilities
 
-This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the [I3C HCI Specification](introduction.md#spec-i3c-hci).
+This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the {term}`I3C HCI spec`.
 
 ## Security
 
@@ -14,9 +14,10 @@ In order to increase security of the solution, the offsets are provided, so soft
 
 ## Extended Capabilities
 
-### Standby Controller Mode (ID=0x12)
+### Standby Controller Mode - 0x12
 
-The Standby Controller Mode follows the [I3C HCI Specification](introduction.md#spec-i3c-hci):
+The Standby Controller Mode follows the {term}`I3C HCI spec`:
+
 * Chapter 6 Theory of Operation
     * Section 6.17 Standby Controller Mode
 * Chapter 7 Register Interface
@@ -56,11 +57,11 @@ This specification provides definitions and descriptions of the following Capabi
   - Implementer
 :::
 
-### Controller Config (ID=0x02)
+### Controller Config - 0x02
 
-The Controller Config Capability follows section 7.7.3 of the [I3C HCI Specification](introduction.md#spec-i3c-hci).
+The Controller Config Capability follows section 7.7.3 of the {term}`I3C HCI spec`.
 
-### Secure Firmware Recovery Interface (ID=0xC0)
+### Secure Firmware Recovery Interface - 0xC0
 
 This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and the I3C Target Recovery Specification.
 
@@ -130,7 +131,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 :::
 
 
-### SoC Management Interface (ID=0xC1)
+### SoC Management Interface - 0xC1
 
 The SoC Management Interface is provided to enable additional configuration capabilities to the system integrator, e.g. programmability of PHY Devices.
 
@@ -183,7 +184,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 Details of the operation are implementation specific.
 It is permissible to implement all registers as generic RW registers.
 
-### Target Transaction Interface (ID=0xC4)
+### Target Transaction Interface - 0xC4
 
 The Target Transaction Interface (TTI) provides additional registers and queues to enable data flow for Devices configured in the Target Mode.
 This specification is meant for Standby Controllers which are capable of operating in Target Mode, therefore implementations are required to advertise the TTI by setting the `Target_XACT_SUPPORT` field of `STBY_CR_CAPABILITIES`.
