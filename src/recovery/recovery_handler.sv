@@ -740,6 +740,23 @@ module recovery_handler
 
   // ....................................................
 
+  // PEC init
+  logic bus_addr_valid;
+  logic pec_init;
+
+  always @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      bus_addr_valid <= '0;
+    end else if (ctl_bus_start_i) begin
+      bus_addr_valid <= '0;
+    end else if (~bus_addr_valid && ctl_bus_addr_valid_i) begin
+      bus_addr_valid <= '1;
+    end
+
+  assign pec_init = ctl_bus_addr_valid_i & ~bus_addr_valid;
+
+  // ....................................................
+
   logic cmd_valid;
   logic cmd_is_rd;
   logic [7:0] cmd_cmd;
@@ -768,9 +785,9 @@ module recovery_handler
 
   // RX PEC mux for initializing it with I2C/I3C address byte
   always_comb begin
-    rx_pec_data  = ctl_bus_addr_valid_i ? ctl_bus_addr_i : tti_rx_data_queue_wdata;
-    rx_pec_valid = ctl_bus_addr_valid_i ? 1'b1 : recv_pec_enable;
-    rx_pec_init  = ctl_bus_addr_valid_i ? 1'b1 : 1'b0;
+    rx_pec_data  = pec_init ? ctl_bus_addr_i : tti_rx_data_queue_wdata;
+    rx_pec_valid = pec_init ? 1'b1 : recv_pec_enable;
+    rx_pec_init  = pec_init ? 1'b1 : 1'b0;
   end
 
   // Clear PEC on start
@@ -839,9 +856,9 @@ module recovery_handler
 
   // TX PEC mux for initializing it with I2C/I3C address byte
   always_comb begin
-    tx_pec_data  = ctl_bus_addr_valid_i ? ctl_bus_addr_i : ctl_tti_tx_data_queue_rdata_o;
-    tx_pec_valid = ctl_bus_addr_valid_i ? 1'b1 : xmit_pec_enable;
-    tx_pec_init  = ctl_bus_addr_valid_i ? 1'b1 : 1'b0;
+    tx_pec_data  = pec_init ? ctl_bus_addr_i : ctl_tti_tx_data_queue_rdata_o;
+    tx_pec_valid = pec_init ? 1'b1 : xmit_pec_enable;
+    tx_pec_init  = pec_init ? 1'b1 : 1'b0;
   end
 
   // Clear PEC on start
