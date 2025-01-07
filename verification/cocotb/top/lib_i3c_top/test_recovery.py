@@ -175,18 +175,48 @@ async def test_recovery_read(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
-    # Write data to PROT_CAP CSR
+    # Write some data to PROT_CAP CSR
+    def make_word(bs):
+        return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
+
+    prot_cap = [
+        0x01,
+        0x02,
+        0x03,
+        0x04,
+        0x05,
+        0x06,
+        0x07,
+        0x08,
+        0x09,
+        0x0A,
+        0x0B,
+        0x0C,
+        0x0D,
+        0x0E,
+        0x0F,
+        0xFF,
+    ]
+
     await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr, int2dword(0x04030201), 4
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
+        int2dword(make_word(prot_cap[0:4])),
+        4,
     )
     await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr, int2dword(0x08070605), 4
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
+        int2dword(make_word(prot_cap[4:8])),
+        4,
     )
     await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr, int2dword(0x0C0B0A09), 4
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
+        int2dword(make_word(prot_cap[8:12])),
+        4,
     )
     await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr, int2dword(0xFF0F0E0D), 4
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr,
+        int2dword(make_word(prot_cap[12:16])),
+        4,
     )
 
     # Wait
@@ -197,6 +227,7 @@ async def test_recovery_read(dut):
 
     # PROT_CAP read always returns 15 bytes
     assert len(recovery_data) == 15
+    assert recovery_data == prot_cap[:15]
 
     # Wait
     await Timer(2, "us")
