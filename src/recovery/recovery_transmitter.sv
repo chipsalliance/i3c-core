@@ -41,10 +41,6 @@ module recovery_transmitter
   assign data_queue_select_o = 1'b1;
   assign start_trig_o        = 1'b0;
 
-  // TODO: Implement sending TX descriptors
-  assign desc_valid_o        = '0;
-  assign desc_data_o         = '0;
-
   // Internal signals
   logic [15:0] len_q;
 
@@ -53,6 +49,7 @@ module recovery_transmitter
   // FSM
   typedef enum logic [7:0] {
     Idle   = 'h00,
+    TxDesc = 'hD0,
     TxLenL = 'h10,
     TxLenH = 'h11,
     TxData = 'h20,
@@ -72,7 +69,12 @@ module recovery_transmitter
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        if (res_valid_i) state_d = TxLenL;
+        if (res_valid_i) state_d = TxDesc;
+      end
+
+      TxDesc: begin
+        if (host_abort_i) state_d = Idle;
+        else if (desc_ready_i) state_d = TxLenL;
       end
 
       TxLenL: begin
@@ -110,12 +112,22 @@ module recovery_transmitter
   // Response ready
   assign res_ready_o = (state_q == Idle);
   // Response data ready
-  //sign res_dready_o = (state_q == TxData) & data_ready_i;
   always_comb
     unique case (state_q)
       TxData:  res_dready_o = data_ready_i;
       Flush:   res_dready_o = 1'b1;
       default: res_dready_o = 1'b0;
+    endcase
+
+  // Descriptor output
+  always_ff @(posedge clk_i)
+    if (state_q == Idle & res_ready_o & res_valid_i)
+      desc_data_o <= res_len_i + 3; // Account for 2-byte length and 1-byte PEC
+
+  always_comb
+    unique case (state_q)
+      TxDesc:  desc_valid_o = 1'b1;
+      default: desc_valid_o = 1'b0;
     endcase
 
   // Data output

@@ -656,9 +656,9 @@ module controller_standby_i3c
   );
 
   descriptor_tx #(
-      .TtiTxDescDataWidth(TtiTxDescDataWidth),
-      .TtiTxDataWidth    (TtiTxDataWidth),
-      .TtiTxDataDepth    (TtiTxFifoDepthWidth)
+      .TtiTxDescDataWidth  (TtiTxDescDataWidth),
+      .TtiTxDataWidth      (TtiTxDataWidth),
+      .TtiTxFifoDepthWidth (TtiTxFifoDepthWidth)
   ) xdescriptor_tx (
       .clk_i                     (clk_i),
       .rst_ni                    (rst_ni),

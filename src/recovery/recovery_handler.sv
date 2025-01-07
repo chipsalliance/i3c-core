@@ -482,6 +482,10 @@ module recovery_handler
   logic recv_tti_rx_desc_ready;
   logic [TtiRxDescDataWidth-1:0] recv_tti_rx_desc_data;
 
+  logic send_tti_tx_desc_valid;
+  logic send_tti_tx_desc_ready;
+  logic [TtiTxDescDataWidth-1:0] send_tti_tx_desc_data;
+
   // RX descriptor queue
   always_comb begin : R1MUX
     if (recovery_enable) begin
@@ -512,14 +516,16 @@ module recovery_handler
   // TX descriptor queue
   always_comb begin : T1MUX
     if (recovery_enable) begin
+      send_tti_tx_desc_ready                  = ctl_tti_tx_desc_queue_rready_i;
       tti_tx_desc_queue_rready                = '0;
       ctl_tti_tx_desc_queue_full_o            = '0;
-      ctl_tti_tx_desc_queue_depth_o           = '0;
-      ctl_tti_tx_desc_queue_empty_o           = '0;
-      ctl_tti_tx_desc_queue_rvalid_o          = '0;
-      ctl_tti_tx_desc_queue_rdata_o           = '0;
+      ctl_tti_tx_desc_queue_depth_o           = '1; // Always maximum data count available
+      ctl_tti_tx_desc_queue_empty_o           = '1; // Never empty
+      ctl_tti_tx_desc_queue_rvalid_o          = send_tti_tx_desc_valid;
+      ctl_tti_tx_desc_queue_rdata_o           = send_tti_tx_desc_data;
       ctl_tti_tx_desc_queue_ready_thld_trig_o = '0;
     end else begin
+      send_tti_tx_desc_ready                  = '0;
       tti_tx_desc_queue_rready                = ctl_tti_tx_desc_queue_rready_i;
       ctl_tti_tx_desc_queue_full_o            = tti_tx_desc_queue_full;
       ctl_tti_tx_desc_queue_depth_o           = tti_tx_desc_queue_depth;
@@ -590,9 +596,9 @@ module recovery_handler
       tti_tx_data_queue_rready                = '0;
       send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
       tti_tx_data_queue_flush                 = send_tti_tx_data_flush;
-      ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
-      ctl_tti_tx_data_queue_depth_o           = tti_tx_data_queue_depth;
-      ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
+      ctl_tti_tx_data_queue_full_o            = '0;
+      ctl_tti_tx_data_queue_depth_o           = '1; // Always maximum data count available
+      ctl_tti_tx_data_queue_empty_o           = '1; // Never empty
       ctl_tti_tx_data_queue_rvalid_o          = send_tti_tx_data_valid;
       ctl_tti_tx_data_queue_rdata_o           = send_tti_tx_data_data;
       ctl_tti_tx_data_queue_start_thld_trig_o = send_tti_tx_start_trig;
@@ -665,16 +671,6 @@ module recovery_handler
   // Threshold
   assign tti_tx_desc_queue_ready_thld_i     = csr_tti_tx_desc_queue_ready_thld_i;
   assign csr_tti_tx_desc_queue_ready_thld_o = tti_tx_desc_queue_ready_thld_o;
-
-  // ......................
-
-  logic                          send_tti_tx_desc_valid;
-  logic                          send_tti_tx_desc_ready;
-  logic [TtiTxDescDataWidth-1:0] send_tti_tx_desc_data;
-
-  // TODO: Implement a mux for TX descriptor queue on the controller side
-  // once the I3C target FSM supports descriptors
-  assign send_tti_tx_desc_ready = 1'd1;
 
   // ......................
 

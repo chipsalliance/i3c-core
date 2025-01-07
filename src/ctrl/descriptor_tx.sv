@@ -14,7 +14,7 @@
 module descriptor_tx #(
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiTxDataWidth = 8,
-    parameter int unsigned TtiTxDataDepth = 64
+    parameter int unsigned TtiTxFifoDepthWidth = 16
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -26,7 +26,7 @@ module descriptor_tx #(
 
     // TTI: TX Data
     input logic tti_tx_queue_rvalid_i,
-    input logic [TtiTxDataDepth-1:0] tti_tx_queue_depth_i,
+    input logic [TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth_i,
     output logic tti_tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
     output logic tx_queue_flush_o,
