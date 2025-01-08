@@ -18,7 +18,9 @@ module stable_high_detector
   logic [CNTR_W-1:0] count;
   logic do_count;
   logic line;
+  logic stable_internal;
 
+  assign stable_o = (delay_count_i == 0) ? line_i : stable_internal;
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       line <= '0;
@@ -39,10 +41,10 @@ module stable_high_detector
 
   always_comb begin
     do_count = '1;
-    stable_o = '0;
+    stable_internal = '0;
     if (count > delay_count_i) begin
       do_count = '0;
-      stable_o = line;
+      stable_internal = line;
     end
   end
 endmodule

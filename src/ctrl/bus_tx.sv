@@ -61,13 +61,14 @@ module bus_tx (
     tcount_d = tcount_q;
     if (load_tcount) begin
       unique case (tcount_sel)
-        tSetupData: tcount_d = 13'(t_r_i) + 13'(t_su_dat_i);
-        tHoldData:  tcount_d = 13'(t_hd_dat_i);
+        tSetupData: tcount_d = (13'(t_r_i) + 13'(t_su_dat_i)) > 0 ? (13'(t_r_i) + 13'(t_su_dat_i)) : 13'h0001;
+        tHoldData:  tcount_d = (13'(t_hd_dat_i) > 0) ? 13'(t_hd_dat_i) : 13'h0001;
         tNoDelay:   tcount_d = 13'h0001;
         default:    tcount_d = 13'h0001;
       endcase
     end else begin
-      tcount_d = tcount_q - 1'b1;
+      if (tcount_q > 13'h0001)
+        tcount_d = tcount_q - 1'b1;
     end
   end
 

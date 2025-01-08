@@ -63,9 +63,10 @@ async def boot_init(tb: I3CTopTestInterface):
     # Write configuration to the device
 
     # Timing configuration
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr, 2)
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG.base_addr, 10)
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG.base_addr, 10)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr, 0)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_F_REG.base_addr, 0)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG.base_addr, 0)
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG.base_addr, 0)
 
     await setup_hci_thresholds(tb)
 

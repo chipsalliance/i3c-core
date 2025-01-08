@@ -28,13 +28,15 @@ module edge_detector
   logic [CNTR_W-1:0] count;
   logic check_in_progress;
   logic detect_line;
+  logic detect_internal;
   assign detect_line = line ^ DETECT_NEGEDGE;
+  assign detect = (delay_count == 0) ? trigger : detect_internal;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       count <= '0;
       check_in_progress <= 1'b0;
-      detect <= 1'b0;
+      detect_internal <= 1'b0;
     end else if (trigger) begin
       check_in_progress <= 1'b1;
       count <= '0;
@@ -42,10 +44,10 @@ module edge_detector
       count <= count + 1'b1;
       if (count >= delay_count) begin
         check_in_progress <= 1'b0;
-        detect <= 1'b1;
+        detect_internal <= 1'b1;
       end
     end else begin
-      detect <= 1'b0;
+      detect_internal <= 1'b0;
     end
   end
 
