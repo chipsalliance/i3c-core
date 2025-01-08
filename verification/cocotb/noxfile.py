@@ -303,6 +303,20 @@ def ctrl_bus_monitor_verify(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["ctrl_edge_detector"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_edge_detector",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def ctrl_edge_detector_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["i3c_phy_io"])
 @nox.parametrize("simulator", ["icarus" if s == "verilator" else s for s in simulators])
 @nox.parametrize(
