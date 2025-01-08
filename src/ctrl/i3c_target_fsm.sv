@@ -211,10 +211,6 @@ module i3c_target_fsm #(
   end
 
   assign rx_fifo_wdata_o = last_byte;
-  assign last_addr_o = last_byte;
-  assign last_addr_valid_o = (state_d == TxPReadData  & state_q != TxPReadTbit) |
-                             (state_d == RxPWriteData & state_q != RxPWriteTbit) ?
-                             1'b1 : 1'b0;
 
   // ACK, T-bit, Parity
   logic ack_done, parity_bit;
@@ -248,6 +244,17 @@ module i3c_target_fsm #(
       end
     end
   end
+
+  assign last_addr_o = {bus_addr_q, bus_rnw_q};
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      last_addr_valid_o <= '0;
+    end else if (bus_start_det) begin
+      last_addr_valid_o <= '0;
+    end else if (bus_addr_valid) begin
+      last_addr_valid_o <= '1;
+    end
 
   logic parity_err;
   always_ff @(posedge clk_i or negedge rst_ni) begin : latch_parity_error
