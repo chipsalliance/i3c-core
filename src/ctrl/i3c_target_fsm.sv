@@ -376,10 +376,10 @@ module i3c_target_fsm #(
       end
       RxPWriteData: begin
         // TODO: Handle FIFO handshake properly
-        bus_rx_req_byte_o = 1'b1;
+        bus_rx_req_byte_o = ~bus_start_det;
       end
       RxPWriteTbit: begin
-        bus_rx_req_bit_o = 1'b1;
+        bus_rx_req_bit_o = ~bus_start_det;
         if (rx_tbit_done) parity_err_o = (parity_bit != bus_rx_data_i[0]);
       end
       TxPReadData: begin

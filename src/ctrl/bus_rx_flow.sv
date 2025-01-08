@@ -149,12 +149,16 @@ module bus_rx_flow (
         state_d = rx_req_byte_i ? ReadByte : rx_req_bit ? ReadBit : Idle;
       end
       ReadByte: begin
-        if (rx_done_o) begin
+        if (!rx_req_byte_i) begin
+          state_d = Idle;
+        end else if (rx_done_o) begin
           state_d = NextTaskDecision;
         end
       end
       ReadBit: begin
-        if (rx_done) begin
+        if (!rx_req_bit_i) begin
+          state_d = Idle;
+        end else if (rx_done) begin
           state_d = NextTaskDecision;
         end
       end
