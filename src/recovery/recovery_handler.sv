@@ -624,6 +624,7 @@ module recovery_handler
   // ....................................................
   // TTI Queues <-> CSR mux
 
+  logic exec_tti_rx_desc_queue_clr;
   // RX descriptor queue
   always_comb begin : R4SW
     if (recovery_enable) begin
@@ -632,7 +633,7 @@ module recovery_handler
       csr_tti_rx_desc_queue_reg_rst_we_o   = '0;
       csr_tti_rx_desc_queue_reg_rst_data_o = '0;
       tti_rx_desc_queue_req                = '0;
-      tti_rx_desc_queue_reg_rst            = '0;
+      tti_rx_desc_queue_reg_rst            = exec_tti_rx_desc_queue_clr;
     end else begin
       csr_tti_rx_desc_queue_ack_o          = tti_rx_desc_queue_ack;
       csr_tti_rx_desc_queue_data_o         = tti_rx_desc_queue_data;
@@ -648,25 +649,16 @@ module recovery_handler
   assign csr_tti_rx_desc_queue_ready_thld_o = tti_rx_desc_queue_ready_thld_o;
 
   // ......................
+  // TX desc is always connected, recovery logic generates its own descriptors
+  // T1MUX disconnects this FIFO from TTI logic
+  logic exec_tti_tx_desc_queue_clr;
 
-  // TX descriptor queue
-  always_comb begin : T4SW
-    if (recovery_enable) begin
-      csr_tti_tx_desc_queue_ack_o          = '0;
-      csr_tti_tx_desc_queue_reg_rst_we_o   = '0;
-      csr_tti_tx_desc_queue_reg_rst_data_o = '0;
-      tti_tx_desc_queue_data               = '0;
-      tti_tx_desc_queue_req                = '0;
-      tti_tx_desc_queue_reg_rst            = '0;
-    end else begin
-      csr_tti_tx_desc_queue_ack_o          = tti_tx_desc_queue_ack;
-      csr_tti_tx_desc_queue_reg_rst_we_o   = tti_tx_desc_queue_reg_rst_we;
-      csr_tti_tx_desc_queue_reg_rst_data_o = tti_tx_desc_queue_reg_rst_data;
-      tti_tx_desc_queue_data               = csr_tti_tx_desc_queue_data_i;
-      tti_tx_desc_queue_req                = csr_tti_tx_desc_queue_req_i;
-      tti_tx_desc_queue_reg_rst            = csr_tti_tx_desc_queue_reg_rst_i;
-    end
-  end
+  assign csr_tti_tx_desc_queue_ack_o          = tti_tx_desc_queue_ack;
+  assign csr_tti_tx_desc_queue_reg_rst_we_o   = tti_tx_desc_queue_reg_rst_we;
+  assign csr_tti_tx_desc_queue_reg_rst_data_o = tti_tx_desc_queue_reg_rst_data;
+  assign tti_tx_desc_queue_data               = csr_tti_tx_desc_queue_data_i;
+  assign tti_tx_desc_queue_req                = csr_tti_tx_desc_queue_req_i;
+  assign tti_tx_desc_queue_reg_rst            = csr_tti_tx_desc_queue_reg_rst_i | exec_tti_tx_desc_queue_clr;
 
   // Threshold
   assign tti_tx_desc_queue_ready_thld_i     = csr_tti_tx_desc_queue_ready_thld_i;
@@ -678,7 +670,7 @@ module recovery_handler
   logic exec_tti_rx_data_ack;
   logic [TtiRxDataDataWidth-1:0] exec_tti_rx_data_data;
   logic exec_tti_rx_queue_sel;
-  logic exec_tti_rx_queue_clr; // TODO: pulse this signal when changing recovery_enable from 1 to 0 to clear the queue
+  logic exec_tti_rx_data_queue_clr;
 
   // RX data queue
   always_comb begin : R3MUX
@@ -687,7 +679,7 @@ module recovery_handler
       csr_tti_rx_data_queue_reg_rst_we_o   = '0;
       csr_tti_rx_data_queue_reg_rst_data_o = '0;
       tti_rx_data_queue_req                = exec_tti_rx_data_req;
-      tti_rx_data_queue_reg_rst            = exec_tti_rx_queue_clr;
+      tti_rx_data_queue_reg_rst            = exec_tti_rx_data_queue_clr;
       exec_tti_rx_data_ack                 = tti_rx_data_queue_ack;
     end else begin
       csr_tti_rx_data_queue_ack_o          = tti_rx_data_queue_ack;
@@ -710,6 +702,7 @@ module recovery_handler
 
   // ......................
 
+  logic exec_tti_tx_data_queue_clr;
   // TX data queue
   always_comb begin : T4MUX
     if (recovery_enable) begin
@@ -718,7 +711,7 @@ module recovery_handler
       csr_tti_tx_data_queue_reg_rst_data_o = '0;
       tti_tx_data_queue_data               = '0;
       tti_tx_data_queue_req                = '0;
-      tti_tx_data_queue_reg_rst            = '0;
+      tti_tx_data_queue_reg_rst            = exec_tti_tx_data_queue_clr;
     end else begin
       csr_tti_tx_data_queue_ack_o          = tti_tx_data_queue_ack;
       csr_tti_tx_data_queue_reg_rst_we_o   = tti_tx_data_queue_reg_rst_we;
@@ -918,7 +911,11 @@ module recovery_handler
       .rx_ack_i      (exec_tti_rx_data_ack),
       .rx_data_i     (exec_tti_rx_data_data),
       .rx_queue_sel_o(exec_tti_rx_queue_sel),
-      .rx_queue_clr_o(exec_tti_rx_queue_clr),
+
+      .rx_data_queue_clr_o(exec_tti_rx_data_queue_clr),
+      .rx_desc_queue_clr_o(exec_tti_rx_desc_queue_clr),
+      .tx_data_queue_clr_o(exec_tti_tx_data_queue_clr),
+      .tx_desc_queue_clr_o(exec_tti_tx_desc_queue_clr),
 
       .rx_queue_full_i (tti_rx_data_queue_full),
       .rx_queue_empty_i(tti_rx_data_queue_empty),

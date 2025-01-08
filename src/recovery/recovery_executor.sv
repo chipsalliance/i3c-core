@@ -38,9 +38,14 @@ module recovery_executor
     input  logic [31:0] rx_data_i, // FIXME: parametrize
 
     output logic rx_queue_sel_o,
-    output logic rx_queue_clr_o,
     input  logic rx_queue_full_i,
     input  logic rx_queue_empty_i,
+
+    // queues clr signals
+    output logic rx_data_queue_clr_o,
+    output logic tx_data_queue_clr_o,
+    output logic rx_desc_queue_clr_o,
+    output logic tx_desc_queue_clr_o,
 
     input logic host_abort_i,
 
@@ -185,6 +190,19 @@ module recovery_executor
   end
 
   // ....................................................
+
+  // Queue flush
+  logic flush_queues;
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) flush_queues <= 1'b0;
+    else begin
+        unique case (state_q)
+          Idle:
+          if (cmd_valid_i) flush_queues <= 1'b1;
+          default: flush_queues <= 1'b0;
+        endcase
+    end
 
   // Data counter
   assign dcnt_next = (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
@@ -482,7 +500,10 @@ module recovery_executor
   // ....................................................
 
   assign rx_queue_sel_o = 1'b1;
-  assign rx_queue_clr_o = (state_q == Error);
+  assign rx_data_queue_clr_o = (state_q == Error);
+  assign rx_desc_queue_clr_o = (state_q == Error);
+  assign tx_data_queue_clr_o = (state_q == Error) | flush_queues;
+  assign tx_desc_queue_clr_o = (state_q == Error) | flush_queues;
 
   // RX FIFO data request
   always_ff @(posedge clk_i)
