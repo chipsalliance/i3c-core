@@ -228,6 +228,7 @@ async def test_recovery_read(dut):
     # PROT_CAP read always returns 15 bytes
     assert len(recovery_data) == 15
     assert recovery_data == prot_cap[:15]
+    assert pec_ok
 
     # Wait
     await Timer(2, "us")
