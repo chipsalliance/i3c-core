@@ -465,6 +465,15 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__in_t MAX_TRANSFER_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__in_t;
 
+    typedef struct packed{
+        logic [31:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__in_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__in_t;
+
     typedef struct packed {
         logic [31:0] DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__in_t;
@@ -500,6 +509,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__in_t INDIRECT_FIFO_STATUS_2;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__in_t INDIRECT_FIFO_STATUS_3;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__in_t INDIRECT_FIFO_STATUS_4;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__in_t INDIRECT_FIFO_STATUS_5;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__in_t INDIRECT_FIFO_DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__in_t;
 
@@ -1905,6 +1915,14 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__out_t MAX_TRANSFER_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__out_t;
 
+    typedef struct packed{
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__PLACEHOLDER__out_t PLACEHOLDER;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__out_t;
+
     typedef struct packed {
         logic [31:0] DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__out_t;
@@ -1942,6 +1960,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__out_t INDIRECT_FIFO_STATUS_2;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__out_t INDIRECT_FIFO_STATUS_3;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__out_t INDIRECT_FIFO_STATUS_4;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5__out_t INDIRECT_FIFO_STATUS_5;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__out_t INDIRECT_FIFO_DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__out_t;
 

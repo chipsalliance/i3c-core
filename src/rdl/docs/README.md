@@ -1091,7 +1091,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x100
 - Base Offset: 0x0
-- Size: 0x68
+- Size: 0x6C
 
 |Offset|      Identifier      |         Name         |
 |------|----------------------|----------------------|
@@ -1120,7 +1120,8 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 | 0x58 |INDIRECT_FIFO_STATUS_2|INDIRECT_FIFO_STATUS_2|
 | 0x5C |INDIRECT_FIFO_STATUS_3|INDIRECT_FIFO_STATUS_3|
 | 0x60 |INDIRECT_FIFO_STATUS_4|INDIRECT_FIFO_STATUS_4|
-| 0x64 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
+| 0x64 |INDIRECT_FIFO_STATUS_5|INDIRECT_FIFO_STATUS_5|
+| 0x68 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
 
 ### EXTCAP_HEADER register
 
@@ -1487,10 +1488,24 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 <p>Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units</p>
 
-### INDIRECT_FIFO_DATA register
+### INDIRECT_FIFO_STATUS_5 register
 
 - Absolute Address: 0x164
 - Base Offset: 0x64
+- Size: 0x4
+
+|Bits| Identifier|Access|Reset|Name|
+|----|-----------|------|-----|----|
+|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+
+#### PLACEHOLDER field
+
+
+
+### INDIRECT_FIFO_DATA register
+
+- Absolute Address: 0x168
+- Base Offset: 0x68
 - Size: 0x4
 
 

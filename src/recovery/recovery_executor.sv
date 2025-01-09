@@ -514,11 +514,10 @@ module recovery_executor
     hwif_rec_o.HW_STATUS.PLACEHOLDER.we = '0;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
-
-    // TODO: Implement update of indirect FIFO status and data
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.we = '0;
   end
 
   always_comb begin

@@ -1405,6 +1405,26 @@
 
     endgroup
 
+    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__INDIRECT_FIFO_STATUS_5 COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_fld_cg with function sample(
+    input bit [32-1:0] PLACEHOLDER
+    );
+        option.per_instance = 1;
+        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+
+    endgroup
+
     /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__INDIRECT_FIFO_DATA COVERGROUPS -----------------------*/
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;

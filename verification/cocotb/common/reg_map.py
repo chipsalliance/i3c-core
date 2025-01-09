@@ -872,9 +872,17 @@ reg_map = Munch.fromDict({
                     "mask": 4294967295
                 }
             },
-            "INDIRECT_FIFO_DATA": {
+            "INDIRECT_FIFO_STATUS_5": {
                 "base_addr": 356,
                 "offset": 356,
+                "PLACEHOLDER": {
+                    "low": 0,
+                    "mask": 4294967295
+                }
+            },
+            "INDIRECT_FIFO_DATA": {
+                "base_addr": 360,
+                "offset": 360,
                 "DATA": {
                     "low": 0,
                     "mask": 4294967295
