@@ -146,12 +146,16 @@ async def test_indirect_fifo_write(dut):
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
     async def get_fifo_ptrs():
+        """
+        Returns (empty, full, write index, read index)
+        """
+        sts   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4))
         wrptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4))
         rdptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4))
-        return wrptr, rdptr
+        return bool(sts & 1), bool(sts & 2), wrptr, rdptr
 
     # Get indirect FIFO pointers
-    wrptr0, rdptr0 = await get_fifo_ptrs()
+    empty0, full0, wrptr0, rdptr0 = await get_fifo_ptrs()
 
     # Write data to indirect FIFO through the recovery interface
     tx_data = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A]
@@ -160,7 +164,7 @@ async def test_indirect_fifo_write(dut):
     )
 
     # Get indirect FIFO pointers
-    wrptr1, rdptr1 = await get_fifo_ptrs()
+    empty1, full1, wrptr1, rdptr1 = await get_fifo_ptrs()
 
     # Wait & read data from the AHB/AXI side
     await Timer(1, "us")
@@ -177,7 +181,7 @@ async def test_indirect_fifo_write(dut):
         rx_words.append(data)
 
     # Get indirect FIFO pointers
-    wrptr2, rdptr2 = await get_fifo_ptrs()
+    empty2, full2, wrptr2, rdptr2 = await get_fifo_ptrs()
 
     # Check data readback
     tx_words = []
@@ -199,6 +203,11 @@ async def test_indirect_fifo_write(dut):
     assert (wrptr0, rdptr0) == (0, 0)
     assert (wrptr1, rdptr1) == (count, 0)
     assert (wrptr2, rdptr2) == (count, count)
+
+    # Check empty/full progression
+    assert (full0, empty0) == (False, True)
+    assert (full1, empty1) == (False, False)
+    assert (full2, empty2) == (False, True)
 
 @cocotb.test()
 async def test_write_pec(dut):

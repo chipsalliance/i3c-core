@@ -39,6 +39,8 @@ module recovery_executor
 
     output logic rx_queue_sel_o,
     output logic rx_queue_clr_o,
+    input  logic rx_queue_full_i,
+    input  logic rx_queue_empty_i,
 
     input logic host_abort_i,
 
@@ -349,6 +351,29 @@ module recovery_executor
 
   // ....................................................
 
+  // FIFO full/empty status
+  logic fifo_full_r;
+  logic fifo_empty_r;
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      fifo_full_r  <= '0;
+      fifo_empty_r <= '1;
+    end else begin
+      fifo_full_r  <= rx_queue_full_i;
+      fifo_empty_r <= rx_queue_empty_i;
+    end
+
+  always_comb begin
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we   = rx_queue_empty_i ^ fifo_empty_r;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.next = rx_queue_empty_i;
+
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we    = rx_queue_full_i  ^ fifo_full_r;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.next  = rx_queue_full_i;
+  end
+
+  // ....................................................
+
   // Top value of a FIFO pointer.
   // Make it a ff to cut a long combinational path.
   logic [31:0] fifo_size;
@@ -491,8 +516,6 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
 
     // TODO: Implement update of indirect FIFO status and data
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;

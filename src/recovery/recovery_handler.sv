@@ -920,6 +920,9 @@ module recovery_handler
       .rx_queue_sel_o(exec_tti_rx_queue_sel),
       .rx_queue_clr_o(exec_tti_rx_queue_clr),
 
+      .rx_queue_full_i (tti_rx_data_queue_full),
+      .rx_queue_empty_i(tti_rx_data_queue_empty),
+
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
       .payload_available_o(payload_available_o),
