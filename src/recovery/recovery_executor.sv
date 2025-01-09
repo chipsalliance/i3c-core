@@ -111,6 +111,7 @@ module recovery_executor
 
   // Internal signals
   logic [15:0] dcnt;
+  logic [15:0] dcnt_next;
   logic [ 1:0] bcnt;
 
   csr_e        csr_sel;
@@ -184,11 +185,11 @@ module recovery_executor
   // ....................................................
 
   // Data counter
+  assign dcnt_next = (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
+
   always_ff @(posedge clk_i)
     unique case (state_q)
-      Idle:
-      if (cmd_valid_i)
-        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
+      Idle: if (cmd_valid_i) dcnt <= dcnt_next;
       CsrWrite, FifoWrite: if (rx_ack_i) dcnt <= dcnt - 1;
       CsrReadLen: dcnt <= csr_length;
       CsrReadData: if (res_dvalid_o & res_dready_i) dcnt <= dcnt - 1;
@@ -348,6 +349,113 @@ module recovery_executor
 
   // ....................................................
 
+  // Top value of a FIFO pointer.
+  // Make it a ff to cut a long combinational path.
+  logic [31:0] fifo_size;
+  logic [31:0] fifo_ptr_top;
+
+  assign fifo_size = hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
+
+  always_ff @(posedge clk_i) begin
+    fifo_ptr_top <= fifo_size - 32'b1;
+  end
+
+  // ........................
+
+  logic [31:0] fifo_wrptr;
+  logic [31:0] fifo_rdptr;
+
+  assign fifo_wrptr = hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
+  assign fifo_rdptr = hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
+
+  logic fifo_wrptr_inc;
+  logic fifo_wrptr_clr;
+  logic fifo_wrptr_add;
+
+  logic fifo_rdptr_inc;
+  logic fifo_rdptr_clr;
+
+  logic [31:0] fifo_wrptr_add_out;
+  logic        fifo_wrptr_add_bsy;
+  logic        fifo_wrptr_add_bsy_x;
+  logic        fifo_wrptr_add_stb;
+
+  // FIFO write pointer
+  assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we =
+    (fifo_wrptr_inc | fifo_wrptr_clr | fifo_wrptr_add_stb);
+
+  always_comb begin
+    // Reset
+    if (fifo_wrptr_clr) begin
+        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
+    end
+    // Add
+    else if (fifo_wrptr_add_stb) begin
+        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = fifo_wrptr_add_out;
+    // Increment with wrap around
+    end else begin
+        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next =
+            (fifo_wrptr == fifo_ptr_top) ? '0 : (fifo_wrptr + 32'd1);
+    end
+  end
+
+  // Write pointer add wrap logic. Make this registered to avoid timing issues
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      fifo_wrptr_add_bsy <= '0;
+    end else begin
+      if (fifo_wrptr_add) begin
+        fifo_wrptr_add_out <= fifo_wrptr + dcnt_next;
+        fifo_wrptr_add_bsy <= '1;
+      end else if (fifo_wrptr_add_out > fifo_ptr_top) begin
+        fifo_wrptr_add_out <= fifo_wrptr - fifo_size;
+      end else begin
+        fifo_wrptr_add_bsy <= '0;
+      end
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) fifo_wrptr_add_bsy_x <= '0;
+    else         fifo_wrptr_add_bsy_x <= fifo_wrptr_add_bsy;
+  end
+
+  assign fifo_wrptr_add_stb = !fifo_wrptr_add_bsy & fifo_wrptr_add_bsy_x;
+
+  // FIFO read pointer
+  assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we =
+    (fifo_rdptr_inc | fifo_rdptr_clr);
+
+  always_comb begin
+    // Reset
+    if (fifo_rdptr_clr) begin
+        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
+    // Increment with wrap around
+    end else begin
+        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next =
+            (fifo_rdptr == fifo_ptr_top) ? '0 : (fifo_rdptr + 32'd1);
+    end
+  end
+
+  // ..............
+
+  // Add received payload length to FIFO write index on INDIRECT_FIFO_DATA
+  // write
+  assign fifo_wrptr_add = (state_q == Idle) &
+    cmd_valid_i & !cmd_error_i & !cmd_is_rd_i & (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA);
+
+  // Increment FIFO read index on INDIRECT_FIFO_DATA read from the CSR side
+  assign fifo_rdptr_inc = (state_q == FifoWrite) & rx_ack_i;
+
+  // TODO: Drive these during INDIRECT_FIFO_DATA_READ
+  assign fifo_wrptr_inc = '0;
+
+  // TODO: Implement read/write index clear
+  assign fifo_wrptr_clr = ~rst_ni;
+  assign fifo_rdptr_clr = ~rst_ni;
+
+  // ....................................................
+
   assign rx_queue_sel_o = 1'b1;
   assign rx_queue_clr_o = (state_q == Error);
 
@@ -386,8 +494,6 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;
   end
