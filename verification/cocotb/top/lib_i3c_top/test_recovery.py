@@ -57,6 +57,17 @@ async def initialize(dut, timeout=50):
     # Configure the top level
     await boot_init(tb)
 
+    # Set recovery indirect FIFO size and max transfer size (in 4B units)
+    # Set low values to easy trigger pointer wrap in tests.
+    fifo_size = 8
+    xfer_size = 8
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr, int2dword(fifo_size), 4
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, int2dword(xfer_size), 4
+    )
+
     # Enable the recovery mode
     status = 0x3  # "Recovery Mode"
     await tb.write_csr(
@@ -134,11 +145,22 @@ async def test_indirect_fifo_write(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
+    async def get_fifo_ptrs():
+        wrptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4))
+        rdptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4))
+        return wrptr, rdptr
+
+    # Get indirect FIFO pointers
+    wrptr0, rdptr0 = await get_fifo_ptrs()
+
     # Write data to indirect FIFO through the recovery interface
     tx_data = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A]
     await recovery.command_write(
         0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data
     )
+
+    # Get indirect FIFO pointers
+    wrptr1, rdptr1 = await get_fifo_ptrs()
 
     # Wait & read data from the AHB/AXI side
     await Timer(1, "us")
@@ -154,7 +176,10 @@ async def test_indirect_fifo_write(dut):
         dut._log.info(f"INDIRECT_FIFO_DATA = 0x{data:08X}")
         rx_words.append(data)
 
-    # Check
+    # Get indirect FIFO pointers
+    wrptr2, rdptr2 = await get_fifo_ptrs()
+
+    # Check data readback
     tx_words = []
     for i in range(count):
         word = 0
@@ -170,6 +195,10 @@ async def test_indirect_fifo_write(dut):
 
     assert tx_words == rx_words
 
+    # Check FIFO pointer progression
+    assert (wrptr0, rdptr0) == (0, 0)
+    assert (wrptr1, rdptr1) == (count, 0)
+    assert (wrptr2, rdptr2) == (count, count)
 
 @cocotb.test()
 async def test_write_pec(dut):
