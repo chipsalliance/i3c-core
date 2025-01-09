@@ -67,7 +67,7 @@ async def initialize(dut, timeout=50):
 
 
 @cocotb.test()
-async def test_recovery_write(dut):
+async def test_write(dut):
     """
     Tests CSR write(s) using the recovery protocol
     """
@@ -126,7 +126,53 @@ async def test_recovery_write(dut):
 
 
 @cocotb.test()
-async def test_recovery_write_pec(dut):
+async def test_indirect_fifo_write(dut):
+    """
+    Tests indirect FIFO write operation
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # Write data to indirect FIFO through the recovery interface
+    tx_data = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A]
+    await recovery.command_write(
+        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data
+    )
+
+    # Wait & read data from the AHB/AXI side
+    await Timer(1, "us")
+
+    # Read data back
+    count    = (len(tx_data) + 3) // 4
+    rx_words = []
+    for i in range(count):
+
+        # Read data
+        res  = await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+        data = dword2int(res)
+        dut._log.info(f"INDIRECT_FIFO_DATA = 0x{data:08X}")
+        rx_words.append(data)
+
+    # Check
+    tx_words = []
+    for i in range(count):
+        word = 0
+        for j in range(4):
+            idx = 4*i + j
+            word >>= 8
+            if idx < len(tx_data):
+                word |= tx_data[idx] << 24
+        tx_words.append(word)
+
+    dut._log.info("TX words: " + " ".join([hex(w) for w in tx_words]))
+    dut._log.info("RX words: " + " ".join([hex(w) for w in rx_words]))
+
+    assert tx_words == rx_words
+
+
+@cocotb.test()
+async def test_write_pec(dut):
     """
     Tests recovery handler behavior upon receiving packet with incorrect PEC
     """
@@ -165,9 +211,12 @@ async def test_recovery_write_pec(dut):
     assert protocol_status == 0x04  # PEC error
     assert data == 0xDEADBEEF  # From previous write
 
+    # Wait
+    await Timer(1, "us")
 
-@cocotb.test(skip=False)
-async def test_recovery_read(dut):
+
+@cocotb.test()
+async def test_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
@@ -231,11 +280,11 @@ async def test_recovery_read(dut):
     assert pec_ok
 
     # Wait
-    await Timer(2, "us")
+    await Timer(1, "us")
 
 
 @cocotb.test()
-async def test_recovery_payload_available(dut):
+async def test_payload_available(dut):
     """
     Tests if payload_available gets asserted/deasserted correctly when data
     chunks are written to INDIRECT_FIFO_DATA CSR.
@@ -267,13 +316,13 @@ async def test_recovery_payload_available(dut):
     ), "After reception of a complete write packet targeting INDIRECT_FIFO_DATA payload_available should be asserted"
 
     # Wait
-    await Timer(1, "us")
+    await Timer(100, "ns")
 
     # Read INDIRECT_FIFO_DATA. This should deassert payload_available
     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
 
     # Wait
-    await Timer(1, "us")
+    await Timer(100, "ns")
 
     # Check if payload available is deasserted
     assert not bool(
@@ -281,11 +330,11 @@ async def test_recovery_payload_available(dut):
     ), "After reading INDIRECT_FIFO_DATA over AHB/AXI payload_available should be deasserted"
 
     # Wait
-    await Timer(2, "us")
+    await Timer(1, "us")
 
 
 @cocotb.test()
-async def test_recovery_image_activated(dut):
+async def test_image_activated(dut):
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
@@ -313,7 +362,7 @@ async def test_recovery_image_activated(dut):
     )
 
     # Wait
-    await Timer(1, "us")
+    await Timer(100, "ns")
 
     # Check if image_activated is deasserted
     assert not bool(
