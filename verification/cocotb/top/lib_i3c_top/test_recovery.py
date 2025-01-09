@@ -254,7 +254,7 @@ async def test_write_pec(dut):
 
 
 @cocotb.test()
-async def test_read(dut):
+async def test_recovery_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
@@ -284,6 +284,37 @@ async def test_read(dut):
         0x0F,
         0xFF,
     ]
+
+    # Disable recovery mode
+    status = 0x2  # "Recovery Mode"
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+    )
+
+    # write some random data to TTI queue and desc
+    data_len = 4
+    test_data = [random.randint(0, 255) for _ in range(data_len)]
+    dut._log.info(
+        "Generated data: [{}]".format(
+            " ".join("".join(f"0x{d:02X}") + " " for d in test_data),
+        )
+    )
+    # Write data to TTI TX FIFO
+    for i in range(0, len(test_data), 4):
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, test_data[i : i + 4], 4
+        )
+
+    # Enable the recovery mode
+    status = 0x3  # "Recovery Mode"
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+    )
+
+    # Write the TX descriptor
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_len), 4
+    )
 
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
