@@ -36,7 +36,10 @@ module descriptor_tx #(
     output logic tx_byte_last_o,
     output logic tx_byte_valid_o,
     input logic tx_byte_ready_i,
-    input logic tx_byte_err_i
+    input logic tx_byte_err_i,
+
+    // recovery mode
+    input recovery_mode_enter_i
 );
 
   logic [31:0] tx_descriptor;
@@ -56,9 +59,13 @@ module descriptor_tx #(
       tx_descriptor <= '0;
     end else begin
       if (tx_end) descriptor_valid <= '0;
-      else if (tti_tx_desc_queue_rready_o) begin
+      else if (tti_tx_desc_queue_rready_o && !recovery_mode_enter_i) begin
         tx_descriptor <= tti_tx_desc_queue_rdata_i;
         descriptor_valid <= '1;
+      end
+      else if (recovery_mode_enter_i) begin
+        descriptor_valid <= '0;
+        tx_descriptor <= '0;
       end
     end
   end

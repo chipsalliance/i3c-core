@@ -163,7 +163,8 @@ module controller_standby
     input  logic peripheral_reset_done_i,
     output logic escalated_reset_o,
 
-    output logic err_o
+    output logic err_o,
+    input  recovery_mode_enter_i
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -408,7 +409,8 @@ module controller_standby
       .parity_err_o(parity_err),
       .peripheral_reset_o,
       .peripheral_reset_done_i,
-      .escalated_reset_o
+      .escalated_reset_o,
+      .recovery_mode_enter_i(recovery_mode_enter_i)
   );
 
 endmodule

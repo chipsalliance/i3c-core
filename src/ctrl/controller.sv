@@ -234,7 +234,8 @@ module controller
     input  logic peripheral_reset_done_i,
     output logic escalated_reset_o,
 
-    output logic err_o
+    output logic err_o,
+    input recovery_mode_enter_i
 );
 
   logic phy_en;
@@ -515,7 +516,8 @@ module controller
       .mrl_o(mrl),
       .peripheral_reset_o,
       .peripheral_reset_done_i,
-      .escalated_reset_o
+      .escalated_reset_o,
+      .recovery_mode_enter_i(recovery_mode_enter_i)
   );
 
 endmodule

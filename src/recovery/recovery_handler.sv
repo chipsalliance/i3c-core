@@ -171,17 +171,29 @@ module recovery_handler
 
     // Recovery status
     output logic payload_available_o,
-    output logic image_activated_o
+    output logic image_activated_o,
+    output logic recovery_mode_enter_o
 );
   assign irq_o = '0;
 
   // ....................................................
 
   logic recovery_enable;
+  logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
   assign recovery_enable = hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode;
 
+  // generate recovery enter pulse
+  assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];
+  always @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      recovery_mode_enter_shreg <= 2'b10;
+    end else if (recovery_enable) begin
+      recovery_mode_enter_shreg <= {1'b0, recovery_mode_enter_shreg[1]};
+    end else begin
+      recovery_mode_enter_shreg <= 2'b10;
+    end
   // ....................................................
   // TTI Queues
 

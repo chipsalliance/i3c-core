@@ -120,7 +120,10 @@ module controller_standby_i3c
 
     output logic peripheral_reset_o,
     input  logic peripheral_reset_done_i,
-    output logic escalated_reset_o
+    output logic escalated_reset_o,
+
+    // recovery mode
+    input recovery_mode_enter_i
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -674,7 +677,8 @@ module controller_standby_i3c
       .tx_byte_last_o            (tx_last_byte),
       .tx_byte_valid_o           (tx_fifo_rvalid),
       .tx_byte_ready_i           (tx_fifo_rready),
-      .tx_byte_err_i             (tx_host_nack)
+      .tx_byte_err_i             (tx_host_nack),
+      .recovery_mode_enter_i     (recovery_mode_enter_i)
   );
 
   descriptor_ibi #(

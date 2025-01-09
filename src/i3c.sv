@@ -496,6 +496,8 @@ module i3c
 
   logic controller_error;
 
+  logic recovery_mode_enter;
+
   controller #(
       .DatAw(DatAw),
       .DctAw(DctAw)
@@ -672,7 +674,8 @@ module i3c
       .peripheral_reset_done_i,
       .escalated_reset_o,
 
-      .err_o(controller_error)
+      .err_o(controller_error),
+      .recovery_mode_enter_i(recovery_mode_enter)
   );
 
   // HCI
@@ -1062,7 +1065,8 @@ module i3c
 
       // Received I2C/I3C address along with RnW# bit
       .ctl_bus_addr_i(rx_bus_addr),
-      .ctl_bus_addr_valid_i(rx_bus_addr_valid)
+      .ctl_bus_addr_valid_i(rx_bus_addr_valid),
+      .recovery_mode_enter_o(recovery_mode_enter)
   );
 
   // I3C PHY
