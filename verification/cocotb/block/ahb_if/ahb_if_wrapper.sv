@@ -149,6 +149,8 @@ module ahb_if_wrapper
     hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = 0;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = '0;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = '0;
 
     // Unhandled wr/rd_ack (drivers are mising)
     hwif_in.DAT.rd_ack = 0;
