@@ -105,6 +105,7 @@ module recovery_executor
     CSR_INDIRECT_FIFO_STATUS_3 = 'd22,
     CSR_INDIRECT_FIFO_STATUS_4 = 'd23,
     CSR_INDIRECT_FIFO_STATUS_5 = 'd24,
+    CSR_INDIRECT_FIFO_DATA     = 'd25,
 
     CSR_INVALID = 'hFF
   } csr_e;
@@ -117,7 +118,6 @@ module recovery_executor
   logic [31:0] csr_data;
   logic [15:0] csr_length;
   logic        csr_writeable;
-  logic        csr_ff_data;
 
   logic payload_available_d, payload_available_q;
   logic payload_available_write;
@@ -132,6 +132,7 @@ module recovery_executor
     CsrRead     = 'h20,
     CsrReadLen  = 'h21,
     CsrReadData = 'h22,
+    FifoWrite   = 'h30,
     Done        = 'hD0,
     Error       = 'hE0
   } state_e;
@@ -150,12 +151,16 @@ module recovery_executor
       Idle: begin
         if (cmd_valid_i) begin
           if (cmd_error_i) state_d = Error;
-          else if (!cmd_is_rd_i) state_d = CsrWrite;
-          else state_d = CsrRead;
+          else if (!cmd_is_rd_i) begin
+            if (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA)
+              state_d = FifoWrite;
+            else
+              state_d = CsrWrite;
+          end else state_d = CsrRead;
         end
       end
 
-      CsrWrite: begin
+      CsrWrite, FifoWrite: begin
         if (rx_ack_i & (dcnt == 1)) state_d = Done;
       end
 
@@ -184,8 +189,8 @@ module recovery_executor
     unique case (state_q)
       Idle:
       if (cmd_valid_i)
-        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Round up
-      CsrWrite: if (rx_ack_i) dcnt <= dcnt - 1;
+        dcnt <= (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
+      CsrWrite, FifoWrite: if (rx_ack_i) dcnt <= dcnt - 1;
       CsrReadLen: dcnt <= csr_length;
       CsrReadData: if (res_dvalid_o & res_dready_i) dcnt <= dcnt - 1;
       default: dcnt <= dcnt;
@@ -214,6 +219,7 @@ module recovery_executor
           CMD_HW_STATUS:            csr_sel <= CSR_HW_STATUS;
           CMD_INDIRECT_FIFO_CTRL:   csr_sel <= CSR_INDIRECT_FIFO_CTRL_0;
           CMD_INDIRECT_FIFO_STATUS: csr_sel <= CSR_INDIRECT_FIFO_STATUS_0;
+          CMD_INDIRECT_FIFO_DATA:   csr_sel <= CSR_INDIRECT_FIFO_DATA;
 
           default: csr_sel <= CSR_INVALID;
         endcase
@@ -255,11 +261,6 @@ module recovery_executor
         endcase
       default: csr_length <= csr_length;
     endcase
-
-  // Set high if the command targets CMD_INDIRECT_FIFO_DATA and is a write.
-  always_ff @(posedge clk_i)
-    if ((state_q == Idle) && cmd_valid_i)
-      csr_ff_data <= (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA) && !cmd_is_rd_i;
 
   // CSR read data mux (registered)
   always_ff @(posedge clk_i)
@@ -340,9 +341,10 @@ module recovery_executor
   // RX FIFO data request
   always_ff @(posedge clk_i)
     unique case (state_q)
-      Idle:     rx_req_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0);
-      CsrWrite: rx_req_o <= rx_ack_i & (dcnt != 1);
-      default:  rx_req_o <= '0;
+      Idle:      rx_req_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0) & (cmd_cmd_i != CMD_INDIRECT_FIFO_DATA);
+      CsrWrite:  rx_req_o <= rx_ack_i & (dcnt != 1);
+      FifoWrite: rx_req_o <= hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr & (dcnt != 0);
+      default:   rx_req_o <= '0;
     endcase
 
   // CSR write. Only applicable for writable CSRs as per the OCP
@@ -374,7 +376,6 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_DATA.PLACEHOLDER.we = '0;
   end
 
   always_comb begin
@@ -382,6 +383,15 @@ module recovery_executor
     hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.next        = rx_data_i;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = rx_data_i;
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = rx_data_i;
+    hwif_rec_o.INDIRECT_FIFO_DATA.rd_data            = rx_data_i;
+  end
+
+  always_comb begin
+    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = '0;
+    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0;
+
+    if (state_q == FifoWrite && (dcnt != 0))
+      hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = rx_ack_i;
   end
 
   // ....................................................
@@ -429,12 +439,13 @@ module recovery_executor
   always_comb begin : payload_available
     payload_available_d = 1'b0;
     payload_available_write = 1'b0;
-    if ((state_q == Done) && csr_ff_data) begin
+    if (state_q == Idle & cmd_valid_i & !cmd_error_i & !cmd_is_rd_i &
+        cmd_cmd_i == CMD_INDIRECT_FIFO_DATA)
+    begin
       payload_available_d = 1'b1;
       payload_available_write = 1'b1;
     end
-    if (hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc &&
-        !hwif_rec_i.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod) begin
+    if (hwif_rec_i.INDIRECT_FIFO_DATA.req && !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr) begin
       payload_available_d = 1'b0;
       payload_available_write = 1'b1;
     end
