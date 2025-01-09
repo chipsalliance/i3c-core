@@ -2359,9 +2359,13 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg EMPTY_bit_cg[1];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg FULL_bit_cg[1];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_bit_cg REGION_bit_cg[3];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field EMPTY;
+        rand uvm_reg_field FULL;
+        rand uvm_reg_field REGION;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2373,10 +2377,16 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.EMPTY = new("EMPTY");
+            this.EMPTY.configure(this, 1, 0, "RO", 1, 'h1, 1, 1, 0);
+            this.FULL = new("FULL");
+            this.FULL.configure(this, 1, 1, "RO", 1, 'h0, 1, 1, 0);
+            this.REGION = new("REGION");
+            this.REGION.configure(this, 3, 8, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(EMPTY_bit_cg[bt]) EMPTY_bit_cg[bt] = new();
+                foreach(FULL_bit_cg[bt]) FULL_bit_cg[bt] = new();
+                foreach(REGION_bit_cg[bt]) REGION_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -2389,9 +2399,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_bit_cg WRITE_INDEX_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field WRITE_INDEX;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2403,10 +2413,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.WRITE_INDEX = new("WRITE_INDEX");
+            this.WRITE_INDEX.configure(this, 32, 0, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(WRITE_INDEX_bit_cg[bt]) WRITE_INDEX_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -2419,9 +2429,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_bit_cg READ_INDEX_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field READ_INDEX;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2433,10 +2443,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.READ_INDEX = new("READ_INDEX");
+            this.READ_INDEX.configure(this, 32, 0, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(READ_INDEX_bit_cg[bt]) READ_INDEX_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -2449,9 +2459,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_bit_cg FIFO_SIZE_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field FIFO_SIZE;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2463,10 +2473,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.FIFO_SIZE = new("FIFO_SIZE");
+            this.FIFO_SIZE.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(FIFO_SIZE_bit_cg[bt]) FIFO_SIZE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -2479,9 +2489,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_bit_cg MAX_TRANSFER_SIZE_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field MAX_TRANSFER_SIZE;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2493,45 +2503,15 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.MAX_TRANSFER_SIZE = new("MAX_TRANSFER_SIZE");
+            this.MAX_TRANSFER_SIZE.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(MAX_TRANSFER_SIZE_bit_cg[bt]) MAX_TRANSFER_SIZE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
     endclass : I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4
-
-    // Reg - I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5
-    class I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5 extends uvm_reg;
-        protected uvm_reg_data_t m_current;
-        protected uvm_reg_data_t m_data;
-        protected bit            m_is_read;
-
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg PLACEHOLDER_bit_cg[32];
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
-
-        function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5");
-            super.new(name, 32, build_coverage(UVM_CVR_ALL));
-        endfunction : new
-        extern virtual function void sample_values();
-        extern protected virtual function void sample(uvm_reg_data_t  data,
-                                                      uvm_reg_data_t  byte_en,
-                                                      bit             is_read,
-                                                      uvm_reg_map     map);
-
-        virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
-            if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
-            end
-            if (has_coverage(UVM_CVR_FIELD_VALS))
-                fld_cg = new();
-        endfunction : build
-    endclass : I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5
 
     // Reg - I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA
     class I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA extends uvm_reg;
@@ -2590,7 +2570,6 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2 INDIRECT_FIFO_STATUS_2;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3 INDIRECT_FIFO_STATUS_3;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4 INDIRECT_FIFO_STATUS_4;
-        rand I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5 INDIRECT_FIFO_STATUS_5;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA INDIRECT_FIFO_DATA;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf");
@@ -2724,16 +2703,11 @@ package I3CCSR_uvm;
 
             this.INDIRECT_FIFO_STATUS_4.build();
             this.default_map.add_reg(this.INDIRECT_FIFO_STATUS_4, 'h60);
-            this.INDIRECT_FIFO_STATUS_5 = new("INDIRECT_FIFO_STATUS_5");
-            this.INDIRECT_FIFO_STATUS_5.configure(this);
-
-            this.INDIRECT_FIFO_STATUS_5.build();
-            this.default_map.add_reg(this.INDIRECT_FIFO_STATUS_5, 'h64);
             this.INDIRECT_FIFO_DATA = new("INDIRECT_FIFO_DATA");
             this.INDIRECT_FIFO_DATA.configure(this);
 
             this.INDIRECT_FIFO_DATA.build();
-            this.default_map.add_reg(this.INDIRECT_FIFO_DATA, 'h68);
+            this.default_map.add_reg(this.INDIRECT_FIFO_DATA, 'h64);
         endfunction : build
     endclass : I3CCSR__I3C_EC__SecFwRecoveryIf
 

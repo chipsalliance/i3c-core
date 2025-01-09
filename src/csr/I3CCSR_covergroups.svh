@@ -1314,10 +1314,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] EMPTY,
+    input bit [1-1:0] FULL,
+    input bit [3-1:0] REGION
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        EMPTY_cp : coverpoint EMPTY;
+        FULL_cp : coverpoint FULL;
+        REGION_cp : coverpoint REGION;
 
     endgroup
 
@@ -1334,10 +1338,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] WRITE_INDEX
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        WRITE_INDEX_cp : coverpoint WRITE_INDEX;
 
     endgroup
 
@@ -1354,10 +1358,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] READ_INDEX
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        READ_INDEX_cp : coverpoint READ_INDEX;
 
     endgroup
 
@@ -1374,10 +1378,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] FIFO_SIZE
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        FIFO_SIZE_cp : coverpoint FIFO_SIZE;
 
     endgroup
 
@@ -1394,30 +1398,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] MAX_TRANSFER_SIZE
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
-
-    endgroup
-
-    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__INDIRECT_FIFO_STATUS_5 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg with function sample(input bit reg_bit);
-        option.per_instance = 1;
-        reg_bit_cp : coverpoint reg_bit {
-            bins value[2] = {0,1};
-        }
-        reg_bit_edge_cp : coverpoint reg_bit {
-            bins rise = (0 => 1);
-            bins fall = (1 => 0);
-        }
-
-    endgroup
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
-    );
-        option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        MAX_TRANSFER_SIZE_cp : coverpoint MAX_TRANSFER_SIZE;
 
     endgroup
 

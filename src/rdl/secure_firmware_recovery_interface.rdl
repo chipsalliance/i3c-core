@@ -235,69 +235,74 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
     reg {
         name = "INDIRECT_FIFO_STATUS_0";
         field {
-            name = "";
-            desc = "";
-            sw = rw;
+            name = "EMPTY";
+            desc = "The FIFO is empty";
+            sw = r;
             hw = rw;
             we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            reset = 1'h1;
+        } EMPTY[0:0];
+        field {
+            name = "FULL";
+            desc = "The FIFO is full";
+            sw = r;
+            hw = rw;
+            we = true;
+            reset = 1'h0;
+        } FULL[1:1];
+        field {
+            name = "REGION";
+            desc = "Memory region type";
+            sw = r;
+            hw = rw;
+            we = true;
+            reset = 3'h0;
+        } REGION[10:8];
     } INDIRECT_FIFO_STATUS_0;
     reg {
         name = "INDIRECT_FIFO_STATUS_1";
         field {
-            name = "";
-            desc = "";
-            sw = rw;
+            name = "WRITE_INDEX";
+            desc = "Offset incremented for each access by the Recovery Agent in 4B units";
+            sw = r;
             hw = rw;
             we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            reset = 32'h0;
+        } WRITE_INDEX[31:0];
     } INDIRECT_FIFO_STATUS_1;
     reg {
         name = "INDIRECT_FIFO_STATUS_2";
         field {
-            name = "";
-            desc = "";
-            sw = rw;
+            name = "READ_INDEX";
+            desc = "Offset incremented for each access by the device in 4B units";
+            sw = r;
             hw = rw;
             we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            reset = 32'h0;
+        } READ_INDEX[31:0];
     } INDIRECT_FIFO_STATUS_2;
     reg {
         name = "INDIRECT_FIFO_STATUS_3";
         field {
-            name = "";
-            desc = "";
+            name = "FIFO_SIZE";
+            desc = "Size of memory window specified in 4B units";
             sw = rw;
             hw = rw;
             we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            reset = 32'h0;
+        } FIFO_SIZE[31:0];
     } INDIRECT_FIFO_STATUS_3;
     reg {
         name = "INDIRECT_FIFO_STATUS_4";
         field {
-            name = "";
-            desc = "";
+            name = "MAX_TRANSFER_SIZE";
+            desc = "Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units";
             sw = rw;
             hw = rw;
             we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
+            reset = 32'h0;
+        } MAX_TRANSFER_SIZE[31:0];
     } INDIRECT_FIFO_STATUS_4;
-    reg {
-        name = "INDIRECT_FIFO_STATUS_5";
-        field {
-            name = "";
-            desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
-            reset = 32'h00000000;
-        } PLACEHOLDER[31:0];
-    } INDIRECT_FIFO_STATUS_5;
     external reg {
         name = "INDIRECT_FIFO_DATA";
         desc = "";

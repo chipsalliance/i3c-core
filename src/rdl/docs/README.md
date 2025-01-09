@@ -1091,7 +1091,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 - Absolute Address: 0x100
 - Base Offset: 0x0
-- Size: 0x6C
+- Size: 0x68
 
 |Offset|      Identifier      |         Name         |
 |------|----------------------|----------------------|
@@ -1120,8 +1120,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 | 0x58 |INDIRECT_FIFO_STATUS_2|INDIRECT_FIFO_STATUS_2|
 | 0x5C |INDIRECT_FIFO_STATUS_3|INDIRECT_FIFO_STATUS_3|
 | 0x60 |INDIRECT_FIFO_STATUS_4|INDIRECT_FIFO_STATUS_4|
-| 0x64 |INDIRECT_FIFO_STATUS_5|INDIRECT_FIFO_STATUS_5|
-| 0x68 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
+| 0x64 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
 
 ### EXTCAP_HEADER register
 
@@ -1414,13 +1413,23 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x50
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset| Name |
+|----|----------|------|-----|------|
+|  0 |   EMPTY  |   r  | 0x1 | EMPTY|
+|  1 |   FULL   |   r  | 0x0 | FULL |
+|10:8|  REGION  |   r  | 0x0 |REGION|
 
-#### PLACEHOLDER field
+#### EMPTY field
 
+<p>The FIFO is empty</p>
 
+#### FULL field
+
+<p>The FIFO is full</p>
+
+#### REGION field
+
+<p>Memory region type</p>
 
 ### INDIRECT_FIFO_STATUS_1 register
 
@@ -1428,13 +1437,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x54
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits| Identifier|Access|Reset|    Name   |
+|----|-----------|------|-----|-----------|
+|31:0|WRITE_INDEX|   r  | 0x0 |WRITE_INDEX|
 
-#### PLACEHOLDER field
+#### WRITE_INDEX field
 
-
+<p>Offset incremented for each access by the Recovery Agent in 4B units</p>
 
 ### INDIRECT_FIFO_STATUS_2 register
 
@@ -1442,13 +1451,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x58
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|   Name   |
+|----|----------|------|-----|----------|
+|31:0|READ_INDEX|   r  | 0x0 |READ_INDEX|
 
-#### PLACEHOLDER field
+#### READ_INDEX field
 
-
+<p>Offset incremented for each access by the device in 4B units</p>
 
 ### INDIRECT_FIFO_STATUS_3 register
 
@@ -1456,13 +1465,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x5C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|   Name  |
+|----|----------|------|-----|---------|
+|31:0| FIFO_SIZE|  rw  | 0x0 |FIFO_SIZE|
 
-#### PLACEHOLDER field
+#### FIFO_SIZE field
 
-
+<p>Size of memory window specified in 4B units</p>
 
 ### INDIRECT_FIFO_STATUS_4 register
 
@@ -1470,32 +1479,18 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x60
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|    Identifier   |Access|Reset|       Name      |
+|----|-----------------|------|-----|-----------------|
+|31:0|MAX_TRANSFER_SIZE|  rw  | 0x0 |MAX_TRANSFER_SIZE|
 
-#### PLACEHOLDER field
+#### MAX_TRANSFER_SIZE field
 
-
-
-### INDIRECT_FIFO_STATUS_5 register
-
-- Absolute Address: 0x164
-- Base Offset: 0x64
-- Size: 0x4
-
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
-
-#### PLACEHOLDER field
-
-
+<p>Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units</p>
 
 ### INDIRECT_FIFO_DATA register
 
-- Absolute Address: 0x168
-- Base Offset: 0x68
+- Absolute Address: 0x164
+- Base Offset: 0x64
 - Size: 0x4
 
 

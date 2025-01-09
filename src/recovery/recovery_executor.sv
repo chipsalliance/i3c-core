@@ -104,8 +104,7 @@ module recovery_executor
     CSR_INDIRECT_FIFO_STATUS_2 = 'd21,
     CSR_INDIRECT_FIFO_STATUS_3 = 'd22,
     CSR_INDIRECT_FIFO_STATUS_4 = 'd23,
-    CSR_INDIRECT_FIFO_STATUS_5 = 'd24,
-    CSR_INDIRECT_FIFO_DATA     = 'd25,
+    CSR_INDIRECT_FIFO_DATA     = 'd24,
 
     CSR_INVALID = 'hFF
   } csr_e;
@@ -263,6 +262,8 @@ module recovery_executor
     endcase
 
   // CSR read data mux (registered)
+  logic [31:0] indirect_fifo_status_0;
+
   always_ff @(posedge clk_i)
     unique case (csr_sel)
       CSR_PROT_CAP_0:      csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
@@ -285,15 +286,27 @@ module recovery_executor
 
       CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
       CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_0: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_STATUS_5: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
+      CSR_INDIRECT_FIFO_STATUS_0: csr_data <= indirect_fifo_status_0;
+      CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
+      CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
+      CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
+      CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
 
       default: csr_data <= '0;
     endcase
+
+  // INDIRECT_FIFO_STATUS_0 as a 32-bit word
+  assign indirect_fifo_status_0 = {
+    // b3,b2
+    16'd0,
+    // b1
+    5'd0,
+    hwif_rec_i.INDIRECT_FIFO_STATUS_0.REGION.value,
+    // b0
+    6'd0,
+    hwif_rec_i.INDIRECT_FIFO_STATUS_0.FULL.value,
+    hwif_rec_i.INDIRECT_FIFO_STATUS_0.EMPTY.value
+  };
 
   // ....................................................
 
@@ -366,16 +379,17 @@ module recovery_executor
     hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
     hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.we = '0;
     hwif_rec_o.HW_STATUS.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we   = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
 
     // TODO: Implement update of indirect FIFO status and data
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_1.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_2.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;
   end
 
   always_comb begin
