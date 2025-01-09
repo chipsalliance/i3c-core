@@ -2539,9 +2539,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_bit_cg PLACEHOLDER_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_bit_cg DATA_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_fld_cg fld_cg;
-        rand uvm_reg_field PLACEHOLDER;
+        rand uvm_reg_field DATA;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2553,10 +2553,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.PLACEHOLDER = new("PLACEHOLDER");
-            this.PLACEHOLDER.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.DATA = new("DATA");
+            this.DATA.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(PLACEHOLDER_bit_cg[bt]) PLACEHOLDER_bit_cg[bt] = new();
+                foreach(DATA_bit_cg[bt]) DATA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();

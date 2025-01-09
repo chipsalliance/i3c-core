@@ -1735,19 +1735,19 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(data[0 + bt]);
+            foreach(DATA_bit_cg[bt]) this.DATA_bit_cg[bt].sample(data[0 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*PLACEHOLDER*/   );
+            this.fld_cg.sample( data[31:0]/*DATA*/   );
         end
     endfunction
 
     function void I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(PLACEHOLDER.get_mirrored_value() >> bt);
+            foreach(DATA_bit_cg[bt]) this.DATA_bit_cg[bt].sample(DATA.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( PLACEHOLDER.get_mirrored_value()   );
+            this.fld_cg.sample( DATA.get_mirrored_value()   );
         end
     endfunction
 

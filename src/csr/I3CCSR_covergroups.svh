@@ -1434,10 +1434,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 

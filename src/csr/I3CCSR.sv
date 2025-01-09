@@ -304,6 +304,7 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5 = cpuif_req_masked & (cpuif_addr == 12'h164);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h168);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h188);
@@ -917,12 +918,6 @@ module I3CCSR (
                         logic load_next;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_5;
-                struct packed{
-                    struct packed{
-                        logic [31:0] next;
-                        logic load_next;
-                    } PLACEHOLDER;
-                } INDIRECT_FIFO_DATA;
             } SecFwRecoveryIf;
             struct packed{
                 struct packed{
@@ -2102,11 +2097,6 @@ module I3CCSR (
                         logic [31:0] value;
                     } PLACEHOLDER;
                 } INDIRECT_FIFO_STATUS_5;
-                struct packed{
-                    struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
-                } INDIRECT_FIFO_DATA;
             } SecFwRecoveryIf;
             struct packed{
                 struct packed{
@@ -5140,32 +5130,11 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.next;
-        end
-    end
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.swmod = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && decoded_req_is_wr;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.swacc = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA;
+
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr = decoded_req_is_wr;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data = decoded_wr_data;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_biten = decoded_wr_biten;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_ID.value = 8'h12;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK
@@ -8932,6 +8901,7 @@ module I3CCSR (
         wr_ack = '0;
         wr_ack |= hwif_in.PIOControl.COMMAND_PORT.wr_ack;
         wr_ack |= hwif_in.PIOControl.TX_DATA_PORT.wr_ack;
+        wr_ack |= hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack;
@@ -8953,6 +8923,7 @@ module I3CCSR (
         rd_ack |= hwif_in.PIOControl.RESPONSE_PORT.rd_ack;
         rd_ack |= hwif_in.PIOControl.RX_DATA_PORT.rd_ack;
         rd_ack |= hwif_in.PIOControl.IBI_PORT.rd_ack;
+        rd_ack |= hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack;
         rd_ack |= hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack;
         rd_ack |= hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack;
         rd_ack |= hwif_in.DAT.rd_ack;
@@ -9159,7 +9130,7 @@ module I3CCSR (
     assign readback_array[54][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.PLACEHOLDER.value : '0;
     assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.PLACEHOLDER.value : '0;
     assign readback_array[56][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.value : '0;
-    assign readback_array[57][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.PLACEHOLDER.value : '0;
+    assign readback_array[57] = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack ? hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data : '0;
     assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h12 : '0;
     assign readback_array[58][23:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
     assign readback_array[58][31:24] = '0;
