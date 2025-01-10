@@ -9,6 +9,10 @@
 */
 module recovery_executor
   import i3c_pkg::*;
+# (
+    parameter int unsigned TtiRxDataDataWidth = 32,
+    parameter int unsigned CsrDataWidth = 32
+)
 (
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)
@@ -32,22 +36,38 @@ module recovery_executor
     output logic [7:0] res_data_o,
     output logic       res_dlast_o,
 
-    // TTI RX FIFO data interface
-    output logic        rx_req_o,
-    input  logic        rx_ack_i,
-    input  logic [31:0] rx_data_i, // FIXME: parametrize
+    // Input from TTI RX data FIFO
+    output logic                          tti_rx_rreq_o,
+    input  logic                          tti_rx_rack_i,
+    input  logic [TtiRxDataDataWidth-1:0] tti_rx_rdata_i,
 
-    output logic rx_queue_sel_o,
-    input  logic rx_queue_full_i,
-    input  logic rx_queue_empty_i,
+    // TTI RX queue control
+    output logic tti_rx_sel_o,
+    output logic tti_rx_clr_o,
+
+    // Output to Indirect RX FIFO
+    output logic                    indirect_rx_wvalid_o,
+    input  logic                    indirect_rx_wready_i,
+    output logic [CsrDataWidth-1:0] indirect_rx_wdata_o,
+
+    // Input from Indirect RX FIFO (for CSR logic)
+    output logic                    indirect_rx_rreq_o,
+    input  logic                    indirect_rx_rack_i,
+    input  logic [CsrDataWidth-1:0] indirect_rx_rdata_i,
+
+    // Indirect FIFO control/status
+    input  logic indirect_rx_full_i,
+    input  logic indirect_rx_empty_i,
+    output logic indirect_rx_clr_o,
+
+    // Others
+    input logic host_abort_i,
 
     // queues clr signals
     output logic rx_data_queue_clr_o,
     output logic tx_data_queue_clr_o,
     output logic rx_desc_queue_clr_o,
     output logic tx_desc_queue_clr_o,
-
-    input logic host_abort_i,
 
     // Recovery status signals
     output logic payload_available_o,
@@ -168,7 +188,7 @@ module recovery_executor
       end
 
       CsrWrite, FifoWrite: begin
-        if (rx_ack_i & (dcnt == 1)) state_d = Done;
+        if (tti_rx_rack_i & (dcnt == 1)) state_d = Done;
       end
 
       CsrRead: begin
@@ -210,7 +230,7 @@ module recovery_executor
   always_ff @(posedge clk_i)
     unique case (state_q)
       Idle: if (cmd_valid_i) dcnt <= dcnt_next;
-      CsrWrite, FifoWrite: if (rx_ack_i) dcnt <= dcnt - 1;
+      CsrWrite, FifoWrite: if (tti_rx_rack_i) dcnt <= dcnt - 1;
       CsrReadLen: dcnt <= csr_length;
       CsrReadData: if (res_dvalid_o & res_dready_i) dcnt <= dcnt - 1;
       default: dcnt <= dcnt;
@@ -246,7 +266,7 @@ module recovery_executor
 
       // FIXME: This will overflow resulting on overwriting unwanted CSRs if
       // a malicious packet with length > CSR length is received
-      CsrWrite: if (rx_ack_i) csr_sel <= csr_e'(csr_sel + 8'd1);
+      CsrWrite: if (tti_rx_rack_i) csr_sel <= csr_e'(csr_sel + 8'd1);
       CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 8'd1);
       default: csr_sel <= csr_sel;
     endcase
@@ -378,141 +398,147 @@ module recovery_executor
       fifo_full_r  <= '0;
       fifo_empty_r <= '1;
     end else begin
-      fifo_full_r  <= rx_queue_full_i;
-      fifo_empty_r <= rx_queue_empty_i;
+      fifo_full_r  <= indirect_rx_full_i;
+      fifo_empty_r <= indirect_rx_empty_i;
     end
 
   always_comb begin
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we   = rx_queue_empty_i ^ fifo_empty_r;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.next = rx_queue_empty_i;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.we   = indirect_rx_empty_i ^ fifo_empty_r;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.EMPTY.next = indirect_rx_empty_i;
 
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we    = rx_queue_full_i  ^ fifo_full_r;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.next  = rx_queue_full_i;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.we    = indirect_rx_full_i  ^ fifo_full_r;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.FULL.next  = indirect_rx_full_i;
   end
 
+//  // ....................................................
+//
+//  // Top value of a FIFO pointer.
+//  // Make it a ff to cut a long combinational path.
+//  logic [31:0] fifo_size;
+//  logic [31:0] fifo_ptr_top;
+//
+//  assign fifo_size = hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
+//
+//  always_ff @(posedge clk_i) begin
+//    fifo_ptr_top <= fifo_size - 32'b1;
+//  end
+//
+//  // ........................
+//
+//  logic [31:0] fifo_wrptr;
+//  logic [31:0] fifo_rdptr;
+//
+//  assign fifo_wrptr = hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
+//  assign fifo_rdptr = hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
+//
+//  logic fifo_wrptr_inc;
+//  logic fifo_wrptr_clr;
+//  logic fifo_wrptr_add;
+//
+//  logic fifo_rdptr_inc;
+//  logic fifo_rdptr_clr;
+//
+//  logic [31:0] fifo_wrptr_add_out;
+//  logic        fifo_wrptr_add_bsy;
+//  logic        fifo_wrptr_add_bsy_x;
+//  logic        fifo_wrptr_add_stb;
+//
+//  // FIFO write pointer
+//  assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we =
+//    (fifo_wrptr_inc | fifo_wrptr_clr | fifo_wrptr_add_stb);
+//
+//  always_comb begin
+//    // Reset
+//    if (fifo_wrptr_clr) begin
+//        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
+//    end
+//    // Add
+//    else if (fifo_wrptr_add_stb) begin
+//        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = fifo_wrptr_add_out;
+//    // Increment with wrap around
+//    end else begin
+//        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next =
+//            (fifo_wrptr == fifo_ptr_top) ? '0 : (fifo_wrptr + 32'd1);
+//    end
+//  end
+//
+//  // Write pointer add wrap logic. Make this registered to avoid timing issues
+//  always_ff @(posedge clk_i or negedge rst_ni) begin
+//    if (~rst_ni) begin
+//      fifo_wrptr_add_bsy <= '0;
+//    end else begin
+//      if (fifo_wrptr_add) begin
+//        fifo_wrptr_add_out <= fifo_wrptr + dcnt_next;
+//        fifo_wrptr_add_bsy <= '1;
+//      end else if (fifo_wrptr_add_out > fifo_ptr_top) begin
+//        fifo_wrptr_add_out <= fifo_wrptr - fifo_size;
+//      end else begin
+//        fifo_wrptr_add_bsy <= '0;
+//      end
+//    end
+//  end
+//
+//  always_ff @(posedge clk_i or negedge rst_ni) begin
+//    if (~rst_ni) fifo_wrptr_add_bsy_x <= '0;
+//    else         fifo_wrptr_add_bsy_x <= fifo_wrptr_add_bsy;
+//  end
+//
+//  assign fifo_wrptr_add_stb = !fifo_wrptr_add_bsy & fifo_wrptr_add_bsy_x;
+//
+//  // FIFO read pointer
+//  assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we =
+//    (fifo_rdptr_inc | fifo_rdptr_clr);
+//
+//  always_comb begin
+//    // Reset
+//    if (fifo_rdptr_clr) begin
+//        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
+//    // Increment with wrap around
+//    end else begin
+//        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next =
+//            (fifo_rdptr == fifo_ptr_top) ? '0 : (fifo_rdptr + 32'd1);
+//    end
+//  end
+//
+//  // ..............
+//
+//  // Add received payload length to FIFO write index on INDIRECT_FIFO_DATA
+//  // write
+//  assign fifo_wrptr_add = (state_q == Idle) &
+//    cmd_valid_i & !cmd_error_i & !cmd_is_rd_i & (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA);
+//
+//  // Increment FIFO read index on INDIRECT_FIFO_DATA read from the CSR side
+//  assign fifo_rdptr_inc = (state_q == FifoWrite) & tti_rx_rack_i;
+//
+//  // TODO: Drive these during INDIRECT_FIFO_DATA_READ
+//  assign fifo_wrptr_inc = '0;
+//
+//  // TODO: Implement read/write index clear
+//  assign fifo_wrptr_clr = ~rst_ni;
+//  assign fifo_rdptr_clr = ~rst_ni;
+//
   // ....................................................
 
-  // Top value of a FIFO pointer.
-  // Make it a ff to cut a long combinational path.
-  logic [31:0] fifo_size;
-  logic [31:0] fifo_ptr_top;
+  assign tti_rx_sel_o = 1'b1;
+  assign tti_rx_clr_o = (state_q == Error);
 
-  assign fifo_size = hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
+  // TODO: implement indirect queue clear
+  assign indirect_rx_clr_o = '0;
 
-  always_ff @(posedge clk_i) begin
-    fifo_ptr_top <= fifo_size - 32'b1;
-  end
-
-  // ........................
-
-  logic [31:0] fifo_wrptr;
-  logic [31:0] fifo_rdptr;
-
-  assign fifo_wrptr = hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
-  assign fifo_rdptr = hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
-
-  logic fifo_wrptr_inc;
-  logic fifo_wrptr_clr;
-  logic fifo_wrptr_add;
-
-  logic fifo_rdptr_inc;
-  logic fifo_rdptr_clr;
-
-  logic [31:0] fifo_wrptr_add_out;
-  logic        fifo_wrptr_add_bsy;
-  logic        fifo_wrptr_add_bsy_x;
-  logic        fifo_wrptr_add_stb;
-
-  // FIFO write pointer
-  assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we =
-    (fifo_wrptr_inc | fifo_wrptr_clr | fifo_wrptr_add_stb);
-
-  always_comb begin
-    // Reset
-    if (fifo_wrptr_clr) begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
-    end
-    // Add
-    else if (fifo_wrptr_add_stb) begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = fifo_wrptr_add_out;
-    // Increment with wrap around
-    end else begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next =
-            (fifo_wrptr == fifo_ptr_top) ? '0 : (fifo_wrptr + 32'd1);
-    end
-  end
-
-  // Write pointer add wrap logic. Make this registered to avoid timing issues
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) begin
-      fifo_wrptr_add_bsy <= '0;
-    end else begin
-      if (fifo_wrptr_add) begin
-        fifo_wrptr_add_out <= fifo_wrptr + dcnt_next;
-        fifo_wrptr_add_bsy <= '1;
-      end else if (fifo_wrptr_add_out > fifo_ptr_top) begin
-        fifo_wrptr_add_out <= fifo_wrptr - fifo_size;
-      end else begin
-        fifo_wrptr_add_bsy <= '0;
-      end
-    end
-  end
-
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) fifo_wrptr_add_bsy_x <= '0;
-    else         fifo_wrptr_add_bsy_x <= fifo_wrptr_add_bsy;
-  end
-
-  assign fifo_wrptr_add_stb = !fifo_wrptr_add_bsy & fifo_wrptr_add_bsy_x;
-
-  // FIFO read pointer
-  assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we =
-    (fifo_rdptr_inc | fifo_rdptr_clr);
-
-  always_comb begin
-    // Reset
-    if (fifo_rdptr_clr) begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
-    // Increment with wrap around
-    end else begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next =
-            (fifo_rdptr == fifo_ptr_top) ? '0 : (fifo_rdptr + 32'd1);
-    end
-  end
-
-  // ..............
-
-  // Add received payload length to FIFO write index on INDIRECT_FIFO_DATA
-  // write
-  assign fifo_wrptr_add = (state_q == Idle) &
-    cmd_valid_i & !cmd_error_i & !cmd_is_rd_i & (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA);
-
-  // Increment FIFO read index on INDIRECT_FIFO_DATA read from the CSR side
-  assign fifo_rdptr_inc = (state_q == FifoWrite) & rx_ack_i;
-
-  // TODO: Drive these during INDIRECT_FIFO_DATA_READ
-  assign fifo_wrptr_inc = '0;
-
-  // TODO: Implement read/write index clear
-  assign fifo_wrptr_clr = ~rst_ni;
-  assign fifo_rdptr_clr = ~rst_ni;
-
-  // ....................................................
-
-  assign rx_queue_sel_o = 1'b1;
-  assign rx_data_queue_clr_o = (state_q == Error);
-  assign rx_desc_queue_clr_o = (state_q == Error);
-  assign tx_data_queue_clr_o = (state_q == Error) | flush_queues;
-  assign tx_desc_queue_clr_o = (state_q == Error) | flush_queues;
-
-  // RX FIFO data request
+  // RX TTI FIFO data request
   always_ff @(posedge clk_i)
     unique case (state_q)
-      Idle:      rx_req_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0) & (cmd_cmd_i != CMD_INDIRECT_FIFO_DATA);
-      CsrWrite:  rx_req_o <= rx_ack_i & (dcnt != 1);
-      FifoWrite: rx_req_o <= hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr & (dcnt != 0);
-      default:   rx_req_o <= '0;
+      Idle:      tti_rx_rreq_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0) & (cmd_cmd_i != CMD_INDIRECT_FIFO_DATA);
+      CsrWrite:  tti_rx_rreq_o <= tti_rx_rack_i & (dcnt != 1);
+      FifoWrite: tti_rx_rreq_o <= (dcnt != 0);
+      default:   tti_rx_rreq_o <= '0;
     endcase
+
+  // RX Indirect FIFO data feed
+  always_comb begin
+    indirect_rx_wvalid_o = (state_q == FifoWrite) & tti_rx_rack_i;
+    indirect_rx_wdata_o  = tti_rx_rdata_i;
+  end
 
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
@@ -529,12 +555,12 @@ module recovery_executor
     hwif_rec_o.DEVICE_ID_5.PLACEHOLDER.we = '0;
     hwif_rec_o.DEVICE_ID_6.PLACEHOLDER.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_DEVICE_RESET);
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_RECOVERY_CTRL);
+    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_DEVICE_RESET);
+    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_RECOVERY_CTRL);
     hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.we = '0;
     hwif_rec_o.HW_STATUS.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = rx_ack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;
@@ -542,19 +568,20 @@ module recovery_executor
   end
 
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.next         = rx_data_i;
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.next        = rx_data_i;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = rx_data_i;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = rx_data_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.rd_data            = rx_data_i;
+    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.next         = tti_rx_rdata_i;
+    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.next        = tti_rx_rdata_i;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = tti_rx_rdata_i;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = tti_rx_rdata_i;
   end
 
-  always_comb begin
-    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = '0;
-    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0;
+  // ....................................................
 
-    if (state_q == FifoWrite && (dcnt != 0))
-      hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = rx_ack_i;
+  // Connect CSR logic to indirect FIFO rx data port
+  always_comb begin
+    indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
+    hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
+    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack  = indirect_rx_rack_i;
+    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack  = '0; // TODO: support writes
   end
 
   // ....................................................

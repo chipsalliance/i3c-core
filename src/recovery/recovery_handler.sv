@@ -29,7 +29,9 @@ module recovery_handler
     parameter int unsigned TtiIbiFifoDepth = 64,
     localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
 
-    parameter int unsigned CsrDataWidth = 32
+    parameter int unsigned CsrDataWidth = 32,
+
+    parameter int unsigned IndirectFifoDepth = 64
 
 ) (
     input logic clk_i,  // Clock
@@ -898,8 +900,61 @@ module recovery_handler
 
   // ....................................................
 
+  logic                           indirect_rx_wvalid;
+  logic                           indirect_rx_wready;
+  logic [TtiRxDataDataWidth-1:0]  indirect_rx_wdata;
+
+  logic                           indirect_rx_rreq;
+  logic                           indirect_rx_rack;
+  logic [CsrDataWidth-1:0]        indirect_rx_rdata;
+
+  logic                           indirect_rx_clr;
+
+  logic                           indirect_rx_full;
+  logic                           indirect_rx_empty;
+
+  // Indirect FIFO (RX only)
+  read_queue # (
+      .Depth      (IndirectFifoDepth),
+      .DataWidth  (CsrDataWidth),
+  ) xindirect_rx_fifo (
+      .clk_i              (clk_i),
+      .rst_ni             (rst_ni),
+
+      // Write port
+      .wvalid_i           (indirect_rx_wvalid),
+      .wready_o           (indirect_rx_wready),
+      .wdata_i            (indirect_rx_wdata),
+
+      // Read port
+      .req_i              (indirect_rx_rreq),
+      .ack_o              (indirect_rx_rack),
+      .data_o             (indirect_rx_rdata),
+
+      // Clear port
+      .reg_rst_i          (indirect_rx_clr),
+      .reg_rst_we_o       (),
+      .reg_rst_data_o     (),
+
+      // Status
+      .full_o             (indirect_rx_full),
+      .empty_o            (indirect_rx_empty),
+
+      // Threshold logic (unused)
+      .start_thld_i       ('0),
+      .ready_thld_i       ('0),
+      .ready_thld_o       (),
+      .start_thld_trig_o  (),
+      .ready_thld_trig_o  ()
+  );
+
+  // ....................................................
+
   // Command executor
-  recovery_executor xrecovery_executor (
+  recovery_executor # (
+      .TtiRxDataDataWidth (TtiRxDataDataWidth),
+      .CsrDataWidth       (CsrDataWidth)
+  ) xrecovery_executor (
       .clk_i,
       .rst_ni(rst_ni & recovery_enable),
 
@@ -919,18 +974,29 @@ module recovery_handler
       .res_data_o  (res_data),
       .res_dlast_o (res_dlast),
 
-      .rx_req_o      (exec_tti_rx_data_req),
-      .rx_ack_i      (exec_tti_rx_data_ack),
-      .rx_data_i     (exec_tti_rx_data_data),
-      .rx_queue_sel_o(exec_tti_rx_queue_sel),
-
       .rx_data_queue_clr_o(exec_tti_rx_data_queue_clr),
       .rx_desc_queue_clr_o(exec_tti_rx_desc_queue_clr),
       .tx_data_queue_clr_o(exec_tti_tx_data_queue_clr),
       .tx_desc_queue_clr_o(exec_tti_tx_desc_queue_clr),
 
-      .rx_queue_full_i (tti_rx_data_queue_full),
-      .rx_queue_empty_i(tti_rx_data_queue_empty),
+      .tti_rx_rreq_o  (exec_tti_rx_data_req),
+      .tti_rx_rack_i  (exec_tti_rx_data_ack),
+      .tti_rx_rdata_i (exec_tti_rx_data_data),
+
+      .tti_rx_sel_o (exec_tti_rx_queue_sel),
+      .tti_rx_clr_o (exec_tti_rx_queue_clr),
+
+      .indirect_rx_wvalid_o  (indirect_rx_wvalid),
+      .indirect_rx_wready_i  (indirect_rx_wready),
+      .indirect_rx_wdata_o   (indirect_rx_wdata),
+
+      .indirect_rx_rreq_o  (indirect_rx_rreq),
+      .indirect_rx_rack_i  (indirect_rx_rack),
+      .indirect_rx_rdata_i (indirect_rx_rdata),
+
+      .indirect_rx_full_i  (indirect_rx_full),
+      .indirect_rx_empty_i (indirect_rx_empty),
+      .indirect_rx_clr_o   (indirect_rx_clr),
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
