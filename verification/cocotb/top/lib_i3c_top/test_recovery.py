@@ -4,14 +4,14 @@ import logging
 import random
 
 from boot import boot_init
-from bus2csr import dword2int, int2dword
+from bus2csr import dword2int, int2dword, int2bytes, bytes2int
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import Timer
+from cocotb.triggers import Timer, Event, Combine
 
 
 async def timeout_task(timeout):
@@ -264,7 +264,7 @@ async def test_write_pec(dut):
 
 
 @cocotb.test()
-async def test_recovery_read(dut):
+async def test_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
@@ -450,3 +450,122 @@ async def test_image_activated(dut):
 
     # Wait
     await Timer(1, "us")
+
+
+@cocotb.test()
+async def test_recovery_flow(dut):
+    """
+    Test firmware image transfer
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=100000)
+
+    # Generate random firmware image data
+    image_size  = 128
+    image_bytes = [random.randint(0, 255) for i in range(image_size)]
+
+    image_words = []
+    for i in range(image_size // 4):
+        image_words.append(
+            (image_bytes[4*i+3] << 24) |
+            (image_bytes[4*i+2] << 16) |
+            (image_bytes[4*i+1] << 8) |
+             image_bytes[4*i+0]
+        )
+
+    bfm_done = Event()
+    dev_done = Event()
+
+    # BFM-side agent
+    async def bfm_agent():
+        logger = dut._log.getChild("bfm_agent")
+        delay  = 1
+
+        # Read INDIRECT_FIFO_STATUS
+        rx_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+        assert pec_ok
+        xfer_size = bytes2int(rx_data[16:19])
+        logger.info(f"xfer_size: {xfer_size} (words)")
+
+        # Send firmware chunks
+        for data_ptr in range(0, image_size, xfer_size * 4):
+
+            # Poll indirect FIFO status
+            while True:
+                rx_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+                assert pec_ok
+                empty = (rx_data[0] & 1)
+
+                if empty:
+                    logger.info("FIFO empty, proceeding")
+                    break
+                else:
+                    logger.info("FIFO not empty")
+
+                await Timer(delay, "us")
+
+            # Write data
+            logger.info(f"Sending {xfer_size*4} bytes...")
+            chunk = image_bytes[data_ptr:data_ptr + xfer_size * 4]
+            await recovery.command_write(
+                0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, chunk
+            )
+            logger.info(f"Firmware chunk {data_ptr//(xfer_size*4)} sent.")
+
+            await Timer(delay, "us")
+
+        logger.info(f"Firmware image sent")
+        bfm_done.set()
+
+    # AXI-side agent
+    async def dev_agent(buffer):
+        logger = dut._log.getChild("dev_agent")
+        interval = 50
+
+        # Read INDIRECT_FIFO_STATUS
+        xfer_size = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4))
+        logger.info(f"xfer_size: {xfer_size} (words)")
+
+        # Receive the firmware image
+        for data_ptr in range(0, image_size, xfer_size * 4):
+
+            # Poll INDIRECT_FIFO_STATUS
+            while True:
+                status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4))
+                empty  = (status & 1)
+
+                if not empty:
+                    logger.info("FIFO not empty, proceeding")
+                    break
+                else:
+                    logger.info("FIFO empty")
+
+                await Timer(10, "us")
+
+            # Wait before reading the data so that the BFM has to poll
+            await Timer(interval, "us")
+
+            # Read data
+            logger.info(f"Reading {xfer_size*4} bytes...")
+            for i in range(xfer_size):
+                data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4))
+                buffer.append(data)
+
+            logger.info(f"Firmware chunk {data_ptr//(xfer_size*4)} received.")
+
+        logger.info(f"Firmware image received")
+        dev_done.set()
+
+    # Start agents
+    xferd_words = []
+
+    cocotb.start_soon(bfm_agent())
+    cocotb.start_soon(dev_agent(xferd_words))
+
+    # Wait
+    await Combine(bfm_done.wait(), dev_done.wait())
+    await Timer(1, "us")
+
+    # Check
+    assert image_words == xferd_words
