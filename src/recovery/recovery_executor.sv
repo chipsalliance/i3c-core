@@ -433,18 +433,16 @@ module recovery_executor
   assign fifo_rdptr = hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
 
   logic fifo_wrptr_inc;
-  logic fifo_wrptr_clr;
-
   logic fifo_rdptr_inc;
-  logic fifo_rdptr_clr;
+  logic fifo_ptr_clr;
 
   // FIFO write pointer
   assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we =
-    (fifo_wrptr_inc | fifo_wrptr_clr);
+    (fifo_wrptr_inc | fifo_ptr_clr);
 
   always_comb begin
     // Reset
-    if (fifo_wrptr_clr) begin
+    if (fifo_ptr_clr) begin
         hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
     // Increment with wrap around
     end else begin
@@ -455,11 +453,11 @@ module recovery_executor
 
   // FIFO read pointer
   assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we =
-    (fifo_rdptr_inc | fifo_rdptr_clr);
+    (fifo_rdptr_inc | fifo_ptr_clr);
 
   always_comb begin
     // Reset
-    if (fifo_rdptr_clr) begin
+    if (fifo_ptr_clr) begin
         hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
     // Increment with wrap around
     end else begin
@@ -475,25 +473,24 @@ module recovery_executor
   // Increment FIFO read index on INDIRECT_FIFO_DATA read from the CSR side
   assign fifo_rdptr_inc = indirect_rx_rack_i;
 
-  // TODO: Implement read/write index clear
-  assign fifo_wrptr_clr = ~rst_ni;
-  assign fifo_rdptr_clr = ~rst_ni;
+  // Clear FIFO indices on write of 0x1 to INDIRECT_FIFO_CTRL byte 1
+  assign fifo_ptr_clr = tti_rx_rack_i &
+    (csr_sel == CSR_INDIRECT_FIFO_CTRL_0) & (tti_rx_rdata_i[15:8] == 8'd1);
+
+  // Clear the indirect FIFO itself along with the pointers
+  assign indirect_rx_clr_o = fifo_ptr_clr;
 
   // ....................................................
 
   assign tti_rx_sel_o = 1'b1;
   assign tti_rx_clr_o = (state_q == Error);
 
-  // TODO: implement indirect queue clear
-  assign indirect_rx_clr_o = '0;
-
   // RX TTI FIFO data request
   always_ff @(posedge clk_i)
     unique case (state_q)
-      Idle:      tti_rx_rreq_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0) & (cmd_cmd_i != CMD_INDIRECT_FIFO_DATA);
-      CsrWrite:  tti_rx_rreq_o <= tti_rx_rack_i & (dcnt != 1);
-      FifoWrite: tti_rx_rreq_o <= (dcnt != 0);
-      default:   tti_rx_rreq_o <= '0;
+      Idle: tti_rx_rreq_o <= cmd_valid_i & !cmd_error_i & (cmd_len_i != 0);
+      CsrWrite, FifoWrite: tti_rx_rreq_o <= tti_rx_rack_i & (dcnt != 1);
+      default: tti_rx_rreq_o <= '0;
     endcase
 
   // RX Indirect FIFO data feed
