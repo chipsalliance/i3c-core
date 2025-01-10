@@ -44,7 +44,6 @@ module recovery_executor
 
     // TTI RX queue control
     output logic tti_rx_sel_o,
-    output logic tti_rx_clr_o,
 
     // Output to Indirect RX FIFO
     output logic                    indirect_rx_wvalid_o,
@@ -483,7 +482,10 @@ module recovery_executor
   // ....................................................
 
   assign tti_rx_sel_o = 1'b1;
-  assign tti_rx_clr_o = (state_q == Error);
+  assign rx_data_queue_clr_o = (state_q == Error);
+  assign rx_desc_queue_clr_o = (state_q == Error);
+  assign tx_data_queue_clr_o = (state_q == Error) | flush_queues;
+  assign tx_desc_queue_clr_o = (state_q == Error) | flush_queues;
 
   // RX TTI FIFO data request
   always_ff @(posedge clk_i)

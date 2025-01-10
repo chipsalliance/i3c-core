@@ -985,7 +985,6 @@ module recovery_handler
       .tti_rx_rdata_i (exec_tti_rx_data_data),
 
       .tti_rx_sel_o (exec_tti_rx_queue_sel),
-      .tti_rx_clr_o (exec_tti_rx_queue_clr),
 
       .indirect_rx_wvalid_o  (indirect_rx_wvalid),
       .indirect_rx_wready_i  (indirect_rx_wready),
