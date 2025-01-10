@@ -200,7 +200,7 @@ module recovery_executor
 
       CsrReadData: begin
         if (host_abort_i) state_d = Error;  // FIXME: Should we make this an error ?
-        else if (res_dvalid_o & res_dready_i & (dcnt == 0)) state_d = Done;
+        else if (res_dvalid_o & res_dready_i & (dcnt == 1)) state_d = Done;
       end
 
       Error: state_d = Done;

@@ -916,7 +916,7 @@ module recovery_handler
   // Indirect FIFO (RX only)
   read_queue # (
       .Depth      (IndirectFifoDepth),
-      .DataWidth  (CsrDataWidth),
+      .DataWidth  (CsrDataWidth)
   ) xindirect_rx_fifo (
       .clk_i              (clk_i),
       .rst_ni             (rst_ni),
