@@ -718,7 +718,7 @@ module recovery_handler
 
   logic exec_tti_tx_data_queue_clr;
   // TX data queue
-  always_comb begin : T4MUX
+  always_comb begin : T3MUX
     if (recovery_enable) begin
       csr_tti_tx_data_queue_ack_o          = '0;
       csr_tti_tx_data_queue_reg_rst_we_o   = '0;
@@ -952,6 +952,7 @@ module recovery_handler
 
   // Command executor
   recovery_executor # (
+      .IndirectFifoDepth  (IndirectFifoDepth),
       .TtiRxDataDataWidth (TtiRxDataDataWidth),
       .CsrDataWidth       (CsrDataWidth)
   ) xrecovery_executor (
