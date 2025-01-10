@@ -183,6 +183,14 @@ async def test_indirect_fifo_write(dut):
     # Get indirect FIFO pointers
     empty2, full2, wrptr2, rdptr2 = await get_fifo_ptrs()
 
+    # Clear FIFO (pointers too)
+    await recovery.command_write(
+        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, [0x00, 0x01, 0x00, 0x00]
+    )
+
+    # Get indirect FIFO pointers
+    empty3, full3, wrptr3, rdptr3 = await get_fifo_ptrs()
+
     # Check data readback
     tx_words = []
     for i in range(count):
@@ -203,11 +211,13 @@ async def test_indirect_fifo_write(dut):
     assert (wrptr0, rdptr0) == (0, 0)
     assert (wrptr1, rdptr1) == (count, 0)
     assert (wrptr2, rdptr2) == (count, count)
+    assert (wrptr3, rdptr3) == (0, 0)
 
     # Check empty/full progression
     assert (full0, empty0) == (False, True)
     assert (full1, empty1) == (False, False)
     assert (full2, empty2) == (False, True)
+    assert (full3, empty3) == (False, True)
 
 @cocotb.test()
 async def test_write_pec(dut):
