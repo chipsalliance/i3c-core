@@ -670,15 +670,49 @@ regfile StandbyControllerModeRegisters#(
         } RST_ACTION[7:0];
     } STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
     reg {
-        name = "Reserved 2";
+        name = "Standby Virtual Controller Device Address";
         desc = "";
         field {
-            name = "Reserved";
-            desc = "";
+            name = "Virtual Device Dynamic Address is Valid";
+            desc = "Indicates whether or not the value in the VIRT_DYNAMIC_ADDR field is valid.
+            1'b0: VIRT_DYNAMIC_ADDR field is not valid
+            1'b1: VIRT_DYNAMIC_ADDR field is valid
+            ";
             hw   = rw;
             sw   = rw;
-        } __rsvd[31:0];
-    } __rsvd_2;
+            we   = true;
+            reset = 1'b0;
+        } VIRT_DYNAMIC_ADDR_VALID[31:31];
+        field {
+            name = "Virtual Device Dynamic Address";
+            desc = "Contains the Controller Virtual Device’s Dynamic Address.";
+            hw   = rw;
+            sw   = rw;
+            we   = true;
+            reset = 7'h0;
+        } VIRT_DYNAMIC_ADDR[22:16];
+        field {
+            name = "Virtual Device Static Address is Valid";
+            desc = "Indicates whether or not the value in the VIRT_STATIC_ADDR field is valid.
+
+            1'b0: The Virtual Device Static Address field is not valid
+
+            1'b1: The Virtual Device Static Address field is valid
+            ";
+            hw   = rw;
+            sw   = rw;
+            we   = true;
+            reset = 1'b0;
+        } VIRT_STATIC_ADDR_VALID[15:15];
+        field {
+            name = "Device Static Address";
+            desc = "This field contains the Host Controller Device’s Static Address.";
+            hw   = rw;
+            sw   = rw;
+            we   = true;
+            reset = 7'h0;
+        } VIRT_STATIC_ADDR[6:0];
+    } STBY_CR_VIRT_DEVICE_ADDR;
     reg {
         name = "Reserved 3";
         desc = "";

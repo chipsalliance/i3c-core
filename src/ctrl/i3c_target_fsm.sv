@@ -1,8 +1,7 @@
-// Copyright lowRISC contributors (OpenTitan project).
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 //
-// Description: I2C finite state machine
+// Description: I3C finite state machine
 
 /*
   ACK/First data bit ambiguity
@@ -19,7 +18,7 @@
     if SDA went from 0 to 1, it was a STOP; otherwise, SR
       - we observe SCL transition with stable SDA, that means it was the first data byte
 
-  Dynamic/static address precedence:
+  Dynmic/static address precedence:
     * If neither address is defined, then the core will ignore all addressed traffic
     * If only static address is defined, it will be used for Legacy I2C transfers or in bus configuration stage
     * If only dynamic address is defined, it will be used for I3C transfers
@@ -83,6 +82,10 @@ module i3c_target_fsm #(
     input logic target_sta_address_valid_i,
     input logic [6:0] target_dyn_address_i,
     input logic target_dyn_address_valid_i,
+    input logic [6:0] virtual_target_sta_address_i,
+    input logic virtual_target_sta_address_valid_i,
+    input logic [6:0] virtual_target_dyn_address_i,
+    input logic virtual_target_dyn_address_valid_i,
 
     output logic event_target_nack_o,  // this target sent a NACK (this is used to keep count)
     output logic event_cmd_complete_o,  // Command is complete
@@ -110,6 +113,7 @@ module i3c_target_fsm #(
 
     output logic [7:0] last_addr_o,
     output logic       last_addr_valid_o,
+    output logic       virual_addr_matched_o,
 
     input logic scl_negedge_i,
     input logic scl_posedge_i,
@@ -224,9 +228,12 @@ module i3c_target_fsm #(
   logic bus_addr_valid;
   logic bus_rnw_d, bus_rnw_q;
   logic [6:0] bus_addr_d, bus_addr_q;
-  logic is_our_addr_match, is_rsvd_byte_match;
+  logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match;
   assign is_our_addr_match = target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
                              target_sta_address_valid_i ? (target_sta_address_i == bus_addr_q) :
+                             1'b0;
+  assign is_virtual_addr_match = virtual_target_dyn_address_valid_i ? (virtual_target_dyn_address_i == bus_addr_q) :
+                             virtual_target_sta_address_valid_i ? (virtual_target_sta_address_i == bus_addr_q) :
                              1'b0;
   assign is_rsvd_byte_match = ({bus_addr_q, bus_rnw_q} == 8'hFC);
 
@@ -246,6 +253,7 @@ module i3c_target_fsm #(
   end
 
   assign last_addr_o = {bus_addr_q, bus_rnw_q};
+  assign virtual_addr_matched_o = is_virtual_addr_match;
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (~rst_ni) begin
@@ -440,14 +448,14 @@ module i3c_target_fsm #(
         end
       end
       CheckFByte: begin
-        if (is_rsvd_byte_match || is_our_addr_match) state_d = TxAckFByte;
+        if (is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) state_d = TxAckFByte;
         else state_d = Wait;
       end
       TxAckFByte: begin
         if (ack_done) begin
           if (is_rsvd_byte_match) state_d = RxSByte;
-          else if (is_our_addr_match && bus_rnw_q) state_d = TxPReadData;
-          else if (is_our_addr_match && ~bus_rnw_q) state_d = RxPWriteData;
+          else if ((is_our_addr_match || is_virtual_addr_match) && bus_rnw_q) state_d = TxPReadData;
+          else if ((is_our_addr_match || is_virtual_addr_match) && ~bus_rnw_q) state_d = RxPWriteData;
           else state_d = Wait;
         end
       end
@@ -464,11 +472,12 @@ module i3c_target_fsm #(
         end
       end
       CheckSByte: begin
-        if (is_our_addr_match) state_d = TxAckSByte;
+        if (is_our_addr_match || is_virtual_addr_match) state_d = TxAckSByte;
         else state_d = Wait;
       end
       TxAckSByte: begin
         if (ack_done) begin
+          // TODO: delegate virtual reads/writes to recovery flow
           if (is_our_addr_match && bus_rnw_q) state_d = TxPReadData;
           else if (is_our_addr_match && ~bus_rnw_q) state_d = RxPWriteData;
           else state_d = Wait;

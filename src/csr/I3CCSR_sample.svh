@@ -2227,8 +2227,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_2 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRT_DEVICE_ADDR SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -2236,19 +2236,25 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(data[0 + bt]);
+            foreach(VIRT_STATIC_ADDR_bit_cg[bt]) this.VIRT_STATIC_ADDR_bit_cg[bt].sample(data[0 + bt]);
+            foreach(VIRT_STATIC_ADDR_VALID_bit_cg[bt]) this.VIRT_STATIC_ADDR_VALID_bit_cg[bt].sample(data[15 + bt]);
+            foreach(VIRT_DYNAMIC_ADDR_bit_cg[bt]) this.VIRT_DYNAMIC_ADDR_bit_cg[bt].sample(data[16 + bt]);
+            foreach(VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt]) this.VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt].sample(data[31 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*__rsvd*/   );
+            this.fld_cg.sample( data[6:0]/*VIRT_STATIC_ADDR*/  ,  data[15:15]/*VIRT_STATIC_ADDR_VALID*/  ,  data[22:16]/*VIRT_DYNAMIC_ADDR*/  ,  data[31:31]/*VIRT_DYNAMIC_ADDR_VALID*/   );
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2::sample_values();
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(__rsvd.get_mirrored_value() >> bt);
+            foreach(VIRT_STATIC_ADDR_bit_cg[bt]) this.VIRT_STATIC_ADDR_bit_cg[bt].sample(VIRT_STATIC_ADDR.get_mirrored_value() >> bt);
+            foreach(VIRT_STATIC_ADDR_VALID_bit_cg[bt]) this.VIRT_STATIC_ADDR_VALID_bit_cg[bt].sample(VIRT_STATIC_ADDR_VALID.get_mirrored_value() >> bt);
+            foreach(VIRT_DYNAMIC_ADDR_bit_cg[bt]) this.VIRT_DYNAMIC_ADDR_bit_cg[bt].sample(VIRT_DYNAMIC_ADDR.get_mirrored_value() >> bt);
+            foreach(VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt]) this.VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt].sample(VIRT_DYNAMIC_ADDR_VALID.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( __rsvd.get_mirrored_value()   );
+            this.fld_cg.sample( VIRT_STATIC_ADDR.get_mirrored_value()  ,  VIRT_STATIC_ADDR_VALID.get_mirrored_value()  ,  VIRT_DYNAMIC_ADDR.get_mirrored_value()  ,  VIRT_DYNAMIC_ADDR_VALID.get_mirrored_value()   );
         end
     endfunction
 

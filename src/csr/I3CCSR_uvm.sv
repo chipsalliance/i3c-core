@@ -3472,17 +3472,23 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS
 
-    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_2
-    class I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_bit_cg __rsvd_bit_cg[32];
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_fld_cg fld_cg;
-        rand uvm_reg_field __rsvd;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_bit_cg VIRT_STATIC_ADDR_bit_cg[7];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_bit_cg VIRT_STATIC_ADDR_VALID_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_bit_cg VIRT_DYNAMIC_ADDR_bit_cg[7];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_bit_cg VIRT_DYNAMIC_ADDR_VALID_bit_cg[1];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_fld_cg fld_cg;
+        rand uvm_reg_field VIRT_STATIC_ADDR;
+        rand uvm_reg_field VIRT_STATIC_ADDR_VALID;
+        rand uvm_reg_field VIRT_DYNAMIC_ADDR;
+        rand uvm_reg_field VIRT_DYNAMIC_ADDR_VALID;
 
-        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2");
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3492,15 +3498,24 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.__rsvd = new("__rsvd");
-            this.__rsvd.configure(this, 32, 0, "RW", 1, 'h0, 0, 1, 0);
+            this.VIRT_STATIC_ADDR = new("VIRT_STATIC_ADDR");
+            this.VIRT_STATIC_ADDR.configure(this, 7, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.VIRT_STATIC_ADDR_VALID = new("VIRT_STATIC_ADDR_VALID");
+            this.VIRT_STATIC_ADDR_VALID.configure(this, 1, 15, "RW", 1, 'h0, 1, 1, 0);
+            this.VIRT_DYNAMIC_ADDR = new("VIRT_DYNAMIC_ADDR");
+            this.VIRT_DYNAMIC_ADDR.configure(this, 7, 16, "RW", 1, 'h0, 1, 1, 0);
+            this.VIRT_DYNAMIC_ADDR_VALID = new("VIRT_DYNAMIC_ADDR_VALID");
+            this.VIRT_DYNAMIC_ADDR_VALID.configure(this, 1, 31, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(__rsvd_bit_cg[bt]) __rsvd_bit_cg[bt] = new();
+                foreach(VIRT_STATIC_ADDR_bit_cg[bt]) VIRT_STATIC_ADDR_bit_cg[bt] = new();
+                foreach(VIRT_STATIC_ADDR_VALID_bit_cg[bt]) VIRT_STATIC_ADDR_VALID_bit_cg[bt] = new();
+                foreach(VIRT_DYNAMIC_ADDR_bit_cg[bt]) VIRT_DYNAMIC_ADDR_bit_cg[bt] = new();
+                foreach(VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt]) VIRT_DYNAMIC_ADDR_VALID_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR
 
     // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_3
     class I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3 extends uvm_reg;
@@ -3548,7 +3563,7 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE STBY_CR_INTR_FORCE;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS STBY_CR_CCC_CONFIG_GETCAPS;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
-        rand I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2 __rsvd_2;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR STBY_CR_VIRT_DEVICE_ADDR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3 __rsvd_3;
 
         function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode");
@@ -3627,11 +3642,11 @@ package I3CCSR_uvm;
 
             this.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.build();
             this.default_map.add_reg(this.STBY_CR_CCC_CONFIG_RSTACT_PARAMS, 'h34);
-            this.__rsvd_2 = new("__rsvd_2");
-            this.__rsvd_2.configure(this);
+            this.STBY_CR_VIRT_DEVICE_ADDR = new("STBY_CR_VIRT_DEVICE_ADDR");
+            this.STBY_CR_VIRT_DEVICE_ADDR.configure(this);
 
-            this.__rsvd_2.build();
-            this.default_map.add_reg(this.__rsvd_2, 'h38);
+            this.STBY_CR_VIRT_DEVICE_ADDR.build();
+            this.default_map.add_reg(this.STBY_CR_VIRT_DEVICE_ADDR, 'h38);
             this.__rsvd_3 = new("__rsvd_3");
             this.__rsvd_3.configure(this);
 

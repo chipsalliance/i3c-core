@@ -1536,7 +1536,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 | 0x2C |       STBY_CR_INTR_FORCE       |     Standby Controller Interrupt Force     |
 | 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |Standby Controller CCC Configuration GETCAPS|
 | 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS| Standby Controller CCC Configuration RSTACT|
-| 0x38 |            __rsvd_2            |                 Reserved 2                 |
+| 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |  Standby Virtual Controller Device Address |
 | 0x3C |            __rsvd_3            |                 Reserved 3                 |
 
 ### EXTCAP_HEADER register
@@ -2137,7 +2137,7 @@ If field ACR_FSM_OP_SELECT in register STBY_CR_CONTROL is set to 1'b1, then
 this field shall be cleared (i.e., readiness to accept the Controller Role
 shall be revoked) with this Target Reset Pattern.</p>
 
-### __rsvd_2 register
+### STBY_CR_VIRT_DEVICE_ADDR register
 
 - Absolute Address: 0x1B8
 - Base Offset: 0x38
@@ -2145,13 +2145,32 @@ shall be revoked) with this Target Reset Pattern.</p>
 
 
 
-|Bits|Identifier|Access|Reset|  Name  |
-|----|----------|------|-----|--------|
-|31:0|  __rsvd  |  rw  |  —  |Reserved|
+| Bits|       Identifier      |Access|Reset|                  Name                 |
+|-----|-----------------------|------|-----|---------------------------------------|
+| 6:0 |    VIRT_STATIC_ADDR   |  rw  | 0x0 |         Device Static Address         |
+|  15 | VIRT_STATIC_ADDR_VALID|  rw  | 0x0 | Virtual Device Static Address is Valid|
+|22:16|   VIRT_DYNAMIC_ADDR   |  rw  | 0x0 |     Virtual Device Dynamic Address    |
+|  31 |VIRT_DYNAMIC_ADDR_VALID|  rw  | 0x0 |Virtual Device Dynamic Address is Valid|
 
-#### __rsvd field
+#### VIRT_STATIC_ADDR field
 
+<p>This field contains the Host Controller Device’s Static Address.</p>
 
+#### VIRT_STATIC_ADDR_VALID field
+
+<p>Indicates whether or not the value in the VIRT_STATIC_ADDR field is valid.</p>
+<p>1'b0: The Virtual Device Static Address field is not valid</p>
+<p>1'b1: The Virtual Device Static Address field is valid</p>
+
+#### VIRT_DYNAMIC_ADDR field
+
+<p>Contains the Controller Virtual Device’s Dynamic Address.</p>
+
+#### VIRT_DYNAMIC_ADDR_VALID field
+
+<p>Indicates whether or not the value in the VIRT_DYNAMIC_ADDR field is valid.
+1'b0: VIRT_DYNAMIC_ADDR field is not valid
+1'b1: VIRT_DYNAMIC_ADDR field is valid</p>
 
 ### __rsvd_3 register
 

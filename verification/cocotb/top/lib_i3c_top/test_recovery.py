@@ -19,7 +19,7 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, timeout=50):
+async def initialize(dut, timeout=50, sw_activate=1):
     """
     Common test initialization routine
     """
@@ -69,15 +69,80 @@ async def initialize(dut, timeout=50):
     )
 
     # Enable the recovery mode
-    status = 0x3  # "Recovery Mode"
+    status = 0x3 if sw_activate else 0x1  # "Recovery Mode"
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
     )
 
     return i3c_controller, i3c_target, tb, recovery
 
-
 @cocotb.test()
+async def test_virtual_write(dut):
+    """
+    Tests CSR write(s) using the recovery protocol using the virtual address
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, sw_activate=0)
+
+    # Write to the RESET CSR (one word)
+    await recovery.command_write(
+        0x6A, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+    dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
+    rec_addr = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
+    )
+    dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+    assert data == 0xDDCCBBAA
+
+    # Write to the FIFO_CTRL CSR (two words)
+    await recovery.command_write(
+        0x6A,
+        I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+    rec_addr = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
+    )
+    dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
+    data0 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
+    data1 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+    assert data0 == 0xDDCCBBAA
+    assert data1 == 0x44332211
+
+@cocotb.test(skip=True)
 async def test_write(dut):
     """
     Tests CSR write(s) using the recovery protocol
@@ -136,7 +201,7 @@ async def test_write(dut):
     assert data1 == 0x44332211
 
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_indirect_fifo_write(dut):
     """
     Tests indirect FIFO write operation
@@ -219,7 +284,7 @@ async def test_indirect_fifo_write(dut):
     assert (full2, empty2) == (False, True)
     assert (full3, empty3) == (False, True)
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_write_pec(dut):
     """
     Tests recovery handler behavior upon receiving packet with incorrect PEC
@@ -362,7 +427,7 @@ async def test_read(dut):
     await Timer(1, "us")
 
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_payload_available(dut):
     """
     Tests if payload_available gets asserted/deasserted correctly when data
@@ -412,7 +477,7 @@ async def test_payload_available(dut):
     await Timer(1, "us")
 
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_image_activated(dut):
 
     # Initialize

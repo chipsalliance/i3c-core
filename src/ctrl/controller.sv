@@ -261,6 +261,10 @@ module controller
   logic target_sta_addr_valid;
   logic [6:0] target_dyn_addr;
   logic target_dyn_addr_valid;
+  logic [6:0] virtual_target_sta_addr;
+  logic virtual_target_sta_addr_valid;
+  logic [6:0] virtual_target_dyn_addr;
+  logic virtual_target_dyn_addr_valid;
   logic [6:0] target_ibi_addr;
   logic target_ibi_addr_valid;
   logic [6:0] target_hot_join_addr;
@@ -288,42 +292,46 @@ module controller
   end
 
   configuration xconfiguration (
-      .clk_i                  (clk_i),
-      .rst_ni                 (rst_ni),
-      .hwif_out_i             (hwif_out_i),
-      .phy_en_o               (phy_en),
-      .phy_mux_select_o       (phy_mux_select),
-      .i2c_active_en_o        (i2c_active_en),
-      .i2c_standby_en_o       (i2c_standby_en),
-      .i3c_active_en_o        (i3c_active_en),
-      .i3c_standby_en_o       (i3c_standby_en),
-      .t_su_dat_o             (t_su_dat),
-      .t_hd_dat_o             (t_hd_dat),
-      .t_r_o                  (t_r),
-      .t_f_o                  (t_f),
-      .t_bus_free_o           (t_bus_free),
-      .t_bus_idle_o           (t_bus_idle),
-      .t_bus_available_o      (t_bus_available),
-      .get_mwl_o              (get_mwl),
-      .get_mrl_o              (get_mrl),
-      .get_status_fmt1_o      (get_status_fmt1),
-      .pid_o                  (pid),
-      .bcr_o                  (bcr),
-      .dcr_o                  (dcr),
-      .target_sta_addr_o      (target_sta_addr),
-      .target_sta_addr_valid_o(target_sta_addr_valid),
-      .target_dyn_addr_o      (target_dyn_addr),
-      .target_dyn_addr_valid_o(target_dyn_addr_valid),
-      .target_ibi_addr_o      (target_ibi_addr),
-      .target_ibi_addr_valid_o(target_ibi_addr_valid),
-      .target_hot_join_addr_o (target_hot_join_addr),
-      .daa_unique_response_o  (daa_unique_response),
-      .ibi_enable_o           (ibi_enable),
-      .ibi_retry_num_o        (ibi_retry_num),
-      .set_mwl_i              (set_mwl),
-      .set_mrl_i              (set_mrl),
-      .mwl_i                  (mwl),
-      .mrl_i                  (mrl)
+      .clk_i                           (clk_i),
+      .rst_ni                          (rst_ni),
+      .hwif_out_i                      (hwif_out_i),
+      .phy_en_o                        (phy_en),
+      .phy_mux_select_o                (phy_mux_select),
+      .i2c_active_en_o                 (i2c_active_en),
+      .i2c_standby_en_o                (i2c_standby_en),
+      .i3c_active_en_o                 (i3c_active_en),
+      .i3c_standby_en_o                (i3c_standby_en),
+      .t_su_dat_o                      (t_su_dat),
+      .t_hd_dat_o                      (t_hd_dat),
+      .t_r_o                           (t_r),
+      .t_f_o                           (t_f),
+      .t_bus_free_o                    (t_bus_free),
+      .t_bus_idle_o                    (t_bus_idle),
+      .t_bus_available_o               (t_bus_available),
+      .get_mwl_o                       (get_mwl),
+      .get_mrl_o                       (get_mrl),
+      .get_status_fmt1_o               (get_status_fmt1),
+      .pid_o                           (pid),
+      .bcr_o                           (bcr),
+      .dcr_o                           (dcr),
+      .target_sta_addr_o               (target_sta_addr),
+      .target_sta_addr_valid_o         (target_sta_addr_valid),
+      .target_dyn_addr_o               (target_dyn_addr),
+      .target_dyn_addr_valid_o         (target_dyn_addr_valid),
+      .virtual_target_sta_addr_o       (virtual_target_sta_addr),
+      .virtual_target_sta_addr_valid_o (virtual_target_sta_addr_valid),
+      .virtual_target_dyn_addr_o       (virtual_target_dyn_addr),
+      .virtual_target_dyn_addr_valid_o (virtual_target_dyn_addr_valid),
+      .target_ibi_addr_o               (target_ibi_addr),
+      .target_ibi_addr_valid_o         (target_ibi_addr_valid),
+      .target_hot_join_addr_o          (target_hot_join_addr),
+      .daa_unique_response_o           (daa_unique_response),
+      .ibi_enable_o                    (ibi_enable),
+      .ibi_retry_num_o                 (ibi_retry_num),
+      .set_mwl_i                       (set_mwl),
+      .set_mrl_i                       (set_mrl),
+      .mwl_i                           (mwl),
+      .mrl_i                           (mrl)
   );
 
 
@@ -489,6 +497,10 @@ module controller
       .target_sta_addr_valid_i(target_sta_addr_valid),
       .target_dyn_addr_i(target_dyn_addr),
       .target_dyn_addr_valid_i(target_dyn_addr_valid),
+      .virtual_target_sta_addr_i(virtual_target_sta_addr),
+      .virtual_target_sta_addr_valid_i(virtual_target_sta_addr_valid),
+      .virtual_target_dyn_addr_i(virtual_target_dyn_addr),
+      .virtual_target_dyn_addr_valid_i(virtual_target_dyn_addr_valid),
       .target_ibi_addr_i(target_ibi_addr),
       .target_ibi_addr_valid_i(target_ibi_addr_valid),
       .target_hot_join_addr_i(target_hot_join_addr),

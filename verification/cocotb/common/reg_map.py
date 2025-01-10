@@ -1247,12 +1247,24 @@ reg_map = Munch.fromDict({
                     "mask": 2147483648
                 }
             },
-            "__RSVD_2": {
+            "STBY_CR_VIRT_DEVICE_ADDR": {
                 "base_addr": 440,
                 "offset": 440,
-                "__rsvd": {
+                "VIRT_STATIC_ADDR": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 127
+                },
+                "VIRT_STATIC_ADDR_VALID": {
+                    "low": 15,
+                    "mask": 32768
+                },
+                "VIRT_DYNAMIC_ADDR": {
+                    "low": 16,
+                    "mask": 8323072
+                },
+                "VIRT_DYNAMIC_ADDR_VALID": {
+                    "low": 31,
+                    "mask": 2147483648
                 }
             },
             "__RSVD_3": {

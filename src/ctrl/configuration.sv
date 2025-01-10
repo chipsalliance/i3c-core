@@ -36,11 +36,15 @@ module configuration (
     output logic [ 7:0] bcr_o,  // Bus Characteristics Register
     output logic [ 7:0] dcr_o,  // Device Characteristics Register
 
-    // Output effective target address (static or dynamic)
+    // Output effective target address (static or dynamic or recovery)
     output logic [6:0] target_sta_addr_o,
     output logic target_sta_addr_valid_o,
     output logic [6:0] target_dyn_addr_o,
     output logic target_dyn_addr_valid_o,
+    output logic [6:0] virtual_target_sta_addr_o,
+    output logic virtual_target_sta_addr_valid_o,
+    output logic [6:0] virtual_target_dyn_addr_o,
+    output logic virtual_target_dyn_addr_valid_o,
     output logic [6:0] target_ibi_addr_o,
     output logic target_ibi_addr_valid_o,
 
@@ -132,6 +136,14 @@ module configuration (
   assign target_dyn_addr_valid_o =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
   assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
+
+  assign target_sta_addr_valid_o =
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value;
+  assign target_sta_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value;
+
+  assign target_dyn_addr_valid_o =
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
+  assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value;
 
   logic [15:0] mwl_dword;
   logic [15:0] mrl_dword;

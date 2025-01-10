@@ -184,7 +184,7 @@ module recovery_handler
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
-  assign recovery_enable = hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode;
+  assign recovery_enable = ctl_bus_addr_i[7:1] == hwif_rec_i.RECOVERY_ADDRESS.PLACEHOLDER.value[6:0];
 
   // generate recovery enter pulse
   assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];

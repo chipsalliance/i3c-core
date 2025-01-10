@@ -882,12 +882,31 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__in_t;
 
     typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2____rsvd__in_t;
+        logic [6:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__in_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2____rsvd__in_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2__in_t;
+        logic next;
+        logic we;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__in_t;
+
+    typedef struct packed{
+        logic [6:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__in_t;
+
+    typedef struct packed{
+        logic next;
+        logic we;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__in_t VIRT_STATIC_ADDR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__in_t VIRT_STATIC_ADDR_VALID;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__in_t VIRT_DYNAMIC_ADDR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__in_t VIRT_DYNAMIC_ADDR_VALID;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__in_t;
 
     typedef struct packed{
         logic [31:0] next;
@@ -909,7 +928,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__in_t STBY_CR_INTR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__in_t STBY_CR_CCC_CONFIG_GETCAPS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__in_t STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2__in_t __rsvd_2;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__in_t STBY_CR_VIRT_DEVICE_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3__in_t __rsvd_3;
     } I3CCSR__I3C_EC__StdbyCtrlMode__in_t;
 
@@ -2382,12 +2401,27 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2____rsvd__out_t;
+        logic [6:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2____rsvd__out_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__out_t;
+
+    typedef struct packed{
+        logic [6:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__out_t;
+
+    typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__out_t VIRT_STATIC_ADDR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__out_t VIRT_STATIC_ADDR_VALID;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__out_t VIRT_DYNAMIC_ADDR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__out_t VIRT_DYNAMIC_ADDR_VALID;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__out_t;
 
     typedef struct packed{
         logic [31:0] value;
@@ -2412,7 +2446,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__out_t STBY_CR_INTR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__out_t STBY_CR_CCC_CONFIG_GETCAPS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__out_t STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2__out_t __rsvd_2;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__out_t STBY_CR_VIRT_DEVICE_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3__out_t __rsvd_3;
     } I3CCSR__I3C_EC__StdbyCtrlMode__out_t;
 

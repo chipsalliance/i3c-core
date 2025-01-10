@@ -1847,8 +1847,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_2 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRT_DEVICE_ADDR COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1859,11 +1859,17 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_2_fld_cg with function sample(
-    input bit [32-1:0] __rsvd
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR_fld_cg with function sample(
+    input bit [7-1:0] VIRT_STATIC_ADDR,
+    input bit [1-1:0] VIRT_STATIC_ADDR_VALID,
+    input bit [7-1:0] VIRT_DYNAMIC_ADDR,
+    input bit [1-1:0] VIRT_DYNAMIC_ADDR_VALID
     );
         option.per_instance = 1;
-        __rsvd_cp : coverpoint __rsvd;
+        VIRT_STATIC_ADDR_cp : coverpoint VIRT_STATIC_ADDR;
+        VIRT_STATIC_ADDR_VALID_cp : coverpoint VIRT_STATIC_ADDR_VALID;
+        VIRT_DYNAMIC_ADDR_cp : coverpoint VIRT_DYNAMIC_ADDR;
+        VIRT_DYNAMIC_ADDR_VALID_cp : coverpoint VIRT_DYNAMIC_ADDR_VALID;
 
     endgroup
 
