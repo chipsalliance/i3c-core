@@ -220,6 +220,7 @@ module controller
     output logic       rst_action_valid_o,
     output logic [6:0] set_dasa_o,
     output logic       set_dasa_valid_o,
+    output logic       set_dasa_virtual_device_o,
     output logic       rstdaa_o,
 
     output logic enec_ibi_o,
@@ -510,6 +511,7 @@ module controller
       .tx_host_nack_o(tti_tx_host_nack_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
+      .set_dasa_virtual_device_o(set_dasa_virtual_device_o),
       .rstdaa_o(rstdaa_o),
       .rst_action_o,
       .rst_action_valid_o,

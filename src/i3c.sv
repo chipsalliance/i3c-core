@@ -476,6 +476,7 @@ module i3c
   logic rx_bus_addr_valid;
   logic [6:0] set_dasa;
   logic set_dasa_valid;
+  logic set_dasa_virtual_device;
   logic rstdaa;
 
   logic enec_ibi;
@@ -658,6 +659,7 @@ module i3c
 
       .set_dasa_o(set_dasa),
       .set_dasa_valid_o(set_dasa_valid),
+      .set_dasa_virtual_device_o(set_dasa_virtual_device),
       .rstdaa_o(rstdaa),
 
       .rst_action_o(rst_action),
@@ -801,6 +803,7 @@ module i3c
 
       .set_dasa_i(set_dasa),
       .set_dasa_valid_i(set_dasa_valid),
+      .set_dasa_virtual_device_i(set_dasa_virtual_device),
       .rstdaa_i(rstdaa),
 
       .rst_action_i(rst_action),

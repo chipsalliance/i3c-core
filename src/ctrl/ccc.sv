@@ -120,6 +120,10 @@ module ccc
     input logic target_sta_address_valid_i,
     input logic [6:0] target_dyn_address_i,
     input logic target_dyn_address_valid_i,
+    input logic [6:0] virtual_target_sta_address_i,
+    input logic virtual_target_sta_address_valid_i,
+    input logic [6:0] virtual_target_dyn_address_i,
+    input logic virtual_target_dyn_address_valid_i,
 
     // Configuration and status interface
     // Reads from CSRs (inputs) are continuous assignments
@@ -187,6 +191,7 @@ module ccc
     // Set Dynamic Address from Static Address
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
+    output logic set_dasa_virtual_device_o,
 
     // Target Reset Action
     // I3C_BCAST_RSTACT
@@ -390,6 +395,7 @@ module ccc
   assign is_byte_rsvd_addr = (rx_data == {7'h7E, 1'b0}) | (command_addr == 7'h7E);
 
   logic is_byte_our_addr;
+  logic is_byte_virtual_addr;
 
   logic [7:0] rx_data_count;
 
@@ -400,6 +406,16 @@ module ccc
       is_byte_our_addr = command_addr == target_sta_address_i;
     end else begin
       is_byte_our_addr = '0;
+    end
+  end
+
+  always_comb begin : virtual_addr_matching
+    if (virtual_target_dyn_address_valid_i) begin
+      is_byte_virtual_addr = command_addr == virtual_target_dyn_address_i;
+    end else if (virtual_target_sta_address_valid_i) begin
+      is_byte_virtual_addr = command_addr == virtual_target_sta_address_i;
+    end else begin
+      is_byte_virtual_addr = '0;
     end
   end
 
@@ -480,8 +496,8 @@ module ccc
       TxDirectAddrAck: begin
         if (bus_tx_done_i) begin
           if (is_byte_rsvd_addr) state_d = WaitForStop;
-          else if (is_byte_our_addr && command_rnw) state_d = TxData;
-          else if (is_byte_our_addr && ~command_rnw) begin
+          else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw) state_d = TxData;
+          else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw) begin
             if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
             else state_d = RxData;
           end else state_d = WaitForBusCond;
@@ -570,7 +586,7 @@ module ccc
       TxDirectAddrAck: begin
         bus_tx_req_byte_o  = '0;
         bus_tx_req_bit_o   = '1;
-        bus_tx_req_value_o = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr)};
+        bus_tx_req_value_o = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr)};
       end
       RxSubCmdByte: begin
       end
@@ -692,6 +708,7 @@ module ccc
   always_comb begin : dyn_addr_set_mux
     set_dasa_valid_o = set_aasa_valid ? set_aasa_valid : set_dasa_valid;
     set_dasa_o = set_aasa_valid ? set_aasa_addr : set_dasa_addr;
+    set_dasa_virtual_device_o = is_byte_virtual_addr ? (set_aasa_valid ? set_aasa_valid : set_dasa_valid) : 1'b0;
   end
 
   // Handle DIRECT SET CCCs

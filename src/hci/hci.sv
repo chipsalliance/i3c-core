@@ -138,6 +138,7 @@ module hci
 
     input logic [6:0] set_dasa_i,
     input logic       set_dasa_valid_i,
+    input logic       set_dasa_virtual_device_i,
     input logic       rstdaa_i,
 
     input logic [7:0] rst_action_i,
@@ -297,10 +298,15 @@ module hci
 
   always_comb begin : wire_address_setting
     // Target address
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_dasa_valid_i | rstdaa_i;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = rstdaa_i ? '0: set_dasa_valid_i;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = set_dasa_valid_i | rstdaa_i;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = rstdaa_i ? 1'b0 : set_dasa_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = (set_dasa_valid_i | rstdaa_i) && ~(set_dasa_virtual_device_i);
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = (rstdaa_i && ~(set_dasa_virtual_device_i)) ? '0: set_dasa_valid_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = (set_dasa_valid_i | rstdaa_i) && ~(set_dasa_virtual_device_i);
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = (rstdaa_i && ~(set_dasa_virtual_device_i)) ? 1'b0 : set_dasa_i;
+    // Virtual device address
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.we = (set_dasa_valid_i | rstdaa_i) && (set_dasa_virtual_device_i);
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next = rstdaa_i && set_dasa_virtual_device_i ? '0: set_dasa_valid_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = (set_dasa_valid_i | rstdaa_i) && (set_dasa_virtual_device_i);
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next = rstdaa_i && set_dasa_virtual_device_i ? 1'b0 : set_dasa_i;
   end
 
   I3CCSR i3c_csr (
@@ -507,6 +513,8 @@ module hci
   always_comb begin : wire_unconnected_regs
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.we = '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next = '0;

@@ -137,13 +137,13 @@ module configuration (
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
   assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
 
-  assign target_sta_addr_valid_o =
+  assign virtual_target_sta_addr_valid_o =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value;
-  assign target_sta_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value;
+  assign virtual_target_sta_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value;
 
-  assign target_dyn_addr_valid_o =
+  assign virtual_target_dyn_addr_valid_o =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
-  assign target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value;
+  assign virtual_target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value;
 
   logic [15:0] mwl_dword;
   logic [15:0] mrl_dword;

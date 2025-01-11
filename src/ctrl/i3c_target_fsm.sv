@@ -113,7 +113,6 @@ module i3c_target_fsm #(
 
     output logic [7:0] last_addr_o,
     output logic       last_addr_valid_o,
-    output logic       virual_addr_matched_o,
 
     input logic scl_negedge_i,
     input logic scl_posedge_i,
@@ -253,7 +252,6 @@ module i3c_target_fsm #(
   end
 
   assign last_addr_o = {bus_addr_q, bus_rnw_q};
-  assign virtual_addr_matched_o = is_virtual_addr_match;
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (~rst_ni) begin
