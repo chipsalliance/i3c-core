@@ -501,6 +501,13 @@ module i3c
   logic virtual_device_tx;
   logic virtual_device_tx_done;
 
+  // HCI
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
+
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
+
   controller #(
       .DatAw(DatAw),
       .DctAw(DctAw)
@@ -685,12 +692,6 @@ module i3c
       .virtual_device_tx_done_i(virtual_device_tx_done)
   );
 
-  // HCI
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
-
-  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
 
 
 
