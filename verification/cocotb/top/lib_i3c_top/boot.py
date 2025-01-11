@@ -218,6 +218,18 @@ async def umbrella_stby_init(tb):
         0x1,
     )
 
+    # Set static address and valid for virtual device
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
+        0x5b,
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
+        0x1,
+    )
+
     # Enable Target Interface
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,

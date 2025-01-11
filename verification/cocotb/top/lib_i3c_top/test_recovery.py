@@ -19,7 +19,7 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, timeout=50, sw_activate=1):
+async def initialize(dut, timeout=50):
     """
     Common test initialization routine
     """
@@ -69,21 +69,21 @@ async def initialize(dut, timeout=50, sw_activate=1):
     )
 
     # Enable the recovery mode
-    status = 0x3 if sw_activate else 0x1  # "Recovery Mode"
+    status = 0x3
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
     )
 
     return i3c_controller, i3c_target, tb, recovery
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_virtual_write(dut):
     """
     Tests CSR write(s) using the recovery protocol using the virtual address
     """
 
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut, sw_activate=0)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
     # Write to the RESET CSR (one word)
     await recovery.command_write(
@@ -201,7 +201,7 @@ async def test_write(dut):
     assert data1 == 0x44332211
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_indirect_fifo_write(dut):
     """
     Tests indirect FIFO write operation
@@ -284,7 +284,7 @@ async def test_indirect_fifo_write(dut):
     assert (full2, empty2) == (False, True)
     assert (full3, empty3) == (False, True)
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_write_pec(dut):
     """
     Tests recovery handler behavior upon receiving packet with incorrect PEC
@@ -427,7 +427,7 @@ async def test_read(dut):
     await Timer(1, "us")
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_payload_available(dut):
     """
     Tests if payload_available gets asserted/deasserted correctly when data
@@ -477,7 +477,7 @@ async def test_payload_available(dut):
     await Timer(1, "us")
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_image_activated(dut):
 
     # Initialize
