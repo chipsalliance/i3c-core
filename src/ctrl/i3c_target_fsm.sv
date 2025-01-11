@@ -121,8 +121,9 @@ module i3c_target_fsm #(
 
     output logic parity_err_o,
     output logic rx_overflow_err_o,
-    output virtual_device_tx_o,
-    input  virtual_device_tx_done_i
+    output logic virtual_device_tx_o,
+    input  logic virtual_device_tx_done_i,
+    input  logic recovery_mode_i
 );
   logic bus_start_det;
   assign bus_start_det = bus_start_det_i | bus_rstart_det_i;
@@ -230,7 +231,8 @@ module i3c_target_fsm #(
   logic bus_rnw_d, bus_rnw_q;
   logic [6:0] bus_addr_d, bus_addr_q;
   logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match;
-  assign is_our_addr_match = target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
+  assign is_our_addr_match = recovery_mode_i ? 1'b0 :
+                             target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
                              target_sta_address_valid_i ? (target_sta_address_i == bus_addr_q) :
                              1'b0;
   assign is_virtual_addr_match = virtual_target_dyn_address_valid_i ? (virtual_target_dyn_address_i == bus_addr_q) :
@@ -477,7 +479,7 @@ module i3c_target_fsm #(
       end
       TxAckSByte: begin
         if (ack_done) begin
-          if (is_our_addr_match && bus_rnw_q) state_d = TxPReadData;
+          if ((is_our_addr_match || is_virtual_addr_match) && bus_rnw_q) state_d = TxPReadData;
           else if ((is_our_addr_match || is_virtual_addr_match) && ~bus_rnw_q) state_d = RxPWriteData;
           else state_d = Wait;
         end

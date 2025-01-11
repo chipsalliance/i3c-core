@@ -169,9 +169,10 @@ module controller_standby
     output logic escalated_reset_o,
 
     output logic err_o,
-    input  recovery_mode_enter_i,
-    output virtual_device_tx_o,
-    input  virtual_device_tx_done_i
+    input  logic recovery_mode_enter_i,
+    output logic virtual_device_tx_o,
+    input  logic virtual_device_tx_done_i,
+    input  logic recovery_mode_i
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -424,7 +425,8 @@ module controller_standby
       .escalated_reset_o,
       .recovery_mode_enter_i(recovery_mode_enter_i),
       .virtual_device_tx_o(virtual_device_tx_o),
-      .virtual_device_tx_done_i(virtual_device_tx_done_i)
+      .virtual_device_tx_done_i(virtual_device_tx_done_i),
+      .recovery_mode_i(recovery_mode_i)
   );
 
 endmodule

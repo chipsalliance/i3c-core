@@ -128,9 +128,10 @@ module controller_standby_i3c
     output logic escalated_reset_o,
 
     // recovery mode
-    input  recovery_mode_enter_i,
-    output virtual_device_tx_o,
-    input  virtual_device_tx_done_i
+    input  logic recovery_mode_enter_i,
+    output logic virtual_device_tx_o,
+    input  logic virtual_device_tx_done_i,
+    input  logic recovery_mode_i
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -463,7 +464,8 @@ module controller_standby_i3c
       .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err),
       .virtual_device_tx_o        (virtual_device_tx_o),
-      .virtual_device_tx_done_i   (virtual_device_tx_done_i)
+      .virtual_device_tx_done_i   (virtual_device_tx_done_i),
+      .recovery_mode_i            (recovery_mode_i)
   );
 
   ccc xccc (

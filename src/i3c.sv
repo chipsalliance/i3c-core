@@ -655,6 +655,7 @@ module i3c
       .err(),  // TODO: Handle errors
       .irq(),  // TODO: Handle interrupts
       .hwif_out_i(hwif_out),
+      .hwif_rec_i(hwif_rec_out),
 
       .ibi_status_o(ibi_status),
       .ibi_status_we_o(ibi_status_we),

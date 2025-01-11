@@ -211,6 +211,7 @@ module controller
 
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
+    input I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
 
     // Status update signals
     output logic [1:0] ibi_status_o,
@@ -236,9 +237,9 @@ module controller
     output logic escalated_reset_o,
 
     output logic err_o,
-    input recovery_mode_enter_i,
-    output virtual_device_tx_o,
-    input  virtual_device_tx_done_i
+    input  logic recovery_mode_enter_i,
+    output logic virtual_device_tx_o,
+    input  logic virtual_device_tx_done_i
 );
 
   logic phy_en;
@@ -278,6 +279,7 @@ module controller
   logic ibi_enable;
   logic [2:0] ibi_retry_num;
 
+  logic recovery_mode;
   // 4:1 multiplexer for signals between PHY and controllers.
   // Needed, because there are 4 controllers in the design (i2c/i3c + active/standby).
   logic ctrl_scl_i[4];
@@ -286,13 +288,15 @@ module controller
   logic ctrl_sda_o[4];
   logic ctrl_sel_od_pp_i[4];
 
+  localparam int unsigned RecoveryMode = 'h3;
   always_comb begin : mux_4_to_1
     scl_o = ctrl_scl_o[phy_mux_select];
     sda_o = ctrl_sda_o[phy_mux_select];
     ctrl_scl_i[phy_mux_select] = scl_i;
     ctrl_sda_i[phy_mux_select] = sda_i;
     sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];
-  end
+    recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+    end
 
   configuration xconfiguration (
       .clk_i                           (clk_i),
@@ -535,7 +539,8 @@ module controller
       .escalated_reset_o,
       .recovery_mode_enter_i(recovery_mode_enter_i),
       .virtual_device_tx_o(virtual_device_tx_o),
-      .virtual_device_tx_done_i(virtual_device_tx_done_i)
+      .virtual_device_tx_done_i(virtual_device_tx_done_i),
+      .recovery_mode_i(recovery_mode)
   );
 
 endmodule
