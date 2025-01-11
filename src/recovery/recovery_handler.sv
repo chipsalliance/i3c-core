@@ -174,7 +174,9 @@ module recovery_handler
     // Recovery status
     output logic payload_available_o,
     output logic image_activated_o,
-    output logic recovery_mode_enter_o
+    output logic recovery_mode_enter_o,
+    input  logic virtual_device_tx_i,
+    output logic virtual_device_tx_done_o
 );
   assign irq_o = '0;
 
@@ -184,7 +186,33 @@ module recovery_handler
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
-  assign recovery_enable = ctl_bus_addr_i[7:1] == hwif_rec_i.RECOVERY_ADDRESS.PLACEHOLDER.value[6:0];
+  logic virtual_device_tx;
+  logic virtual_device_tx_done;
+
+  assign virtual_device_tx_done = 0'b0;
+  // latch virtual_tx_i
+  always @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      virtual_device_tx <= 1'b0;
+    end else if (virtual_device_tx_i) begin
+      virtual_device_tx <= 1'b1;
+    end else if (virtual_device_tx_done) begin
+      virtual_device_tx <= 1'b0;
+    end
+
+  assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx;
+
+  // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
+  logic [1:0] virtual_device_cec_shreg;
+  assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];
+  always @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      virtual_device_cec_shreg <= 2'b10;
+    end else if (recovery_enable) begin
+      virtual_device_cec_shreg <= {1'b0, virtual_device_cec_shreg[1]};
+    end else begin
+      virtual_device_cec_shreg <= 2'b10;
+    end
 
   // generate recovery enter pulse
   assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];
@@ -781,7 +809,7 @@ module recovery_handler
       .rst_ni(rst_ni & !rx_pec_clear & recovery_enable),
 
       .dat_i  (rx_pec_data),
-      .valid_i(rx_pec_valid),
+      .valid_i(rx_pec_valid | virtual_device_cec_shreg[0]),
       .init_i (rx_pec_init),
       .crc_o  (recv_pec_crc)
   );
@@ -824,7 +852,9 @@ module recovery_handler
       .cmd_cmd_o  (cmd_cmd),
       .cmd_len_o  (cmd_len),
       .cmd_error_o(cmd_error),
-      .cmd_done_i (cmd_done)
+      .cmd_done_i (cmd_done),
+
+      .virtual_device_tx_i(virtual_device_tx)
   );
 
   // ....................................................

@@ -120,7 +120,9 @@ module i3c_target_fsm #(
     input logic sda_posedge_i,
 
     output logic parity_err_o,
-    output logic rx_overflow_err_o
+    output logic rx_overflow_err_o,
+    output virtual_device_tx_o,
+    input  virtual_device_tx_done_i
 );
   logic bus_start_det;
   assign bus_start_det = bus_start_det_i | bus_rstart_det_i;
@@ -475,9 +477,8 @@ module i3c_target_fsm #(
       end
       TxAckSByte: begin
         if (ack_done) begin
-          // TODO: delegate virtual reads/writes to recovery flow
           if (is_our_addr_match && bus_rnw_q) state_d = TxPReadData;
-          else if (is_our_addr_match && ~bus_rnw_q) state_d = RxPWriteData;
+          else if ((is_our_addr_match || is_virtual_addr_match) && ~bus_rnw_q) state_d = RxPWriteData;
           else state_d = Wait;
         end
       end
@@ -559,6 +560,7 @@ module i3c_target_fsm #(
   end
 
   assign target_idle_o = (state_q == Idle);
+  assign virtual_device_tx_o = (state_q == TxAckSByte) && is_virtual_addr_match;
 
   // TODO: Also sub FSM should contribute
   // TODO: Maybe we can do it based on write module rather than states

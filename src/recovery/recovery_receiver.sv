@@ -36,7 +36,9 @@ module recovery_receiver
     output logic [ 7:0] cmd_cmd_o,
     output logic [15:0] cmd_len_o,
     output logic        cmd_error_o,
-    input  logic        cmd_done_i
+    input  logic        cmd_done_i,
+    // virtual device
+    input  logic        virtual_device_tx_i
 );
 
   // Internal signals
@@ -76,7 +78,7 @@ module recovery_receiver
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        if (bus_start_i) state_d = RxCmd;
+        if (bus_start_i || virtual_device_tx_i) state_d = RxCmd;
       end
 
       RxCmd: begin

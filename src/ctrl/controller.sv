@@ -236,7 +236,9 @@ module controller
     output logic escalated_reset_o,
 
     output logic err_o,
-    input recovery_mode_enter_i
+    input recovery_mode_enter_i,
+    output virtual_device_tx_o,
+    input  virtual_device_tx_done_i
 );
 
   logic phy_en;
@@ -531,7 +533,9 @@ module controller
       .peripheral_reset_o,
       .peripheral_reset_done_i,
       .escalated_reset_o,
-      .recovery_mode_enter_i(recovery_mode_enter_i)
+      .recovery_mode_enter_i(recovery_mode_enter_i),
+      .virtual_device_tx_o(virtual_device_tx_o),
+      .virtual_device_tx_done_i(virtual_device_tx_done_i)
   );
 
 endmodule

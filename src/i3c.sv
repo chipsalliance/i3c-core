@@ -498,6 +498,8 @@ module i3c
   logic controller_error;
 
   logic recovery_mode_enter;
+  logic virtual_device_tx;
+  logic virtual_device_tx_done;
 
   controller #(
       .DatAw(DatAw),
@@ -677,7 +679,9 @@ module i3c
       .escalated_reset_o,
 
       .err_o(controller_error),
-      .recovery_mode_enter_i(recovery_mode_enter)
+      .recovery_mode_enter_i(recovery_mode_enter),
+      .virtual_device_tx_o(virtual_device_tx),
+      .virtual_device_tx_done_i(virtual_device_tx_done)
   );
 
   // HCI
@@ -1069,7 +1073,9 @@ module i3c
       // Received I2C/I3C address along with RnW# bit
       .ctl_bus_addr_i(rx_bus_addr),
       .ctl_bus_addr_valid_i(rx_bus_addr_valid),
-      .recovery_mode_enter_o(recovery_mode_enter)
+      .recovery_mode_enter_o(recovery_mode_enter),
+      .virtual_device_tx_i(virtual_device_tx),
+      .virtual_device_tx_done_o(virtual_device_tx_done)
   );
 
   // I3C PHY

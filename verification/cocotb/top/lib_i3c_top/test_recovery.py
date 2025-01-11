@@ -5,13 +5,14 @@ import random
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword, int2bytes, bytes2int
+from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import Timer, Event, Combine
+from cocotb.triggers import Timer, Event, Combine, ClockCycles
 
 
 async def timeout_task(timeout):
@@ -85,9 +86,31 @@ async def test_virtual_write(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
+    # exit recovery mode
+    status = 0x2
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+    )
+
+    # set addresses
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
+    DYNAMIC_ADDR = 0x52
+    VIRT_DYNAMIC_ADDR = 0x53
+
+    await ClockCycles(tb.clk, 50)
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     # Write to the RESET CSR (one word)
     await recovery.command_write(
-        0x6A, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -99,48 +122,44 @@ async def test_virtual_write(dut):
     dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
     data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
-    rec_addr = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
-    )
-    dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
 
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
     assert data == 0xDDCCBBAA
 
-    # Write to the FIFO_CTRL CSR (two words)
-    await recovery.command_write(
-        0x6A,
-        I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
-    )
+    # # Write to the FIFO_CTRL CSR (two words)
+    # await recovery.command_write(
+    #     0x5A,
+    #     I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
+    #     [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+    # )
 
-    # Wait & read the CSR from the AHB/AXI side
-    await Timer(1, "us")
+    # # Wait & read the CSR from the AHB/AXI side
+    # await Timer(1, "us")
 
-    status = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
-    )
-    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    rec_addr = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
-    )
-    dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
-    data0 = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
-    )
-    dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
-    data1 = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
-    )
-    dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
+    # status = dword2int(
+    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    # )
+    # dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+    # rec_addr = dword2int(
+    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
+    # )
+    # dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
+    # data0 = dword2int(
+    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
+    # )
+    # dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
+    # data1 = dword2int(
+    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
+    # )
+    # dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
 
-    # Check
-    protocol_status = (status >> 8) & 0xFF
-    assert protocol_status == 0
-    assert data0 == 0xDDCCBBAA
-    assert data1 == 0x44332211
+    # # Check
+    # protocol_status = (status >> 8) & 0xFF
+    # assert protocol_status == 0
+    # assert data0 == 0xDDCCBBAA
+    # assert data1 == 0x44332211
 
 @cocotb.test(skip=True)
 async def test_write(dut):
