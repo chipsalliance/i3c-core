@@ -75,7 +75,11 @@ module recovery_executor
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
-    output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o
+    output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o,
+
+    // virtual device interface
+    input  logic virtual_device_tx_i,
+    output logic virtual_device_tx_done_o
 );
 
   // Commands
@@ -386,6 +390,7 @@ module recovery_executor
 
   // Update status on command done
   assign status_protocol_we = (state_q == Done);
+  assign virtual_device_tx_done_o = (state_q == Done) & virtual_device_tx_i;
 
   // ....................................................
 

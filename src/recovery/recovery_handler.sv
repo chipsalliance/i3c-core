@@ -187,16 +187,13 @@ module recovery_handler
   localparam int unsigned RecoveryMode = 'h3;
 
   logic virtual_device_tx;
-  logic virtual_device_tx_done;
-
-  assign virtual_device_tx_done = 0'b0;
   // latch virtual_tx_i
   always @(posedge clk_i or negedge rst_ni)
     if (~rst_ni) begin
       virtual_device_tx <= 1'b0;
     end else if (virtual_device_tx_i) begin
       virtual_device_tx <= 1'b1;
-    end else if (virtual_device_tx_done) begin
+    end else if (virtual_device_tx_done_o) begin
       virtual_device_tx <= 1'b0;
     end
 
@@ -204,7 +201,6 @@ module recovery_handler
 
   // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
   logic [1:0] virtual_device_cec_shreg;
-  assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];
   always @(posedge clk_i or negedge rst_ni)
     if (~rst_ni) begin
       virtual_device_cec_shreg <= 2'b10;
@@ -1034,7 +1030,10 @@ module recovery_handler
       .image_activated_o  (image_activated_o),
 
       .hwif_rec_i(hwif_rec_i),
-      .hwif_rec_o(hwif_rec_o)
+      .hwif_rec_o(hwif_rec_o),
+
+      .virtual_device_tx_i(virtual_device_tx),
+      .virtual_device_tx_done_o(virtual_device_tx_done_o)
   );
 
 endmodule
