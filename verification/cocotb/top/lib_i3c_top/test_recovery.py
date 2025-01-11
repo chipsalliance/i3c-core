@@ -14,6 +14,10 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import Timer, Event, Combine, ClockCycles
 
+STATIC_ADDR = 0x5A
+VIRT_STATIC_ADDR = 0x5B
+DYNAMIC_ADDR = 0x52
+VIRT_DYNAMIC_ADDR = 0x53
 
 async def timeout_task(timeout):
     await Timer(timeout, "us")
@@ -92,11 +96,6 @@ async def test_virtual_write(dut):
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
     )
 
-    # set addresses
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    DYNAMIC_ADDR = 0x52
-    VIRT_DYNAMIC_ADDR = 0x53
 
     await ClockCycles(tb.clk, 50)
     # set regular device dynamic address
@@ -197,9 +196,18 @@ async def test_write(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     # Write to the RESET CSR (one word)
     await recovery.command_write(
-        0x5A, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -219,7 +227,7 @@ async def test_write(dut):
 
     # Write to the FIFO_CTRL CSR (two words)
     await recovery.command_write(
-        0x5A,
+        VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
         [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
     )
@@ -256,6 +264,15 @@ async def test_indirect_fifo_write(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     async def get_fifo_ptrs():
         """
         Returns (empty, full, write index, read index)
@@ -271,7 +288,7 @@ async def test_indirect_fifo_write(dut):
     # Write data to indirect FIFO through the recovery interface
     tx_data = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A]
     await recovery.command_write(
-        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data
     )
 
     # Get indirect FIFO pointers
@@ -296,7 +313,7 @@ async def test_indirect_fifo_write(dut):
 
     # Clear FIFO (pointers too)
     await recovery.command_write(
-        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, [0x00, 0x01, 0x00, 0x00]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, [0x00, 0x01, 0x00, 0x00]
     )
 
     # Get indirect FIFO pointers
@@ -339,9 +356,18 @@ async def test_write_pec(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
 
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     # Write to the RESET CSR
     await recovery.command_write(
-        0x5A, I3cRecoveryInterface.Command.DEVICE_RESET, [0xEF, 0xBE, 0xAD, 0xDE]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xEF, 0xBE, 0xAD, 0xDE]
     )
 
     # Wait, skip checks
@@ -349,7 +375,7 @@ async def test_write_pec(dut):
 
     # Write to the RESET CSR again, deliberately malform PEC
     await recovery.command_write(
-        0x5A,
+        VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.DEVICE_RESET,
         [0xBA, 0xBA, 0xFE, 0xCA],
         force_pec_error=True,
@@ -382,6 +408,15 @@ async def test_read(dut):
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
 
     # Write some data to PROT_CAP CSR
     def make_word(bs):
@@ -462,7 +497,7 @@ async def test_read(dut):
     await Timer(1, "us")
 
     # Read the PROT_CAP register
-    recovery_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.PROT_CAP)
+    recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
 
     # PROT_CAP read always returns 15 bytes
     assert len(recovery_data) == 15
@@ -484,6 +519,16 @@ async def test_payload_available(dut):
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=50)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     payload_available = dut.xi3c_wrapper.recovery_payload_available_o
 
     # Check if payload available is deasserted
@@ -494,7 +539,7 @@ async def test_payload_available(dut):
     # Generate random data payload. Write the payload to INDIRECT_FIFO_DATA
     payload_data = [random.randint(0, 0xFF) for i in range(payload_size)]
     await recovery.command_write(
-        0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data
     )
 
     # Wait
@@ -528,6 +573,16 @@ async def test_image_activated(dut):
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     image_activated = dut.xi3c_wrapper.recovery_image_activated_o
 
     # Check if image_activated is deasserted
@@ -536,7 +591,7 @@ async def test_image_activated(dut):
     ), "Upon initialization image_activated should be deasserted"
 
     # Write 0xF to byte 2 of RECOVERY_CTRL
-    await recovery.command_write(0x5A, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF])
+    await recovery.command_write(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF])
 
     # Wait
     await Timer(1, "us")
@@ -572,6 +627,15 @@ async def test_recovery_flow(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=100000)
 
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
     # Generate random firmware image data
     image_size  = 128
     image_bytes = [random.randint(0, 255) for i in range(image_size)]
@@ -594,7 +658,7 @@ async def test_recovery_flow(dut):
         delay  = 1
 
         # Read INDIRECT_FIFO_STATUS
-        rx_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+        rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
         assert pec_ok
         xfer_size = bytes2int(rx_data[16:19])
         logger.info(f"xfer_size: {xfer_size} (words)")
@@ -604,7 +668,7 @@ async def test_recovery_flow(dut):
 
             # Poll indirect FIFO status
             while True:
-                rx_data, pec_ok = await recovery.command_read(0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+                rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
                 assert pec_ok
                 empty = (rx_data[0] & 1)
 
@@ -620,7 +684,7 @@ async def test_recovery_flow(dut):
             logger.info(f"Sending {xfer_size*4} bytes...")
             chunk = image_bytes[data_ptr:data_ptr + xfer_size * 4]
             await recovery.command_write(
-                0x5A, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, chunk
+                VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, chunk
             )
             logger.info(f"Firmware chunk {data_ptr//(xfer_size*4)} sent.")
 
