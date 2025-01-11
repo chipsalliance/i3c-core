@@ -231,7 +231,8 @@ module hci_queues_wrapper
 
     output logic payload_available_o,
     output logic image_activated_o,
-    output logic irq_o
+    output logic irq_o,
+    input  logic virtual_device_tx_i
 );
 
   // I3C SW CSR IF
@@ -703,6 +704,7 @@ module hci_queues_wrapper
       .ctl_tti_ibi_queue_rready_i(tti_ibi_rready_i),
       .ctl_tti_ibi_queue_rdata_o(tti_ibi_rdata_o),
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_ready_thld_o),
-      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig_o)
+      .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig_o),
+      .virtual_device_tx_i(virtual_device_tx_i)
   );
 endmodule
