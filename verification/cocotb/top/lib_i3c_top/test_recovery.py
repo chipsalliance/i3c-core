@@ -77,7 +77,7 @@ async def initialize(dut, timeout=50):
 
     return i3c_controller, i3c_target, tb, recovery
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_virtual_write(dut):
     """
     Tests CSR write(s) using the recovery protocol using the virtual address
@@ -128,40 +128,67 @@ async def test_virtual_write(dut):
     assert protocol_status == 0
     assert data == 0xDDCCBBAA
 
-    # # Write to the FIFO_CTRL CSR (two words)
-    # await recovery.command_write(
-    #     0x5A,
-    #     I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-    #     [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
-    # )
+    # read GET_STATUS from main target
+    interrupt_status_reg_addr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr
+    pending_interrupt_field = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
+    interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
+    dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
 
-    # # Wait & read the CSR from the AHB/AXI side
-    # await Timer(1, "us")
+    # Write arbitrary value to the pending interrupt field
+    pending_interrupt_in = random.randint(0, 15)
+    dut._log.info(
+        f"Write {hex(pending_interrupt_in)} to interrupt status register at pending interrupt field"
+    )
+    await tb.write_csr_field(interrupt_status_reg_addr, pending_interrupt_field, pending_interrupt_in)
+    interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
+    dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
 
-    # status = dword2int(
-    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
-    # )
-    # dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
-    # rec_addr = dword2int(
-    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_ADDRESS.base_addr, 4)
-    # )
-    # dut._log.info(f"RECOVERY_ADDRESS = 0x{rec_addr:08X}")
-    # data0 = dword2int(
-    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
-    # )
-    # dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
-    # data1 = dword2int(
-    #     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
-    # )
-    # dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
+    pending_interrupt = await tb.read_csr_field(interrupt_status_reg_addr, pending_interrupt_field)
+    assert (
+        pending_interrupt == pending_interrupt_in
+    ), "Unexpected pending interrupt value read from CSR"
 
-    # # Check
-    # protocol_status = (status >> 8) & 0xFF
-    # assert protocol_status == 0
-    # assert data0 == 0xDDCCBBAA
-    # assert data1 == 0x44332211
+    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=DYNAMIC_ADDR, count=2)
+    status = responses[0][1]
+    pending_interrupt = (
+        int.from_bytes(status, byteorder="big", signed=False) & 0xF
+    )
+    assert (
+        pending_interrupt == pending_interrupt_in
+    ), "Unexpected pending interrupt value received from GETSTATUS CCC"
 
-@cocotb.test(skip=True)
+    cocotb.log.info(f"GET STATUS = {status}")
+
+    # Write to the FIFO_CTRL CSR (two words)
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR,
+        I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+    data0 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{data0:08X}")
+    data1 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{data1:08X}")
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+    assert data0 == 0xDDCCBBAA
+    assert data1 == 0x44332211
+
+@cocotb.test()
 async def test_write(dut):
     """
     Tests CSR write(s) using the recovery protocol
@@ -653,3 +680,4 @@ async def test_recovery_flow(dut):
 
     # Check
     assert image_words == xferd_words
+
