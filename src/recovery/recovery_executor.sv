@@ -79,17 +79,20 @@ module recovery_executor
 
     // virtual device interface
     input  logic virtual_device_tx_i,
-    output logic virtual_device_tx_done_o
+    output logic virtual_device_tx_done_o,
+    input  recovery_mode_enabled_i
 );
 
   // Commands
   typedef enum logic [7:0] {
+    // always available commands
     CMD_PROT_CAP = 'd34,
     CMD_DEVICE_ID = 'd35,
     CMD_DEVICE_STATUS = 'd36,
     CMD_DEVICE_RESET = 'd37,
     CMD_RECOVERY_CTRL = 'd38,
     CMD_RECOVERY_STATUS = 'd39,
+    // commands available only in recovery mode
     CMD_HW_STATUS = 'd40,
     CMD_INDIRECT_CTRL = 'd41,
     CMD_INDIRECT_STATUS = 'd42,
@@ -181,7 +184,9 @@ module recovery_executor
     unique case (state_q)
       Idle: begin
         if (cmd_valid_i) begin
-          if (cmd_error_i) state_d = Error;
+          // check if we're accessed in regular mode and error if requested command is not accessible
+          // also, check for illegal commands
+          if (cmd_error_i || (~recovery_mode_enabled_i && (cmd_cmd_i > 8'h27)) || ((cmd_cmd_i > 8'h2f) || (cmd_cmd_i < 8'h22))) state_d = Error;
           else if (!cmd_is_rd_i) begin
             if (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA)
               state_d = FifoWrite;

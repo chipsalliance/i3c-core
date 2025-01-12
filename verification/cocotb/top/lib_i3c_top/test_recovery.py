@@ -159,6 +159,7 @@ async def test_virtual_write(dut):
     cocotb.log.info(f"GET STATUS = {status}")
 
     # Write to the FIFO_CTRL CSR (two words)
+    # This write should not pass because the device is not set to recovery mode
     await recovery.command_write(
         VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
@@ -184,8 +185,8 @@ async def test_virtual_write(dut):
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
-    assert data0 == 0xDDCCBBAA
-    assert data1 == 0x44332211
+    assert data0 != 0xDDCCBBAA
+    assert data1 != 0x44332211
 
 @cocotb.test()
 async def test_write(dut):

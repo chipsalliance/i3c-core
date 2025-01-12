@@ -183,6 +183,7 @@ module recovery_handler
   // ....................................................
 
   logic recovery_enable;
+  logic recovery_mode_enabled; //recovery globally enabled in the csr
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
@@ -198,6 +199,7 @@ module recovery_handler
     end
 
   assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx;
+  assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
 
   // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
   logic [1:0] virtual_device_cec_shreg;
@@ -1033,7 +1035,8 @@ module recovery_handler
       .hwif_rec_o(hwif_rec_o),
 
       .virtual_device_tx_i(virtual_device_tx),
-      .virtual_device_tx_done_o(virtual_device_tx_done_o)
+      .virtual_device_tx_done_o(virtual_device_tx_done_o),
+      .recovery_mode_enabled_i(recovery_mode_enabled)
   );
 
 endmodule
