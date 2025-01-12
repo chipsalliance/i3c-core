@@ -81,7 +81,7 @@ async def initialize(dut, timeout=50):
 
     return i3c_controller, i3c_target, tb, recovery
 
-@cocotb.test()
+@cocotb.test(skip=False)
 async def test_virtual_write(dut):
     """
     Tests CSR write(s) using the recovery protocol using the virtual address
@@ -109,7 +109,7 @@ async def test_virtual_write(dut):
 
     # Write to the RESET CSR (one word)
     await recovery.command_write(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC]
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -122,10 +122,15 @@ async def test_virtual_write(dut):
     data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
+    # read back device reset
+    i3c_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET)
+
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
-    assert data == 0xDDCCBBAA
+    assert data == 0xCCBBAA
+    assert bytes2int(i3c_data) == 0xCCBBAA
+    assert pec_ok
 
     # read GET_STATUS from main target
     interrupt_status_reg_addr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr

@@ -187,18 +187,7 @@ module recovery_handler
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
-  logic virtual_device_tx;
-  // latch virtual_tx_i
-  always @(posedge clk_i or negedge rst_ni)
-    if (~rst_ni) begin
-      virtual_device_tx <= 1'b0;
-    end else if (virtual_device_tx_i) begin
-      virtual_device_tx <= 1'b1;
-    end else if (virtual_device_tx_done_o) begin
-      virtual_device_tx <= 1'b0;
-    end
-
-  assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx;
+  assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx_i;
   assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
 
   // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
@@ -852,7 +841,7 @@ module recovery_handler
       .cmd_error_o(cmd_error),
       .cmd_done_i (cmd_done),
 
-      .virtual_device_tx_i(virtual_device_tx)
+      .virtual_device_tx_i(virtual_device_tx_i)
   );
 
   // ....................................................
@@ -1034,7 +1023,7 @@ module recovery_handler
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o),
 
-      .virtual_device_tx_i(virtual_device_tx),
+      .virtual_device_tx_i(virtual_device_tx_i),
       .virtual_device_tx_done_o(virtual_device_tx_done_o),
       .recovery_mode_enabled_i(recovery_mode_enabled)
   );

@@ -562,8 +562,16 @@ module i3c_target_fsm #(
   end
 
   assign target_idle_o = (state_q == Idle);
-  assign virtual_device_tx_o = (state_q == TxAckSByte) && is_virtual_addr_match;
 
+  always_ff @(posedge clk_i or negedge rst_ni) begin : virtual_device_tx_latch
+    if (!rst_ni) begin
+      virtual_device_tx_o <= 1'b0;
+    end else begin
+      if ((state_q == TxAckSByte) && is_virtual_addr_match) begin
+        virtual_device_tx_o <= 1'b1;
+      end else if (state_q == Idle) virtual_device_tx_o <= 1'b0;
+    end
+  end
   // TODO: Also sub FSM should contribute
   // TODO: Maybe we can do it based on write module rather than states
   assign target_transmitting_o =
