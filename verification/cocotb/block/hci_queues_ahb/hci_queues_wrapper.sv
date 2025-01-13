@@ -8,6 +8,9 @@ module hci_queues_wrapper
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
+    parameter int unsigned AhbAddrWidth = 18,
+    parameter int unsigned AhbDataWidth = 64,
+
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
     parameter int unsigned HciRxFifoDepth   = 64,
@@ -60,15 +63,15 @@ module hci_queues_wrapper
     input hreset_n,  // active low reset
 
     // AHB-Lite interface
-    input logic [`AHB_ADDR_WIDTH-1:0] haddr,
+    input logic [AhbAddrWidth-1:0] haddr,
     input logic [2:0] hburst,
     input logic [3:0] hprot,
     input logic [2:0] hsize,
     input logic [1:0] htrans,
-    input logic [`AHB_DATA_WIDTH-1:0] hwdata,
-    input logic [`AHB_DATA_WIDTH/8-1:0] hwstrb,
+    input logic [AhbDataWidth-1:0] hwdata,
+    input logic [AhbDataWidth/8-1:0] hwstrb,
     input logic hwrite,
-    output logic [`AHB_DATA_WIDTH-1:0] hrdata,
+    output logic [AhbDataWidth-1:0] hrdata,
     output logic hreadyout,
     output logic hresp,
     input logic hsel,
@@ -219,8 +222,8 @@ module hci_queues_wrapper
   logic s_cpuif_wr_err;
 
   ahb_if #(
-      .AhbDataWidth(`AHB_DATA_WIDTH),
-      .AhbAddrWidth(`AHB_ADDR_WIDTH)
+      .AhbDataWidth(AhbDataWidth),
+      .AhbAddrWidth(AhbAddrWidth)
   ) i3c_ahb_if (
       .hclk_i(hclk),
       .hreset_n_i(hreset_n),
@@ -535,6 +538,7 @@ module hci_queues_wrapper
       .csr_tti_rx_desc_queue_reg_rst_i     (csr_tti_rx_desc_queue_reg_rst),
       .csr_tti_rx_desc_queue_reg_rst_we_o  (csr_tti_rx_desc_queue_reg_rst_we),
       .csr_tti_rx_desc_queue_reg_rst_data_o(csr_tti_rx_desc_queue_reg_rst_data),
+      .csr_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig_o),
 
       // TTI TX descriptors queue
       .csr_tti_tx_desc_queue_req_i         (csr_tti_tx_desc_queue_req),
@@ -556,6 +560,7 @@ module hci_queues_wrapper
       .csr_tti_rx_data_queue_reg_rst_i     (csr_tti_rx_data_queue_reg_rst),
       .csr_tti_rx_data_queue_reg_rst_we_o  (csr_tti_rx_data_queue_reg_rst_we),
       .csr_tti_rx_data_queue_reg_rst_data_o(csr_tti_rx_data_queue_reg_rst_data),
+      .csr_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX queue
       .csr_tti_tx_data_queue_req_i         (csr_tti_tx_data_queue_req),
@@ -596,7 +601,6 @@ module hci_queues_wrapper
       .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_wready_o),
       .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_wdata_i),
       .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_ready_thld_o),
-      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig_o),
 
       // TTI TX descriptors queue
       .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_full_o),
@@ -619,7 +623,6 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
-      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_full_o),

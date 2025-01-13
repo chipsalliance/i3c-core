@@ -596,6 +596,7 @@ module hci_queues_wrapper
       .csr_tti_rx_desc_queue_reg_rst_i     (csr_tti_rx_desc_queue_reg_rst),
       .csr_tti_rx_desc_queue_reg_rst_we_o  (csr_tti_rx_desc_queue_reg_rst_we),
       .csr_tti_rx_desc_queue_reg_rst_data_o(csr_tti_rx_desc_queue_reg_rst_data),
+      .csr_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig_o),
 
       // TTI TX descriptors queue
       .csr_tti_tx_desc_queue_req_i         (csr_tti_tx_desc_queue_req),
@@ -617,6 +618,7 @@ module hci_queues_wrapper
       .csr_tti_rx_data_queue_reg_rst_i     (csr_tti_rx_data_queue_reg_rst),
       .csr_tti_rx_data_queue_reg_rst_we_o  (csr_tti_rx_data_queue_reg_rst_we),
       .csr_tti_rx_data_queue_reg_rst_data_o(csr_tti_rx_data_queue_reg_rst_data),
+      .csr_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX queue
       .csr_tti_tx_data_queue_req_i         (csr_tti_tx_data_queue_req),
@@ -657,7 +659,6 @@ module hci_queues_wrapper
       .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_wready_o),
       .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_wdata_i),
       .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_ready_thld_o),
-      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig_o),
 
       // TTI TX descriptors queue
       .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_full_o),
@@ -680,7 +681,6 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
-      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_full_o),
