@@ -31,6 +31,7 @@ module tti
     input  logic [RxDescDataWidth-1:0] rx_desc_queue_data_i,
     output logic [RxDescThldWidth-1:0] rx_desc_queue_ready_thld_o,
     input  logic [RxDescThldWidth-1:0] rx_desc_queue_ready_thld_i,
+    input  logic                       rx_desc_queue_ready_thld_trig_i,
     output logic                       rx_desc_queue_reg_rst_o,
     input  logic                       rx_desc_queue_reg_rst_we_i,
     input  logic                       rx_desc_queue_reg_rst_data_i,
@@ -42,6 +43,7 @@ module tti
     output logic [RxThldWidth-1:0] rx_data_queue_start_thld_o,
     output logic [RxThldWidth-1:0] rx_data_queue_ready_thld_o,
     input  logic [RxThldWidth-1:0] rx_data_queue_ready_thld_i,
+    input  logic                   rx_data_queue_ready_thld_trig_i,
     output logic                   rx_data_queue_reg_rst_o,
     input  logic                   rx_data_queue_reg_rst_we_i,
     input  logic                   rx_data_queue_reg_rst_data_i,
@@ -88,7 +90,10 @@ module tti
     input logic disec_crr_i,
     input logic disec_hj_i,
 
-    input logic err_i
+    input logic err_i,
+
+    // Interrupt
+    output logic irq_o
 );
 
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
@@ -186,44 +191,49 @@ module tti
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = '0;
+//    hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = '0;
+//    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next = '0;
 
-    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.IBI_DONE_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.next = '0;
-    hwif_tti_o.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.next = '0;
-
-    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.IBI_THLD_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.IBI_DONE_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.next = '0;
-    hwif_tti_o.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.next = '0;
-
     hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
     hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.we = '0;
   end
 
   assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
+
+  // Interrupts
+  logic [1:0] irqs;
+
+  interrupt xintr0 (
+    .irq_i          (rx_desc_queue_ready_thld_trig_i),
+    .clr_i          (rx_desc_queue_ack_i),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[0])
+  );
+
+  interrupt xintr1 (
+    .irq_i          (rx_data_queue_ready_thld_trig_i),
+    .clr_i          (rx_data_queue_ack_i),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[1])
+  );
+
+  // Interrupt output
+  assign irq_o = |irqs;
+
 endmodule : tti

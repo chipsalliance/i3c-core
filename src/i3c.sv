@@ -193,9 +193,10 @@ module i3c
 
     output logic peripheral_reset_o,
     input  logic peripheral_reset_done_i,
-    output logic escalated_reset_o
+    output logic escalated_reset_o,
 
-    // TODO: Add interrupts
+    // Interrupt output
+    output logic irq_o
 );
 
   // I3C SW CSR IF
@@ -467,6 +468,9 @@ module i3c
   logic [31:0] stby_cr_device_addr_reg;
   logic [31:0] stby_cr_device_char_reg;
   logic [31:0] stby_cr_device_pid_lo_reg;
+
+  // Interrupts
+  logic tti_irq;
 
   logic bus_start;
   logic bus_rstart;
@@ -822,6 +826,7 @@ module i3c
   logic [TtiRxDescDataWidth-1:0] csr_tti_rx_desc_data;
   logic [TtiRxDescThldWidth-1:0] csr_tti_rx_desc_ready_thld_i;
   logic [TtiRxDescThldWidth-1:0] csr_tti_rx_desc_ready_thld_o;
+  logic                          csr_tti_rx_desc_ready_trig;
   logic                          csr_tti_rx_desc_reg_rst;
   logic                          csr_tti_rx_desc_reg_rst_we;
   logic                          csr_tti_rx_desc_reg_rst_data;
@@ -843,6 +848,7 @@ module i3c
   logic [    TtiRxThldWidth-1:0] csr_tti_rx_data_start_thld;
   logic [    TtiRxThldWidth-1:0] csr_tti_rx_data_ready_thld_i;
   logic [    TtiRxThldWidth-1:0] csr_tti_rx_data_ready_thld_o;
+  logic                          csr_tti_rx_data_ready_trig;
   logic                          csr_tti_rx_data_reg_rst;
   logic                          csr_tti_rx_data_reg_rst_we;
   logic                          csr_tti_rx_data_reg_rst_data;
@@ -883,6 +889,7 @@ module i3c
       .rx_desc_queue_reg_rst_o     (csr_tti_rx_desc_reg_rst),
       .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_reg_rst_we),
       .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_reg_rst_data),
+      .rx_desc_queue_ready_thld_trig_i (csr_tti_rx_desc_ready_trig),
 
       // TTI TX descriptors queue
       .tx_desc_queue_req_o         (csr_tti_tx_desc_req),
@@ -904,6 +911,7 @@ module i3c
       .rx_data_queue_reg_rst_o     (csr_tti_rx_data_reg_rst),
       .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_reg_rst_we),
       .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_reg_rst_data),
+      .rx_data_queue_ready_thld_trig_i (csr_tti_rx_data_ready_trig),
 
       // TTI TX queue
       .tx_data_queue_req_o         (csr_tti_tx_data_req),
@@ -935,7 +943,9 @@ module i3c
       .disec_crr_i(disec_crr),
       .disec_hj_i (disec_hj),
 
-      .err_i(controller_error)
+      .err_i(controller_error),
+
+      .irq_o (tti_irq)
   );
 
   // Recovery handler
@@ -963,6 +973,7 @@ module i3c
       .csr_tti_rx_desc_queue_reg_rst_i     (csr_tti_rx_desc_reg_rst),
       .csr_tti_rx_desc_queue_reg_rst_we_o  (csr_tti_rx_desc_reg_rst_we),
       .csr_tti_rx_desc_queue_reg_rst_data_o(csr_tti_rx_desc_reg_rst_data),
+      .csr_tti_rx_desc_queue_ready_thld_trig_o (csr_tti_rx_desc_ready_trig),
 
       // TTI TX descriptors queue
       .csr_tti_tx_desc_queue_req_i         (csr_tti_tx_desc_req),
@@ -984,6 +995,7 @@ module i3c
       .csr_tti_rx_data_queue_reg_rst_i     (csr_tti_rx_data_reg_rst),
       .csr_tti_rx_data_queue_reg_rst_we_o  (csr_tti_rx_data_reg_rst_we),
       .csr_tti_rx_data_queue_reg_rst_data_o(csr_tti_rx_data_reg_rst_data),
+      .csr_tti_rx_data_queue_ready_thld_trig_o (csr_tti_rx_data_ready_trig),
 
       // TTI TX queue
       .csr_tti_tx_data_queue_req_i         (csr_tti_tx_data_req),
@@ -1013,7 +1025,6 @@ module i3c
       .ctl_tti_rx_desc_queue_wready_o(tti_rx_desc_wready),
       .ctl_tti_rx_desc_queue_wdata_i(tti_rx_desc_wdata),
       .ctl_tti_rx_desc_queue_ready_thld_o(tti_rx_desc_ready_thld),
-      .ctl_tti_rx_desc_queue_ready_thld_trig_o(tti_rx_desc_ready_thld_trig),
 
       // TTI TX descriptors queue
       .ctl_tti_tx_desc_queue_full_o(tti_tx_desc_full),
@@ -1023,7 +1034,6 @@ module i3c
       .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_rready),
       .ctl_tti_tx_desc_queue_rdata_o(tti_tx_desc_rdata),
       .ctl_tti_tx_desc_queue_ready_thld_o(tti_tx_desc_ready_thld),
-      .ctl_tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_ready_thld_trig),
 
       // TTI RX data queue
       .ctl_tti_rx_data_queue_full_o(tti_rx_full),
@@ -1036,7 +1046,6 @@ module i3c
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld),
-      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig),
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_full),
@@ -1095,4 +1104,8 @@ module i3c
       .sel_od_pp_i(ctrl_sel_od_pp),
       .sel_od_pp_o(sel_od_pp_o)
   );
+
+  // Aggregate interrupts
+  assign irq_o = tti_irq;
+
 endmodule

@@ -48,7 +48,6 @@ module recovery_handler
     output logic                               ctl_tti_rx_desc_queue_wready_o,
     input  logic [     TtiRxDescDataWidth-1:0] ctl_tti_rx_desc_queue_wdata_i,
     output logic [     TtiRxDescThldWidth-1:0] ctl_tti_rx_desc_queue_ready_thld_o,
-    output logic                               ctl_tti_rx_desc_queue_ready_thld_trig_o,
 
     // TX Descriptor queue
     output logic                               ctl_tti_tx_desc_queue_full_o,
@@ -71,7 +70,6 @@ module recovery_handler
     output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_start_thld_o,
     output logic                               ctl_tti_rx_data_queue_start_thld_trig_o,
     output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_ready_thld_o,
-    output logic                               ctl_tti_rx_data_queue_ready_thld_trig_o,
 
     // TX Data queue
     output logic                               ctl_tti_tx_data_queue_full_o,
@@ -117,6 +115,7 @@ module recovery_handler
     input  logic                          csr_tti_rx_desc_queue_reg_rst_i,
     output logic                          csr_tti_rx_desc_queue_reg_rst_we_o,
     output logic                          csr_tti_rx_desc_queue_reg_rst_data_o,
+    output logic                          csr_tti_rx_desc_queue_ready_thld_trig_o,
 
     // TX Descriptor queue
     input  logic                          csr_tti_tx_desc_queue_req_i,
@@ -138,6 +137,7 @@ module recovery_handler
     input  logic                          csr_tti_rx_data_queue_reg_rst_i,
     output logic                          csr_tti_rx_data_queue_reg_rst_we_o,
     output logic                          csr_tti_rx_data_queue_reg_rst_data_o,
+    output logic                          csr_tti_rx_data_queue_ready_thld_trig_o,
 
     // TX data queue
     input  logic                          csr_tti_tx_data_queue_req_i,
@@ -524,7 +524,7 @@ module recovery_handler
       ctl_tti_rx_desc_queue_depth_o           = '0;
       ctl_tti_rx_desc_queue_empty_o           = '0;
       ctl_tti_rx_desc_queue_wready_o          = recv_tti_rx_desc_ready;
-      ctl_tti_rx_desc_queue_ready_thld_trig_o = '0;
+      csr_tti_rx_desc_queue_ready_thld_trig_o = '0;
     end else begin
       recv_tti_rx_desc_valid                  = '0;
       tti_rx_desc_queue_wvalid                = ctl_tti_rx_desc_queue_wvalid_i;
@@ -532,7 +532,7 @@ module recovery_handler
       ctl_tti_rx_desc_queue_depth_o           = tti_rx_desc_queue_depth;
       ctl_tti_rx_desc_queue_empty_o           = tti_rx_desc_queue_empty;
       ctl_tti_rx_desc_queue_wready_o          = tti_rx_desc_queue_wready;
-      ctl_tti_rx_desc_queue_ready_thld_trig_o = tti_rx_desc_queue_ready_thld_trig;
+      csr_tti_rx_desc_queue_ready_thld_trig_o = tti_rx_desc_queue_ready_thld_trig;
     end
 
     tti_rx_desc_queue_wdata                   = ctl_tti_rx_desc_queue_wdata_i; // Don't mux data, disabling valid is enough
@@ -588,7 +588,7 @@ module recovery_handler
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = recv_tti_rx_data_ready;
       ctl_tti_rx_data_queue_start_thld_trig_o = '0;
-      ctl_tti_rx_data_queue_ready_thld_trig_o = '0;
+      csr_tti_rx_data_queue_ready_thld_trig_o = '0;
     end else begin
       recv_tti_rx_data_valid                  = '0;
       tti_rx_data_queue_wvalid                = ctl_tti_rx_data_queue_wvalid_i;
@@ -598,7 +598,7 @@ module recovery_handler
       ctl_tti_rx_data_queue_empty_o           = tti_rx_data_queue_empty;
       ctl_tti_rx_data_queue_wready_o          = tti_rx_data_queue_wready;
       ctl_tti_rx_data_queue_start_thld_trig_o = tti_rx_data_queue_start_thld_trig;
-      ctl_tti_rx_data_queue_ready_thld_trig_o = tti_rx_data_queue_ready_thld_trig;
+      csr_tti_rx_data_queue_ready_thld_trig_o = tti_rx_data_queue_ready_thld_trig;
     end
 
     tti_rx_data_queue_wdata                   = ctl_tti_rx_data_queue_wdata_i; // Don't mux data, disabling valid is enough
