@@ -305,84 +305,84 @@ regfile TargetTransactionInterfaceRegisters #(
             name = "TRANSFER_ERR_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ERR_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ERR_STAT_EN[31:31];
         field {
             name = "TRANSFER_ABORT_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ABORT_STAT_EN[25:25];
         field {
             name = "IBI_DONE_EN";
             desc = "Enables the corresponding interrupt bit `IBI_DONE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } IBI_DONE_EN[13:13];
         field {
             name = "IBI_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_IBI_THLD_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } IBI_THLD_STAT_EN[12:12];
         field {
             name = "RX_DESC_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_THLD_STAT_EN[11:11];
         field {
             name = "TX_DESC_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_THLD_STAT_EN[10:10];
         field {
             name = "RX_DATA_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DATA_THLD_STAT_EN[9:9];
         field {
             name = "TX_DATA_THLD_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DATA_THLD_STAT_EN[8:8];
         field {
             name = "TX_DESC_TIMEOUT_EN";
             desc = "Enables the corresponding interrupt bit `TX_DESC_TIMEOUT_EN`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_TIMEOUT_EN[3:3];
         field {
             name = "RX_DESC_TIMEOUT_EN";
             desc = "Enables the corresponding interrupt bit `RX_DESC_TIMEOUT_EN`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_TIMEOUT_EN[2:2];
         field {
             name = "TX_DESC_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TX_DESC_STAT_EN`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_STAT_EN[1:1];
         field {
             name = "RX_DESC_STAT_EN";
             desc = "Enables the corresponding interrupt bit `RX_DESC_STAT_EN`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_STAT_EN[0:0];
     } INTERRUPT_ENABLE;
@@ -393,84 +393,84 @@ regfile TargetTransactionInterfaceRegisters #(
             name = "TRANSFER_ERR_STAT_FORCE";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ERR_STAT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ERR_STAT_FORCE[31:31];
         field {
             name = "TRANSFER_ABORT_STAT_FORCE";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ABORT_STAT_FORCE[25:25];
         field {
             name = "IBI_DONE_FORCE";
             desc = "Enables the corresponding interrupt bit `IBI_DONE_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } IBI_DONE_FORCE[13:13];
         field {
             name = "IBI_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_IBI_THLD_STAT` to be set to 1";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } IBI_THLD_FORCE[12:12];
         field {
             name = "RX_DESC_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT` to be set to `1`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_THLD_FORCE[11:11];
         field {
             name = "TX_DESC_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT` to be set to `1`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_THLD_FORCE[10:10];
         field {
             name = "RX_DATA_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT` to be set to `1`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DATA_THLD_FORCE[9:9];
         field {
             name = "TX_DATA_THLD_FORCE";
             desc = "Forces the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT` to be set to `1`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DATA_THLD_FORCE[8:8];
         field {
             name = "TX_DESC_TIMEOUT_FORCE";
             desc = "Enables the corresponding interrupt bit `TX_DESC_TIMEOUT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_TIMEOUT_FORCE[3:3];
         field {
             name = "RX_DESC_TIMEOUT_FORCE";
             desc = "Enables the corresponding interrupt bit `RX_DESC_TIMEOUT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_TIMEOUT_FORCE[2:2];
         field {
             name = "TX_DESC_STAT_FORCE";
             desc = "Enables the corresponding interrupt bit `TX_DESC_STAT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } TX_DESC_STAT_FORCE[1:1];
         field {
             name = "RX_DESC_STAT_FORCE";
             desc = "Enables the corresponding interrupt bit `RX_DESC_STAT_FORCE`";
             sw = rw;
-            hw = rw;
+            hw = r;
             reset = 1'b0;
         } RX_DESC_STAT_FORCE[0:0];
     } INTERRUPT_FORCE;
