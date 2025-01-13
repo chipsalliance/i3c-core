@@ -1008,42 +1008,52 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_TIMEOUT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_TIMEOUT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DATA_THLD_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DATA_THLD_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_THLD_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_THLD_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_THLD_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__in_t;
 
     typedef struct packed{
@@ -1053,10 +1063,12 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__in_t;
 
     typedef struct packed{
         logic next;
+        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__in_t;
 
     typedef struct packed{

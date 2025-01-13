@@ -7296,7 +7296,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value & ~(decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next;
             load_next_c = '1;
         end
@@ -7320,7 +7320,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value & ~(decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next;
             load_next_c = '1;
         end
@@ -7344,7 +7344,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value & ~(decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next;
             load_next_c = '1;
         end
@@ -7368,7 +7368,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value & ~(decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next;
             load_next_c = '1;
         end
@@ -7389,10 +7389,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value;
         load_next_c = '0;
-        
-        // HW Write
-        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
-        load_next_c = '1;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
+            load_next_c = '1;
+        end
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = next_c;
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.load_next = load_next_c;
     end
@@ -7410,10 +7410,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value;
         load_next_c = '0;
-        
-        // HW Write
-        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
-        load_next_c = '1;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
+            load_next_c = '1;
+        end
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = next_c;
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.load_next = load_next_c;
     end
@@ -7431,10 +7431,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value;
         load_next_c = '0;
-        
-        // HW Write
-        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
-        load_next_c = '1;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
+            load_next_c = '1;
+        end
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = next_c;
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.load_next = load_next_c;
     end
@@ -7452,10 +7452,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value;
         load_next_c = '0;
-        
-        // HW Write
-        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
-        load_next_c = '1;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
+            load_next_c = '1;
+        end
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = next_c;
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.load_next = load_next_c;
     end
@@ -7473,10 +7473,10 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value;
         load_next_c = '0;
-        
-        // HW Write
-        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
-        load_next_c = '1;
+        if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
+            load_next_c = '1;
+        end
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next = next_c;
         field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.load_next = load_next_c;
     end
@@ -7497,7 +7497,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value & ~(decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.next;
             load_next_c = '1;
         end
@@ -7545,7 +7545,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value & ~(decoded_wr_data[25:25] & decoded_wr_biten[25:25]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next;
             load_next_c = '1;
         end
@@ -7569,7 +7569,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
             next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value & ~(decoded_wr_data[31:31] & decoded_wr_biten[31:31]);
             load_next_c = '1;
-        end else begin // HW Write
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next;
             load_next_c = '1;
         end
@@ -9366,41 +9366,34 @@ module I3CCSR (
     assign readback_array[69][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value : '0;
     assign readback_array[69][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value : '0;
     assign readback_array[69][31:20] = '0;
-    assign readback_array[70][9:0] = '0;
-    assign readback_array[70][10:10] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value : '0;
-    assign readback_array[70][11:11] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value : '0;
-    assign readback_array[70][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value : '0;
-    assign readback_array[70][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value : '0;
-    assign readback_array[70][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value : '0;
-    assign readback_array[70][16:15] = '0;
-    assign readback_array[70][17:17] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value : '0;
-    assign readback_array[70][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value : '0;
-    assign readback_array[70][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value : '0;
-    assign readback_array[70][31:20] = '0;
-    assign readback_array[71][2:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value : '0;
-    assign readback_array[71][7:3] = '0;
-    assign readback_array[71][11:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value : '0;
-    assign readback_array[71][31:12] = '0;
-    assign readback_array[72][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value : '0;
-    assign readback_array[72][15:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value : '0;
-    assign readback_array[72][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value : '0;
-    assign readback_array[72][30:24] = '0;
-    assign readback_array[72][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value : '0;
-    assign readback_array[73][6:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value : '0;
-    assign readback_array[73][14:7] = '0;
-    assign readback_array[73][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value : '0;
-    assign readback_array[73][22:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value : '0;
-    assign readback_array[73][30:23] = '0;
-    assign readback_array[73][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value : '0;
-    assign readback_array[74][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value : '0;
-    assign readback_array[75][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
-    assign readback_array[75][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
-    assign readback_array[75][31:24] = '0;
-    assign readback_array[76][9:0] = '0;
-    assign readback_array[76][10:10] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value : '0;
-    assign readback_array[76][11:11] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value : '0;
-    assign readback_array[76][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
-    assign readback_array[76][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
+    assign readback_array[70][2:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value : '0;
+    assign readback_array[70][7:3] = '0;
+    assign readback_array[70][11:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value : '0;
+    assign readback_array[70][31:12] = '0;
+    assign readback_array[71][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value : '0;
+    assign readback_array[71][15:8] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value : '0;
+    assign readback_array[71][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value : '0;
+    assign readback_array[71][30:24] = '0;
+    assign readback_array[71][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value : '0;
+    assign readback_array[72][6:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value : '0;
+    assign readback_array[72][14:7] = '0;
+    assign readback_array[72][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value : '0;
+    assign readback_array[72][22:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value : '0;
+    assign readback_array[72][30:23] = '0;
+    assign readback_array[72][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value : '0;
+    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value : '0;
+    assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
+    assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
+    assign readback_array[74][31:24] = '0;
+    assign readback_array[75][9:0] = '0;
+    assign readback_array[75][10:10] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value : '0;
+    assign readback_array[75][11:11] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value : '0;
+    assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
+    assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
+    assign readback_array[75][31:16] = '0;
+    assign readback_array[76][12:0] = '0;
+    assign readback_array[76][13:13] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
+    assign readback_array[76][15:14] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
     assign readback_array[76][31:16] = '0;
     assign readback_array[77][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;
     assign readback_array[77][1:1] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value : '0;

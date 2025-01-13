@@ -192,6 +192,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } TRANSFER_ERR_STAT[31:31];
         field {
@@ -200,6 +201,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } TRANSFER_ABORT_STAT[25:25];
         field {
@@ -216,6 +218,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } IBI_DONE[13:13];
         field {
@@ -223,6 +226,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`";
             sw = r;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } IBI_THLD_STAT[12:12];
         field {
@@ -230,6 +234,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is >= the value defined in `TTI_RX_DESC_THLD`";
             sw = r;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } RX_DESC_THLD_STAT[11:11];
         field {
@@ -237,6 +242,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is >= the value defined in `TTI_TX_DESC_THLD`";
             sw = r;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } TX_DESC_THLD_STAT[10:10];
         field {
@@ -244,6 +250,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is >= the value defined in `TTI_RX_DATA_THLD`";
             sw = r;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } RX_DATA_THLD_STAT[9:9];
         field {
@@ -251,6 +258,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is >= the value defined in `TTI_TX_DATA_THLD`";
             sw = r;
             hw = rw;
+            we = true;
             reset = 1'b0;
         } TX_DATA_THLD_STAT[8:8];
         field {
@@ -259,6 +267,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } TX_DESC_TIMEOUT[3:3];
         field {
@@ -267,6 +276,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } RX_DESC_TIMEOUT[2:2];
         field {
@@ -275,6 +285,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } TX_DESC_STAT[1:1];
         field {
@@ -283,6 +294,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = rw;
             hw = rw;
             woclr = true;
+            we = true;
             reset = 1'b0;
         } RX_DESC_STAT[0:0];
     } INTERRUPT_STATUS;
