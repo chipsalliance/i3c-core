@@ -515,6 +515,41 @@ async def test_read(dut):
 
 
 @cocotb.test()
+async def test_virtual_read_illegal(dut):
+    """
+    Tests CSR read(s) using the recovery protocol
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Disable recovery mode
+    status = 0x2  # "Recovery Mode"
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+    )
+
+    # Read the INDIRECT_FIFO_STATUS register
+    data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+
+    # Expect NACK
+    # This is how cocotbext-i3c reports a NACK for a recovery command
+    assert data == None
+    assert pec_ok == None
+
+    # Wait
+    await Timer(1, "us")
+
+@cocotb.test()
 async def test_payload_available(dut):
     """
     Tests if payload_available gets asserted/deasserted correctly when data
@@ -702,7 +737,7 @@ async def test_recovery_flow(dut):
     # AXI-side agent
     async def dev_agent(buffer):
         logger = dut._log.getChild("dev_agent")
-        interval = 50
+        interval = 25
 
         # Read INDIRECT_FIFO_STATUS
         xfer_size = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4))
