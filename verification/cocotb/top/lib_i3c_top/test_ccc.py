@@ -46,7 +46,7 @@ async def test_setup(dut):
 
 @cocotb.test()
 async def test_ccc_getstatus(dut):
-    PENDING_INTERRUPT = 7
+    PENDING_INTERRUPT = 0
     PENDING_INTERRUPT_MASK = 0b1111
 
     i3c_controller, i3c_target, tb = await test_setup(dut)
@@ -56,13 +56,9 @@ async def test_ccc_getstatus(dut):
     interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
     dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
 
-    # Write arbitrary value to the pending interrupt field
-    dut._log.info(
-        f"Write {PENDING_INTERRUPT} to interrupt status register at pending interrupt field"
-    )
-    await tb.write_csr_field(interrupt_status_reg_addr, pending_interrupt_field, PENDING_INTERRUPT)
-    interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
-    dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
+    # NOTE: The field INTERRUPT_STATUS.PENDING_INTERRUPT is not writable by
+    # software and cocotb does not allow to set the underlying register directly.
+    # So the only value that can be read back is 0.
 
     pending_interrupt = await tb.read_csr_field(interrupt_status_reg_addr, pending_interrupt_field)
     assert (

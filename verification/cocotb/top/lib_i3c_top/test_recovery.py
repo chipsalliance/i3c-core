@@ -138,14 +138,10 @@ async def test_virtual_write(dut):
     interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
     dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
 
-    # Write arbitrary value to the pending interrupt field
-    pending_interrupt_in = random.randint(0, 15)
-    dut._log.info(
-        f"Write {hex(pending_interrupt_in)} to interrupt status register at pending interrupt field"
-    )
-    await tb.write_csr_field(interrupt_status_reg_addr, pending_interrupt_field, pending_interrupt_in)
-    interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
-    dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
+    # NOTE: The field INTERRUPT_STATUS.PENDING_INTERRUPT is not writable by
+    # software and cocotb does not allow to set the underlying register directly.
+    # So the only value that can be read back is 0.
+    pending_interrupt_in = 0
 
     pending_interrupt = await tb.read_csr_field(interrupt_status_reg_addr, pending_interrupt_field)
     assert (
