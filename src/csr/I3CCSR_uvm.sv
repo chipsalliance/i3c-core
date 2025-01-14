@@ -3760,7 +3760,7 @@ package I3CCSR_uvm;
             this.PROTOCOL_ERROR = new("PROTOCOL_ERROR");
             this.PROTOCOL_ERROR.configure(this, 1, 13, "RO", 1, 'h0, 1, 1, 0);
             this.LAST_IBI_STATUS = new("LAST_IBI_STATUS");
-            this.LAST_IBI_STATUS.configure(this, 2, 14, "RW", 1, 'h0, 1, 1, 0);
+            this.LAST_IBI_STATUS.configure(this, 2, 14, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(PROTOCOL_ERROR_bit_cg[bt]) PROTOCOL_ERROR_bit_cg[bt] = new();
                 foreach(LAST_IBI_STATUS_bit_cg[bt]) LAST_IBI_STATUS_bit_cg[bt] = new();

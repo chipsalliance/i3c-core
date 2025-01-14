@@ -2288,7 +2288,7 @@ DISINT bit in the DISEC command.</p>
 | Bits|   Identifier  |Access|Reset|      Name     |
 |-----|---------------|------|-----|---------------|
 |  13 | PROTOCOL_ERROR|   r  | 0x0 | PROTOCOL_ERROR|
-|15:14|LAST_IBI_STATUS|  rw  | 0x0 |LAST_IBI_STATUS|
+|15:14|LAST_IBI_STATUS|   r  | 0x0 |LAST_IBI_STATUS|
 
 #### PROTOCOL_ERROR field
 

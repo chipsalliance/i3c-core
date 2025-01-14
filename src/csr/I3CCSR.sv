@@ -7126,10 +7126,7 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value & ~decoded_wr_biten[15:14]) | (decoded_wr_data[15:14] & decoded_wr_biten[15:14]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.we) begin // HW Write - we
+        if(hwif_in.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
             load_next_c = '1;
         end
@@ -7143,6 +7140,8 @@ module I3CCSR (
             field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
         end
     end
+    assign hwif_out.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value = field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value;
+    assign hwif_out.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.swacc = decoded_reg_strb.I3C_EC.TTI.STATUS;
     // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.SOFT_RST
     always_comb begin
         automatic logic [0:0] next_c;

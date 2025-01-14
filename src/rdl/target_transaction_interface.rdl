@@ -109,10 +109,11 @@ regfile TargetTransactionInterfaceRegisters #(
             Part of data in the IBI queue is considered corrupted and will be discarded.
             11 - Failure: IBI was terminated after 1 retry.
             ";
-            sw = rw;
-            hw = w;
+            sw = r;
+            hw = rw;
             we = true;
             reset = 2'b00;
+            swacc = true;
         } LAST_IBI_STATUS[15:14];
         field {
             name = "PROTOCOL_ERROR";
