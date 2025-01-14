@@ -13,6 +13,8 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
+from target_interrupts import get_interrupt_status
+
 TARGET_ADDRESS = 0x5A
 
 
@@ -94,7 +96,6 @@ def format_ibi_data(mdb, data):
     descr = (mdb << 24) | len(data)
     return [descr] + words
 
-
 @cocotb.test()
 async def test_i3c_target_write(dut):
 
@@ -113,23 +114,20 @@ async def test_i3c_target_write(dut):
         # Enable RX descriptor interrupt
         await tb.write_csr_field(
             tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE.base_addr,
-            tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN,
+            tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN,
             1
         )
 
         for i, tx_data in enumerate(test_data):
 
-            # Wait for the RX descriptor interrupt signal to go high
+            # Wait for the interrupt signal to go high
             irq = dut.xi3c_wrapper.i3c.irq_o
             while irq.value == 0:
                 await RisingEdge(tb.clk)
 
             # Read & check interrupt status
-            sts = await tb.read_csr_field(
-                tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr,
-                tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT,
-            )
-            assert sts == 1
+            intrs = await get_interrupt_status(tb)
+            assert intrs["RX_DESC_STAT"] == 1
 
             # Read RX descriptor, the interrupt should go low
             data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
@@ -148,11 +146,8 @@ async def test_i3c_target_write(dut):
                 await RisingEdge(tb.clk)
 
             # Read & check interrupt status
-            sts = await tb.read_csr_field(
-                tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr,
-                tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT,
-            )
-            assert sts == 0
+            intrs = await get_interrupt_status(tb)
+            assert intrs["RX_DESC_STAT"] == 0
 
             # Read RX data
             data_len = ceil(desc_len / 4)
