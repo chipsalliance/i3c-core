@@ -35,6 +35,9 @@ module tti
     output logic                       rx_desc_queue_reg_rst_o,
     input  logic                       rx_desc_queue_reg_rst_we_i,
     input  logic                       rx_desc_queue_reg_rst_data_i,
+    input  logic                       rx_desc_queue_empty_i,
+    input  logic                       rx_desc_queue_full_i,
+    input  logic                       rx_desc_queue_write_i,
 
     // RX data queue
     output logic                   rx_data_queue_req_o,
@@ -47,6 +50,9 @@ module tti
     output logic                   rx_data_queue_reg_rst_o,
     input  logic                   rx_data_queue_reg_rst_we_i,
     input  logic                   rx_data_queue_reg_rst_data_i,
+    input  logic                   rx_data_queue_empty_i,
+    input  logic                   rx_data_queue_full_i,
+    input  logic                   rx_data_queue_write_i,
 
     // TX descriptors queue
     output logic                       tx_desc_queue_req_o,
@@ -190,7 +196,7 @@ module tti
 
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = '0;
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.next = '0;
+//    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;
@@ -208,10 +214,47 @@ module tti
   assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
 
   // Interrupts
-  logic [1:0] irqs;
+  logic [2:0] irqs;
 
+  // Delay queue write monitor signals by 1 cycle to align them with
+  // full/empty/threshold trigger update.
+  logic rx_desc_queue_write_r;
+  logic rx_data_queue_write_r;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      rx_desc_queue_write_r <= '0;
+      rx_data_queue_write_r <= '0;
+    end else begin
+      rx_desc_queue_write_r <= rx_desc_queue_write_i;
+      rx_data_queue_write_r <= rx_data_queue_write_i;
+    end
+  end
+
+  // RX_DESC_STAT
+  // set: any write to the RX desc queue
+  // clr: any read from the RX desc queue
   interrupt xintr0 (
-    .irq_i          (rx_desc_queue_ready_thld_trig_i),
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (rx_desc_queue_write_r),
+    .clr_i          (rx_desc_queue_ack_i),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.RX_DESC_STAT.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.RX_DESC_STAT.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[0])
+  );
+
+  // RX_DESC_THLD_STAT
+  // set: a write to the RX desc queue an threshold exceeded
+  // clr: any read from the RX desc queue
+  interrupt xintr1 (
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (rx_desc_queue_write_r & rx_desc_queue_ready_thld_trig_i),
     .clr_i          (rx_desc_queue_ack_i),
     .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value),
     .sts_o          (hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next),
@@ -219,11 +262,16 @@ module tti
     .sts_i          (hwif_tti_i.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value),
     .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value),
     .sig_ena_i      ('1),
-    .irq_o          (irqs[0])
+    .irq_o          (irqs[1])
   );
 
-  interrupt xintr1 (
-    .irq_i          (rx_data_queue_ready_thld_trig_i),
+  // RX_DATA_THLD_STAT
+  // set: a write to the RX data queue an threshold exceeded
+  // clr: any read from the RX data queue
+  interrupt xintr2 (
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (rx_data_queue_write_r & rx_data_queue_ready_thld_trig_i),
     .clr_i          (rx_data_queue_ack_i),
     .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value),
     .sts_o          (hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next),
@@ -231,7 +279,7 @@ module tti
     .sts_i          (hwif_tti_i.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value),
     .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value),
     .sig_ena_i      ('1),
-    .irq_o          (irqs[1])
+    .irq_o          (irqs[2])
   );
 
   // Interrupt output

@@ -831,6 +831,10 @@ module i3c
   logic                          csr_tti_rx_desc_reg_rst_we;
   logic                          csr_tti_rx_desc_reg_rst_data;
 
+  logic                          csr_tti_rx_desc_empty;
+  logic                          csr_tti_rx_desc_full;
+  logic                          csr_tti_rx_desc_write;
+
   // TTI TX Descriptor queue
   logic                          csr_tti_tx_desc_req;
   logic                          csr_tti_tx_desc_ack;
@@ -852,6 +856,10 @@ module i3c
   logic                          csr_tti_rx_data_reg_rst;
   logic                          csr_tti_rx_data_reg_rst_we;
   logic                          csr_tti_rx_data_reg_rst_data;
+
+  logic                          csr_tti_rx_data_empty;
+  logic                          csr_tti_rx_data_full;
+  logic                          csr_tti_rx_data_write;
 
   // TTI TX data queue
   logic                          csr_tti_tx_data_req;
@@ -891,6 +899,10 @@ module i3c
       .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_reg_rst_data),
       .rx_desc_queue_ready_thld_trig_i (csr_tti_rx_desc_ready_trig),
 
+      .rx_desc_queue_empty_i       (tti_rx_desc_empty),
+      .rx_desc_queue_full_i        (tti_rx_desc_full),
+      .rx_desc_queue_write_i       (tti_rx_desc_wvalid & tti_rx_desc_wready),
+
       // TTI TX descriptors queue
       .tx_desc_queue_req_o         (csr_tti_tx_desc_req),
       .tx_desc_queue_ack_i         (csr_tti_tx_desc_ack),
@@ -912,6 +924,10 @@ module i3c
       .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_reg_rst_we),
       .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_reg_rst_data),
       .rx_data_queue_ready_thld_trig_i (csr_tti_rx_data_ready_trig),
+
+      .rx_data_queue_empty_i       (tti_rx_empty),
+      .rx_data_queue_full_i        (tti_rx_full),
+      .rx_data_queue_write_i       (tti_rx_wvalid & tti_rx_wready),
 
       // TTI TX queue
       .tx_data_queue_req_o         (csr_tti_tx_data_req),
