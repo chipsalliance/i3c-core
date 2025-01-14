@@ -2365,13 +2365,13 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 |  1  |    TX_DESC_STAT   |rw, woclr| 0x0 |    TX_DESC_STAT   |
 |  2  |  RX_DESC_TIMEOUT  |rw, woclr| 0x0 |  RX_DESC_TIMEOUT  |
 |  3  |  TX_DESC_TIMEOUT  |rw, woclr| 0x0 |  TX_DESC_TIMEOUT  |
-|  8  | TX_DATA_THLD_STAT |    r    | 0x0 | TX_DATA_THLD_STAT |
-|  9  | RX_DATA_THLD_STAT |    r    | 0x0 | RX_DATA_THLD_STAT |
-|  10 | TX_DESC_THLD_STAT |    r    | 0x0 | TX_DESC_THLD_STAT |
-|  11 | RX_DESC_THLD_STAT |    r    | 0x0 | RX_DESC_THLD_STAT |
-|  12 |   IBI_THLD_STAT   |    r    | 0x0 |   IBI_THLD_STAT   |
+|  8  | TX_DATA_THLD_STAT |rw, woclr| 0x0 | TX_DATA_THLD_STAT |
+|  9  | RX_DATA_THLD_STAT |rw, woclr| 0x0 | RX_DATA_THLD_STAT |
+|  10 | TX_DESC_THLD_STAT |rw, woclr| 0x0 | TX_DESC_THLD_STAT |
+|  11 | RX_DESC_THLD_STAT |rw, woclr| 0x0 | RX_DESC_THLD_STAT |
+|  12 |   IBI_THLD_STAT   |rw, woclr| 0x0 |   IBI_THLD_STAT   |
 |  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
-|18:15| PENDING_INTERRUPT |    rw   | 0x0 | PENDING_INTERRUPT |
+|18:15| PENDING_INTERRUPT |rw, woclr| 0x0 | PENDING_INTERRUPT |
 |  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
 |  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 

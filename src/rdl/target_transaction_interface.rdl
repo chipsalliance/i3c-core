@@ -209,6 +209,7 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.";
             sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 4'd0;
         } PENDING_INTERRUPT[18:15];
@@ -224,40 +225,45 @@ regfile TargetTransactionInterfaceRegisters #(
         field {
             name = "IBI_THLD_STAT";
             desc = "TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`";
-            sw = r;
+            sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 1'b0;
         } IBI_THLD_STAT[12:12];
         field {
             name = "RX_DESC_THLD_STAT";
             desc = "TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is >= the value defined in `TTI_RX_DESC_THLD`";
-            sw = r;
+            sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 1'b0;
         } RX_DESC_THLD_STAT[11:11];
         field {
             name = "TX_DESC_THLD_STAT";
             desc = "TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is >= the value defined in `TTI_TX_DESC_THLD`";
-            sw = r;
+            sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 1'b0;
         } TX_DESC_THLD_STAT[10:10];
         field {
             name = "RX_DATA_THLD_STAT";
             desc = "TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is >= the value defined in `TTI_RX_DATA_THLD`";
-            sw = r;
+            sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 1'b0;
         } RX_DATA_THLD_STAT[9:9];
         field {
             name = "TX_DATA_THLD_STAT";
             desc = "TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is >= the value defined in `TTI_TX_DATA_THLD`";
-            sw = r;
+            sw = rw;
             hw = rw;
+            woclr = true;
             we = true;
             reset = 1'b0;
         } TX_DATA_THLD_STAT[8:8];
