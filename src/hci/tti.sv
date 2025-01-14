@@ -189,7 +189,6 @@ module tti
 
   always_comb begin : wire_unconnected_regs
 
-    hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.we = '0;
     hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
@@ -203,7 +202,7 @@ module tti
     hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next = '0;
+//    hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next = '0;
 
@@ -214,7 +213,7 @@ module tti
   assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
 
   // Interrupts
-  logic [2:0] irqs;
+  logic [3:0] irqs;
 
   // Delay queue write monitor signals by 1 cycle to align them with
   // full/empty/threshold trigger update.
@@ -280,6 +279,23 @@ module tti
     .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value),
     .sig_ena_i      ('1),
     .irq_o          (irqs[2])
+  );
+
+  // IBI_DONE
+  // set: an IBI has been transmitter to the host
+  // clr: read LAST_IBI_STATUS
+  interrupt xintr3 (
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (ibi_status_we_i),
+    .clr_i          (hwif_tti_i.STATUS.LAST_IBI_STATUS.swacc),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.IBI_DONE_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.IBI_DONE.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.IBI_DONE_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[3])
   );
 
   // Interrupt output

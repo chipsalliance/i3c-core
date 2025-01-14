@@ -13,6 +13,9 @@ import cocotb
 from cocotb.regression import TestFactory
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
+from utils import get_interrupt_status
+from utils import format_ibi_data
+
 # =============================================================================
 
 TARGET_ADDRESS = 0x5A
@@ -99,6 +102,60 @@ async def test_rx_desc_stat(dut):
     await ClockCycles(tb.clk, 10)
 
 
+@cocotb.test()
+async def test_ibi_done(dut):
+
+    # Setup
+    i3c_controller, _, tb = await test_setup(dut)
+    irq = dut.xi3c_wrapper.i3c.irq_o
+
+    target = i3c_controller.add_target(TARGET_ADDRESS)
+    target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
+
+    # Enable IBI ACK-ing
+    i3c_controller.enable_ibi(True)
+
+    # Enable the interrupt
+    csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
+    await tb.write_csr_field(csr.base_addr, csr.IBI_DONE_EN, 1)
+
+    # Ensure interrupt status
+    await ClockCycles(tb.clk, 10)
+    assert irq.value == 0
+
+    intrs = await get_interrupt_status(tb)
+    assert intrs["IBI_DONE"] == 0
+
+    # Send an IBI
+    mdb = 0xAA
+    ibi_data = format_ibi_data(mdb, [])
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+    # Wait for the IBI to be serviced
+    await i3c_controller.wait_for_ibi()
+
+    # Ensure interrupt status
+    await ClockCycles(tb.clk, 10)
+    assert irq.value == 1
+
+    intrs = await get_interrupt_status(tb)
+    assert intrs["IBI_DONE"] == 1
+
+    # Read LAST_IBI_STATUS, the irq should go low
+    dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
+
+    # Ensure interrupt status
+    await ClockCycles(tb.clk, 10)
+    assert irq.value == 0
+
+    intrs = await get_interrupt_status(tb)
+    assert intrs["IBI_DONE"] == 0
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
+
+
 async def test_interrupt_force(dut, fields):
     """
     Tests interrupt force and clear capability
@@ -172,6 +229,7 @@ tf.add_option("fields", [
     ("RX_DESC_STAT_EN",         "RX_DESC_STAT_FORCE",  "RX_DESC_STAT"),
     ("RX_DESC_THLD_STAT_EN",    "RX_DESC_THLD_FORCE",  "RX_DESC_THLD_STAT"),
     ("RX_DATA_THLD_STAT_EN",    "RX_DATA_THLD_FORCE",  "RX_DATA_THLD_STAT"),
+    ("IBI_DONE_EN",             "IBI_DONE_FORCE",      "IBI_DONE"),
 ])
 tf.generate_tests()
 

@@ -13,7 +13,8 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
-from target_interrupts import get_interrupt_status
+from utils import get_interrupt_status
+from utils import format_ibi_data
 
 TARGET_ADDRESS = 0x5A
 
@@ -74,27 +75,6 @@ async def test_setup(dut):
 
     return i3c_controller, i3c_target, tb
 
-
-def format_ibi_data(mdb, data):
-    """
-    Given MDB and a list of data bytes (can be empty) prepare a sequence of
-    32-bit words to be written to the TTI IBI queue.
-    """
-    count = (len(data) + 3) // 4
-    words = [0 for i in range(count)]
-
-    i = 0
-    j = 0
-    for d in data:
-        words[j] |= d << (8 * i)
-
-        i = i + 1
-        if i == 4:
-            i = 0
-            j = j + 1
-
-    descr = (mdb << 24) | len(data)
-    return [descr] + words
 
 @cocotb.test()
 async def test_i3c_target_write(dut):

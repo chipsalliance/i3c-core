@@ -266,3 +266,47 @@ def split_into_dwords(data: bytes) -> Iterable[tuple[int, int]]:
         yield dword, mask
 
         byte_idx += 4
+
+def format_ibi_data(mdb, data):
+    """
+    Given MDB and a list of data bytes (can be empty) prepare a sequence of
+    32-bit words to be written to the TTI IBI queue.
+    """
+    count = (len(data) + 3) // 4
+    words = [0 for i in range(count)]
+
+    i = 0
+    j = 0
+    for d in data:
+        words[j] |= d << (8 * i)
+
+        i = i + 1
+        if i == 4:
+            i = 0
+            j = j + 1
+
+    descr = (mdb << 24) | len(data)
+    return [descr] + words
+
+
+async def get_interrupt_status(tb):
+    """
+    Retrieves TTI interrupt statuses through a series of CSR reads
+    """
+
+    intrs = {
+        "RX_DESC_STAT": None,
+        "RX_DESC_THLD_STAT": None,
+        "RX_DATA_THLD_STAT": None,
+        "IBI_DONE": None,
+    }
+
+    csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
+
+    for key in intrs.keys():
+        field = getattr(csr, key)
+        state = await tb.read_csr_field(csr.base_addr, field)
+        intrs[key] = state
+
+    return intrs
+
