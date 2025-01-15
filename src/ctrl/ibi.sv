@@ -146,7 +146,7 @@ module ibi (
         if (bus_stop_i) state_q <= Flush;
         else if (bus_tx_done_i) state_q <= ibi_byte_last_i ? Done : SendData;
 
-        WaitStop: if (bus_stop_i) state_q <= Done;
+        WaitStop: if (bus_stop_i) state_q <= Idle;
 
         Flush: if (!ibi_byte_valid_i) state_q <= Done;
 
@@ -249,6 +249,6 @@ module ibi (
   assign done_o = (state_q == Done);
 
   assign ibi_status_o    = ibi_status;
-  assign ibi_status_we_o = (state_q == Done);
+  assign ibi_status_we_o = (state_q == Done) | ((state_q == WaitStop) & bus_stop_i);
 
 endmodule
