@@ -698,6 +698,7 @@ module controller_standby_i3c
       .tx_byte_valid_o           (tx_fifo_rvalid),
       .tx_byte_ready_i           (tx_fifo_rready),
       .tx_byte_err_i             (tx_host_nack),
+      .bus_stop_det_i            (bus_stop_det),
       .recovery_mode_enter_i     (recovery_mode_enter_i)
   );
 

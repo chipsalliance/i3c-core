@@ -31,6 +31,9 @@ module descriptor_tx #(
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
     output logic tx_queue_flush_o,
 
+    // Bus conditions
+    input logic bus_stop_det_i,
+
     // Interface to the target FSM
     output logic [7:0] tx_byte_o,
     output logic tx_byte_last_o,
@@ -63,7 +66,7 @@ module descriptor_tx #(
         tx_descriptor <= tti_tx_desc_queue_rdata_i;
         descriptor_valid <= '1;
       end
-      else if (recovery_mode_enter_i) begin
+      else if (bus_stop_det_i || recovery_mode_enter_i) begin
         descriptor_valid <= '0;
         tx_descriptor <= '0;
       end
@@ -110,5 +113,5 @@ module descriptor_tx #(
   assign tx_byte_o = tti_tx_queue_rdata_i;
   assign tti_tx_queue_rready_o = tx_byte_valid_o && tx_byte_ready_i;
 
-  assign tx_queue_flush_o = tx_end;
+  assign tx_queue_flush_o = tx_end | bus_stop_det_i;
 endmodule
