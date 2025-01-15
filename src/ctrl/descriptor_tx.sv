@@ -113,5 +113,5 @@ module descriptor_tx #(
   assign tx_byte_o = tti_tx_queue_rdata_i;
   assign tti_tx_queue_rready_o = tx_byte_valid_o && tx_byte_ready_i;
 
-  assign tx_queue_flush_o = tx_end | bus_stop_det_i;
+  assign tx_queue_flush_o = tx_end;
 endmodule
