@@ -491,7 +491,6 @@ module i3c_target_fsm #(
       // Private Write data loop
       RxPWriteData: begin
         if (bus_start_det) state_d = RxFByte;
-        else if (bus_stop_det_i) state_d = Idle;
         else if (bus_rx_done_i) state_d = RxPWriteTbit;
       end
       RxPWriteTbit: begin
@@ -501,7 +500,6 @@ module i3c_target_fsm #(
       // Private Read data loop
       TxPReadData: begin
         if (bus_start_det) state_d = RxFByte;
-        else if (bus_stop_det_i) state_d = Idle;
         else if (bus_tx_done_i) state_d = TxPReadTbit;
       end
       TxPReadTbit: begin
@@ -517,7 +515,6 @@ module i3c_target_fsm #(
 
       Wait: begin
         if (bus_start_det) state_d = RxFByte;
-        else if (bus_stop_det_i) state_d = Idle;
       end
 
       DoIBI: begin
@@ -553,6 +550,8 @@ module i3c_target_fsm #(
 
     // Bypass state transition for HDR Exit Pattern
     if (hdr_exit_detect_i) state_d = DoHdrExit;
+    // Bypass any state transition when a stop is received
+    if (bus_stop_det_i) state_d = Idle;
   end
 
   // Synchronous state transition
