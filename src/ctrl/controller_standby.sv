@@ -193,7 +193,6 @@ module controller_standby
   logic i3c_tx_queue_rready_o;
   logic i2c_tx_queue_rready_o;
   logic i3c_tx_queue_flush_o;
-  logic i2c_tx_queue_flush_o;
   logic i3c_bus_start_o;
   logic i2c_bus_start_o;
   logic i3c_bus_rstart_o;
@@ -219,7 +218,7 @@ module controller_standby
     rx_queue_flush_o = sel_i2c_i3c ? i3c_rx_queue_flush_o : i2c_rx_queue_flush_o;
     tx_desc_queue_rready_o = sel_i2c_i3c ? i3c_tx_desc_queue_rready_o : i2c_tx_desc_queue_rready_o;
     tx_queue_rready_o = sel_i2c_i3c ? i3c_tx_queue_rready_o : i2c_tx_queue_rready_o;
-    tx_queue_flush_o = sel_i2c_i3c ? i3c_tx_queue_flush_o : i2c_tx_queue_flush_o;
+    tx_queue_flush_o = sel_i2c_i3c ? i3c_tx_queue_flush_o : 1'b0;
     bus_start_o = sel_i2c_i3c ? i3c_bus_start_o : i2c_bus_start_o;
     bus_rstart_o = sel_i2c_i3c ? i3c_bus_rstart_o : i2c_bus_rstart_o;
     bus_stop_o = sel_i2c_i3c ? i3c_bus_stop_o : i2c_bus_stop_o;

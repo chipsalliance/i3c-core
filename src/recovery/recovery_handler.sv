@@ -614,7 +614,6 @@ module recovery_handler
   logic       send_tti_tx_data_valid;
   logic       send_tti_tx_data_ready;
   logic [7:0] send_tti_tx_data_data;
-  logic       send_tti_tx_data_flush;
 
   logic       send_tti_tx_data_queue_select;
   logic       send_tti_tx_start_trig;
@@ -624,7 +623,7 @@ module recovery_handler
     if (recovery_enable & send_tti_tx_data_queue_select) begin
       tti_tx_data_queue_rready                = '0;
       send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
-      tti_tx_data_queue_flush                 = send_tti_tx_data_flush;
+      tti_tx_data_queue_flush                 = '0;
       ctl_tti_tx_data_queue_full_o            = '0;
       ctl_tti_tx_data_queue_depth_o           = '1; // Always maximum data count available
       ctl_tti_tx_data_queue_empty_o           = '1; // Never empty

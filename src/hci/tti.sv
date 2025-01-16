@@ -182,6 +182,9 @@ module tti
   end
 
   always_comb begin : wire_unconnected_regs
+
+    hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
 
@@ -191,9 +194,7 @@ module tti
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;
-//    hwif_tti_o.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = '0;
-//    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.IBI_DONE.next = '0;

@@ -392,6 +392,8 @@ module recovery_executor
   // TODO: Implement reporting other statuses
   assign status_device_we = '0;
   assign status_reason_we = '0;
+  assign status_device = '0;
+  assign status_reason = '0;
 
   // Update status on command done
   assign status_protocol_we = (state_q == Done);
@@ -560,6 +562,26 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack  = '0; // TODO: support writes
   end
 
+  // tie unused signals
+  always_comb begin
+    hwif_rec_o.PROT_CAP_3.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_6.PLACEHOLDER.next = '0;
+    hwif_rec_o.PROT_CAP_1.PLACEHOLDER.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = '0;
+    hwif_rec_o.DEVICE_ID_4.PLACEHOLDER.next = '0;
+    hwif_rec_o.PROT_CAP_2.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_1.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_2.PLACEHOLDER.next = '0;
+    hwif_rec_o.HW_STATUS.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_STATUS_1.PLACEHOLDER.next = '0;
+    hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.next = '0;
+    hwif_rec_o.PROT_CAP_0.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_3.PLACEHOLDER.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_5.PLACEHOLDER.next = '0;
+    hwif_rec_o.DEVICE_ID_0.PLACEHOLDER.next = '0;
+  end
   // ....................................................
 
   // Command response

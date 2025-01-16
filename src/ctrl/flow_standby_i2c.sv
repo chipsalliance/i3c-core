@@ -91,6 +91,10 @@ module flow_standby_i2c
   assign rx_fifo_wdata_o = fifo_buf[0][7:0];
   assign byte_count = transaction_byte_count[1:0];
 
+  assign response_fifo_wdata_o.err_status = '0;
+  assign response_fifo_wdata_o.tid = '0;
+  assign response_fifo_wdata_o.__rsvd23_16 = '0;
+
   assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
   assign start_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStart);
   assign stop_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStop);
