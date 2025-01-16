@@ -153,8 +153,8 @@ module configuration (
 
   always @(posedge clk_i or negedge rst_ni) begin : mrl_mwl
     if (~rst_ni) begin
-      get_mwl_o <= 16'h0002;
-      get_mrl_o <= 16'h0002;
+      get_mwl_o <= 16'd256;
+      get_mrl_o <= 16'd256;
     end else begin
       if (set_mwl_i) get_mwl_o <= mwl_i;
       if (set_mrl_i) get_mrl_o <= mrl_i;
