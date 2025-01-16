@@ -211,6 +211,7 @@ module controller_standby_i3c
   logic [7:0] ibi_bus_rx_data;
 
   // TX Queue interface
+  logic tx_desc_avail;
   logic tx_fifo_rvalid;
   logic tx_fifo_rready;
   logic [7:0] tx_fifo_rdata;
@@ -257,6 +258,9 @@ module controller_standby_i3c
   logic scl_stable_high;
 
   //
+  logic tx_pr_start;
+  logic tx_pr_abort;
+
   logic rx_overflow_err;
   logic bus_error;
   logic bus_busy;
@@ -421,6 +425,9 @@ module controller_standby_i3c
       .bus_rx_data_i        (fsm_bus_rx_data),
       .bus_rx_error_i       (fsm_bus_rx_error),
 
+      .tx_pr_start_o              (tx_pr_start),
+      .tx_pr_abort_o              (tx_pr_abort),
+      .tx_desc_avail_i            (tx_desc_avail),
       .tx_fifo_rvalid_i           (tx_fifo_rvalid),
       .tx_fifo_rready_o           (tx_fifo_rready),
       .tx_fifo_rdata_i            (tx_fifo_rdata),
@@ -693,12 +700,13 @@ module controller_standby_i3c
       .tti_tx_queue_rready_o     (tx_queue_rready_o),
       .tti_tx_queue_rdata_i      (tx_queue_rdata_i),
       .tx_queue_flush_o          (tx_queue_flush_o),
+      .tx_start_i                (tx_pr_start),
+      .tx_abort_i                (tx_pr_abort | tx_host_nack),
+      .tx_desc_avail_o           (tx_desc_avail),
       .tx_byte_o                 (tx_fifo_rdata),
       .tx_byte_last_o            (tx_last_byte),
       .tx_byte_valid_o           (tx_fifo_rvalid),
       .tx_byte_ready_i           (tx_fifo_rready),
-      .tx_byte_err_i             (tx_host_nack),
-      .bus_stop_det_i            (bus_stop_det),
       .recovery_mode_enter_i     (recovery_mode_enter_i)
   );
 

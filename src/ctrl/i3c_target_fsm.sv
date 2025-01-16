@@ -64,6 +64,7 @@ module i3c_target_fsm #(
     input logic bus_rx_error_i,
 
     // TX FIFO used for Target Read
+    input  logic                   tx_desc_avail_i,
     input  logic                   tx_fifo_rvalid_i,  // indicates there is valid data in tx_fifo
     output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
     input  logic [TxDataWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
@@ -123,7 +124,10 @@ module i3c_target_fsm #(
     output logic rx_overflow_err_o,
     output logic virtual_device_tx_o,
     input  logic virtual_device_tx_done_i,
-    input  logic recovery_mode_i
+    input  logic recovery_mode_i,
+
+    output logic tx_pr_start_o,
+    output logic tx_pr_abort_o
 );
   logic bus_start_det;
   assign bus_start_det = bus_start_det_i | bus_rstart_det_i;
@@ -338,6 +342,8 @@ module i3c_target_fsm #(
     bus_tx_req_byte_o = '0;
     bus_tx_req_bit_o = '0;
     bus_tx_req_value_o = 8'h1;
+    tx_pr_start_o = '0;
+    tx_pr_abort_o = '0;
     tx_host_nack_o = '0;
     bus_addr_d = '0;
     bus_addr_valid = '0;
@@ -361,7 +367,11 @@ module i3c_target_fsm #(
           bus_rnw_d = bus_rx_data_i[0];
         end
       end
-      CheckFByte: ;
+      CheckFByte: begin
+        // Signal begin of a private read
+        if (!is_rsvd_byte_match)
+            tx_pr_start_o = is_our_addr_match && bus_rnw_q;
+      end
       TxAckFByte: begin
         bus_tx_req_bit_o = 1'b1;
         bus_tx_req_value_o[0] = 1'b0;  // LSB is the only bit used for bit TX transfer
@@ -386,7 +396,10 @@ module i3c_target_fsm #(
           bus_rnw_d = bus_rx_data_i[0];
         end
       end
-      CheckSByte: ;
+      CheckSByte: begin
+        // Signal begin of a private read
+        tx_pr_start_o = is_our_addr_match && bus_rnw_q;
+      end
       TxAckSByte: begin
         bus_tx_req_bit_o   = 1'b1;
         bus_tx_req_value_o = '0;
@@ -402,10 +415,12 @@ module i3c_target_fsm #(
       TxPReadData: begin
         bus_tx_req_byte_o  = 1'b1;
         bus_tx_req_value_o = tx_data_byte;
+        tx_pr_abort_o = bus_start_det | bus_stop_det_i;
       end
       TxPReadTbit: begin
         bus_tx_req_bit_o   = 1'b1;
         bus_tx_req_value_o = {7'h0, ~tx_end_xfer};
+        tx_pr_abort_o = bus_start_det | bus_stop_det_i;
       end
       Wait: begin
         nack_transaction_d = 1'b1;
@@ -474,7 +489,7 @@ module i3c_target_fsm #(
         end
       end
       CheckSByte: begin
-        if ((is_our_addr_match || is_virtual_addr_match) && (tx_fifo_rvalid_i | ~bus_rnw_q)) begin
+        if ((is_our_addr_match || is_virtual_addr_match) && (tx_desc_avail_i | ~bus_rnw_q)) begin
             state_d = TxAckSByte;
         end else begin
             state_d = Wait;
@@ -506,7 +521,7 @@ module i3c_target_fsm #(
         if (bus_start_det) state_d = RxFByte;
         else if (tx_tbit_done)
           // Continue transfer if FIFO is not empty or if it's the last byte
-          if (tx_fifo_rvalid_i | (tx_last_byte_i & ~tx_end_xfer))
+          if ((tx_fifo_rvalid_i | tx_last_byte_i) & ~tx_end_xfer)
             state_d = TxPReadData;
           // Wait for START or STOP if it was the last byte already
           else

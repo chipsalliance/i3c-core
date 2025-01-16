@@ -31,30 +31,34 @@ module descriptor_tx #(
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
     output logic tx_queue_flush_o,
 
-    // Bus conditions
-    input logic bus_stop_det_i,
-
     // Interface to the target FSM
+    input logic tx_start_i,
+    input logic tx_abort_i,
+    output logic tx_desc_avail_o,
     output logic [7:0] tx_byte_o,
     output logic tx_byte_last_o,
     output logic tx_byte_valid_o,
     input logic tx_byte_ready_i,
-    input logic tx_byte_err_i,
 
     // recovery mode
     input recovery_mode_enter_i
 );
 
   logic [31:0] tx_descriptor;
-  logic [15:0] byte_counter, byte_counter_q;
+  logic [15:0] byte_counter;
   logic [15:0] data_len;
   logic [15:0] data_len_words;
   logic descriptor_valid;
   logic tx_start;
   logic tx_pending;
   logic tx_end;
+  logic flush;
 
-  assign tti_tx_desc_queue_rready_o = ~descriptor_valid && tti_tx_desc_queue_rvalid_i;
+  assign tti_tx_desc_queue_rready_o = ~descriptor_valid && tx_start_i &&
+                                      tti_tx_desc_queue_rvalid_i && !flush &&
+                                      !(tx_abort_i || recovery_mode_enter_i);
+
+  assign tx_desc_avail_o = tti_tx_desc_queue_rvalid_i;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_
     if (!rst_ni) begin
@@ -62,13 +66,25 @@ module descriptor_tx #(
       tx_descriptor <= '0;
     end else begin
       if (tx_end) descriptor_valid <= '0;
-      else if (tti_tx_desc_queue_rready_o && !recovery_mode_enter_i) begin
+      else if (tti_tx_desc_queue_rready_o) begin
         tx_descriptor <= tti_tx_desc_queue_rdata_i;
         descriptor_valid <= '1;
       end
-      else if (bus_stop_det_i || recovery_mode_enter_i) begin
+      else if (tx_abort_i || recovery_mode_enter_i) begin
         descriptor_valid <= '0;
         tx_descriptor <= '0;
+      end
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      flush <= '0;
+    end else begin
+      if (!flush && (tx_abort_i || recovery_mode_enter_i)) begin
+        flush <= '1;
+      end else if (flush && (byte_counter == 16'd1) && tti_tx_queue_rvalid_i) begin
+        flush <= '0;
       end
     end
   end
@@ -85,7 +101,7 @@ module descriptor_tx #(
     end else begin
       if (tx_start) begin
         tx_pending <= '1;
-      end else if (tx_end) begin
+      end else if (tx_end | tx_abort_i) begin
         tx_pending <= '0;
       end
     end
@@ -93,10 +109,8 @@ module descriptor_tx #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_byte_counter
     if (!rst_ni) begin
-      byte_counter_q <= '0;
       byte_counter   <= '0;
     end else begin
-      byte_counter_q <= byte_counter;
       if (tx_start) begin
         byte_counter <= data_len;
       end else if (tti_tx_queue_rready_o) begin
@@ -111,7 +125,7 @@ module descriptor_tx #(
   assign tx_byte_valid_o = tx_pending && tti_tx_queue_rvalid_i;
   assign tx_byte_last_o = byte_counter == 16'd1;
   assign tx_byte_o = tti_tx_queue_rdata_i;
-  assign tti_tx_queue_rready_o = tx_byte_valid_o && tx_byte_ready_i;
+  assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) | (flush && (tti_tx_queue_rvalid_i | tx_queue_flush_o));
 
-  assign tx_queue_flush_o = tx_end;
+  assign tx_queue_flush_o = tx_end | tx_abort_i;
 endmodule
