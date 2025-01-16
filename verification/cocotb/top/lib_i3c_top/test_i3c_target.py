@@ -223,8 +223,14 @@ async def test_i3c_target_read(dut):
 
         return data
 
-    def compare(expected, received):
-        dut._log.info("Expected: [" + " ".join([f"{d:02X}" for d in expected]) + "]")
+    def compare(expected, received, lnt=None):
+        if lnt is None or lnt == len(expected):
+            sfx = ""
+        else:
+            sfx = " ([" + " ".join([f"{d:02X}" for d in expected[lnt:]]) + "] skipped)"
+            expected = expected[:lnt]
+
+        dut._log.info("Expected: [" + " ".join([f"{d:02X}" for d in expected]) + "]" + sfx)
         dut._log.info("Received: [" + " ".join([f"{d:02X}" for d in received]) + "]")
         assert expected == received
 
@@ -272,7 +278,7 @@ async def test_i3c_target_read(dut):
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, lnt)
         rx_data = list(rx_data)
         await Timer(1, "us")
-        compare(tx_data[i][:lnt], rx_data)
+        compare(tx_data[i], rx_data, lnt)
 
     await Timer(1, "us")
 
