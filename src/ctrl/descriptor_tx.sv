@@ -47,7 +47,7 @@ module descriptor_tx #(
   logic [31:0] tx_descriptor;
   logic [15:0] byte_counter;
   logic [15:0] data_len;
-  logic [15:0] data_len_words;
+  logic [TtiTxDescDataWidth-1:0] data_len_words;
   logic descriptor_valid;
   logic tx_start;
   logic tx_pending;

@@ -81,9 +81,9 @@ module write_queue #(
       ready_thld_trig_o = |ready_thld_o && (empty_entries >= FifoDepthWidth'(ready_thld_o));
     end else begin
       start_thld_trig_o = |start_thld_i &&
-                          (fifo_depth >= (1 << (FifoDepthWidth'(start_thld_i) + 1)));
+                          (fifo_depth >= FifoDepthWidth'(1 << (FifoDepthWidth'(start_thld_i) + 1)));
       ready_thld_trig_o = |ready_thld_o &&
-                          (empty_entries >= (1 << (FifoDepthWidth'(ready_thld_o) + 1)));
+                          (empty_entries >= FifoDepthWidth'(1 << (FifoDepthWidth'(ready_thld_o) + 1)));
     end
   end : trigger_threshold
 
