@@ -218,6 +218,8 @@ module hci
     if (!rst_ni) begin
       cmd_ready_thld_we  <= '0;
       resp_ready_thld_we <= '0;
+      cmd_ready_thld_swmod_q <= '0;
+      resp_ready_thld_swmod_q <= '0;
     end else begin
       cmd_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
       cmd_ready_thld_we <= cmd_ready_thld_swmod_q;

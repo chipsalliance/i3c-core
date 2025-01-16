@@ -156,6 +156,10 @@ module recovery_receiver
       len_lsb <= '0;
       len_msb <= '0;
     end else begin
+      cmd_cmd_o <= cmd_cmd_o;
+      len_lsb   <= len_lsb;
+      len_msb   <= len_msb;
+      pec_recv  <= pec_recv;
       unique case (state_q)
         RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
         RxLenL: if (rx_flow) len_lsb <= data_data_i;
