@@ -339,6 +339,7 @@ module controller_standby_i3c
     ibi_bus_tx_done    = '0;
     ibi_bus_tx_idle    = '0;
     ibi_bus_rx_done    = '0;
+    ibi_bus_rx_data    = '0;
 
     unique case (xfer_mux_sel)
       Fsm: begin

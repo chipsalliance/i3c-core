@@ -292,6 +292,8 @@ module controller
   always_comb begin : mux_4_to_1
     scl_o = ctrl_scl_o[phy_mux_select];
     sda_o = ctrl_sda_o[phy_mux_select];
+    ctrl_scl_i[phy_mux_select] = '0;
+    ctrl_sda_i[phy_mux_select] = '0;
     ctrl_scl_i[phy_mux_select] = scl_i;
     ctrl_sda_i[phy_mux_select] = sda_i;
     sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];

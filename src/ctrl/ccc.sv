@@ -663,21 +663,25 @@ module ccc
       `I3C_DIRECT_GETBCR: begin
         tx_data_id_init = 8'h01;
         if (tx_data_id == 8'h01) tx_data = get_bcr_i;
+        else tx_data = '0;
       end
       `I3C_DIRECT_GETDCR: begin
         tx_data_id_init = 8'h01;
         if (tx_data_id == 8'h01) tx_data = get_dcr_i;
+        else tx_data = '0;
       end
       // 2 Bytes
       `I3C_DIRECT_GETSTATUS: begin
         tx_data_id_init = 8'h02;
         if (tx_data_id == 8'h02) tx_data = get_status_fmt1_i[15:8];
         else if (tx_data_id == 8'h01) tx_data = get_status_fmt1_i[7:0];
+        else tx_data = '0;
       end
       `I3C_DIRECT_GETMWL: begin
         tx_data_id_init = 8'h02;
         if (tx_data_id == 8'h02) tx_data = get_mwl_i[15:8];
         else if (tx_data_id == 8'h01) tx_data = get_mwl_i[7:0];
+        else tx_data = '0;
       end
       // 3 Bytes
       `I3C_DIRECT_GETMRL: begin
@@ -687,6 +691,7 @@ module ccc
         else if (tx_data_id == 8'h01)
           // Maximum IBI payload size is 256 Bytes
           tx_data = '1;
+        else tx_data = '0;
       end
       `I3C_DIRECT_GETPID: begin
         tx_data_id_init = 8'h06;
@@ -696,6 +701,7 @@ module ccc
         else if (tx_data_id == 8'h03) tx_data = get_pid_i[23:16];
         else if (tx_data_id == 8'h02) tx_data = get_pid_i[15:8];
         else if (tx_data_id == 8'h01) tx_data = get_pid_i[7:0];
+        else tx_data = '0;
       end
       default: begin
         tx_data_id_init = 8'h00;
