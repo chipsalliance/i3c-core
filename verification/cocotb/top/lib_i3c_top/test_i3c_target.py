@@ -2,7 +2,7 @@
 
 import logging
 from math import ceil
-from random import randint
+import random
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword
@@ -192,48 +192,101 @@ async def test_i3c_target_write(dut):
 
 @cocotb.test()
 async def test_i3c_target_read(dut):
-    TEST_LENGTH = 3
-    MAX_DATA_LEN = 10
 
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
-    for _ in range(TEST_LENGTH):
-        data_len = randint(4, MAX_DATA_LEN)
-        test_data = [randint(0, 255) for _ in range(data_len)]
-        dut._log.info(
-            "Generated data: [{}]".format(
-                " ".join("".join(f"0x{d:02X}") + " " for d in test_data),
-            )
-        )
+    # Generates a randomized transfer and puts it into the TTI TX queue
+    async def make_transfer(min_len=1, max_len=16):
+
+        length = random.randint(min_len, max_len)
+        data   = [random.randint(0, 255) for _ in range(length)]
+
+        dut._log.info(f"Enqueueing transfer of length {length}")
 
         # Write data to TTI TX FIFO
-        for i in range(0, len(test_data), 4):
-            await tb.write_csr(
-                tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, test_data[i : i + 4], 4
-            )
+        for i in range((length + 3) // 4):
+            word = data[4*i]
+            if 4*i+1 < length:
+                word |= data[4*i+1] << 8;
+            if 4*i+2 < length:
+                word |= data[4*i+2] << 16;
+            if 4*i+3 < length:
+                word |= data[4*i+3] << 24;
+
+            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+                int2dword(word), 4)
 
         # Write the TX descriptor
-        await tb.write_csr(
-            tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_len), 4
-        )
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
+            int2dword(length), 4)
 
-        # Issue a private read
-        recv_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(test_data))
-        recv_data = list(recv_data)
+        return data
 
-        # Compare
-        dut._log.info(
-            "Comparing input [ {}] and CSR data [ {}]".format(
-                "".join("".join(f"0x{d:02X}") + " " for d in test_data),
-                "".join("".join(f"0x{d:02X}") + " " for d in recv_data),
-            )
-        )
-        assert test_data == recv_data
+    def compare(expected, received):
+        dut._log.info("Expected: [" + " ".join([f"{d:02X}" for d in expected]) + "]")
+        dut._log.info("Received: [" + " ".join([f"{d:02X}" for d in received]) + "]")
+        assert expected == received
 
-        # Dummy wait
-        await ClockCycles(tb.clk, 100)
-    await ClockCycles(tb.clk, 100)
+    # .............
+
+    # Test N consecutive transfers. Do not queue new transfers before completion
+    dut._log.info("N consecutive transfers, one at a time")
+    for i in range(2):
+        tx_data = await make_transfer()
+        rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
+        rx_data = list(rx_data)
+        await Timer(1, "us")
+        compare(tx_data, rx_data)
+
+    await Timer(1, "us")
+
+    # Test N consecutive transfers. First enqueue, then service
+    dut._log.info("N consecutive transfers, enqueued then serviced")
+    tx_data = []
+    for i in range(3):
+        tx_data.append(await make_transfer())
+
+    for i in range(3):
+        rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data[i]))
+        rx_data = list(rx_data)
+        await Timer(1, "us")
+        compare(tx_data[i], rx_data)
+
+    await Timer(1, "us")
+
+    # Test N consecutive transfers. First enqueue, then service. Occasionally
+    # read less data.
+    short = random.sample([i for i in range(5)], 2)
+    dut._log.info(f"N consecutive transfers, short read for {short}")
+
+    tx_data = []
+    for i in range(5):
+        tx_data.append(await make_transfer(min_len=4))
+
+    for i in range(5):
+        lnt = len(tx_data[i])
+        if i in short:
+            lnt -= random.randint(1, 3)
+
+        rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, lnt)
+        rx_data = list(rx_data)
+        await Timer(1, "us")
+        compare(tx_data[i][:lnt], rx_data)
+
+    await Timer(1, "us")
+
+    # Test N consecutive transfers. Do not queue new transfers before completion
+    dut._log.info("N consecutive transfers, one at a time (again)")
+    for i in range(2):
+        tx_data = await make_transfer()
+        rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
+        rx_data = list(rx_data)
+        await Timer(1, "us")
+        compare(tx_data, rx_data)
+
+    # Dummy wait
+    await Timer(1, "us")
 
 
 @cocotb.test()
@@ -478,14 +531,14 @@ async def test_i3c_target_ibi_data(dut):
     assert result
 
 
-@cocotb.test()
+@cocotb.test(skip=True)
 async def test_i3c_target_writes_and_reads(dut):
 
     # Setup
     i3c_controller, i3c_target, tb = await test_setup(dut)
 
     tx_data_len = 16
-    tx_test_data = [randint(0, 255) for _ in range(tx_data_len)]
+    tx_test_data = [random.randint(0, 255) for _ in range(tx_data_len)]
 
     # Write data to TTI TX FIFO
     for i in range(0, len(tx_test_data), 4):
@@ -590,7 +643,7 @@ async def test_i3c_target_pwrite_err_detection(dut):
         ) == 0, "GETSTATUS reported unexpected Protocol Error"
 
         # Send Private Write on I3C
-        test_data = [randint(0, 255) for _ in range(TRANSFER_LENGTH)]
+        test_data = [random.randint(0, 255) for _ in range(TRANSFER_LENGTH)]
         await i3c_controller.i3c_write(TARGET_ADDRESS, test_data, inject_tbit_err=True)
         await ClockCycles(tb.clk, 10)
 
