@@ -141,7 +141,7 @@ module controller_standby
     input logic [2:0] ibi_retry_num_i,
 
     output logic tx_host_nack_o,
-    output logic [7:0] set_dasa_o,
+    output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic set_dasa_virtual_device_o,
     output logic rstdaa_o,
