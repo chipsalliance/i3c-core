@@ -151,7 +151,10 @@ module recovery_receiver
   // Command header & PEC capture
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      pec_recv <= 0;
+      pec_recv <= '0;
+      cmd_cmd_o <= '0;
+      len_lsb <= '0;
+      len_msb <= '0;
     end else begin
       unique case (state_q)
         RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
