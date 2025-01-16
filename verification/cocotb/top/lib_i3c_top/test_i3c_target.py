@@ -31,7 +31,7 @@ async def test_setup(dut):
     """
 
     cocotb.log.setLevel(logging.INFO)
-    cocotb.start_soon(timeout_task(100))
+    cocotb.start_soon(timeout_task(200))
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -537,7 +537,7 @@ async def test_i3c_target_ibi_data(dut):
     assert result
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_i3c_target_writes_and_reads(dut):
 
     # Setup

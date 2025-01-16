@@ -85,6 +85,8 @@ module descriptor_tx #(
         flush <= '1;
       end else if (flush && (byte_counter == 16'd1) && tti_tx_queue_rvalid_i) begin
         flush <= '0;
+      end else if (flush && tx_queue_flush_o) begin
+        flush <= '0;
       end
     end
   end
@@ -121,11 +123,11 @@ module descriptor_tx #(
     end
   end
 
-  assign tx_end = (byte_counter == 16'h1 && tx_byte_ready_i);
+  assign tx_end = (byte_counter == 16'h1 && tx_byte_ready_i | flush);
   assign tx_byte_valid_o = tx_pending && tti_tx_queue_rvalid_i;
   assign tx_byte_last_o = byte_counter == 16'd1;
   assign tx_byte_o = tti_tx_queue_rdata_i;
-  assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) | (flush && (tti_tx_queue_rvalid_i | tx_queue_flush_o));
+  assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) | (flush && tti_tx_queue_rvalid_i);
 
-  assign tx_queue_flush_o = tx_end | tx_abort_i;
+  assign tx_queue_flush_o = (|data_len[1:0] & tx_end) | (|byte_counter[1:0] & tx_end);
 endmodule

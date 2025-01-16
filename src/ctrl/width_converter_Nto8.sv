@@ -39,7 +39,7 @@ module width_converter_Nto8 #(
     if (!rst_ni) bcnt <= '0;
     else begin
       if ((bcnt != '0) & source_flush_i) bcnt <= '0;
-      else if ((bcnt == '0) & sink_valid_i & sink_ready_o) bcnt <= Bytes;
+      else if ((bcnt == '0) & sink_valid_i & sink_ready_o & ~source_flush_i) bcnt <= Bytes;
       else if ((bcnt != '0) & source_valid_o & source_ready_i) bcnt <= bcnt - 1;
     end
 
