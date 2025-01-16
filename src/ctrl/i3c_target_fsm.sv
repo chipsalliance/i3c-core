@@ -370,7 +370,7 @@ module i3c_target_fsm #(
       CheckFByte: begin
         // Signal begin of a private read
         if (!is_rsvd_byte_match)
-            tx_pr_start_o = is_our_addr_match && bus_rnw_q;
+            tx_pr_start_o = (is_our_addr_match || is_virtual_addr_match) && bus_rnw_q;
       end
       TxAckFByte: begin
         bus_tx_req_bit_o = 1'b1;
@@ -398,7 +398,7 @@ module i3c_target_fsm #(
       end
       CheckSByte: begin
         // Signal begin of a private read
-        tx_pr_start_o = is_our_addr_match && bus_rnw_q;
+        tx_pr_start_o = (is_our_addr_match || is_virtual_addr_match) && bus_rnw_q;
       end
       TxAckSByte: begin
         bus_tx_req_bit_o   = 1'b1;

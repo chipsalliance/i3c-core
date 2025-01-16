@@ -81,7 +81,7 @@ module descriptor_tx #(
     if (!rst_ni) begin
       flush <= '0;
     end else begin
-      if (!flush && (tx_abort_i || recovery_mode_enter_i)) begin
+      if (!flush && (tx_abort_i || (recovery_mode_enter_i && |byte_counter) )) begin
         flush <= '1;
       end else if (flush && (byte_counter == 16'd1) && tti_tx_queue_rvalid_i) begin
         flush <= '0;
