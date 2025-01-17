@@ -79,11 +79,9 @@ module bus_rx_flow (
   end
 
   always_comb begin : update_output_data_value
-    if (~rst_ni) begin
-      rx_data_o = '0;
-    end else if (rx_req_bit) begin
+    if (rx_req_bit) begin
       rx_data_o = {{7{1'b0}}, rx_bit};
-    end else if (rx_req_byte_i) begin
+    end else begin
       rx_data_o = {rx_data[6:0], sda_i};
     end
   end

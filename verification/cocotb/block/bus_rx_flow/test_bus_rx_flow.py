@@ -51,7 +51,6 @@ async def setup_test(dut):
     await ClockCycles(dut.clk_i, 10)
 
     assert dut.rx_done_o.value == 0
-    assert dut.rx_data_o.value == 0
     assert dut.rx_idle_o.value == 1
 
 
@@ -74,6 +73,7 @@ async def test_multiple_bit_reads(dut):
         result = await First(scl_negedge, done_posedge)
 
         if result == done_posedge:
+            await RisingEdge(dut.clk_i)
             assert dut.rx_data_o.value == d
             dut.rx_req_bit_i.value = 0
             dut._log.debug(f"Bit correct, rx_data_o: {dut.rx_data_o.value}, expected: {d}")
