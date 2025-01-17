@@ -62,7 +62,7 @@ module flow_standby_i2c
   // Are we currently mid-transfer?
   logic transfer_active;
   // Number of data bytes held in `fifo_buf`
-  logic [1:0] byte_count;  // Note: Handling only 4 entries of `fifo_buf`
+  logic [AcqFifoDepth-1:0] byte_count;  // Note: We handle only 4 entries of `fifo_buf`
   // Total number of bytes processed in transaction
   logic [15:0] transaction_byte_count;
   // Read transaction length
