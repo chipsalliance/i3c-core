@@ -48,7 +48,6 @@ module write_queue #(
     output logic reg_rst_data_o
 );
 
-  logic rst;
   logic fifo_clr;
   logic fifo_wvalid;
   logic fifo_wready;
@@ -56,9 +55,6 @@ module write_queue #(
   logic [FifoDepthWidth-1:0] fifo_depth;
 
   logic [FifoDepthWidth-1:0] empty_entries;
-
-  // FIXME: Unused rst
-  assign rst = ~rst_ni | reg_rst_i;
 
   assign fifo_clr = reg_rst_i;
   assign reg_rst_data_o = 1'b0;
