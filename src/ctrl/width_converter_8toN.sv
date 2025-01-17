@@ -26,11 +26,6 @@ module width_converter_8toN #(
     output logic [Width-1:0] source_data_o
 );
 
-  // Ensure that Width is divisible by 8
-  initial begin : param_check
-    if ((Width % 8) != 0) $error("Width must be divisible by 8");
-  end
-
   // Number of bytes of wider data bus
   localparam int unsigned Bytes = Width / 8;
 

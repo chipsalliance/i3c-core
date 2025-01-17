@@ -57,13 +57,6 @@ module write_queue #(
 
   logic [FifoDepthWidth-1:0] empty_entries;
 
-  initial begin
-    if (ThldIsPow == 1'b1 && LimitReadyThld == 1'b1) begin
-      $warning("Configuration with both `ThldIsPow` and `LimitReadyThld` enabled",
-               "is not tested and might result in unexpected behavior.");
-    end
-  end
-
   // FIXME: Unused rst
   assign rst = ~rst_ni | reg_rst_i;
 

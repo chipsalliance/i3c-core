@@ -66,16 +66,6 @@ module axi_adapter #(
     input  logic                    s_cpuif_wr_ack,
     input  logic                    s_cpuif_wr_err
 );
-  // Check configuration
-  initial begin : axi_param_check
-    if (AxiAddrWidth < CsrAddrWidth) begin : ahb_addr_w_oob
-      $warning("WARNING: AxiAddrWidth is lower than CsrAddrWidth (instance %m)");
-    end
-    if (!(AxiDataWidth inside {32, 64})) begin : axi_data_w_oob
-      $error("ERROR: AxiDataWidth is required to be one of {32, 64} (instance %m)");
-      $finish;
-    end
-  end
 
   axi_if #(
       .AW(CsrAddrWidth),

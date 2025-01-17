@@ -117,62 +117,6 @@ module i3c_wrapper #(
     // TODO: Add interrupts
 );
 
-  `define REPORT_INCOMPATIBLE_PARAM(param_name, received, expected) \
-    `ifdef DEBUG \
-      $warning("%s: %0d doesn't match the I3C config: %0d (instance %m).", \
-        param_name, received, expected); \
-      $info("Overriding %s to %0d.", param_name, expected); \
-    `else \
-      $fatal(0, "%s: %0d doesn't match the I3C config: %0d (instance %m).", \
-      param_name, received, expected); \
-    `endif
-
-  // Check widths match the I3C configuration
-  initial begin : clptra_vs_i3c_config_param_check
-`ifdef I3C_USE_AHB
-    if (AhbAddrWidth != `AHB_ADDR_WIDTH) begin : clptra_ahb_addr_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AHB address width", AhbAddrWidth, `AHB_ADDR_WIDTH)
-    end
-    if (AhbDataWidth != `AHB_DATA_WIDTH) begin : clptra_ahb_data_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AHB data width", AhbDataWidth, `AHB_DATA_WIDTH)
-    end
-`elsif I3C_USE_AXI
-    if (AxiAddrWidth != `AXI_ADDR_WIDTH) begin : clptra_axi_addr_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI address width", AxiAddrWidth, `AXI_ADDR_WIDTH)
-    end
-    if (AxiDataWidth != `AXI_DATA_WIDTH) begin : clptra_axi_data_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI data width", AxiDataWidth, `AXI_DATA_WIDTH)
-    end
-    if (AxiUserWidth != `AXI_USER_WIDTH) begin : clptra_axi_user_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI user width", AxiUserWidth, `AXI_USER_WIDTH)
-    end
-    if (AxiIdWidth != `AXI_ID_WIDTH) begin : clptra_axi_id_w_check
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AXI_ID_WIDTH)
-    end
-`endif
-  end
-
-`ifdef I3C_USE_AXI
-  initial begin : axi_data_user_w_check
-    if (AxiUserWidth != AxiDataWidth) begin
-      $fatal(0, {"AxiUserWidth (%0d) != AxiDataWidth (%0d): Current AXI doesn't support ",
-                 "different USER and DATA widths. (instance %m)."}, AxiUserWidth, AxiDataWidth);
-      `REPORT_INCOMPATIBLE_PARAM("AXI ID width", AxiIdWidth, `AXI_ID_WIDTH)
-    end
-  end
-`endif
-
-  initial begin : dxt_w_check
-    if (DatAw != i3c_pkg::DatAw) begin
-      $warning({"I3C is configured with DatAw=%0d but got DatAw=%0d in `i3c_wrapper`.",
-                "Consider reconfiguring the I3C core."}, i3c_pkg::DatAw, DatAw);
-    end
-    if (DctAw != i3c_pkg::DctAw) begin
-      $warning({"I3C is configured with DctAw=%0d but got DctAw=%0d in `i3c_wrapper`.",
-                "Consider reconfiguring the I3C core."}, i3c_pkg::DctAw, DctAw);
-    end
-  end
-
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
