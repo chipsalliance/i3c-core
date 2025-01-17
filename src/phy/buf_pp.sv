@@ -12,7 +12,6 @@
   |  1 |   0| 1   |
   |  1 |   1| x   |
 
-  TODO: Add assertion for when pull_up_en and pull_down_en have the same state
 */
 module buf_pp (
     input  logic pull_up_en,

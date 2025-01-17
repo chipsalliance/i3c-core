@@ -30,6 +30,11 @@ module i3c_phy_io_wrapper (
     logic sda_io2phy;
     logic sel_od_pp;
 
+    logic scl_drive_low, sda_drive_low;
+    logic sda_od, scl_od;
+    assign scl_drive_low = ~scl_phy2io;
+    assign sda_drive_low = ~sda_phy2io;
+
     i3c_phy xphy(
         .clk_i(clk_i),
         .rst_ni(rst_ni),
@@ -50,11 +55,14 @@ module i3c_phy_io_wrapper (
         .sda_i(sda_phy2io),
         .scl_o(scl_io2phy),
         .sda_o(sda_io2phy),
-        .sel_od_pp_i(sel_od_pp),
         .scl_io(scl_io),
         .sda_io(sda_io)
     );
 
+    assign sda_od = sda_drive_low ? 1'b0 : 1'bz;
+    assign scl_od = sda_drive_low ? 1'b0 : 1'bz;
+    assign i3c_sda_io = sel_od_pp ? sda_io : sda_od;
+    assign i3c_scl_io = sel_od_pp ? scl_io : scl_od;
 
     initial
     begin

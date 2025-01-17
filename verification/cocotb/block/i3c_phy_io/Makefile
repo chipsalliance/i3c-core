@@ -16,7 +16,6 @@ TOPLEVEL     = i3c_phy_io_wrapper
 include $(TEST_DIR)/../../caliptra_common.mk
 
 VERILOG_SOURCES += \
-	$(SRC_DIR)/phy/buf_od.sv \
 	$(SRC_DIR)/phy/buf_pp.sv \
 	$(SRC_DIR)/phy/bufs.sv \
 	$(SRC_DIR)/phy/i3c_io.sv \
