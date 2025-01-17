@@ -175,6 +175,7 @@ module recovery_handler
     output logic payload_available_o,
     output logic image_activated_o,
     output logic recovery_mode_enter_o,
+    output logic recovery_mode_enabled_o,
     input  logic virtual_device_tx_i,
     output logic virtual_device_tx_done_o
 );
@@ -191,6 +192,9 @@ module recovery_handler
 
   assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx_i;
   assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+
+  // Output recovery mode enable state. Either via DEVICE_STATUS or via access through virtual target address
+  assign recovery_mode_enabled_o = recovery_enable;
 
   // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
   logic [1:0] virtual_device_cec_shreg;

@@ -505,6 +505,7 @@ module i3c
   logic controller_error;
 
   logic recovery_mode_enter;
+  logic recovery_mode_enabled;
   logic virtual_device_tx;
   logic virtual_device_tx_done;
 
@@ -948,6 +949,7 @@ module i3c
       .ibi_queue_reg_rst_we_i  (csr_tti_ibi_reg_rst_we),
       .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data),
 
+      .recovery_mode_enabled_i(recovery_mode_enabled),
       .ibi_status_i(ibi_status),
       .ibi_status_we_i(ibi_status_we),
       .tx_pr_end_i(tti_tx_pr_end),
@@ -1101,6 +1103,7 @@ module i3c
       .ctl_bus_addr_i(rx_bus_addr),
       .ctl_bus_addr_valid_i(rx_bus_addr_valid),
       .recovery_mode_enter_o(recovery_mode_enter),
+      .recovery_mode_enabled_o(recovery_mode_enabled),
       .virtual_device_tx_i(virtual_device_tx),
       .virtual_device_tx_done_o(virtual_device_tx_done)
   );

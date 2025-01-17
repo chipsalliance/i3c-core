@@ -87,7 +87,8 @@ module tti
     // IBI status
     input logic [1:0] ibi_status_i,
     input logic ibi_status_we_i,
-
+    // Recovery status
+    input logic recovery_mode_enabled_i,
     // Private read status
     input logic tx_pr_end_i,
 
@@ -224,8 +225,8 @@ module tti
       rx_desc_queue_write_r <= '0;
       rx_data_queue_write_r <= '0;
     end else begin
-      rx_desc_queue_write_r <= rx_desc_queue_write_i;
-      rx_data_queue_write_r <= rx_data_queue_write_i;
+      rx_desc_queue_write_r <= rx_desc_queue_write_i & ~recovery_mode_enabled_i;
+      rx_data_queue_write_r <= rx_data_queue_write_i & ~recovery_mode_enabled_i;
     end
   end
 
@@ -303,7 +304,7 @@ module tti
   interrupt xintr4 (
     .clk_i          (clk_i),
     .rst_ni         (rst_ni),
-    .irq_i          (tx_pr_end_i),
+    .irq_i          (~recovery_mode_enabled_i & tx_pr_end_i),
     .clr_i          ('0),
     .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value),
     .sts_o          (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next),
