@@ -470,7 +470,9 @@ module i3c
   logic [31:0] stby_cr_device_pid_lo_reg;
 
   // Interrupts
+  logic ctl_irq;
   logic tti_irq;
+  logic recovery_irq;
 
   logic bus_start;
   logic bus_rstart;
@@ -657,14 +659,12 @@ module i3c
       .dct_wdata_hw_o(dct_wdata_hw),
       .dct_rdata_hw_i(dct_rdata_hw),
 
-      // TODO: TTI interface
-
       //TODO: Rename
       .i3c_fsm_en_i  (i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
       .err(),  // TODO: Handle errors
-      .irq(),  // TODO: Handle interrupts
+      .irq(ctl_irq),
       .hwif_out_i(hwif_out),
       .hwif_rec_i(hwif_rec_out),
 
@@ -695,9 +695,6 @@ module i3c
       .virtual_device_tx_o(virtual_device_tx),
       .virtual_device_tx_done_i(virtual_device_tx_done)
   );
-
-
-
 
   // HCI
   hci #(
@@ -1087,7 +1084,7 @@ module i3c
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_ready_thld),
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig),
 
-      .irq_o(),  // TODO: Connect me
+      .irq_o(recovery_irq),
 
       // Recovery status signals
       .payload_available_o(recovery_payload_available_o),
@@ -1122,6 +1119,6 @@ module i3c
   );
 
   // Aggregate interrupts
-  assign irq_o = tti_irq;
+  assign irq_o = ctl_irq | tti_irq | recovery_irq;
 
 endmodule

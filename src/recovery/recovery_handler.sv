@@ -178,6 +178,8 @@ module recovery_handler
     input  logic virtual_device_tx_i,
     output logic virtual_device_tx_done_o
 );
+
+  // The recovery mode does not support interrupts
   assign irq_o = '0;
 
   // ....................................................
