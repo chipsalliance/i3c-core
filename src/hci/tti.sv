@@ -197,7 +197,6 @@ module tti
 
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = '0;
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;
-    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next = '0;

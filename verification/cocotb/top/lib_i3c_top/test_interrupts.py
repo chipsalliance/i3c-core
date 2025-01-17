@@ -11,7 +11,7 @@ from interface import I3CTopTestInterface
 
 import cocotb
 from cocotb.regression import TestFactory
-from cocotb.triggers import ClockCycles, RisingEdge, Timer
+from cocotb.triggers import ClockCycles, RisingEdge, Timer, Event
 
 from utils import get_interrupt_status
 from utils import format_ibi_data
@@ -101,6 +101,53 @@ async def test_rx_desc_stat(dut):
     # Dummy wait
     await ClockCycles(tb.clk, 10)
 
+@cocotb.test()
+async def test_tx_desc_stat(dut):
+
+    # Setup
+    i3c_controller, _, tb = await test_setup(dut)
+    irq = dut.xi3c_wrapper.i3c.irq_o
+
+    # Enable the interrupt
+    csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
+    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT_EN, 1)
+
+    # Ensure that irq is low
+    await ClockCycles(tb.clk, 10)
+    assert irq.value == 0
+
+    # Write data and descriptor
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+        int2dword(0xDEADBEEF), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
+        int2dword(4), 4)
+
+    # Send a private read to the target
+    async def i3c_task(evt):
+        data = list(await i3c_controller.i3c_read(TARGET_ADDRESS, 4))
+        assert data == [0xEF, 0xBE, 0xAD, 0xDE]
+        evt.set()
+
+    done = Event()
+    cocotb.start_soon(i3c_task(done))
+
+    # Wait for the interrupt
+    while irq.value == 0:
+        await RisingEdge(tb.clk)
+
+    # Clear the interrupt
+    csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
+    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT, 1)
+
+    # Ensure that irq is low
+    await ClockCycles(tb.clk, 10)
+    assert irq.value == 0
+
+    # Wait for the I3C transfer to complete
+    await done.wait()
+
+    # Dummy wait
+    await ClockCycles(tb.clk, 10)
 
 @cocotb.test()
 async def test_ibi_done(dut):
@@ -226,6 +273,7 @@ async def test_interrupt_force(dut, fields):
 
 tf = TestFactory(test_function=test_interrupt_force)
 tf.add_option("fields", [
+    ("TX_DESC_STAT_EN",         "TX_DESC_STAT_FORCE",  "TX_DESC_STAT"),
     ("RX_DESC_STAT_EN",         "RX_DESC_STAT_FORCE",  "RX_DESC_STAT"),
     ("RX_DESC_THLD_STAT_EN",    "RX_DESC_THLD_FORCE",  "RX_DESC_THLD_STAT"),
     ("RX_DATA_THLD_STAT_EN",    "RX_DATA_THLD_FORCE",  "RX_DATA_THLD_STAT"),
