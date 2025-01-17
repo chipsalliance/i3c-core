@@ -98,6 +98,7 @@ module controller_standby_i3c
     output logic [7:0] rst_action_o,
     output logic rst_action_valid_o,
     output logic tx_host_nack_o,
+    output logic tx_pr_end_o,
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic set_dasa_virtual_device_o,
@@ -708,7 +709,8 @@ module controller_standby_i3c
       .tx_byte_last_o            (tx_last_byte),
       .tx_byte_valid_o           (tx_fifo_rvalid),
       .tx_byte_ready_i           (tx_fifo_rready),
-      .recovery_mode_enter_i     (recovery_mode_enter_i)
+      .recovery_mode_enter_i     (recovery_mode_enter_i),
+      .tx_end_o                  (tx_pr_end_o)
   );
 
   descriptor_ibi #(

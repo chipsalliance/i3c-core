@@ -88,6 +88,9 @@ module tti
     input logic [1:0] ibi_status_i,
     input logic ibi_status_we_i,
 
+    // Private read status
+    input logic tx_pr_end_i,
+
     input logic enec_ibi_i,
     input logic enec_crr_i,
     input logic enec_hj_i,
@@ -189,7 +192,6 @@ module tti
 
   always_comb begin : wire_unconnected_regs
 
-    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
 
@@ -211,7 +213,7 @@ module tti
   assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
 
   // Interrupts
-  logic [3:0] irqs;
+  logic [4:0] irqs;
 
   // Delay queue write monitor signals by 1 cycle to align them with
   // full/empty/threshold trigger update.
@@ -294,6 +296,23 @@ module tti
     .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.IBI_DONE_EN.value),
     .sig_ena_i      ('1),
     .irq_o          (irqs[3])
+  );
+
+  // TX_DESC_STAT
+  // set: A private read transfer has completed
+  // clr: None, need to clear via INTERRUPT_STATUS
+  interrupt xintr4 (
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (tx_pr_end_i),
+    .clr_i          ('0),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.TX_DESC_STAT.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[4])
   );
 
   // Interrupt output

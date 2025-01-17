@@ -39,6 +39,7 @@ module descriptor_tx #(
     output logic tx_byte_last_o,
     output logic tx_byte_valid_o,
     input logic tx_byte_ready_i,
+    output logic tx_end_o,
 
     // recovery mode
     input recovery_mode_enter_i
@@ -130,4 +131,6 @@ module descriptor_tx #(
   assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) | (flush && tti_tx_queue_rvalid_i);
 
   assign tx_queue_flush_o = (|data_len[1:0] & tx_end) | (|byte_counter[1:0] & tx_end);
+
+  assign tx_end_o = tx_end;
 endmodule
