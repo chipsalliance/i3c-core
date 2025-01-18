@@ -93,8 +93,8 @@ module i3c_wrapper #(
 
 `endif
 
-    // I3C input and output signals are exposed for the purpose of simulation with Verilator
-`ifdef VERILATOR
+    // digital I3C input and output signals are exposed for the purpose of simulation
+`ifdef DIGITAL_IO_I3C
     input  logic scl_i,
     input  logic sda_i,
     output logic scl_o,
@@ -257,7 +257,7 @@ module i3c_wrapper #(
       .cfg_i('0)  // Unused
   );
 
-`ifdef VERILATOR
+`ifdef DIGITAL_IO_I3C
   assign scl_io2phy = scl_i;
   assign sda_io2phy = sda_i;
   assign scl_o = scl_phy2io;

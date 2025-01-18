@@ -3,7 +3,7 @@
 VCS = vcs
 BUILD_DIR = $(I3C_ROOT_DIR)/testbench/build
 
-BUILD_ARGS += +define+VERILATOR -full64 -sverilog
+BUILD_ARGS += +define+DIGITAL_IO_I3C -full64 -sverilog
 BUILD_ARGS += +libext+.sv +libext+.v
 BUILD_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
 BUILD_ARGS += -debug_access+all +memcbk -timescale=1ns/1ps

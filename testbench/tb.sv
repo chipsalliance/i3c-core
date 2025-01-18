@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 `include "i3c_defines.svh"
-`define VERILATOR
+`define DIGITAL_IO_I3C
 
 /*
     Testbench

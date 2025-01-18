@@ -41,6 +41,7 @@ endif
 # Enable processing of #delay statements
 ifeq ($(SIM), verilator)
     COMPILE_ARGS += --timing
+    COMPILE_ARGS += +define+DIGITAL_IO_I3C
     COMPILE_ARGS += -Wall -Wno-fatal
     COMPILE_ARGS += --x-assign unique --x-initial unique
 
@@ -50,10 +51,9 @@ ifeq ($(SIM), verilator)
 endif
 
 ifeq ($(SIM), vcs)
-    COMPILE_ARGS += +define+VERILATOR
     COMPILE_ARGS += +libext+.sv +libext+.v
+    COMPILE_ARGS += +define+DIGITAL_IO_I3C
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
-
     COMPILE_ARGS += -debug_access+all +memcbk
     SIM_ARGS += +dumpon
     EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd
