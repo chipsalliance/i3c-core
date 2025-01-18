@@ -266,7 +266,7 @@ module i3c_wrapper #(
 `else
   logic scl_drive_low, sda_drive_low;
   logic sda_od, scl_od;
-  wire i3c_scl_pp_io, i3c_scl_pp_io;
+  wire i3c_scl_pp_io, i3c_sda_pp_io;
   assign scl_drive_low = ~scl_phy2io;
   assign sda_drive_low = ~sda_phy2io;
 
@@ -275,7 +275,6 @@ module i3c_wrapper #(
       .sda_i(sda_phy2io),
       .scl_o(scl_io2phy),
       .sda_o(sda_io2phy),
-      .sel_od_pp_i(sel_od_pp),
       .scl_io(i3c_scl_pp_io),
       .sda_io(i3c_sda_pp_io)
   );
