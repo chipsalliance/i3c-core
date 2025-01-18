@@ -70,7 +70,7 @@ async def test_rx_desc_stat(dut):
 
     # Setup
     i3c_controller, _, tb = await test_setup(dut)
-    irq = dut.xi3c_wrapper.i3c.irq_o
+    irq = dut.xi3c_wrapper.irq_o
 
     # Enable the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
@@ -106,7 +106,7 @@ async def test_tx_desc_stat(dut):
 
     # Setup
     i3c_controller, _, tb = await test_setup(dut)
-    irq = dut.xi3c_wrapper.i3c.irq_o
+    irq = dut.xi3c_wrapper.irq_o
 
     # Enable the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
@@ -154,7 +154,7 @@ async def test_ibi_done(dut):
 
     # Setup
     i3c_controller, _, tb = await test_setup(dut)
-    irq = dut.xi3c_wrapper.i3c.irq_o
+    irq = dut.xi3c_wrapper.irq_o
 
     target = i3c_controller.add_target(TARGET_ADDRESS)
     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
@@ -210,7 +210,7 @@ async def test_interrupt_force(dut, fields):
 
     # Setup
     i3c_controller, _, tb = await test_setup(dut, timeout_us=0.5)
-    irq = dut.xi3c_wrapper.i3c.irq_o
+    irq = dut.xi3c_wrapper.irq_o
 
     f_ena, f_force, f_sts = fields
 
