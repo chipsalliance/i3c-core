@@ -50,37 +50,8 @@ module i3c_phy (
       .q_o(ctrl_sda_o)
   );
 
-  // Delay controller SDA
-  caliptra_prim_flop_2sync #(
-      .Width(1),
-      .ResetValue(1)
-  ) ctrl_sda_synchronizer (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .d_i(ctrl_sda_i),
-      .q_o(sda_o)
-  );
-
-  // Delay controller SCL
-  caliptra_prim_flop_2sync #(
-      .Width(1),
-      .ResetValue(1)
-  ) ctrl_scl_synchronizer (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .d_i(ctrl_scl_i),
-      .q_o(scl_o)
-  );
-
-  // Delay driver select
-  caliptra_prim_flop_2sync #(
-      .Width(1),
-      .ResetValue(0)
-  ) sel_od_pp_synchronizer (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .d_i(sel_od_pp_i),
-      .q_o(sel_od_pp_o)
-  );
+  assign sda_o = ctrl_sda_i;
+  assign scl_o = ctrl_scl_i;
+  assign sel_od_pp_o = sel_od_pp_i;
 
 endmodule
