@@ -32,20 +32,24 @@ module bus_tx (
     output logic sel_od_pp_o,
     output logic sda_o  // Output I3C SDA bus line
 );
-  logic [12:0] tcount_q;  // current counter for setting delays
-  logic [12:0] tcount_d;  // next counter for setting delays
-  logic        load_tcount;  // indicates counter must be loaded
 
-  logic tx_idle, tx_done;
+  logic [12:0] tcount_q;    // current counter for setting delays
+  logic [12:0] tcount_d;    // next counter for setting delays
+  logic        load_tcount; // indicates counter must be loaded
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (~rst_ni) begin
-      tx_idle_o <= '0;
-      tx_done_o <= '0;
-    end else begin
-      tx_idle_o <= tx_idle;
-      tx_done_o <= tx_done;
-    end
+  // Compute timings
+  logic [13:0] t_sd_i;
+  logic [13:0] t_sd;
+
+  logic        t_sd_z;
+  logic        t_hd_z;
+
+  assign t_sd_i = 13'(t_r_i) + 13'(t_su_dat_i);
+
+  always_ff @(posedge clk_i) begin
+    t_sd   <= t_sd_i;
+    t_sd_z <= t_sd_i == 13'd0;
+    t_hd_z <= t_hd_dat_i == 13'd0;
   end
 
   // Clock counter implementation
@@ -61,20 +65,21 @@ module bus_tx (
     tcount_d = tcount_q;
     if (load_tcount) begin
       unique case (tcount_sel)
-        tSetupData: tcount_d = (13'(t_r_i) + 13'(t_su_dat_i)) > 0 ? (13'(t_r_i) + 13'(t_su_dat_i)) : 13'h0001;
+        tSetupData: tcount_d = t_sd;
         tHoldData:  tcount_d = (13'(t_hd_dat_i) > 0) ? 13'(t_hd_dat_i) : 13'h0001;
         tNoDelay:   tcount_d = 13'h0001;
         default:    tcount_d = 13'h0001;
       endcase
     end else begin
-      if (tcount_q > 13'h0001)
+      if (tcount_q != 13'd0) begin
         tcount_d = tcount_q - 1'b1;
+      end
     end
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : clk_counter
     if (~rst_ni) begin
-      tcount_q <= '1;
+      tcount_q <= '0;
     end else begin
       tcount_q <= tcount_d;
     end
@@ -100,93 +105,82 @@ module bus_tx (
     end
   end
 
+  // State outputs
+  assign tx_idle_o = (state_q == Idle);
+
   always_comb begin : tx_fsm_outputs
-    sda_o = drive_value_i;
-    tx_idle = 1'b0;  // Assign to 1 only in Idle
-    tx_done = 1'b0;  // Assign to 1 only after transmitting a bit
-    load_tcount = 1'b0;
+    sda_o = '1;
+    tx_done_o = '0;  // Assign to 1 only after transmitting a bit
+    load_tcount = '0;
     tcount_sel = tNoDelay;
 
     unique case (state_q)
       Idle: begin
-        sda_o   = 1'b1;  // Do not pull down the bus
-        tx_idle = 1'b1;
-        if (scl_stable_low_i) begin
-          load_tcount = 1'b1;
+        if (drive_i) begin
           tcount_sel  = tSetupData;
+          load_tcount = '1;
         end
       end
       AwaitClockNegedge: begin
-        sda_o = 1'b1;  // Do not pull down the bus
-        load_tcount = 1'b1;
-        tcount_sel = tSetupData;
+        tcount_sel  = tSetupData;
+        load_tcount = '1;
+        if (t_sd_z) begin
+          sda_o = drive_value_i;
+        end
       end
-      SetupData: ;
-      AwaitClockPosedge: ;
+      SetupData: begin
+        if (tcount_q == 13'd1) begin
+          sda_o = drive_value_i;
+        end
+      end
       TransmitData: begin
+        sda_o = drive_value_i;
         if (scl_negedge_i) begin
-          load_tcount = 1'b1;
           tcount_sel  = tHoldData;
+          load_tcount = '1;
+          if (t_hd_z) tx_done_o = '1;
         end
       end
       HoldData: begin
-        tx_done = 1'b1;
-        if (drive_i) begin
-          load_tcount = 1'b1;
-          tcount_sel  = tSetupData;
+        if (tcount_q != 13'd0) begin
+          sda_o = drive_value_i;
+        end else begin
+          tx_done_o = '1;
         end
-      end
-      NextTaskDecision: ;
-      default: begin
-        sda_o   = 1'b1;
-        tx_idle = 1'b0;
-        tx_done = 1'b0;
       end
     endcase
   end
 
+  // State transitions
   always_comb begin : tx_fsm_state
     state_d = state_q;
 
     unique case (state_q)
       Idle: begin
-        state_d = scl_stable_low_i ? SetupData : AwaitClockNegedge;
+        if (drive_i) begin
+          if (scl_stable_low_i | scl_negedge_i)
+            state_d = (t_sd_z) ? TransmitData : SetupData;
+          else
+            state_d = AwaitClockNegedge;
+        end
       end
       AwaitClockNegedge: begin
-        if (scl_negedge_i) begin
-          state_d = SetupData;
-        end
+        if (scl_stable_low_i | scl_negedge_i)
+          state_d = (t_sd_z) ? TransmitData : SetupData;
       end
       SetupData: begin
-        if (tcount_q == 13'd1) begin
-          state_d = AwaitClockPosedge;
-        end
-      end
-      AwaitClockPosedge: begin
-        if (scl_posedge_i) begin
+        if (tcount_q == 13'd1)
           state_d = TransmitData;
-        end
       end
       TransmitData: begin
-        if (scl_negedge_i) begin
-          state_d = HoldData;
-        end
+        if (scl_negedge_i)
+          state_d = (t_hd_z) ? Idle : HoldData;
       end
       HoldData: begin
-        state_d = NextTaskDecision;
-      end
-      NextTaskDecision: begin
-        state_d = SetupData;
-      end
-      default: begin
-        state_d = Idle;
+        if (tcount_q == 13'd0)
+          state_d = Idle;
       end
     endcase
-
-    // Allow to abort and go back to Idle if needed
-    if (~drive_i) begin
-      state_d = Idle;
-    end
   end
 
   assign sel_od_pp_o = sel_od_pp_i;  // Pass through the OD/PP selection
