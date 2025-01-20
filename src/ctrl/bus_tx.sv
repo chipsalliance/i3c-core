@@ -124,7 +124,7 @@ module bus_tx (
       AwaitClockNegedge: begin
         tcount_sel  = tSetupData;
         load_tcount = '1;
-        if (t_sd_z) begin
+        if (t_sd_z & scl_negedge_i) begin
           sda_o = drive_value_i;
         end
       end
@@ -177,7 +177,7 @@ module bus_tx (
           state_d = (t_hd_z) ? Idle : HoldData;
       end
       HoldData: begin
-        if (tcount_q == 13'd0)
+        if (tcount_q == 13'd0 & scl_stable_low_i)
           state_d = Idle;
       end
     endcase
