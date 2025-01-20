@@ -509,7 +509,7 @@ async def test_read(dut):
     # Wait
     await Timer(1, "us")
 
-@cocotb.test(skip=True) # FIXME: Revisit cocotbext-i3c for recovery read !
+@cocotb.test()
 async def test_read_short(dut):
     """
     Tests CSR read(s) using the recovery protocol. Read less data than the
