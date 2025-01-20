@@ -20,7 +20,7 @@ async def reset(dut):
     await RisingEdge(dut.clk_i)
 
 
-async def setup_test(dut):
+async def setup_test(dut, timings=None, scl_clk_ratio=SCL_CLK_RATIO):
     """
     Spawn system clock, reset the module and
     Happy path testing, arbitrarily selected:
@@ -31,17 +31,25 @@ async def setup_test(dut):
 
     clock = Clock(dut.clk_i, CLOCK_PERIOD_NS, units="ns")
     cocotb.start_soon(clock.start())
-    scl_clock = Clock(dut.scl_i, CLOCK_PERIOD_NS * SCL_CLK_RATIO, units="ns")
+    scl_clock = Clock(dut.scl_i, CLOCK_PERIOD_NS * scl_clk_ratio, units="ns")
     cocotb.start_soon(scl_clock.start())
     bus_monitor = BusMonitor(dut)
     bus_monitor.start()
 
+    if timings is None:
+        timings = {
+            "t_r":  2,
+            "t_f":  2,
+            "t_su": 5,
+            "t_hd": 5,
+        }
+
     dut.rst_ni.value = 0
     dut.scl_i.value = 1  # pull-up
-    dut.t_r_i.value = 2
-    dut.t_f_i.value = 2
-    dut.t_su_dat_i.value = 5
-    dut.t_hd_dat_i.value = 5
+    dut.t_r_i.value = timings["t_r"]
+    dut.t_f_i.value = timings["t_f"]
+    dut.t_su_dat_i.value = timings["t_su"]
+    dut.t_hd_dat_i.value = timings["t_hd"]
     dut.drive_i.value = 0
     dut.drive_value_i.value = 0
     dut.scl_negedge_i.value = 0
@@ -63,25 +71,25 @@ async def setup_test(dut):
 async def assert_drive_start(dut, sda_value):
     if not dut.scl_stable_low_i.value:
         await RisingEdge(dut.scl_negedge_i)
-        await ReadOnly()
-        assert dut.tx_idle_o.value == 0
-    else:
-        await ReadOnly()
+    await ReadOnly()
     # SDA should not be driven 1 cycle after SCL negedge
     assert dut.sda_o.value == 1
     assert dut.tx_done_o.value == 0
-    await ClockCycles(dut.clk_i, dut.t_su_dat_i.value + dut.t_r_i.value)
+    await ClockCycles(dut.clk_i, 1 + dut.t_su_dat_i.value + dut.t_r_i.value)
     await ReadOnly()
     assert dut.sda_o.value == sda_value
 
-    await RisingEdge(dut.tx_done_o)
-    # Stop requesting bus tx
+    # Ensure data is correct until tx is finished
+    while True:
+        await ReadOnly()
+        if dut.tx_done_o.value:
+            break
+        assert dut.sda_o.value == sda_value
+        assert dut.tx_idle_o.value == 0
+        await RisingEdge(dut.clk_i)
+
+    await RisingEdge(dut.clk_i)
     dut.drive_i.value = 0
-    await ReadOnly()
-    # SDA should be driven until tx_idle_o is HIGH
-    assert dut.tx_idle_o.value == 0
-    assert dut.sda_o.value == sda_value
-
     await RisingEdge(dut.tx_idle_o)
     await ReadOnly()
     assert dut.sda_o.value == 1
@@ -95,27 +103,46 @@ async def send_bit(dut, value):
     # If SCL is already low, wait setup time only
     if not dut.scl_stable_low_i.value:
         await RisingEdge(dut.scl_negedge_i)
-    await ClockCycles(dut.clk_i, dut.t_su_dat_i.value + dut.t_r_i.value)
+    await ClockCycles(dut.clk_i, 1 + dut.t_su_dat_i.value + dut.t_r_i.value)
 
     # Ensure data is correct until tx is finished
-    while not dut.tx_done_o.value:
-        await RisingEdge(dut.clk_i)
+    while True:
         await ReadOnly()
+        if dut.tx_done_o.value:
+            break
         assert dut.sda_o.value == value
         assert dut.tx_idle_o.value == 0
-
+        await RisingEdge(dut.clk_i)
 
 async def send_byte(dut, data):
     for i in range(8):
-        bit = (data >> i) & 1
+        bit = ((data << i) & 0x80) != 0
         await send_bit(dut, bit)
 
     # Leave ReadOnly phase
     await RisingEdge(dut.clk_i)
 
 
-async def test_bit_tx_negedge(dut, value):
-    await setup_test(dut)
+async def test_bit_tx_negedge(dut, value, timings, ratio):
+
+    if timings == "default":
+        timings = None
+    elif timings == "1":
+        timings = {
+            "t_r":  1,
+            "t_f":  1,
+            "t_su": 1,
+            "t_hd": 1,
+        }
+    elif timings == "0":
+        timings = {
+            "t_r":  0,
+            "t_f":  0,
+            "t_su": 0,
+            "t_hd": 0,
+        }
+
+    await setup_test(dut, timings, ratio)
 
     await FallingEdge(dut.scl_i)
     dut.drive_i.value = 1
@@ -127,6 +154,8 @@ async def test_bit_tx_negedge(dut, value):
 
 tf = TestFactory(test_function=test_bit_tx_negedge)
 tf.add_option(name="value", optionlist=[0, 1])
+tf.add_option(name="timings", optionlist=["default", "1", "0"])
+tf.add_option(name="ratio", optionlist=[SCL_CLK_RATIO, 10])
 tf.generate_tests()
 
 
@@ -183,7 +212,7 @@ tf.generate_tests()
 
 @cocotb.test()
 async def test_byte_tx(dut):
-    data = 0xAF
+    data = 0xAC
     await setup_test(dut)
 
     # Begin driving bus request after SCL negedge
