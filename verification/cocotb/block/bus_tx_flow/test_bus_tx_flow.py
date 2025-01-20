@@ -75,44 +75,20 @@ async def assert_bit_request(dut, sda_value):
     await ReadOnly()
     assert dut.sda_o.value == sda_value
 
-    await RisingEdge(dut.bus_tx_done_o)
-    # Stop requesting bus tx
-    dut.req_bit_i.value = 0
-    await ReadOnly()
-    # SDA should be driven until tx_idle_o is HIGH
-    assert dut.bus_tx_idle_o.value == 0
-    assert dut.sda_o.value == sda_value
+    # Ensure data is correct until tx is finished
+    while True:
+        await ReadOnly()
+        if dut.bus_tx_done_o.value:
+            break
+        assert dut.sda_o.value == sda_value
+        assert dut.bus_tx_idle_o.value == 0
+        await RisingEdge(dut.clk_i)
 
+    await RisingEdge(dut.clk_i)
+    dut.req_bit_i.value = 0
     await RisingEdge(dut.bus_tx_idle_o)
     await ReadOnly()
     assert dut.sda_o.value == 1
-
-
-async def send_bit(dut, value):
-    # Ensure we're out of ReadOnly phase and setup data
-    await RisingEdge(dut.clk_i)
-    dut.drive_value_i.value = value
-
-    # If SCL is already low, wait setup time only
-    if not dut.scl_stable_low_i.value:
-        await RisingEdge(dut.scl_negedge_i)
-    await ClockCycles(dut.clk_i, dut.t_su_dat_i.value + dut.t_r_i.value)
-
-    # Ensure data is correct until tx is finished
-    while not dut.tx_done_o.value:
-        await RisingEdge(dut.clk_i)
-        await ReadOnly()
-        assert dut.sda_o.value == value
-        assert dut.tx_idle_o.value == 0
-
-
-async def send_byte(dut, data):
-    for i in range(8):
-        bit = (data >> i) & 1
-        await send_bit(dut, bit)
-
-    # Leave ReadOnly phase
-    await RisingEdge(dut.clk_i)
 
 
 async def test_bit_tx_negedge(dut, value):
