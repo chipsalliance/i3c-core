@@ -16,6 +16,7 @@ ahb:
   FrontendBusInterface: "AHB"
   FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
+  DisableInputFF: True
 
 axi:
   CmdFifoDepth: 64
@@ -31,3 +32,4 @@ axi:
   FrontendBusDataWidth: 32
   FrontendBusUserWidth: 32
   FrontendBusIdWidth: 8
+  DisableInputFF: True

@@ -91,6 +91,10 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 128
+        },
+        "DisableInputFF": {
+            "description": "Disable input synchronization flip-flops on SDA and SCL lines.",
+            "type": "boolean"
         }
     },
     "if": {
