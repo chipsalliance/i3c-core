@@ -28,7 +28,7 @@ async def timeout_task(timeout_us=5):
     raise TimeoutError("Timeout!")
 
 
-async def test_setup(dut):
+async def test_setup(dut, fclk=200.0, fbus=12.5):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -36,13 +36,16 @@ async def test_setup(dut):
     cocotb.log.setLevel(logging.INFO)
     cocotb.start_soon(timeout_task(200))
 
+    dut._log.info(f"fclk = {fclk:.3f} MHz")
+    dut._log.info(f"fbus = {fbus:.3f} MHz")
+
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
         sda_o=dut.sda_sim_ctrl_i,
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=fbus*1e6,
     )
 
     i3c_target = I3CTarget(  # noqa
@@ -51,14 +54,39 @@ async def test_setup(dut):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=fbus*1e6,
     )
 
     tb = I3CTopTestInterface(dut)
-    await tb.setup()
+    await tb.setup(fclk)
 
     # Configure the top level
-    await boot_init(tb)
+
+    # Calculate timings. See MIPI I3C basic spec v1.1.1 p.368
+    tclk = 1000.0 / fclk # [ns]
+    tcr  = 150.0  / fbus # [ns]
+    thd  = tcr + 3 # [ns]
+    tsu  = 3.0 # [ns]
+
+#    timings = {
+#        "T_R":      max(0, int(ceil(tcr / tclk))),
+#        "T_F":      max(0, int(ceil(tcr / tclk))),
+#        "T_HD_DAT": max(0, int(ceil(thd / tclk))),
+#        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
+#    }
+
+    # TODO: For now test with all timings set to 0
+    timings = {
+        "T_R":      0,
+        "T_F":      0,
+        "T_HD_DAT": 0,
+        "T_SU_DAT": 0,
+    }
+
+    for k, v in timings.items():
+        dut._log.info(f"{k} = {v}")
+
+    await boot_init(tb, timings)
 
     # Set TTI queues thresholds
     await tb.write_csr_field(
