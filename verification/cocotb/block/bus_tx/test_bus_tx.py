@@ -81,12 +81,12 @@ async def assert_drive_start(dut, sda_value):
 
     # Ensure data is correct until tx is finished
     while True:
-        await ReadOnly()
         if dut.tx_done_o.value:
             break
         assert dut.sda_o.value == sda_value
         assert dut.tx_idle_o.value == 0
         await RisingEdge(dut.clk_i)
+        await ReadOnly()
 
     await RisingEdge(dut.clk_i)
     dut.drive_i.value = 0

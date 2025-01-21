@@ -77,12 +77,12 @@ async def assert_bit_request(dut, sda_value):
 
     # Ensure data is correct until tx is finished
     while True:
-        await ReadOnly()
         if dut.bus_tx_done_o.value:
             break
         assert dut.sda_o.value == sda_value
         assert dut.bus_tx_idle_o.value == 0
         await RisingEdge(dut.clk_i)
+        await ReadOnly()
 
     await RisingEdge(dut.clk_i)
     dut.req_bit_i.value = 0
