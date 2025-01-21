@@ -60,9 +60,6 @@ module bus_monitor
     end
   end
 
-  assign scl = scl_i_q;
-  assign sda = sda_i_q;
-
   assign scl_negedge_i = scl_i_q && !scl_i;
   assign scl_posedge_i = !scl_i_q && scl_i;
   assign sda_negedge_i = sda_i_q && !sda_i;
@@ -81,7 +78,7 @@ module bus_monitor
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(scl_negedge_i),
-      .line(scl),
+      .line(scl_i_q),
       .delay_count(t_f_i),
       .detect(scl_negedge)
   );
@@ -90,7 +87,7 @@ module bus_monitor
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(scl_posedge_i),
-      .line(scl),
+      .line(scl_i_q),
       .delay_count(t_r_i),
       .detect(scl_posedge)
   );
@@ -101,7 +98,7 @@ module bus_monitor
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(sda_negedge_i),
-      .line(sda),
+      .line(sda_i_q),
       .delay_count(t_f_i),
       .detect(sda_negedge)
   );
@@ -110,7 +107,7 @@ module bus_monitor
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .trigger(sda_posedge_i),
-      .line(sda),
+      .line(sda_i_q),
       .delay_count(t_r_i),
       .detect(sda_posedge)
   );
@@ -118,7 +115,7 @@ module bus_monitor
   stable_high_detector stable_detector_sda_high (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .line_i(sda),
+      .line_i(sda_i_q),
       .delay_count_i(t_r_i),
       .stable_o(sda_stable_high)
   );
@@ -126,7 +123,7 @@ module bus_monitor
   stable_high_detector stable_detector_scl_high (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .line_i(scl),
+      .line_i(scl_i_q),
       .delay_count_i(t_r_i),
       .stable_o(scl_stable_high)
   );
@@ -134,10 +131,41 @@ module bus_monitor
   stable_high_detector stable_detector_scl_low (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .line_i(!scl),
+      .line_i(!scl_i_q),
       .delay_count_i(t_f_i),
       .stable_o(scl_stable_low)
   );
+
+  // Synchronize input SDA/SCL to edge detectors
+  logic sda_r;
+  logic scl_r;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      sda_r <= '1;
+    end else begin
+      if (sda_posedge) begin
+        sda_r <= '1;
+      end else if(sda_negedge) begin
+        sda_r <= '0;
+      end
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      scl_r <= '1;
+    end else begin
+      if (scl_posedge) begin
+        scl_r <= '1;
+      end else if(scl_negedge) begin
+        scl_r <= '0;
+      end
+    end
+  end
+
+  assign sda = sda_r | sda_posedge;
+  assign scl = scl_r | scl_posedge;
 
   // Start and Stop detection
   always_ff @(posedge clk_i or negedge rst_ni) begin

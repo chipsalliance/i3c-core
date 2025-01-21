@@ -572,6 +572,7 @@ module controller_standby_i3c
       .bus_rx_req_bit_o  (ibi_bus_rx_req_bit),
       .bus_rx_req_value_i(ibi_bus_rx_data),
 
+      .t_hd_dat_i(t_hd_dat_i),
       .sda_o(ibi_sda)
   );
 
