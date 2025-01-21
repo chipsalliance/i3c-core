@@ -18,8 +18,7 @@ module controller_standby_i3c
     input logic rst_ni,
 
     // Interface to SDA/SCL
-    input  logic ctrl_scl_i,
-    input  logic ctrl_sda_i,
+    input bus_state_t ctrl_bus_i,
     output logic ctrl_scl_o,
     output logic ctrl_sda_o,
     output logic phy_sel_od_pp_o,
@@ -55,11 +54,6 @@ module controller_standby_i3c
     input logic [TtiIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
     output logic ibi_queue_rready_o,
     input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
-
-    // Bus condition detection
-    output logic bus_start_o,
-    output logic bus_rstart_o,
-    output logic bus_stop_o,
 
     // I3C received address (with RnW# bit) for the recovery handler
     output logic [7:0] bus_addr_o,
@@ -138,14 +132,7 @@ module controller_standby_i3c
   assign i3c_standby_en = i3c_standby_en_i;
 
   // Bus events detection
-  logic bus_start_det;
-  logic bus_rstart_det;
-  logic bus_stop_det;
   logic bus_timeout;
-  logic scl_negedge;
-  logic scl_posedge;
-  logic sda_negedge;
-  logic sda_posedge;
 
   // Target control signals
   logic target_idle;
@@ -253,10 +240,6 @@ module controller_standby_i3c
   logic ccc_valid;
   logic is_ccc_done;
   logic is_hotjoin_done;
-
-  // Bus monitor
-  logic scl_stable_low;
-  logic scl_stable_high;
 
   //
   logic tx_pr_start;
@@ -407,9 +390,9 @@ module controller_standby_i3c
       .clk_i,
       .rst_ni,
       .target_enable_i      (i3c_standby_en),
-      .bus_start_det_i      (bus_start_det),
-      .bus_rstart_det_i     (bus_rstart_det),
-      .bus_stop_det_i       (bus_stop_det),
+      .bus_start_det_i      (ctrl_bus_i.start_det),
+      .bus_rstart_det_i     (ctrl_bus_i.rstart_det),
+      .bus_stop_det_i       (ctrl_bus_i.stop_det),
       .bus_timeout_i        (bus_timeout),
       .target_idle_o        (target_idle),
       .target_transmitting_o(target_transmitting),
@@ -466,10 +449,10 @@ module controller_standby_i3c
       .is_hotjoin_done_i          (is_hotjoin_done),
       .last_addr_o                (bus_addr_o),
       .last_addr_valid_o          (bus_addr_valid_o),
-      .scl_negedge_i              (scl_negedge),
-      .scl_posedge_i              (scl_posedge),
-      .sda_negedge_i              (sda_negedge),
-      .sda_posedge_i              (sda_posedge),
+      .scl_negedge_i              (ctrl_bus_i.scl.neg_edge),
+      .scl_posedge_i              (ctrl_bus_i.scl.pos_edge),
+      .sda_negedge_i              (ctrl_bus_i.sda.neg_edge),
+      .sda_posedge_i              (ctrl_bus_i.sda.pos_edge),
       .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err),
       .virtual_device_tx_o        (virtual_device_tx_o),
@@ -483,9 +466,9 @@ module controller_standby_i3c
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),
-      .bus_start_det_i           (bus_start_det),
-      .bus_rstart_det_i          (bus_rstart_det),
-      .bus_stop_det_i            (bus_stop_det),
+      .bus_start_det_i           (ctrl_bus_i.start_det),
+      .bus_rstart_det_i          (ctrl_bus_i.rstart_det),
+      .bus_stop_det_i            (ctrl_bus_i.stop_det),
       .bus_tx_done_i             (ccc_bus_tx_done),
       .bus_tx_req_byte_o         (ccc_bus_tx_req_byte),
       .bus_tx_req_bit_o          (ccc_bus_tx_req_bit),
@@ -573,10 +556,10 @@ module controller_standby_i3c
       .ibi_byte_last_i (ibi_last_byte),
       .ibi_byte_err_o  (),                 // FIXME
 
-      .scl_negedge_i  (scl_negedge),
-      .scl_posedge_i  (scl_posedge),
+      .scl_negedge_i  (ctrl_bus_i.scl.neg_edge),
+      .scl_posedge_i  (ctrl_bus_i.scl.pos_edge),
       .bus_available_i(bus_available),
-      .bus_stop_i     (bus_stop_det),
+      .bus_stop_i     (ctrl_bus_i.stop_det),
 
       .bus_tx_done_i     (ibi_bus_tx_done),
       .bus_tx_req_byte_o (ibi_bus_tx_req_byte),
@@ -602,9 +585,9 @@ module controller_standby_i3c
       .t_r_i,
       .t_su_dat_i,
       .t_hd_dat_i,
-      .scl_negedge_i   (scl_negedge),
-      .scl_posedge_i   (scl_posedge),
-      .scl_stable_low_i(scl_stable_low),
+      .scl_negedge_i   (ctrl_bus_i.scl.neg_edge),
+      .scl_posedge_i   (ctrl_bus_i.scl.pos_edge),
+      .scl_stable_low_i(ctrl_bus_i.scl.stable_low),
       .req_byte_i      (bus_tx_req_byte),
       .req_bit_i       (bus_tx_req_bit),
       .req_value_i     (bus_tx_req_value),
@@ -620,9 +603,9 @@ module controller_standby_i3c
   bus_rx_flow xbus_rx_flow (
       .clk_i,
       .rst_ni,
-      .scl_posedge_i    (scl_posedge),
-      .scl_stable_high_i(scl_stable_high),
-      .sda_i            (ctrl_sda_i),
+      .scl_posedge_i    (ctrl_bus_i.scl.pos_edge),
+      .scl_stable_high_i(ctrl_bus_i.scl.stable_high),
+      .sda_i            (ctrl_bus_i.sda.value),
       .rx_req_bit_i     (bus_rx_req_bit),
       .rx_req_byte_i    (bus_rx_req_byte),
       .rx_data_o        (bus_rx_data),
@@ -631,24 +614,11 @@ module controller_standby_i3c
       .error_o          (bus_rx_error)
   );
 
-  bus_monitor xbus_monitor (
+  i3c_bus_monitor xbus_monitor (
       .clk_i,
       .rst_ni,
       .enable_i             (i3c_standby_en),
-      .scl_i                (ctrl_scl_i),
-      .sda_i                (ctrl_sda_i),
-      .t_hd_dat_i,
-      .t_r_i,
-      .t_f_i,
-      .scl_negedge_o        (scl_negedge),
-      .scl_posedge_o        (scl_posedge),
-      .sda_negedge_o        (sda_negedge),
-      .sda_posedge_o        (sda_posedge),
-      .scl_stable_low_o     (scl_stable_low),
-      .scl_stable_high_o    (scl_stable_high),
-      .start_det_o          (bus_start_det),
-      .rstart_det_o         (bus_rstart_det),
-      .stop_det_o           (bus_stop_det),
+      .bus_i                (ctrl_bus_i),
       .is_in_hdr_mode_i     (is_in_hdr_mode),
       .hdr_exit_detect_o    (hdr_exit_detect),
       .target_reset_detect_o(target_reset_detect)
@@ -658,7 +628,7 @@ module controller_standby_i3c
       .clk_i,
       .rst_ni,
       .enable_i         (i3c_standby_en),
-      .restart_counter_i(bus_stop_det),
+      .restart_counter_i(ctrl_bus_i.stop_det),
       .t_bus_free_i     (t_bus_free_i),
       .t_bus_idle_i     (t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
@@ -733,11 +703,6 @@ module controller_standby_i3c
   );
 
   assign tx_host_nack_o = tx_host_nack;
-
-  // Expose bus condition detection
-  assign bus_start_o = bus_start_det;
-  assign bus_rstart_o = bus_rstart_det;
-  assign bus_stop_o = bus_stop_det;
 
   logic peripheral_reset;
   logic escalated_reset;

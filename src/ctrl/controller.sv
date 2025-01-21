@@ -281,10 +281,27 @@ module controller
   logic [2:0] ibi_retry_num;
 
   logic recovery_mode;
+
+  // I2C/I3C Bus state monitor
+  bus_state_t bus;
+  bus_monitor xbus_monitor (
+    .clk_i,
+    .rst_ni,
+
+    .sda_i,
+    .scl_i,
+
+    .enable_i   (1'b1),
+    .t_hd_dat_i (t_hd_dat),
+    .t_r_i      (t_r),
+    .t_f_i      (t_f),
+
+    .state_o    (bus)
+  );
+
   // 4:1 multiplexer for signals between PHY and controllers.
   // Needed, because there are 4 controllers in the design (i2c/i3c + active/standby).
-  logic ctrl_scl_i[4];
-  logic ctrl_sda_i[4];
+  bus_state_t ctrl_bus_i[4];
   logic ctrl_scl_o[4];
   logic ctrl_sda_o[4];
   logic ctrl_sel_od_pp_i[4];
@@ -293,12 +310,19 @@ module controller
   always_comb begin : mux_4_to_1
     scl_o = ctrl_scl_o[phy_mux_select];
     sda_o = ctrl_sda_o[phy_mux_select];
-    ctrl_scl_i[phy_mux_select] = '0;
-    ctrl_sda_i[phy_mux_select] = '0;
-    ctrl_scl_i[phy_mux_select] = scl_i;
-    ctrl_sda_i[phy_mux_select] = sda_i;
     sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];
-    recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+
+    // Default
+    for (int i=0; i<4; i++) begin
+        ctrl_bus_i[i] = '0;
+        ctrl_bus_i[i].sda.value = '1;
+        ctrl_bus_i[i].scl.value = '1;
+        ctrl_bus_i[i].sda.stable_high = '1;
+        ctrl_bus_i[i].scl.stable_high = '1;
+    end
+
+    // Muxed
+    ctrl_bus_i[phy_mux_select] = bus;
     end
 
   configuration xconfiguration (
@@ -344,13 +368,13 @@ module controller
       .mrl_i                           (mrl)
   );
 
+  assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
 
   // Active controller
   controller_active xcontroller_active (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .ctrl_scl_i(ctrl_scl_i[0:1]),
-      .ctrl_sda_i(ctrl_sda_i[0:1]),
+      .ctrl_bus_i(ctrl_bus_i[0:1]),
       .ctrl_scl_o(ctrl_scl_o[0:1]),
       .ctrl_sda_o(ctrl_sda_o[0:1]),
       .phy_sel_od_pp_o(ctrl_sel_od_pp_i[0:1]),
@@ -428,8 +452,7 @@ module controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .ctrl_scl_i(ctrl_scl_i[2:3]),
-      .ctrl_sda_i(ctrl_sda_i[2:3]),
+      .ctrl_bus_i(ctrl_bus_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
       .ctrl_sda_o(ctrl_sda_o[2:3]),
       .phy_sel_od_pp_o(ctrl_sel_od_pp_i[2:3]),

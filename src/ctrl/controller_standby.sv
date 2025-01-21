@@ -32,8 +32,7 @@ module controller_standby
     input logic rst_ni,
 
     // Interface to SDA/SCL
-    input logic ctrl_scl_i[2],
-    input logic ctrl_sda_i[2],
+    input bus_state_t ctrl_bus_i[2],
     output logic ctrl_scl_o[2],
     output logic ctrl_sda_o[2],
     output logic phy_sel_od_pp_o[2],
@@ -261,8 +260,8 @@ module controller_standby
   ) xcontroller_standby_i2c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .ctrl_scl_i(ctrl_scl_i[0]),
-      .ctrl_sda_i(ctrl_sda_i[0]),
+      .ctrl_scl_i(ctrl_bus_i[0].scl.value),
+      .ctrl_sda_i(ctrl_bus_i[0].sda.value),
       .ctrl_scl_o(ctrl_scl_o[0]),
       .ctrl_sda_o(ctrl_sda_o[0]),
       .phy_sel_od_pp_o(phy_sel_od_pp_o[0]),
@@ -341,8 +340,7 @@ module controller_standby
   ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .ctrl_scl_i(ctrl_scl_i[1]),
-      .ctrl_sda_i(ctrl_sda_i[1]),
+      .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
       .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
@@ -366,9 +364,6 @@ module controller_standby
       .ibi_queue_depth_i(ibi_queue_depth_i),
       .ibi_queue_rready_o(i3c_ibi_queue_rready_o),
       .ibi_queue_rdata_i(ibi_queue_rdata_i),
-      .bus_start_o(i3c_bus_start_o),
-      .bus_rstart_o(i3c_bus_rstart_o),
-      .bus_stop_o(i3c_bus_stop_o),
       .bus_addr_o(i3c_bus_addr_o),
       .bus_addr_valid_o(i3c_bus_addr_valid_o),
       .i3c_standby_en_i(i3c_standby_en_i),
@@ -429,5 +424,11 @@ module controller_standby
       .virtual_device_tx_done_i(virtual_device_tx_done_i),
       .recovery_mode_i(recovery_mode_i)
   );
+
+  always_comb begin
+    i3c_bus_start_o   = ctrl_bus_i[1].start_det;
+    i3c_bus_rstart_o  = ctrl_bus_i[1].rstart_det;
+    i3c_bus_stop_o    = ctrl_bus_i[1].stop_det;
+  end
 
 endmodule

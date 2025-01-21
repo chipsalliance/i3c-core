@@ -32,8 +32,7 @@ module controller_active
     input logic rst_ni,
 
     // Interface to SDA/SCL
-    input logic ctrl_scl_i[2],
-    input logic ctrl_sda_i[2],
+    input bus_state_t ctrl_bus_i[2],
     output logic ctrl_scl_o[2],
     output logic ctrl_sda_o[2],
     output logic phy_sel_od_pp_o[2],
@@ -223,9 +222,9 @@ module controller_active
   i2c_controller_fsm i2c_fsm (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
-      .scl_i (ctrl_scl_i[0]),
+      .scl_i (ctrl_bus_i[0].scl.value),
       .scl_o (ctrl_scl_o[0]),
-      .sda_i (ctrl_sda_i[0]),
+      .sda_i (ctrl_bus_i[0].sda.value),
       .sda_o (ctrl_sda_o[0]),
 
       // These should be controlled by the flow FSM
@@ -281,8 +280,8 @@ module controller_active
   i3c_controller_fsm xi3c_controller_fsm (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .ctrl_scl_i(ctrl_scl_i[1]),
-      .ctrl_sda_i(ctrl_sda_i[1]),
+      .ctrl_scl_i(ctrl_bus_i[1].scl.value),
+      .ctrl_sda_i(ctrl_bus_i[1].sda.value),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1])
   );

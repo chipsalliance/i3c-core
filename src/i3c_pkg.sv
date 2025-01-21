@@ -10,6 +10,24 @@ package i3c_pkg;
   localparam int unsigned DatAw = $clog2(`DAT_DEPTH);
   localparam int unsigned DctAw = $clog2(`DCT_DEPTH);
 
+  // Bus signal state
+  typedef struct packed {
+    logic value;
+    logic pos_edge;
+    logic neg_edge;
+    logic stable_high;
+    logic stable_low;
+  } signal_state_t;
+
+  // I2C/I3C bus state
+  typedef struct packed {
+    signal_state_t sda;
+    signal_state_t scl;
+    logic start_det;
+    logic rstart_det;
+    logic stop_det;
+  } bus_state_t;
+
   // Memory port to DAT table
   typedef struct packed {
     logic             req;
