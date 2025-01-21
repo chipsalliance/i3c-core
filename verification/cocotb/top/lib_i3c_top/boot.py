@@ -52,7 +52,7 @@ async def common_procedure(tb: I3CTopTestInterface):
     return core_config
 
 
-async def boot_init(tb: I3CTopTestInterface):
+async def boot_init(tb: I3CTopTestInterface, timings = None):
     """
     Boot sequence model should match the description in "Boot and Initialization" chapter of the documentation.
 
@@ -62,11 +62,23 @@ async def boot_init(tb: I3CTopTestInterface):
 
     # Write configuration to the device
 
-    # Timing configuration
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr, 0)
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_F_REG.base_addr, 0)
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG.base_addr, 0)
-    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG.base_addr, 0)
+    # Timing configuration. When none set all to zeros
+    if timings is None:
+        timings = {
+            "T_R":  0,
+            "T_F":  0,
+            "T_HD_DAT": 0,
+            "T_SU_DAT": 0,
+        }
+
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr,
+        timings["T_R"])
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_F_REG.base_addr,
+        timings["T_F"])
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG.base_addr,
+        timings["T_HD_DAT"])
+    await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG.base_addr,
+        timings["T_SU_DAT"])
 
     await setup_hci_thresholds(tb)
 
