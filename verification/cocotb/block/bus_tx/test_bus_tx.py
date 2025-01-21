@@ -69,11 +69,19 @@ async def setup_test(dut, timings=None, scl_clk_ratio=SCL_CLK_RATIO):
 
 
 async def assert_drive_start(dut, sda_value):
-    if not dut.scl_stable_low_i.value:
-        await RisingEdge(dut.scl_negedge_i)
+    while not dut.scl_stable_low_i.value:
+        await RisingEdge(dut.clk_i)
     await ReadOnly()
-    # SDA should not be driven 1 cycle after SCL negedge
-    assert dut.sda_o.value == 1
+
+    t_r  = int(dut.t_r_i.value)
+    t_su = int(dut.t_su_dat_i.value)
+    if (t_r + t_su) == 0:
+        # SDA should be driven 1 cycle after SCL negedge
+        assert dut.sda_o.value == sda_value
+    else:
+        # SDA should not be driven 1 cycle after SCL negedge
+        assert dut.sda_o.value == 1
+
     assert dut.tx_done_o.value == 0
     await ClockCycles(dut.clk_i, 1 + dut.t_su_dat_i.value + dut.t_r_i.value)
     await ReadOnly()
