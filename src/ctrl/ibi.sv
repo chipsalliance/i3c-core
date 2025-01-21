@@ -59,6 +59,7 @@ module ibi (
     input logic [7:0] bus_rx_req_value_i,
 
     // Bus drive interface
+    input  logic [19:0] t_hd_dat_i,
     output logic sda_o
 );
 
@@ -73,6 +74,8 @@ module ibi (
   ibi_status_e       ibi_status;
   logic        [2:0] ibi_retry_cnt;
   logic              ibi_can_retry;
+
+  logic [19:0] tcount;
 
   // NACK
   logic              bus_rx_req_nack;
@@ -124,7 +127,12 @@ module ibi (
 
         DriveStart:
         if (bus_stop_i) state_q <= Done;
-        else if (scl_negedge_i) state_q <= DriveAddr;
+        else begin
+          if (t_hd_dat_i == 20'd0 && scl_negedge_i)
+              state_q <= DriveAddr;
+          if (tcount == 20'd0)
+              state_q <= DriveAddr;
+        end
 
         DriveAddr:
         if (bus_stop_i) state_q <= Done;
@@ -156,6 +164,17 @@ module ibi (
 
   // SDA pull
   assign sda_o = !(state_q == DriveStart);
+
+  // SCL fall time counter
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      tcount <= 20'(-1);
+    else begin
+      if (state_q == DriveStart && scl_negedge_i)
+        tcount <= t_hd_dat_i - 20'd1;
+      else if (tcount != 20'(-1))
+        tcount <= tcount - 20'd1;
+    end
 
   // Bus tx and rx control
   always_comb begin

@@ -173,7 +173,7 @@ module bus_monitor
       start_det_pending <= 1'b0;
     end else if (start_det_trigger) begin
       start_det_pending <= 1'b1;
-    end else if (!enable || !scl_i || start_det || stop_det_trigger) begin
+    end else if (!enable || !scl || start_det || stop_det_trigger) begin
       start_det_pending <= 1'b0;
     end
   end
@@ -183,7 +183,7 @@ module bus_monitor
       stop_det_pending <= 1'b0;
     end else if (stop_det_trigger) begin
       stop_det_pending <= 1'b1;
-    end else if (!enable || !scl_i || stop_det || start_det_trigger) begin
+    end else if (!enable || !scl || stop_det || start_det_trigger) begin
       stop_det_pending <= 1'b0;
     end
   end
