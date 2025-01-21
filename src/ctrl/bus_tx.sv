@@ -33,23 +33,23 @@ module bus_tx (
     output logic sda_o  // Output I3C SDA bus line
 );
 
-  logic [12:0] tcount_q;    // current counter for setting delays
-  logic [12:0] tcount_d;    // next counter for setting delays
+  logic [19:0] tcount_q;    // current counter for setting delays
+  logic [19:0] tcount_d;    // next counter for setting delays
   logic        load_tcount; // indicates counter must be loaded
 
   // Compute timings
-  logic [13:0] t_sd_i;
-  logic [13:0] t_sd;
+  logic [19:0] t_sd_i;
+  logic [19:0] t_sd;
 
   logic        t_sd_z;
   logic        t_hd_z;
 
-  assign t_sd_i = 13'(t_r_i) + 13'(t_su_dat_i);
+  assign t_sd_i = t_r_i + t_su_dat_i;
 
   always_ff @(posedge clk_i) begin
     t_sd   <= t_sd_i;
-    t_sd_z <= t_sd_i == 13'd0;
-    t_hd_z <= t_hd_dat_i == 13'd0;
+    t_sd_z <= t_sd_i == 20'd0;
+    t_hd_z <= t_hd_dat_i == 20'd0;
   end
 
   // Clock counter implementation
@@ -66,12 +66,12 @@ module bus_tx (
     if (load_tcount) begin
       unique case (tcount_sel)
         tSetupData: tcount_d = t_sd;
-        tHoldData:  tcount_d = (13'(t_hd_dat_i) > 0) ? 13'(t_hd_dat_i) : 13'h0001;
-        tNoDelay:   tcount_d = 13'h0001;
-        default:    tcount_d = 13'h0001;
+        tHoldData:  tcount_d = (t_hd_dat_i > 0) ? t_hd_dat_i : 20'd1;
+        tNoDelay:   tcount_d = 20'd1;
+        default:    tcount_d = 20'd1;
       endcase
     end else begin
-      if (tcount_q != 13'd0) begin
+      if (tcount_q != 20'd0) begin
         tcount_d = tcount_q - 1'b1;
       end
     end
@@ -89,10 +89,8 @@ module bus_tx (
     Idle,
     AwaitClockNegedge,
     SetupData,
-    AwaitClockPosedge,
     TransmitData,
-    HoldData,
-    NextTaskDecision
+    HoldData
   } tx_state_e;
 
   tx_state_e state_d, state_q;
@@ -129,7 +127,7 @@ module bus_tx (
         end
       end
       SetupData: begin
-        if (tcount_q == 13'd1) begin
+        if (tcount_q == 20'd1) begin
           sda_o = drive_value_i;
         end
       end
@@ -142,7 +140,7 @@ module bus_tx (
         end
       end
       HoldData: begin
-        if (tcount_q != 13'd0) begin
+        if (tcount_q != 20'd0) begin
           sda_o = drive_value_i;
         end else begin
           tx_done_o = '1;
@@ -169,7 +167,7 @@ module bus_tx (
           state_d = (t_sd_z) ? TransmitData : SetupData;
       end
       SetupData: begin
-        if (tcount_q == 13'd1)
+        if (tcount_q == 20'd1)
           state_d = TransmitData;
       end
       TransmitData: begin
@@ -177,7 +175,7 @@ module bus_tx (
           state_d = (t_hd_z) ? Idle : HoldData;
       end
       HoldData: begin
-        if (tcount_q == 13'd0 & scl_stable_low_i)
+        if (tcount_q == 20'd0 & scl_stable_low_i)
           state_d = Idle;
       end
     endcase
