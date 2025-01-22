@@ -73,8 +73,9 @@ class FrontBusTestInterface:
         self.rst_n = rst_n
         self.reg_map = reg_map
 
-    async def register_test_interfaces(self):
-        await cocotb.start(setup_dut(self.clk, self.rst_n, (2, "ns")))
+    async def register_test_interfaces(self, fclk=500.0):
+        tclk = int(1e6 / fclk + 0.5)
+        await cocotb.start(setup_dut(self.clk, self.rst_n, (tclk, "ps")))
 
     async def read_csr(
         self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"
@@ -124,7 +125,7 @@ class AHBTestInterface(FrontBusTestInterface):
         # Cocotb-ahb-specific construct for simulation purposes
         self.wrapper = InterconnectWrapper()
 
-    async def register_test_interfaces(self):
+    async def register_test_interfaces(self, *args, **kw):
         # Clocks & resets
         self.AHBManager.register_clock(self.clk).register_reset(self.rst_n, True)
         self.interconnect.register_clock(self.clk).register_reset(self.rst_n, True)
@@ -143,7 +144,7 @@ class AHBTestInterface(FrontBusTestInterface):
         await cocotb.start(self.AHBManager.start())
         await cocotb.start(self.wrapper.start())
 
-        await super().register_test_interfaces()
+        await super().register_test_interfaces(*args, **kw)
 
     async def read_csr(
         self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"
@@ -182,8 +183,8 @@ class AXITestInterface(FrontBusTestInterface):
         axi_bus = AxiBus.from_entity(self.dut)
         self.axi_m = AxiMaster(axi_bus, self.clk, self.rst_n, reset_active_level=False)
 
-    async def register_test_interfaces(self):
-        await super().register_test_interfaces()
+    async def register_test_interfaces(self, *args, **kw):
+        await super().register_test_interfaces(*args, **kw)
         # TODO: Investigate if there's a neater solution
         # wait before issuing any transactions:
         # workaround for cocotbext-axi issuing transactions during reset

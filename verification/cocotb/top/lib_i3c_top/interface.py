@@ -26,9 +26,6 @@ class I3CTopTestInterface:
         self.write_csr_field = self.busIf.write_csr_field
 
     async def setup(self, fclk=500.0):
-        await self.busIf.register_test_interfaces()
-        clock = Clock(self.clk, 1000.0 / fclk, units="ns")
-        cocotb.start_soon(clock.start())
-
+        await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)
