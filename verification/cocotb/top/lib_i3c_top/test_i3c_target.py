@@ -28,7 +28,7 @@ async def timeout_task(timeout_us=5):
     raise TimeoutError("Timeout!")
 
 
-async def test_setup(dut, fclk=200.0, fbus=12.5):
+async def test_setup(dut, fclk=1000.0/6.0, fbus=12.5):
     """
     Sets up controller, target models and top-level core interface
     """
