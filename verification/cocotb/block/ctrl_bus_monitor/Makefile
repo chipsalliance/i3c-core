@@ -18,6 +18,6 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/ctrl/edge_detector.sv \
     $(SRC_DIR)/ctrl/stable_high_detector.sv \
     $(SRC_DIR)/ctrl/bus_monitor.sv \
-    bus_monitor_wrapper.sv
+    $(TEST_DIR)/bus_monitor_wrapper.sv
 
 include $(TEST_DIR)/../block_common.mk

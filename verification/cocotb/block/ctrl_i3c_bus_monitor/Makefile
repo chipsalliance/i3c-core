@@ -20,6 +20,6 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/ctrl/target_reset_detector.sv \
     $(SRC_DIR)/ctrl/bus_monitor.sv \
     $(SRC_DIR)/ctrl/i3c_bus_monitor.sv \
-    i3c_bus_monitor_wrapper.sv
+    $(TEST_DIR)/i3c_bus_monitor_wrapper.sv
 
 include $(TEST_DIR)/../block_common.mk
