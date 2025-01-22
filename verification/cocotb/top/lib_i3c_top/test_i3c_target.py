@@ -75,11 +75,12 @@ async def test_setup(dut, fclk=200.0, fbus=12.5):
 #        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
 #    }
 
-    # TODO: For now test with all timings set to 0
+    # TODO: For now test with all timings set to 0 except T_HD_DAT so that
+    # SDA isn't relased too soon when triggering an IBI
     timings = {
         "T_R":      0,
         "T_F":      0,
-        "T_HD_DAT": 0,
+        "T_HD_DAT": 1,
         "T_SU_DAT": 0,
     }
 
