@@ -117,7 +117,7 @@ module bus_tx (
         if (drive_i) begin
           tcount_sel  = tSetupData;
           load_tcount = '1;
-          if (scl_stable_low_i | scl_negedge_i) begin
+          if (t_sd_z & (scl_stable_low_i | scl_negedge_i)) begin
             sda_o = drive_value_i;
           end
         end
