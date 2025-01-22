@@ -213,7 +213,7 @@ module bus_monitor
   assign state_o.sda.value          = sda;
   assign state_o.sda.pos_edge       = sda_posedge;
   assign state_o.sda.neg_edge       = sda_negedge;
-  assign state_o.sda.stable_high    = '0; // Unused
+  assign state_o.sda.stable_high    = sda_stable_high;
   assign state_o.sda.stable_low     = '0; // Unused
 
   assign state_o.scl.value          = scl;
