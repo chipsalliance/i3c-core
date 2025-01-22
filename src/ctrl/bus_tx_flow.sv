@@ -137,7 +137,7 @@ module bus_tx_flow (
       end
       DriveByte: begin
         bit_counter_en = 1'b1;
-        drive_bit_en = 1'b1;
+        drive_bit_en = req;
         drive_bit_value = req_value[7];
         if (~|bit_counter & tx_done) begin
           bus_tx_done = 1'b1;
@@ -145,7 +145,7 @@ module bus_tx_flow (
       end
       DriveBit: begin
         drive_bit_value = req_value[0];
-        drive_bit_en = 1'b1;
+        drive_bit_en = req;
         if (tx_done) bus_tx_done = 1'b1;
       end
       NextTaskDecision: begin

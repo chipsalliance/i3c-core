@@ -182,6 +182,11 @@ module bus_tx (
           state_d = Idle;
       end
     endcase
+
+    // Go to Idle unconditionally
+    if (~drive_i) begin
+      state_d = Idle;
+    end
   end
 
   assign sel_od_pp_o = sel_od_pp_i;  // Pass through the OD/PP selection
