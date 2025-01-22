@@ -202,11 +202,11 @@ module bus_monitor
   end
 
   // (Repeated) Start condition detection by target
-  assign start_det_trigger = enable & scl_stable_high & sda_negedge & !simultaneous_negedge;
+  assign start_det_trigger = enable & scl_stable_high & sda_negedge & !scl_negedge & !simultaneous_negedge;
   assign start_det = enable & start_det_pending;
 
   // Stop condition detection by target
-  assign stop_det_trigger = enable & scl_stable_high & sda_posedge & !simultaneous_posedge;
+  assign stop_det_trigger = enable & scl_stable_high & sda_posedge & !scl_negedge & !simultaneous_posedge;
   assign stop_det = enable & stop_det_pending;
 
   // Detection output
