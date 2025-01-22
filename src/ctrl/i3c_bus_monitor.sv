@@ -52,10 +52,12 @@ module i3c_bus_monitor
       .enable_i,
       .scl_high(bus_i.scl.stable_high),
       .scl_low(bus_i.scl.stable_low),
+      .scl_posedge(bus_i.scl.pos_edge),
       .scl_negedge(bus_i.scl.neg_edge),
+      .sda_low(bus_i.sda.stable_low),
       .sda_posedge(bus_i.sda.pos_edge),
       .sda_negedge(bus_i.sda.neg_edge),
-      .start_detected_i(bus_i.start_det),
+      .start_detected_i(bus_i.start_det | bus_i.rstart_det),
       .stop_detected_i(bus_i.stop_det),
       .target_reset_detect_o
   );

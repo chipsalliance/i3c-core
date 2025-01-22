@@ -1,8 +1,9 @@
-typedef enum logic [1:0] {
-  AwaitPattern = 2'h0,
-  AwaitSr = 2'h1,
-  AwaitP = 2'h2,
-  ResetDetected = 2'h3
+typedef enum logic [2:0] {
+  AwaitPattern = 3'h0,
+  AwaitSCL = 3'h1,
+  AwaitSr = 3'h2,
+  AwaitP = 3'h3,
+  ResetDetected = 3'h4
 } target_reset_detector_state_e;
 
 module target_reset_detector
@@ -16,6 +17,8 @@ module target_reset_detector
     input logic scl_low,
     input logic scl_high,
     input logic scl_negedge,
+    input logic scl_posedge,
+    input logic sda_low,
     input logic sda_posedge,
     input logic sda_negedge,
 
@@ -61,7 +64,16 @@ module target_reset_detector
   always_comb begin : target_reset_detection_fsm
     case (state_q)
       AwaitPattern: begin
-        state_d = (sda_transition_count_q == 4'he) ? AwaitSr : AwaitPattern;
+        state_d = (sda_transition_count_q == 4'he) ? AwaitSCL : AwaitPattern;
+      end
+      AwaitSCL: begin
+        state_d = AwaitSCL;
+        // Bus state has changed, go back
+        if (scl_high | sda_low) begin
+          state_d = AwaitPattern;
+        end else if (scl_posedge) begin
+          state_d = AwaitSr;
+        end
       end
       AwaitSr: begin
         state_d = AwaitSr;

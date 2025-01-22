@@ -6,7 +6,7 @@ from cocotbext_i3c.i3c_controller import I3cController
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, RisingEdge
+from cocotb.triggers import ClockCycles, RisingEdge, ReadOnly
 
 
 async def setup(dut):
@@ -29,9 +29,10 @@ async def count_high_cycles(clk, sig, e_terminate):
     """
     num_det = 0
     while not e_terminate.is_set():
+        await RisingEdge(clk)
+        await ReadOnly()
         if sig.value:
             num_det += 1
-        await RisingEdge(clk)
     return num_det
 
 
