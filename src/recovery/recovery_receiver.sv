@@ -42,6 +42,8 @@ module recovery_receiver
 );
 
   // Internal signals
+  logic        bus_start_r;
+
   logic        rx_flow;
   logic [15:0] dcnt;
 
@@ -78,7 +80,7 @@ module recovery_receiver
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        if (bus_start_i || virtual_device_tx_i) state_d = RxCmd;
+        if (bus_start_i || bus_start_r || virtual_device_tx_i) state_d = RxCmd;
       end
 
       RxCmd: begin
@@ -118,6 +120,20 @@ module recovery_receiver
       default: state_d = Idle;
     endcase
   end
+
+  // Bus start condition latch. Needed as next start may come before the
+  // FSM is finished.
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni)
+      bus_start_r <= '0;
+    else
+      unique case (state_q)
+        CmdIsRd, Cmd, Busy: begin
+          if (bus_start_i)
+            bus_start_r <= '1;
+        end
+        default: bus_start_r <= '0;
+      endcase
 
   // Data ready
   always_ff @(posedge clk_i or negedge rst_ni)
