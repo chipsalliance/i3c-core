@@ -357,6 +357,7 @@ module controller_standby
       .tx_queue_depth_i(tx_queue_depth_i),
       .tx_queue_rready_o(i3c_tx_queue_rready_o),
       .tx_queue_rdata_i(tx_queue_rdata_i),
+      .tx_queue_empty_i(tx_queue_empty_i),
       .tx_queue_flush_o(i3c_tx_queue_flush_o),
       .ibi_queue_full_i(ibi_queue_full_i),
       .ibi_queue_empty_i(ibi_queue_empty_i),

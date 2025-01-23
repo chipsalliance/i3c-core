@@ -29,6 +29,7 @@ module descriptor_tx #(
     input logic [TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth_i,
     output logic tti_tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
+    input  logic tti_tx_queue_empty_i,
     output logic tx_queue_flush_o,
 
     // Interface to the target FSM
@@ -91,7 +92,7 @@ module descriptor_tx #(
         if ((byte_counter == 16'd1) && tti_tx_queue_rvalid_i)
             flush <= '0;
         // No more data in the FIFO to complete the flush
-        if (!tti_tx_queue_rvalid_i)
+        if (!tti_tx_queue_rvalid_i && tti_tx_queue_empty_i)
             flush <= '0;
         // Last word from the FIFO is flushed
         if (tx_queue_flush_o)

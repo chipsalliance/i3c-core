@@ -45,6 +45,7 @@ module controller_standby_i3c
     input logic [TtiTxFifoDepthWidth-1:0] tx_queue_depth_i,
     output logic tx_queue_rready_o,
     input logic [TtiTxDataWidth-1:0] tx_queue_rdata_i,
+    input logic tx_queue_empty_i,
     output logic tx_queue_flush_o,
 
     // TTI: In-band-interrupt queue
@@ -672,6 +673,7 @@ module controller_standby_i3c
       .tti_tx_queue_depth_i      (tx_queue_depth_i),
       .tti_tx_queue_rready_o     (tx_queue_rready_o),
       .tti_tx_queue_rdata_i      (tx_queue_rdata_i),
+      .tti_tx_queue_empty_i      (tx_queue_empty_i),
       .tx_queue_flush_o          (tx_queue_flush_o),
       .tx_start_i                (tx_pr_start),
       .tx_abort_i                (tx_pr_abort | tx_host_nack),
