@@ -28,7 +28,7 @@ async def timeout_task(timeout_us=5):
     raise TimeoutError("Timeout!")
 
 
-async def test_setup(dut, fclk=1000.0/6.0, fbus=12.5):
+async def test_setup(dut, fclk=1000.0/7.0, fbus=12.5):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -75,12 +75,11 @@ async def test_setup(dut, fclk=1000.0/6.0, fbus=12.5):
 #        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
 #    }
 
-    # TODO: For now test with all timings set to 0 except T_HD_DAT so that
-    # SDA isn't relased too soon when triggering an IBI
+    # TODO: For now test with all timings set to 0.
     timings = {
         "T_R":      0,
         "T_F":      0,
-        "T_HD_DAT": 1,
+        "T_HD_DAT": 0,
         "T_SU_DAT": 0,
     }
 
@@ -426,7 +425,7 @@ async def test_i3c_target_ibi_retry(dut):
 
     # Wait for some time so that the target gets a change to retry IBI
     # transmission
-    await Timer(5, "us")
+    await Timer(10, "us")
 
     # Check LAST_IBI_STATUS
     status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))

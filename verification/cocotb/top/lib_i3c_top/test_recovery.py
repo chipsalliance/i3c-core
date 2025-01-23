@@ -24,7 +24,7 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, timeout=50):
+async def initialize(dut, fclk=1000.0/7.0, fbus=12.5, timeout=50):
     """
     Common test initialization routine
     """
@@ -41,7 +41,7 @@ async def initialize(dut, timeout=50):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=fbus*1e6,
     )
 
     i3c_target = I3CTarget(  # noqa
@@ -50,17 +50,28 @@ async def initialize(dut, timeout=50):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=fbus*1e6,
         address=0x23,
     )
 
     tb = I3CTopTestInterface(dut)
-    await tb.setup()
+    await tb.setup(fclk)
 
     recovery = I3cRecoveryInterface(i3c_controller)
 
+    # TODO: For now test with all timings set to 0.
+    timings = {
+        "T_R":      0,
+        "T_F":      0,
+        "T_HD_DAT": 0,
+        "T_SU_DAT": 0,
+    }
+
+    for k, v in timings.items():
+        dut._log.info(f"{k} = {v}")
+
     # Configure the top level
-    await boot_init(tb)
+    await boot_init(tb, timings)
 
     # Set recovery indirect FIFO size and max transfer size (in 4B units)
     # Set low values to easy trigger pointer wrap in tests.
