@@ -26,6 +26,16 @@ class I3CTopTestInterface:
         self.write_csr_field = self.busIf.write_csr_field
 
     async def setup(self, fclk=500.0):
+
+        # Limit the requested clock frequency if a limit is set via cocotb
+        # plusargs
+        fmin = cocotb.plusargs.get("MinSystemClockFrequency", None)
+        if fmin is not None:
+            fmin = float(fmin)
+            if fclk < fmin:
+                self.dut._log.warning(f"Enforcing min. system clock frequency of {fmin:.3f} MHz")
+                fclk = fmin
+
         await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)

@@ -25,6 +25,9 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
     # session.install("-r", pip_requirements_path)
     test = VerificationTest(test_group, test_type, test_name, coverage)
 
+    # Translate session options to plusargs
+    plusargs = list(session.posargs)
+
     # Randomize seed for initialization of undefined signals in the simulation
     random.seed(time.time_ns())
     seed = random.randint(1, 10000)
@@ -40,20 +43,17 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
         ]
         if simulator == "verilator":
-            args.append(
-                "PLUSARGS="
-                + " ".join(
-                    [
-                        "+verilator+rand+reset+2",
-                        f"+verilator+seed+{seed}",
-                    ]
-                )
-            )
+            plusargs.extend([
+                "+verilator+rand+reset+2",
+                f"+verilator+seed+{seed}",
+            ])
         if coverage:
             args.append("COVERAGE_TYPE=" + coverage)
 
         if simulator:
             args.append("SIM=" + simulator)
+
+        args.append("PLUSARGS=" + " ".join(plusargs))
 
         session.run(
             *args,
