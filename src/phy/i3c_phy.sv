@@ -27,7 +27,7 @@ module i3c_phy (
     output logic sel_od_pp_o
 );
 
-`ifndef DISABLE_INPUT_F_F
+`ifndef DISABLE_INPUT_FF
 
   // Synchronize SCL to system clock
   caliptra_prim_flop_2sync #(

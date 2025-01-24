@@ -18,6 +18,6 @@
   `define AXI_DATA_WIDTH    32
   `define AXI_USER_WIDTH    32
   `define AXI_ID_WIDTH      8
-  `define DISABLE_INPUT_F_F 1
+  `define DISABLE_INPUT_FF  1
 
 `endif  // I3C_CONFIG
