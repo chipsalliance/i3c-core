@@ -201,6 +201,65 @@ async def test_virtual_write(dut):
     assert data1 != 0x44332211
 
 @cocotb.test()
+async def test_virtual_write_alternating(dut):
+    """
+    Alternate between recovery CSR write and regular TTI private writes
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Repeat the sequence twice. The second time with the recovery mode disabled
+    for i in range(2):
+
+        # ..........
+
+        # Write to the RESET CSR (one word)
+        data = [random.randint(0, 255) for i in range(3)]
+        await recovery.command_write(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, data
+        )
+
+        # Wait & read the CSR from the AHB/AXI side
+        await Timer(1, "us")
+        readback = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+        assert readback == int.from_bytes(data, byteorder="little")
+
+        # ..........
+
+        # Do a private write
+        data = [random.randint(0, 255) for i in range(3)]
+        await i3c_controller.i3c_write(DYNAMIC_ADDR, data)
+
+        # Wait and read data back
+        await Timer(1, "us")
+        desc = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+        desc = desc & 0xFFFF
+        assert desc == len(data)
+
+        readback = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+        assert readback == int.from_bytes(data, byteorder="little")
+
+        # ..........
+
+        # exit recovery mode
+        await Timer(1, "us")
+        status = 0x2
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+        )
+        await ClockCycles(tb.clk, 50)
+
+@cocotb.test()
 async def test_write(dut):
     """
     Tests CSR write(s) using the recovery protocol
@@ -700,6 +759,90 @@ async def test_virtual_read_illegal(dut):
 
     # Wait
     await Timer(1, "us")
+
+@cocotb.test()
+async def test_virtual_read_alternating(dut):
+    """
+    Alternate between recovery mode reads and TTI reads
+    """
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    def make_word(bs):
+        return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
+
+    # Repeat the sequence twice. The second time with the recovery mode disabled
+    for i in range(2):
+
+        # ..........
+
+        # Write some data to PROT_CAP CSR
+        prot_cap = [random.randint(0, 255) for i in range(16)]
+
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
+            int2dword(make_word(prot_cap[0:4])),
+            4,
+        )
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
+            int2dword(make_word(prot_cap[4:8])),
+            4,
+        )
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
+            int2dword(make_word(prot_cap[8:12])),
+            4,
+        )
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_3.base_addr,
+            int2dword(make_word(prot_cap[12:16])),
+            4,
+        )
+
+        # Wait, read the PROT_CAP register
+        await Timer(1, "us")
+        recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+
+        # PROT_CAP read always returns 15 bytes
+        assert len(recovery_data) == 15
+        assert recovery_data == prot_cap[:15]
+        assert pec_ok
+
+        # ..........
+
+        # Write data to TTI TX queue
+        data = [random.randint(0, 255) for i in range(3)]
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+            int2dword(int.from_bytes(data, byteorder="little")), 4)
+
+        # Write the TX descriptor
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
+            int2dword(len(data)), 4)
+
+        # Wait and do a private read
+        await Timer(1, "us")
+        readback = await i3c_controller.i3c_read(DYNAMIC_ADDR, len(data))
+        assert data == list(readback)
+
+        # ..........
+
+        # Disable recovery mode
+        await Timer(1, "us")
+        status = 0x2  # "Recovery Mode"
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+        )
 
 @cocotb.test()
 async def test_payload_available(dut):
