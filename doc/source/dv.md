@@ -21,9 +21,11 @@ Definitions:
 ### Testplans for individual blocks
 
 ```{include} ../../verification/testplan/generated/testplans_blocks.md
+:heading-offset: 2
 ```
 
 ### Testplans for the core
 
 ```{include} ../../verification/testplan/generated/testplans_core.md
+:heading-offset: 2
 ```

@@ -20,50 +20,50 @@ async def should_be_empty_after_rst(dut: SimHandleBase, if_name: str, queue: str
 
 
 @cocotb.test()
-async def run_cmd_capacity_status_test(dut: SimHandleBase):
+async def test_cmd_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "cmd")
 
 
 @cocotb.test()
-async def run_rx_capacity_status_test(dut: SimHandleBase):
+async def test_rx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "rx")
 
 
 @cocotb.test()
-async def run_resp_capacity_status_test(dut: SimHandleBase):
+async def test_resp_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "resp")
 
 
 @cocotb.test()
-async def run_tx_capacity_status_test(dut: SimHandleBase):
+async def test_tx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "tx")
 
 
 @cocotb.test()
-async def run_ibi_capacity_status_test(dut: SimHandleBase):
+async def test_ibi_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "ibi")
 
 
 @cocotb.test()
-async def run_tti_tx_desc_capacity_status_test(dut: SimHandleBase):
+async def test_tti_tx_desc_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "tx_desc")
 
 
 @cocotb.test()
-async def run_tti_rx_capacity_status_test(dut: SimHandleBase):
+async def test_tti_rx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "rx")
 
 
 @cocotb.test()
-async def run_tti_rx_desc_capacity_status_test(dut: SimHandleBase):
+async def test_tti_rx_desc_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "rx_desc")
 
 
 @cocotb.test()
-async def run_tti_tx_capacity_status_test(dut: SimHandleBase):
+async def test_tti_tx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "tx")
 
 
 @cocotb.test()
-async def run_tti_ibi_capacity_status_test(dut: SimHandleBase):
+async def test_tti_ibi_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "ibi")

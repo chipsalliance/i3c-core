@@ -1,0 +1,165 @@
+{
+  name: Target
+  testpoints:
+  [
+    {
+      name: i3c_target_write
+      desc:
+        '''
+        Spawns a TTI agent that reads from TTI descriptor and data queues
+        and stores received data.
+
+        While the agent is running the test issues several private writes
+        over I3C. Data sent over I3C is compared with data received by
+        the agent.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_write
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: i3c_target_read
+      desc:
+        '''
+        Writes a data chunk and its descriptor to TTI TX queues, issues
+        an I3C private read transfer. Verifies that the data matches.
+        Repeats the two steps N times.
+
+        Writes N data chunks and their descriptors to TTI TX queues,
+        issues N private read transfers over I3C. For each one verifies
+        that data matches.
+
+        Writes a data chunk and its descriptor to TTI TX queues, issues
+        an I3C private read transfer which is shorter than the length of
+        the chunk. Verifies that the received data matches with the chunk.
+        Repeats the steps N times.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_read
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: i3c_target_ibi
+      desc:
+        '''
+        Writes an IBI descriptor to the TTI IBI queue. Waits until the
+        controller services the IBI. Checks if the mandatory byte (MDB)
+        matches on both sides.
+
+        Reads the LAST_IBI_STATUS fiels of the TTI STATUS CSR. Ensures
+        that it is equal to 0 (no error).
+
+        Writes an IBI descriptor followed by N bytes of data to the TTI
+        IBI queue. Waits until the controller services the IBI. Checks if
+        the mandatory byte (MDB) and data matches on both sides.
+
+        Repeats the LAST_IBI_STATUS check
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_ibi
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: i3c_target_ibi_retry
+      desc:
+        '''
+        Disables ACK-ing IBIs in the I3C controller model, issues an ibi
+        from the target by writing to TTI IBI queue. Waits for a fixed
+        time period - sufficiently long for the target to retry sending
+        the IBI, reads LAST_IBI_STATUS from the TTI STATUS CSR, check
+        if it is set to 3 (IBI retry).
+
+        Re-enables ACK-ing of IBIs in the controller model, waits for the
+        model to service the IBI, compares the IBI mandatory byte (MDB)
+        with the one written to the TTI queue. Reads LAST_IBI_STATUS from
+        the TTI STATUS CSR, check if it is set to 0 (no error).
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_ibi_retry
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: i3c_target_ibi_data
+      desc:
+        '''
+        Sets a limit on how many IBI data bytes may be accepted in the
+        controller model. Issues an IBI with more data bytes by writing
+        to the TTI IBI queue, checks if the IBI gets serivced correctly,
+        compares data.
+
+        Issues another IBI with data payload within the set limit, checks
+        if it gets serviced correctly, compares data.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_ibi_data
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: i3c_target_writes_and_reads
+      desc:
+        '''
+        Writes a randomized data chunk to the TTI TX data queue, writes
+        a corresponding descriptor to the TTI TX descriptor queue.
+
+        Issues private write transfers to the target with randomized
+        payloads, waits until a TTI interrupt is set by polling TTI
+        INTERRUPT_STATUS CSR. Reads received data from TTI RX queues,
+        compares it with what has been sent.
+
+        Does a private read transfer, compares if the received data equals
+        the data written to TTI TX queue in the beginning of the test.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        i3c_target_writes_and_reads
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+  ]
+}

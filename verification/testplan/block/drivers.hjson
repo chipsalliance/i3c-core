@@ -1,0 +1,23 @@
+{
+  name: drivers
+  testpoints:
+  [
+    {
+      name: test_drivers
+      desc:
+        '''
+        Tests the I3C PHY module. Loops through all possible states of
+        SDA/SCL for OD and PP mode. Checks if driven data matches the
+        bus state.
+        '''
+      tests:
+      [
+        drivers
+      ]
+      tags:
+      [
+        drivers
+      ]
+    }
+  ]
+}

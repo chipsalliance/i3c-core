@@ -1,0 +1,82 @@
+{
+  name: csr_sw_access
+  testpoints:
+  [
+    {
+      name: read_hci_version_csr
+      desc: Reads the HCI version CSR and verifies its content
+      tests:
+      [
+        read_hci_version_csr
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+    {
+      name: read_pio_section_offset
+      desc: Reads the PIO_SECTION_OFFSET CSR and verifies its content
+      tests:
+      [
+        read_pio_section_offset
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+    {
+      name: write_to_controller_device_addr
+      desc: "Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful "
+      tests:
+      [
+        write_to_controller_device_addr
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+    {
+      name: write_should_not_affect_ro_csr
+      desc:
+        '''
+        Writes to the HC_CAPABILITIES CSR which is read-only for software
+        Verifies that the write did not succeed.
+        '''
+      tests:
+      [
+        write_should_not_affect_ro_csr
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+    {
+      name: sequence_csr_read
+      desc: Performs a sequence of CSR reads. Verifies that each one succeeds
+      tests:
+      [
+        sequence_csr_read
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+    {
+      name: sequence_csr_write
+      desc: Performs a sequence of CSR writes. Verifies that each one succeeds
+      tests:
+      [
+        sequence_csr_write
+      ]
+      tags:
+      [
+        adapter
+      ]
+    }
+  ]
+}

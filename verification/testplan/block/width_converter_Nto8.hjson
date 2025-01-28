@@ -1,0 +1,41 @@
+{
+  name: width_converter_Nto8
+  testpoints:
+  [
+    {
+      name: converter
+      desc:
+        '''
+        Pushes random N-bit word stream to the converter module. After each
+        word waits at random. Simultaneously receives bytes and generates
+        pushback (deasserts ready) at random. Verifies if the output data
+        matches the input.
+        '''
+      tests:
+      [
+        width_converter_nto8_converter
+      ]
+      tags:
+      [
+        width_converter_Nto8
+      ]
+    }
+    {
+      name: flush
+      desc:
+        '''
+        Feeds an N-bit word to the module. Receives M bytes where M is in
+        [1, 2, 3] and asserts source_flush_i. Verifies that the module
+        ceases to output data as expected.
+        '''
+      tests:
+      [
+        width_converter_nto8_flush
+      ]
+      tags:
+      [
+        width_converter_Nto8
+      ]
+    }
+  ]
+}

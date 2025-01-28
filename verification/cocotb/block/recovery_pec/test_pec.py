@@ -11,7 +11,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_pec(dut):
 
     # Generate some data
     data = []

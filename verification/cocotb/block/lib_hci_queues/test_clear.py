@@ -11,7 +11,7 @@ from cocotb.handle import SimHandleBase
 
 
 @cocotb.test()
-async def run_clear_on_nonempty_resp_queue(dut: SimHandleBase):
+async def test_clear_on_nonempty_resp_queue(dut: SimHandleBase):
     """
     Issue Response queue clear through RESET_CONTROL and verify the newly enqueued
     response will be returned on the read
@@ -39,7 +39,7 @@ async def run_clear_on_nonempty_resp_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
+async def test_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
     """
     Issue Command queue clear through RESET_CONTROL and verify the newly enqueued
     command will be returned on the read
@@ -66,7 +66,7 @@ async def run_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_clear_on_nonempty_rx_queue(dut: SimHandleBase):
+async def test_clear_on_nonempty_rx_queue(dut: SimHandleBase):
     """
     Issue RX queue clear through RESET_CONTROL and verify the newly enqueued
     data will be returned on the read
@@ -91,7 +91,7 @@ async def run_clear_on_nonempty_rx_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_clear_on_nonempty_tx_queue(dut: SimHandleBase):
+async def test_clear_on_nonempty_tx_queue(dut: SimHandleBase):
     """
     Issue TX queue clear through RESET_CONTROL and verify the newly enqueued
     data will be returned on the read
@@ -116,7 +116,7 @@ async def run_clear_on_nonempty_tx_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_clear_on_nonempty_ibi_queue(dut: SimHandleBase):
+async def test_clear_on_nonempty_ibi_queue(dut: SimHandleBase):
     """
     Issue IBI queue clear through RESET_CONTROL and verify the newly enqueued
     data will be returned on the read

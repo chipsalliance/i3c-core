@@ -1,0 +1,25 @@
+{
+  name: descriptor_tx
+  testpoints:
+  [
+    {
+      name: descriptor_tx
+      desc:
+        '''
+        Tests the descriptor_tx module responsible for processing TTI TX
+        descriptors and controlling TTI data flow during I3C private
+        reads. Sends a descriptor to the module followed with the right
+        amount of data. Verifies that the module accepted the descriptor
+        and allowed the right amount of data bytes to pass through it.
+        '''
+      tests:
+      [
+        descriptor_tx
+      ]
+      tags:
+      [
+        descriptor_tx
+      ]
+    }
+  ]
+}

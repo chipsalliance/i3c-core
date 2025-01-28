@@ -1,0 +1,325 @@
+{
+  name: CCC handling
+  testpoints:
+  [
+    {
+      name: ccc_getstatus
+      desc:
+        '''
+        The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
+        status CSR. Next, it issues the GETSTATUS directed CCC to the
+        target. Finally it compares the interrupt status returned by the
+        CCC with the one read from the register.
+        '''
+      tests:
+      [
+        ccc_getstatus
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setdasa
+      desc:
+        '''
+        The test sets dynamic address and virtual dynamic address by
+        sending SETDASA CCC. Then it verifies that correct addresses have
+        been set by reading STBY_CR_DEVICE_ADDR CSR.
+        '''
+      tests:
+      [
+        ccc_setdasa
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_rstdaa
+      desc:
+        '''
+        Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
+        RSTDAA CCC and verifies that the address got cleared.
+        '''
+      tests:
+      [
+        ccc_rstdaa
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_getbcr
+      desc:
+        '''
+        Reads BCR register content by sending GETBCR CCC and examining
+        returned data.
+        '''
+      tests:
+      [
+        ccc_getbcr
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_getdcr
+      desc:
+        '''
+        Reads DCR register content by sending GETDCR CCC and examining
+        returned data.
+        '''
+      tests:
+      [
+        ccc_getdcr
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_getmwl
+      desc:
+        '''
+        Reads MWL register content by sending GETMWL CCC and examining
+        returned data.
+        '''
+      tests:
+      [
+        ccc_getmwl
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_getmrl
+      desc:
+        '''
+        Reads MRL register content by sending GETMWL CCC and examining
+        returned data.
+        '''
+      tests:
+      [
+        ccc_getmrl
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setaasa
+      desc:
+        '''
+        Issues the broadcast SETAASA CCC and checks if the target uses
+        its static address as dynamic by examining STBY_CR_DEVICE_ADDR
+        CSR.
+        '''
+      tests:
+      [
+        ccc_setaasa
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_getpid
+      desc:
+        '''
+        Sends the CCC to the target and examines if the returned PID
+        matches the expected.
+        '''
+      tests:
+      [
+        ccc_getpid
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_enec_disec_direct
+      desc:
+        '''
+        Sends DISEC CCC to the target and verifies that events are disabled.
+        Then, sends ENEC CCC to the target and checks that events are enabled.
+        '''
+      tests:
+      [
+        ccc_enec_disec_direct
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_enec_disec_bcast
+      desc:
+        '''
+        Sends boradcast DISEC CCC and verifies that events are disabled.
+        Then, sends broadcast ENEC CCC and checks that events are enabled.
+        '''
+      tests:
+      [
+        ccc_enec_disec_bcast
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setmwl_direct
+      desc:
+        '''
+        Sends directed SETMWL CCC to the target and verifies that the
+        register got correctly set. The check is performed by examining
+        relevant wires in the target DUT
+        '''
+      tests:
+      [
+        ccc_setmwl_direct
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setmrl_direct
+      desc:
+        '''
+        Sends directed SETMRL CCC to the target and verifies that the
+        register got correctly set. The check is performed by examining
+        relevant wires in the target DUT
+        '''
+      tests:
+      [
+        ccc_setmrl_direct
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setmwl_bcast
+      desc:
+        '''
+        Sends broadcast SETMWL CCC and verifies that the
+        register got correctly set. The check is performed by examining
+        relevant wires in the target DUT
+        '''
+      tests:
+      [
+        ccc_setmwl_bcast
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_setmrl_bcast
+      desc:
+        '''
+        Sends SETMRL CCC and verifies that the
+        register got correctly set. The check is performed by examining
+        relevant wires in the target DUT
+        '''
+      tests:
+      [
+        ccc_setmrl_bcast
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_rstact_direct
+      desc:
+        '''
+        Sends directed RSTACT CCC to the target followed by reset pattern
+        and checks if reset action was stored correctly. The check is
+        done by examining DUT wires. Then, triggers target reset and
+        verifies that the peripheral_reset_o signal gets asserted.
+        '''
+      tests:
+      [
+        ccc_rstact_direct
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_rstact_bcast
+      desc:
+        '''
+        Sends directed RSTACT CCC to the target followed by reset pattern
+        and checks if reset action was stored correctly. The check is
+        done by examining DUT wires. Then, triggers target reset and
+        verifies that the escalated_reset_o signal gets asserted.
+        '''
+      tests:
+      [
+        ccc_rstact_bcast
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_direct_multiple_wr
+      desc:
+        '''
+        Sends a sequence of multiple directed SETMWL CCCs. The first and
+        the last have non-matching address. The two middle ones set MWL
+        to different values. Verify that the target responded to correct
+        addresses and executed both CCCs.
+        '''
+      tests:
+      [
+        ccc_direct_multiple_wr
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: ccc_direct_multiple_rd
+      desc:
+        '''
+        Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
+        thee different addresses. Only the one for the target should
+        be ACK-ed with the correct MWL content.
+        '''
+      tests:
+      [
+        ccc_direct_multiple_rd
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+  ]
+}

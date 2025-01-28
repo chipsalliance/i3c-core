@@ -15,6 +15,7 @@ BLOCK_VERIF_DIR     := $(COCOTB_VERIF_DIR)/block
 TOP_VERIF_DIR       := $(COCOTB_VERIF_DIR)/top
 TOOL_VERIF_DIR      := $(VERIFICATION_DIR)/tools/
 UVM_VERIF_DIR       := $(VERIFICATION_DIR)/uvm_i3c/
+TESTPLAN_DIR        := $(VERIFICATION_DIR)/testplan
 
 TOOL_DIR            := $(I3C_ROOT_DIR)/tools/
 UVM_TOOL_DIR        := $(TOOL_DIR)/uvm/
@@ -25,6 +26,7 @@ CALIPTRA_ROOT       ?= $(THIRD_PARTY_DIR)/caliptra-rtl## Path: caliptra-rtl repo
 # TODO: Connect to version selection in tools/simulators/
 UVM_DIR             ?= $(VERILATOR_UVM_DIR)/## Select UVM version
 SIMULATOR           ?= verilator## Supported: verilator, dsim, questa, vcs
+REPO_URL            ?= https://github.com/chipsalliance/i3c-core/tree/main/
 
 NUM_PROC            := $$(($$(nproc)-1))
 # Environment variables
@@ -131,6 +133,12 @@ tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
 
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify" --no-venv
+
+BLOCKS_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*.hjson" ! -name "target*.hjson" -printf "%P\n")
+CORE_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*target*.hjson" -printf "%P\n")
+verification-docs:
+	cd $(TESTPLAN_DIR) && testplanner $(BLOCKS_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_blocks.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
+	cd $(TESTPLAN_DIR) && testplanner $(CORE_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_core.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
 
 #
 # Utilities

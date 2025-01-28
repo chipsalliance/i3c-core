@@ -417,45 +417,45 @@ async def should_setup_ready_threshold(interface: HCIBaseTestInterface, q: Queue
 
 
 @cocotb.test()
-async def run_cmd_setup_threshold_test(dut: SimHandleBase):
+async def test_cmd_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_setup_ready_threshold(interface, CmdQueueThldHandler())
 
 
 @cocotb.test()
-async def run_rx_setup_threshold_test(dut: SimHandleBase):
+async def test_rx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_setup_start_threshold(interface, RxQueueThldHandler())
     await should_setup_ready_threshold(interface, RxQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tx_setup_threshold_test(dut: SimHandleBase):
+async def test_tx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_setup_start_threshold(interface, TxQueueThldHandler())
     await should_setup_ready_threshold(interface, TxQueueThldHandler())
 
 
 @cocotb.test()
-async def run_resp_setup_threshold_test(dut: SimHandleBase):
+async def test_resp_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_setup_ready_threshold(interface, RespQueueThldHandler())
 
 
 @cocotb.test()
-async def run_ibi_setup_threshold_test(dut: SimHandleBase):
+async def test_ibi_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_setup_ready_threshold(interface, IbiQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_tx_desc_setup_threshold_test(dut: SimHandleBase):
+async def test_tti_tx_desc_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTITxDescQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_rx_setup_threshold_test(dut: SimHandleBase):
+async def test_tti_rx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
     # await should_setup_start_threshold(interface, TTIRxQueueThldHandler())
@@ -463,7 +463,7 @@ async def run_tti_rx_setup_threshold_test(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_tti_tx_setup_threshold_test(dut: SimHandleBase):
+async def test_tti_tx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
     # await should_setup_start_threshold(interface, TTITxQueueThldHandler())
@@ -471,13 +471,13 @@ async def run_tti_tx_setup_threshold_test(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_tti_rx_desc_setup_threshold_test(dut: SimHandleBase):
+async def test_tti_rx_desc_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTIRxDescQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_ibi_setup_threshold_test(dut: SimHandleBase):
+async def test_tti_ibi_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TtiIbiQueueThldHandler())
 
@@ -596,32 +596,32 @@ async def should_raise_ready_thld_trig_receiver(
 
 
 @cocotb.test()
-async def run_resp_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_resp_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_raise_ready_thld_trig_receiver(interface, RespQueueThldHandler())
 
 
 @cocotb.test()
-async def run_rx_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_rx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_raise_start_thld_trig_receiver(interface, RxQueueThldHandler())
     await should_raise_ready_thld_trig_receiver(interface, RxQueueThldHandler())
 
 
 @cocotb.test()
-async def run_ibi_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_ibi_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_raise_ready_thld_trig_receiver(interface, IbiQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_rx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tti_rx_desc_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_receiver(interface, TTIRxDescQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_rx_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tti_rx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
     await should_raise_start_thld_trig_receiver(interface, TTIRxQueueThldHandler())
@@ -745,20 +745,20 @@ async def should_raise_ready_thld_trig_transmitter(
 
 
 @cocotb.test()
-async def run_cmd_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_cmd_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_raise_ready_thld_trig_transmitter(interface, CmdQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tx_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "hci")
     await should_raise_start_thld_trig_transmitter(interface, TxQueueThldHandler())
     await should_raise_ready_thld_trig_transmitter(interface, TxQueueThldHandler())
 
 
 @cocotb.test()
-async def run_tti_tx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tti_tx_desc_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_transmitter(interface, TTITxDescQueueThldHandler())
 
@@ -768,7 +768,7 @@ async def run_tti_tx_desc_should_raise_thld_trig_test(dut: SimHandleBase):
 # falls through it hence is not accounted by the threshold counter. Fixing this
 # requires reworking the converter itself or the queue - converter interface.
 @cocotb.test(skip=True)
-async def run_tti_tx_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tti_tx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
     await should_raise_start_thld_trig_transmitter(interface, TTITxQueueThldHandler())
@@ -776,6 +776,6 @@ async def run_tti_tx_should_raise_thld_trig_test(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def run_tti_ibi_should_raise_thld_trig_test(dut: SimHandleBase):
+async def test_tti_ibi_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_transmitter(interface, TtiIbiQueueThldHandler())

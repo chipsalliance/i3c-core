@@ -57,7 +57,7 @@ async def test_flush(dut, count):
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_width_converter_8ton_flush(dut):
 
     # Drive clock
     clock = Clock(dut.clk_i, 1, "ns")

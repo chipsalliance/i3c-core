@@ -22,6 +22,12 @@ jobs:
       - name: Setup repository
         uses: actions/checkout@v4
 
+      - name: Generate VP
+        run: |
+          export I3C_ROOT_DIR="`pwd`"
+          pip3 install git+https://github.com/antmicro/testplanner.git
+          REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" make verification-docs
+
       - name: Build Docs
         run: |
           pushd doc

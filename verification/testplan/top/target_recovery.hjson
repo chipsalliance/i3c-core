@@ -1,0 +1,362 @@
+{
+  name: Recovery mode tests
+  testpoints:
+  [
+    {
+      name: virtual_write
+      desc:
+        '''
+        Tests CSR write(s) through recovery protocol using the virtual
+        target address. In the beginning sets the TTI and recovery
+        addresses via two SETDASA CCCs.
+
+        Performs a write to DEVICE_RESET register via the recovery
+        protocol targeting the virtual address. Reads the CSR content
+        back through AHB/AXI, checks if the transfer was successful and
+        the content read back matches. Then reads again the DEVICE_RESET
+        register, this time via the recovery protocol. Check if the content
+        matches.
+
+        Reads PENDING_INTERRUPT field from INTERRUPT_STATUS CSR via the
+        GET_STATUS CCC command issued to the TTI I3C address. Verifies
+        that the content read back matches what is set in the CSR.
+
+        Writes to the INDIRECT_FIFO_CTRL register using recovery protocol,
+        reads content of the register via AHB/AXI and verifies that their
+        content matches.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        virtual_write
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: virtual_write_alternating
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes to DEVICE_RESET via recovery protocol targeting the virtual
+        device address. Reads the register content through AHB/AXI and
+        check if it matches with what has been written.
+
+        Sends a private write transfer to the TTI address. Reads the
+        data back from TTI TX data queue and check that it matches.
+
+        Disables the recovery mode by writing 0x2 to DEVICE_STATUS register
+        and repeats the previous steps to test whether the I3C core
+        responds both to TTI and virtual addresses.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        virtual_write_alternating
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: write
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Performs a write to DEVICE_RESET register via the recovery
+        protocol targeting the virtual address. Reads the CSR content
+        back through AHB/AXI, checks if the transfer was successful and
+        the content read back matches. Then reads again the DEVICE_RESET
+        register, this time via the recovery protocol. Check if the content
+        matches.
+
+        Writes to the INDIRECT_FIFO_CTRL register using recovery protocol,
+        reads content of the register via AHB/AXI and verifies that their
+        content matches.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        write
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: indirect_fifo_write
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Retrieves indirect FIFO status and pointers by reading
+        INDIRECT_FIFO_STATUS CSR over AHB/AXI bus. Writes data to the
+        indirect FIFO through the recovery interface and retrieves status
+        and pointers again. Reads the data from the FIFO back through
+        AHB/AXI bus, retrieves FIFO pointers. Lastly clears the indirect
+        FIFO by writing to INDIRECT_FIFO_CTRL through the recovery
+        interface and obtains the pointers again.
+
+        After each FIFO status and pointer retrieval checks if both
+        match the expected behavior.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        indirect_fifo_write
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: write_pec
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes some data to DEVICE_RESET register using the recovery
+        interface. Then, repeats the write with different data but
+        deliberately corrupts the recovery packet's checksum (PEC).
+        Finally, reads the content of DEVICE_RESET CSR over AHB/AXI
+        and ensures that it matches with what was written in the first
+        transfer.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        write_pec
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: read
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+        Disables the recovery mode, writes some data to TTI TX queues
+        via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+        the recovery protocol. Checks if the content matches what was
+        written in the beginning of the test.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        read
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: read_short
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+        Disables the recovery mode, writes some data to TTI TX queues
+        via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+        the recovery protocol. The I3C read transfer is deliberately
+        shorter - the recovery read is terminated by the I3C controller.
+        Checks if the content read back matches what was written in the
+        beginning of the test.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        read_short
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: read_long
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+        Disables the recovery mode, writes some data to TTI TX queues
+        via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+        the recovery protocol. The I3C read transfer is deliberately
+        longer - the recovery read is terminated by the I3C target.
+        Checks if the content read back matches what was written in the
+        beginning of the test.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        read_long
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: virtual_read
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
+        the recovery mode.
+
+        Issues a series of recovery read commands to all CSRs mentioned in the
+        spec. The series is repeated twice - for recovery mode enabled and disabled.
+        Each transfer is checked if the response is ACK or NACK and in case of
+        ACK if PEC checksum is correct.
+
+        Checks if CSRs that sould be available anytime (i.e. when the recovery
+        mode is off) are always accessible, checks if other CSRs are accessible
+        only in the recovery mode.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        virtual_read
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: virtual_read_alternating
+      desc:
+        '''
+        Alternates between recovery mode reads and TTI reads. Initially
+        sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes random data to the PROT_CAP register over AHB/AXI, reads
+        the register through the recovery protocol and check if the
+        content matches.
+
+        Writes data and its descriptor to TTI TX queues, issues a private
+        I3C read, verifies that the data read back matches.
+
+        Disables the recovery mode and repeats the recovery and TTI reads
+        to ensure that both TTI and recovery transfers are possible
+        regardless of the recovery mode setting.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        virtual_read_alternating
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: payload_available
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Ensures that initially the recovery_payload_available_o signal
+        is deasserted. Then writes data to the indirect FIFO via the
+        recovery interface and checks if the signal gets asserted.
+
+        Reads from INDIRECT_FIFO_DATA CSR over AHB/AXI and checks if the
+        read causes the signal to be deasserted again.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        payload_available
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: image_activated
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Ensures that initially the image_activated_o signal is deasserted.
+        Writes 0xF to the 3rd byte of the RECOVERY_CTRL register using the
+        recovery interface. Checks if the signal gets asserted. Then writes
+        0xFF to the same byte of the register and checks if the signal
+        gets deasserted.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        image_activated
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+    {
+      name: recovery_flow
+      desc:
+        '''
+        The test exercises firmware image transfer flow using the recovery
+        protocol. It consists of two agents running concurrently.
+
+        The AHB/AXI agent is responsible for recovery operation from the
+        system bus side. It mimicks operation of the recovery handling
+        firmware.
+
+        The BFM agent issues I3C transactions and is responsible for pushing
+        a firmware image to the target.
+
+        The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+        The I3C bus clock is set to 12.5 MHz
+        '''
+      tests:
+      [
+        recovery_flow
+      ]
+      tags:
+      [
+        top
+      ]
+    }
+  ]
+}

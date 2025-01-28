@@ -75,7 +75,7 @@ async def test_read_sequence(dut: Any, address: int, master: I2cMaster, data: by
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_mem_r(dut):
     TARGET_ADDR = 12
     CLK_SPEED = 400000
 

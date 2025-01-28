@@ -17,7 +17,7 @@ from cocotb.triggers import ClockCycles
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_mem_rw(dut):
     """
     Executes random read and writes while checking data on the I2C FSM.
     """

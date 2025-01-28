@@ -159,7 +159,7 @@ async def test_write_restart_read_sequence(
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_wr_restart_rd(dut):
     TARGET_ADDR = 12
     CLK_SPEED = 400000
 

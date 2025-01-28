@@ -1,0 +1,278 @@
+{
+  name: tti_queues
+  testpoints:
+  [
+    {
+      name: tti_tx_capacity_status
+      desc:
+        '''
+        Resets the TTI TX queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tti_tx_capacity_status
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_tx_desc_capacity_status
+      desc:
+        '''
+        Resets the TTI TX descriptor queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tti_tx_desc_capacity_status
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_rx_capacity_status
+      desc:
+        '''
+        Resets the TTI RX queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tti_rx_capacity_status
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_rx_desc_capacity_status
+      desc:
+        '''
+        Resets the TTI RX descriptor queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tti_rx_desc_capacity_status
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_tx_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the TTI data TX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tti_tx_setup_threshold
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_tx_desc_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the TTI descriptor TX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tti_tx_desc_setup_threshold
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_rx_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the TTI data RX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tti_rx_setup_threshold
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_rx_desc_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the TTI descriptor RX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tti_rx_desc_setup_threshold
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_ibi_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the TTI IBI
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tti_ibi_setup_threshold
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_ibi_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready threshold of the TTI queue and checks whether the
+        trigger signal is properly asserted at different levels of the
+        queue fill.
+        '''
+      tests:
+      [
+        tti_ibi_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_rx_desc_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready threshold of the read queue and checks whether the
+        trigger signal is properly asserted at different levels of the
+        queue fill.
+        '''
+      tests:
+      [
+        tti_rx_desc_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: rx_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start thresholds of the read queue and checks
+        whether the trigger signals are properly asserted at different
+        levels of the queue fill.
+        '''
+      tests:
+      [
+        rx_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tx_desc_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start threshold of the write queue and checks
+        whether the trigger is properly asserted at different levels of
+        the queue fill.
+        '''
+      tests:
+      [
+        tti_tx_desc_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tx_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start threshold of the write queue and checks
+        whether the trigger is properly asserted at different levels of
+        the queue fill.
+        '''
+      tests:
+      [
+        tx_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: ibi_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start threshold of the write queue and checks
+        whether the trigger is properly asserted at different levels of
+        the queue fill.
+        '''
+      tests:
+      [
+        ibi_should_raise_thld_trig
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+    {
+      name: tti_ibi_capacity_status
+      desc:
+        '''
+        Resets the TTI TX IBI queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tti_ibi_capacity_status
+      ]
+      tags:
+      [
+        tti_queues
+      ]
+    }
+  ]
+}

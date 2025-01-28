@@ -1,0 +1,23 @@
+{
+  name: descriptor_rx
+  testpoints:
+  [
+    {
+      name: descriptor_rx
+      desc:
+        '''
+        Tests the descriptor_rx module responsible for generating TTI RX
+        descriptors. The test sends N bytes to the module and verifies
+        that it emits a valid descriptor with data length set to N.
+        '''
+      tests:
+      [
+        descriptor_rx
+      ]
+      tags:
+      [
+        descriptor_rx
+      ]
+    }
+  ]
+}

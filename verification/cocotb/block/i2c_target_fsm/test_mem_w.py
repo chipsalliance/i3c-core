@@ -48,7 +48,7 @@ def MatchWDataExact(value, dut):
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_mem_w(dut):
     TARGET_ADDR = 12
     CLK_SPEED = 400000
 

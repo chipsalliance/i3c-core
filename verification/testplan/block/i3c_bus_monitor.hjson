@@ -1,0 +1,42 @@
+{
+  name: i3c_bus_monitor
+  testpoints:
+  [
+    {
+      name: bus_monitor_hdr_exit
+      desc:
+        '''
+        Verifies that the i3c_bus_monitor module correctly detects HDR
+        exit pattern. Sends the HDR exit pattern and verifies that the
+        module does not react - initially the bus is in SDR mode. Instructs
+        the module that the bus has entered HDR mode, issues the HDR exit
+        pattern and counts the number of times the module reported HDR
+        exit. Checks if it reported exactly one HDR exit event.
+        '''
+      tests:
+      [
+        bus_monitor_hdr_exit
+      ]
+      tags:
+      [
+        i3c_bus_monitor
+      ]
+    }
+    {
+      name: target_reset_detection
+      desc:
+        '''
+        Issues a target reset patterin to the I3C bus, verifies that the
+        i3c_bus_monitor correctly report it detected.
+        '''
+      tests:
+      [
+        target_reset_detection
+      ]
+      tags:
+      [
+        i3c_bus_monitor
+      ]
+    }
+  ]
+}

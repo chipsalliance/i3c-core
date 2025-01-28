@@ -1,0 +1,40 @@
+{
+  name: bus_rx_flow
+  testpoints:
+  [
+    {
+      name: multiple_bit_reads
+      desc:
+        '''
+        Drives SCL line with a steady clock, issues multiple bit read
+        requests, verifies that the module returns correct data sampled
+        from the SDA line.
+        '''
+      tests:
+      [
+        multiple_bit_reads
+      ]
+      tags:
+      [
+        bus_rx_flow
+      ]
+    }
+    {
+      name: multiple_byte_reads
+      desc:
+        '''
+        Drives SCL line with a steady clock, issues multiple byte read
+        requests, verifies that the module returns correct data sampled
+        from the SDA line.
+        '''
+      tests:
+      [
+        multiple_byte_reads
+      ]
+      tags:
+      [
+        bus_rx_flow
+      ]
+    }
+  ]
+}

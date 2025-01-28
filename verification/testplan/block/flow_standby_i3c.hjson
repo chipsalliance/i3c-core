@@ -1,0 +1,24 @@
+{
+  name: flow_standby_i3c
+  testpoints:
+  [
+    {
+      name: rx
+      desc:
+        '''
+        Tests basic operation of the flow_standby_i3c module. The test
+        instantiates two tasks serving as BFMs for RX and TX queues.
+        Then it simulates bus start condition followed by data reception
+        ended by bus stop condition.
+        '''
+      tests:
+      [
+        rx
+      ]
+      tags:
+      [
+        flow_standby_i3c
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 
 
 @cocotb.test()
-async def run_write_cmd_queue(dut):
+async def test_write_cmd_queue(dut):
     cocotb.log.setLevel(logging.DEBUG)
 
     dut.i3c_scl_i.value = 1

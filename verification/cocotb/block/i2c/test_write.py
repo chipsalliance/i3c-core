@@ -61,7 +61,7 @@ async def test_write_sequence(
 
 
 @cocotb.test()
-async def run_test(dut):
+async def test_write(dut):
     TARGET_ADDR = 0x18
     CLK_SPEED = 400e3
 

@@ -1,0 +1,353 @@
+{
+  name: hci_queues
+  testpoints:
+  [
+    {
+      name: clear_on_nonempty_resp_queue
+      desc:
+        '''
+        Writes to the HCI queue RESET_CONTROL CSR bit which causes HCI
+        command response queue to be cleared. Then, polls the CSR until the
+        bit gets cleared by the hardware. To check if the queue has been
+        cleared puts a descriptor to the queue and reads it back. It
+        should be the same descriptor.
+        '''
+      tests:
+      [
+        clear_on_nonempty_resp_queue
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: clear_on_nonempty_cmd_queue
+      desc:
+        '''
+        Puts a command descriptor to the HCI command queue. Writes to the
+        RESET_CONTROL CSR to the bit responsible for clearing the queue,
+        polls the CSR until the bit gets cleared by hardware. Verifies that
+        the queue got cleared by pushing and retrieving another descriptor
+        from the queue.
+        '''
+      tests:
+      [
+        clear_on_nonempty_cmd_queue
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: clear_on_nonempty_rx_queue
+      desc:
+        '''
+        Puts 10 data words to the HCI RX data queue. Writes to the
+        RESET_CONTROL CSR to the bit responsible for clearing the queue,
+        polls the CSR until the bit gets cleared by hardware. Puts and
+        gets another data word from the queue to check if it was cleared
+        '''
+      tests:
+      [
+        clear_on_nonempty_rx_queue
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: clear_on_nonempty_tx_queue
+      desc:
+        '''
+        Puts 10 data words to the HCI TX data queue. Writes to the
+        RESET_CONTROL CSR to the bit responsible for clearing the queue,
+        polls the CSR until the bit gets cleared by hardware. Puts and
+        gets another data word from the queue to check if it was cleared
+        '''
+      tests:
+      [
+        clear_on_nonempty_tx_queue
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: clear_on_nonempty_ibi_queue
+      desc:
+        '''
+        Puts 10 data words to the HCI IBI queue. Writes to the
+        RESET_CONTROL CSR to the bit responsible for clearing the queue,
+        polls the CSR until the bit gets cleared by hardware. Puts and
+        gets another data word from the queue to check if it was cleared
+        '''
+      tests:
+      [
+        clear_on_nonempty_ibi_queue
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: cmd_capacity_status
+      desc:
+        '''
+        Resets the HCI command queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        cmd_capacity_status
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: resp_capacity_status
+      desc:
+        '''
+        Resets the HCI response queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        resp_capacity_status
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: rx_capacity_status
+      desc:
+        '''
+        Resets the HCI RX queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        rx_capacity_status
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: tx_capacity_status
+      desc:
+        '''
+        Resets the HCI TX queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        tx_capacity_status
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: ibi_capacity_status
+      desc:
+        '''
+        Resets the HCI IBI queue and verifies that it is empty
+        afterwards
+        '''
+      tests:
+      [
+        ibi_capacity_status
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: cmd_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the HCI command
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        cmd_setup_threshold
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: resp_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the HCI response
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        resp_setup_threshold
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: rx_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the HCI data RX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        rx_setup_threshold
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: tx_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the HCI data TX
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        tx_setup_threshold
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: ibi_setup_threshold
+      desc:
+        '''
+        Writes the threshold to appropriate register for the HCI IBI
+        queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
+        Verifies that an appropriate value has been written to the CSR.
+        Verifies the threshold signal assumes the correct value.
+        '''
+      tests:
+      [
+        ibi_setup_threshold
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: resp_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready threshold of the read queue and checks whether the
+        trigger signal is properly asserted at different levels of the
+        queue fill.
+        '''
+      tests:
+      [
+        resp_should_raise_thld_trig
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: rx_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start thresholds of the read queue and checks
+        whether the trigger signals are properly asserted at different
+        levels of the queue fill.
+        '''
+      tests:
+      [
+        rx_should_raise_thld_trig
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: ibi_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready threshold of the read queue and checks whether the
+        trigger signal is properly asserted at different levels of the
+        queue fill.
+        '''
+      tests:
+      [
+        ibi_should_raise_thld_trig
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: cmd_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready threshold of the write queue and checks whether
+        the trigger is properly asserted at different levels of the queue
+        fill.
+        '''
+      tests:
+      [
+        cmd_should_raise_thld_trig
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+    {
+      name: tx_should_raise_thld_trig
+      desc:
+        '''
+        Sets up a ready and start threshold of the write queue and checks
+        whether the trigger is properly asserted at different levels of
+        the queue fill.
+        '''
+      tests:
+      [
+        tx_should_raise_thld_trig
+      ]
+      tags:
+      [
+        hci_queues
+      ]
+    }
+  ]
+}
