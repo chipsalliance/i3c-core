@@ -506,8 +506,9 @@ module i3c
 
   logic recovery_mode_enter;
   logic recovery_mode_enabled;
-  logic virtual_device_tx;
-  logic virtual_device_tx_done;
+  logic virtual_device_sel;
+  logic virtual_device_rdy;
+  logic xfer_in_progress;
 
   // HCI
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
@@ -695,8 +696,9 @@ module i3c
 
       .err_o(controller_error),
       .recovery_mode_enter_i(recovery_mode_enter),
-      .virtual_device_tx_o(virtual_device_tx),
-      .virtual_device_tx_done_i(virtual_device_tx_done)
+      .virtual_device_sel_o(virtual_device_sel),
+      .virtual_device_rdy_i(virtual_device_rdy),
+      .xfer_in_progress_o(xfer_in_progress)
   );
 
   // HCI
@@ -1104,8 +1106,8 @@ module i3c
       .ctl_bus_addr_valid_i(rx_bus_addr_valid),
       .recovery_mode_enter_o(recovery_mode_enter),
       .recovery_mode_enabled_o(recovery_mode_enabled),
-      .virtual_device_tx_i(virtual_device_tx),
-      .virtual_device_tx_done_o(virtual_device_tx_done)
+      .virtual_device_sel_i(virtual_device_sel),
+      .xfer_in_progress_i(xfer_in_progress)
   );
 
   // I3C PHY

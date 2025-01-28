@@ -125,9 +125,9 @@ module controller_standby_i3c
 
     // recovery mode
     input  logic recovery_mode_enter_i,
-    output logic virtual_device_tx_o,
-    input  logic virtual_device_tx_done_i,
-    input  logic recovery_mode_i
+    output logic virtual_device_sel_o,
+    input  logic virtual_device_rdy_i,
+    output logic xfer_in_progress_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -456,9 +456,9 @@ module controller_standby_i3c
       .sda_posedge_i              (ctrl_bus_i.sda.pos_edge),
       .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err),
-      .virtual_device_tx_o        (virtual_device_tx_o),
-      .virtual_device_tx_done_i   (virtual_device_tx_done_i),
-      .recovery_mode_i            (recovery_mode_i)
+      .virtual_device_sel_o       (virtual_device_sel_o),
+      .virtual_device_rdy_i       (virtual_device_rdy_i),
+      .xfer_in_progress_o         (xfer_in_progress_o)
   );
 
   ccc xccc (

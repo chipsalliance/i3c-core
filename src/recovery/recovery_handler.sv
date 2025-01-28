@@ -176,8 +176,8 @@ module recovery_handler
     output logic image_activated_o,
     output logic recovery_mode_enter_o,
     output logic recovery_mode_enabled_o,
-    input  logic virtual_device_tx_i,
-    output logic virtual_device_tx_done_o
+    input  logic virtual_device_sel_i,
+    input  logic xfer_in_progress_i
 );
 
   // The recovery mode does not support interrupts
@@ -187,11 +187,14 @@ module recovery_handler
 
   logic recovery_enable;
   logic recovery_mode_enabled; //recovery globally enabled in the csr
+  logic recovery_xfer_pending;
+  logic recovery_exec_pending;
+  logic recovery_pending;
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
-  assign recovery_enable = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode) | virtual_device_tx_i;
   assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+  assign recovery_enable = virtual_device_sel_i;
 
   // Output recovery mode enable state. Either via DEVICE_STATUS or via access through virtual target address
   assign recovery_mode_enabled_o = recovery_enable;
@@ -217,6 +220,26 @@ module recovery_handler
     end else begin
       recovery_mode_enter_shreg <= 2'b10;
     end
+
+  // Recovery transfer pending signal
+  assign recovery_xfer_pending = xfer_in_progress_i && virtual_device_sel_i;
+
+  // Recovery execution pending signal
+  logic cmd_valid;
+  logic cmd_done;
+
+  always @(posedge clk_i or negedge rst_ni)
+    if (~rst_ni) begin
+      recovery_exec_pending <= '0;
+    end else if (cmd_valid) begin
+      recovery_exec_pending <= '1;
+    end else if (cmd_done) begin
+      recovery_exec_pending <= '0;
+    end
+
+  // Recovery transfer and execution pending
+  assign recovery_pending = recovery_xfer_pending | recovery_exec_pending;
+
   // ....................................................
   // TTI Queues
 
@@ -483,8 +506,8 @@ module recovery_handler
       .rready_i(ctl_tti_ibi_queue_rready_i),
       .rdata_o(ctl_tti_ibi_queue_rdata_o),
 
-      .req_i (tti_ibi_queue_req),
-      .ack_o (tti_ibi_queue_ack),
+      .req_i (csr_tti_ibi_queue_req_i),
+      .ack_o (csr_tti_ibi_queue_ack_o),
       .data_i(csr_tti_ibi_queue_data_i),
 
       .start_thld_i('0),  // The IBI queue does not support start threshold
@@ -495,20 +518,6 @@ module recovery_handler
       .reg_rst_we_o(csr_tti_ibi_queue_reg_rst_we_o),
       .reg_rst_data_o(csr_tti_ibi_queue_reg_rst_data_o)
   );
-
-  // Prevent CSR writes to IBI queue in recovery mode
-  // Make writes from CSR side seem as always accepted
-  // TODO: Consult TTI and recovery specification and verify if it is a
-  //       legitimate behavior.
-  always_comb begin
-    if (recovery_enable) begin
-      tti_ibi_queue_req       = 1'b0;
-      csr_tti_ibi_queue_ack_o = csr_tti_ibi_queue_req_i;
-    end else begin
-      tti_ibi_queue_req       = csr_tti_ibi_queue_req_i;
-      csr_tti_ibi_queue_ack_o = tti_ibi_queue_ack;
-    end
-  end
 
   // ....................................................
   // TTI Queues <-> controller mux
@@ -523,7 +532,7 @@ module recovery_handler
 
   // RX descriptor queue
   always_comb begin : R1MUX
-    if (recovery_enable) begin
+    if (recovery_pending) begin
       recv_tti_rx_desc_valid                  = ctl_tti_rx_desc_queue_wvalid_i;
       tti_rx_desc_queue_wvalid                = '0;
       ctl_tti_rx_desc_queue_full_o            = '0;
@@ -550,7 +559,7 @@ module recovery_handler
 
   // TX descriptor queue
   always_comb begin : T1MUX
-    if (recovery_enable) begin
+    if (recovery_pending) begin
       send_tti_tx_desc_ready                  = ctl_tti_tx_desc_queue_rready_i;
       tti_tx_desc_queue_rready                = '0;
       ctl_tti_tx_desc_queue_full_o            = '0;
@@ -585,7 +594,7 @@ module recovery_handler
 
   // RX data queue
   always_comb begin : R2MUX
-    if (recovery_enable & recv_tti_rx_data_queue_select) begin
+    if (recovery_pending & recv_tti_rx_data_queue_select) begin
       recv_tti_rx_data_valid                  = ctl_tti_rx_data_queue_wvalid_i;
       tti_rx_data_queue_wvalid                = '0;
       tti_rx_data_queue_flush                 = recv_tti_rx_data_queue_flush;
@@ -626,7 +635,7 @@ module recovery_handler
 
   // TX data queue
   always_comb begin : T2MUX
-    if (recovery_enable & send_tti_tx_data_queue_select) begin
+    if (recovery_pending & send_tti_tx_data_queue_select) begin
       tti_tx_data_queue_rready                = '0;
       send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
       tti_tx_data_queue_flush                 = '0;
@@ -661,7 +670,7 @@ module recovery_handler
   logic exec_tti_rx_desc_queue_clr;
   // RX descriptor queue
   always_comb begin : R4SW
-    if (recovery_enable) begin
+    if (recovery_pending) begin
       csr_tti_rx_desc_queue_ack_o          = '0;
       csr_tti_rx_desc_queue_data_o         = '0;
       csr_tti_rx_desc_queue_reg_rst_we_o   = '0;
@@ -708,7 +717,7 @@ module recovery_handler
 
   // RX data queue
   always_comb begin : R3MUX
-    if (recovery_enable & exec_tti_rx_queue_sel) begin
+    if (recovery_pending & exec_tti_rx_queue_sel) begin
       csr_tti_rx_data_queue_ack_o          = '0;
       csr_tti_rx_data_queue_reg_rst_we_o   = '0;
       csr_tti_rx_data_queue_reg_rst_data_o = '0;
@@ -735,26 +744,15 @@ module recovery_handler
   assign csr_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
 
   // ......................
-
+  // TX data queue is always connected. The recovery logic does not use it
   logic exec_tti_tx_data_queue_clr;
-  // TX data queue
-  always_comb begin : T3MUX
-    if (recovery_enable) begin
-      csr_tti_tx_data_queue_ack_o          = '0;
-      csr_tti_tx_data_queue_reg_rst_we_o   = '0;
-      csr_tti_tx_data_queue_reg_rst_data_o = '0;
-      tti_tx_data_queue_data               = '0;
-      tti_tx_data_queue_req                = '0;
-      tti_tx_data_queue_reg_rst            = exec_tti_tx_data_queue_clr;
-    end else begin
-      csr_tti_tx_data_queue_ack_o          = tti_tx_data_queue_ack;
-      csr_tti_tx_data_queue_reg_rst_we_o   = tti_tx_data_queue_reg_rst_we;
-      csr_tti_tx_data_queue_reg_rst_data_o = tti_tx_data_queue_reg_rst_next;
-      tti_tx_data_queue_data               = csr_tti_tx_data_queue_data_i;
-      tti_tx_data_queue_req                = csr_tti_tx_data_queue_req_i;
-      tti_tx_data_queue_reg_rst            = csr_tti_tx_data_queue_reg_rst_i;
-    end
-  end
+
+  assign csr_tti_tx_data_queue_ack_o          = tti_tx_data_queue_ack;
+  assign csr_tti_tx_data_queue_reg_rst_we_o   = tti_tx_data_queue_reg_rst_we;
+  assign csr_tti_tx_data_queue_reg_rst_data_o = tti_tx_data_queue_reg_rst_next;
+  assign tti_tx_data_queue_data               = csr_tti_tx_data_queue_data_i;
+  assign tti_tx_data_queue_req                = csr_tti_tx_data_queue_req_i;
+  assign tti_tx_data_queue_reg_rst            = csr_tti_tx_data_queue_reg_rst_i | exec_tti_tx_data_queue_clr;
 
   // Threshold
   assign tti_tx_data_queue_start_thld       = csr_tti_tx_data_queue_start_thld_i;
@@ -780,12 +778,10 @@ module recovery_handler
 
   // ....................................................
 
-  logic cmd_valid;
   logic cmd_is_rd;
   logic [7:0] cmd_cmd;
   logic [15:0] cmd_len;
   logic cmd_error;
-  logic        cmd_done; // TODO: Consider replacing this with rx_cmd_ready and making the executor not ready rather than pulsing done.
 
   // RX PEC calculator
   logic rx_pec_clear;
@@ -846,7 +842,7 @@ module recovery_handler
       .cmd_error_o(cmd_error),
       .cmd_done_i (cmd_done),
 
-      .virtual_device_tx_i(virtual_device_tx_i)
+      .virtual_device_tx_i(recovery_pending)
   );
 
   // ....................................................
@@ -1028,8 +1024,6 @@ module recovery_handler
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o),
 
-      .virtual_device_tx_i(virtual_device_tx_i),
-      .virtual_device_tx_done_o(virtual_device_tx_done_o),
       .recovery_mode_enabled_i(recovery_mode_enabled)
   );
 

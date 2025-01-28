@@ -170,9 +170,9 @@ module controller_standby
 
     output logic err_o,
     input  logic recovery_mode_enter_i,
-    output logic virtual_device_tx_o,
-    input  logic virtual_device_tx_done_i,
-    input  logic recovery_mode_i
+    output logic virtual_device_sel_o,
+    input  logic virtual_device_rdy_i,
+    output logic xfer_in_progress_o
 );
 
   logic sel_i2c_i3c;  // i2c = 0; i3c = 1;
@@ -421,9 +421,9 @@ module controller_standby
       .peripheral_reset_done_i,
       .escalated_reset_o,
       .recovery_mode_enter_i(recovery_mode_enter_i),
-      .virtual_device_tx_o(virtual_device_tx_o),
-      .virtual_device_tx_done_i(virtual_device_tx_done_i),
-      .recovery_mode_i(recovery_mode_i)
+      .virtual_device_sel_o(virtual_device_sel_o),
+      .virtual_device_rdy_i(virtual_device_rdy_i),
+      .xfer_in_progress_o(xfer_in_progress_o)
   );
 
   always_comb begin

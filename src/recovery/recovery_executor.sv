@@ -61,6 +61,7 @@ module recovery_executor
     output logic indirect_rx_clr_o,
 
     // Others
+    output logic pending_o,
     input logic host_abort_i,
 
     // queues clr signals
@@ -77,9 +78,7 @@ module recovery_executor
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
     output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o,
 
-    // virtual device interface
-    input  logic virtual_device_tx_i,
-    output logic virtual_device_tx_done_o,
+    // Recovery mode enabled via a CSR
     input  recovery_mode_enabled_i
 );
 
@@ -219,19 +218,6 @@ module recovery_executor
   end
 
   // ....................................................
-
-  // Queue flush
-  logic flush_queues;
-
-  always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) flush_queues <= 1'b0;
-    else begin
-        unique case (state_q)
-          Idle:
-          if (cmd_valid_i) flush_queues <= 1'b1;
-          default: flush_queues <= 1'b0;
-        endcase
-    end
 
   // Data counter
   assign dcnt_next = (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
@@ -397,7 +383,6 @@ module recovery_executor
 
   // Update status on command done
   assign status_protocol_we = (state_q == Done);
-  assign virtual_device_tx_done_o = (state_q == Done) & virtual_device_tx_i;
 
   // ....................................................
 
@@ -496,8 +481,8 @@ module recovery_executor
   assign tti_rx_sel_o = 1'b1;
   assign rx_data_queue_clr_o = (state_q == Error);
   assign rx_desc_queue_clr_o = (state_q == Error);
-  assign tx_data_queue_clr_o = (state_q == Error) | flush_queues;
-  assign tx_desc_queue_clr_o = (state_q == Error) | flush_queues;
+  assign tx_data_queue_clr_o = '0;
+  assign tx_desc_queue_clr_o = '0;
 
   // RX TTI FIFO data request
   always_ff @(posedge clk_i)

@@ -122,9 +122,9 @@ module i3c_target_fsm #(
 
     output logic parity_err_o,
     output logic rx_overflow_err_o,
-    output logic virtual_device_tx_o,
-    input  logic virtual_device_tx_done_i,
-    input  logic recovery_mode_i,
+    output logic virtual_device_sel_o,
+    input  logic virtual_device_rdy_i,
+    output logic xfer_in_progress_o,
 
     output logic tx_pr_start_o,
     output logic tx_pr_abort_o
@@ -235,13 +235,15 @@ module i3c_target_fsm #(
   logic bus_rnw_d, bus_rnw_q;
   logic [6:0] bus_addr_d, bus_addr_q;
   logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match;
-  assign is_our_addr_match = recovery_mode_i ? 1'b0 :
-                             target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
+
+  assign is_our_addr_match = target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
                              target_sta_address_valid_i ? (target_sta_address_i == bus_addr_q) :
                              1'b0;
+
   assign is_virtual_addr_match = virtual_target_dyn_address_valid_i ? (virtual_target_dyn_address_i == bus_addr_q) :
-                             virtual_target_sta_address_valid_i ? (virtual_target_sta_address_i == bus_addr_q) :
-                             1'b0;
+                                 virtual_target_sta_address_valid_i ? (virtual_target_sta_address_i == bus_addr_q) :
+                                 1'b0;
+
   assign is_rsvd_byte_match = ({bus_addr_q, bus_rnw_q} == 8'hFC);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : update_bus_addr_matcher
@@ -580,15 +582,36 @@ module i3c_target_fsm #(
 
   assign target_idle_o = (state_q == Idle);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : virtual_device_tx_latch
+  always_ff @(posedge clk_i or negedge rst_ni) begin : virtual_device_sel_latch
     if (!rst_ni) begin
-      virtual_device_tx_o <= 1'b0;
-    end else begin
-      if ((state_q == TxAckSByte) && is_virtual_addr_match) begin
-        virtual_device_tx_o <= 1'b1;
-      end else if (state_q == Idle) virtual_device_tx_o <= 1'b0;
-    end
+      virtual_device_sel_o <= '0;
+    end else unique case(state_q)
+      CheckFByte:
+        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
+            virtual_device_sel_o <= is_virtual_addr_match;
+      CheckSByte:
+        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
+            virtual_device_sel_o <= is_virtual_addr_match;
+      default:
+        virtual_device_sel_o <= virtual_device_sel_o;
+    endcase
   end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      xfer_in_progress_o <= '0;
+    end else unique case(state_q)
+      Idle:
+        xfer_in_progress_o <= '0;
+      CheckFByte:
+        xfer_in_progress_o <= (is_our_addr_match || is_virtual_addr_match);
+      CheckSByte:
+        xfer_in_progress_o <= (is_our_addr_match || is_virtual_addr_match);
+      default:
+        xfer_in_progress_o <= xfer_in_progress_o;
+    endcase
+  end
+
   // TODO: Also sub FSM should contribute
   // TODO: Maybe we can do it based on write module rather than states
   assign target_transmitting_o =
