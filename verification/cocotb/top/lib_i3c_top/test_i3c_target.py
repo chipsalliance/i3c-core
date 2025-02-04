@@ -1,20 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from math import ceil
 import random
+from math import ceil
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
+from utils import format_ibi_data, get_interrupt_status
 
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
-
-from utils import get_interrupt_status
-from utils import format_ibi_data
 
 TARGET_ADDRESS = 0x5A
 
@@ -45,7 +43,7 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
-        speed=fbus*1e6,
+        speed=fbus * 1e6,
     )
 
     i3c_target = I3CTarget(  # noqa
@@ -54,7 +52,7 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
-        speed=fbus*1e6,
+        speed=fbus * 1e6,
     )
 
     tb = I3CTopTestInterface(dut)
@@ -63,22 +61,22 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
     # Configure the top level
 
     # Calculate timings. See MIPI I3C basic spec v1.1.1 p.368
-    tclk = 1000.0 / fclk # [ns]
-    tcr  = 150.0  / fbus # [ns]
-    thd  = tcr + 3 # [ns]
-    tsu  = 3.0 # [ns]
+    tclk = 1000.0 / fclk  # [ns]
+    tcr = 150.0 / fbus  # [ns]
+    thd = tcr + 3  # [ns]
+    tsu = 3.0  # [ns]
 
-#    timings = {
-#        "T_R":      max(0, int(ceil(tcr / tclk))),
-#        "T_F":      max(0, int(ceil(tcr / tclk))),
-#        "T_HD_DAT": max(0, int(ceil(thd / tclk))),
-#        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
-#    }
+    #    timings = {
+    #        "T_R":      max(0, int(ceil(tcr / tclk))),
+    #        "T_F":      max(0, int(ceil(tcr / tclk))),
+    #        "T_HD_DAT": max(0, int(ceil(thd / tclk))),
+    #        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
+    #    }
 
     # TODO: For now test with all timings set to 0.
     timings = {
-        "T_R":      0,
-        "T_F":      0,
+        "T_R": 0,
+        "T_F": 0,
         "T_HD_DAT": 0,
         "T_SU_DAT": 0,
     }
@@ -92,13 +90,13 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.TTI.QUEUE_THLD_CTRL.base_addr,
         tb.reg_map.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD,
-        1
+        1,
     )
 
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.base_addr,
         tb.reg_map.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD,
-        0 # threshold = 2 ^ (x + 1) = 2
+        0,  # threshold = 2 ^ (x + 1) = 2
     )
 
     return i3c_controller, i3c_target, tb
@@ -123,7 +121,7 @@ async def test_i3c_target_write(dut):
         await tb.write_csr_field(
             tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE.base_addr,
             tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN,
-            1
+            1,
         )
 
         for i, tx_data in enumerate(test_data):
@@ -138,7 +136,9 @@ async def test_i3c_target_write(dut):
             assert intrs["RX_DESC_STAT"] == 1
 
             # Read RX descriptor, the interrupt should go low
-            data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+            data = dword2int(
+                await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
+            )
             desc_len = data & 0xFFFF
 
             # Examine the descriptor
@@ -159,7 +159,7 @@ async def test_i3c_target_write(dut):
 
             # Read RX data
             data_len = ceil(desc_len / 4)
-            rx_data  = []
+            rx_data = []
             for _ in range(data_len):
                 data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
                 for k in range(4):
@@ -203,26 +203,24 @@ async def test_i3c_target_read(dut):
     async def make_transfer(min_len=1, max_len=16):
 
         length = random.randint(min_len, max_len)
-        data   = [random.randint(0, 255) for _ in range(length)]
+        data = [random.randint(0, 255) for _ in range(length)]
 
         dut._log.info(f"Enqueueing transfer of length {length}")
 
         # Write data to TTI TX FIFO
         for i in range((length + 3) // 4):
-            word = data[4*i]
-            if 4*i+1 < length:
-                word |= data[4*i+1] << 8;
-            if 4*i+2 < length:
-                word |= data[4*i+2] << 16;
-            if 4*i+3 < length:
-                word |= data[4*i+3] << 24;
+            word = data[4 * i]
+            if 4 * i + 1 < length:
+                word |= data[4 * i + 1] << 8
+            if 4 * i + 2 < length:
+                word |= data[4 * i + 2] << 16
+            if 4 * i + 3 < length:
+                word |= data[4 * i + 3] << 24
 
-            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
-                int2dword(word), 4)
+            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
 
         # Write the TX descriptor
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
-            int2dword(length), 4)
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(length), 4)
 
         return data
 

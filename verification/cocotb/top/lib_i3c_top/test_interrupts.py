@@ -8,17 +8,16 @@ from bus2csr import dword2int, int2dword
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
+from utils import format_ibi_data, get_interrupt_status
 
 import cocotb
 from cocotb.regression import TestFactory
-from cocotb.triggers import ClockCycles, RisingEdge, Timer, Event
-
-from utils import get_interrupt_status
-from utils import format_ibi_data
+from cocotb.triggers import ClockCycles, Event, RisingEdge, Timer
 
 # =============================================================================
 
 TARGET_ADDRESS = 0x5A
+
 
 async def timeout_task(timeout_us):
     """
@@ -63,7 +62,9 @@ async def test_setup(dut, timeout_us=50):
 
     return i3c_controller, i3c_target, tb
 
+
 # =============================================================================
+
 
 @cocotb.test()
 async def test_rx_desc_stat(dut):
@@ -101,6 +102,7 @@ async def test_rx_desc_stat(dut):
     # Dummy wait
     await ClockCycles(tb.clk, 10)
 
+
 @cocotb.test()
 async def test_tx_desc_stat(dut):
 
@@ -117,10 +119,8 @@ async def test_tx_desc_stat(dut):
     assert irq.value == 0
 
     # Write data and descriptor
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
-        int2dword(0xDEADBEEF), 4)
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
-        int2dword(4), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(0xDEADBEEF), 4)
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(4), 4)
 
     # Send a private read to the target
     async def i3c_task(evt):
@@ -148,6 +148,7 @@ async def test_tx_desc_stat(dut):
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
+
 
 @cocotb.test()
 async def test_ibi_done(dut):
@@ -272,12 +273,14 @@ async def test_interrupt_force(dut, fields):
 
 
 tf = TestFactory(test_function=test_interrupt_force)
-tf.add_option("fields", [
-    ("TX_DESC_STAT_EN",         "TX_DESC_STAT_FORCE",  "TX_DESC_STAT"),
-    ("RX_DESC_STAT_EN",         "RX_DESC_STAT_FORCE",  "RX_DESC_STAT"),
-    ("RX_DESC_THLD_STAT_EN",    "RX_DESC_THLD_FORCE",  "RX_DESC_THLD_STAT"),
-    ("RX_DATA_THLD_STAT_EN",    "RX_DATA_THLD_FORCE",  "RX_DATA_THLD_STAT"),
-    ("IBI_DONE_EN",             "IBI_DONE_FORCE",      "IBI_DONE"),
-])
+tf.add_option(
+    "fields",
+    [
+        ("TX_DESC_STAT_EN", "TX_DESC_STAT_FORCE", "TX_DESC_STAT"),
+        ("RX_DESC_STAT_EN", "RX_DESC_STAT_FORCE", "RX_DESC_STAT"),
+        ("RX_DESC_THLD_STAT_EN", "RX_DESC_THLD_FORCE", "RX_DESC_THLD_STAT"),
+        ("RX_DATA_THLD_STAT_EN", "RX_DATA_THLD_FORCE", "RX_DATA_THLD_STAT"),
+        ("IBI_DONE_EN", "IBI_DONE_FORCE", "IBI_DONE"),
+    ],
+)
 tf.generate_tests()
-

@@ -267,6 +267,7 @@ def split_into_dwords(data: bytes) -> Iterable[tuple[int, int]]:
 
         byte_idx += 4
 
+
 def format_ibi_data(mdb, data):
     """
     Given MDB and a list of data bytes (can be empty) prepare a sequence of
@@ -309,4 +310,3 @@ async def get_interrupt_status(tb):
         intrs[key] = state
 
     return intrs
-

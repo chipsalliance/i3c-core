@@ -6,7 +6,7 @@ from cocotbext_i3c.i3c_controller import I3cController
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, RisingEdge, ReadOnly
+from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge
 
 
 async def setup(dut):
@@ -44,6 +44,7 @@ def create_default_controller(dut: SimHandleBase) -> I3cController:
         scl_o=dut.scl_i,
         speed=12.5e6,
     )
+
 
 @cocotb.test()
 async def test_bus_monitor_hdr_exit(dut: SimHandleBase):

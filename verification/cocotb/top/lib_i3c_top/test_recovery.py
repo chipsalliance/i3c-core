@@ -4,7 +4,7 @@ import logging
 import random
 
 from boot import boot_init
-from bus2csr import dword2int, int2dword, int2bytes, bytes2int
+from bus2csr import bytes2int, dword2int, int2bytes, int2dword
 from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
@@ -12,12 +12,13 @@ from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import Timer, Event, Combine, ClockCycles
+from cocotb.triggers import ClockCycles, Combine, Event, Timer
 
 STATIC_ADDR = 0x5A
 VIRT_STATIC_ADDR = 0x5B
 DYNAMIC_ADDR = 0x52
 VIRT_DYNAMIC_ADDR = 0x53
+
 
 async def timeout_task(timeout):
     await Timer(timeout, "us")
@@ -41,7 +42,7 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
-        speed=fbus*1e6,
+        speed=fbus * 1e6,
     )
 
     i3c_target = I3CTarget(  # noqa
@@ -50,7 +51,7 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
-        speed=fbus*1e6,
+        speed=fbus * 1e6,
         address=0x23,
     )
 
@@ -61,8 +62,8 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
 
     # TODO: For now test with all timings set to 0.
     timings = {
-        "T_R":      0,
-        "T_F":      0,
+        "T_R": 0,
+        "T_F": 0,
         "T_HD_DAT": 0,
         "T_SU_DAT": 0,
     }
@@ -92,6 +93,7 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
 
     return i3c_controller, i3c_target, tb, recovery
 
+
 @cocotb.test()
 async def test_virtual_write(dut):
     """
@@ -106,7 +108,6 @@ async def test_virtual_write(dut):
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
     )
-
 
     await ClockCycles(tb.clk, 50)
     # set regular device dynamic address
@@ -134,7 +135,9 @@ async def test_virtual_write(dut):
     dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
 
     # read back device reset
-    i3c_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET)
+    i3c_data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET
+    )
 
     # Check
     protocol_status = (status >> 8) & 0xFF
@@ -159,11 +162,11 @@ async def test_virtual_write(dut):
         pending_interrupt == pending_interrupt_in
     ), "Unexpected pending interrupt value read from CSR"
 
-    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=DYNAMIC_ADDR, count=2)
-    status = responses[0][1]
-    pending_interrupt = (
-        int.from_bytes(status, byteorder="big", signed=False) & 0xF
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETSTATUS, addr=DYNAMIC_ADDR, count=2
     )
+    status = responses[0][1]
+    pending_interrupt = int.from_bytes(status, byteorder="big", signed=False) & 0xF
     assert (
         pending_interrupt == pending_interrupt_in
     ), "Unexpected pending interrupt value received from GETSTATUS CCC"
@@ -175,7 +178,7 @@ async def test_virtual_write(dut):
     await recovery.command_write(
         VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22],
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -198,7 +201,8 @@ async def test_virtual_write(dut):
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
     assert data0 != 0xDDCCBBAA
-    assert data1 != 0x44332211
+    assert data1 != 0x2211
+
 
 @cocotb.test()
 async def test_virtual_write_alternating(dut):
@@ -231,8 +235,17 @@ async def test_virtual_write_alternating(dut):
 
         # Wait & read the CSR from the AHB/AXI side
         await Timer(1, "us")
-        readback = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+        readback = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4)
+        )
         assert readback == int.from_bytes(data, byteorder="little")
+
+        # Clear device reset CSR
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr,
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.RESET_CTRL,
+            0xFF,
+        )
 
         # ..........
 
@@ -258,6 +271,7 @@ async def test_virtual_write_alternating(dut):
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
         )
         await ClockCycles(tb.clk, 50)
+
 
 @cocotb.test()
 async def test_write(dut):
@@ -295,13 +309,13 @@ async def test_write(dut):
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
-    assert data == 0xDDCCBBAA
+    assert data == 0xCCBBAA  # 0xDD trimmed because this register is only 3 bytes
 
     # Write to the FIFO_CTRL CSR (two words)
     await recovery.command_write(
         VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22],
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -324,7 +338,7 @@ async def test_write(dut):
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
     assert data0 == 0xDDCCBBAA
-    assert data1 == 0x44332211
+    assert data1 == 0x2211
 
 
 @cocotb.test()
@@ -349,9 +363,15 @@ async def test_indirect_fifo_write(dut):
         """
         Returns (empty, full, write index, read index)
         """
-        sts   = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4))
-        wrptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4))
-        rdptr = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4))
+        sts = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4)
+        )
+        wrptr = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4)
+        )
+        rdptr = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4)
+        )
         return bool(sts & 1), bool(sts & 2), wrptr, rdptr
 
     # Get indirect FIFO pointers
@@ -370,12 +390,12 @@ async def test_indirect_fifo_write(dut):
     await Timer(1, "us")
 
     # Read data back
-    count    = (len(tx_data) + 3) // 4
+    count = (len(tx_data) + 3) // 4
     rx_words = []
     for i in range(count):
 
         # Read data
-        res  = await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+        res = await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
         data = dword2int(res)
         dut._log.info(f"INDIRECT_FIFO_DATA = 0x{data:08X}")
         rx_words.append(data)
@@ -396,7 +416,7 @@ async def test_indirect_fifo_write(dut):
     for i in range(count):
         word = 0
         for j in range(4):
-            idx = 4*i + j
+            idx = 4 * i + j
             word >>= 8
             if idx < len(tx_data):
                 word |= tx_data[idx] << 24
@@ -418,6 +438,7 @@ async def test_indirect_fifo_write(dut):
     assert (full1, empty1) == (False, False)
     assert (full2, empty2) == (False, True)
     assert (full3, empty3) == (False, True)
+
 
 @cocotb.test()
 async def test_write_pec(dut):
@@ -466,7 +487,9 @@ async def test_write_pec(dut):
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0x04  # PEC error
-    assert data == 0xDEADBEEF  # From previous write
+    assert (
+        data == 0xADBEEF
+    )  # From previous write (0xDE trimmed because this register is only 3 bytes)
 
     # Wait
     await Timer(1, "us")
@@ -495,14 +518,15 @@ async def test_read(dut):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
     prot_cap = [
-        0x01,
-        0x02,
-        0x03,
-        0x04,
-        0x05,
-        0x06,
-        0x07,
-        0x08,
+        # First 8 bytes is Recovery magic string "OCP RECV"
+        0x20,  # ' '
+        0x50,  # 'P'
+        0x43,  # 'C'
+        0x4F,  # 'O'
+        0x56,  # 'V'
+        0x43,  # 'C'
+        0x45,  # 'E'
+        0x52,  # 'R'
         0x09,
         0x0A,
         0x0B,
@@ -529,9 +553,7 @@ async def test_read(dut):
     )
     # Write data to TTI TX FIFO
     for i in range(0, len(test_data), 4):
-        await tb.write_csr(
-            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, test_data[i : i + 4], 4
-        )
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, test_data[i : i + 4], 4)
 
     # Enable the recovery mode
     status = 0x3  # "Recovery Mode"
@@ -540,20 +562,8 @@ async def test_read(dut):
     )
 
     # Write the TX descriptor
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_len), 4
-    )
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_len), 4)
 
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
-        int2dword(make_word(prot_cap[0:4])),
-        4,
-    )
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
-        int2dword(make_word(prot_cap[4:8])),
-        4,
-    )
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
         int2dword(make_word(prot_cap[8:12])),
@@ -569,7 +579,9 @@ async def test_read(dut):
     await Timer(1, "us")
 
     # Read the PROT_CAP register
-    recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+    recovery_data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP
+    )
 
     # PROT_CAP read always returns 15 bytes
     assert len(recovery_data) == 15
@@ -578,6 +590,7 @@ async def test_read(dut):
 
     # Wait
     await Timer(1, "us")
+
 
 @cocotb.test()
 async def test_read_short(dut):
@@ -602,18 +615,19 @@ async def test_read_short(dut):
     def make_word(bs):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
-    prot_cap = [random.randint(0, 255) for i in range(16)]
+    prot_cap = [
+        # First 8 bytes is Recovery magic string "OCP RECV"
+        0x20,  # ' '
+        0x50,  # 'P'
+        0x43,  # 'C'
+        0x4F,  # 'O'
+        0x56,  # 'V'
+        0x43,  # 'C'
+        0x45,  # 'E'
+        0x52,  # 'R'
+    ]
+    prot_cap += [random.randint(0, 255) for i in range(8)]
 
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
-        int2dword(make_word(prot_cap[0:4])),
-        4,
-    )
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
-        int2dword(make_word(prot_cap[4:8])),
-        4,
-    )
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
         int2dword(make_word(prot_cap[8:12])),
@@ -641,7 +655,9 @@ async def test_read_short(dut):
     await Timer(2, "us")
 
     # Read PROT_CAP again, this time using the correct length
-    recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+    recovery_data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP
+    )
 
     # PROT_CAP read always returns 15 bytes
     assert recovery_data is not None
@@ -651,6 +667,7 @@ async def test_read_short(dut):
 
     # Wait
     await Timer(1, "us")
+
 
 @cocotb.test()
 async def test_read_long(dut):
@@ -675,18 +692,19 @@ async def test_read_long(dut):
     def make_word(bs):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
-    prot_cap = [random.randint(0, 255) for i in range(16)]
+    prot_cap = [
+        # First 8 bytes is Recovery magic string "OCP RECV"
+        0x20,  # ' '
+        0x50,  # 'P'
+        0x43,  # 'C'
+        0x4F,  # 'O'
+        0x56,  # 'V'
+        0x43,  # 'C'
+        0x45,  # 'E'
+        0x52,  # 'R'
+    ]
+    prot_cap += [random.randint(0, 255) for i in range(8)]
 
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
-        int2dword(make_word(prot_cap[0:4])),
-        4,
-    )
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
-        int2dword(make_word(prot_cap[4:8])),
-        4,
-    )
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
         int2dword(make_word(prot_cap[8:12])),
@@ -714,7 +732,9 @@ async def test_read_long(dut):
     await Timer(1, "us")
 
     # Read PROT_CAP again, this time using the correct length
-    recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+    recovery_data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP
+    )
 
     # PROT_CAP read always returns 15 bytes
     assert recovery_data is not None
@@ -724,6 +744,7 @@ async def test_read_long(dut):
 
     # Wait
     await Timer(1, "us")
+
 
 @cocotb.test()
 async def test_virtual_read_illegal(dut):
@@ -750,7 +771,9 @@ async def test_virtual_read_illegal(dut):
     )
 
     # Read the INDIRECT_FIFO_STATUS register
-    data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+    data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS
+    )
 
     # Expect NACK
     # This is how cocotbext-i3c reports a NACK for a recovery command
@@ -759,6 +782,7 @@ async def test_virtual_read_illegal(dut):
 
     # Wait
     await Timer(1, "us")
+
 
 @cocotb.test()
 async def test_virtual_read_alternating(dut):
@@ -787,18 +811,19 @@ async def test_virtual_read_alternating(dut):
         # ..........
 
         # Write some data to PROT_CAP CSR
-        prot_cap = [random.randint(0, 255) for i in range(16)]
+        prot_cap = [
+            # First 8 bytes is Recovery magic string "OCP RECV"
+            0x20,  # ' '
+            0x50,  # 'P'
+            0x43,  # 'C'
+            0x4F,  # 'O'
+            0x56,  # 'V'
+            0x43,  # 'C'
+            0x45,  # 'E'
+            0x52,  # 'R'
+        ]
+        prot_cap += [random.randint(0, 255) for i in range(8)]
 
-        await tb.write_csr(
-            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_0.base_addr,
-            int2dword(make_word(prot_cap[0:4])),
-            4,
-        )
-        await tb.write_csr(
-            tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_1.base_addr,
-            int2dword(make_word(prot_cap[4:8])),
-            4,
-        )
         await tb.write_csr(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
             int2dword(make_word(prot_cap[8:12])),
@@ -812,7 +837,9 @@ async def test_virtual_read_alternating(dut):
 
         # Wait, read the PROT_CAP register
         await Timer(1, "us")
-        recovery_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+        recovery_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP
+        )
 
         # PROT_CAP read always returns 15 bytes
         assert len(recovery_data) == 15
@@ -823,12 +850,16 @@ async def test_virtual_read_alternating(dut):
 
         # Write data to TTI TX queue
         data = [random.randint(0, 255) for i in range(3)]
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
-            int2dword(int.from_bytes(data, byteorder="little")), 4)
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+            int2dword(int.from_bytes(data, byteorder="little")),
+            4,
+        )
 
         # Write the TX descriptor
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
-            int2dword(len(data)), 4)
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(len(data)), 4
+        )
 
         # Wait and do a private read
         await Timer(1, "us")
@@ -843,6 +874,7 @@ async def test_virtual_read_alternating(dut):
         await tb.write_csr(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
         )
+
 
 @cocotb.test()
 async def test_payload_available(dut):
@@ -927,7 +959,9 @@ async def test_image_activated(dut):
     ), "Upon initialization image_activated should be deasserted"
 
     # Write 0xF to byte 2 of RECOVERY_CTRL
-    await recovery.command_write(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF])
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF]
+    )
 
     # Wait
     await Timer(1, "us")
@@ -973,16 +1007,16 @@ async def test_recovery_flow(dut):
     )
 
     # Generate random firmware image data
-    image_size  = 128
+    image_size = 128
     image_bytes = [random.randint(0, 255) for i in range(image_size)]
 
     image_words = []
     for i in range(image_size // 4):
         image_words.append(
-            (image_bytes[4*i+3] << 24) |
-            (image_bytes[4*i+2] << 16) |
-            (image_bytes[4*i+1] << 8) |
-             image_bytes[4*i+0]
+            (image_bytes[4 * i + 3] << 24)
+            | (image_bytes[4 * i + 2] << 16)
+            | (image_bytes[4 * i + 1] << 8)
+            | image_bytes[4 * i + 0]
         )
 
     bfm_done = Event()
@@ -991,21 +1025,31 @@ async def test_recovery_flow(dut):
     # BFM-side agent
     async def bfm_agent():
         logger = dut._log.getChild("bfm_agent")
-        delay  = 1
+        delay = 1
 
-        rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP)
+        rx_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.PROT_CAP
+        )
         assert pec_ok
-        rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_ID)
+        rx_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_ID
+        )
         assert pec_ok
-        rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.HW_STATUS)
+        rx_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.HW_STATUS
+        )
         assert pec_ok
         # wait for recovery to start
         while True:
-            rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_STATUS)
+            rx_data, pec_ok = await recovery.command_read(
+                VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_STATUS
+            )
             assert pec_ok
             if rx_data[0] == 0x3:
                 break
-        rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_STATUS)
+        rx_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_STATUS
+        )
         assert pec_ok
         # # Read INDIRECT_FIFO_STATUS
         # rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
@@ -1014,16 +1058,37 @@ async def test_recovery_flow(dut):
         # logger.info(f"xfer_size: {xfer_size} (words)")
 
         data = [0, 0, 0]
-        await recovery.command_write(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, data)
+        await recovery.command_write(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, data
+        )
         data = [0, 1, 4, 0, 0, 0]
-        await recovery.command_write(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, data)
+        await recovery.command_write(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, data
+        )
+
+        wrptr = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4)
+        )
+        rdptr = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4)
+        )
+
+        assert (wrptr, rdptr) == (0, 0)
+
+        # Clear FIFO reset
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr,
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.RESET,
+            0xFF,
+        )
+
         # Send firmware chunks
         xfer_size = 4
         for data_ptr in range(0, image_size, xfer_size * 4):
 
             # Write data
             logger.info(f"Sending {xfer_size*4} bytes...")
-            chunk = image_bytes[data_ptr:data_ptr + xfer_size * 4]
+            chunk = image_bytes[data_ptr : data_ptr + xfer_size * 4]
             await recovery.command_write(
                 VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, chunk
             )
@@ -1031,9 +1096,11 @@ async def test_recovery_flow(dut):
 
             # Poll indirect FIFO status
             while True:
-                rx_data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS)
+                rx_data, pec_ok = await recovery.command_read(
+                    VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS
+                )
                 assert pec_ok
-                empty = (rx_data[0] & 1)
+                empty = rx_data[0] & 1
 
                 if empty:
                     logger.info("FIFO empty, proceeding")
@@ -1042,7 +1109,6 @@ async def test_recovery_flow(dut):
                     logger.info("FIFO not empty")
 
                 await Timer(delay, "us")
-
 
         logger.info(f"Firmware image sent")
         bfm_done.set()
@@ -1053,7 +1119,9 @@ async def test_recovery_flow(dut):
         interval = 25
 
         # Read INDIRECT_FIFO_STATUS
-        xfer_size = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4))
+        xfer_size = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4)
+        )
         logger.info(f"xfer_size: {xfer_size} (words)")
 
         xfer_size = 4
@@ -1062,8 +1130,12 @@ async def test_recovery_flow(dut):
 
             # Poll INDIRECT_FIFO_STATUS
             while True:
-                status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4))
-                empty  = (status & 1)
+                status = dword2int(
+                    await tb.read_csr(
+                        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr, 4
+                    )
+                )
+                empty = status & 1
 
                 if not empty:
                     logger.info("FIFO not empty, proceeding")
@@ -1079,7 +1151,11 @@ async def test_recovery_flow(dut):
             # Read data
             logger.info(f"Reading {xfer_size*4} bytes...")
             for i in range(xfer_size):
-                data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4))
+                data = dword2int(
+                    await tb.read_csr(
+                        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4
+                    )
+                )
                 buffer.append(data)
 
             logger.info(f"Firmware chunk {data_ptr//(xfer_size*4)} received.")
@@ -1099,4 +1175,3 @@ async def test_recovery_flow(dut):
 
     # Check
     assert image_words == xferd_words
-

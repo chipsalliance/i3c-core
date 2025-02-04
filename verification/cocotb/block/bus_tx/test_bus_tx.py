@@ -38,8 +38,8 @@ async def setup_test(dut, timings=None, scl_clk_ratio=SCL_CLK_RATIO):
 
     if timings is None:
         timings = {
-            "t_r":  2,
-            "t_f":  2,
+            "t_r": 2,
+            "t_f": 2,
             "t_su": 5,
             "t_hd": 5,
         }
@@ -73,7 +73,7 @@ async def assert_drive_start(dut, sda_value):
         await RisingEdge(dut.clk_i)
     await ReadOnly()
 
-    t_r  = int(dut.t_r_i.value)
+    t_r = int(dut.t_r_i.value)
     t_su = int(dut.t_su_dat_i.value)
     if (t_r + t_su) == 0:
         # SDA should be driven 1 cycle after SCL negedge
@@ -122,6 +122,7 @@ async def send_bit(dut, value):
         assert dut.tx_idle_o.value == 0
         await RisingEdge(dut.clk_i)
 
+
 async def send_byte(dut, data):
     for i in range(8):
         bit = ((data << i) & 0x80) != 0
@@ -137,15 +138,15 @@ async def test_bit_tx_negedge(dut, value, timings, ratio):
         timings = None
     elif timings == "1":
         timings = {
-            "t_r":  1,
-            "t_f":  1,
+            "t_r": 1,
+            "t_f": 1,
             "t_su": 1,
             "t_hd": 1,
         }
     elif timings == "0":
         timings = {
-            "t_r":  0,
-            "t_f":  0,
+            "t_r": 0,
+            "t_f": 0,
             "t_su": 0,
             "t_hd": 0,
         }

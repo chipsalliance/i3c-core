@@ -7,6 +7,7 @@ from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, RisingEdge
 
+
 async def setup(dut):
     """
     Sets up a base for testing
@@ -14,8 +15,8 @@ async def setup(dut):
 
     cocotb.log.setLevel("INFO")
 
-    dut.trigger.value   = 0
-    dut.line.value      = 0
+    dut.trigger.value = 0
+    dut.line.value = 0
 
     clock = Clock(dut.clk_i, 2, units="ns")
     cocotb.start_soon(clock.start())
@@ -65,7 +66,7 @@ async def test_pretrigger_with_delay(dut: SimHandleBase):
     cycles = await count_cycles(clk, dut.detect)
 
     # Check cycle count
-    assert cycles == DELAY+1
+    assert cycles == DELAY + 1
 
 
 @cocotb.test()

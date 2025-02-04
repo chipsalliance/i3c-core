@@ -98,8 +98,12 @@ async def test_ccc_setdasa(dut):
     )
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
-    virtual_dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr
-    virtual_dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR
+    virtual_dynamic_address_reg_addr = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr
+    )
+    virtual_dynamic_address_reg_value = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR
+    )
     dynamic_address_reg_valid = (
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
     )
@@ -110,14 +114,18 @@ async def test_ccc_setdasa(dut):
     dynamic_address_valid = await tb.read_csr_field(
         dynamic_address_reg_addr, dynamic_address_reg_valid
     )
-    virt_dynamic_address = await tb.read_csr_field(virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value)
+    virt_dynamic_address = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value
+    )
     virt_dynamic_address_valid = await tb.read_csr_field(
         virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_valid
     )
     assert dynamic_address == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the CSR"
     assert dynamic_address_valid == 1, "New DYNAMIC ADDRESS is not set as valid"
 
-    assert virt_dynamic_address == VIRT_DYNAMIC_ADDR, "Unexpected VIRT DYNAMIC ADDRESS read from the CSR"
+    assert (
+        virt_dynamic_address == VIRT_DYNAMIC_ADDR
+    ), "Unexpected VIRT DYNAMIC ADDRESS read from the CSR"
     assert virt_dynamic_address_valid == 1, "New VIRT DYNAMIC ADDRESS is not set as valid"
 
 
@@ -220,9 +228,7 @@ async def test_ccc_getmrl(dut):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
 
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=command, addr=TGT_ADR, count=3
-    )
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=3)
     [mrl_msb, mrl_lsb, ibi_payload_size] = responses[0][1]
 
     mrl = (mrl_msb << 8) | mrl_lsb
@@ -500,9 +506,9 @@ async def test_ccc_direct_multiple_wr(dut):
 
     cccs = [
         (TGT_ADR - 1, (0x00, 0xA0)),
-        (TGT_ADR,     (0x00, 0xA1)),
-        (TGT_ADR,     (0x00, 0xA2)),
-        (TGT_ADR + 2, (0x00, 0xA3)), # TGT_ADR + 1 is set as virtual target static address
+        (TGT_ADR, (0x00, 0xA1)),
+        (TGT_ADR, (0x00, 0xA2)),
+        (TGT_ADR + 2, (0x00, 0xA3)),  # TGT_ADR + 1 is set as virtual target static address
     ]
 
     # Send CCCs
@@ -537,8 +543,9 @@ async def test_ccc_direct_multiple_rd(dut):
     await ClockCycles(tb.clk, 50)
 
     # Set MWL in the target
-    acks = await i3c_controller.i3c_ccc_write(ccc=CCC.DIRECT.SETMWL,
-        directed_data=[(TGT_ADR, (0x00, 0x55))])
+    acks = await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETMWL, directed_data=[(TGT_ADR, (0x00, 0x55))]
+    )
     if acks != [True]:
         dut._log.error("Initial SETMWL failed")
         assert False
@@ -547,8 +554,7 @@ async def test_ccc_direct_multiple_rd(dut):
 
     # Issue multiple directed GETMWL
     addrs = [TGT_ADR - 1, TGT_ADR, TGT_ADR, TGT_ADR + 2]
-    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETMWL,
-        addr=addrs, count=2)
+    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETMWL, addr=addrs, count=2)
 
     # Check ACKs
     acks = [r[0] for r in responses]
