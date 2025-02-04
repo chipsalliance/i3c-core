@@ -113,25 +113,35 @@
         }
     },
     "then": {
-        "properties": {
-            "FrontendBusUserWidth": {
-                "type": "integer"
+        "allOf": [
+            {
+                "required": [
+                    "FrontendBusUserWidth",
+                    "FrontendBusIdWidth",
+                    "FrontendBusIdFiltering"
+                ]
             },
-            "FrontendBusIdWidth": {
-                "type": "integer"
-            },
-            "NumPrivIds": {
-                "type": "integer"
-            },
-            "FrontendBusIdFiltering": {
-                "type": "boolean"
+            {
+                "if": {
+                    "properties": {
+                        "FrontendBusIdFiltering": {
+                            "const": true
+                        }
+                    }
+                },
+                "then": {
+                    "required": [
+                        "NumPrivIds"
+                    ]
+                },
+                "else": {
+                    "not": {
+                        "required": [
+                            "NumPrivIds"
+                        ]
+                    }
+                }
             }
-        },
-        "required": [
-            "FrontendBusUserWidth",
-            "FrontendBusIdWidth",
-            "NumPrivIds",
-            "FrontendBusIdFiltering"
         ]
     },
     "else": {

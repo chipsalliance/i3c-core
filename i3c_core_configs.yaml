@@ -47,7 +47,6 @@ axi:
   FrontendBusUserWidth: 32
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: False
-  NumPrivIds: 4
   DisableInputFF: True
 
 axi_ff:
@@ -65,5 +64,4 @@ axi_ff:
   FrontendBusUserWidth: 32
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: False
-  NumPrivIds: 4
   DisableInputFF: False
