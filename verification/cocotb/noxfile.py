@@ -281,6 +281,7 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
         "test_target_reset",
         "test_ccc",
         "test_csr_access",
+        "test_bypass",
     ],
 )
 @nox.parametrize("coverage", coverage_types)

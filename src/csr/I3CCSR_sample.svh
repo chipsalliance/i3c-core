@@ -2914,8 +2914,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__SOC_MGMT_RSVD_0 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__REC_INTF_CFG SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -2923,24 +2923,26 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(data[0 + bt]);
+            foreach(REC_INTF_BYPASS_bit_cg[bt]) this.REC_INTF_BYPASS_bit_cg[bt].sample(data[0 + bt]);
+            foreach(REC_PAYLOAD_DONE_bit_cg[bt]) this.REC_PAYLOAD_DONE_bit_cg[bt].sample(data[1 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*PLACEHOLDER*/   );
+            this.fld_cg.sample( data[0:0]/*REC_INTF_BYPASS*/  ,  data[1:1]/*REC_PAYLOAD_DONE*/   );
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0::sample_values();
+    function void I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(PLACEHOLDER.get_mirrored_value() >> bt);
+            foreach(REC_INTF_BYPASS_bit_cg[bt]) this.REC_INTF_BYPASS_bit_cg[bt].sample(REC_INTF_BYPASS.get_mirrored_value() >> bt);
+            foreach(REC_PAYLOAD_DONE_bit_cg[bt]) this.REC_PAYLOAD_DONE_bit_cg[bt].sample(REC_PAYLOAD_DONE.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( PLACEHOLDER.get_mirrored_value()   );
+            this.fld_cg.sample( REC_INTF_BYPASS.get_mirrored_value()  ,  REC_PAYLOAD_DONE.get_mirrored_value()   );
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__SOC_MGMT_RSVD_1 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__REC_INTF_REG_W1C_ACCESS SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -2948,19 +2950,23 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(data[0 + bt]);
+            foreach(DEVICE_RESET_CTRL_bit_cg[bt]) this.DEVICE_RESET_CTRL_bit_cg[bt].sample(data[0 + bt]);
+            foreach(RECOVERY_CTRL_ACTIVATE_REC_IMG_bit_cg[bt]) this.RECOVERY_CTRL_ACTIVATE_REC_IMG_bit_cg[bt].sample(data[8 + bt]);
+            foreach(INDIRECT_FIFO_CTRL_RESET_bit_cg[bt]) this.INDIRECT_FIFO_CTRL_RESET_bit_cg[bt].sample(data[16 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*PLACEHOLDER*/   );
+            this.fld_cg.sample( data[7:0]/*DEVICE_RESET_CTRL*/  ,  data[15:8]/*RECOVERY_CTRL_ACTIVATE_REC_IMG*/  ,  data[23:16]/*INDIRECT_FIFO_CTRL_RESET*/   );
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1::sample_values();
+    function void I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PLACEHOLDER_bit_cg[bt]) this.PLACEHOLDER_bit_cg[bt].sample(PLACEHOLDER.get_mirrored_value() >> bt);
+            foreach(DEVICE_RESET_CTRL_bit_cg[bt]) this.DEVICE_RESET_CTRL_bit_cg[bt].sample(DEVICE_RESET_CTRL.get_mirrored_value() >> bt);
+            foreach(RECOVERY_CTRL_ACTIVATE_REC_IMG_bit_cg[bt]) this.RECOVERY_CTRL_ACTIVATE_REC_IMG_bit_cg[bt].sample(RECOVERY_CTRL_ACTIVATE_REC_IMG.get_mirrored_value() >> bt);
+            foreach(INDIRECT_FIFO_CTRL_RESET_bit_cg[bt]) this.INDIRECT_FIFO_CTRL_RESET_bit_cg[bt].sample(INDIRECT_FIFO_CTRL_RESET.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( PLACEHOLDER.get_mirrored_value()   );
+            this.fld_cg.sample( DEVICE_RESET_CTRL.get_mirrored_value()  ,  RECOVERY_CTRL_ACTIVATE_REC_IMG.get_mirrored_value()  ,  INDIRECT_FIFO_CTRL_RESET.get_mirrored_value()   );
         end
     endfunction
 

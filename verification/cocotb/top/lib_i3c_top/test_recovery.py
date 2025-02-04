@@ -4,7 +4,7 @@ import logging
 import random
 
 from boot import boot_init
-from bus2csr import bytes2int, compare_values, dword2int, int2bytes, int2dword
+from bus2csr import bytes2int, compare_values, dword2int, int2dword
 from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
@@ -1354,7 +1354,7 @@ async def test_recovery_flow(dut):
 
                 await Timer(delay, "us")
 
-        logger.info(f"Firmware image sent")
+        logger.info("Firmware image sent")
         bfm_done.set()
 
     # AXI-side agent
@@ -1404,7 +1404,7 @@ async def test_recovery_flow(dut):
 
             logger.info(f"Firmware chunk {data_ptr//(xfer_size*4)} received.")
 
-        logger.info(f"Firmware image received")
+        logger.info("Firmware image received")
         dev_done.set()
 
     # Start agents

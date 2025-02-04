@@ -523,8 +523,14 @@ module i3c
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
 
+  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_out;
+  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_inp;
+
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
+
+  logic bypass_i3c_core;
+  assign bypass_i3c_core = hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
 
   controller #(
       .DatAw(DatAw),
@@ -764,6 +770,9 @@ module i3c
       .hwif_tti_o(hwif_tti_out),
       .hwif_tti_i(hwif_tti_inp),
 
+      .hwif_socmgmt_o(hwif_socmgmt_out),
+      .hwif_socmgmt_i(hwif_socmgmt_inp),
+
       .hwif_rec_o(hwif_rec_out),
       .hwif_rec_i(hwif_rec_inp),
 
@@ -1001,9 +1010,15 @@ module i3c
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
+      // SoC Managment CSR interface
+      .hwif_socmgmt_i(hwif_socmgmt_out),
+      .hwif_socmgmt_o(hwif_socmgmt_inp),
+
       // Recovery CSR interface
       .hwif_rec_i(hwif_rec_out),
       .hwif_rec_o(hwif_rec_inp),
+
+      .bypass_i3c_core_i(bypass_i3c_core),
 
       // TTI RX descriptors queue
       .csr_tti_rx_desc_queue_req_i         (csr_tti_rx_desc_req),

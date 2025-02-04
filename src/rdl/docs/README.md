@@ -3194,31 +3194,31 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 - Base Offset: 0x100
 - Size: 0x5C
 
-|Offset|    Identifier    |                  Name                  |
-|------|------------------|----------------------------------------|
-| 0x00 |   EXTCAP_HEADER  |                    —                   |
-| 0x04 | SOC_MGMT_CONTROL |         SoC Management Control         |
-| 0x08 |  SOC_MGMT_STATUS |          SoC Management Status         |
-| 0x0C |  SOC_MGMT_RSVD_0 |                                        |
-| 0x10 |  SOC_MGMT_RSVD_1 |                                        |
-| 0x14 |  SOC_MGMT_RSVD_2 |                                        |
-| 0x18 |  SOC_MGMT_RSVD_3 |                                        |
-| 0x1C |   SOC_PAD_CONF   |     I3C Pad Configuration Register     |
-| 0x20 |   SOC_PAD_ATTR   |I3C Pad Attribute Configuration Register|
-| 0x24 |SOC_MGMT_FEATURE_2|                                        |
-| 0x28 |SOC_MGMT_FEATURE_3|                                        |
-| 0x2C |      T_R_REG     |                                        |
-| 0x30 |      T_F_REG     |                                        |
-| 0x34 |   T_SU_DAT_REG   |                                        |
-| 0x38 |   T_HD_DAT_REG   |                                        |
-| 0x3C |    T_HIGH_REG    |                                        |
-| 0x40 |     T_LOW_REG    |                                        |
-| 0x44 |   T_HD_STA_REG   |                                        |
-| 0x48 |   T_SU_STA_REG   |                                        |
-| 0x4C |   T_SU_STO_REG   |                                        |
-| 0x50 |    T_FREE_REG    |                                        |
-| 0x54 |    T_AVAL_REG    |                                        |
-| 0x58 |    T_IDLE_REG    |                                        |
+|Offset|       Identifier      |                  Name                  |
+|------|-----------------------|----------------------------------------|
+| 0x00 |     EXTCAP_HEADER     |                    —                   |
+| 0x04 |    SOC_MGMT_CONTROL   |         SoC Management Control         |
+| 0x08 |    SOC_MGMT_STATUS    |          SoC Management Status         |
+| 0x0C |      REC_INTF_CFG     |   Configuration of Recovery Interface  |
+| 0x10 |REC_INTF_REG_W1C_ACCESS|      Mock hardware register access     |
+| 0x14 |    SOC_MGMT_RSVD_2    |                                        |
+| 0x18 |    SOC_MGMT_RSVD_3    |                                        |
+| 0x1C |      SOC_PAD_CONF     |     I3C Pad Configuration Register     |
+| 0x20 |      SOC_PAD_ATTR     |I3C Pad Attribute Configuration Register|
+| 0x24 |   SOC_MGMT_FEATURE_2  |                                        |
+| 0x28 |   SOC_MGMT_FEATURE_3  |                                        |
+| 0x2C |        T_R_REG        |                                        |
+| 0x30 |        T_F_REG        |                                        |
+| 0x34 |      T_SU_DAT_REG     |                                        |
+| 0x38 |      T_HD_DAT_REG     |                                        |
+| 0x3C |       T_HIGH_REG      |                                        |
+| 0x40 |       T_LOW_REG       |                                        |
+| 0x44 |      T_HD_STA_REG     |                                        |
+| 0x48 |      T_SU_STA_REG     |                                        |
+| 0x4C |      T_SU_STO_REG     |                                        |
+| 0x50 |       T_FREE_REG      |                                        |
+| 0x54 |       T_AVAL_REG      |                                        |
+| 0x58 |       T_IDLE_REG      |                                        |
 
 ### EXTCAP_HEADER register
 
@@ -3267,33 +3267,56 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 
 
 
-### SOC_MGMT_RSVD_0 register
+### REC_INTF_CFG register
 
 - Absolute Address: 0x20C
 - Base Offset: 0xC
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|   Identifier   |Access|Reset|             Name             |
+|----|----------------|------|-----|------------------------------|
+|  0 | REC_INTF_BYPASS|  rw  | 0x0 |Recovery Interface access type|
+|  1 |REC_PAYLOAD_DONE|  rw  | 0x0 |     Recovery payload done    |
 
-#### PLACEHOLDER field
+#### REC_INTF_BYPASS field
 
+<p>Choose Recovery Interface access type:</p>
+<ul>
+<li>
+<p>0 - I3C Core</p>
+</li>
+<li>
+<p>1 - direct AXI</p>
+</li>
+</ul>
 
+#### REC_PAYLOAD_DONE field
 
-### SOC_MGMT_RSVD_1 register
+<p>Inform Recovery Handler that payload transfer is finished.</p>
+
+### REC_INTF_REG_W1C_ACCESS register
 
 - Absolute Address: 0x210
 - Base Offset: 0x10
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|          Identifier          |Access|Reset|             Name             |
+|-----|------------------------------|------|-----|------------------------------|
+| 7:0 |       DEVICE_RESET_CTRL      |  rw  | 0x0 |    HW Device Reset Control   |
+| 15:8|RECOVERY_CTRL_ACTIVATE_REC_IMG|  rw  | 0x0 |  HW Activate Recovery Image  |
+|23:16|   INDIRECT_FIFO_CTRL_RESET   |  rw  | 0x0 |HW Indirect FIFO Reset Control|
 
-#### PLACEHOLDER field
+#### DEVICE_RESET_CTRL field
 
+<p>Write to 'Reset control - Device Reset Control' register, mocking a hardware access (bypassing 'write 1 to clear' register property).</p>
 
+#### RECOVERY_CTRL_ACTIVATE_REC_IMG field
+
+<p>Write to 'Recovery Control - Activate Recovery Image' register, mocking a hardware access (bypassing 'write 1 to clear' register property).</p>
+
+#### INDIRECT_FIFO_CTRL_RESET field
+
+<p>Write to 'Indirect memory configuration - reset' register, mocking a hardware access (bypassing 'write 1 to clear' register property).</p>
 
 ### SOC_MGMT_RSVD_2 register
 

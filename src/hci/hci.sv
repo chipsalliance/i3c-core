@@ -128,6 +128,9 @@ module hci
     // Target Transaction Interface CSRs
     output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_o,
     input  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t  hwif_tti_i,
+    // SoC Managment CSR interface
+    output I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_o,
+    input  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_i,
 
     // Recovery interface CSRs
     output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_o,
@@ -162,6 +165,10 @@ module hci
   // TTI CSR interface
   assign hwif_tti_o = hwif_out_o.I3C_EC.TTI;
   assign hwif_in.I3C_EC.TTI = hwif_tti_i;
+
+  // SoC Managment CSR interface
+  assign hwif_socmgmt_o = hwif_out_o.I3C_EC.SoCMgmtIf;
+  assign hwif_in.I3C_EC.SoCMgmtIf = hwif_socmgmt_i;
 
   // Recovery CSR interface
   assign hwif_rec_o = hwif_out_o.I3C_EC.SecFwRecoveryIf;

@@ -229,6 +229,7 @@ module hci_queues_wrapper
     input logic [7:0] bus_addr_i,
     input logic bus_addr_valid_i,
 
+    input logic bypass_i3c_core_i,
     output logic payload_available_o,
     output logic image_activated_o,
     output logic irq_o
@@ -578,6 +579,9 @@ module hci_queues_wrapper
 
       // Interrupt
       .irq_o(irq_o),
+
+      // I3C Core bypass
+      .bypass_i3c_core_i,
 
       // Recovery status
       .payload_available_o(payload_available_o),

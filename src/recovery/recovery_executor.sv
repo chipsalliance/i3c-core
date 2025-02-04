@@ -69,8 +69,13 @@ module recovery_executor
     output logic tx_desc_queue_clr_o,
 
     // Recovery status signals
+    input  logic bypass_i3c_core_i,
     output logic payload_available_o,
     output logic image_activated_o,
+
+    // SoC Managment CSR interface
+    input  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_i,
+    output I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_o,
 
     // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
@@ -152,6 +157,42 @@ module recovery_executor
   logic payload_available_q;
   assign payload_available_o = payload_available_q;
 
+  // Bypass of SW write to W1C registers
+  logic sw_device_reset_ctrl_swmod;
+  logic sw_recovery_ctrl_activate_rec_img_swmod;
+  logic sw_indirect_fifo_ctrl_reset_swmod;
+  logic [7:0] sw_device_reset_ctrl_value;
+  logic [7:0] sw_recovery_ctrl_activate_rec_img_value;
+  logic [7:0] sw_indirect_fifo_ctrl_reset_value;
+
+  always_comb begin : blockName
+    sw_device_reset_ctrl_value = hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value;
+    sw_recovery_ctrl_activate_rec_img_value = hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value;
+    sw_indirect_fifo_ctrl_reset_value = hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value;
+  end
+
+  // swmod must be delayed by one cycle due to delayed propagation of value
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      sw_device_reset_ctrl_swmod <= '0;
+      sw_recovery_ctrl_activate_rec_img_swmod <= '0;
+      sw_indirect_fifo_ctrl_reset_swmod <= '0;
+    end else begin
+      sw_device_reset_ctrl_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.swmod;
+      sw_recovery_ctrl_activate_rec_img_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.swmod;
+      sw_indirect_fifo_ctrl_reset_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.swmod;
+    end
+  end
+
+  always_comb begin : clear_bypassed_regs
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.we = sw_device_reset_ctrl_swmod;
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next = '0;
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.we = sw_recovery_ctrl_activate_rec_img_swmod;
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next = '0;
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.we = sw_indirect_fifo_ctrl_reset_swmod;
+    hwif_socmgmt_o.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next = '0;
+  end
+
   // ....................................................
 
   // FSM
@@ -167,6 +208,14 @@ module recovery_executor
   } state_e;
 
   state_e state_d, state_q;
+
+  logic fifo_xfer_done;
+  assign fifo_xfer_done = (indirect_rx_full_i | (image_activated_o && ~indirect_rx_empty_i));
+
+  always_comb begin : set_payload_done_bypass
+    hwif_socmgmt_o.REC_INTF_CFG.REC_PAYLOAD_DONE.we   = fifo_xfer_done;
+    hwif_socmgmt_o.REC_INTF_CFG.REC_PAYLOAD_DONE.next = '0;
+  end
 
   // State transition
   always_ff @(posedge clk_i or negedge rst_ni)
@@ -190,8 +239,12 @@ module recovery_executor
         end
       end
 
-      CsrWrite, FifoWrite: begin
+      CsrWrite: begin
         if (tti_rx_rack_i & (dcnt == 1)) state_d = Done;
+      end
+      FifoWrite: begin
+        if ((tti_rx_rack_i & (dcnt == 1)) | (bypass_i3c_core_i & hwif_socmgmt_i.REC_INTF_CFG.REC_PAYLOAD_DONE.value & ~indirect_rx_empty_i))
+          state_d = Done;
       end
 
       CsrRead: begin
@@ -608,10 +661,10 @@ module recovery_executor
     hwif_rec_o.DEVICE_STATUS_1.HEARTBEAT.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS.we = '0;
-    hwif_rec_o.DEVICE_RESET.RESET_CTRL.we = device_reset_we;
+    hwif_rec_o.DEVICE_RESET.RESET_CTRL.we = bypass_i3c_core_i ? sw_device_reset_ctrl_swmod : device_reset_we;
     hwif_rec_o.DEVICE_RESET.FORCED_RECOVERY.we = device_reset_we;
     hwif_rec_o.DEVICE_RESET.IF_CTRL.we = device_reset_we;
-    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.we = recovery_ctrl_we;
+    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.we = bypass_i3c_core_i ? sw_recovery_ctrl_activate_rec_img_swmod : recovery_ctrl_we;
     hwif_rec_o.RECOVERY_CTRL.REC_IMG_SEL.we = recovery_ctrl_we;
     hwif_rec_o.RECOVERY_CTRL.CMS.we = recovery_ctrl_we;
     hwif_rec_o.RECOVERY_STATUS.DEV_REC_STATUS.we = '0;
@@ -624,22 +677,22 @@ module recovery_executor
     hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS.we = '0;
     hwif_rec_o.HW_STATUS.CTEMP.we = '0;
     hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS_LEN.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.we = indirect_fifo_ctrl_0_we;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.we = bypass_i3c_core_i ? sw_indirect_fifo_ctrl_reset_swmod : indirect_fifo_ctrl_0_we;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.we = indirect_fifo_ctrl_0_we;
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we = 1'b1;
     hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.we = '0;
   end
 
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.RESET_CTRL.next = tti_rx_rdata_i[7:0];
+    hwif_rec_o.DEVICE_RESET.RESET_CTRL.next = bypass_i3c_core_i ? sw_device_reset_ctrl_value : tti_rx_rdata_i[7:0];
     hwif_rec_o.DEVICE_RESET.FORCED_RECOVERY.next = tti_rx_rdata_i[15:8];
     hwif_rec_o.DEVICE_RESET.IF_CTRL.next = tti_rx_rdata_i[23:16];
-    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.next = tti_rx_rdata_i[23:16];
+    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.next = bypass_i3c_core_i ? sw_recovery_ctrl_activate_rec_img_value : tti_rx_rdata_i[23:16];
     hwif_rec_o.RECOVERY_CTRL.REC_IMG_SEL.next = tti_rx_rdata_i[15:8];
     hwif_rec_o.RECOVERY_CTRL.CMS.next = tti_rx_rdata_i[7:0];
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.next = tti_rx_rdata_i[15:8];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.next = bypass_i3c_core_i ? sw_indirect_fifo_ctrl_reset_value : tti_rx_rdata_i[15:8];
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.next = tti_rx_rdata_i[7:0];
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = {
       tti_rx_rdata_i[15:0], prev_tti_rx_rdata[31:16]
@@ -673,7 +726,7 @@ module recovery_executor
     indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
     hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
     hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = indirect_rx_rack_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0; // TODO: support writes
+    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0;  // TODO: support writes
   end
 
   // tie unused signals
@@ -681,7 +734,7 @@ module recovery_executor
     hwif_rec_o.PROT_CAP_3.NUM_OF_CMS_REGIONS.next = '0;
     hwif_rec_o.PROT_CAP_3.MAX_RESP_TIME.next = '0;
     hwif_rec_o.PROT_CAP_3.HEARTBEAT_PERIOD.next = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = 32'd64;  // Caliptra Subsystem Recovery Sequence specifies this to 256 bytes (64 DWORDs)
     hwif_rec_o.PROT_CAP_2.REC_PROT_VERSION.next = '0;
     hwif_rec_o.PROT_CAP_2.AGENT_CAPS.next = '0;
     hwif_rec_o.HW_STATUS.TEMP_CRITICAL.next = '0;
@@ -754,9 +807,15 @@ module recovery_executor
   //
   // De-assertion:
   // The payload_available signal must reset if recovery FIFO indicates empty.
+  logic payload_high_en, bypass_xfer_done;
+  assign payload_high_en = bypass_i3c_core_i ?
+                            (bypass_xfer_done | hwif_socmgmt_i.REC_INTF_CFG.REC_PAYLOAD_DONE.value) :
+                            fifo_xfer_done;
+  assign bypass_xfer_done = (state_q == FifoWrite) & (state_d == Done);
+
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) payload_available_q <= 1'b0;
-    else if (indirect_rx_full_i | (image_activated_o && ~indirect_rx_empty_i)) payload_available_q <= 1'b1;
+    else if (payload_high_en) payload_available_q <= 1'b1;
     else if (indirect_rx_empty_i) payload_available_q <= 1'b0;
     else payload_available_q <= payload_available_q;
 

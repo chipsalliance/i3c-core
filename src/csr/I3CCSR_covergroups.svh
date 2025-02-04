@@ -2429,8 +2429,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__SOC_MGMT_RSVD_0 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__REC_INTF_CFG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -2441,16 +2441,18 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG_fld_cg with function sample(
+    input bit [1-1:0] REC_INTF_BYPASS,
+    input bit [1-1:0] REC_PAYLOAD_DONE
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        REC_INTF_BYPASS_cp : coverpoint REC_INTF_BYPASS;
+        REC_PAYLOAD_DONE_cp : coverpoint REC_PAYLOAD_DONE;
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__SOC_MGMT_RSVD_1 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__REC_INTF_REG_W1C_ACCESS COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -2461,11 +2463,15 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS_fld_cg with function sample(
+    input bit [8-1:0] DEVICE_RESET_CTRL,
+    input bit [8-1:0] RECOVERY_CTRL_ACTIVATE_REC_IMG,
+    input bit [8-1:0] INDIRECT_FIFO_CTRL_RESET
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DEVICE_RESET_CTRL_cp : coverpoint DEVICE_RESET_CTRL;
+        RECOVERY_CTRL_ACTIVATE_REC_IMG_cp : coverpoint RECOVERY_CTRL_ACTIVATE_REC_IMG;
+        INDIRECT_FIFO_CTRL_RESET_cp : coverpoint INDIRECT_FIFO_CTRL_RESET;
 
     endgroup
 

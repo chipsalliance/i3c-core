@@ -3699,29 +3699,59 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "SOC_MGMT_RSVD_0": {
+            "REC_INTF_CFG": {
                 "base_addr": 524,
                 "offset": 524,
-                "PLACEHOLDER": {
+                "REC_INTF_BYPASS": {
                     "low": 0,
-                    "mask": 4294967295,
+                    "mask": 1,
                     "reset": 0,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0
-                }
-            },
-            "SOC_MGMT_RSVD_1": {
-                "base_addr": 528,
-                "offset": 528,
-                "PLACEHOLDER": {
-                    "low": 0,
-                    "mask": 4294967295,
+                },
+                "REC_PAYLOAD_DONE": {
+                    "low": 1,
+                    "mask": 2,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "r",
+                    "hw": "rw",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                }
+            },
+            "REC_INTF_REG_W1C_ACCESS": {
+                "base_addr": 528,
+                "offset": 528,
+                "DEVICE_RESET_CTRL": {
+                    "low": 0,
+                    "mask": 255,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "rw",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "RECOVERY_CTRL_ACTIVATE_REC_IMG": {
+                    "low": 8,
+                    "mask": 65280,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "rw",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "INDIRECT_FIFO_CTRL_RESET": {
+                    "low": 16,
+                    "mask": 16711680,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "rw",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0

@@ -162,11 +162,15 @@ module recovery_handler
     output logic                       csr_tti_ibi_queue_reg_rst_data_o,
 
     // ....................................................
-    // Recovery CSR interface
+    // SoC Managment CSR interface
+    input  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_i,
+    output I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_o,
 
-    // CSR
+    // Recovery CSR interface
     input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
     output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o,
+
+    input logic bypass_i3c_core_i,
 
     // ....................................................
 
@@ -227,13 +231,13 @@ module recovery_handler
   assign recovery_xfer_pending = xfer_in_progress_i && virtual_device_sel_i;
 
   // Recovery execution pending signal
-  logic cmd_valid;
+  logic recv_cmd_valid;
   logic cmd_done;
 
   always @(posedge clk_i or negedge rst_ni)
     if (~rst_ni) begin
       recovery_exec_pending <= '0;
-    end else if (cmd_valid) begin
+    end else if (recv_cmd_valid) begin
       recovery_exec_pending <= '1;
     end else if (cmd_done) begin
       recovery_exec_pending <= '0;
@@ -309,7 +313,7 @@ module recovery_handler
   logic                               tti_tx_data_queue_empty;
   logic                               tti_tx_data_queue_rvalid;
   logic                               tti_tx_data_queue_rready;
-  logic [                        7:0] tti_tx_data_queue_rdata;
+  logic [                       31:0] tti_tx_data_queue_rdata;
   logic                               tti_tx_data_queue_flush;
   logic                               tti_tx_data_queue_start_thld_trig;
   logic                               tti_tx_data_queue_ready_thld_trig;
@@ -334,21 +338,28 @@ module recovery_handler
       unused_tx_desc_start_thld_trig,
       unused_ibi_queue_start_thld_trig;
 
-  // Data width converters
+  // 8toN Converter -> TTI RX Data Queue
   logic                          tti_rx_data_queue_wvalid_q;
   logic                          tti_rx_data_queue_wready_q;
   logic [TtiRxDataDataWidth-1:0] tti_rx_data_queue_wdata_q;
 
-  logic                          tti_tx_data_queue_rvalid_q;
-  logic                          tti_tx_data_queue_rready_q;
-  logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_rdata_q;
+  // TTI TX Data Queue -> Nto8 Converter
+  logic                          tti_tx_data_queue_rvalid_conv_sink;
+  logic                          tti_tx_data_queue_rready_conv_sink;
+  logic [TtiTxDataDataWidth-1:0] tti_tx_data_queue_rdata_conv_sink;
+
+  // Nto8 Converter -> I3C Controller
+  logic                          tti_tx_data_queue_rvalid_conv_source;
+  logic                          tti_tx_data_queue_rready_conv_source;
+  logic [                   7:0] tti_tx_data_queue_rdata_conv_source;
+  logic                          tti_tx_data_queue_flush_conv_source;
 
   width_converter_8toN #(
       .Width(TtiRxDataDataWidth)
 
   ) tti_conv_8toN (
       .clk_i,
-      .rst_ni,
+      .rst_ni(rst_ni & ~bypass_i3c_core_i),
 
       .sink_valid_i(tti_rx_data_queue_wvalid),
       .sink_ready_o(tti_rx_data_queue_wready),
@@ -365,16 +376,16 @@ module recovery_handler
 
   ) tti_conv_Nto8 (
       .clk_i,
-      .rst_ni,
+      .rst_ni(rst_ni & ~bypass_i3c_core_i),
 
-      .sink_valid_i(tti_tx_data_queue_rvalid_q),
-      .sink_ready_o(tti_tx_data_queue_rready_q),
-      .sink_data_i (tti_tx_data_queue_rdata_q),
+      .sink_valid_i(tti_tx_data_queue_rvalid_conv_sink),
+      .sink_ready_o(tti_tx_data_queue_rready_conv_sink),
+      .sink_data_i (tti_tx_data_queue_rdata_conv_sink),
 
-      .source_valid_o(tti_tx_data_queue_rvalid),
-      .source_ready_i(tti_tx_data_queue_rready),
-      .source_data_o (tti_tx_data_queue_rdata),
-      .source_flush_i(tti_tx_data_queue_flush)
+      .source_valid_o(tti_tx_data_queue_rvalid_conv_source),
+      .source_ready_i(tti_tx_data_queue_rready_conv_source),
+      .source_data_o (tti_tx_data_queue_rdata_conv_source),
+      .source_flush_i(tti_tx_data_queue_flush_conv_source)
   );
 
   // Data queues
@@ -467,9 +478,9 @@ module recovery_handler
       .tx_start_thld_trig_o(tti_tx_data_queue_start_thld_trig),
       .tx_ready_thld_trig_o(tti_tx_data_queue_ready_thld_trig),
       .tx_empty_o(tti_tx_data_queue_empty),
-      .tx_rvalid_o(tti_tx_data_queue_rvalid_q),
-      .tx_rready_i(tti_tx_data_queue_rready_q),
-      .tx_rdata_o(tti_tx_data_queue_rdata_q),
+      .tx_rvalid_o(tti_tx_data_queue_rvalid),
+      .tx_rready_i(tti_tx_data_queue_rready),
+      .tx_rdata_o(tti_tx_data_queue_rdata),
       .tx_req_i(tti_tx_data_queue_req),
       .tx_ack_o(tti_tx_data_queue_ack),
       .tx_data_i(tti_tx_data_queue_data),
@@ -639,26 +650,38 @@ module recovery_handler
 
   // TX data queue
   always_comb begin : T2MUX
-    if (recovery_pending & send_tti_tx_data_queue_select) begin
-      tti_tx_data_queue_rready                = '0;
-      send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
-      tti_tx_data_queue_flush                 = '0;
+    if (bypass_i3c_core_i) begin
+      tti_tx_data_queue_rready_conv_source    = '0;
+      send_tti_tx_data_ready                  = '0;
+      tti_tx_data_queue_flush_conv_source     = '0;
       ctl_tti_tx_data_queue_full_o            = '0;
-      ctl_tti_tx_data_queue_depth_o           = '1; // Always maximum data count available
-      ctl_tti_tx_data_queue_empty_o           = '1; // Never empty
+      ctl_tti_tx_data_queue_depth_o           = '0;
+      ctl_tti_tx_data_queue_empty_o           = '0;
+      ctl_tti_tx_data_queue_rvalid_o          = '0;
+      ctl_tti_tx_data_queue_rdata_o           = '0;
+      ctl_tti_tx_data_queue_start_thld_trig_o = '0;
+      ctl_tti_tx_data_queue_ready_thld_trig_o = '0;
+    end else if (recovery_pending & send_tti_tx_data_queue_select) begin
+      tti_tx_data_queue_rready_conv_source    = '0;
+      send_tti_tx_data_ready                  = ctl_tti_tx_data_queue_rready_i;
+      tti_tx_data_queue_flush_conv_source     = '0;
+      ctl_tti_tx_data_queue_full_o            = '0;
+      ctl_tti_tx_data_queue_depth_o           = '1;  // Always maximum data count available
+      ctl_tti_tx_data_queue_empty_o           = '1;  // Never empty
       ctl_tti_tx_data_queue_rvalid_o          = send_tti_tx_data_valid;
       ctl_tti_tx_data_queue_rdata_o           = send_tti_tx_data_data;
       ctl_tti_tx_data_queue_start_thld_trig_o = send_tti_tx_start_trig;
       ctl_tti_tx_data_queue_ready_thld_trig_o = '0;
+
     end else begin
-      tti_tx_data_queue_rready                = ctl_tti_tx_data_queue_rready_i;
-      tti_tx_data_queue_flush                 = ctl_tti_tx_data_queue_flush_i;
+      tti_tx_data_queue_rready_conv_source    = ctl_tti_tx_data_queue_rready_i;
+      tti_tx_data_queue_flush_conv_source     = ctl_tti_tx_data_queue_flush_i;
       send_tti_tx_data_ready                  = '0;
       ctl_tti_tx_data_queue_full_o            = tti_tx_data_queue_full;
       ctl_tti_tx_data_queue_depth_o           = tti_tx_data_queue_depth;
       ctl_tti_tx_data_queue_empty_o           = tti_tx_data_queue_empty;
-      ctl_tti_tx_data_queue_rvalid_o          = tti_tx_data_queue_rvalid;
-      ctl_tti_tx_data_queue_rdata_o           = tti_tx_data_queue_rdata;
+      ctl_tti_tx_data_queue_rvalid_o          = tti_tx_data_queue_rvalid_conv_source;
+      ctl_tti_tx_data_queue_rdata_o           = tti_tx_data_queue_rdata_conv_source;
       ctl_tti_tx_data_queue_start_thld_trig_o = tti_tx_data_queue_start_thld_trig;
       ctl_tti_tx_data_queue_ready_thld_trig_o = tti_tx_data_queue_ready_thld_trig;
     end
@@ -700,15 +723,15 @@ module recovery_handler
   // T1MUX disconnects this FIFO from TTI logic
   logic exec_tti_tx_desc_queue_clr;
 
-  assign csr_tti_tx_desc_queue_ack_o          = tti_tx_desc_queue_ack;
-  assign csr_tti_tx_desc_queue_reg_rst_we_o   = tti_tx_desc_queue_reg_rst_we;
+  assign csr_tti_tx_desc_queue_ack_o = tti_tx_desc_queue_ack;
+  assign csr_tti_tx_desc_queue_reg_rst_we_o = tti_tx_desc_queue_reg_rst_we;
   assign csr_tti_tx_desc_queue_reg_rst_data_o = tti_tx_desc_queue_reg_rst_data;
-  assign tti_tx_desc_queue_data               = csr_tti_tx_desc_queue_data_i;
-  assign tti_tx_desc_queue_req                = csr_tti_tx_desc_queue_req_i;
-  assign tti_tx_desc_queue_reg_rst            = csr_tti_tx_desc_queue_reg_rst_i | exec_tti_tx_desc_queue_clr;
+  assign tti_tx_desc_queue_data = csr_tti_tx_desc_queue_data_i;
+  assign tti_tx_desc_queue_req = csr_tti_tx_desc_queue_req_i;
+  assign tti_tx_desc_queue_reg_rst = csr_tti_tx_desc_queue_reg_rst_i | exec_tti_tx_desc_queue_clr;
 
   // Threshold
-  assign tti_tx_desc_queue_ready_thld_i     = csr_tti_tx_desc_queue_ready_thld_i;
+  assign tti_tx_desc_queue_ready_thld_i = csr_tti_tx_desc_queue_ready_thld_i;
   assign csr_tti_tx_desc_queue_ready_thld_o = tti_tx_desc_queue_ready_thld_o;
 
   // ......................
@@ -721,13 +744,22 @@ module recovery_handler
 
   // RX data queue
   always_comb begin : R3MUX
-    if (recovery_pending & exec_tti_rx_queue_sel) begin
+    if (bypass_i3c_core_i) begin
+      exec_tti_rx_data_ack = tti_tx_data_queue_rvalid;
+      exec_tti_rx_data_data = tti_tx_data_queue_rdata;
+      csr_tti_rx_data_queue_ack_o = '0;
+      csr_tti_rx_data_queue_reg_rst_we_o = '0;
+      csr_tti_rx_data_queue_reg_rst_data_o = '0;
+      tti_rx_data_queue_req = '0;  // exec_tti_rx_data_req is connected to tti_tx_data_queue_req
+      tti_rx_data_queue_reg_rst = exec_tti_rx_data_queue_clr;
+    end else if (recovery_pending & exec_tti_rx_queue_sel) begin
       csr_tti_rx_data_queue_ack_o          = '0;
       csr_tti_rx_data_queue_reg_rst_we_o   = '0;
       csr_tti_rx_data_queue_reg_rst_data_o = '0;
       tti_rx_data_queue_req                = exec_tti_rx_data_req;
       tti_rx_data_queue_reg_rst            = exec_tti_rx_data_queue_clr;
       exec_tti_rx_data_ack                 = tti_rx_data_queue_ack;
+      exec_tti_rx_data_data                = tti_rx_data_queue_data;
     end else begin
       csr_tti_rx_data_queue_ack_o          = tti_rx_data_queue_ack;
       csr_tti_rx_data_queue_reg_rst_we_o   = tti_rx_data_queue_reg_rst_we;
@@ -735,11 +767,11 @@ module recovery_handler
       tti_rx_data_queue_req                = csr_tti_rx_data_queue_req_i;
       tti_rx_data_queue_reg_rst            = csr_tti_rx_data_queue_reg_rst_i;
       exec_tti_rx_data_ack                 = '0;
+      exec_tti_rx_data_data                = tti_rx_data_queue_data;
     end
 
     // No need to mux data
     csr_tti_rx_data_queue_data_o = tti_rx_data_queue_data;
-    exec_tti_rx_data_data        = tti_rx_data_queue_data;
   end
 
   // Threshold
@@ -751,16 +783,16 @@ module recovery_handler
   // TX data queue is always connected. The recovery logic does not use it
   logic exec_tti_tx_data_queue_clr;
 
-  assign csr_tti_tx_data_queue_ack_o          = tti_tx_data_queue_ack;
-  assign csr_tti_tx_data_queue_reg_rst_we_o   = tti_tx_data_queue_reg_rst_we;
+  assign csr_tti_tx_data_queue_ack_o = tti_tx_data_queue_ack;
+  assign csr_tti_tx_data_queue_reg_rst_we_o = tti_tx_data_queue_reg_rst_we;
   assign csr_tti_tx_data_queue_reg_rst_data_o = tti_tx_data_queue_reg_rst_next;
-  assign tti_tx_data_queue_data               = csr_tti_tx_data_queue_data_i;
-  assign tti_tx_data_queue_req                = csr_tti_tx_data_queue_req_i;
-  assign tti_tx_data_queue_reg_rst            = csr_tti_tx_data_queue_reg_rst_i | exec_tti_tx_data_queue_clr;
+  assign tti_tx_data_queue_data = csr_tti_tx_data_queue_data_i;
+  assign tti_tx_data_queue_req = csr_tti_tx_data_queue_req_i;
+  assign tti_tx_data_queue_reg_rst = csr_tti_tx_data_queue_reg_rst_i | exec_tti_tx_data_queue_clr;
 
   // Threshold
-  assign tti_tx_data_queue_start_thld       = csr_tti_tx_data_queue_start_thld_i;
-  assign tti_tx_data_queue_ready_thld_i     = csr_tti_tx_data_queue_ready_thld_i;
+  assign tti_tx_data_queue_start_thld = csr_tti_tx_data_queue_start_thld_i;
+  assign tti_tx_data_queue_ready_thld_i = csr_tti_tx_data_queue_ready_thld_i;
   assign csr_tti_tx_data_queue_ready_thld_o = tti_tx_data_queue_ready_thld_o;
 
   // ....................................................
@@ -782,10 +814,10 @@ module recovery_handler
 
   // ....................................................
 
-  logic cmd_is_rd;
-  logic [7:0] cmd_cmd;
-  logic [15:0] cmd_len;
-  logic cmd_error;
+  logic recv_cmd_is_rd;
+  logic [7:0] recv_cmd_cmd;
+  logic [15:0] recv_cmd_len;
+  logic recv_cmd_error;
 
   // RX PEC calculator
   logic rx_pec_clear;
@@ -798,7 +830,7 @@ module recovery_handler
 
   recovery_pec xrecovery_rx_pec (
       .clk_i,
-      .rst_ni(rst_ni & !rx_pec_clear & recovery_enable),
+      .rst_ni(rst_ni & !rx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
 
       .dat_i  (rx_pec_data),
       .valid_i(rx_pec_valid | virtual_device_cec_shreg[0]),
@@ -819,7 +851,7 @@ module recovery_handler
   // Recovery packet reception handler
   recovery_receiver xrecovery_receiver (
       .clk_i,
-      .rst_ni(rst_ni & recovery_enable),
+      .rst_ni(rst_ni & recovery_enable & ~bypass_i3c_core_i),
 
       .desc_valid_i(recv_tti_rx_desc_valid),
       .desc_ready_o(recv_tti_rx_desc_ready),
@@ -839,11 +871,11 @@ module recovery_handler
       .pec_crc_i   (recv_pec_crc),
       .pec_enable_o(recv_pec_enable),
 
-      .cmd_valid_o(cmd_valid),
-      .cmd_is_rd_o(cmd_is_rd),
-      .cmd_cmd_o  (cmd_cmd),
-      .cmd_len_o  (cmd_len),
-      .cmd_error_o(cmd_error),
+      .cmd_valid_o(recv_cmd_valid),
+      .cmd_is_rd_o(recv_cmd_is_rd),
+      .cmd_cmd_o  (recv_cmd_cmd),
+      .cmd_len_o  (recv_cmd_len),
+      .cmd_error_o(recv_cmd_error),
       .cmd_done_i (cmd_done),
 
       .virtual_device_tx_i(recovery_pending)
@@ -851,12 +883,15 @@ module recovery_handler
 
   // ....................................................
 
+  logic        xmit_res_ready;
+  logic        xmit_res_dready;
+  logic        exec_res_ready;
+  logic        exec_res_dready;
+
   logic        res_valid;
-  logic        res_ready;
   logic [15:0] res_len;
 
   logic        res_dvalid;
-  logic        res_dready;
   logic [ 7:0] res_data;
   logic        res_dlast;
 
@@ -871,7 +906,7 @@ module recovery_handler
 
   recovery_pec xrecovery_tx_pec (
       .clk_i,
-      .rst_ni(rst_ni & !tx_pec_clear & recovery_enable),
+      .rst_ni(rst_ni & !tx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
 
       .dat_i  (tx_pec_data),
       .valid_i(tx_pec_valid),
@@ -892,7 +927,7 @@ module recovery_handler
   // Recovery packet transmitter
   recovery_transmitter xrecovery_transmitter (
       .clk_i,
-      .rst_ni(rst_ni & recovery_enable),
+      .rst_ni(rst_ni & recovery_enable & ~bypass_i3c_core_i),
 
       .desc_valid_o(send_tti_tx_desc_valid),
       .desc_ready_i(send_tti_tx_desc_ready),
@@ -911,90 +946,154 @@ module recovery_handler
       .pec_enable_o(xmit_pec_enable),
 
       .res_valid_i(res_valid),
-      .res_ready_o(res_ready),
+      .res_ready_o(xmit_res_ready),
       .res_len_i  (res_len),
 
       .res_dvalid_i(res_dvalid),
-      .res_dready_o(res_dready),
+      .res_dready_o(xmit_res_dready),
       .res_data_i  (res_data),
       .res_dlast_i (res_dlast)
   );
 
   // ....................................................
 
-  logic                           indirect_rx_wvalid;
-  logic                           indirect_rx_wready;
-  logic [TtiRxDataDataWidth-1:0]  indirect_rx_wdata;
+  logic                          indirect_rx_wvalid;
+  logic                          indirect_rx_wready;
+  logic [TtiRxDataDataWidth-1:0] indirect_rx_wdata;
 
-  logic                           indirect_rx_rreq;
-  logic                           indirect_rx_rack;
-  logic [CsrDataWidth-1:0]        indirect_rx_rdata;
+  logic                          indirect_rx_rreq;
+  logic                          indirect_rx_rack;
+  logic [      CsrDataWidth-1:0] indirect_rx_rdata;
 
-  logic                           indirect_rx_clr;
+  logic                          indirect_rx_clr;
 
-  logic                           indirect_rx_full;
-  logic                           indirect_rx_empty;
+  logic                          indirect_rx_full;
+  logic                          indirect_rx_empty;
 
   // Indirect FIFO (RX only)
-  read_queue # (
-      .Depth      (IndirectFifoDepth),
-      .DataWidth  (CsrDataWidth)
+  read_queue #(
+      .Depth    (IndirectFifoDepth),
+      .DataWidth(CsrDataWidth)
   ) xindirect_rx_fifo (
-      .clk_i              (clk_i),
-      .rst_ni             (rst_ni),
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
 
       // Write port
-      .wvalid_i           (indirect_rx_wvalid),
-      .wready_o           (indirect_rx_wready),
-      .wdata_i            (indirect_rx_wdata),
+      .wvalid_i(indirect_rx_wvalid),
+      .wready_o(indirect_rx_wready),
+      .wdata_i (indirect_rx_wdata),
 
       // Read port
-      .req_i              (indirect_rx_rreq),
-      .ack_o              (indirect_rx_rack),
-      .data_o             (indirect_rx_rdata),
+      .req_i (indirect_rx_rreq),
+      .ack_o (indirect_rx_rack),
+      .data_o(indirect_rx_rdata),
 
       // Clear port
-      .reg_rst_i          (indirect_rx_clr),
-      .reg_rst_we_o       (),
-      .reg_rst_data_o     (),
+      .reg_rst_i     (indirect_rx_clr),
+      .reg_rst_we_o  (),
+      .reg_rst_data_o(),
 
       // Status
-      .full_o             (indirect_rx_full),
-      .empty_o            (indirect_rx_empty),
+      .full_o (indirect_rx_full),
+      .empty_o(indirect_rx_empty),
 
       // Threshold logic (unused)
-      .start_thld_i       ('0),
-      .ready_thld_i       ('0),
-      .ready_thld_o       (),
-      .start_thld_trig_o  (),
-      .ready_thld_trig_o  (),
-      .depth_o            ()
+      .start_thld_i     ('0),
+      .ready_thld_i     ('0),
+      .ready_thld_o     (),
+      .start_thld_trig_o(),
+      .ready_thld_trig_o(),
+      .depth_o          ()
   );
 
   // ....................................................
 
+  logic exec_tti_rx_data_ready;
+
+  logic exec_cmd_valid;
+  logic exec_cmd_is_rd;
+  logic [7:0] exec_cmd_cmd;
+  logic [15:0] exec_cmd_len;
+  logic exec_cmd_error;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : convert_req_to_ready
+    if (~rst_ni) begin
+      exec_tti_rx_data_ready <= '0;
+    end else if (exec_tti_rx_data_req) begin
+      exec_tti_rx_data_ready <= 1'b1;
+    end else if (tti_tx_data_queue_rvalid) begin
+      exec_tti_rx_data_ready <= 1'b0;
+    end
+  end
+
+  always_comb begin : tti_tx_queue_converter_sink
+    if (bypass_i3c_core_i) begin
+      tti_tx_data_queue_rvalid_conv_sink = '0;
+      tti_tx_data_queue_rready = exec_tti_rx_data_ready;
+      tti_tx_data_queue_rdata_conv_sink = '0;
+    end else begin
+      tti_tx_data_queue_rvalid_conv_sink = tti_tx_data_queue_rvalid;
+      tti_tx_data_queue_rready = tti_tx_data_queue_rready_conv_sink;
+      tti_tx_data_queue_rdata_conv_sink = tti_tx_data_queue_rdata;
+    end
+  end
+
+  always_comb begin : disconnect_executor_from_receiver
+    if (bypass_i3c_core_i) begin
+      exec_res_ready  = '0;
+      exec_res_dready = '0;
+    end else begin
+      exec_res_ready  = xmit_res_ready;
+      exec_res_dready = xmit_res_dready;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : reg_cmd_for_bypass
+    if (~rst_ni) begin
+      exec_cmd_valid <= '0;
+      exec_cmd_is_rd <= '0;
+      exec_cmd_cmd   <= '0;
+      exec_cmd_len   <= '0;
+      exec_cmd_error <= '0;
+    end else begin
+      if (bypass_i3c_core_i) begin
+        exec_cmd_valid <= 1'b1;
+        exec_cmd_is_rd <= 1'b0;
+        exec_cmd_cmd   <= 8'd47;  // CMD_INDIRECT_FIFO_DATA
+        exec_cmd_len   <= 16'd256;  // Fixed 256 bytes per transaction specified by Caliptra SS Recovery Sequence
+        exec_cmd_error <= '0;
+      end else begin
+        exec_cmd_valid <= recv_cmd_valid;
+        exec_cmd_is_rd <= recv_cmd_is_rd;
+        exec_cmd_cmd   <= recv_cmd_cmd;
+        exec_cmd_len   <= recv_cmd_len;
+        exec_cmd_error <= recv_cmd_error;
+      end
+    end
+  end
+
   // Command executor
-  recovery_executor # (
-      .IndirectFifoDepth  (IndirectFifoDepth),
-      .TtiRxDataDataWidth (TtiRxDataDataWidth),
-      .CsrDataWidth       (CsrDataWidth)
+  recovery_executor #(
+      .IndirectFifoDepth (IndirectFifoDepth),
+      .TtiRxDataDataWidth(TtiRxDataDataWidth),
+      .CsrDataWidth      (CsrDataWidth)
   ) xrecovery_executor (
       .clk_i,
-      .rst_ni(rst_ni & recovery_enable),
+      .rst_ni(rst_ni & (recovery_enable | bypass_i3c_core_i)),
 
-      .cmd_valid_i(cmd_valid),
-      .cmd_is_rd_i(cmd_is_rd),
-      .cmd_cmd_i  (cmd_cmd),
-      .cmd_len_i  (cmd_len),
-      .cmd_error_i(cmd_error),
+      .cmd_valid_i(exec_cmd_valid),
+      .cmd_is_rd_i(exec_cmd_is_rd),
+      .cmd_cmd_i  (exec_cmd_cmd),
+      .cmd_len_i  (exec_cmd_len),
+      .cmd_error_i(exec_cmd_error),
       .cmd_done_o (cmd_done),
 
       .res_valid_o(res_valid),
-      .res_ready_i(res_ready),
+      .res_ready_i(exec_res_ready),
       .res_len_o  (res_len),
 
       .res_dvalid_o(res_dvalid),
-      .res_dready_i(res_dready),
+      .res_dready_i(exec_res_dready),
       .res_data_o  (res_data),
       .res_dlast_o (res_dlast),
 
@@ -1003,28 +1102,33 @@ module recovery_handler
       .tx_data_queue_clr_o(exec_tti_tx_data_queue_clr),
       .tx_desc_queue_clr_o(exec_tti_tx_desc_queue_clr),
 
-      .tti_rx_rreq_o  (exec_tti_rx_data_req),
-      .tti_rx_rack_i  (exec_tti_rx_data_ack),
-      .tti_rx_rdata_i (exec_tti_rx_data_data),
+      .tti_rx_rreq_o (exec_tti_rx_data_req),
+      .tti_rx_rack_i (exec_tti_rx_data_ack),
+      .tti_rx_rdata_i(exec_tti_rx_data_data),
 
-      .tti_rx_sel_o (exec_tti_rx_queue_sel),
+      .tti_rx_sel_o(exec_tti_rx_queue_sel),
 
-      .indirect_rx_wvalid_o  (indirect_rx_wvalid),
-      .indirect_rx_wready_i  (indirect_rx_wready),
-      .indirect_rx_wdata_o   (indirect_rx_wdata),
+      .indirect_rx_wvalid_o(indirect_rx_wvalid),
+      .indirect_rx_wready_i(indirect_rx_wready),
+      .indirect_rx_wdata_o (indirect_rx_wdata),
 
-      .indirect_rx_rreq_o  (indirect_rx_rreq),
-      .indirect_rx_rack_i  (indirect_rx_rack),
-      .indirect_rx_rdata_i (indirect_rx_rdata),
+      .indirect_rx_rreq_o (indirect_rx_rreq),
+      .indirect_rx_rack_i (indirect_rx_rack),
+      .indirect_rx_rdata_i(indirect_rx_rdata),
 
-      .indirect_rx_full_i  (indirect_rx_full),
-      .indirect_rx_empty_i (indirect_rx_empty),
-      .indirect_rx_clr_o   (indirect_rx_clr),
+      .indirect_rx_full_i (indirect_rx_full),
+      .indirect_rx_empty_i(indirect_rx_empty),
+      .indirect_rx_clr_o  (indirect_rx_clr),
 
       .host_abort_i(ctl_tti_tx_host_nack_i | ctl_bus_stop_i),
 
+      .bypass_i3c_core_i,
+
       .payload_available_o(payload_available_o),
       .image_activated_o  (image_activated_o),
+
+      .hwif_socmgmt_i,
+      .hwif_socmgmt_o,
 
       .hwif_rec_i(hwif_rec_i),
       .hwif_rec_o(hwif_rec_o),

@@ -196,8 +196,8 @@ module I3CCSR (
                 logic EXTCAP_HEADER;
                 logic SOC_MGMT_CONTROL;
                 logic SOC_MGMT_STATUS;
-                logic SOC_MGMT_RSVD_0;
-                logic SOC_MGMT_RSVD_1;
+                logic REC_INTF_CFG;
+                logic REC_INTF_REG_W1C_ACCESS;
                 logic SOC_MGMT_RSVD_2;
                 logic SOC_MGMT_RSVD_3;
                 logic SOC_PAD_CONF;
@@ -347,8 +347,8 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h200);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h204);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS = cpuif_req_masked & (cpuif_addr == 12'h208);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 = cpuif_req_masked & (cpuif_addr == 12'h20c);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 = cpuif_req_masked & (cpuif_addr == 12'h210);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG = cpuif_req_masked & (cpuif_addr == 12'h20c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS = cpuif_req_masked & (cpuif_addr == 12'h210);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 = cpuif_req_masked & (cpuif_addr == 12'h214);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 = cpuif_req_masked & (cpuif_addr == 12'h218);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF = cpuif_req_masked & (cpuif_addr == 12'h21c);
@@ -1590,16 +1590,28 @@ module I3CCSR (
                 } SOC_MGMT_STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic next;
                         logic load_next;
-                    } PLACEHOLDER;
-                } SOC_MGMT_RSVD_0;
+                    } REC_INTF_BYPASS;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } REC_PAYLOAD_DONE;
+                } REC_INTF_CFG;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic [7:0] next;
                         logic load_next;
-                    } PLACEHOLDER;
-                } SOC_MGMT_RSVD_1;
+                    } DEVICE_RESET_CTRL;
+                    struct packed{
+                        logic [7:0] next;
+                        logic load_next;
+                    } RECOVERY_CTRL_ACTIVATE_REC_IMG;
+                    struct packed{
+                        logic [7:0] next;
+                        logic load_next;
+                    } INDIRECT_FIFO_CTRL_RESET;
+                } REC_INTF_REG_W1C_ACCESS;
                 struct packed{
                     struct packed{
                         logic [31:0] next;
@@ -2694,14 +2706,23 @@ module I3CCSR (
                 } SOC_MGMT_STATUS;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
-                } SOC_MGMT_RSVD_0;
+                        logic value;
+                    } REC_INTF_BYPASS;
+                    struct packed{
+                        logic value;
+                    } REC_PAYLOAD_DONE;
+                } REC_INTF_CFG;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } PLACEHOLDER;
-                } SOC_MGMT_RSVD_1;
+                        logic [7:0] value;
+                    } DEVICE_RESET_CTRL;
+                    struct packed{
+                        logic [7:0] value;
+                    } RECOVERY_CTRL_ACTIVATE_REC_IMG;
+                    struct packed{
+                        logic [7:0] value;
+                    } INDIRECT_FIFO_CTRL_RESET;
+                } REC_INTF_REG_W1C_ACCESS;
                 struct packed{
                     struct packed{
                         logic [31:0] value;
@@ -9239,52 +9260,136 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= 32'h0;
+            field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value <= 1'h0;
         end else begin
-            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next) begin
-                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
+            if(field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value <= field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.next;
             end
         end
     end
-    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
-    // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [0:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next = next_c;
-        field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= 32'h0;
+            field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value <= 1'h0;
         end else begin
-            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next) begin
-                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
+            if(field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value <= field_combo.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.next;
             end
         end
     end
-    assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value & ~decoded_wr_biten[7:0]) | (decoded_wr_data[7:0] & decoded_wr_biten[7:0]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value <= 8'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value <= field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.swmod = decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value <= 8'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value <= field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.swmod = decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value <= 8'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value <= field_combo.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value = field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.swmod = decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && decoded_req_is_wr;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER
     always_comb begin
         automatic logic [31:0] next_c;
@@ -10414,8 +10519,13 @@ module I3CCSR (
     assign readback_array[87][31:24] = '0;
     assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
     assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value : '0;
-    assign readback_array[91][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value : '0;
+    assign readback_array[90][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value : '0;
+    assign readback_array[90][1:1] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value : '0;
+    assign readback_array[90][31:2] = '0;
+    assign readback_array[91][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value : '0;
+    assign readback_array[91][15:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value : '0;
+    assign readback_array[91][23:16] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value : '0;
+    assign readback_array[91][31:24] = '0;
     assign readback_array[92][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
     assign readback_array[93][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
     assign readback_array[94][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value : '0;

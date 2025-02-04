@@ -1232,6 +1232,41 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__in_t;
 
     typedef struct packed{
+        logic next;
+        logic we;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__in_t REC_PAYLOAD_DONE;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__in_t;
+
+    typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__in_t;
+
+    typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__in_t;
+
+    typedef struct packed{
+        logic [7:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__in_t DEVICE_RESET_CTRL;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__in_t RECOVERY_CTRL_ACTIVATE_REC_IMG;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__in_t INDIRECT_FIFO_CTRL_RESET;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__in_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__in_t REC_INTF_CFG;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__in_t REC_INTF_REG_W1C_ACCESS;
+    } I3CCSR__I3C_EC__SoCMgmtIf__in_t;
+
+    typedef struct packed{
         logic [1:0] next;
         logic we;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__in_t;
@@ -1248,6 +1283,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__in_t SecFwRecoveryIf;
         I3CCSR__I3C_EC__StdbyCtrlMode__in_t StdbyCtrlMode;
         I3CCSR__I3C_EC__TTI__in_t TTI;
+        I3CCSR__I3C_EC__SoCMgmtIf__in_t SoCMgmtIf;
         I3CCSR__I3C_EC__CtrlCfg__in_t CtrlCfg;
     } I3CCSR__I3C_EC__in_t;
 
@@ -2985,20 +3021,38 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__PLACEHOLDER__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_INTF_BYPASS__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__out_t;
+        logic value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__PLACEHOLDER__out_t;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_INTF_BYPASS__out_t REC_INTF_BYPASS;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__out_t REC_PAYLOAD_DONE;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__PLACEHOLDER__out_t PLACEHOLDER;
-    } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__out_t;
+        logic [7:0] value;
+        logic swmod;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__out_t;
+
+    typedef struct packed{
+        logic [7:0] value;
+        logic swmod;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__out_t;
+
+    typedef struct packed{
+        logic [7:0] value;
+        logic swmod;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__out_t DEVICE_RESET_CTRL;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__out_t RECOVERY_CTRL_ACTIVATE_REC_IMG;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__out_t INDIRECT_FIFO_CTRL_RESET;
+    } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__out_t;
 
     typedef struct packed{
         logic [31:0] value;
@@ -3193,8 +3247,8 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__out_t SOC_MGMT_CONTROL;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__out_t SOC_MGMT_STATUS;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_0__out_t SOC_MGMT_RSVD_0;
-        I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_1__out_t SOC_MGMT_RSVD_1;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__out_t REC_INTF_CFG;
+        I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__out_t REC_INTF_REG_W1C_ACCESS;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__out_t SOC_MGMT_RSVD_2;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__out_t SOC_MGMT_RSVD_3;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__out_t SOC_PAD_CONF;
