@@ -804,7 +804,12 @@ def csr_access_test_data(tb, rd_acc=Access.Priv, wr_acc=Access.Priv):
     return test_data
 
 
-@cocotb.test(skip=os.getenv("FrontendBusInterface") != "AXI")
+@cocotb.test(
+    skip=(
+        "FrontendBusInterface" not in cocotb.plusargs
+        or cocotb.plusargs["FrontendBusInterface"] != "AXI"
+    )
+)
 async def test_axi_filtering(dut):
     """
     Verifies AXI ID filtering in Secure Firmware Recovery registers access.

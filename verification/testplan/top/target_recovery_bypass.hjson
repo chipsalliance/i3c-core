@@ -1,0 +1,99 @@
+// SPDX-License-Identifier: Apache-2.0
+{
+  name: Recovery bypass
+  testpoints: [
+    {
+      name: simple_write_read
+      desc: '''
+            Verify basic bypass functionality
+            - Enable I3C Core bypass in the Recovery Handler via CSR
+            - Write to the TTI TX Data Queue and read from the Indirect FIFO Queue
+            - Compare the data and verify it hasn't changed'''
+      tests: ["indirect_fifo_write"]
+      tags: ["top"]
+    }
+    {
+      name: check_csr_access
+      desc: '''
+            Verify accessibility of CSRs as specified in the OCP Secure Firmware Recovery
+            specification with additional bypass features
+            - Write to all RW and read from all RO Secure Firmware Recovery Registers
+            - Write to bypass registers with W1C property
+            - Ensure the reserved fields of tested registers were not written
+            - Ensure RW registers can be written and read back
+            - Ensure RO registers cannot be written
+            - Perform checks with bypass disabled and enabled'''
+      tests: ["ocp_csr_access_bypass_enabled", "ocp_csr_access_bypass_disabled"]
+      tags: ["top"]
+    }
+    {
+      name: recovery_status_wires
+      desc: '''
+            Verify recovery status wires as specified in the Caliptra SS Hardware Specification
+            - Write to the TTI TX Queue and read from the Indirect FIFO Queue.
+            - Ensuring correct state of the `payload_available` wire
+            - Write to the Recovery Control CSR to activate an image
+            - Ensure correct state of the `image_activated` wire'''
+      tests: ["payload_available", "image_activated"]
+      tags: ["top"]
+    }
+    {
+      name: indirect_fifo_overflow
+      desc: '''
+            Verify that access is rejected when the Indirect FIFO Queue overflows'''
+      tests: ["indirect_fifo_overflow"]
+      tags: ["top"]
+    }
+    {
+      name: indirect_fifo_underflow
+      desc: '''
+            Verify that access is rejected when the Indirect FIFO Queue underflows'''
+      tests: ["indirect_fifo_underflow"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_bus_traffic_during_loopback
+      desc: '''
+            Verify that Recovery Handler with bypass enabled is not in any way interfered by any
+            I3C bus traffic'''
+      tests: ["i3c_bus_traffic_during_loopback"]
+      tags: ["top"]
+    }
+    {
+      name: check_axi_filtering
+      desc: '''
+            Verify that AXI access to Secure Firmware Recovery registers is filtered
+            - AXI IDs from privileged ID list should always grant access to all registers
+            - Once ID filtering is disabled, register access should be granted regardless of the
+              transaction ID
+            - With ID filtering enabled, all transactions with ID outside of the privileged ID list
+              should be rejected with SLVERR response and register access request should not be
+              propagated to the CPUIF'''
+      tests: ["axi_filtering"]
+      tags: ["top"]
+    }
+    {
+      name: recovery_flow
+      desc: '''
+            Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
+            as specified in the Caliptra Root of Trust specification'''
+      tests: ["recovery_flow"]
+      tags: ["top"]
+    }
+    {
+      name: cptra_mcu_recovery
+      desc: '''
+            Verify that Caliptra Subsystem can perform full Recovery Sequence with I3C Core with
+            bypass feature enabled. This test will run software on both Caliptra core and Caliptra
+            MCU to interact with the I3C Core and Caliptra RoT.
+            - MCU should initialize I3C Core with bypass enabled
+            - Caliptra ROM should enable Recovery Mode
+            - MCU should load image to Indirect FIFO Queue which will be read by Caliptra ROM
+            - MCU should activate an image
+            - Caliptra ROM should write an image to MCU SRAM
+            - The image should be identical with the one read form simulated QSPI'''
+      tests: ["cptra_mcu_recovery"]
+      tags: ["top"]
+    }
+  ]
+}

@@ -122,7 +122,7 @@ async def test_write_to_controller_device_addr_filter_on_priv(dut):
 
 
 @cocotb.test()
-async def test_write_to_controller_device_addr_on_non_priv(dut):
+async def test_write_to_controller_device_addr_filter_on_non_priv(dut):
     priv_ids = draw_axi_priv_ids()
     tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
     await write_to_controller_device_addr(dut, False, priv_ids, tid)
@@ -159,7 +159,7 @@ async def test_write_should_not_affect_ro_csr_filter_on_priv(dut):
 
 
 @cocotb.test()
-async def test_write_should_not_affect_ro_csr_on_non_priv(dut):
+async def test_write_should_not_affect_ro_csr_filter_on_non_priv(dut):
     priv_ids = draw_axi_priv_ids()
     tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
     await write_should_not_affect_ro_csr(dut, False, priv_ids, tid)

@@ -17,6 +17,8 @@ testplans:
     - verification/cocotb/block/{name}/test_converter.py
   - Target:
     - verification/cocotb/top/lib_i3c_top/test_i3c_target.py
+  - Recovery bypass:
+    - verification/cocotb/top/lib_i3c_top/test_bypass.py
   - .*:
     - verification/cocotb/block/ctrl_{name}/test_{name}.py
     - verification/cocotb/block/{name}/test_{name}.py

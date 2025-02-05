@@ -243,7 +243,7 @@ async def test_write_burst_collision_with_read_id_filter_on_priv(dut):
 
 
 @cocotb.test()
-async def test_write_burst_collision_with_read_id_filter_non_priv(dut):
+async def test_write_burst_collision_with_read_id_filter_on_non_priv(dut):
     await write_burst_collision_with_read(dut, False, Access.Priv, Access.Unpriv)
 
 
