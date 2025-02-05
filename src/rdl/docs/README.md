@@ -1093,35 +1093,35 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x0
 - Size: 0x6C
 
-|Offset|      Identifier      |         Name         |
-|------|----------------------|----------------------|
-| 0x00 |     EXTCAP_HEADER    |           —          |
-| 0x04 |      PROT_CAP_0      |      PROT_CAP_0      |
-| 0x08 |      PROT_CAP_1      |      PROT_CAP_1      |
-| 0x0C |      PROT_CAP_2      |      PROT_CAP_2      |
-| 0x10 |      PROT_CAP_3      |      PROT_CAP_3      |
-| 0x14 |      DEVICE_ID_0     |      DEVICE_ID_0     |
-| 0x18 |      DEVICE_ID_1     |      DEVICE_ID_1     |
-| 0x1C |      DEVICE_ID_2     |      DEVICE_ID_2     |
-| 0x20 |      DEVICE_ID_3     |      DEVICE_ID_3     |
-| 0x24 |      DEVICE_ID_4     |      DEVICE_ID_4     |
-| 0x28 |      DEVICE_ID_5     |      DEVICE_ID_5     |
-| 0x2C |      DEVICE_ID_6     |      DEVICE_ID_6     |
-| 0x30 |    DEVICE_STATUS_0   |    DEVICE_STATUS_0   |
-| 0x34 |    DEVICE_STATUS_1   |    DEVICE_STATUS_1   |
-| 0x38 |     DEVICE_RESET     |     DEVICE_RESET     |
-| 0x3C |     RECOVERY_CTRL    |     RECOVERY_CTRL    |
-| 0x40 |    RECOVERY_STATUS   |    RECOVERY_STATUS   |
-| 0x44 |       HW_STATUS      |       HW_STATUS      |
-| 0x48 | INDIRECT_FIFO_CTRL_0 | INDIRECT_FIFO_CTRL_0 |
-| 0x4C | INDIRECT_FIFO_CTRL_1 | INDIRECT_FIFO_CTRL_1 |
-| 0x50 |INDIRECT_FIFO_STATUS_0|INDIRECT_FIFO_STATUS_0|
-| 0x54 |INDIRECT_FIFO_STATUS_1|INDIRECT_FIFO_STATUS_1|
-| 0x58 |INDIRECT_FIFO_STATUS_2|INDIRECT_FIFO_STATUS_2|
-| 0x5C |INDIRECT_FIFO_STATUS_3|INDIRECT_FIFO_STATUS_3|
-| 0x60 |INDIRECT_FIFO_STATUS_4|INDIRECT_FIFO_STATUS_4|
-| 0x64 |INDIRECT_FIFO_STATUS_5|INDIRECT_FIFO_STATUS_5|
-| 0x68 |  INDIRECT_FIFO_DATA  |  INDIRECT_FIFO_DATA  |
+|Offset|      Identifier      |              Name              |
+|------|----------------------|--------------------------------|
+| 0x00 |     EXTCAP_HEADER    |                —               |
+| 0x04 |      PROT_CAP_0      |Recovery Protocol Capabilities 0|
+| 0x08 |      PROT_CAP_1      |Recovery Protocol Capabilities 1|
+| 0x0C |      PROT_CAP_2      |Recovery Protocol Capabilities 2|
+| 0x10 |      PROT_CAP_3      |Recovery Protocol Capabilities 3|
+| 0x14 |      DEVICE_ID_0     |     Device Identification 0    |
+| 0x18 |      DEVICE_ID_1     |     Device Identification 1    |
+| 0x1C |      DEVICE_ID_2     |     Device Identification 2    |
+| 0x20 |      DEVICE_ID_3     |     Device Identification 3    |
+| 0x24 |      DEVICE_ID_4     |     Device Identification 4    |
+| 0x28 |      DEVICE_ID_5     |     Device Identification 5    |
+| 0x2C |      DEVICE_ID_6     |     Device Identification 6    |
+| 0x30 |    DEVICE_STATUS_0   |         Device status 0        |
+| 0x34 |    DEVICE_STATUS_1   |         Device status 1        |
+| 0x38 |     DEVICE_RESET     |          Reset control         |
+| 0x3C |     RECOVERY_CTRL    | Recovery configuration/control |
+| 0x40 |    RECOVERY_STATUS   |         Recovery status        |
+| 0x44 |       HW_STATUS      |         Hardware status        |
+| 0x48 | INDIRECT_FIFO_CTRL_0 |     Indirect FIFO Control 0    |
+| 0x4C | INDIRECT_FIFO_CTRL_1 |     Indirect FIFO Control 1    |
+| 0x50 |INDIRECT_FIFO_STATUS_0|     Indirect FIFO Status 0     |
+| 0x54 |INDIRECT_FIFO_STATUS_1|     Indirect FIFO Status 1     |
+| 0x58 |INDIRECT_FIFO_STATUS_2|     Indirect FIFO Status 2     |
+| 0x5C |INDIRECT_FIFO_STATUS_3|     Indirect FIFO Status 3     |
+| 0x60 |INDIRECT_FIFO_STATUS_4|     Indirect FIFO Status 4     |
+| 0x64 |INDIRECT_FIFO_RESERVED|     INDIRECT_FIFO_RESERVED     |
+| 0x68 |  INDIRECT_FIFO_DATA  |       INDIRECT_FIFO_DATA       |
 
 ### EXTCAP_HEADER register
 
@@ -1148,13 +1148,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x4
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|    Identifier    |Access|   Reset  |             Name             |
+|----|------------------|------|----------|------------------------------|
+|31:0|REC_MAGIC_STRING_0|   r  |0x4F435020|Recovery protocol magic string|
 
-#### PLACEHOLDER field
+#### REC_MAGIC_STRING_0 field
 
-
+<p>Magic string 'OCP ' (1st part of 'OCP RECV') in ASCII code - '0x4f 0x43 0x50 0x20'</p>
 
 ### PROT_CAP_1 register
 
@@ -1162,13 +1162,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x8
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|    Identifier    |Access|   Reset  |             Name             |
+|----|------------------|------|----------|------------------------------|
+|31:0|REC_MAGIC_STRING_1|   r  |0x52454356|Recovery protocol magic string|
 
-#### PLACEHOLDER field
+#### REC_MAGIC_STRING_1 field
 
-
+<p>Magic string 'RECV' (2nd part of 'OCP RECV') in ASCII code - '0x52 0x45 0x43 0x56'</p>
 
 ### PROT_CAP_2 register
 
@@ -1176,13 +1176,69 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0xC
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|   Identifier   |Access|Reset|             Name             |
+|-----|----------------|------|-----|------------------------------|
+| 15:0|REC_PROT_VERSION|  rw  | 0x0 |   Recovery protocol version  |
+|31:16|   AGENT_CAPS   |  rw  | 0x0 |Recovery protocol capabilities|
 
-#### PLACEHOLDER field
+#### REC_PROT_VERSION field
 
+<ul>
+<li>
+<p>Byte 0: Major version number = 0x1</p>
+</li>
+<li>
+<p>Byte 1: Minor version number = 0x1</p>
+</li>
+</ul>
 
+#### AGENT_CAPS field
+
+<p>Agent capabilities:</p>
+<ul>
+<li>
+<p>bit 0: Identification (DEVICE_ID structure)</p>
+</li>
+<li>
+<p>bit 1: Forced Recovery (From RESET)</p>
+</li>
+<li>
+<p>bit 2: Mgmt reset (From RESET)</p>
+</li>
+<li>
+<p>bit 3: Device Reset (From RESET)</p>
+</li>
+<li>
+<p>bit 4: Device status (DEVICE_STATUS)</p>
+</li>
+<li>
+<p>bit 5: Recovery memory access (INDIRECT_CTRL)</p>
+</li>
+<li>
+<p>bit 6: Local C-image support</p>
+</li>
+<li>
+<p>bit 7: Push C-image support</p>
+</li>
+<li>
+<p>bit 8: Interface isolation</p>
+</li>
+<li>
+<p>bit 9: Hardware status</p>
+</li>
+<li>
+<p>bit 10: Vendor command</p>
+</li>
+<li>
+<p>bit 11: Flashless boot (From RESET)</p>
+</li>
+<li>
+<p>bit 12: FIFO CMS support (INDIRECT_FIFO_CTRL)</p>
+</li>
+<li>
+<p>bits 13-15: Reserved</p>
+</li>
+</ul>
 
 ### PROT_CAP_3 register
 
@@ -1190,13 +1246,23 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x10
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|    Identifier    |Access|Reset|            Name           |
+|-----|------------------|------|-----|---------------------------|
+| 7:0 |NUM_OF_CMS_REGIONS|  rw  | 0x0 |Total number of CMS regions|
+| 15:8|   MAX_RESP_TIME  |  rw  | 0x0 |   Maximum Response Time   |
+|23:16| HEARTBEAT_PERIOD |  rw  | 0x0 |      Heartbeat Period     |
 
-#### PLACEHOLDER field
+#### NUM_OF_CMS_REGIONS field
 
+<p>0-255: The total number of component memory space (CMS) regions a device supports. This number includes any logging, code and vendor defined regions</p>
 
+#### MAX_RESP_TIME field
+
+<p>0-255: Maximum response time in 2^x microseconds(us).</p>
+
+#### HEARTBEAT_PERIOD field
+
+<p>0-255: Heartbeat period, 2^x microseconds (us), 0 indicates not supported</p>
 
 ### DEVICE_ID_0 register
 
@@ -1204,13 +1270,44 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x14
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|        Identifier        |Access|Reset|             Name            |
+|----|--------------------------|------|-----|-----------------------------|
+| 7:0|         DESC_TYPE        |  rw  | 0x0 |   Initial descriptor type   |
+|15:8|VENDOR_SPECIFIC_STR_LENGTH|  rw  | 0x0 |Vendor Specific String Length|
 
-#### PLACEHOLDER field
+#### DESC_TYPE field
 
+<p>Based on table 8 from [DMTF PLDM FM]:</p>
+<ul>
+<li>
+<p>0x00: PCI Vendor</p>
+</li>
+<li>
+<p>0x1: IANA</p>
+</li>
+<li>
+<p>0x2: UUID</p>
+</li>
+<li>
+<p>0x3: PnP Vendor</p>
+</li>
+<li>
+<p>0x4: ACPI Vendor</p>
+</li>
+<li>
+<p>0x5: IANA Enterprise Type</p>
+</li>
+<li>
+<p>0x6-0xFE: Reserved</p>
+</li>
+<li>
+<p>0xFF: NVMe-MI</p>
+</li>
+</ul>
 
+#### VENDOR_SPECIFIC_STR_LENGTH field
+
+<p>0x0-0xFF: Total length of Vendor Specific String, 0 indicates not supported</p>
 
 ### DEVICE_ID_1 register
 
@@ -1218,11 +1315,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x18
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1232,11 +1329,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x1C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1246,11 +1343,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x20
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1260,11 +1357,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x24
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1274,11 +1371,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x28
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1288,11 +1385,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x2C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|   DATA   |  rw  | 0x0 |    |
 
-#### PLACEHOLDER field
+#### DATA field
 
 
 
@@ -1302,13 +1399,140 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x30
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|   Identifier  | Access |Reset|         Name        |
+|-----|---------------|--------|-----|---------------------|
+| 7:0 |   DEV_STATUS  |   rw   | 0x0 |    Device status    |
+| 15:8|   PROT_ERROR  |rw, rclr| 0x0 |    Protocol Error   |
+|31:16|REC_REASON_CODE|   rw   | 0x0 |Recovery Reason Codes|
 
-#### PLACEHOLDER field
+#### DEV_STATUS field
 
+<ul>
+<li>
+<p>0x0: Status Pending (Recover Reason Code not populated)</p>
+</li>
+<li>
+<p>0x1: Device healthy (Recover Reason Code not populated)</p>
+</li>
+<li>
+<p>0x2: Device Error (“soft” error or other error state) - (Recover Reason Code not populated)</p>
+</li>
+<li>
+<p>0x3: Recovery mode - ready to accept recovery image - (Recover Reason Code populated)</p>
+</li>
+<li>
+<p>0x4: Recovery Pending (waiting for activation) - (Recover Reason Code populated)</p>
+</li>
+<li>
+<p>0x5: Running Recovery Image ( Recover Reason Code not populated)</p>
+</li>
+<li>
+<p>0x6-0xD: Reserved</p>
+</li>
+<li>
+<p>0xE: Boot Failure (Recover Reason Code populated)</p>
+</li>
+<li>
+<p>0xF: Fatal Error (Recover Reason Code not populated)</p>
+</li>
+<li>
+<p>0x10-FF:Reserved</p>
+</li>
+</ul>
 
+#### PROT_ERROR field
+
+<ul>
+<li>
+<p>0x0: No Protocol Error</p>
+</li>
+<li>
+<p>0x1: Unsupported/Write Command - command is not support or a write to a RO command</p>
+</li>
+<li>
+<p>0x2: Unsupported Parameter</p>
+</li>
+<li>
+<p>0x3: Length write error (length of write command is incorrect)</p>
+</li>
+<li>
+<p>0x4: CRC Error (if supported)</p>
+</li>
+<li>
+<p>0x5-0xFE: Reserved</p>
+</li>
+<li>
+<p>0xFF: General Protocol Error - catch all unclassified errors</p>
+</li>
+</ul>
+
+#### REC_REASON_CODE field
+
+<ul>
+<li>
+<p>0x0: No Boot Failure detected (BFNF)</p>
+</li>
+<li>
+<p>0x1: Generic hardware error (BFGHWE)</p>
+</li>
+<li>
+<p>0x2: Generic hardware soft error (BFGSE) - soft error may be recoverable</p>
+</li>
+<li>
+<p>0x3: Self-test failure (BFSTF) (e.g., RSA self test failure, FIPs self test failure,, etc.)</p>
+</li>
+<li>
+<p>0x4: Corrupted/missing critical data (BFCD)</p>
+</li>
+<li>
+<p>0x5: Missing/corrupt key manifest (BFKMMC)</p>
+</li>
+<li>
+<p>0x6: Authentication Failure on key manifest (BFKMAF)</p>
+</li>
+<li>
+<p>0x7: Anti-rollback failure on key manifest (BFKIAR)</p>
+</li>
+<li>
+<p>0x8: Missing/corrupt boot loader (first mutable code) firmware image (BFFIMC)</p>
+</li>
+<li>
+<p>0x9: Authentication failure on boot loader ( 1st mutable code) firmware image (BFFIAF)</p>
+</li>
+<li>
+<p>0xA: Anti-rollback failure boot loader (1st mutable code) firmware image (BFFIAR)</p>
+</li>
+<li>
+<p>0xB: Missing/corrupt main/management firmware image (BFMFMC)</p>
+</li>
+<li>
+<p>0xC: Authentication Failure main/management firmware image (BFMFAF)</p>
+</li>
+<li>
+<p>0xD: Anti-rollback Failure main/management firmware image (BFMFAR)</p>
+</li>
+<li>
+<p>0xE: Missing/corrupt recovery firmware (BFRFMC)</p>
+</li>
+<li>
+<p>0xF: Authentication Failure recovery firmware (BFRFAF)</p>
+</li>
+<li>
+<p>0x10: Anti-rollback Failure on recovery firmware (BFRFAR)</p>
+</li>
+<li>
+<p>0x11: Forced Recovery (FR)</p>
+</li>
+<li>
+<p>0x12: Flashless/Streaming Boot (FSB)</p>
+</li>
+<li>
+<p>0x13-0x7F: Reserved</p>
+</li>
+<li>
+<p>0x80-0xFF: Vendor Unique Boot Failure Codes</p>
+</li>
+</ul>
 
 ### DEVICE_STATUS_1 register
 
@@ -1316,13 +1540,19 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x34
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|     Identifier     |Access|Reset|             Name            |
+|-----|--------------------|------|-----|-----------------------------|
+| 15:0|      HEARTBEAT     |  rw  | 0x0 |          Heartbeat          |
+|24:16|VENDOR_STATUS_LENGTH|  rw  | 0x0 |     Vendor Status Length    |
+|31:25|    VENDOR_STATUS   |  rw  | 0x0 |Vendor defined status message|
 
-#### PLACEHOLDER field
+#### HEARTBEAT field
 
+<p>0-4095: Incrementing number (counter wraps)</p>
 
+#### VENDOR_STATUS_LENGTH field
+
+<p>0-248: Length in bytes of just VENDOR_STATUS. Zero indicates no vendor status and zero additional bytes.</p>
 
 ### DEVICE_RESET register
 
@@ -1330,13 +1560,61 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x38
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+<p>For devices which support reset, this register will reset the device or management entity</p>
 
-#### PLACEHOLDER field
+| Bits|   Identifier  |  Access |Reset|        Name        |
+|-----|---------------|---------|-----|--------------------|
+| 7:0 |   RESET_CTRL  |rw, woclr| 0x0 |Device Reset Control|
+| 15:8|FORCED_RECOVERY|    rw   | 0x0 |   Forced Recovery  |
+|23:16|    IF_CTRL    |    rw   | 0x0 |  Interface Control |
 
+#### RESET_CTRL field
 
+<ul>
+<li>
+<p>0x0: No reset</p>
+</li>
+<li>
+<p>0x1: Reset Device (PCIe Fundamental Reset or equivalent. This is likely bus disruptive)</p>
+</li>
+<li>
+<p>0x2: Reset Management. This reset will reset the management subsystem. If supported, this reset MUST not be bus disruptive (cause re-enumeration)</p>
+</li>
+<li>
+<p>0x3-FF: Reserved</p>
+</li>
+</ul>
+
+#### FORCED_RECOVERY field
+
+<ul>
+<li>
+<p>0x0: No forced recovery</p>
+</li>
+<li>
+<p>0x01-0xD: Reserved</p>
+</li>
+<li>
+<p>0xE: Enter flashless boot mode on next platform reset</p>
+</li>
+<li>
+<p>0xF: Enter recovery mode on next platform reset</p>
+</li>
+<li>
+<p>0x10-FF: Reserved</p>
+</li>
+</ul>
+
+#### IF_CTRL field
+
+<ul>
+<li>
+<p>0x0: Disable Interface mastering</p>
+</li>
+<li>
+<p>0x1: Enable Interface mastering</p>
+</li>
+</ul>
 
 ### RECOVERY_CTRL register
 
@@ -1344,13 +1622,48 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x3C
 - Size: 0x4
 
-|Bits| Identifier|  Access |Reset|Name|
-|----|-----------|---------|-----|----|
-|31:0|PLACEHOLDER|rw, woclr| 0x0 |    |
+| Bits|   Identifier   |  Access |Reset|            Name            |
+|-----|----------------|---------|-----|----------------------------|
+| 7:0 |       CMS      |    rw   | 0x0 |Component Memory Space (CMS)|
+| 15:8|   REC_IMG_SEL  |    rw   | 0x0 |  Recovery Image Selection  |
+|23:16|ACTIVATE_REC_IMG|rw, woclr| 0x0 |   Activate Recovery Image  |
 
-#### PLACEHOLDER field
+#### CMS field
 
+<ul>
+<li>0-255: Selects a component memory space where the recovery image is. 0 is the default</li>
+</ul>
 
+#### REC_IMG_SEL field
+
+<ul>
+<li>
+<p>0x0: No operation</p>
+</li>
+<li>
+<p>0x1: Use Recovery Image from memory window (CMS)</p>
+</li>
+<li>
+<p>0x2: Use Recovery Image stored on device (C-image)</p>
+</li>
+<li>
+<p>0x3-FF: reserved</p>
+</li>
+</ul>
+
+#### ACTIVATE_REC_IMG field
+
+<ul>
+<li>
+<p>0x0: do not activate recovery image - after activation device will report this code.</p>
+</li>
+<li>
+<p>0xF: Activate recovery image</p>
+</li>
+<li>
+<p>0x10-FF-reserved</p>
+</li>
+</ul>
 
 ### RECOVERY_STATUS register
 
@@ -1358,13 +1671,40 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x40
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|      Identifier      |Access|Reset|         Name         |
+|----|----------------------|------|-----|----------------------|
+| 3:0|    DEV_REC_STATUS    |  rw  | 0x0 |Device recovery status|
+| 7:4|     REC_IMG_INDEX    |  rw  | 0x0 | Recovery image index |
+|15:8|VENDOR_SPECIFIC_STATUS|  rw  | 0x0 |Vendor specific status|
 
-#### PLACEHOLDER field
+#### DEV_REC_STATUS field
 
-
+<ul>
+<li>
+<p>0x0: Not in recovery mode</p>
+</li>
+<li>
+<p>0x1: Awaiting recovery image</p>
+</li>
+<li>
+<p>0x2: Booting recovery image</p>
+</li>
+<li>
+<p>0x3: Recovery successful</p>
+</li>
+<li>
+<p>0xc: Recovery failed</p>
+</li>
+<li>
+<p>0xd: Recovery image authentication error</p>
+</li>
+<li>
+<p>0xe: Error entering Recovery mode (might be administratively disabled)</p>
+</li>
+<li>
+<p>0xf: Invalid component address space</p>
+</li>
+</ul>
 
 ### HW_STATUS register
 
@@ -1372,13 +1712,54 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x44
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|     Identifier     |Access|Reset|                     Name                     |
+|-----|--------------------|------|-----|----------------------------------------------|
+|  0  |    TEMP_CRITICAL   |  rw  | 0x0 |          Device temperature critical         |
+|  1  |      SOFT_ERR      |  rw  | 0x0 |              Hardware Soft Error             |
+|  2  |      FATAL_ERR     |  rw  | 0x0 |             Hardware Fatal Error             |
+| 7:3 |    RESERVED_7_3    |  rw  | 0x0 |                   Reserved                   |
+| 15:8|  VENDOR_HW_STATUS  |  rw  | 0x0 |    Vendor HW Status (bit mask active high)   |
+|23:16|        CTEMP       |  rw  | 0x0 |         Composite temperature (CTemp)        |
+|31:24|VENDOR_HW_STATUS_LEN|  rw  | 0x0 |Vendor Specific Hardware Status length (bytes)|
 
-#### PLACEHOLDER field
+#### TEMP_CRITICAL field
 
+<p>Device temperature is critical (may need reset to clear)</p>
 
+#### SOFT_ERR field
+
+<p>Hardware Soft Error (may need reset to clear)</p>
+
+#### CTEMP field
+
+<p>Current temperatureof device in degrees Celsius: Compatible with NVMe-MI command code 0 offset 3.</p>
+<ul>
+<li>
+<p>0x00-0x7e: 0 to 126 C</p>
+</li>
+<li>
+<p>0x7f: 127 C or higher</p>
+</li>
+<li>
+<p>0x80: no temperature data, or data is older than 5 seconds</p>
+</li>
+<li>
+<p>0x81: temperature sensor failure</p>
+</li>
+<li>
+<p>0x82-0x83: reserved</p>
+</li>
+<li>
+<p>0xc4: -60 C or lower</p>
+</li>
+<li>
+<p>0xc5-0xff: -59 to -1 C (in two's complement)</p>
+</li>
+</ul>
+
+#### VENDOR_HW_STATUS_LEN field
+
+<p>0-251: Length in bytes of Vendor Specific Hardware Status.</p>
 
 ### INDIRECT_FIFO_CTRL_0 register
 
@@ -1386,13 +1767,39 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x48
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+| Bits|  Identifier  |  Access |Reset|                   Name                   |
+|-----|--------------|---------|-----|------------------------------------------|
+| 7:0 |      CMS     |    rw   | 0x0 |Indirect FIFO memory access configuration.|
+| 15:8|     RESET    |rw, woclr| 0x0 |   Indirect memory configuration - reset  |
+|31:16|IMAGE_SIZE_MSB|    rw   | 0x0 |Indirect memory configuration - Image Size|
 
-#### PLACEHOLDER field
+#### CMS field
 
+<p>This register selects a region within the device. Read/write access is through address
+spaces. Each space represents a FIFO.
+Component Memory Space (CMS):</p>
+<ul>
+<li>0-255: Address region within a device.</li>
+</ul>
 
+#### RESET field
+
+<p>Reset (Write 1 Clear):</p>
+<ul>
+<li>
+<p>0x0: idle</p>
+</li>
+<li>
+<p>0x1: reset Write Index and Read Index to initial value.</p>
+</li>
+<li>
+<p>0x2 to 0xFF: reserved</p>
+</li>
+</ul>
+
+#### IMAGE_SIZE_MSB field
+
+<p>Image Size (2 MSBs): Size of the image to be loaded in 4B units</p>
 
 ### INDIRECT_FIFO_CTRL_1 register
 
@@ -1400,13 +1807,13 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x4C
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
+|Bits|  Identifier  |Access|Reset|                   Name                   |
+|----|--------------|------|-----|------------------------------------------|
+|15:0|IMAGE_SIZE_LSB|  rw  | 0x0 |Indirect memory configuration - Image Size|
 
-#### PLACEHOLDER field
+#### IMAGE_SIZE_LSB field
 
-
+<p>Image Size (2 LSBs): Size of the image to be loaded in 4B units</p>
 
 ### INDIRECT_FIFO_STATUS_0 register
 
@@ -1414,23 +1821,40 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x50
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset| Name |
-|----|----------|------|-----|------|
-|  0 |   EMPTY  |   r  | 0x1 | EMPTY|
-|  1 |   FULL   |   r  | 0x0 | FULL |
-|10:8|  REGION  |   r  | 0x0 |REGION|
+|Bits| Identifier|Access|Reset|       Name       |
+|----|-----------|------|-----|------------------|
+|  0 |   EMPTY   |   r  | 0x1 |    FIFO Empty    |
+|  1 |    FULL   |   r  | 0x0 |     FIFO Full    |
+|10:8|REGION_TYPE|   r  | 0x0 |Memory Region Type|
 
 #### EMPTY field
 
-<p>The FIFO is empty</p>
+<p>If set, FIFO is empty</p>
 
 #### FULL field
 
-<p>The FIFO is full</p>
+<p>If set, FIFO is full</p>
 
-#### REGION field
+#### REGION_TYPE field
 
-<p>Memory region type</p>
+<p>Memory Region Type:</p>
+<ul>
+<li>
+<p>0b000: Code space for recovery. (write only)</p>
+</li>
+<li>
+<p>0b001: Log uses the defined debug format (read only)</p>
+</li>
+<li>
+<p>0b100: Vendor Defined Region (write only)</p>
+</li>
+<li>
+<p>0b101: Vendor Defined Region (read only)</p>
+</li>
+<li>
+<p>0b111: Unsupported Region (address space out of range)</p>
+</li>
+</ul>
 
 ### INDIRECT_FIFO_STATUS_1 register
 
@@ -1438,9 +1862,9 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x54
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|    Name   |
-|----|-----------|------|-----|-----------|
-|31:0|WRITE_INDEX|   r  | 0x0 |WRITE_INDEX|
+|Bits| Identifier|Access|Reset|      Name      |
+|----|-----------|------|-----|----------------|
+|31:0|WRITE_INDEX|   r  | 0x0 |FIFO Write Index|
 
 #### WRITE_INDEX field
 
@@ -1452,9 +1876,9 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x58
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|   Name   |
-|----|----------|------|-----|----------|
-|31:0|READ_INDEX|   r  | 0x0 |READ_INDEX|
+|Bits|Identifier|Access|Reset|      Name     |
+|----|----------|------|-----|---------------|
+|31:0|READ_INDEX|   r  | 0x0 |FIFO Read Index|
 
 #### READ_INDEX field
 
@@ -1466,9 +1890,9 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x5C
 - Size: 0x4
 
-|Bits|Identifier|Access|Reset|   Name  |
-|----|----------|------|-----|---------|
-|31:0| FIFO_SIZE|  rw  | 0x0 |FIFO_SIZE|
+|Bits|Identifier|Access|Reset|       Name       |
+|----|----------|------|-----|------------------|
+|31:0| FIFO_SIZE|   r  | 0x0 |Indirect FIFO size|
 
 #### FIFO_SIZE field
 
@@ -1482,25 +1906,21 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 |Bits|    Identifier   |Access|Reset|       Name      |
 |----|-----------------|------|-----|-----------------|
-|31:0|MAX_TRANSFER_SIZE|  rw  | 0x0 |MAX_TRANSFER_SIZE|
+|31:0|MAX_TRANSFER_SIZE|   r  | 0x0 |Max transfer size|
 
 #### MAX_TRANSFER_SIZE field
 
 <p>Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units</p>
 
-### INDIRECT_FIFO_STATUS_5 register
+### INDIRECT_FIFO_RESERVED register
 
 - Absolute Address: 0x164
 - Base Offset: 0x64
 - Size: 0x4
 
-|Bits| Identifier|Access|Reset|Name|
-|----|-----------|------|-----|----|
-|31:0|PLACEHOLDER|  rw  | 0x0 |    |
-
-#### PLACEHOLDER field
-
-
+|Bits|Identifier|Access|Reset|       Name      |
+|----|----------|------|-----|-----------------|
+|31:0|   DATA   |   r  | 0x0 |Reserved register|
 
 ### INDIRECT_FIFO_DATA register
 
@@ -1508,11 +1928,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x68
 - Size: 0x4
 
-
+<p>Indirect memory access to address space configured in INDIRECT_FIFO_CTRL at the Head Pointer offset.</p>
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|31:0|   DATA   |  rw  | 0x0 |    |
+|31:0|   DATA   |  rw  | 0x0 |  — |
 
 ## StdbyCtrlMode register file
 

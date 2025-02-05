@@ -9,12 +9,11 @@
 */
 module recovery_executor
   import i3c_pkg::*;
-# (
+#(
     parameter int unsigned IndirectFifoDepth = 64,
     parameter int unsigned TtiRxDataDataWidth = 32,
     parameter int unsigned CsrDataWidth = 32
-)
-(
+) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)
 
@@ -62,7 +61,7 @@ module recovery_executor
 
     // Others
     output logic pending_o,
-    input logic host_abort_i,
+    input  logic host_abort_i,
 
     // queues clr signals
     output logic rx_data_queue_clr_o,
@@ -79,7 +78,7 @@ module recovery_executor
     output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_o,
 
     // Recovery mode enabled via a CSR
-    input  recovery_mode_enabled_i
+    input recovery_mode_enabled_i
 );
 
   // Commands
@@ -185,12 +184,11 @@ module recovery_executor
         if (cmd_valid_i) begin
           // check if we're accessed in regular mode and error if requested command is not accessible
           // also, check for illegal commands
-          if (cmd_error_i || (~recovery_mode_enabled_i && (cmd_cmd_i > 8'h27)) || ((cmd_cmd_i > 8'h2f) || (cmd_cmd_i < 8'h22))) state_d = Error;
+          if (cmd_error_i || (~recovery_mode_enabled_i && (cmd_cmd_i > 8'h27)) || ((cmd_cmd_i > 8'h2f) || (cmd_cmd_i < 8'h22)))
+            state_d = Error;
           else if (!cmd_is_rd_i) begin
-            if (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA)
-              state_d = FifoWrite;
-            else
-              state_d = CsrWrite;
+            if (cmd_cmd_i == CMD_INDIRECT_FIFO_DATA) state_d = FifoWrite;
+            else state_d = CsrWrite;
           end else state_d = CsrRead;
         end
       end
@@ -299,37 +297,112 @@ module recovery_executor
 
   // CSR read data mux (registered)
   logic [31:0] indirect_fifo_status_0;
+  logic [31:0] indirect_fifo_ctrl_0;
+  logic [31:0] prot_cap_2, prot_cap_3;
+  logic [31:0] device_id_0;
+  logic [31:0] device_status_0, device_status_1;
+  logic [31:0] device_reset;
+  logic [31:0] recovery_ctrl, recovery_status;
+  logic [31:0] hw_status;
 
   always_ff @(posedge clk_i)
     unique case (csr_sel)
-      CSR_PROT_CAP_0:      csr_data <= hwif_rec_i.PROT_CAP_0.PLACEHOLDER.value;
-      CSR_PROT_CAP_1:      csr_data <= hwif_rec_i.PROT_CAP_1.PLACEHOLDER.value;
-      CSR_PROT_CAP_2:      csr_data <= hwif_rec_i.PROT_CAP_2.PLACEHOLDER.value;
-      CSR_PROT_CAP_3:      csr_data <= hwif_rec_i.PROT_CAP_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_0:     csr_data <= hwif_rec_i.DEVICE_ID_0.PLACEHOLDER.value;
-      CSR_DEVICE_ID_1:     csr_data <= hwif_rec_i.DEVICE_ID_1.PLACEHOLDER.value;
-      CSR_DEVICE_ID_2:     csr_data <= hwif_rec_i.DEVICE_ID_2.PLACEHOLDER.value;
-      CSR_DEVICE_ID_3:     csr_data <= hwif_rec_i.DEVICE_ID_3.PLACEHOLDER.value;
-      CSR_DEVICE_ID_4:     csr_data <= hwif_rec_i.DEVICE_ID_4.PLACEHOLDER.value;
-      CSR_DEVICE_ID_5:     csr_data <= hwif_rec_i.DEVICE_ID_5.PLACEHOLDER.value;
-      CSR_DEVICE_ID_6:     csr_data <= hwif_rec_i.DEVICE_ID_6.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_0: csr_data <= hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value;
-      CSR_DEVICE_STATUS_1: csr_data <= hwif_rec_i.DEVICE_STATUS_1.PLACEHOLDER.value;
-      CSR_DEVICE_RESET:    csr_data <= hwif_rec_i.DEVICE_RESET.PLACEHOLDER.value;
-      CSR_RECOVERY_CTRL:   csr_data <= hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value;
-      CSR_RECOVERY_STATUS: csr_data <= hwif_rec_i.RECOVERY_STATUS.PLACEHOLDER.value;
-      CSR_HW_STATUS:       csr_data <= hwif_rec_i.HW_STATUS.PLACEHOLDER.value;
+      CSR_PROT_CAP_0:      csr_data <= hwif_rec_i.PROT_CAP_0.REC_MAGIC_STRING_0.value;
+      CSR_PROT_CAP_1:      csr_data <= hwif_rec_i.PROT_CAP_1.REC_MAGIC_STRING_1.value;
+      CSR_PROT_CAP_2:      csr_data <= prot_cap_2;
+      CSR_PROT_CAP_3:      csr_data <= prot_cap_3;
+      CSR_DEVICE_ID_0:     csr_data <= device_id_0;
+      CSR_DEVICE_ID_1:     csr_data <= hwif_rec_i.DEVICE_ID_1.DATA.value;
+      CSR_DEVICE_ID_2:     csr_data <= hwif_rec_i.DEVICE_ID_2.DATA.value;
+      CSR_DEVICE_ID_3:     csr_data <= hwif_rec_i.DEVICE_ID_3.DATA.value;
+      CSR_DEVICE_ID_4:     csr_data <= hwif_rec_i.DEVICE_ID_4.DATA.value;
+      CSR_DEVICE_ID_5:     csr_data <= hwif_rec_i.DEVICE_ID_5.DATA.value;
+      CSR_DEVICE_ID_6:     csr_data <= hwif_rec_i.DEVICE_ID_6.DATA.value;
+      CSR_DEVICE_STATUS_0: csr_data <= device_status_0;
+      CSR_DEVICE_STATUS_1: csr_data <= device_status_1;
+      CSR_DEVICE_RESET:    csr_data <= device_reset;
+      CSR_RECOVERY_CTRL:   csr_data <= recovery_ctrl;
+      CSR_RECOVERY_STATUS: csr_data <= recovery_status;
+      CSR_HW_STATUS:       csr_data <= hw_status;
 
-      CSR_INDIRECT_FIFO_CTRL_0:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.value;
-      CSR_INDIRECT_FIFO_CTRL_1:   csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.value;
+      CSR_INDIRECT_FIFO_CTRL_0: csr_data <= indirect_fifo_ctrl_0;
+      CSR_INDIRECT_FIFO_CTRL_1:
+      csr_data <= {16'd0, hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value};
       CSR_INDIRECT_FIFO_STATUS_0: csr_data <= indirect_fifo_status_0;
       CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
       CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
       CSR_INDIRECT_FIFO_STATUS_3: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
-      CSR_INDIRECT_FIFO_STATUS_4: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
+      CSR_INDIRECT_FIFO_STATUS_4:
+      csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
 
       default: csr_data <= '0;
     endcase
+
+  assign prot_cap_2 = {
+    hwif_rec_i.PROT_CAP_2.AGENT_CAPS.value, hwif_rec_i.PROT_CAP_2.REC_PROT_VERSION.value
+  };
+
+  assign prot_cap_3 = {
+    8'h0,
+    hwif_rec_i.PROT_CAP_3.HEARTBEAT_PERIOD.value,
+    hwif_rec_i.PROT_CAP_3.MAX_RESP_TIME.value,
+    hwif_rec_i.PROT_CAP_3.NUM_OF_CMS_REGIONS.value
+  };
+
+  assign device_id_0 = {
+    16'h0,
+    hwif_rec_i.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value,
+    hwif_rec_i.DEVICE_ID_0.DESC_TYPE.value
+  };
+
+  assign device_status_0 = {
+    hwif_rec_i.DEVICE_STATUS_0.REC_REASON_CODE.value,
+    hwif_rec_i.DEVICE_STATUS_0.PROT_ERROR.value,
+    hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value
+  };
+
+  assign device_status_1 = {
+    hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS.value,
+    hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value,
+    hwif_rec_i.DEVICE_STATUS_1.HEARTBEAT.value
+  };
+
+  assign device_reset = {
+    8'h0,
+    hwif_rec_i.DEVICE_RESET.IF_CTRL.value,
+    hwif_rec_i.DEVICE_RESET.FORCED_RECOVERY.value,
+    hwif_rec_i.DEVICE_RESET.RESET_CTRL.value
+  };
+
+  assign recovery_ctrl = {
+    8'h0,
+    hwif_rec_i.RECOVERY_CTRL.ACTIVATE_REC_IMG.value,
+    hwif_rec_i.RECOVERY_CTRL.REC_IMG_SEL.value,
+    hwif_rec_i.RECOVERY_CTRL.CMS.value
+  };
+
+  assign recovery_status = {
+    16'h0,
+    hwif_rec_i.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value,
+    hwif_rec_i.RECOVERY_STATUS.REC_IMG_INDEX.value,
+    hwif_rec_i.RECOVERY_STATUS.DEV_REC_STATUS.value
+  };
+
+  assign hw_status = {
+    hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS_LEN.value,
+    hwif_rec_i.HW_STATUS.CTEMP.value,
+    hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS.value,
+    hwif_rec_i.HW_STATUS.RESERVED_7_3.value,
+    hwif_rec_i.HW_STATUS.FATAL_ERR.value,
+    hwif_rec_i.HW_STATUS.SOFT_ERR.value,
+    hwif_rec_i.HW_STATUS.TEMP_CRITICAL.value
+  };
+
+  assign indirect_fifo_ctrl_0 = {
+    hwif_rec_i.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value,
+    hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value,
+    hwif_rec_i.INDIRECT_FIFO_CTRL_0.CMS.value
+  };
 
   // INDIRECT_FIFO_STATUS_0 as a 32-bit word
   assign indirect_fifo_status_0 = {
@@ -337,7 +410,7 @@ module recovery_executor
     16'd0,
     // b1
     5'd0,
-    hwif_rec_i.INDIRECT_FIFO_STATUS_0.REGION.value,
+    hwif_rec_i.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value,
     // b0
     6'd0,
     hwif_rec_i.INDIRECT_FIFO_STATUS_0.FULL.value,
@@ -356,14 +429,15 @@ module recovery_executor
 
   // Device status CSR update
   always_comb begin
-    hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.we =
-            status_device_we | status_protocol_we | status_reason_we;
+    hwif_rec_o.DEVICE_STATUS_0.REC_REASON_CODE.we = status_reason_we;
+    hwif_rec_o.DEVICE_STATUS_0.PROT_ERROR.we = status_protocol_we;
+    hwif_rec_o.DEVICE_STATUS_0.DEV_STATUS.we = status_device_we;
   end
 
   always_comb begin
-    hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[ 7: 0] = status_device_we   ? status_device   : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[ 7: 0];
-    hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[15: 8] = status_protocol_we ? status_protocol : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[15: 8];
-    hwif_rec_o.DEVICE_STATUS_0.PLACEHOLDER.next[31:16] = status_reason_we   ? status_reason   : hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[31:16];
+    hwif_rec_o.DEVICE_STATUS_0.REC_REASON_CODE.next = status_reason;
+    hwif_rec_o.DEVICE_STATUS_0.PROT_ERROR.next = status_protocol;
+    hwif_rec_o.DEVICE_STATUS_0.DEV_STATUS.next = status_device;
   end
 
   // Protocol status
@@ -417,7 +491,7 @@ module recovery_executor
   assign fifo_size = hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
 
   always_ff @(posedge clk_i) begin
-    fifo_ptr_top <= fifo_size - 32'b1;
+    fifo_ptr_top <= fifo_size - 32'h1;
   end
 
   // ........................
@@ -433,31 +507,29 @@ module recovery_executor
   logic fifo_ptr_clr;
 
   // FIFO write pointer
-  assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we =
-    (fifo_wrptr_inc | fifo_ptr_clr);
+  assign hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.we = (fifo_wrptr_inc | fifo_ptr_clr);
 
   always_comb begin
     // Reset
     if (fifo_ptr_clr) begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
-    // Increment with wrap around
+      hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next = '0;
+      // Increment with wrap around
     end else begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next =
+      hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next =
             (fifo_wrptr == fifo_ptr_top) ? '0 : (fifo_wrptr + 32'd1);
     end
   end
 
   // FIFO read pointer
-  assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we =
-    (fifo_rdptr_inc | fifo_ptr_clr);
+  assign hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.we = (fifo_rdptr_inc | fifo_ptr_clr);
 
   always_comb begin
     // Reset
     if (fifo_ptr_clr) begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
-    // Increment with wrap around
+      hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next = '0;
+      // Increment with wrap around
     end else begin
-        hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next =
+      hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.next =
             (fifo_rdptr == fifo_ptr_top) ? '0 : (fifo_rdptr + 32'd1);
     end
   end
@@ -470,8 +542,7 @@ module recovery_executor
   assign fifo_rdptr_inc = indirect_rx_rack_i;
 
   // Clear FIFO indices on write of 0x1 to INDIRECT_FIFO_CTRL byte 1
-  assign fifo_ptr_clr = tti_rx_rack_i &
-    (csr_sel == CSR_INDIRECT_FIFO_CTRL_0) & (tti_rx_rdata_i[15:8] == 8'd1);
+  assign fifo_ptr_clr = hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value == 8'd1;
 
   // Clear the indirect FIFO itself along with the pointers
   assign indirect_rx_clr_o = fifo_ptr_clr;
@@ -500,35 +571,68 @@ module recovery_executor
 
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
+  logic device_reset_we;
+  logic indirect_fifo_ctrl_0_we;
+  logic recovery_ctrl_we;
+  logic indirect_fifo_ctrl_0_reset_we;
+
+  assign device_reset_we = tti_rx_rack_i & (csr_sel == CSR_DEVICE_RESET);
+  assign indirect_fifo_ctrl_0_we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
+  assign recovery_ctrl_we = tti_rx_rack_i & (csr_sel == CSR_RECOVERY_CTRL);
+
   always_comb begin
-    hwif_rec_o.PROT_CAP_0.PLACEHOLDER.we = '0;
-    hwif_rec_o.PROT_CAP_1.PLACEHOLDER.we = '0;
-    hwif_rec_o.PROT_CAP_2.PLACEHOLDER.we = '0;
-    hwif_rec_o.PROT_CAP_3.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_0.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_1.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_2.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_3.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_4.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_5.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_ID_6.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_STATUS_1.PLACEHOLDER.we = '0;
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_DEVICE_RESET);
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_RECOVERY_CTRL);
-    hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.we = '0;
-    hwif_rec_o.HW_STATUS.PLACEHOLDER.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_0);
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we  = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.we = '0;
+    hwif_rec_o.PROT_CAP_2.REC_PROT_VERSION.we = '0;
+    hwif_rec_o.PROT_CAP_2.AGENT_CAPS.we = '0;
+    hwif_rec_o.PROT_CAP_3.NUM_OF_CMS_REGIONS.we = '0;
+    hwif_rec_o.PROT_CAP_3.MAX_RESP_TIME.we = '0;
+    hwif_rec_o.PROT_CAP_3.HEARTBEAT_PERIOD.we = '0;
+    hwif_rec_o.DEVICE_ID_0.DESC_TYPE.we = '0;
+    hwif_rec_o.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.we = '0;
+    hwif_rec_o.DEVICE_ID_1.DATA.we = '0;
+    hwif_rec_o.DEVICE_ID_2.DATA.we = '0;
+    hwif_rec_o.DEVICE_ID_3.DATA.we = '0;
+    hwif_rec_o.DEVICE_ID_4.DATA.we = '0;
+    hwif_rec_o.DEVICE_ID_5.DATA.we = '0;
+    hwif_rec_o.DEVICE_ID_6.DATA.we = '0;
+    hwif_rec_o.DEVICE_STATUS_1.HEARTBEAT.we = '0;
+    hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.we = '0;
+    hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS.we = '0;
+    hwif_rec_o.DEVICE_RESET.RESET_CTRL.we = device_reset_we;
+    hwif_rec_o.DEVICE_RESET.FORCED_RECOVERY.we = device_reset_we;
+    hwif_rec_o.DEVICE_RESET.IF_CTRL.we = device_reset_we;
+    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.we = recovery_ctrl_we;
+    hwif_rec_o.RECOVERY_CTRL.REC_IMG_SEL.we = recovery_ctrl_we;
+    hwif_rec_o.RECOVERY_CTRL.CMS.we = recovery_ctrl_we;
+    hwif_rec_o.RECOVERY_STATUS.DEV_REC_STATUS.we = '0;
+    hwif_rec_o.RECOVERY_STATUS.REC_IMG_INDEX.we = '0;
+    hwif_rec_o.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.we = '0;
+    hwif_rec_o.HW_STATUS.TEMP_CRITICAL.we = '0;
+    hwif_rec_o.HW_STATUS.SOFT_ERR.we = '0;
+    hwif_rec_o.HW_STATUS.FATAL_ERR.we = '0;
+    hwif_rec_o.HW_STATUS.RESERVED_7_3.we = '0;
+    hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS.we = '0;
+    hwif_rec_o.HW_STATUS.CTEMP.we = '0;
+    hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS_LEN.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.we = indirect_fifo_ctrl_0_we;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.we = indirect_fifo_ctrl_0_we;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.we = indirect_fifo_ctrl_0_we;
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we = '0;
+    hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.we = '0;
   end
 
   always_comb begin
-    hwif_rec_o.DEVICE_RESET.PLACEHOLDER.next         = tti_rx_rdata_i;
-    hwif_rec_o.RECOVERY_CTRL.PLACEHOLDER.next        = tti_rx_rdata_i;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.PLACEHOLDER.next = tti_rx_rdata_i;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.PLACEHOLDER.next = tti_rx_rdata_i;
+    hwif_rec_o.DEVICE_RESET.RESET_CTRL.next = tti_rx_rdata_i[7:0];
+    hwif_rec_o.DEVICE_RESET.FORCED_RECOVERY.next = tti_rx_rdata_i[15:8];
+    hwif_rec_o.DEVICE_RESET.IF_CTRL.next = tti_rx_rdata_i[23:16];
+    hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.next = tti_rx_rdata_i[23:16];
+    hwif_rec_o.RECOVERY_CTRL.REC_IMG_SEL.next = tti_rx_rdata_i[15:8];
+    hwif_rec_o.RECOVERY_CTRL.CMS.next = tti_rx_rdata_i[7:0];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.next = tti_rx_rdata_i[31:16];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.next = tti_rx_rdata_i[15:8];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.next = tti_rx_rdata_i[7:0];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.next = tti_rx_rdata_i[15:0];
   end
 
   // Force the value of FIFO_STATUS.FIFO_SIZE to IndirectFifoDepth.
@@ -543,29 +647,41 @@ module recovery_executor
   always_comb begin
     indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
     hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack  = indirect_rx_rack_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack  = '0; // TODO: support writes
+    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = indirect_rx_rack_i;
+    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0; // TODO: support writes
   end
 
   // tie unused signals
   always_comb begin
-    hwif_rec_o.PROT_CAP_3.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_6.PLACEHOLDER.next = '0;
-    hwif_rec_o.PROT_CAP_1.PLACEHOLDER.next = '0;
+    hwif_rec_o.PROT_CAP_3.NUM_OF_CMS_REGIONS.next = '0;
+    hwif_rec_o.PROT_CAP_3.MAX_RESP_TIME.next = '0;
+    hwif_rec_o.PROT_CAP_3.HEARTBEAT_PERIOD.next = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = '0;
-    hwif_rec_o.DEVICE_ID_4.PLACEHOLDER.next = '0;
-    hwif_rec_o.PROT_CAP_2.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_1.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_2.PLACEHOLDER.next = '0;
-    hwif_rec_o.HW_STATUS.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_STATUS_1.PLACEHOLDER.next = '0;
-    hwif_rec_o.RECOVERY_STATUS.PLACEHOLDER.next = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION.next = '0;
-    hwif_rec_o.PROT_CAP_0.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_3.PLACEHOLDER.next = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_5.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_5.PLACEHOLDER.next = '0;
-    hwif_rec_o.DEVICE_ID_0.PLACEHOLDER.next = '0;
+    hwif_rec_o.PROT_CAP_2.REC_PROT_VERSION.next = '0;
+    hwif_rec_o.PROT_CAP_2.AGENT_CAPS.next = '0;
+    hwif_rec_o.HW_STATUS.TEMP_CRITICAL.next = '0;
+    hwif_rec_o.HW_STATUS.SOFT_ERR.next = '0;
+    hwif_rec_o.HW_STATUS.FATAL_ERR.next = '0;
+    hwif_rec_o.HW_STATUS.RESERVED_7_3.next = '0;
+    hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS.next = '0;
+    hwif_rec_o.HW_STATUS.CTEMP.next = '0;
+    hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS_LEN.next = '0;
+    hwif_rec_o.DEVICE_STATUS_1.HEARTBEAT.next = '0;
+    hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.next = '0;
+    hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS.next = '0;
+    hwif_rec_o.RECOVERY_STATUS.DEV_REC_STATUS.next = '0;
+    hwif_rec_o.RECOVERY_STATUS.REC_IMG_INDEX.next = '0;
+    hwif_rec_o.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.next = '0;
+    hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_1.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_2.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_3.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_4.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_5.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_6.DATA.next = '0;
+    hwif_rec_o.DEVICE_ID_0.DESC_TYPE.next = '0;
+    hwif_rec_o.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next = '0;
   end
   // ....................................................
 
@@ -628,6 +744,6 @@ module recovery_executor
     else payload_available_q <= payload_available_write ? payload_available_d : payload_available_q;
 
   // Image activation logic.
-  assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.PLACEHOLDER.value[23:16] == 8'h0F);
+  assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.ACTIVATE_REC_IMG.value == 8'h0F);
 
 endmodule

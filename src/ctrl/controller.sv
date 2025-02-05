@@ -369,7 +369,7 @@ module controller
       .mrl_i                           (mrl)
   );
 
-  assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+  assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
 
   // Active controller
   controller_active xcontroller_active (

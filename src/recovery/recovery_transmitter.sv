@@ -122,7 +122,7 @@ module recovery_transmitter
   // Descriptor output
   always_ff @(posedge clk_i)
     if (state_q == Idle & res_ready_o & res_valid_i)
-      desc_data_o <= res_len_i + 3; // Account for 2-byte length and 1-byte PEC
+      desc_data_o <= res_len_i + 3;  // Account for 2-byte length and 1-byte PEC
 
   always_comb
     unique case (state_q)

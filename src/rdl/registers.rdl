@@ -68,6 +68,15 @@ addrmap I3CCSR #(
         .tx_fifo_size(tx_fifo_size),
         .ext_ibi_size(ext_ibi_size)
     ) PIOControl @ PIO_offset;
+    ECRegisters #(
+        .tti_rx_desc_fifo_size(tti_rx_desc_fifo_size),
+        .tti_tx_desc_fifo_size(tti_tx_desc_fifo_size),
+        .tti_rx_fifo_size(tti_rx_fifo_size),
+        .tti_tx_fifo_size(tti_tx_fifo_size),
+        .tti_ibi_fifo_size(tti_ibi_fifo_size),
+        .pid_hi(pid_hi),
+        .pid_lo(pid_lo)
+    ) I3C_EC @ EC_offset;
     mem {
         name = "Device Address Table";
         mementries = 128;
@@ -82,14 +91,4 @@ addrmap I3CCSR #(
         sw = rw;
         DCT_structure DCT_MEMORY [128];
     } external DCT @ DCT_offset;
-
-    ECRegisters #(
-        .tti_rx_desc_fifo_size(tti_rx_desc_fifo_size),
-        .tti_tx_desc_fifo_size(tti_tx_desc_fifo_size),
-        .tti_rx_fifo_size(tti_rx_fifo_size),
-        .tti_tx_fifo_size(tti_tx_fifo_size),
-        .tti_ibi_fifo_size(tti_ibi_fifo_size),
-        .pid_hi(pid_hi),
-        .pid_lo(pid_lo)
-    ) I3C_EC @ EC_offset;
 };

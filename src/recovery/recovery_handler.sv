@@ -186,14 +186,14 @@ module recovery_handler
   // ....................................................
 
   logic recovery_enable;
-  logic recovery_mode_enabled; //recovery globally enabled in the csr
+  logic recovery_mode_enabled;  //recovery globally enabled in the csr
   logic recovery_xfer_pending;
   logic recovery_exec_pending;
   logic recovery_pending;
   logic [1:0] recovery_mode_enter_shreg;
   localparam int unsigned RecoveryMode = 'h3;
 
-  assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.PLACEHOLDER.value[7:0] == RecoveryMode);
+  assign recovery_mode_enabled = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
   assign recovery_enable = virtual_device_sel_i;
 
   // Output recovery mode enable state. Either via DEVICE_STATUS or via access through virtual target address
@@ -563,8 +563,8 @@ module recovery_handler
       send_tti_tx_desc_ready                  = ctl_tti_tx_desc_queue_rready_i;
       tti_tx_desc_queue_rready                = '0;
       ctl_tti_tx_desc_queue_full_o            = '0;
-      ctl_tti_tx_desc_queue_depth_o           = '1; // Always maximum data count available
-      ctl_tti_tx_desc_queue_empty_o           = '1; // Never empty
+      ctl_tti_tx_desc_queue_depth_o           = '1;  // Always maximum data count available
+      ctl_tti_tx_desc_queue_empty_o           = '1;  // Never empty
       ctl_tti_tx_desc_queue_rvalid_o          = send_tti_tx_desc_valid;
       ctl_tti_tx_desc_queue_rdata_o           = send_tti_tx_desc_data;
       ctl_tti_tx_desc_queue_ready_thld_trig_o = '0;

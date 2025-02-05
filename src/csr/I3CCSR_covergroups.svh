@@ -934,10 +934,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] REC_MAGIC_STRING_0
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        REC_MAGIC_STRING_0_cp : coverpoint REC_MAGIC_STRING_0;
 
     endgroup
 
@@ -954,10 +954,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] REC_MAGIC_STRING_1
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        REC_MAGIC_STRING_1_cp : coverpoint REC_MAGIC_STRING_1;
 
     endgroup
 
@@ -974,10 +974,12 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [16-1:0] REC_PROT_VERSION,
+    input bit [16-1:0] AGENT_CAPS
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        REC_PROT_VERSION_cp : coverpoint REC_PROT_VERSION;
+        AGENT_CAPS_cp : coverpoint AGENT_CAPS;
 
     endgroup
 
@@ -994,10 +996,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] NUM_OF_CMS_REGIONS,
+    input bit [8-1:0] MAX_RESP_TIME,
+    input bit [8-1:0] HEARTBEAT_PERIOD
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        NUM_OF_CMS_REGIONS_cp : coverpoint NUM_OF_CMS_REGIONS;
+        MAX_RESP_TIME_cp : coverpoint MAX_RESP_TIME;
+        HEARTBEAT_PERIOD_cp : coverpoint HEARTBEAT_PERIOD;
 
     endgroup
 
@@ -1014,10 +1020,12 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] DESC_TYPE,
+    input bit [8-1:0] VENDOR_SPECIFIC_STR_LENGTH
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DESC_TYPE_cp : coverpoint DESC_TYPE;
+        VENDOR_SPECIFIC_STR_LENGTH_cp : coverpoint VENDOR_SPECIFIC_STR_LENGTH;
 
     endgroup
 
@@ -1034,10 +1042,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1054,10 +1062,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1074,10 +1082,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1094,10 +1102,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1114,10 +1122,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1134,10 +1142,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 
@@ -1154,10 +1162,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] DEV_STATUS,
+    input bit [8-1:0] PROT_ERROR,
+    input bit [16-1:0] REC_REASON_CODE
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DEV_STATUS_cp : coverpoint DEV_STATUS;
+        PROT_ERROR_cp : coverpoint PROT_ERROR;
+        REC_REASON_CODE_cp : coverpoint REC_REASON_CODE;
 
     endgroup
 
@@ -1174,10 +1186,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [16-1:0] HEARTBEAT,
+    input bit [9-1:0] VENDOR_STATUS_LENGTH,
+    input bit [7-1:0] VENDOR_STATUS
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        HEARTBEAT_cp : coverpoint HEARTBEAT;
+        VENDOR_STATUS_LENGTH_cp : coverpoint VENDOR_STATUS_LENGTH;
+        VENDOR_STATUS_cp : coverpoint VENDOR_STATUS;
 
     endgroup
 
@@ -1194,10 +1210,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] RESET_CTRL,
+    input bit [8-1:0] FORCED_RECOVERY,
+    input bit [8-1:0] IF_CTRL
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        RESET_CTRL_cp : coverpoint RESET_CTRL;
+        FORCED_RECOVERY_cp : coverpoint FORCED_RECOVERY;
+        IF_CTRL_cp : coverpoint IF_CTRL;
 
     endgroup
 
@@ -1214,10 +1234,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] CMS,
+    input bit [8-1:0] REC_IMG_SEL,
+    input bit [8-1:0] ACTIVATE_REC_IMG
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        CMS_cp : coverpoint CMS;
+        REC_IMG_SEL_cp : coverpoint REC_IMG_SEL;
+        ACTIVATE_REC_IMG_cp : coverpoint ACTIVATE_REC_IMG;
 
     endgroup
 
@@ -1234,10 +1258,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [4-1:0] DEV_REC_STATUS,
+    input bit [4-1:0] REC_IMG_INDEX,
+    input bit [8-1:0] VENDOR_SPECIFIC_STATUS
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DEV_REC_STATUS_cp : coverpoint DEV_REC_STATUS;
+        REC_IMG_INDEX_cp : coverpoint REC_IMG_INDEX;
+        VENDOR_SPECIFIC_STATUS_cp : coverpoint VENDOR_SPECIFIC_STATUS;
 
     endgroup
 
@@ -1254,10 +1282,22 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [1-1:0] TEMP_CRITICAL,
+    input bit [1-1:0] SOFT_ERR,
+    input bit [1-1:0] FATAL_ERR,
+    input bit [5-1:0] RESERVED_7_3,
+    input bit [8-1:0] VENDOR_HW_STATUS,
+    input bit [8-1:0] CTEMP,
+    input bit [8-1:0] VENDOR_HW_STATUS_LEN
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        TEMP_CRITICAL_cp : coverpoint TEMP_CRITICAL;
+        SOFT_ERR_cp : coverpoint SOFT_ERR;
+        FATAL_ERR_cp : coverpoint FATAL_ERR;
+        RESERVED_7_3_cp : coverpoint RESERVED_7_3;
+        VENDOR_HW_STATUS_cp : coverpoint VENDOR_HW_STATUS;
+        CTEMP_cp : coverpoint CTEMP;
+        VENDOR_HW_STATUS_LEN_cp : coverpoint VENDOR_HW_STATUS_LEN;
 
     endgroup
 
@@ -1274,10 +1314,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [8-1:0] CMS,
+    input bit [8-1:0] RESET,
+    input bit [16-1:0] IMAGE_SIZE_MSB
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        CMS_cp : coverpoint CMS;
+        RESET_cp : coverpoint RESET;
+        IMAGE_SIZE_MSB_cp : coverpoint IMAGE_SIZE_MSB;
 
     endgroup
 
@@ -1294,10 +1338,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    input bit [16-1:0] IMAGE_SIZE_LSB
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        IMAGE_SIZE_LSB_cp : coverpoint IMAGE_SIZE_LSB;
 
     endgroup
 
@@ -1316,12 +1360,12 @@
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0_fld_cg with function sample(
     input bit [1-1:0] EMPTY,
     input bit [1-1:0] FULL,
-    input bit [3-1:0] REGION
+    input bit [3-1:0] REGION_TYPE
     );
         option.per_instance = 1;
         EMPTY_cp : coverpoint EMPTY;
         FULL_cp : coverpoint FULL;
-        REGION_cp : coverpoint REGION;
+        REGION_TYPE_cp : coverpoint REGION_TYPE;
 
     endgroup
 
@@ -1405,8 +1449,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__INDIRECT_FIFO_STATUS_5 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__INDIRECT_FIFO_RESERVED COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1417,11 +1461,11 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_5_fld_cg with function sample(
-    input bit [32-1:0] PLACEHOLDER
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED_fld_cg with function sample(
+    input bit [32-1:0] DATA
     );
         option.per_instance = 1;
-        PLACEHOLDER_cp : coverpoint PLACEHOLDER;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 

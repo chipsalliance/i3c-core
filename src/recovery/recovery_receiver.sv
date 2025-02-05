@@ -124,13 +124,11 @@ module recovery_receiver
   // Bus start condition latch. Needed as next start may come before the
   // FSM is finished.
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni)
-      bus_start_r <= '0;
+    if (!rst_ni) bus_start_r <= '0;
     else
       unique case (state_q)
         CmdIsRd, Cmd, Busy: begin
-          if (bus_start_i)
-            bus_start_r <= '1;
+          if (bus_start_i) bus_start_r <= '1;
         end
         default: bus_start_r <= '0;
       endcase
@@ -167,10 +165,10 @@ module recovery_receiver
   // Command header & PEC capture
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      pec_recv <= '0;
+      pec_recv  <= '0;
       cmd_cmd_o <= '0;
-      len_lsb <= '0;
-      len_msb <= '0;
+      len_lsb   <= '0;
+      len_msb   <= '0;
     end else begin
       cmd_cmd_o <= cmd_cmd_o;
       len_lsb   <= len_lsb;

@@ -675,7 +675,7 @@ reg_map = Munch.fromDict({
             "PROT_CAP_0": {
                 "base_addr": 260,
                 "offset": 260,
-                "PLACEHOLDER": {
+                "REC_MAGIC_STRING_0": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -683,7 +683,7 @@ reg_map = Munch.fromDict({
             "PROT_CAP_1": {
                 "base_addr": 264,
                 "offset": 264,
-                "PLACEHOLDER": {
+                "REC_MAGIC_STRING_1": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -691,31 +691,47 @@ reg_map = Munch.fromDict({
             "PROT_CAP_2": {
                 "base_addr": 268,
                 "offset": 268,
-                "PLACEHOLDER": {
+                "REC_PROT_VERSION": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 65535
+                },
+                "AGENT_CAPS": {
+                    "low": 16,
+                    "mask": 4294901760
                 }
             },
             "PROT_CAP_3": {
                 "base_addr": 272,
                 "offset": 272,
-                "PLACEHOLDER": {
+                "NUM_OF_CMS_REGIONS": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "MAX_RESP_TIME": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "HEARTBEAT_PERIOD": {
+                    "low": 16,
+                    "mask": 16711680
                 }
             },
             "DEVICE_ID_0": {
                 "base_addr": 276,
                 "offset": 276,
-                "PLACEHOLDER": {
+                "DESC_TYPE": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "VENDOR_SPECIFIC_STR_LENGTH": {
+                    "low": 8,
+                    "mask": 65280
                 }
             },
             "DEVICE_ID_1": {
                 "base_addr": 280,
                 "offset": 280,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -723,7 +739,7 @@ reg_map = Munch.fromDict({
             "DEVICE_ID_2": {
                 "base_addr": 284,
                 "offset": 284,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -731,7 +747,7 @@ reg_map = Munch.fromDict({
             "DEVICE_ID_3": {
                 "base_addr": 288,
                 "offset": 288,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -739,7 +755,7 @@ reg_map = Munch.fromDict({
             "DEVICE_ID_4": {
                 "base_addr": 292,
                 "offset": 292,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -747,7 +763,7 @@ reg_map = Munch.fromDict({
             "DEVICE_ID_5": {
                 "base_addr": 296,
                 "offset": 296,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -755,7 +771,7 @@ reg_map = Munch.fromDict({
             "DEVICE_ID_6": {
                 "base_addr": 300,
                 "offset": 300,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
@@ -763,65 +779,137 @@ reg_map = Munch.fromDict({
             "DEVICE_STATUS_0": {
                 "base_addr": 304,
                 "offset": 304,
-                "PLACEHOLDER": {
+                "DEV_STATUS": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "PROT_ERROR": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "REC_REASON_CODE": {
+                    "low": 16,
+                    "mask": 4294901760
                 }
             },
             "DEVICE_STATUS_1": {
                 "base_addr": 308,
                 "offset": 308,
-                "PLACEHOLDER": {
+                "HEARTBEAT": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 65535
+                },
+                "VENDOR_STATUS_LENGTH": {
+                    "low": 16,
+                    "mask": 33488896
+                },
+                "VENDOR_STATUS": {
+                    "low": 25,
+                    "mask": 4261412864
                 }
             },
             "DEVICE_RESET": {
                 "base_addr": 312,
                 "offset": 312,
-                "PLACEHOLDER": {
+                "RESET_CTRL": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "FORCED_RECOVERY": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "IF_CTRL": {
+                    "low": 16,
+                    "mask": 16711680
                 }
             },
             "RECOVERY_CTRL": {
                 "base_addr": 316,
                 "offset": 316,
-                "PLACEHOLDER": {
+                "CMS": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "REC_IMG_SEL": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "ACTIVATE_REC_IMG": {
+                    "low": 16,
+                    "mask": 16711680
                 }
             },
             "RECOVERY_STATUS": {
                 "base_addr": 320,
                 "offset": 320,
-                "PLACEHOLDER": {
+                "DEV_REC_STATUS": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 15
+                },
+                "REC_IMG_INDEX": {
+                    "low": 4,
+                    "mask": 240
+                },
+                "VENDOR_SPECIFIC_STATUS": {
+                    "low": 8,
+                    "mask": 65280
                 }
             },
             "HW_STATUS": {
                 "base_addr": 324,
                 "offset": 324,
-                "PLACEHOLDER": {
+                "TEMP_CRITICAL": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 1
+                },
+                "SOFT_ERR": {
+                    "low": 1,
+                    "mask": 2
+                },
+                "FATAL_ERR": {
+                    "low": 2,
+                    "mask": 4
+                },
+                "RESERVED_7_3": {
+                    "low": 3,
+                    "mask": 248
+                },
+                "VENDOR_HW_STATUS": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "CTEMP": {
+                    "low": 16,
+                    "mask": 16711680
+                },
+                "VENDOR_HW_STATUS_LEN": {
+                    "low": 24,
+                    "mask": 4278190080
                 }
             },
             "INDIRECT_FIFO_CTRL_0": {
                 "base_addr": 328,
                 "offset": 328,
-                "PLACEHOLDER": {
+                "CMS": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 255
+                },
+                "RESET": {
+                    "low": 8,
+                    "mask": 65280
+                },
+                "IMAGE_SIZE_MSB": {
+                    "low": 16,
+                    "mask": 4294901760
                 }
             },
             "INDIRECT_FIFO_CTRL_1": {
                 "base_addr": 332,
                 "offset": 332,
-                "PLACEHOLDER": {
+                "IMAGE_SIZE_LSB": {
                     "low": 0,
-                    "mask": 4294967295
+                    "mask": 65535
                 }
             },
             "INDIRECT_FIFO_STATUS_0": {
@@ -835,7 +923,7 @@ reg_map = Munch.fromDict({
                     "low": 1,
                     "mask": 2
                 },
-                "REGION": {
+                "REGION_TYPE": {
                     "low": 8,
                     "mask": 1792
                 }
@@ -872,10 +960,10 @@ reg_map = Munch.fromDict({
                     "mask": 4294967295
                 }
             },
-            "INDIRECT_FIFO_STATUS_5": {
+            "INDIRECT_FIFO_RESERVED": {
                 "base_addr": 356,
                 "offset": 356,
-                "PLACEHOLDER": {
+                "DATA": {
                     "low": 0,
                     "mask": 4294967295
                 }
