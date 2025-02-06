@@ -28,7 +28,7 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             desc = "Magic string 'OCP ' (1st part of 'OCP RECV') in ASCII code - '0x4f 0x43 0x50 0x20'";
             sw = r;
             hw = r;
-            reset = 32'h4f435020;
+            reset = 32'h2050434f;
         } REC_MAGIC_STRING_0[31:0];
     } PROT_CAP_0;
     reg {
@@ -38,7 +38,7 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             desc = "Magic string 'RECV' (2nd part of 'OCP RECV') in ASCII code - '0x52 0x45 0x43 0x56'";
             sw = r;
             hw = r;
-            reset = 32'h52454356;
+            reset = 32'h56434552;
         } REC_MAGIC_STRING_1[31:0];
     } PROT_CAP_1;
     reg {
@@ -151,6 +151,14 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
             we = true;
             reset = 8'h0;
         } VENDOR_SPECIFIC_STR_LENGTH[15:8];
+        field {
+            name = "";
+            desc = "";
+            sw = rw;
+            hw = rw;
+            we = true;
+            reset = 16'h0;
+        } DATA[31:16];
     } DEVICE_ID_0;
     reg {
         name = "Device Identification 1";

@@ -801,6 +801,10 @@ module I3CCSR (
                         logic [7:0] next;
                         logic load_next;
                     } VENDOR_SPECIFIC_STR_LENGTH;
+                    struct packed{
+                        logic [15:0] next;
+                        logic load_next;
+                    } DATA;
                 } DEVICE_ID_0;
                 struct packed{
                     struct packed{
@@ -2094,6 +2098,9 @@ module I3CCSR (
                     struct packed{
                         logic [7:0] value;
                     } VENDOR_SPECIFIC_STR_LENGTH;
+                    struct packed{
+                        logic [15:0] value;
+                    } DATA;
                 } DEVICE_ID_0;
                 struct packed{
                     struct packed{
@@ -4696,8 +4703,8 @@ module I3CCSR (
     assign hwif_out.PIOControl.PIO_CONTROL.ABORT.value = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
     assign hwif_out.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_ID.value = 8'hc0;
     assign hwif_out.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_LENGTH.value = 16'h20;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.REC_MAGIC_STRING_0.value = 32'h4f435020;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.REC_MAGIC_STRING_1.value = 32'h52454356;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.REC_MAGIC_STRING_0.value = 32'h2050434f;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.REC_MAGIC_STRING_1.value = 32'h56434552;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION
     always_comb begin
         automatic logic [15:0] next_c;
@@ -4866,6 +4873,30 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value;
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA
+    always_comb begin
+        automatic logic [15:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value & ~decoded_wr_biten[31:16]) | (decoded_wr_data[31:16] & decoded_wr_biten[31:16]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value <= 16'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next;
+        end
+    end
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA
     always_comb begin
         automatic logic [31:0] next_c;
@@ -9798,8 +9829,8 @@ module I3CCSR (
     assign readback_array[31][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc0 : '0;
     assign readback_array[31][23:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h20 : '0;
     assign readback_array[31][31:24] = '0;
-    assign readback_array[32][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_0 && !decoded_req_is_wr) ? 32'h4f435020 : '0;
-    assign readback_array[33][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_1 && !decoded_req_is_wr) ? 32'h52454356 : '0;
+    assign readback_array[32][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_0 && !decoded_req_is_wr) ? 32'h2050434f : '0;
+    assign readback_array[33][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_1 && !decoded_req_is_wr) ? 32'h56434552 : '0;
     assign readback_array[34][15:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value : '0;
     assign readback_array[34][31:16] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value : '0;
     assign readback_array[35][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.PROT_CAP_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value : '0;
@@ -9808,7 +9839,7 @@ module I3CCSR (
     assign readback_array[35][31:24] = '0;
     assign readback_array[36][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value : '0;
     assign readback_array[36][15:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value : '0;
-    assign readback_array[36][31:16] = '0;
+    assign readback_array[36][31:16] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value : '0;
     assign readback_array[37][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value : '0;
     assign readback_array[38][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value : '0;
     assign readback_array[39][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value : '0;

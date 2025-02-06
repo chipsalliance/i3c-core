@@ -350,7 +350,7 @@ module recovery_executor
   };
 
   assign device_id_0 = {
-    16'h0,
+    hwif_rec_i.DEVICE_ID_0.DATA.value,
     hwif_rec_i.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value,
     hwif_rec_i.DEVICE_ID_0.DESC_TYPE.value
   };
@@ -588,6 +588,7 @@ module recovery_executor
     hwif_rec_o.PROT_CAP_3.HEARTBEAT_PERIOD.we = '0;
     hwif_rec_o.DEVICE_ID_0.DESC_TYPE.we = '0;
     hwif_rec_o.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.we = '0;
+    hwif_rec_o.DEVICE_ID_0.DATA.we = '0;
     hwif_rec_o.DEVICE_ID_1.DATA.we = '0;
     hwif_rec_o.DEVICE_ID_2.DATA.we = '0;
     hwif_rec_o.DEVICE_ID_3.DATA.we = '0;
@@ -682,6 +683,7 @@ module recovery_executor
     hwif_rec_o.DEVICE_ID_6.DATA.next = '0;
     hwif_rec_o.DEVICE_ID_0.DESC_TYPE.next = '0;
     hwif_rec_o.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next = '0;
+    hwif_rec_o.DEVICE_ID_0.DATA.next = '0;
   end
   // ....................................................
 

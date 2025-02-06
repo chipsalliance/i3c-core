@@ -1150,7 +1150,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 |Bits|    Identifier    |Access|   Reset  |             Name             |
 |----|------------------|------|----------|------------------------------|
-|31:0|REC_MAGIC_STRING_0|   r  |0x4F435020|Recovery protocol magic string|
+|31:0|REC_MAGIC_STRING_0|   r  |0x2050434F|Recovery protocol magic string|
 
 #### REC_MAGIC_STRING_0 field
 
@@ -1164,7 +1164,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 |Bits|    Identifier    |Access|   Reset  |             Name             |
 |----|------------------|------|----------|------------------------------|
-|31:0|REC_MAGIC_STRING_1|   r  |0x52454356|Recovery protocol magic string|
+|31:0|REC_MAGIC_STRING_1|   r  |0x56434552|Recovery protocol magic string|
 
 #### REC_MAGIC_STRING_1 field
 
@@ -1270,10 +1270,11 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x14
 - Size: 0x4
 
-|Bits|        Identifier        |Access|Reset|             Name            |
-|----|--------------------------|------|-----|-----------------------------|
-| 7:0|         DESC_TYPE        |  rw  | 0x0 |   Initial descriptor type   |
-|15:8|VENDOR_SPECIFIC_STR_LENGTH|  rw  | 0x0 |Vendor Specific String Length|
+| Bits|        Identifier        |Access|Reset|             Name            |
+|-----|--------------------------|------|-----|-----------------------------|
+| 7:0 |         DESC_TYPE        |  rw  | 0x0 |   Initial descriptor type   |
+| 15:8|VENDOR_SPECIFIC_STR_LENGTH|  rw  | 0x0 |Vendor Specific String Length|
+|31:16|           DATA           |  rw  | 0x0 |                             |
 
 #### DESC_TYPE field
 
@@ -1308,6 +1309,10 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 #### VENDOR_SPECIFIC_STR_LENGTH field
 
 <p>0x0-0xFF: Total length of Vendor Specific String, 0 indicates not supported</p>
+
+#### DATA field
+
+
 
 ### DEVICE_ID_1 register
 

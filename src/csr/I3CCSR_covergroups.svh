@@ -1021,11 +1021,13 @@
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_fld_cg with function sample(
     input bit [8-1:0] DESC_TYPE,
-    input bit [8-1:0] VENDOR_SPECIFIC_STR_LENGTH
+    input bit [8-1:0] VENDOR_SPECIFIC_STR_LENGTH,
+    input bit [16-1:0] DATA
     );
         option.per_instance = 1;
         DESC_TYPE_cp : coverpoint DESC_TYPE;
         VENDOR_SPECIFIC_STR_LENGTH_cp : coverpoint VENDOR_SPECIFIC_STR_LENGTH;
+        DATA_cp : coverpoint DATA;
 
     endgroup
 

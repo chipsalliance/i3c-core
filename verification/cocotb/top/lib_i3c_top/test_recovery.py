@@ -519,14 +519,14 @@ async def test_read(dut):
 
     prot_cap = [
         # First 8 bytes is Recovery magic string "OCP RECV"
-        0x20,  # ' '
-        0x50,  # 'P'
-        0x43,  # 'C'
         0x4F,  # 'O'
-        0x56,  # 'V'
         0x43,  # 'C'
-        0x45,  # 'E'
+        0x50,  # 'P'
+        0x20,  # ' '
         0x52,  # 'R'
+        0x45,  # 'E'
+        0x43,  # 'C'
+        0x56,  # 'V'
         0x09,
         0x0A,
         0x0B,
@@ -617,14 +617,14 @@ async def test_read_short(dut):
 
     prot_cap = [
         # First 8 bytes is Recovery magic string "OCP RECV"
-        0x20,  # ' '
-        0x50,  # 'P'
-        0x43,  # 'C'
         0x4F,  # 'O'
-        0x56,  # 'V'
         0x43,  # 'C'
-        0x45,  # 'E'
+        0x50,  # 'P'
+        0x20,  # ' '
         0x52,  # 'R'
+        0x45,  # 'E'
+        0x43,  # 'C'
+        0x56,  # 'V'
     ]
     prot_cap += [random.randint(0, 255) for i in range(8)]
 
@@ -694,14 +694,14 @@ async def test_read_long(dut):
 
     prot_cap = [
         # First 8 bytes is Recovery magic string "OCP RECV"
-        0x20,  # ' '
-        0x50,  # 'P'
-        0x43,  # 'C'
         0x4F,  # 'O'
-        0x56,  # 'V'
         0x43,  # 'C'
-        0x45,  # 'E'
+        0x50,  # 'P'
+        0x20,  # ' '
         0x52,  # 'R'
+        0x45,  # 'E'
+        0x43,  # 'C'
+        0x56,  # 'V'
     ]
     prot_cap += [random.randint(0, 255) for i in range(8)]
 
@@ -813,14 +813,14 @@ async def test_virtual_read_alternating(dut):
         # Write some data to PROT_CAP CSR
         prot_cap = [
             # First 8 bytes is Recovery magic string "OCP RECV"
-            0x20,  # ' '
-            0x50,  # 'P'
-            0x43,  # 'C'
-            0x4F,  # 'O'
-            0x56,  # 'V'
-            0x43,  # 'C'
-            0x45,  # 'E'
-            0x52,  # 'R'
+        0x4F,  # 'O'
+        0x43,  # 'C'
+        0x50,  # 'P'
+        0x20,  # ' '
+        0x52,  # 'R'
+        0x45,  # 'E'
+        0x43,  # 'C'
+        0x56,  # 'V'
         ]
         prot_cap += [random.randint(0, 255) for i in range(8)]
 

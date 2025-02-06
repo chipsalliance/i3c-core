@@ -726,6 +726,10 @@ reg_map = Munch.fromDict({
                 "VENDOR_SPECIFIC_STR_LENGTH": {
                     "low": 8,
                     "mask": 65280
+                },
+                "DATA": {
+                    "low": 16,
+                    "mask": 4294901760
                 }
             },
             "DEVICE_ID_1": {

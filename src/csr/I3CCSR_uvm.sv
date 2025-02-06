@@ -1804,7 +1804,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.REC_MAGIC_STRING_0 = new("REC_MAGIC_STRING_0");
-            this.REC_MAGIC_STRING_0.configure(this, 32, 0, "RO", 0, 'h4f435020, 1, 1, 0);
+            this.REC_MAGIC_STRING_0.configure(this, 32, 0, "RO", 0, 'h2050434f, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(REC_MAGIC_STRING_0_bit_cg[bt]) REC_MAGIC_STRING_0_bit_cg[bt] = new();
             end
@@ -1834,7 +1834,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.REC_MAGIC_STRING_1 = new("REC_MAGIC_STRING_1");
-            this.REC_MAGIC_STRING_1.configure(this, 32, 0, "RO", 0, 'h52454356, 1, 1, 0);
+            this.REC_MAGIC_STRING_1.configure(this, 32, 0, "RO", 0, 'h56434552, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(REC_MAGIC_STRING_1_bit_cg[bt]) REC_MAGIC_STRING_1_bit_cg[bt] = new();
             end
@@ -1926,9 +1926,11 @@ package I3CCSR_uvm;
 
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_bit_cg DESC_TYPE_bit_cg[8];
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_bit_cg VENDOR_SPECIFIC_STR_LENGTH_bit_cg[8];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_bit_cg DATA_bit_cg[16];
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0_fld_cg fld_cg;
         rand uvm_reg_field DESC_TYPE;
         rand uvm_reg_field VENDOR_SPECIFIC_STR_LENGTH;
+        rand uvm_reg_field DATA;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -1944,9 +1946,12 @@ package I3CCSR_uvm;
             this.DESC_TYPE.configure(this, 8, 0, "RW", 1, 'h0, 1, 1, 0);
             this.VENDOR_SPECIFIC_STR_LENGTH = new("VENDOR_SPECIFIC_STR_LENGTH");
             this.VENDOR_SPECIFIC_STR_LENGTH.configure(this, 8, 8, "RW", 1, 'h0, 1, 1, 0);
+            this.DATA = new("DATA");
+            this.DATA.configure(this, 16, 16, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(DESC_TYPE_bit_cg[bt]) DESC_TYPE_bit_cg[bt] = new();
                 foreach(VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt]) VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt] = new();
+                foreach(DATA_bit_cg[bt]) DATA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();

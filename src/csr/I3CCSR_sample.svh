@@ -1218,9 +1218,10 @@
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(DESC_TYPE_bit_cg[bt]) this.DESC_TYPE_bit_cg[bt].sample(data[0 + bt]);
             foreach(VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt]) this.VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt].sample(data[8 + bt]);
+            foreach(DATA_bit_cg[bt]) this.DATA_bit_cg[bt].sample(data[16 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[7:0]/*DESC_TYPE*/  ,  data[15:8]/*VENDOR_SPECIFIC_STR_LENGTH*/   );
+            this.fld_cg.sample( data[7:0]/*DESC_TYPE*/  ,  data[15:8]/*VENDOR_SPECIFIC_STR_LENGTH*/  ,  data[31:16]/*DATA*/   );
         end
     endfunction
 
@@ -1228,9 +1229,10 @@
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(DESC_TYPE_bit_cg[bt]) this.DESC_TYPE_bit_cg[bt].sample(DESC_TYPE.get_mirrored_value() >> bt);
             foreach(VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt]) this.VENDOR_SPECIFIC_STR_LENGTH_bit_cg[bt].sample(VENDOR_SPECIFIC_STR_LENGTH.get_mirrored_value() >> bt);
+            foreach(DATA_bit_cg[bt]) this.DATA_bit_cg[bt].sample(DATA.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( DESC_TYPE.get_mirrored_value()  ,  VENDOR_SPECIFIC_STR_LENGTH.get_mirrored_value()   );
+            this.fld_cg.sample( DESC_TYPE.get_mirrored_value()  ,  VENDOR_SPECIFIC_STR_LENGTH.get_mirrored_value()  ,  DATA.get_mirrored_value()   );
         end
     endfunction
 

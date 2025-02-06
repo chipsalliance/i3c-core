@@ -284,8 +284,14 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__in_t;
 
     typedef struct packed{
+        logic [15:0] next;
+        logic we;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__in_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__in_t DESC_TYPE;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__in_t VENDOR_SPECIFIC_STR_LENGTH;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__in_t;
 
     typedef struct packed{
@@ -1783,8 +1789,13 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__out_t;
 
     typedef struct packed{
+        logic [15:0] value;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__out_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__out_t DESC_TYPE;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__out_t VENDOR_SPECIFIC_STR_LENGTH;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__out_t;
 
     typedef struct packed{
