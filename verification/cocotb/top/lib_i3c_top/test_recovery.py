@@ -19,6 +19,17 @@ VIRT_STATIC_ADDR = 0x5B
 DYNAMIC_ADDR = 0x52
 VIRT_DYNAMIC_ADDR = 0x53
 
+ocp_magic_string_as_bytes = [
+    0x4F,  # 'O'
+    0x43,  # 'C'
+    0x50,  # 'P'
+    0x20,  # ' '
+    0x52,  # 'R'
+    0x45,  # 'E'
+    0x43,  # 'C'
+    0x56,  # 'V'
+]
+
 
 async def timeout_task(timeout):
     await Timer(timeout, "us")
@@ -517,16 +528,7 @@ async def test_read(dut):
     def make_word(bs):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
-    prot_cap = [
-        # First 8 bytes is Recovery magic string "OCP RECV"
-        0x4F,  # 'O'
-        0x43,  # 'C'
-        0x50,  # 'P'
-        0x20,  # ' '
-        0x52,  # 'R'
-        0x45,  # 'E'
-        0x43,  # 'C'
-        0x56,  # 'V'
+    prot_cap = ocp_magic_string_as_bytes + [
         0x09,
         0x0A,
         0x0B,
@@ -615,18 +617,7 @@ async def test_read_short(dut):
     def make_word(bs):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
-    prot_cap = [
-        # First 8 bytes is Recovery magic string "OCP RECV"
-        0x4F,  # 'O'
-        0x43,  # 'C'
-        0x50,  # 'P'
-        0x20,  # ' '
-        0x52,  # 'R'
-        0x45,  # 'E'
-        0x43,  # 'C'
-        0x56,  # 'V'
-    ]
-    prot_cap += [random.randint(0, 255) for i in range(8)]
+    prot_cap = ocp_magic_string_as_bytes + [random.randint(0, 255) for i in range(8)]
 
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
@@ -677,7 +668,7 @@ async def test_read_long(dut):
     """
 
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=100)
 
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
@@ -692,18 +683,7 @@ async def test_read_long(dut):
     def make_word(bs):
         return (bs[3] << 24) | (bs[2] << 16) | (bs[1] << 8) | bs[0]
 
-    prot_cap = [
-        # First 8 bytes is Recovery magic string "OCP RECV"
-        0x4F,  # 'O'
-        0x43,  # 'C'
-        0x50,  # 'P'
-        0x20,  # ' '
-        0x52,  # 'R'
-        0x45,  # 'E'
-        0x43,  # 'C'
-        0x56,  # 'V'
-    ]
-    prot_cap += [random.randint(0, 255) for i in range(8)]
+    prot_cap = ocp_magic_string_as_bytes + [random.randint(0, 255) for i in range(8)]
 
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
@@ -740,6 +720,65 @@ async def test_read_long(dut):
     assert recovery_data is not None
     assert len(recovery_data) == 15
     assert recovery_data == prot_cap[:15]
+    assert pec_ok
+
+    # Test DEVICE_ID register
+    device_id = [random.randint(0, 255) for _ in range(24)]
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_0.base_addr,
+        int2dword(make_word(device_id[0:4])),
+        4,
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_1.base_addr,
+        int2dword(make_word(device_id[4:8])),
+        4,
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_2.base_addr,
+        int2dword(make_word(device_id[8:12])),
+        4,
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_3.base_addr,
+        int2dword(make_word(device_id[12:16])),
+        4,
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_4.base_addr,
+        int2dword(make_word(device_id[16:20])),
+        4,
+    )
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_ID_5.base_addr,
+        int2dword(make_word(device_id[20:24])),
+        4,
+    )
+
+    # Wait
+    await Timer(1, "us")
+
+    # Issue the recovery mode DEVICE_ID read command
+    data = [I3cRecoveryInterface.Command.DEVICE_ID]
+    data.append(recovery.pec_calc.checksum(bytes([VIRT_DYNAMIC_ADDR << 1] + data)))
+    await i3c_controller.i3c_write(VIRT_DYNAMIC_ADDR, data, stop=False)
+
+    # Read the DEVICE_ID register using private read of fixed length which is
+    # shorter than the register content + length + PEC
+    data = await i3c_controller.i3c_read(VIRT_DYNAMIC_ADDR, 20)
+
+    # Wait
+    await Timer(1, "us")
+
+    # Read PROT_CAP again, this time using the correct length
+    recovery_data, pec_ok = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_ID
+    )
+
+    # PROT_CAP read always returns 15 bytes
+    assert recovery_data is not None
+    assert len(recovery_data) == 24
+    assert recovery_data == device_id[:24]
     assert pec_ok
 
     # Wait
@@ -811,18 +850,7 @@ async def test_virtual_read_alternating(dut):
         # ..........
 
         # Write some data to PROT_CAP CSR
-        prot_cap = [
-            # First 8 bytes is Recovery magic string "OCP RECV"
-        0x4F,  # 'O'
-        0x43,  # 'C'
-        0x50,  # 'P'
-        0x20,  # ' '
-        0x52,  # 'R'
-        0x45,  # 'E'
-        0x43,  # 'C'
-        0x56,  # 'V'
-        ]
-        prot_cap += [random.randint(0, 255) for i in range(8)]
+        prot_cap = ocp_magic_string_as_bytes + [random.randint(0, 255) for i in range(8)]
 
         await tb.write_csr(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.PROT_CAP_2.base_addr,
