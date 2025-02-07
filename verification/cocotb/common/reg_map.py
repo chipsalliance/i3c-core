@@ -772,7 +772,7 @@ reg_map = Munch.fromDict({
                     "mask": 4294967295
                 }
             },
-            "DEVICE_ID_6": {
+            "DEVICE_ID_RESERVED": {
                 "base_addr": 300,
                 "offset": 300,
                 "DATA": {

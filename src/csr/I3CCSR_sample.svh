@@ -1361,8 +1361,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__DEVICE_ID_6 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__DEVICE_ID_RESERVED SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -1377,7 +1377,7 @@
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6::sample_values();
+    function void I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(DATA_bit_cg[bt]) this.DATA_bit_cg[bt].sample(DATA.get_mirrored_value() >> bt);
         end

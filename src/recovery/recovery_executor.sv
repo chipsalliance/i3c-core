@@ -122,7 +122,6 @@ module recovery_executor
     CSR_DEVICE_ID_3            = 'd7,
     CSR_DEVICE_ID_4            = 'd8,
     CSR_DEVICE_ID_5            = 'd9,
-    CSR_DEVICE_ID_6            = 'd10,
     CSR_DEVICE_STATUS_0        = 'd11,
     CSR_DEVICE_STATUS_1        = 'd12,
     CSR_DEVICE_RESET           = 'd13,
@@ -317,7 +316,6 @@ module recovery_executor
       CSR_DEVICE_ID_3:     csr_data <= hwif_rec_i.DEVICE_ID_3.DATA.value;
       CSR_DEVICE_ID_4:     csr_data <= hwif_rec_i.DEVICE_ID_4.DATA.value;
       CSR_DEVICE_ID_5:     csr_data <= hwif_rec_i.DEVICE_ID_5.DATA.value;
-      CSR_DEVICE_ID_6:     csr_data <= hwif_rec_i.DEVICE_ID_6.DATA.value;
       CSR_DEVICE_STATUS_0: csr_data <= device_status_0;
       CSR_DEVICE_STATUS_1: csr_data <= device_status_1;
       CSR_DEVICE_RESET:    csr_data <= device_reset;
@@ -594,7 +592,6 @@ module recovery_executor
     hwif_rec_o.DEVICE_ID_3.DATA.we = '0;
     hwif_rec_o.DEVICE_ID_4.DATA.we = '0;
     hwif_rec_o.DEVICE_ID_5.DATA.we = '0;
-    hwif_rec_o.DEVICE_ID_6.DATA.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.HEARTBEAT.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.we = '0;
     hwif_rec_o.DEVICE_STATUS_1.VENDOR_STATUS.we = '0;
@@ -680,7 +677,6 @@ module recovery_executor
     hwif_rec_o.DEVICE_ID_3.DATA.next = '0;
     hwif_rec_o.DEVICE_ID_4.DATA.next = '0;
     hwif_rec_o.DEVICE_ID_5.DATA.next = '0;
-    hwif_rec_o.DEVICE_ID_6.DATA.next = '0;
     hwif_rec_o.DEVICE_ID_0.DESC_TYPE.next = '0;
     hwif_rec_o.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next = '0;
     hwif_rec_o.DEVICE_ID_0.DATA.next = '0;

@@ -216,16 +216,15 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
         } DATA[31:0];
     } DEVICE_ID_5;
     reg {
-        name = "Device Identification 6";
+        name = "Reserved";
         field {
             name = "";
             desc = "";
-            sw = rw;
-            hw = rw;
-            we = true;
+            sw = r;
+            hw = r;
             reset = 32'h0;
         } DATA[31:0];
-    } DEVICE_ID_6;
+    } DEVICE_ID_RESERVED;
     reg {
         name = "Device status 0";
         field {

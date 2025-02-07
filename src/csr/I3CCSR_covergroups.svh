@@ -1131,8 +1131,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__DEVICE_ID_6 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__SECFWRECOVERYIF__DEVICE_ID_RESERVED COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1143,7 +1143,7 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_fld_cg with function sample(
+    covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED_fld_cg with function sample(
     input bit [32-1:0] DATA
     );
         option.per_instance = 1;

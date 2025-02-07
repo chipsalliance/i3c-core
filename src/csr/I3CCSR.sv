@@ -137,7 +137,7 @@ module I3CCSR (
                 logic DEVICE_ID_3;
                 logic DEVICE_ID_4;
                 logic DEVICE_ID_5;
-                logic DEVICE_ID_6;
+                logic DEVICE_ID_RESERVED;
                 logic DEVICE_STATUS_0;
                 logic DEVICE_STATUS_1;
                 logic DEVICE_RESET;
@@ -288,7 +288,7 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 = cpuif_req_masked & (cpuif_addr == 12'h120);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4 = cpuif_req_masked & (cpuif_addr == 12'h124);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5 = cpuif_req_masked & (cpuif_addr == 12'h128);
-        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 = cpuif_req_masked & (cpuif_addr == 12'h12c);
+        decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_RESERVED = cpuif_req_masked & (cpuif_addr == 12'h12c);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 = cpuif_req_masked & (cpuif_addr == 12'h130);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1 = cpuif_req_masked & (cpuif_addr == 12'h134);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_RESET = cpuif_req_masked & (cpuif_addr == 12'h138);
@@ -836,12 +836,6 @@ module I3CCSR (
                         logic load_next;
                     } DATA;
                 } DEVICE_ID_5;
-                struct packed{
-                    struct packed{
-                        logic [31:0] next;
-                        logic load_next;
-                    } DATA;
-                } DEVICE_ID_6;
                 struct packed{
                     struct packed{
                         logic [7:0] next;
@@ -2127,11 +2121,6 @@ module I3CCSR (
                         logic [31:0] value;
                     } DATA;
                 } DEVICE_ID_5;
-                struct packed{
-                    struct packed{
-                        logic [31:0] value;
-                    } DATA;
-                } DEVICE_ID_6;
                 struct packed{
                     struct packed{
                         logic [7:0] value;
@@ -5017,30 +5006,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value;
-    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.next = next_c;
-        field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.next;
-        end
-    end
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_RESERVED.DATA.value = 32'h0;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS
     always_comb begin
         automatic logic [7:0] next_c;
@@ -9845,7 +9811,7 @@ module I3CCSR (
     assign readback_array[39][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value : '0;
     assign readback_array[40][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value : '0;
     assign readback_array[41][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value : '0;
-    assign readback_array[42][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6.DATA.value : '0;
+    assign readback_array[42][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_ID_RESERVED && !decoded_req_is_wr) ? 32'h0 : '0;
     assign readback_array[43][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value : '0;
     assign readback_array[43][15:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value : '0;
     assign readback_array[43][31:16] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value : '0;

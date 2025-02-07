@@ -2108,17 +2108,17 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5
 
-    // Reg - I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_6
-    class I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_ID_RESERVED
+    class I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_bit_cg DATA_bit_cg[32];
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6_fld_cg fld_cg;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED_bit_cg DATA_bit_cg[32];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED_fld_cg fld_cg;
         rand uvm_reg_field DATA;
 
-        function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6");
+        function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -2129,14 +2129,14 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.DATA = new("DATA");
-            this.DATA.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.DATA.configure(this, 32, 0, "RO", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(DATA_bit_cg[bt]) DATA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6
+    endclass : I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED
 
     // Reg - I3CCSR.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0
     class I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0 extends uvm_reg;
@@ -2701,7 +2701,7 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3 DEVICE_ID_3;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4 DEVICE_ID_4;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5 DEVICE_ID_5;
-        rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6 DEVICE_ID_6;
+        rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED DEVICE_ID_RESERVED;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0 DEVICE_STATUS_0;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1 DEVICE_STATUS_1;
         rand I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET DEVICE_RESET;
@@ -2779,11 +2779,11 @@ package I3CCSR_uvm;
 
             this.DEVICE_ID_5.build();
             this.default_map.add_reg(this.DEVICE_ID_5, 'h28);
-            this.DEVICE_ID_6 = new("DEVICE_ID_6");
-            this.DEVICE_ID_6.configure(this);
+            this.DEVICE_ID_RESERVED = new("DEVICE_ID_RESERVED");
+            this.DEVICE_ID_RESERVED.configure(this);
 
-            this.DEVICE_ID_6.build();
-            this.default_map.add_reg(this.DEVICE_ID_6, 'h2c);
+            this.DEVICE_ID_RESERVED.build();
+            this.default_map.add_reg(this.DEVICE_ID_RESERVED, 'h2c);
             this.DEVICE_STATUS_0 = new("DEVICE_STATUS_0");
             this.DEVICE_STATUS_0.configure(this);
 

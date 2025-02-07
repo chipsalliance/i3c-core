@@ -340,15 +340,6 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__in_t;
 
     typedef struct packed{
-        logic [31:0] next;
-        logic we;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__DATA__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__DATA__in_t DATA;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__in_t;
-
-    typedef struct packed{
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__DEV_STATUS__in_t;
@@ -613,7 +604,6 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__in_t DEVICE_ID_3;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__in_t DEVICE_ID_4;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__in_t DEVICE_ID_5;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__in_t DEVICE_ID_6;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__in_t DEVICE_STATUS_0;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__in_t DEVICE_STATUS_1;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__in_t DEVICE_RESET;
@@ -1840,11 +1830,11 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] value;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__DATA__out_t;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__DATA__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__DATA__out_t DATA;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__out_t;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__DATA__out_t DATA;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__out_t;
 
     typedef struct packed{
         logic [7:0] value;
@@ -2084,7 +2074,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__out_t DEVICE_ID_3;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__out_t DEVICE_ID_4;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__out_t DEVICE_ID_5;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_6__out_t DEVICE_ID_6;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__out_t DEVICE_ID_RESERVED;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__out_t DEVICE_STATUS_0;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__out_t DEVICE_STATUS_1;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__out_t DEVICE_RESET;

@@ -1106,7 +1106,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 | 0x20 |      DEVICE_ID_3     |     Device Identification 3    |
 | 0x24 |      DEVICE_ID_4     |     Device Identification 4    |
 | 0x28 |      DEVICE_ID_5     |     Device Identification 5    |
-| 0x2C |      DEVICE_ID_6     |     Device Identification 6    |
+| 0x2C |  DEVICE_ID_RESERVED  |            Reserved            |
 | 0x30 |    DEVICE_STATUS_0   |         Device status 0        |
 | 0x34 |    DEVICE_STATUS_1   |         Device status 1        |
 | 0x38 |     DEVICE_RESET     |          Reset control         |
@@ -1384,7 +1384,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 
 
-### DEVICE_ID_6 register
+### DEVICE_ID_RESERVED register
 
 - Absolute Address: 0x12C
 - Base Offset: 0x2C
@@ -1392,7 +1392,7 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|31:0|   DATA   |  rw  | 0x0 |    |
+|31:0|   DATA   |   r  | 0x0 |    |
 
 #### DATA field
 
