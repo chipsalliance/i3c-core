@@ -786,13 +786,13 @@ async def test_read_long(dut):
 
 
 @cocotb.test()
-async def test_virtual_read_illegal(dut):
+async def test_virtual_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
 
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=500)
 
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
@@ -803,21 +803,69 @@ async def test_virtual_read_illegal(dut):
         ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
     )
 
-    # Disable recovery mode
-    status = 0x2  # "Recovery Mode"
-    await tb.write_csr(
-        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
-    )
+    # Recovery commands to test
+    commands = [
+        ("Y", "A", I3cRecoveryInterface.Command.PROT_CAP),
+        ("Y", "A", I3cRecoveryInterface.Command.DEVICE_ID),
+        ("Y", "A", I3cRecoveryInterface.Command.DEVICE_STATUS),
+        ("N", "A", I3cRecoveryInterface.Command.DEVICE_RESET),
+        ("Y", "A", I3cRecoveryInterface.Command.RECOVERY_CTRL),
+        ("N", "A", I3cRecoveryInterface.Command.RECOVERY_STATUS),
+        ("N", "R", I3cRecoveryInterface.Command.HW_STATUS),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_CTRL),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_STATUS),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_DATA),
+        ("N", "R", I3cRecoveryInterface.Command.VENDOR),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS),
+        ("N", "R", I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA),
+    ]
 
-    # Read the INDIRECT_FIFO_STATUS register
-    data, pec_ok = await recovery.command_read(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS
-    )
+    result = True
 
-    # Expect NACK
-    # This is how cocotbext-i3c reports a NACK for a recovery command
-    assert data == None
-    assert pec_ok == None
+    # Test each command in recovery mode enabled and disabled. Recovery is
+    # initially enabled.
+    for recovery_mode in [True, False]:
+        for req, scope, cmd in commands:
+
+            # Do the command
+            dut._log.info(f"Command 0x{cmd:02X}")
+            data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, cmd)
+
+            is_nack = data == None and pec_ok == None
+            pec_ok  = bool(pec_ok)
+
+            if is_nack:
+                dut._log.info("NACK")
+            else:
+                dut._log.info(f"ACK, pec_ok={pec_ok}")
+
+            # In recovery mode
+            if recovery_mode:
+                if is_nack:
+                    dut._log.error("Scope R recovery command NACKed")
+                    result = False
+            # Not in recovery mode
+            else:
+                if scope == "A" and is_nack:
+                    dut._log.error("Scope A recovery command NACKed")
+                    result = False
+                elif scope == "R" and not is_nack:
+                    dut._log.error("Scope R recovery command ACKed")
+                    result = False
+
+            # Check PEC
+            if not is_nack and not pec_ok:
+                dut._log.error("PEC error!")
+                result = False
+
+        # Disable recovery mode
+        status = 0x2  # "Recovery Mode"
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
+        )
+
+    assert result
 
     # Wait
     await Timer(1, "us")
