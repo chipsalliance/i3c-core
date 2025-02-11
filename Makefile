@@ -45,7 +45,7 @@ include $(TOOL_DIR)/simulators/Makefile.$(SIMULATOR)
 # Ensure `make test` is called with `TEST` flag set
 ifeq ($(MAKECMDGOALS), test)
     ifndef TEST
-    $(error Run this target with the `TEST` flag set, i.e. 'TEST=i3c make test')
+    $(error Run this target with the `TEST` flag set, i.e. 'TEST=i3c_axi make test')
     endif
 endif
 
