@@ -33,6 +33,9 @@ module i3c
     parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
     parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
     parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
+`ifdef AXI_ID_FILTERING
+    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
+`endif
 `endif
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
@@ -168,12 +171,16 @@ module i3c
     input  logic                      wvalid_i,
     output logic                      wready_o,
 
-    output logic [           1:0]   bresp_o,
-    output logic [AxiIdWidth-1:0]   bid_o,
+    output logic [             1:0] bresp_o,
+    output logic [  AxiIdWidth-1:0] bid_o,
     output logic [AxiUserWidth-1:0] buser_o,
     output logic                    bvalid_o,
     input  logic                    bready_i,
-
+`ifdef AXI_ID_FILTERING
+    // ID Filtering
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
+`endif
 `endif
 
     // I3C bus IO
@@ -396,6 +403,10 @@ module i3c
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
       .AxiIdWidth  (AxiIdWidth)
+`ifdef AXI_ID_FILTERING
+        ,
+      .NumPrivIds(NumPrivIds)
+`endif
   ) i3c_axi_if (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -442,6 +453,11 @@ module i3c
       .bvalid_o(bvalid_o),
       .bready_i(bready_i),
       .buser_o(buser_o),
+
+`ifdef AXI_ID_FILTERING
+      .disable_id_filtering_i(disable_id_filtering_i),
+      .priv_ids_i(priv_ids_i),
+`endif
 
       // I3C SW CSR access interface
       .s_cpuif_req(s_cpuif_req),

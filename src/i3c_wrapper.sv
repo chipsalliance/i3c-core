@@ -10,6 +10,9 @@ module i3c_wrapper #(
     parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
     parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
     parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
+`ifdef AXI_ID_FILTERING
+    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
+`endif
 `endif
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
@@ -94,6 +97,10 @@ module i3c_wrapper #(
     output logic                    bvalid_o,
     input  logic                    bready_i,
 
+`ifdef AXI_ID_FILTERING
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
+`endif
 `endif
 
     // digital I3C input and output signals are exposed for the purpose of simulation
@@ -144,6 +151,9 @@ module i3c_wrapper #(
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
       .AxiIdWidth(AxiIdWidth),
+`endif
+`ifdef AXI_ID_FILTERING
+      .NumPrivIds(NumPrivIds),
 `endif
       .CsrDataWidth(CsrDataWidth),
       .CsrAddrWidth(CsrAddrWidth),
@@ -210,6 +220,11 @@ module i3c_wrapper #(
       .bvalid_o(bvalid_o),
       .bready_i(bready_i),
       .buser_o(buser_o),
+
+`ifdef AXI_ID_FILTERING
+      .disable_id_filtering_i(disable_id_filtering_i),
+      .priv_ids_i(priv_ids_i),
+`endif
 `endif
 
       .i3c_scl_i  (scl_io2phy),

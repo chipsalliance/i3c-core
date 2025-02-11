@@ -83,6 +83,11 @@ module i3c_test_wrapper #(
     output logic [AxiIdWidth-1:0] bid,
     output logic                  bvalid,
     input  logic                  bready,
+
+`ifdef AXI_ID_FILTERING
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds-1],
+`endif
 `endif
     // I3C Target Simulation model
     input logic sda_sim_target_i,
@@ -192,6 +197,11 @@ i3c_wrapper xi3c_wrapper (
     .bid_o(bid),
     .bvalid_o(bvalid),
     .bready_i(bready),
+
+`ifdef AXI_ID_FILTERING
+      .disable_id_filtering_i(disable_id_filtering_i),
+      .priv_ids_i(priv_ids_i),
+`endif
 `endif
 
     .scl_i(bus_scl),

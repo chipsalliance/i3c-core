@@ -92,6 +92,14 @@
             "minimum": 0,
             "maximum": 128
         },
+        "FrontendBusIdFiltering": {
+            "description": "Enable AXI ID filtering logic.",
+            "type": "boolean"
+        },
+        "NumPrivIds": {
+            "description": "Number of privileged AXI IDs.",
+            "type": "integer"
+        },
         "DisableInputFF": {
             "description": "Disable input synchronization flip-flops on SDA and SCL lines.",
             "type": "boolean"
@@ -111,11 +119,19 @@
             },
             "FrontendBusIdWidth": {
                 "type": "integer"
+            },
+            "NumPrivIds": {
+                "type": "integer"
+            },
+            "FrontendBusIdFiltering": {
+                "type": "boolean"
             }
         },
         "required": [
             "FrontendBusUserWidth",
-            "FrontendBusIdWidth"
+            "FrontendBusIdWidth",
+            "NumPrivIds",
+            "FrontendBusIdFiltering"
         ]
     },
     "else": {
@@ -136,6 +152,20 @@
                 "not": {
                     "required": [
                         "FrontendBusIdWidth"
+                    ]
+                }
+            },
+            {
+                "not": {
+                    "required": [
+                        "NumPrivIds"
+                    ]
+                }
+            },
+            {
+                "not": {
+                    "required": [
+                        "FrontendBusIdFiltering"
                     ]
                 }
             }

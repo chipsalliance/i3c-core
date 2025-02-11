@@ -105,6 +105,11 @@ module hci_queues_wrapper
     output logic                  bvalid,
     input  logic                  bready,
 
+`ifdef AXI_ID_FILTERING
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds-1],
+`endif
+
     // HCI queues (FSM side)
     // Response queue
     output logic [HciRespThldWidth-1:0] hci_resp_ready_thld_o,
@@ -297,6 +302,11 @@ module hci_queues_wrapper
       .bid_o(bid),
       .bvalid_o(bvalid),
       .bready_i(bready),
+
+`ifdef AXI_ID_FILTERING
+      .disable_id_filtering_i(disable_id_filtering_i),
+      .priv_ids_i(priv_ids_i),
+`endif
 
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),

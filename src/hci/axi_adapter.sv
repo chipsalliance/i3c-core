@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+`include "i3c_defines.svh"
 
 module axi_adapter #(
     localparam int unsigned CsrAddrWidth = 12,
@@ -7,7 +8,10 @@ module axi_adapter #(
     parameter int unsigned AxiDataWidth = 64,
     parameter int unsigned AxiAddrWidth = 32,
     parameter int unsigned AxiUserWidth = 32,
-    parameter int unsigned AxiIdWidth   = 2
+    parameter int unsigned AxiIdWidth   = 8
+`ifdef AXI_ID_FILTERING,
+    parameter int unsigned NumPrivIds   = 4
+`endif
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -49,11 +53,16 @@ module axi_adapter #(
     input  logic                      wvalid_i,
     output logic                      wready_o,
 
-    output logic [           1:0]   bresp_o,
-    output logic [AxiIdWidth-1:0]   bid_o,
+    output logic [             1:0] bresp_o,
+    output logic [  AxiIdWidth-1:0] bid_o,
     output logic [AxiUserWidth-1:0] buser_o,
     output logic                    bvalid_o,
     input  logic                    bready_i,
+
+`ifdef AXI_ID_FILTERING
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i[NumPrivIds],
+`endif
 
     // I3C SW CSR access interface
     output logic                    s_cpuif_req,
@@ -75,6 +84,9 @@ module axi_adapter #(
   localparam UpperAddrBits = LowerAddrBits + AxiCSRDataShift;
   localparam ShiftWidth = $clog2(CsrDataWidth);
 
+  logic rlegal;
+  logic wlegal;
+
   axi_if #(
       .AW(CsrAddrWidth),
       .DW(AxiDataWidth),
@@ -84,6 +96,45 @@ module axi_adapter #(
       .clk  (clk_i),
       .rst_n(rst_ni)
   );
+
+`ifdef AXI_ID_FILTERING
+  logic [NumPrivIds-1:0] rsel;
+  logic [NumPrivIds-1:0] wsel;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : axi_id_filter
+    if (!rst_ni) begin
+      rlegal <= '0;
+      wlegal <= '0;
+    end else begin
+      if (arready_o && arvalid_i) begin
+        rlegal <= disable_id_filtering_i | (|rsel);
+      end
+
+      if (awready_o && awvalid_i) begin
+        wlegal <= disable_id_filtering_i | (|wsel);
+      end
+    end
+  end
+
+  genvar j;
+  for (j = 0; j < NumPrivIds; j = j + 1) begin : g_match_id
+    always_comb begin
+      if (!rst_ni) begin
+        rsel[j] = '0;
+        wsel[j] = '0;
+      end else begin
+        rsel[j] = arid_i == priv_ids_i[j];
+        wsel[j] = awid_i == priv_ids_i[j];
+      end
+    end
+  end
+
+`else
+  always_comb begin
+    rlegal = 1'b1;
+    wlegal = 1'b1;
+  end
+`endif
 
   // AXI Read Channels
   always_comb begin : axi_r
@@ -144,6 +195,7 @@ module axi_adapter #(
   logic [AxiDataWidth-1:0] i3c_req_rdata;
   logic [AxiIdWidth-1:0] i3c_req_id;
   logic [AxiDataWidth-1:0] i3c_req_user;
+  logic i3c_rd_err, i3c_wr_err;
 
   // Instantiate AXI subordinate to component interface module
   i3c_axi_sub #(
@@ -172,8 +224,8 @@ module axi_adapter #(
       .rdata(i3c_req_rdata),
       .last(i3c_req_last),
       .hld(i3c_req_hld),
-      .rd_err(s_cpuif_rd_err),
-      .wr_err(s_cpuif_wr_err)
+      .rd_err(i3c_rd_err),
+      .wr_err(i3c_wr_err)
   );
 
   genvar i;
@@ -183,14 +235,27 @@ module axi_adapter #(
     end
   end
 
-  logic cpuif_no_ack;
+  logic cpuif_no_ack, wr_hld, rd_hld;
+  logic wr_hld_ext, rd_hld_ext, rd_req, wr_req, rd_req_legal, wr_req_legal;
   assign cpuif_no_ack = ~s_cpuif_wr_ack & ~s_cpuif_rd_ack;
 
   always_comb begin : axi_2_i3c_comp
-    cpuif_req_stall = i3c_req_write ? s_cpuif_req_stall_wr : s_cpuif_req_stall_rd;
-    i3c_req_hld = (i3c_req_dv | cpuif_req_stall | i3c_req_hld_ext) & cpuif_no_ack;
+    rd_req = i3c_req_dv & !i3c_req_write;
+    wr_req = i3c_req_dv & i3c_req_write;
+    // Operation is legal if ID of the request is on 'priv_ids_i'
+    rd_req_legal = rd_req & rlegal;
+    wr_req_legal = wr_req & wlegal;
 
-    s_cpuif_req = i3c_req_dv & ~i3c_req_hld_ext;
+    rd_hld = (rd_req_legal | rd_hld_ext | s_cpuif_req_stall_rd) & cpuif_no_ack;
+    wr_hld = (wr_req_legal | wr_hld_ext | s_cpuif_req_stall_wr) & cpuif_no_ack;
+
+    // Raise an error only when `hld` is deasserted
+    i3c_rd_err = ((rd_req & !rlegal) | s_cpuif_rd_err) & !wr_hld;
+    i3c_wr_err = ((wr_req & !wlegal) | s_cpuif_wr_err) & !rd_hld;
+
+    i3c_req_hld_ext = wr_hld_ext | rd_hld_ext;
+    i3c_req_hld = wr_hld | rd_hld;
+    s_cpuif_req = (wr_req_legal | rd_req_legal) & ~i3c_req_hld_ext;
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
   end
@@ -212,9 +277,11 @@ module axi_adapter #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      i3c_req_hld_ext <= '0;
+      wr_hld_ext <= 0;
+      rd_hld_ext <= 0;
     end else begin
-      i3c_req_hld_ext <= cpuif_no_ack ? i3c_req_dv : 1'b0;
+      wr_hld_ext <= cpuif_no_ack ? wr_req_legal : 1'b0;
+      rd_hld_ext <= cpuif_no_ack ? rd_req_legal : 1'b0;
     end
   end
 endmodule

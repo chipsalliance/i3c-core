@@ -14,6 +14,10 @@ $(info From common.mk, CURDIR is $(CURDIR))
 # Set pythonpath so that tests can access common modules
 export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/common
 
+# Add empty file to common sources to enforce
+# configuration build before running the tests
+COMMON_SOURCES += $(TEST_DIR)/sim_build/i3c_config.vh
+
 VERILOG_INCLUDE_DIRS= \
     $(CALIPTRA_ROOT)/src/libs/rtl \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
@@ -93,3 +97,11 @@ convert-vpd2vcd: $(COCOTB_RESULTS_FILE)
 all: sim convert-vpd2vcd
 
 endif
+
+CFG_FILE ?= $(I3C_ROOT)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
+CFG_NAME ?= axi## Valid configuration name from the YAML configuration file
+
+$(TEST_DIR)/sim_build/i3c_config.vh:
+	pushd $(I3C_ROOT) && CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME) make config && popd
+	mkdir -p $(TEST_DIR)/sim_build
+	touch $(TEST_DIR)/sim_build/i3c_config.vh

@@ -191,17 +191,32 @@ class AXITestInterface(FrontBusTestInterface):
         await ClockCycles(self.clk, 10)
 
     async def read_csr(
-        self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"
+        self,
+        addr: int,
+        size: int = 4,
+        arid: int = None,
+        timeout: int = 1,
+        units: str = "us",
+        ret_data_only=True,
     ) -> List[int]:
         """Send a read request & await the response."""
-        return (await with_timeout(self.axi_m.read(addr, size), timeout, units)).data
+        resp = await with_timeout(self.axi_m.read(addr, size, arid=arid), timeout, units)
+        if ret_data_only:
+            return resp.data
+        return resp
 
     async def write_csr(
-        self, addr: int, data: List[int], size: int = 4, timeout: int = 1, units: str = "us"
+        self,
+        addr: int,
+        data: List[int],
+        size: int = 4,
+        awid: int = None,
+        timeout: int = 1,
+        units: str = "us",
     ) -> None:
         """Send a write request & await transfer to finish."""
         # assert not bytes(data)
-        await with_timeout(self.axi_m.write(addr, bytes(data)), timeout, units)
+        return await with_timeout(self.axi_m.write(addr, bytes(data), awid=awid), timeout, units)
 
 
 def get_frontend_bus_if():

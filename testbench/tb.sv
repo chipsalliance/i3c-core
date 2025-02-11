@@ -16,6 +16,9 @@ module tb ();
     localparam int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH;
     localparam int unsigned AxiUserWidth = `AXI_USER_WIDTH;
     localparam int unsigned AxiIdWidth = `AXI_ID_WIDTH;
+`ifdef AXI_ID_FILTERING
+    localparam int unsigned NumPrivIds = `NUM_PRIV_IDS;
+`endif
 `endif
 
 localparam int unsigned DatAw = i3c_pkg::DatAw;
@@ -83,6 +86,11 @@ logic rst_n;
     logic [AxiIdWidth-1:0] bid;
     logic                  bvalid;
     logic                  bready;
+
+`ifdef AXI_ID_FILTERING
+    logic disable_id_filtering_i;
+    logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds];
+`endif
 `endif
 
 // I3C Bus signals
@@ -101,6 +109,9 @@ i3c_wrapper #(
     .AxiAddrWidth(AxiAddrWidth),
     .AxiUserWidth(AxiUserWidth),
     .AxiIdWidth(AxiIdWidth),
+`ifdef AXI_ID_FILTERING
+    .NumPrivIds(NumPrivIds),
+`endif
 `endif
     .DatAw(DatAw),
     .DctAw(DctAw),
@@ -161,6 +172,11 @@ i3c_wrapper #(
     .bid_o(bid),
     .bvalid_o(bvalid),
     .bready_i(bready),
+
+`ifdef AXI_ID_FILTERING
+    .disable_id_filtering_i(disable_id_filtering_i),
+    .priv_ids_i(priv_ids_i),
+`endif
 `endif
 
     .scl_i(bus_scl),

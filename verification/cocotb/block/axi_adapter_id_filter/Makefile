@@ -12,8 +12,10 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 
-MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
-TOPLEVEL     = axi_adapter_wrapper
+MODULE  ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
+TOPLEVEL = axi_adapter_wrapper
+CFG_NAME = axi
+CFG_FILE = $(TEST_DIR)/i3c_cfg.yaml
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \

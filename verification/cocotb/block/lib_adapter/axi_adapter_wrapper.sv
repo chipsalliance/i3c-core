@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // This wrapper module provides compliance to cocotbext-AXI
 // with AXI standard signal naming convention
+`include "i3c_defines.svh"
 
 module axi_adapter_wrapper
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
@@ -15,7 +16,10 @@ module axi_adapter_wrapper
     parameter int unsigned AxiAddrWidth = 12,
     parameter int unsigned AxiDataWidth = 32,
     parameter int unsigned AxiUserWidth = 32,
-    parameter int unsigned AxiIdWidth   = 2
+    parameter int unsigned AxiIdWidth   = 8
+`ifdef AXI_ID_FILTERING,
+    parameter int unsigned NumPrivIds = 4
+`endif
 ) (
     input aclk,  // clock
     input areset_n,  // active low reset
@@ -63,7 +67,12 @@ module axi_adapter_wrapper
     output logic                    bvalid,
     input  logic                    bready,
 
-    output logic [           6:0] fifo_depth_o
+    output logic [           7:0] fifo_depth_o,
+    output logic                  fifo_full_o
+`ifdef AXI_ID_FILTERING,
+    input logic disable_id_filtering_i,
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds]
+`endif
 );
   // I3C SW CSR access interface
   logic                    s_cpuif_req;
@@ -79,11 +88,15 @@ module axi_adapter_wrapper
   logic                    s_cpuif_wr_ack;
   logic                    s_cpuif_wr_err;
 
+
   axi_adapter #(
       .AxiDataWidth(AxiDataWidth),
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
       .AxiIdWidth(AxiIdWidth)
+`ifdef AXI_ID_FILTERING,
+      .NumPrivIds(NumPrivIds)
+`endif
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -130,6 +143,11 @@ module axi_adapter_wrapper
       .buser_o(buser),
       .bvalid_o(bvalid),
       .bready_i(bready),
+
+`ifdef AXI_ID_FILTERING
+      .disable_id_filtering_i(disable_id_filtering_i),
+      .priv_ids_i(priv_ids_i),
+`endif
 
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
@@ -179,13 +197,13 @@ module axi_adapter_wrapper
   logic fifo_rready;
   logic [31:0] fifo_rdata;
 
-  logic unused_err, unused_full;
+  logic unused_err;
 
   // FIFO for stress testing AXI
   caliptra_prim_fifo_sync #(
       .Width(32),
       .Pass (1'b0),
-      .Depth(64)
+      .Depth(128)
   ) fifo (
       .clk_i(aclk),
       .rst_ni(areset_n),
@@ -197,7 +215,7 @@ module axi_adapter_wrapper
       .rvalid_o(fifo_rvalid),
       .rready_i(fifo_rready),
       .rdata_o(fifo_rdata),
-      .full_o(unused_full),
+      .full_o(fifo_full_o),
       .err_o(unused_err)
   );
 

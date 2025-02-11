@@ -119,6 +119,21 @@ def axi_adapter_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
 
+@nox.session(tags=["tests", "axi"])
+@nox.parametrize("test_group", ["axi_adapter_id_filter"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_seq_csr_access",
+        "test_bus_stress",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def axi_adapter_id_filter_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
 @nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["bus_rx_flow"])
 @nox.parametrize(
