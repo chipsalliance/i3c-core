@@ -82,8 +82,11 @@ class I3CCoreConfig:
             # PascalCase -> UPPER_SNAKE_CASE
             new_name = self._format_name(name).replace("FRONTEND_BUS", bus)
 
-            # Resolve the parameter type (i.e. booleans)
-            self._defines[new_name] = self._py_to_sv_type(value, name)
+            # Resolve the parameter type
+            value = self._py_to_sv_type(value, name)
+            # Skips boolean parameters that are set to 'False'
+            if value is not None:
+                self._defines[new_name] = value
 
     # Change camel case name format to upper snake case
     def _format_name(self, name: str) -> str:
@@ -91,8 +94,8 @@ class I3CCoreConfig:
 
     def _py_to_sv_type(self, element: any, name: str) -> int | str:
         match element:
-            case bool():  # Bool is not supported, use 0 or 1
-                return int(element)
+            case bool():
+                return 1 if element else None
             case str():  # Ensure the resulting definition contains ""
                 return f'"{element}"'
             case list():  # Run recursively on each element & return a string

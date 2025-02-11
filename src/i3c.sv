@@ -44,9 +44,11 @@ module i3c
     parameter int unsigned HciCmdFifoDepth = `CMD_FIFO_DEPTH,
     parameter int unsigned HciRxFifoDepth = `RX_FIFO_DEPTH,
     parameter int unsigned HciTxFifoDepth = `TX_FIFO_DEPTH,
-    parameter int unsigned HciIbiFifoDepth = (`IBI_FIFO_EXT_SIZE)
-                                                ? (8 * `IBI_FIFO_DEPTH)
-                                                : (`IBI_FIFO_DEPTH),
+`ifdef IBI_FIFO_EXT_SIZE
+    parameter int unsigned HciIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
+`else
+    parameter int unsigned HciIbiFifoDepth = `IBI_FIFO_DEPTH,
+`endif
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
     localparam int unsigned HciCmdFifoDepthWidth  = $clog2(HciCmdFifoDepth + 1),
@@ -70,9 +72,11 @@ module i3c
     parameter int unsigned TtiTxDescFifoDepth = `CMD_FIFO_DEPTH,
     parameter int unsigned TtiRxFifoDepth = `RX_FIFO_DEPTH,
     parameter int unsigned TtiTxFifoDepth = `TX_FIFO_DEPTH,
-    parameter int unsigned TtiIbiFifoDepth = (`IBI_FIFO_EXT_SIZE)
-                                                ? (8 * `IBI_FIFO_DEPTH)
-                                                : (`IBI_FIFO_DEPTH),
+`ifdef IBI_FIFO_EXT_SIZE
+    parameter int unsigned TtiIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
+`else
+    parameter int unsigned TtiIbiFifoDepth = `IBI_FIFO_DEPTH,
+`endif
     localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
     localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
     localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
