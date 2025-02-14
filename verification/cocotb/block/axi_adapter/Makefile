@@ -16,6 +16,8 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = axi_adapter_wrapper
 
 VERILOG_SOURCES  = \
+	$(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \
+	$(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/libs/axi/axi_pkg.sv \
     $(SRC_DIR)/libs/axi/axi_if.sv \

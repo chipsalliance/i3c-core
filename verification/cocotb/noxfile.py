@@ -100,6 +100,7 @@ def ahb_if_verify(session, test_group, test_name, coverage, simulator):
     "test_name",
     [
         "test_csr_sw_access",
+        "test_bus_stress",
     ],
 )
 @nox.parametrize("coverage", coverage_types)

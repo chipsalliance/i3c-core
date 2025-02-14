@@ -58,7 +58,9 @@ module axi_adapter_wrapper
     output logic [           1:0] bresp,
     output logic [AxiIdWidth-1:0] bid,
     output logic                  bvalid,
-    input  logic                  bready
+    input  logic                  bready,
+
+    output logic [           6:0] fifo_depth_o
 );
   // I3C SW CSR access interface
   logic                    s_cpuif_req;
@@ -164,6 +166,35 @@ module axi_adapter_wrapper
       .hwif_out(hwif_out)
   );
 
+  logic fifo_wvalid;
+  logic fifo_wready;
+  logic [31:0] fifo_wdata;
+  logic fifo_rvalid;
+  logic fifo_rready;
+  logic [31:0] fifo_rdata;
+
+  logic unused_err, unused_full;
+
+  // FIFO for stress testing AXI
+  caliptra_prim_fifo_sync #(
+      .Width(32),
+      .Pass (1'b0),
+      .Depth(64)
+  ) fifo (
+      .clk_i(aclk),
+      .rst_ni(areset_n),
+      .clr_i('0),
+      .wvalid_i(fifo_wvalid),
+      .wready_o(fifo_wready),
+      .wdata_i(fifo_wdata),
+      .depth_o(fifo_depth_o),
+      .rvalid_o(fifo_rvalid),
+      .rready_i(fifo_rready),
+      .rdata_o(fifo_rdata),
+      .full_o(unused_full),
+      .err_o(unused_err)
+  );
+
   // TODO: These write-enable signals were not combo-driven or initialized on reset.
   // This is a placeholder driver. They require either unimplemented drivers or changes in RDL.
   always_comb begin : missing_csr_we_inits
@@ -214,8 +245,6 @@ module axi_adapter_wrapper
     hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = 0;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = '0;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = '0;
 
     // Unhandled wr/rd_ack (drivers are mising)
     hwif_in.DAT.rd_ack = 0;
@@ -223,4 +252,14 @@ module axi_adapter_wrapper
     hwif_in.DCT.rd_ack = 0;
     hwif_in.DCT.wr_ack = 0;
   end : other_uninit_signals
+
+  always_comb begin : connect_inidrect_fifo
+    fifo_wvalid = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
+    fifo_wdata = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = fifo_wvalid & fifo_wready;
+
+    fifo_rready = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & ~hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = fifo_rdata;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = fifo_rvalid & fifo_rready;
+  end
 endmodule
