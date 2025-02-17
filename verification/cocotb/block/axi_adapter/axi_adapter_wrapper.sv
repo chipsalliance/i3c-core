@@ -253,13 +253,30 @@ module axi_adapter_wrapper
     hwif_in.DCT.wr_ack = 0;
   end : other_uninit_signals
 
+  logic wr_ack_q, rd_ack_q;
+  logic [31:0] rdata_q, wdata_q;
+
   always_comb begin : connect_inidrect_fifo
     fifo_wvalid = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
-    fifo_wdata = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = fifo_wvalid & fifo_wready;
+    fifo_wdata = wdata_q;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = wr_ack_q;
 
     fifo_rready = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & ~hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = fifo_rdata;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = fifo_rvalid & fifo_rready;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = rdata_q;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = rd_ack_q;
+  end
+
+  always_ff @(posedge aclk or negedge areset_n) begin : stall_fifo_access
+    if (~areset_n) begin
+      wr_ack_q <= '0;
+      rd_ack_q <= '0;
+      rdata_q <= '0;
+      wdata_q <= '0;
+    end else begin
+      wr_ack_q <= fifo_wvalid & fifo_wready;
+      rd_ack_q <= fifo_rvalid & fifo_rready;
+      rdata_q <= fifo_rdata;
+      wdata_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
+    end
   end
 endmodule
