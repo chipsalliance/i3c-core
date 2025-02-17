@@ -18,6 +18,8 @@ from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, Combine, Event, RisingEdge, Timer, with_timeout
 from cocotb_helpers import reset_n
 
+from cocotbext.axi.constants import AxiBurstType
+
 
 async def timeout_task(timeout):
     await Timer(timeout, "us")
@@ -69,6 +71,8 @@ async def initialize(dut, timeout=50):
     data_len = random.randint(10, 100)
     test_data = [random.randint(0, 2**32 - 1) for _ in range(data_len)]
 
+    tb.log.info(f"Generated {data_len} dwords to transfer.")
+
     return tb, data_len, test_data
 
 
@@ -78,12 +82,12 @@ async def test_collision_with_write(dut):
 
     fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
-    tb.log.info(f"Generated {data_len} dwords to transfer.")
-
     async def writer():
         # Write sequence should just write data
         for d in test_data:
             await tb.write_csr(fifo_addr, int2bytes(d))
+            # Wait for read to finish to avoid multiple writes per read
+            await tb.axi_m.wait_read()
 
     async def reader(return_data):
         # Wait until there is data in FIFO
@@ -104,7 +108,7 @@ async def test_collision_with_write(dut):
 
     await Combine(w, r)
 
-    assert received_data == test_data, "Recieved data does not match sent data!"
+    assert received_data == test_data, "Received data does not match sent data!"
 
     tb.log.info("Test finished!")
 
@@ -115,8 +119,6 @@ async def test_collision_with_read(dut):
 
     fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
-    tb.log.info(f"Generated {data_len} dwords to transfer.")
-
     async def writer():
         # Write sequence should write data on each read data
         for i, d in enumerate(test_data):
@@ -124,7 +126,9 @@ async def test_collision_with_read(dut):
             if i > 2:
                 await RisingEdge(dut.s_cpuif_req)
                 assert not dut.s_cpuif_req_is_wr.value
-            await tb.write_csr(fifo_addr, int2bytes(d))
+                # Wait additional cycle to line up write with FIFO read delay
+                await RisingEdge(tb.clk)
+            await tb.write_csr(fifo_addr, int2dword(d))
 
     async def reader(return_data):
         # Wait until there is data in FIFO
@@ -134,6 +138,8 @@ async def test_collision_with_read(dut):
 
         # Read sequence should just read data
         for _ in range(data_len):
+            # Wait for write to finish to avoid multiple reads per write
+            await tb.axi_m.wait_write()
             return_data.append(dword2int(await tb.read_csr(fifo_addr)))
             await RisingEdge(tb.clk)
 
@@ -143,26 +149,32 @@ async def test_collision_with_read(dut):
 
     await Combine(w, r)
 
-    assert received_data == test_data, "Recieved data does not match sent data!"
+    assert received_data == test_data, "Received data does not match sent data!"
 
     tb.log.info("Test finished!")
 
 
-@cocotb.test(skip=True)
-async def test_write_burst(dut):
-    tb = await initialize(dut)
+@cocotb.test()
+async def test_write_read_burst(dut):
+    tb, data_len, test_data = await initialize(dut)
 
+    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
-@cocotb.test(skip=True)
-async def test_read_burst(dut):
-    tb = await initialize(dut)
+    await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+    received_data = await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us")
+
+    assert received_data == test_data, "Received data does not match sent data!"
 
 
 @cocotb.test(skip=True)
 async def test_read_burst_collision_with_write(dut):
-    tb = await initialize(dut)
+    tb, data_len, test_data = await initialize(dut)
+
+    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
 
 @cocotb.test(skip=True)
 async def test_write_burst_collision_with_read(dut):
-    tb = await initialize(dut)
+    tb, data_len, test_data = await initialize(dut)
+
+    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
