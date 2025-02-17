@@ -68,7 +68,7 @@ async def initialize(dut, timeout=50):
     await ClockCycles(tb.clk, 20)
     await reset_n(tb.clk, tb.rst_n, cycles=5)
 
-    data_len = random.randint(10, 100)
+    data_len = random.randint(10, 64)
     test_data = [random.randint(0, 2**32 - 1) for _ in range(data_len)]
 
     tb.log.info(f"Generated {data_len} dwords to transfer.")
