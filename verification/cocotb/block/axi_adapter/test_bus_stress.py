@@ -33,7 +33,7 @@ async def initialize(dut, timeout=50):
     cocotb.log.setLevel(logging.DEBUG)
 
     # Start the background timeout task
-    await cocotb.start(timeout_task(timeout))
+    cocotb.start_soon(timeout_task(timeout))
 
     # Initialize inputs
     dut.araddr.value = 0
@@ -86,10 +86,16 @@ async def test_collision_with_write(dut):
             await tb.write_csr(fifo_addr, int2bytes(d))
 
     async def reader(return_data):
+        # Wait until there is data in FIFO
+        read_offset = 2
+        while int(dut.fifo_depth_o.value) < read_offset:
+            await RisingEdge(tb.clk)
+
         # Read sequence should read data on each write data
-        for _ in test_data:
+        for i in range(data_len):
             # Awaiting `awvalid` causes reading simultaneously with write data channel activity
-            await RisingEdge(dut.awvalid)
+            if i < (data_len - read_offset):
+                await RisingEdge(dut.awvalid)
             return_data.append(dword2int(await tb.read_csr(fifo_addr)))
 
     received_data = []
@@ -103,7 +109,7 @@ async def test_collision_with_write(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
@@ -114,22 +120,22 @@ async def test_collision_with_read(dut):
     async def writer():
         # Write sequence should write data on each read data
         for i, d in enumerate(test_data):
-            # Awaiting `arvalid` causes writing simultaneously with read data channel activity
-            if i >= 2:
-                await RisingEdge(dut.arvalid)
+            # Awaiting read request causes writing simultaneously with read data channel activity
+            if i > 2:
+                await RisingEdge(dut.s_cpuif_req)
+                assert not dut.s_cpuif_req_is_wr.value
             await tb.write_csr(fifo_addr, int2bytes(d))
 
     async def reader(return_data):
         # Wait until there is data in FIFO
-        while dut.fifo_depth_o.value < 2:
-            continue
+        read_offset = 2
+        while int(dut.fifo_depth_o.value) < read_offset:
+            await RisingEdge(tb.clk)
 
         # Read sequence should just read data
-        for i in range(data_len):
-            wvalid = RisingEdge(dut.wvalid)
-            wready = RisingEdge(dut.wready)
-            await Combine(wvalid, wready)
+        for _ in range(data_len):
             return_data.append(dword2int(await tb.read_csr(fifo_addr)))
+            await RisingEdge(tb.clk)
 
     received_data = []
     w = cocotb.start_soon(writer())
