@@ -254,15 +254,16 @@ module axi_adapter_wrapper
   end : other_uninit_signals
 
   logic wr_ack_q, rd_ack_q;
-  logic [31:0] rdata_q, wdata_q;
+  logic fifo_rready_q, fifo_wvalid_q;
+  logic [31:0] fifo_rdata_q, fifo_wdata_q;
 
   always_comb begin : connect_inidrect_fifo
-    fifo_wvalid = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
-    fifo_wdata = wdata_q;
+    fifo_wvalid = fifo_wvalid_q;
+    fifo_wdata = fifo_wdata_q;
     hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = wr_ack_q;
 
-    fifo_rready = hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & ~hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = rdata_q;
+    fifo_rready = fifo_rready_q;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = fifo_rdata_q;
     hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = rd_ack_q;
   end
 
@@ -270,13 +271,17 @@ module axi_adapter_wrapper
     if (~areset_n) begin
       wr_ack_q <= '0;
       rd_ack_q <= '0;
-      rdata_q <= '0;
-      wdata_q <= '0;
+      fifo_rready_q <= '0;
+      fifo_wvalid_q <= '0;
+      fifo_rdata_q <= '0;
+      fifo_wdata_q <= '0;
     end else begin
       wr_ack_q <= fifo_wvalid & fifo_wready;
       rd_ack_q <= fifo_rvalid & fifo_rready;
-      rdata_q <= fifo_rdata;
-      wdata_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
+      fifo_rready_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & ~hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
+      fifo_wvalid_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
+      fifo_rdata_q <= fifo_rdata;
+      fifo_wdata_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
     end
   end
 endmodule
