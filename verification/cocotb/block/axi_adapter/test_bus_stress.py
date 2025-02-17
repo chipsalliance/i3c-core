@@ -165,16 +165,39 @@ async def test_write_read_burst(dut):
 
     assert received_data == test_data, "Received data does not match sent data!"
 
+    tb.log.info("Test finished!")
 
-@cocotb.test(skip=True)
-async def test_read_burst_collision_with_write(dut):
+
+@cocotb.test()
+async def test_write_burst_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
     fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
+    # Time in clock cycles to perform single dword write
+    single_write_cycles = 3
+
+    async def writer():
+        await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+
+    async def reader(return_data):
+        return_data.extend(await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+
+    received_data = []
+    half_write_timer = ClockCycles(tb.clk, data_len * single_write_cycles // 2)
+
+    w = cocotb.start_soon(writer())
+    await half_write_timer
+    r = cocotb.start_soon(reader(received_data))
+    await Combine(w, r)
+
+    assert received_data == test_data, "Received data does not match sent data!"
+
+    tb.log.info("Test finished!")
+
 
 @cocotb.test(skip=True)
-async def test_write_burst_collision_with_read(dut):
+async def test_read_burst_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 
     fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
