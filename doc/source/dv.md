@@ -5,8 +5,6 @@ The core is verified with [the Cocotb + unit tests](https://github.com/chipsalli
 
 There are also non-public tests which utilize Avery I3C VIP framework. The tests include: `private_read`, `private_write` and `recovery` and verify operation of target mode private reads and writes and the secure firmware recovery flow respectively.
 
-## Testplans
-
 This section contains testplans for the verification.
 
 Definitions:
@@ -18,13 +16,15 @@ Definitions:
     * `tests` - names of implemented tests, which cover the testpoint. Relation test-testpoint can be many to many.
     * `tags` - additional tags that can be used to group testpoints
 
-### Testplans for individual blocks
+Full overview of tests can be found in [Testplan summary](./sim-results/index.html){.external}.
+
+## Testplans for individual blocks
 
 ```{include} ../../verification/testplan/generated/testplans_blocks.md
 :heading-offset: 2
 ```
 
-### Testplans for the core
+## Testplans for the core
 
 ```{include} ../../verification/testplan/generated/testplans_core.md
 :heading-offset: 2
