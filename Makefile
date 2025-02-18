@@ -28,6 +28,11 @@ UVM_DIR             ?= $(VERILATOR_UVM_DIR)/## Select UVM version
 SIMULATOR           ?= verilator## Supported: verilator, dsim, questa, vcs
 REPO_URL            ?= https://github.com/chipsalliance/i3c-core/tree/main/
 
+# Path to directory with XMLs with tests' results
+TESTS_RESULTS_DIR   ?= $(COCOTB_VERIF_DIR)
+# Base directory present in "file" entries in XMLs with cocotb results
+TESTS_XML_BASE_PATH ?= $(I3C_ROOT_DIR)
+
 NUM_PROC            := $$(($$(nproc)-1))
 # Environment variables
 export I3C_ROOT_DIR
@@ -134,12 +139,23 @@ tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify" --no-venv
 
-BLOCKS_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*.hjson" ! -name "target*.hjson" -printf "%P\n")
-CORE_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*target*.hjson" -printf "%P\n")
+BLOCKS_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*.hjson" ! -name "target*.hjson" | sort)
+CORE_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*target*.hjson" | sort)
 verification-docs:
-	cd $(TESTPLAN_DIR) && testplanner $(BLOCKS_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_blocks.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
-	cd $(TESTPLAN_DIR) && testplanner $(CORE_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_core.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
+	testplanner $(BLOCKS_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_blocks.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
+	testplanner $(CORE_VERIFICATION_PLANS) -ot $(TESTPLAN_DIR)/generated/testplans_core.md --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
 
+VERIFICATION_SIM_RESULTS_XMLS = $(shell find $(TESTS_RESULTS_DIR) -type f -name "*.xml" | sort)
+cocotbxml-to-hjson-sim-results:
+	cocotbxml-to-hjson -i $(VERIFICATION_SIM_RESULTS_XMLS) -t $(BLOCKS_VERIFICATION_PLANS) -o $(TESTS_RESULTS_DIR) --tests-base-dir $(TESTS_XML_BASE_PATH) --tests-ignore-dirs venv .venv .pyenv
+	cocotbxml-to-hjson -i $(VERIFICATION_SIM_RESULTS_XMLS) -t $(CORE_VERIFICATION_PLANS) -o $(TESTS_RESULTS_DIR) --tests-base-dir $(TESTS_XML_BASE_PATH) --tests-ignore-dirs venv .venv .pyenv
+
+BLOCKS_VERIFICATION_SIM_RESULTS = $(shell find $(TESTS_RESULTS_DIR) -type f -name "*.hjson" ! -name "target*.hjson" | sort)
+CORE_VERIFICATION_SIM_RESULTS = $(shell find $(TESTS_RESULTS_DIR) -type f -name "*target*.hjson" | sort)
+verification-docs-with-sim: cocotbxml-to-hjson-sim-results
+	testplanner $(BLOCKS_VERIFICATION_PLANS) -s $(BLOCKS_VERIFICATION_SIM_RESULTS) -ot $(TESTPLAN_DIR)/generated/testplans_blocks.md -os $(TESTPLAN_DIR)/generated/sim-results --output-summary-title "Tests for individual blocks" --output-summary $(TESTPLAN_DIR)/generated/sim-results/index-blocks.html --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
+	testplanner $(CORE_VERIFICATION_PLANS) -s $(CORE_VERIFICATION_SIM_RESULTS) -ot $(TESTPLAN_DIR)/generated/testplans_core.md -os $(TESTPLAN_DIR)/generated/sim-results --output-summary-title "Tests for the core" --output-summary $(TESTPLAN_DIR)/generated/sim-results/index-top.html --project-root $(I3C_ROOT_DIR) --testplan-file-map $(TESTPLAN_DIR)/source-maps.yml --source-url-prefix $(REPO_URL)
+	cat $(TESTPLAN_DIR)/generated/sim-results/index-blocks.html $(TESTPLAN_DIR)/generated/sim-results/index-top.html > $(TESTPLAN_DIR)/generated/sim-results/index.html
 #
 # Utilities
 #
