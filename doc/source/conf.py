@@ -46,7 +46,7 @@ numfig = True
 
 # If you need to add extensions just add to those lists
 extensions = default_extensions
-myst_enable_extensions = default_myst_enable_extensions
+myst_enable_extensions = default_myst_enable_extensions + ["attrs_inline"]
 myst_fence_as_directive = default_myst_fence_as_directive
 
 myst_substitutions = {
