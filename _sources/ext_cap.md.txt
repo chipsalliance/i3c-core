@@ -1,6 +1,6 @@
 # Specification for I3C Vendor-Specific Extended Capabilities
 
-This chapter is the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the {term}`I3C HCI spec`.
+This chapter provides a description of Target Transaction Interface that created for the Standby Controller according to the normative specification of the Vendor-Specific Extended Capabilities for the I3C Controller as per section 7.7.13 of the {term}`I3C HCI spec`.
 
 ## Security
 

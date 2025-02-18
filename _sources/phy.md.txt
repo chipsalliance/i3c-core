@@ -1,6 +1,6 @@
 # Physical Layer
 
-This chapter provides a description of the PHY logic.
+This chapter provides a description of the I3C PHY Layer logic.
 
 ## Common PHY Layer
 

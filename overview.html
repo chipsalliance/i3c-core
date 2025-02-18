@@ -254,20 +254,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#virtual-target" class="md-nav__link">
-    <span class="md-ellipsis">Virtual target</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#register-descriptions" class="md-nav__link">
-    <span class="md-ellipsis">Register descriptions</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#configuration-script" class="md-nav__link">
     <span class="md-ellipsis">Configuration script</span>
   </a>
@@ -277,6 +263,20 @@
         <li class="md-nav__item">
   <a href="#system-bus" class="md-nav__link">
     <span class="md-ellipsis">System Bus</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#virtual-target" class="md-nav__link">
+    <span class="md-ellipsis">Virtual target</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">Register descriptions</span>
   </a>
   
 </li>
@@ -310,6 +310,33 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#i3c-common-command-codes-ccc" class="md-nav__link">
+    <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I3C Common Command Codes (CCC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#broadcast-cccs" class="md-nav__link">
+    <span class="md-ellipsis">Broadcast CCCs</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#direct-cccs" class="md-nav__link">
+    <span class="md-ellipsis">Direct CCCs</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#other-features" class="md-nav__link">
     <span class="md-ellipsis">Other features</span>
   </a>
@@ -320,22 +347,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="ccc.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
-      </a>
     </li>
   
 
@@ -435,6 +446,17 @@
 
 
 <h1 id="i3c-core-overview">I3C core overview<a class="headerlink" href="#i3c-core-overview" title="Link to this heading">¶</a></h1>
+<p>This chapter provides a high level overview of the I3C target functionalities implemented in the core.</p>
+<h2 id="configuration-script">Configuration script<a class="headerlink" href="#configuration-script" title="Link to this heading">¶</a></h2>
+<p>The I3C Core is configured with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/i3c_core_config.py">i3c_core_config</a> Python script, which reads configurations from the <code class="docutils literal notranslate"><span class="pre">i3c_core_configs.yaml</span></code> YAML file.</p>
+<p>The supported configurations can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml">i3c_core_configs.yaml</a> file.</p>
+<p>More details on the usage of the tool can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">relevant README</a>.</p>
+<h2 id="system-bus">System Bus<a class="headerlink" href="#system-bus" title="Link to this heading">¶</a></h2>
+<p>The I3C core can connect to system buses via dedicated adapters:</p>
+<ul class="simple">
+<li><p>AXI4</p></li>
+<li><p>AHB - The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification (IHI0033A)</p></li>
+</ul>
 <h2 id="virtual-target">Virtual target<a class="headerlink" href="#virtual-target" title="Link to this heading">¶</a></h2>
 <p>The I3C core implements the Secure Firmware Recovery protocol according to the Open Compute “Secure Firmware Recovery” specification rev. 1.1-rc5.
 For this purpose, the I3C core exposes a “virtual” target with its own static and dynamic bus addresses.
@@ -451,16 +473,6 @@ Certain CCC commands like <code class="docutils literal notranslate"><span class
 </ul>
 <p>The RDL files generate the relevant SystemVerilog which can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/csr">src/csr/</a> directory.
 The auto-generated descriptions are included in the <a class="reference internal" href="registers.html"><span class="std std-doc">Register descriptions</span></a> chapter.</p>
-<h2 id="configuration-script">Configuration script<a class="headerlink" href="#configuration-script" title="Link to this heading">¶</a></h2>
-<p>The I3C Core is configured with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/i3c_core_config.py">i3c_core_config</a> Python script, which reads configurations from the <code class="docutils literal notranslate"><span class="pre">i3c_core_configs.yaml</span></code> YAML file.</p>
-<p>The supported configurations can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml">i3c_core_configs.yaml</a> file.</p>
-<p>More details on the usage of the tool can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">relevant README</a>.</p>
-<h2 id="system-bus">System Bus<a class="headerlink" href="#system-bus" title="Link to this heading">¶</a></h2>
-<p>The I3C core can connect to system buses via dedicated adapters:</p>
-<ul class="simple">
-<li><p>AXI</p></li>
-<li><p>AHB - The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification (IHI0033A)</p></li>
-</ul>
 <h2 id="target-interface-queues">Target Interface Queues<a class="headerlink" href="#target-interface-queues" title="Link to this heading">¶</a></h2>
 <p>There are also target interface queues via Target Transaction Interface (TTI):</p>
 <ul class="simple">
@@ -509,6 +521,36 @@ Optional IBI data immediately follows the descriptor in the same queue.</p>
 <p>The core watches the IBI queue for a descriptor write.
 Once a descriptor is written, the core peeks it and waits until the defined count of data words is written to the queue.
 Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit words.</p>
+<h2 id="i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)<a class="headerlink" href="#i3c-common-command-codes-ccc" title="Link to this heading">¶</a></h2>
+<p>The I3C core supports all CCCs required by the I3C Basic spec, please see “Table 16 I3C Common Command Codes” for a full reference.</p>
+<p>All CCCs are exercised with Cocotb tests.</p>
+<h3 id="broadcast-cccs">Broadcast CCCs<a class="headerlink" href="#broadcast-cccs" title="Link to this heading">¶</a></h3>
+<p>The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):</p>
+<ul class="simple">
+<li><p>ENEC (R) - Enable Events Command</p></li>
+<li><p>DISEC (R) - Disable Events Command</p></li>
+<li><p>SETMWL (R) - Set Max Write Length</p></li>
+<li><p>SETMRL (R) - Set Max Read Length</p></li>
+<li><p>SETAASA (O) - Set All Addresses to Static Adresses</p></li>
+<li><p>RSTACT (R) - Target Reset Action</p></li>
+</ul>
+<h3 id="direct-cccs">Direct CCCs<a class="headerlink" href="#direct-cccs" title="Link to this heading">¶</a></h3>
+<p>The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):</p>
+<ul class="simple">
+<li><p>ENEC (R) - Enable Events Command</p></li>
+<li><p>DISEC (R) - Disable Events Command</p></li>
+<li><p>RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec</p></li>
+<li><p>SETDASA (O) - Set Dynamic Address from Static Address</p></li>
+<li><p>SETMWL (R) - Set Max Write Length</p></li>
+<li><p>SETMRL (R) - Set Max Read Length</p></li>
+<li><p>GETMWL (R) - Get Max Write Length</p></li>
+<li><p>GETMRL (R) - Set Max Read Length</p></li>
+<li><p>GETPID (C) - Get Provisioned ID</p></li>
+<li><p>GETBCR (C) - Get Bus Characteristics Register</p></li>
+<li><p>GETDCR (C) - Get Device Characteristics Register</p></li>
+<li><p>GETSTATUS (R) - Get Device Status</p></li>
+<li><p>RSTACT (R) - Target Reset Action</p></li>
+</ul>
 <h2 id="other-features">Other features<a class="headerlink" href="#other-features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Target Reset Pattern is detected and causes assertion of output pins, based on the action selected with RSTACT:</p>
@@ -566,13 +608,13 @@ Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit wo
       
       
         
-        <a href="ccc.html" class="md-footer__link md-footer__link--next" aria-label="Next: I3C Common Command Codes (CCC)" rel="next">
+        <a href="phy.html" class="md-footer__link md-footer__link--next" aria-label="Next: Physical Layer" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              I3C Common Command Codes (CCC)
+              Physical Layer
             </div>
           </div>
           <div class="md-footer__button md-icon">
