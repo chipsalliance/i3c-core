@@ -4,7 +4,7 @@ This chapter is the normative specification of the Vendor-Specific Extended Capa
 
 ## Security
 
-The original HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
+The HCI specification defines Extended Capabilities as a list of linked lists, which can be discovered from software through a series of CSR reads.
 This mechanism is unacceptable for the Recovery Mode as memory offsets must be known at synthesis time.
 Implementation based on this specification should provide a list of known memory offsets for each of the Extended Capabilities.
 
@@ -63,7 +63,7 @@ The Controller Config Capability follows section 7.7.3 of the {term}`I3C HCI spe
 
 ### Secure Firmware Recovery Interface - 0xC0
 
-This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.0 and the I3C Target Recovery Specification.
+This section is based on the Open Compute Project Secure Firmware Recovery, Version 1.1-rc5 and the I3C Target Recovery Specification.
 
 The `EXTCAP_HEADER` is located at the `SEC_FW_RECOVERY_OFFSET` memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
@@ -111,38 +111,28 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
 * - HW_STATUS
   - Hardware status including temperature
 * - INDIRECT_FIFO_CTRL_0
-  - Indirect memory window control
+  - Indirect FIFO memory window control
 * - INDIRECT_FIFO_CTRL_1
-  - Indirect memory window control
+  - Indirect FIFO memory window control
 * - INDIRECT_FIFO_STATUS_0
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_STATUS_1
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_STATUS_2
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_STATUS_3
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_STATUS_4
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_STATUS_5
-  - Indirect memory window status
+  - Indirect FIFO memory window status
 * - INDIRECT_FIFO_DATA
-  - Indirect memory window for pushing recovery image
+  - Indirect FIFO memory window for pushing recovery image
 :::
-
 
 ### SoC Management Interface - 0xC1
 
-The SoC Management Interface is provided to enable additional configuration capabilities to the system integrator, e.g. programmability of PHY Devices.
-
-Features may include programmability of:
-
-* High Keeper strength and enable
-* Push-pull driver strength
-    * Slew rate control
-* Open-drain driver strength
-    * Slew rate control
-* Calibration of the on-chip resistor
+The SoC Management Interface is provided to enable additional configuration capabilities to the system integrator, e.g. programability of PHY Devices.
 
 The `SOC_MGMT_EXTCAP_HEADER` is located at the `SOC_MGMT_SECTION_OFFSET` memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
@@ -199,33 +189,21 @@ The term "RX" is used to denote instances in which the software performs a read 
 
 #### Operation
 
-TTI is used to handle generic Read-Type and Write-Type transactions sent by the Active Controller on the I3C bus.
+TTI is used to handle generic Read-Type and Write-Type transactions sent by the Standby Controller on the I3C bus.
 In this mode, software is responsible for servicing TX and RX queues based on the interrupt signals.
 
 There are 5 queues to communicate between the bus and the register interface:
 
-* TX Descriptor queue, which holds information about the write transfer
-* TX Data queue to buffer data written from the Target Device to the bus
-* RX Descriptor queue, which holds information about the read transfer
-* RX Data queue to buffer data read from the bus by the Target Device
-* IBI queue to buffer data which will be written to the Bus as an In-Band Interrupt
+* TTI TX Descriptor queue, which holds information about read transfer
+* TTI TX Data queue to buffer data written from the Target Device to the bus
+* TTI RX Descriptor queue, which holds information about write transfer
+* TTI RX Data queue to buffer data read from the bus by the Target Device
+* TTI IBI queue to buffer data which will be written to the Bus as an In-Band Interrupt
 
 ##### Bus Read Transaction
 
 After the Bus Read Transaction is acknowledged by the Target Device, it performs a write to the Interrupt Register to inform software of a pending read transaction.
 Software writes the response data to the TX queue and the TX descriptor to the TTI TX Descriptor queue.
-
-
-:::{note}
-If 2 consecutive long writes (252B) to the TX buffer occur, then:
-
-* The Target Device should raise an interrupt
-* The Target Device should generate status error that write to the buffer failed
-* How do you clean up the data that was written? Mechanism can break in unknown state
-    * Current state of FIFO is only accessible via Debug EC
-* Issuing soft reset can break the pending transaction
-    * Software should be notified when the pending transaction is done
-:::
 
 ##### Bus Write Transaction
 
@@ -250,7 +228,7 @@ During the Private Write transaction, an error can be caused by:
 Private Write timing diagram: Parity bit error or RX Queue overrun scenario
 :::
 
-If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor should indicate an error status and the Target Device should not ACK data on the bus.
+If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor will indicate an error status and the Target Device should not ACK data on the bus.
 The Active Controller can attempt mitigating such a situation by reading Target queue size from the `TTI_QUEUE_SIZE` register before sending a big chunk of data.
 
 ##### In-Band Interrupts
@@ -282,497 +260,7 @@ IBI Timing Diagram: send an IBI.
 
 #### Register Interface
 
-The `TTI_EXTCAP_HEADER` is located at the `TTI_SECTION_OFFSET` memory offset.
-The registers are aligned to DWORD size (4 bytes), unless specified otherwise.
-
-:::{list-table} TTI Register Interface
-:name: tab-tti-register-interface
-:widths: 50 50
-
-* - Register Name
-  - Role
-* - TTI_EXTCAP_HEADER
-  - Information about the Extended Capability
-* - TTI_CONTROL
-  - Software control, mode, operation
-* - TTI_STATUS
-  - Report status
-* - TTI_INTERRUPT_STATUS
-  - Status of outstanding TTI interrupts
-* - TTI_INTERRUPT_ENABLE
-  - Control register for outstanding TTI interrupts
-* - TTI_INTERRUPT_FORCE
-  - Force trigger of outstanding TTI interrupts for debugging purposes
-* - TTI_RX_DESC_QUEUE_PORT
-  - Access port to TTI RX Descriptor Queue
-* - TTI_RX_DATA_PORT
-  - Access port to TTI RX Data Queue
-* - TTI_TX_DESC_QUEUE_PORT
-  - Access port to TTI TX Descriptor Queue
-* - TTI_TX_DATA_PORT
-  - Access port to TTI TX Data Queue
-* - TTI_QUEUE_SIZE
-  - Information about TTI RX Descriptor, TTI RX Data, TTI TX Descriptor, TTI TX Data queue sizes
-* - TTI_QUEUE_THLD_CONTROL
-  - Control register for trigger threshold level of TTI Queues interrupts
-:::
-
-##### TTI_CONTROL Register
-
-:::{list-table} *TTI_CONTROL Register*
-:name: tab-tti-control-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - TBD
-  - TBD
-  - TBD
-  - TBD
-  - TBD
-:::
-
-##### TTI_STATUS Register
-
-:::{list-table} *TTI_STATUS Register*
-:name: tab-tti-status-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - TBD
-  - TBD
-  - TBD
-  - TBD
-  - TBD
-:::
-
-##### TTI_RESET_CONTROL Register
-
-:::{list-table} *TTI_RESET_CONTROL Register*
-:name: tab-tti-reset-control-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 1 [5]
-  - IBI_QUEUE_RST
-  - R/W
-  - 0x0
-  - TTI IBI Queue Buffer Software Reset
-* - 1 [4]
-  - RX_DATA_RST
-  - R/W
-  - 0x0
-  - TTI RX Data Queue Buffer Software Reset
-* - 1 [3]
-  - TX_DATA_RST
-  - R/W
-  - 0x0
-  - TTI TX Data Queue Buffer Software Reset
-* - 1 [2]
-  - RX_DESC_RST
-  - R/W
-  - 0x0
-  - TTI RX Descriptor Queue Buffer Software Reset
-* - 1 [1]
-  - TX_DESC_RST
-  - R/W
-  - 0x0
-  - TTI TX Descriptor Queue Buffer Software Reset
-* - 1 [0]
-  - SOFT_RST
-  - R/W
-  - 0x0
-  - Target Core Software Reset
-:::
-
-##### TTI_INTERRUPT_STATUS Register
-
-The status fields are either R/W1C (write 1 to clear), or else are cleared based on queue operations.
-
-:::{list-table} *TTI_INTERRUPT_STATUS Register*
-:name: tab-tti-interrupt-status-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 1 [31]
-  - TRANSFER_ERR_STAT
-  - R/W1C
-  - 0x0
-  - Bus error occurred
-* - 1 [25]
-  - TRANSFER_ABORT_STAT
-  - R/W1C
-  - 0x0
-  - Bus aborted transaction
-* - 1 [12]
-  - IBI_THLD_STAT
-  - R
-  - 0x0
-  - TTI IBI Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI IBI Queue is >= the value defined in `TTI_IBI_THLD`
-* - 1 [11]
-  - RX_DESC_THLD_STAT
-  - R
-  - 0x0
-  - TTI RX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is >= the value defined in `TTI_RX_DESC_THLD`
-* - 1 [10]
-  - TX_DESC_THLD_STAT
-  - R
-  - 0x0
-  - TTI TX Descriptor Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is >= the value defined in `TTI_TX_DESC_THLD`
-* - 1 [9]
-  - RX_DATA_THLD_STAT
-  - R
-  - 0x0
-  - TTI RX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of entries in the TTI RX Data Queue is >= the value defined in `TTI_RX_DATA_THLD`
-* - 1 [8]
-  - TX_DATA_THLD_STAT
-  - R
-  - 0x0
-  - TTI TX Data Buffer Threshold Status, the Target Controller should set this bit to 1 when the number of available entries in the TTI TX Data Queue is >= the value defined in `TTI_TX_DATA_THLD`
-* - 1 [3]
-  - TX_DESC_TIMEOUT
-  - R/W1C
-  - 0x0
-  - Pending Write was NACK’ed, because the `TX_DESC_STAT` event was not handled in time
-* - 1 [2]
-  - RX_DESC_TIMEOUT
-  - R/W1C
-  - 0x0
-  - Pending Read was NACK’ed, because the `RX_DESC_STAT` event was not handled in time
-* - 1 [1]
-  - TX_DESC_STAT
-  - R/W1C
-  - 0x0
-  - There is a pending Write Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue
-* - 1 [0]
-  - RX_DESC_STAT
-  - R/W1C
-  - 0x0
-  - There is a pending Read Transaction. Software should read data from the RX Descriptor Queue and the RX Data Queue
-:::
-
-##### TTI_INTERRUPT_ENABLE Register
-
-:::{list-table} *TTI_INTERRUPT_ENABLE Register*
-:name: tab-tti-interrupt-enable-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 1 [4]
-  - IBI_THLD_STAT_EN
-  - R/W
-  - 0x0
-  - Enables the corresponding interrupt bit `TTI_IBI_THLD_STAT`
-* - 1 [3]
-  - RX_DESC_THLD_STAT_EN
-  - R/W
-  - 0x0
-  - Enables the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT`
-* - 1 [2]
-  - TX_DESC_THLD_STAT_EN
-  - R/W
-  - 0x0
-  - Enables the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT`
-* - 1 [1]
-  - RX_DATA_THLD_STAT_EN
-  - R/W
-  - 0x0
-  - Enables the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT`
-* - 1 [0]
-  - TX_DATA_THLD_STAT_EN
-  - R/W
-  - 0x0
-  - Enables the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT`
-:::
-
-##### TTI_INTERRUPT_FORCE Register
-
-:::{list-table} *TTI_INTERRUPT_FORCE Register*
-:name: tab-tti-interrupt-force-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 1 [4]
-  - IBI_THLD_FORCE
-  - R/W
-  - 0x0
-  - Forces the corresponding interrupt bit `TTI_IBI_THLD_STAT` to be set to `1`
-* - 1 [3]
-  - RX_DESC_THLD_FORCE
-  - R/W
-  - 0x0
-  - Forces the corresponding interrupt bit `TTI_RX_DESC_THLD_STAT` to be set to `1`
-* - 1 [2]
-  - TX_DESC_THLD_FORCE
-  - R/W
-  - 0x0
-  - Forces the corresponding interrupt bit `TTI_TX_DESC_THLD_STAT` to be set to `1`
-* - 1 [1]
-  - RX_DATA_THLD_FORCE
-  - R/W
-  - 0x0
-  - Forces the corresponding interrupt bit `TTI_RX_DATA_THLD_STAT` to be set to `1`
-* - 1 [0]
-  - TX_DATA_THLD_FORCE
-  - R/W
-  - 0x0
-  - Forces the corresponding interrupt bit `TTI_TX_DATA_THLD_STAT` to be set to `1`
-:::
-
-##### TTI_RX_DESC_QUEUE_PORT Register
-
-:::{list-table} *TTI_RX_DESC_QUEUE_PORT Register*
-:name: tab-tti-rx-descriptor-queue-port-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 32 [31:0]
-  - RX_DESC
-  - R
-  - 0x0
-  - RX Descriptor
-:::
-
-##### TTI_RX_DATA_PORT Register
-
-:::{list-table} *TTI_RX_DATA_PORT Register*
-:name: tab-tti-rx-data-port-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 32 [31:0]
-  - RX_DATA
-  - R
-  - 0x0
-  - Data Read from the TTI RX Data Buffer
-:::
-
-##### TTI_TX_DESC_QUEUE_PORT Register
-
-:::{list-table} *TTI_TX_DESC_QUEUE_PORT Register*
-:name: tab-tti-tx-descriptor-queue-port-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 32 [31:0]
-  - TX_DESC
-  - W
-  - 0x0
-  - TX Descriptor
-:::
-
-##### TTI_TX_DATA_PORT Register
-
-:::{list-table} *TTI_TX_DATA_PORT Register*
-:name: tab-tti-tx-data-port-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 32 [31:0]
-  - TX_DATA
-  - W
-  - 0x0
-  - Data Write to the TTI TX Data Buffer
-:::
-
-##### TTI_QUEUE_SIZE Register
-
-:::{list-table} *TTI_QUEUE_SIZE Register*
-:name: tab-queue-size-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 8 [31:24]
-  - TX_DATA_BUFFER_SIZE
-  - R
-  - IMPL
-  - Transmit Data Buffer Size in DWORDs:
-    * 0x0: 2
-    * 0x1: 4
-    * 0x2: 8
-    * 0x3: 16
-    * 0x4: 32
-    * 0x5: 64
-    * 0x6: 128
-    * 0x7: 256
-    * 0x8-0xF:
-
-      Reserved for future use
-* - 8 [23:16]
-  - RX_DATA_BUFFER_SIZE
-  - R
-  - IMPL
-  - Receive Data Buffer Size in DWORDs:
-    * 0x0: 2
-    * 0x1: 4
-    * 0x2: 8
-    * 0x3: 16
-    * 0x4: 32
-    * 0x5: 64
-    * 0x6: 128
-    * 0x7: 256
-    * 0x8-0xF:
-
-      Reserved for future use
-* - 8 [15:8]
-  - TX_DESC_BUFFER_SIZE
-  - R
-  - IMPL
-  - TX Descriptor Buffer Size in DWORDs:
-    * 0x0: 2
-    * 0x1: 4
-    * 0x2: 8
-    * 0x3: 16
-    * 0x4: 32
-    * 0x5: 64
-    * 0x6: 128
-    * 0x7: 256
-    * 0x8-0xF:
-
-      Reserved for future use
-* - 8 [7:0]
-  - RX_DESC_BUFFER_SIZE
-  - R
-  - IMPL
-  - RX Descriptor Buffer Size in DWORDs:
-    * 0x0: 2
-    * 0x1: 4
-    * 0x2: 8
-    * 0x3: 16
-    * 0x4: 32
-    * 0x5: 64
-    * 0x6: 128
-    * 0x7: 256
-    * 0x8-0xF:
-
-      Reserved for future use
-:::
-
-##### TTI_IBI_QUEUE_SIZE Register
-
-:::{list-table} *TTI_IBI_QUEUE_SIZE Register*
-:name: tab-ibi-queue-size-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 8 [7:0]
-  - IBI_QUEUE_SIZE
-  - R
-  - IMPL
-  - IBI Queue Size in DWORDs:
-    * 0x0: 2 DWORDS
-    * 0x1: 4 DWORDs
-    * 0x2: 8 DWORDs
-    * 0x3: 16 DWORDs
-    * 0x4: 32 DWORDs
-    * 0x5: 64 DWORDs
-    * 0x6: 128 DWORDs
-    * 0x7: 256 DWORDs
-    * 0x8-0xF: Reserved for future use
-:::
-
-##### TTI_QUEUE_THLD_CONTROL Register
-
-:::{list-table} *TTI_QUEUE_THLD_CONTROL Register*
-:name: tab-tti-queue-threshold-control-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 8 [31:24]
-  - IBI_THLD
-  - R/W
-  - 0x1
-  - Controls the minimum number of IBI Queue entries needed to trigger the IBI threshold interrupt.
-* - 8 [23:16]
-  - RESERVED
-  -
-  -
-  -
-* - 8 [15:8]
-  - RX_DESC_THLD
-  - R/W
-  - 0x1
-  - Controls the minimum number of TTI RX Descriptor Queue entries needed to trigger the TTI RX Descriptor interrupt.
-* - 8 [7:0]
-  - TX_DESC_THLD
-  - R/W
-  - 0x1
-  - Controls the minimum number of empty TTI TX Descriptor Queue entries needed to trigger the TTI TX Descriptor interrupt.
-:::
-
-##### TTI_DATA_BUFFER_THLD_CONTROL Register
-
-:::{list-table} *TTI_IBI_QUEUE_THLD_CONTROL Register*
-:name: tab-tti-ibi-queue-threshold-control-register
-:widths: 10 30 13 9 38
-* - **Size [bits]**
-  - **Field Name**
-  - **Memory Access**
-  - **Reset Value**
-  - **Description**
-* - 3 [26:24]
-  - RX_START_THLD
-  - R/W
-  - 0x1
-  - Minimum number of available TTI RX Data queue entries, in DWORDs, that will initiate the TTI RX Data transfer.
-    Transfer starts when there are at least 2{sup}`N+1` RX Buffer DWORD entries available.
-* - 3 [18:16]
-  - TX_START_THLD
-  - R/W
-  - 0x1
-  - Minimum number of TTI TX Data queue entries, in DWORDs, that will initiate the TTI TX transfer.
-    Transfer starts when there are at least 2{sup}`N+1` TX Buffer DWORDs to be written.
-* - 3 [10:8]
-  - RX_DATA_THLD
-  - R/W
-  - 0x1
-  - Minimum number of TTI RX Data queue entries of data received, in DWORDs, that will trigger the TTI RX Data interrupt.
-    Interrupt triggers when 2{sup}`N+1` RX Buffer DWORD entries are received during the Read transfer.
-* - 3 [2:0]
-  - TX_DATA_THLD
-  - R/W
-  - 0x1
-  - Minimum number of available TTI TX Data queue entries, in DWORDs, that will trigger the TTI TX Data interrupt.
-    Interrupt triggers when 2{sup}`N+1` TX Buffer DWORD entries are available.
-:::
+For a detailed list of TTI registers, refer to the [TTI Registers chapter](tti_registers.md).
 
 #### Data Structures (descriptors)
 
@@ -833,35 +321,7 @@ The IBI Descriptor is 32-bit wide and has the following format:
 
 #### TTI Queues
 
-TTI TX Descriptor, TTI TX Data, TTI RX Descriptor, TTI RX Data and TTI IBI queues should be implemented as FIFO queues of 32 bit (1 DWORD) width.
+TTI TX Descriptor, TTI TX Data, TTI RX Descriptor, TTI RX Data and TTI IBI queues are implemented as FIFO queues of 32 bit (1 DWORD) width.
 Depth should be parametrizable and the `TTI_QUEUE_SIZE` register’s reset value should be set accordingly.
 In order to prevent overflow/underrun scenarios, a programmable threshold signal is provided.
 Software-issued reset of the queues contents is also possible.
-
-#### Errors
-
-1. [Generic Read] Device didn’t have data in time to respond to the controller
-    1. Action taken by hardware
-        1. NACK the next byte of data
-        2. Report Error in the Error Register
-        3. Raise `ERR_IRQ`
-    2. Action taken by software
-        1. Prepare an IBI with Pending Read Notification
-        2. If MCTP, then use `5’h0E` Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)
-2. [Generic Write] Device was overrun
-    1. Prevention mechanisms
-        1. Active Controller should use `SETMWL`, `SETMRL` based on realistically set `GETMWL`, `GETMRL` values
-    2. Action taken by hardware
-        1. NACK the next byte of data
-        2. Report Error in the Error Register
-        3. Raise `ERR_IRQ`
-    3. Action taken by software
-        1. Prepare an IBI with Error Type Notification
-            1. Can use the `5’h0D` Interrupt Identifier (Section 5.1.6.2.1, I3C Basic)
-
-## Ideas for the future (informative)
-
-* Add Debug EC
-* Virtual TTI
-    * Consider reusing existing CSRs from Active Controller in this way
-* [MCTP Binding](https://www.dmtf.org/sites/default/files/standards/documents/DSP0233_1.0.0WIP.pdf)

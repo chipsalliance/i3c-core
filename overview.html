@@ -13,7 +13,7 @@
     
     
       
-        <title>Introduction - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>I3C core overview - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Introduction
+              I3C core overview
             
           </span>
         </div>
@@ -204,6 +204,22 @@
 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
     
@@ -215,12 +231,12 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span class="md-ellipsis">Introduction</span>
+          <span class="md-ellipsis">I3C core overview</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span class="md-ellipsis">Introduction</span>
+        <span class="md-ellipsis">I3C core overview</span>
       </a>
       
         
@@ -238,8 +254,64 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#documentation-structure" class="md-nav__link">
-    <span class="md-ellipsis">Documentation structure</span>
+  <a href="#virtual-target" class="md-nav__link">
+    <span class="md-ellipsis">Virtual target</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">Register descriptions</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-script" class="md-nav__link">
+    <span class="md-ellipsis">Configuration script</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#system-bus" class="md-nav__link">
+    <span class="md-ellipsis">System Bus</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-interface-queues" class="md-nav__link">
+    <span class="md-ellipsis">Target Interface Queues</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-recovery-interface" class="md-nav__link">
+    <span class="md-ellipsis">Target recovery interface</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-reads-and-writes" class="md-nav__link">
+    <span class="md-ellipsis">Private reads and writes</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-band-interrupts-ibi" class="md-nav__link">
+    <span class="md-ellipsis">In-<wbr>Band Interrupts <wbr>(IBI)</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-features" class="md-nav__link">
+    <span class="md-ellipsis">Other features</span>
   </a>
   
 </li>
@@ -248,22 +320,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
-      </a>
     </li>
   
 
@@ -762,18 +818,90 @@
                   
 
 
-<h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
-<p>This document summarizes the current state of the I3C core developed by Antmicro for Caliptra within CHIPS Alliance.</p>
-<p>The implementation follows the Errata 01 for MIPI I3C Basic Specification Version 1.1.1 dated 11.03.2022.</p>
-<h2 id="documentation-structure">Documentation structure<a class="headerlink" href="#documentation-structure" title="Link to this heading">¶</a></h2>
-<p>This documentation comprises the following chapters:</p>
+<h1 id="i3c-core-overview">I3C core overview<a class="headerlink" href="#i3c-core-overview" title="Link to this heading">¶</a></h1>
+<h2 id="virtual-target">Virtual target<a class="headerlink" href="#virtual-target" title="Link to this heading">¶</a></h2>
+<p>The I3C core implements the Secure Firmware Recovery protocol according to the Open Compute “Secure Firmware Recovery” specification rev. 1.1-rc5.
+For this purpose, the I3C core exposes a “virtual” target with its own static and dynamic bus addresses.
+The virtual target implementation shares most of its logic with the “main” one while retaining a distinct data path.
+Certain CCC commands like <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> and <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> are implemented separately for the “main” and “virtual” targets.</p>
+<h2 id="register-descriptions">Register descriptions<a class="headerlink" href="#register-descriptions" title="Link to this heading">¶</a></h2>
+<p>Register descriptions are specified in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/rdl">RDL format</a> for I3C core CSRs:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="overview.html"><span class="std std-doc">I3C core overview</span></a> - summarizes the main notions of the project</p></li>
-<li><p><a class="reference internal" href="ccc.html"><span class="std std-doc">I3C Common Command Codes (CCC)</span></a></p></li>
-<li><p><a class="reference internal" href="phy.html"><span class="std std-doc">Physical Layer</span></a> - provides a description of the PHY logic</p></li>
-<li><p><a class="reference internal" href="dv.html"><span class="std std-doc">Design Verification</span></a> - describes verification tooling and testplans</p></li>
-<li><p><a class="reference internal" href="recovery_flow.html"><span class="std std-doc">Recovery flow</span></a> - describes the Recovery mode workflow</p></li>
-<li><p><a class="reference internal" href="registers.html"><span class="std std-doc">Register descriptions</span></a> - provides auto-generated register descriptions</p></li>
+<li><p>I3C Capability and Operational Registers (I3CBase)</p></li>
+<li><p>Programmable I/O (PIOControl)</p></li>
+<li><p>Extended Capabilities (I3C_EC)</p></li>
+<li><p>Device Address Table (DAT)</p></li>
+<li><p>Device Characteristic Table (DCT)</p></li>
+</ul>
+<p>The RDL files generate the relevant SystemVerilog which can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/csr">src/csr/</a> directory.
+The auto-generated descriptions are included in the <a class="reference internal" href="registers.html"><span class="std std-doc">Register descriptions</span></a> chapter.</p>
+<h2 id="configuration-script">Configuration script<a class="headerlink" href="#configuration-script" title="Link to this heading">¶</a></h2>
+<p>The I3C Core is configured with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/i3c_core_config.py">i3c_core_config</a> Python script, which reads configurations from the <code class="docutils literal notranslate"><span class="pre">i3c_core_configs.yaml</span></code> YAML file.</p>
+<p>The supported configurations can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml">i3c_core_configs.yaml</a> file.</p>
+<p>More details on the usage of the tool can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">relevant README</a>.</p>
+<h2 id="system-bus">System Bus<a class="headerlink" href="#system-bus" title="Link to this heading">¶</a></h2>
+<p>The I3C core can connect to system buses via dedicated adapters:</p>
+<ul class="simple">
+<li><p>AXI</p></li>
+<li><p>AHB - The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification (IHI0033A)</p></li>
+</ul>
+<h2 id="target-interface-queues">Target Interface Queues<a class="headerlink" href="#target-interface-queues" title="Link to this heading">¶</a></h2>
+<p>There are also target interface queues via Target Transaction Interface (TTI):</p>
+<ul class="simple">
+<li><p>RX - read descriptor &amp; data queues</p></li>
+<li><p>TX - write descriptor &amp; data queues</p></li>
+<li><p>IBI - IBI combined descriptor + data queue</p></li>
+</ul>
+<h2 id="target-recovery-interface">Target recovery interface<a class="headerlink" href="#target-recovery-interface" title="Link to this heading">¶</a></h2>
+<p>Several functionalities related to the recovery interface have been implemented for Caliptra:</p>
+<ul class="simple">
+<li><p>Recovery mode enable control via a CSR field</p></li>
+<li><p>Hardware recovery packet handling (private read/write)</p></li>
+<li><p>Hardware PEC checksum calculation and checking</p></li>
+<li><p>Access to Recovery CSRs from the I3C side</p></li>
+<li><p>Status signaling via output pins:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">recovery_payload_available_o</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">recovery_image_activated_o</span></code></p></li>
+</ul>
+</li>
+</ul>
+<h2 id="private-reads-and-writes">Private reads and writes<a class="headerlink" href="#private-reads-and-writes" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>The core handles I3C private reads and writes</p>
+<ul>
+<li><p>This functionality passes Avery test suite tests</p></li>
+<li><p>Private writes push data to the TTI RX Queue, accessible from the AXI bus, allowing the CPU to read the data</p>
+<ul>
+<li><p>The number of received bytes is written into the TTI RX descriptor Queue</p></li>
+<li><p>The software is supposed to first read the descriptor data, and then the number of bytes defined by the descriptor for the TTI RX Queue</p></li>
+</ul>
+</li>
+<li><p>Private reads send data on I3C lines from TTI TX Queue</p>
+<ul>
+<li><p>The software has to write the TTI TX Queue prior to a I3C private read transaction</p></li>
+<li><p>The TTI TX descriptor is used similarly to set the max number of bytes to be sent in the next private read transaction</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="in-band-interrupts-ibi">In-Band Interrupts (IBI)<a class="headerlink" href="#in-band-interrupts-ibi" title="Link to this heading">¶</a></h2>
+<p>The core is capable of raising In-Band Interrupts.
+IBIs are controlled using descriptors written to a dedicated IBI queue by software.
+Optional IBI data immediately follows the descriptor in the same queue.</p>
+<p>The core watches the IBI queue for a descriptor write.
+Once a descriptor is written, the core peeks it and waits until the defined count of data words is written to the queue.
+Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit words.</p>
+<h2 id="other-features">Other features<a class="headerlink" href="#other-features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Target Reset Pattern is detected and causes assertion of output pins, based on the action selected with RSTACT:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">peripheral_reset_o</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">escalated_reset_o</span></code></p></li>
+</ul>
+</li>
+<li><p>The core correctly detects HDR-Exit Pattern</p></li>
 </ul>
 
 
@@ -806,7 +934,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: CHIPS Alliance Caliptra Open Source I3C core" rel="prev">
+        <a href="introduction.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -815,20 +943,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              CHIPS Alliance Caliptra Open Source I3C core
+              Introduction
             </div>
           </div>
         </a>
       
       
         
-        <a href="overview.html" class="md-footer__link md-footer__link--next" aria-label="Next: I3C core overview" rel="next">
+        <a href="ccc.html" class="md-footer__link md-footer__link--next" aria-label="Next: I3C Common Command Codes (CCC)" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              I3C core overview
+              I3C Common Command Codes (CCC)
             </div>
           </div>
           <div class="md-footer__button md-icon">

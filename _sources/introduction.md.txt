@@ -1,39 +1,16 @@
 # Introduction
 
-This document describes the open source I3C Basic controller developed as part of the Caliptra project within CHIPS Alliance.
-.
+This document summarizes the current state of the I3C core developed by Antmicro for Caliptra within CHIPS Alliance.
 
-The scope of the project includes:
+The implementation follows the Errata 01 for MIPI I3C Basic Specification Version 1.1.1 dated 11.03.2022.
 
-* Secondary Controller Mode
-* Active Controller Mode
-* Extended Capabilities from the [](ext_cap.md)
+## Documentation structure
 
-```{note}
-Secondary Controller Mode with generic TX/RX transfers can serve the same role as an I3C Target Device with support for Legacy I2C communication.
-```
+This documentation comprises the following chapters:
 
-## Reference documents
-
-The I3C Core provides a Controller Interface which is developed in compliance with:
-
-```{glossary}
-I3C basic spec
-  MIPI Alliance Specification for I3C Basic, Version 1.1.1
-
-I3C HCI spec
-  MIPI Alliance Specification for I3C HCI, Version 1.2
-
-I3C TCRI spec
-  MIPI Alliance Specification for I3C TCRI, Version 1.0
-```
-
-The specification documents can be obtained directly from the [MIPI website](https://www.mipi.org/specifications/i3c-hci), however, a login with a MIPI Alliance account is required.
-
-Some terminology of the MIPI Alliance Specifications carry over to this documentation and requires additional context:
-
-* `Active Controller Mode` is the mode in which the I3C Core initiates transfers on the I3C bus and is primarily responsible for bus initialization and management
-* `Secondary Controller Mode` is the mode, in which the I3C Core joins the I3C Bus as a Target Device and is conditionally responsible for specific bus management tasks
-* `Secondary Controller Mode` and `Standby Controller Mode` are used interchangeably
-* `Controller Interface` and `Host Controller Interface` are used interchangeably
-* `Controller Interface` is the Register Interface provided by the I3C Core
+* [I3C core overview](overview.md) - summarizes the main notions of the project
+* [I3C Common Command Codes (CCC)](ccc.md)
+* [Physical Layer](phy.md) - provides a description of the PHY logic
+* [Design Verification](dv.md) - describes verification tooling and testplans
+* [Recovery flow](recovery_flow.md) - describes the Recovery mode workflow
+* [Register descriptions](registers.md) - provides auto-generated register descriptions
