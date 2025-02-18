@@ -81,3 +81,5 @@ html_title = project
     latex_logo,
     latex_additional_files
 ) = antmicro_latex(basic_filename, authors, project)
+
+html_extra_path = ["../../verification/testplan/generated"]
