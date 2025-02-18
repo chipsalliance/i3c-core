@@ -13,7 +13,7 @@ exclude =
     .nox,
     .pytest_cache,
     __pycache__,
-    docs/source/conf.py,
+    doc/source/conf.py,
     venv,
 count = True
 show-source = True
