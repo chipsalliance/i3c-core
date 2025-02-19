@@ -196,8 +196,39 @@ async def test_write_burst_collision_with_read(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test(skip=True)
+@cocotb.test()
 async def test_read_burst_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 
     fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+
+    # Time in clock cycles to perform single dword write
+    single_write_cycles = 3
+
+    async def writer():
+        await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+
+    async def reader(return_data):
+        return_data.extend(await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+
+    received_data1 = []
+    received_data2 = []
+    half_write_timer = ClockCycles(tb.clk, data_len * single_write_cycles // 2)
+
+    # Request 1st write burst
+    w1 = cocotb.start_soon(writer())
+    await half_write_timer
+    # Request 1st read burst during 1st write burst, should wait for write to finish
+    r1 = cocotb.start_soon(reader(received_data1))
+    await half_write_timer
+    # Request 2nd write burst that will collision with 1st read burst, should wait for read to finish
+    w2 = cocotb.start_soon(writer())
+    await half_write_timer
+    # Request 2nd read burst during 2nd write burst, should wait for write to finish
+    r2 = cocotb.start_soon(reader(received_data2))
+    await Combine(w1, r1, w2, r2)
+
+    assert received_data1 == test_data, "Received data from 1st burst does not match sent data!"
+    assert received_data2 == test_data, "Received data from 2nd burst does not match sent data!"
+
+    tb.log.info("Test finished!")
