@@ -57,6 +57,7 @@ module axi_sub import axi_pkg::*; #(
     output logic [IW-1:0] id,
     output logic [DW-1:0] wdata, // Requires: Component dwidth == AXI dwidth
     output logic [BC-1:0] wstrb, // Requires: Component dwidth == AXI dwidth
+    output logic [2:0]    size,
     input  logic [DW-1:0] rdata, // Requires: Component dwidth == AXI dwidth
     output logic          last, // Asserted with final 'dv' of a burst
     input  logic          hld,
@@ -66,18 +67,21 @@ module axi_sub import axi_pkg::*; #(
 );
 
     // Exclusive Access Signals
+    `ifdef CALIPTRA_AXI_SUB_EX_EN
     logic        [ID_NUM-1:0] ex_clr;
     logic        [ID_NUM-1:0] ex_active;
     struct packed {
         logic [AW-1:0] addr;
         logic [AW-1:0] addr_mask;
     } [ID_NUM-1:0] ex_ctx;
+    `endif
 
     //Read Subordinate INF
     logic          r_dv;
     logic [AW-1:0] r_addr;  // Byte address
     logic [UW-1:0] r_user;
     logic [IW-1:0] r_id;
+    logic [2:0]    r_size;
     logic          r_last;  // Asserted with final 'dv' of a burst
     logic          r_hld;
     logic          r_err;
@@ -91,6 +95,7 @@ module axi_sub import axi_pkg::*; #(
     logic [IW-1:0] w_id;
     logic [DW-1:0] w_wdata; // Requires: Component dwidth == AXI dwidth
     logic [BC-1:0] w_wstrb; // Requires: Component dwidth == AXI dwidth
+    logic [2:0]    w_size; 
     logic          w_last;  // Asserted with final 'dv' of a burst
     logic          w_hld;
     logic          w_err;
@@ -100,9 +105,8 @@ module axi_sub import axi_pkg::*; #(
         .AW   (AW   ),
         .DW   (DW   ),
         .UW   (UW   ),
-        .IW   (IW   ),
+        .IW   (IW   )
 
-        .EX_EN(EX_EN)
     ) i_axi_sub_wr (
         .clk  (clk  ),
         .rst_n(rst_n),
@@ -111,9 +115,11 @@ module axi_sub import axi_pkg::*; #(
         .s_axi_if(s_axi_w_if),
 
         // Exclusive Access Signals
+        `ifdef CALIPTRA_AXI_SUB_EX_EN
         .ex_clr   (ex_clr   ),
         .ex_active(ex_active),
         .ex_ctx   (ex_ctx   ),
+        `endif
 
         //COMPONENT INF
         .dv   (w_dv   ),
@@ -122,6 +128,7 @@ module axi_sub import axi_pkg::*; #(
         .id   (w_id   ),
         .wdata(w_wdata),
         .wstrb(w_wstrb),
+        .wsize(w_size ),
         .last (w_last ),
         .hld  (w_hld  ),
         .err  (w_err  )
@@ -134,7 +141,6 @@ module axi_sub import axi_pkg::*; #(
         .UW(UW),
         .IW(IW),
 
-        .EX_EN(EX_EN),
         .C_LAT(C_LAT)
     ) i_axi_sub_rd (
         .clk  (clk  ),
@@ -144,15 +150,18 @@ module axi_sub import axi_pkg::*; #(
         .s_axi_if(s_axi_r_if),
 
         // Exclusive Access Signals
+        `ifdef CALIPTRA_AXI_SUB_EX_EN
         .ex_clr   (ex_clr   ),
         .ex_active(ex_active),
         .ex_ctx   (ex_ctx   ),
+        `endif
 
         //COMPONENT INF
         .dv   (r_dv   ),
         .addr (r_addr ),
         .user (r_user ),
         .id   (r_id   ),
+        .size (r_size ),
         .last (r_last ),
         .hld  (r_hld  ),
         .err  (r_err  ),
@@ -166,7 +175,6 @@ module axi_sub import axi_pkg::*; #(
         .UW(UW),
         .IW(IW),
 
-        .EX_EN(EX_EN),
         .C_LAT(C_LAT)
     ) i_axi_sub_arb (
         .clk    (clk    ),
@@ -178,6 +186,7 @@ module axi_sub import axi_pkg::*; #(
         .r_user (r_user ),
         .r_id   (r_id   ),
         .r_last (r_last ),
+        .r_size (r_size ),
         .r_hld  (r_hld  ),
         .r_err  (r_err  ),
         .r_rdata(r_rdata),
@@ -189,6 +198,7 @@ module axi_sub import axi_pkg::*; #(
         .w_id   (w_id   ),
         .w_wdata(w_wdata),
         .w_wstrb(w_wstrb),
+        .w_size (w_size ),
         .w_last (w_last ),
         .w_hld  (w_hld  ),
         .w_err  (w_err  ),
@@ -201,6 +211,7 @@ module axi_sub import axi_pkg::*; #(
         .id     (id     ),
         .wdata  (wdata  ),
         .wstrb  (wstrb  ),
+        .size   (size   ),
         .last   (last   ),
         .hld    (hld    ),
         .rd_err (rd_err ),
