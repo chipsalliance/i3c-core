@@ -34,6 +34,7 @@ module axi_adapter_wrapper
     output logic [AxiDataWidth-1:0] rdata,
     output logic [             1:0] rresp,
     output logic [  AxiIdWidth-1:0] rid,
+    output logic [AxiUserWidth-1:0] ruser,
     output logic                    rlast,
     output logic                    rvalid,
     input  logic                    rready,
@@ -51,14 +52,16 @@ module axi_adapter_wrapper
 
     input  logic [AxiDataWidth-1:0] wdata,
     input  logic [             3:0] wstrb,
+    input  logic [AxiUserWidth-1:0] wuser,
     input  logic                    wlast,
     input  logic                    wvalid,
     output logic                    wready,
 
-    output logic [           1:0] bresp,
-    output logic [AxiIdWidth-1:0] bid,
-    output logic                  bvalid,
-    input  logic                  bready,
+    output logic [             1:0] bresp,
+    output logic [  AxiIdWidth-1:0] bid,
+    output logic [AxiUserWidth-1:0] buser,
+    output logic                    bvalid,
+    input  logic                    bready,
 
     output logic [           6:0] fifo_depth_o
 );
@@ -99,6 +102,7 @@ module axi_adapter_wrapper
       .rdata_o(rdata),
       .rresp_o(rresp),
       .rid_o(rid),
+      .ruser_o(ruser),
       .rlast_o(rlast),
       .rvalid_o(rvalid),
       .rready_i(rready),
@@ -116,12 +120,14 @@ module axi_adapter_wrapper
 
       .wdata_i (wdata),
       .wstrb_i (wstrb),
+      .wuser_i (wuser),
       .wlast_i (wlast),
       .wvalid_i(wvalid),
       .wready_o(wready),
 
       .bresp_o(bresp),
       .bid_o(bid),
+      .buser_o(buser),
       .bvalid_o(bvalid),
       .bready_i(bready),
 

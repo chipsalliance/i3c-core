@@ -26,6 +26,7 @@ module axi_adapter #(
     output logic [AxiDataWidth-1:0] rdata_o,
     output logic [             1:0] rresp_o,
     output logic [  AxiIdWidth-1:0] rid_o,
+    output logic [AxiUserWidth-1:0] ruser_o,
     output logic                    rlast_o,
     output logic                    rvalid_o,
     input  logic                    rready_i,
@@ -43,14 +44,16 @@ module axi_adapter #(
 
     input  logic [  AxiDataWidth-1:0] wdata_i,
     input  logic [AxiDataWidth/8-1:0] wstrb_i,
+    input  logic [  AxiUserWidth-1:0] wuser_i,
     input  logic                      wlast_i,
     input  logic                      wvalid_i,
     output logic                      wready_o,
 
-    output logic [           1:0] bresp_o,
-    output logic [AxiIdWidth-1:0] bid_o,
-    output logic                  bvalid_o,
-    input  logic                  bready_i,
+    output logic [           1:0]   bresp_o,
+    output logic [AxiIdWidth-1:0]   bid_o,
+    output logic [AxiUserWidth-1:0] buser_o,
+    output logic                    bvalid_o,
+    input  logic                    bready_i,
 
     // I3C SW CSR access interface
     output logic                    s_cpuif_req,
@@ -92,6 +95,7 @@ module axi_adapter #(
     rvalid_o = axi.rvalid;
     axi.rready = rready_i;
     rid_o = axi.rid;
+    ruser_o = axi.ruser;
     rdata_o = axi.rdata;
     rresp_o = axi.rresp;
     rlast_o = axi.rlast;
@@ -113,12 +117,14 @@ module axi_adapter #(
     wready_o    = axi.wready;
     axi.wdata   = wdata_i;
     axi.wstrb   = wstrb_i;
+    axi.wuser   = wuser_i;
     axi.wlast   = wlast_i;
 
     bvalid_o    = axi.bvalid;
     axi.bready  = bready_i;
     bresp_o     = axi.bresp;
     bid_o       = axi.bid;
+    buser_o     = axi.buser;
   end
 
   logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
@@ -127,6 +133,7 @@ module axi_adapter #(
   logic i3c_req_last;
   logic [CsrDataWidth-1:0] i3c_req_wdata;
   logic [AxiDataWidth/8-1:0] i3c_req_wstrb;
+  logic [2:0] i3c_req_size;
   logic [AxiAddrWidth-1:0] i3c_req_addr;
   logic [CsrDataWidth-1:0] i3c_req_rdata;
   logic [AxiIdWidth-1:0] i3c_req_id;
@@ -154,6 +161,7 @@ module axi_adapter #(
       .id(i3c_req_id),
       .wdata(i3c_req_wdata),
       .wstrb(i3c_req_wstrb),
+      .size(i3c_req_size),
       .rdata(i3c_req_rdata),
       .last(i3c_req_last),
       .hld(i3c_req_hld),

@@ -57,6 +57,7 @@ async def initialize(dut, timeout=50):
     dut.awvalid.value = 0
     dut.wdata.value = 0
     dut.wstrb.value = 0
+    dut.wuser.value = 0
     dut.wlast.value = 0
     dut.wvalid.value = 0
     dut.bready.value = 0
