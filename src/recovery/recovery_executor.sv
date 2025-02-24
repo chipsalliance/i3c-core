@@ -722,17 +722,16 @@ module recovery_executor
 
   // Payload availability logic
   // Assert payload_available_o upon reception of a complete recovery write
-  // packet targeting CSR_INDIRECT_FIFO_DATA.
+  // packet targeting CSR_INDIRECT_FIFO_DATA. Deassert it when the
   always_comb begin : payload_available
     payload_available_d = 1'b0;
     payload_available_write = 1'b0;
-    if (state_q == Idle & cmd_valid_i & !cmd_error_i & !cmd_is_rd_i &
-        cmd_cmd_i == CMD_INDIRECT_FIFO_DATA)
+    if (~payload_available_q && indirect_rx_wvalid_o && indirect_rx_wready_i)
     begin
       payload_available_d = 1'b1;
       payload_available_write = 1'b1;
     end
-    if (hwif_rec_i.INDIRECT_FIFO_DATA.req && !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr) begin
+    if ( payload_available_q && indirect_rx_empty_i) begin
       payload_available_d = 1'b0;
       payload_available_write = 1'b1;
     end
