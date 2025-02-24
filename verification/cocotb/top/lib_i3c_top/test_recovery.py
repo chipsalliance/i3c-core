@@ -997,16 +997,23 @@ async def test_payload_available(dut):
     # Wait
     await Timer(100, "ns")
 
-    # Read INDIRECT_FIFO_DATA. This should deassert payload_available
-    await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+    # Read data from the indirect FIFO from the AXI side. payload_available should
+    # get deasserted only when the FIFO gets empty.
+    for i in range(payload_size // 4):
 
-    # Wait
-    await Timer(100, "ns")
+        # Check the signal
+        assert bool(
+            payload_available.value
+        ), "FIFO payload_available should not be deasserted until the indirect FIFO is not empty"
 
-    # Check if payload available is deasserted
+        # Read & wait
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+        await Timer(100, "ns")
+
+    # Check the signal
     assert not bool(
         payload_available.value
-    ), "After reading INDIRECT_FIFO_DATA over AHB/AXI payload_available should be deasserted"
+    ), "After emptying indirect FIFO payload_available should be deasserted"
 
     # Wait
     await Timer(1, "us")
