@@ -2682,7 +2682,7 @@ read causes the signal to be deasserted again.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="image-activated"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code><a class="headerlink" href="#image-activated" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1015"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1022"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Ensures that initially the image_activated_o signal is deasserted.
 Writes 0xF to the 3rd byte of the RECOVERY_CTRL register using the
@@ -2692,7 +2692,7 @@ gets deasserted.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="recovery-flow"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#recovery-flow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1067"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1074"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code></a></p>
 <p>The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.</p>
 <p>The AHB/AXI agent is responsible for recovery operation from the
