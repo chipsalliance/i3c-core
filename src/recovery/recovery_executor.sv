@@ -281,7 +281,7 @@ module recovery_executor
         unique case (cmd_cmd_i)
           CMD_PROT_CAP:             csr_length <= 'd15;
           CMD_DEVICE_ID:            csr_length <= 'd24;
-          CMD_DEVICE_STATUS:        csr_length <= 'd8;
+          CMD_DEVICE_STATUS:        csr_length <= 'd7;
           CMD_DEVICE_RESET:         csr_length <= 'd3;
           CMD_RECOVERY_CTRL:        csr_length <= 'd3;
           CMD_RECOVERY_STATUS:      csr_length <= 'd2;
