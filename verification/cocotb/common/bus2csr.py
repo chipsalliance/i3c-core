@@ -249,6 +249,7 @@ class AXITestInterface(FrontBusTestInterface):
                 assert rresp == AxiResp.OKAY, self._report_response(rresp, AxiResp.OKAY, True)
             else:
                 assert rresp == AxiResp.SLVERR, self._report_response(rresp, AxiResp.SLVERR, True)
+                assert self.dut.rdata.value == 0
 
             await RisingEdge(self.dut.aclk)
 

@@ -1,18 +1,21 @@
 # SPDX-License-Identifier: Apache-2.0
 
+import os
 import logging
 import random
 
-from bus2csr import dword2int, int2dword
+from bus2csr import compare_values, dword2int, int2bytes, int2dword
+from cocotb_helpers import reset_n
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
+from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
 
 import cocotb
 from cocotb.triggers import ClockCycles, Combine, Event, Join, RisingEdge, Timer
 
 
-async def write_to_indirect_fifo(tb, data=None, format="bytes"):
+async def write_to_indirect_fifo(tb, data=None, awid=None, format="bytes"):
     """
     Issues a write command to the target
     """
@@ -34,7 +37,7 @@ async def write_to_indirect_fifo(tb, data=None, format="bytes"):
     # Do the I3C write transfer using the controller functionality
     for d in xfer:
         tb.dut._log.info(f"Writing data to TTI TX Data Queue: 0x{d:08X}")
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(d))
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(d), awid=awid)
 
 
 async def timeout_task(timeout):
@@ -54,7 +57,6 @@ async def initialize(dut, timeout=50):
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-
     # Set recovery indirect FIFO size and max transfer size (in 4B units)
     # Set low values to easy trigger pointer wrap in tests.
     fifo_size = 8
@@ -723,3 +725,119 @@ async def test_recovery_flow(dut):
 
     # Check if generated image matches received image
     assert image_dwords == xferd_words
+
+
+def csr_access_test_data(tb, rd_acc=Access.Priv, wr_acc=Access.Priv):
+    test_data = []
+    for reg_name in tb.reg_map.I3C_EC.SECFWRECOVERYIF:
+        if reg_name in ["start_addr", "INDIRECT_FIFO_DATA"]:
+            continue
+        reg = getattr(tb.reg_map.I3C_EC.SECFWRECOVERYIF, reg_name)
+        addr = reg.base_addr
+        wdata = random.randint(0, 2**32 - 1)
+        exp_rd = 0
+        for f_name in reg:
+            if f_name in ["base_addr", "offset"]:
+                continue
+            f = getattr(reg, f_name)
+            if f.sw == "r" or ((wr_acc == Access.Unpriv) and (rd_acc == Access.Priv)):
+                data = (f.reset << f.low) & f.mask
+            elif f.woclr or f.hwclr:
+                data = 0
+            else:
+                data = wdata & f.mask
+            # The reset value of 'INDIRECT_FIFO_STATUS_3' is 0 but it's set
+            # by 'recovery_executor' to 'IndirectFifoDepth' parameter
+            if reg_name == "INDIRECT_FIFO_STATUS_3" and f_name == "FIFO_SIZE":
+                data = 0x40
+            if reg_name == "INDIRECT_FIFO_STATUS_4" and f_name == "MAX_TRANSFER_SIZE":
+                data = 0x40
+
+            if rd_acc == Access.Unpriv:
+                data = 0x0
+
+            exp_rd |= data
+        test_data.append([addr, wdata, exp_rd])
+    return test_data
+
+
+@cocotb.test(skip=os.getenv("FrontendBusInterface") != "AXI")
+async def test_check_axi_filtering(dut):
+    """
+    Verifies AXI ID filtering in Secure Firmware Recovery registers access.
+    """
+
+    # Initialize
+    tb = await initialize(dut)
+    cocotb.start_soon(tb.busIf.write_access_monitor())
+    cocotb.start_soon(tb.busIf.read_access_monitor())
+    priv_ids = draw_axi_priv_ids()
+    dut.disable_id_filtering_i.value = 0
+    dut.priv_ids_i.value = priv_ids
+
+    #########################################################################
+    # Verify privileged & unprivileged registers access                     #
+    #########################################################################
+    acc_pairs = [(x, y) for x in [Access.Priv, Access.Unpriv] for y in [Access.Priv, Access.Unpriv]]
+    for rd_acc, wr_acc in acc_pairs:
+        sfr_seq = csr_access_test_data(tb, rd_acc, wr_acc)
+
+        for addr, wdata, exp_rd in sfr_seq:
+            awid = get_axi_ids_seq(priv_ids, 1, wr_acc)[0]
+            arid = get_axi_ids_seq(priv_ids, 1, rd_acc)[0]
+            await tb.write_csr(addr, int2dword(wdata), 4, awid=awid)
+            resp = await tb.read_csr(addr, arid=arid)
+            compare_values(int2bytes(exp_rd), resp, addr)
+
+        # Skip the indirect fifo data check as it will cause a read from an empty FIFO
+        if wr_acc == Access.Unpriv:
+            continue
+
+        # Writes to `INDIRECT_FIFO_DATA` are executed through the I3C
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr,
+            int2dword(2),
+            4,
+            awid=awid,
+        )
+        addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+        # Burst ID cannot be 0
+        awid = get_axi_ids_seq(priv_ids, 1, wr_acc)[0]
+        while awid == 0:
+            awid = get_axi_ids_seq(priv_ids, 1, wr_acc)[0]
+        payload_data = [random.randint(0, 2**32 - 1) for _ in range(2)]
+        await write_to_indirect_fifo(tb, payload_data, format="dwords", awid=awid)
+
+        resp = await tb.read_csr(addr, arid=get_axi_ids_seq(priv_ids, 1, rd_acc)[0])
+        exp_rd = 0 if rd_acc == Access.Unpriv or wr_acc == Access.Unpriv else payload_data[0]
+        compare_values(int2bytes(exp_rd), resp, addr)
+
+        await reset_n(dut.aclk, dut.areset_n, 2)
+
+    #########################################################################
+    # Verify registers access with unprivileged IDs & configuration changes #
+    #########################################################################
+
+    async def disable_random():
+        while True:
+            filter_off = int(dut.disable_id_filtering_i.value)
+            if abs(random.random()) < 0.1:
+                dut.disable_id_filtering_i.value = not filter_off
+            await RisingEdge(dut.aclk)
+
+    async def priv_id_swap_random():
+        while True:
+            if abs(random.random()) < 0.2:
+                dut.priv_ids_i.value = draw_axi_priv_ids()
+            await RisingEdge(dut.aclk)
+
+    cocotb.start_soon(disable_random())
+    cocotb.start_soon(priv_id_swap_random())
+
+    sfr_seq = csr_access_test_data(tb)
+
+    for addr, wdata, _ in sfr_seq:
+        awid = get_axi_ids_seq(priv_ids, 1, Access.Mixed)[0]
+        arid = get_axi_ids_seq(priv_ids, 1, Access.Mixed)[0]
+        await tb.write_csr(addr, int2dword(wdata), 4, awid=awid)
+        _ = await tb.read_csr(addr, arid=arid)
