@@ -60,19 +60,6 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
 
     # Configure the top level
 
-    # Calculate timings. See MIPI I3C basic spec v1.1.1 p.368
-    tclk = 1000.0 / fclk  # [ns]
-    tcr = 150.0 / fbus  # [ns]
-    thd = tcr + 3  # [ns]
-    tsu = 3.0  # [ns]
-
-    #    timings = {
-    #        "T_R":      max(0, int(ceil(tcr / tclk))),
-    #        "T_F":      max(0, int(ceil(tcr / tclk))),
-    #        "T_HD_DAT": max(0, int(ceil(thd / tclk))),
-    #        "T_SU_DAT": max(0, int(ceil(tsu / tclk))),
-    #    }
-
     # TODO: For now test with all timings set to 0.
     timings = {
         "T_R": 0,
@@ -113,8 +100,6 @@ async def test_i3c_target_write(dut):
 
     # Receiver agent (firmware side)
     async def rx_agent():
-        logger = dut._log.getChild("dev_agent")
-
         nonlocal recv_data
 
         # Enable RX descriptor interrupt

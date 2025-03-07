@@ -1,21 +1,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import os
 import logging
+import os
 import random
 
+from boot import boot_init
 from bus2csr import compare_values, dword2int, int2bytes, int2dword
+from ccc import CCC
 from cocotb_helpers import reset_n
 from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
 
 import cocotb
+from cocotb.result import SimTimeoutError
 from cocotb.triggers import ClockCycles, Combine, Event, Join, RisingEdge, Timer
 
 
-async def write_to_indirect_fifo(tb, data=None, awid=None, format="bytes"):
+async def write_to_indirect_fifo(tb, data=None, awid=None, format="bytes", timeout=1, units="us"):
     """
     Issues a write command to the target
     """
@@ -37,7 +41,13 @@ async def write_to_indirect_fifo(tb, data=None, awid=None, format="bytes"):
     # Do the I3C write transfer using the controller functionality
     for d in xfer:
         tb.dut._log.info(f"Writing data to TTI TX Data Queue: 0x{d:08X}")
-        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(d), awid=awid)
+        await tb.write_csr(
+            tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+            int2dword(d),
+            awid=awid,
+            timeout=timeout,
+            units=units,
+        )
 
 
 async def timeout_task(timeout):
@@ -115,17 +125,15 @@ async def test_indirect_fifo_write(dut):
     empty0, full0, wrptr0, rdptr0 = await get_fifo_ptrs()
 
     # Write data to indirect FIFO through the recovery interface
-    tx_data_len = random.randint(2, 256)
-    tx_data = [random.randint(2, 255) for _ in range(tx_data_len)]
-    await write_to_indirect_fifo(tb, tx_data)
+    tx_data = [random.randint(2, 2**32 - 1) for _ in range(fifo_size)]
+    await write_to_indirect_fifo(tb, tx_data, format="dwords")
 
     # Get indirect FIFO pointers
     empty1, full1, wrptr1, rdptr1 = await get_fifo_ptrs()
 
     # Read data back
-    count = (tx_data_len + 3) // 4
     rx_words = []
-    for i in range(count):
+    for _ in range(fifo_size):
 
         # Read data
         res = await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
@@ -154,38 +162,70 @@ async def test_indirect_fifo_write(dut):
     empty3, full3, wrptr3, rdptr3 = await get_fifo_ptrs()
 
     # Check data readback
-    tx_words = []
-    for i in range(count):
-        word = 0
-        for j in range(4):
-            idx = 4 * i + j
-            word >>= 8
-            if idx < len(tx_data):
-                word |= tx_data[idx] << 24
-        tx_words.append(word)
-
-    dut._log.info("TX data: " + " ".join([hex(w) for w in tx_words]))
+    dut._log.info("TX data: " + " ".join([hex(w) for w in tx_data]))
     dut._log.info("Indirect FIFO: " + " ".join([hex(w) for w in rx_words]))
 
-    assert tx_words == rx_words
-
-    # Pointers wrap around when they reach maximum value so they'll be equal to 0
-    top_ptr = count if (fifo_size > count) else 0
+    assert tx_data == rx_words
 
     # Check FIFO pointer progression
     assert (wrptr0, rdptr0) == (0, 0)
-    assert (wrptr1, rdptr1) == (top_ptr, 0)
-    assert (wrptr2, rdptr2) == (top_ptr, top_ptr)
+    assert (wrptr1, rdptr1) == (0, 0)
+    assert (wrptr2, rdptr2) == (0, 0)
     assert (wrptr3, rdptr3) == (0, 0)
-
-    # If top pointer is equal to 0, then FIFO should be full after write
-    fifo_full_at_top = top_ptr == 0
 
     # Check empty/full progression
     assert (full0, empty0) == (False, True)
-    assert (full1, empty1) == (fifo_full_at_top, False)
+    assert (full1, empty1) == (True, False)
     assert (full2, empty2) == (False, True)
     assert (full3, empty3) == (False, True)
+
+
+@cocotb.test()
+async def test_indirect_fifo_overflow(dut):
+    """
+    Tests whether access is properly rejected on Indirect FIFO overflow
+    """
+    tb = await initialize(dut)
+
+    fifo_size = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr, 4)
+    )
+    dut._log.info(f"Indirect FIFO Size is {fifo_size}")
+
+    # Fill the Indirect FIFO
+    tx_data = [random.randint(2, 2**32 - 1) for _ in range(fifo_size)]
+    await write_to_indirect_fifo(tb, tx_data, format="dwords")
+
+    # Cause the Indirect FIFO to overflow
+    try:
+        await write_to_indirect_fifo(
+            tb, [random.randint(2, 2**32 - 1)], format="dwords", timeout=100, units="ns"
+        )
+    except SimTimeoutError:
+        pass
+    else:
+        assert False, "Write to Indirect FIFO was not rejected while it's full!"
+
+
+@cocotb.test()
+async def test_indirect_fifo_underflow(dut):
+    """
+    Tests whether access is properly rejected on Indirect FIFO underflow
+    """
+    tb = await initialize(dut)
+
+    # Cause the Indirect FIFO to underflow
+    try:
+        await tb.read_csr(
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr,
+            4,
+            timeout=100,
+            units="ns",
+        )
+    except SimTimeoutError:
+        pass
+    else:
+        assert False, "Read from empty Indirect FIFO was not rejected!"
 
 
 @cocotb.test()
@@ -193,8 +233,6 @@ async def test_read(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
-
-    # Initialize
     tb = await initialize(dut)
 
     # Write some data to PROT_CAP CSR
@@ -328,7 +366,6 @@ async def test_payload_available(dut):
     Tests if payload_available gets asserted/deasserted correctly when data
     chunks are written to the INDIRECT_FIFO_DATA CSR.
     """
-    # Initialize
     tb = await initialize(dut, timeout=50)
 
     payload_size = (
@@ -389,8 +426,6 @@ async def test_payload_available(dut):
 
 @cocotb.test()
 async def test_image_activated(dut):
-
-    # Initialize
     tb = await initialize(dut)
 
     image_activated = dut.xi3c_wrapper.recovery_image_activated_o
@@ -452,6 +487,7 @@ async def test_i3c_bus_traffic_during_loopback(dut):
         speed=fbus * 1e6,
         address=sim_target_addr,
     )
+    payload_available = dut.xi3c_wrapper.recovery_payload_available_o
 
     run_target_bus_traffic = Event()
 
@@ -483,8 +519,12 @@ async def test_i3c_bus_traffic_during_loopback(dut):
                 write_to_indirect_fifo(tb, payload_data, format="dwords")
             )
 
+            # Wait until payload is available
+            while (not payload_available.value):
+                dut._log.info("Waiting for payload_available wire to assert...")
+                await ClockCycles(tb.clk, delay_cycles)
+
             # Wait for random number of cycles and start read from Indirect FIFO via bypass
-            await ClockCycles(tb.clk, delay_cycles)
             payload_received = []
             for _ in range(fifo_size):
                 d = dword2int(
@@ -511,7 +551,6 @@ async def test_recovery_flow(dut):
     """
     Test firmware image transfer
     """
-    # Initialize
     tb = await initialize(dut, timeout=1000)
 
     # Generate random firmware image data
@@ -637,6 +676,7 @@ async def test_recovery_flow(dut):
     # Caliptra ROM (RoT) agent
     async def rot_agent(buffer):
         logger = dut._log.getChild("RoT_agent")
+        payload_available = dut.xi3c_wrapper.recovery_payload_available_o
 
         # Set PROT_CAP to Flashless boot
         await tb.write_csr_field(
@@ -668,15 +708,19 @@ async def test_recovery_flow(dut):
         for data_ptr in range(0, image_size // 4, max_xfer_size):
             # Wait for data in Indirect FIFO
             while True:
-                empty = await tb.read_csr_field(
+                full = await tb.read_csr_field(
                     tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.base_addr,
-                    tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.EMPTY,
+                    tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_0.FULL,
                 )
-                if not empty:
-                    logger.info("Indirect FIFO not empty, reading data...")
+                if full:
+                    logger.info("Indirect FIFO full, reading data...")
                     break
                 else:
-                    logger.info("Indirect FIFO empty, proceed...")
+                    logger.info("Indirect FIFO not empty, proceed...")
+
+                if payload_available.value:
+                    logger.info("Payload available wire asserted, reading data...")
+                    break
 
                 # Indirect FIFO is empty so wait arbitrary number of cycles for other side
                 # to write data
@@ -757,7 +801,7 @@ def csr_access_test_data(tb, rd_acc=Access.Priv, wr_acc=Access.Priv):
                 data = 0x0
 
             exp_rd |= data
-        test_data.append([addr, wdata, exp_rd])
+        test_data.append([reg_name, addr, wdata, exp_rd])
     return test_data
 
 
@@ -782,7 +826,7 @@ async def test_check_axi_filtering(dut):
     for rd_acc, wr_acc in acc_pairs:
         sfr_seq = csr_access_test_data(tb, rd_acc, wr_acc)
 
-        for addr, wdata, exp_rd in sfr_seq:
+        for _, addr, wdata, exp_rd in sfr_seq:
             awid = get_axi_ids_seq(priv_ids, 1, wr_acc)[0]
             arid = get_axi_ids_seq(priv_ids, 1, rd_acc)[0]
             await tb.write_csr(addr, int2dword(wdata), 4, awid=awid)
@@ -836,8 +880,112 @@ async def test_check_axi_filtering(dut):
 
     sfr_seq = csr_access_test_data(tb)
 
-    for addr, wdata, _ in sfr_seq:
+    for _, addr, wdata, _ in sfr_seq:
         awid = get_axi_ids_seq(priv_ids, 1, Access.Mixed)[0]
         arid = get_axi_ids_seq(priv_ids, 1, Access.Mixed)[0]
         await tb.write_csr(addr, int2dword(wdata), 4, awid=awid)
         _ = await tb.read_csr(addr, arid=arid)
+
+
+async def init_i3c_recovery(dut, timeout=50):
+    fbus = 12.5
+
+    tb = await initialize(dut, timeout)
+
+    # Initialize I3C interfaces
+    i3c_controller = I3cController(
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_ctrl_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_ctrl_i,
+        debug_state_o=None,
+        speed=fbus * 1e6,
+    )
+
+    i3c_target = I3CTarget(  # noqa
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_target_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_target_i,
+        debug_state_o=None,
+        speed=fbus * 1e6,
+        address=0x23,
+    )
+
+    recovery = I3cRecoveryInterface(i3c_controller)
+
+    # TODO: For now test with all timings set to 0.
+    timings = {"T_R": 0, "T_F": 0, "T_HD_DAT": 0, "T_SU_DAT": 0}
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
+    DYNAMIC_ADDR = 0x52
+    VIRT_DYNAMIC_ADDR = 0x53
+
+    for k, v in timings.items():
+        dut._log.info(f"{k} = {v}")
+
+    # Configure the top level
+    await boot_init(tb, timings)
+    # Set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # Set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+    # Write to the RESET CSR (one word)
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+    )
+
+    return tb
+
+
+async def test_ocp_csr_access(dut, enable_bypass):
+    # Perform the recovery protocol to obtain access to CSRs
+    if not enable_bypass:
+        tb = await init_i3c_recovery(dut)
+    # CSRs should be available without executing the protocol
+    else:
+        tb = await initialize(dut)
+
+    reg_test_data = csr_access_test_data(tb)
+
+    # Enable/disable bypass
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SOCMGMTIF.REC_INTF_CFG.base_addr, int2dword(enable_bypass), 4
+    )
+
+    for name, addr, wdata, exp_rd in reg_test_data:
+        if name == "DEVICE_RESET":
+            exp_rd &= 0xFFFFFF00  # 1st byte is W1C
+        elif name == "INDIRECT_FIFO_CTRL_0":
+            exp_rd &= 0xFFFF00FF  # 2nd byte is W1C
+        elif name == "RECOVERY_CTRL":
+            exp_rd &= 0xFF00FFFF  # 3rd byte is W1C
+
+        await tb.write_csr(addr, int2dword(wdata), 4)
+        rd_data = await tb.read_csr(addr)
+        compare_values(int2dword(exp_rd), rd_data, addr)
+
+    # Test additional bypass register
+    exp_data = random.randint(1, 2**32 - 1)
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SOCMGMTIF.REC_INTF_REG_W1C_ACCESS.base_addr, int2dword(exp_data), 4
+    )
+
+    rd_data = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SOCMGMTIF.REC_INTF_REG_W1C_ACCESS.base_addr)
+    )
+    assert rd_data == 0, "W1C bypass register should not store written values"
+
+
+@cocotb.test()
+async def test_ocp_csr_access_bypass_enabled(dut):
+    await test_ocp_csr_access(dut, True)
+
+
+@cocotb.test()
+async def test_ocp_csr_access_bypass_disabled(dut):
+    await test_ocp_csr_access(dut, False)

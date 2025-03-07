@@ -5,7 +5,6 @@ from cocotb_helpers import reset_n
 from reg_map import reg_map
 
 import cocotb
-from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles
 

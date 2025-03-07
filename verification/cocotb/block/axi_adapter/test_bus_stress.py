@@ -3,18 +3,12 @@
 import logging
 import random
 
-from bus2csr import (
-    dword2int,
-    get_frontend_bus_if,
-    int2bytes,
-    int2dword,
-)
+from bus2csr import dword2int, get_frontend_bus_if, int2bytes, int2dword
+from cocotb_helpers import reset_n
+from cocotbext.axi.constants import AxiBurstType
 
 import cocotb
 from cocotb.triggers import ClockCycles, Combine, RisingEdge, Timer, with_timeout
-from cocotb_helpers import reset_n
-
-from cocotbext.axi.constants import AxiBurstType
 
 
 async def timeout_task(timeout):
@@ -167,10 +161,14 @@ async def test_write_read_burst(dut):
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Run write burst to fill the FIFO
-    await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+    await with_timeout(
+        tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us"
+    )
 
     # Run read burst to empty the FIFO
-    received_data = await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us")
+    received_data = await with_timeout(
+        tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"
+    )
 
     assert received_data == test_data, "Received data does not match sent data!"
 
@@ -188,10 +186,16 @@ async def test_write_burst_collision_with_read(dut):
     single_write_cycles = 3
 
     async def writer():
-        await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+        await with_timeout(
+            tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us"
+        )
 
     async def reader(return_data):
-        return_data.extend(await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+        return_data.extend(
+            await with_timeout(
+                tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"
+            )
+        )
 
     received_data = []
     half_write_timer = ClockCycles(tb.clk, data_len * single_write_cycles // 2)
@@ -221,10 +225,16 @@ async def test_read_burst_collision_with_write(dut):
     single_write_cycles = 3
 
     async def writer():
-        await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+        await with_timeout(
+            tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us"
+        )
 
     async def reader(return_data):
-        return_data.extend(await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+        return_data.extend(
+            await with_timeout(
+                tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"
+            )
+        )
 
     received_data1 = []
     received_data2 = []

@@ -388,6 +388,7 @@ module recovery_handler
       .source_flush_i(tti_tx_data_queue_flush_conv_source)
   );
 
+  logic allow_indirect_write, allow_indirect_read;
   // Data queues
   queues #(
 
@@ -481,7 +482,7 @@ module recovery_handler
       .tx_rvalid_o(tti_tx_data_queue_rvalid),
       .tx_rready_i(tti_tx_data_queue_rready),
       .tx_rdata_o(tti_tx_data_queue_rdata),
-      .tx_req_i(tti_tx_data_queue_req),
+      .tx_req_i(tti_tx_data_queue_req & allow_indirect_write),
       .tx_ack_o(tti_tx_data_queue_ack),
       .tx_data_i(tti_tx_data_queue_data),
       .tx_start_thld_i(tti_tx_data_queue_start_thld),
@@ -491,9 +492,6 @@ module recovery_handler
       .tx_reg_rst_we_o(tti_tx_data_queue_reg_rst_we),
       .tx_reg_rst_data_o(tti_tx_data_queue_reg_rst_next)
   );
-
-  // Recovery data available signal.
-  // assign payload_available_o = recovery_enable & !tti_rx_data_queue_empty;
 
   // IBI
   write_queue #(
@@ -984,7 +982,7 @@ module recovery_handler
       .wdata_i (indirect_rx_wdata),
 
       // Read port
-      .req_i (indirect_rx_rreq),
+      .req_i (indirect_rx_rreq & allow_indirect_read),
       .ack_o (indirect_rx_rack),
       .data_o(indirect_rx_rdata),
 
@@ -1005,6 +1003,26 @@ module recovery_handler
       .ready_thld_trig_o(),
       .depth_o          ()
   );
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : indirect_fifo_access_permissions
+    if (~rst_ni) begin
+      allow_indirect_write <= '0;
+      allow_indirect_read <= '0;
+    end else begin
+      if (bypass_i3c_core_i) begin
+        if (indirect_rx_empty) begin
+          allow_indirect_write <= 1'b1;
+          allow_indirect_read <= 1'b0;
+        end else if (indirect_rx_full | payload_available_o) begin
+          allow_indirect_write <= 1'b0;
+          allow_indirect_read <= 1'b1;
+        end
+      end else begin
+        allow_indirect_write <= 1'b1;
+        allow_indirect_read <= 1'b1;
+      end
+    end
+  end
 
   // ....................................................
 

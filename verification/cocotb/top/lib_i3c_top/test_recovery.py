@@ -928,7 +928,7 @@ async def test_virtual_read(dut):
             dut._log.info(f"Command 0x{cmd:02X}")
             data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, cmd)
 
-            is_nack = data == None and pec_ok == None
+            is_nack = data is None and pec_ok is None
             pec_ok = bool(pec_ok)
 
             if is_nack:
