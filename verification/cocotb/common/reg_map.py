@@ -2038,7 +2038,7 @@ reg_map = Munch.fromDict({
                     "low": 0,
                     "mask": 4294967295,
                     "reset": 0,
-                    "sw": "rw",
+                    "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
                     "rclr": 0,
