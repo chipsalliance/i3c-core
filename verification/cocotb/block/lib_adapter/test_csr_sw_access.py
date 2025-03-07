@@ -30,6 +30,14 @@ import cocotb
 from cocotb.handle import SimHandleBase
 
 
+# Disable AXI ID filtering to let the CSR requests pass through
+def disable_id_filtering(dut):
+    if hasattr(dut, "disable_id_filtering_i"):
+        dut.disable_id_filtering_i.value = 1
+    if hasattr(dut, "priv_ids_i"):
+        dut.priv_ids_i.value = [0] * len(dut.priv_ids_i)
+
+
 async def read_csr_and_verify(
     testIf: FrontBusTestInterface,
     addr: int,
@@ -67,7 +75,7 @@ async def write_csr_and_verify(
 @cocotb.test()
 async def test_read_hci_version_csr(dut: SimHandleBase):
     """Run test to read HCI version register."""
-
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 
@@ -80,7 +88,7 @@ async def test_read_hci_version_csr(dut: SimHandleBase):
 @cocotb.test()
 async def test_read_pio_section_offset(dut: SimHandleBase):
     """Run test to read PIO section offset register."""
-
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 
@@ -90,7 +98,7 @@ async def test_read_pio_section_offset(dut: SimHandleBase):
 @cocotb.test()
 async def test_write_to_controller_device_addr(dut: SimHandleBase):
     """Run test to write & read from Controller Device Address."""
-
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 
@@ -104,7 +112,7 @@ async def test_write_to_controller_device_addr(dut: SimHandleBase):
 @cocotb.test()
 async def test_write_should_not_affect_ro_csr(dut: SimHandleBase):
     """Run test to write to RO HC Capabilities."""
-
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 
@@ -119,6 +127,7 @@ async def test_write_should_not_affect_ro_csr(dut: SimHandleBase):
 
 @cocotb.test()
 async def test_sequence_csr_read(dut: SimHandleBase):
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 
@@ -153,6 +162,7 @@ async def test_sequence_csr_read(dut: SimHandleBase):
 
 @cocotb.test()
 async def test_sequence_csr_write(dut: SimHandleBase):
+    disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
     await tb.register_test_interfaces()
 

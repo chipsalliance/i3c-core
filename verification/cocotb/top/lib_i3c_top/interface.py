@@ -36,6 +36,9 @@ class I3CTopTestInterface:
                 self.dut._log.warning(f"Enforcing min. system clock frequency of {fmin:.3f} MHz")
                 fclk = fmin
 
+        if hasattr(self.dut, "disable_id_filtering_i"):
+            self.dut.disable_id_filtering_i.value = 1
+
         await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)

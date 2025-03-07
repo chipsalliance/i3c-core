@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+`include "i3c_defines.svh"
 
 module hci_queues_wrapper
   import i3c_pkg::*;
@@ -12,6 +13,9 @@ module hci_queues_wrapper
     parameter int unsigned AxiDataWidth = 32,
     parameter int unsigned AxiUserWidth = 32,
     parameter int unsigned AxiIdWidth   = 2,
+`ifdef AXI_ID_FILTERING
+    parameter int unsigned NumPrivIds = 4,
+`endif
 
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
@@ -107,7 +111,7 @@ module hci_queues_wrapper
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds-1],
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
 `endif
 
     // HCI queues (FSM side)

@@ -58,6 +58,9 @@ async def initialize(dut, timeout=50):
     dut.wvalid.value = 0
     dut.bready.value = 0
 
+    if hasattr(dut, "disable_id_filtering_i"):
+        dut.disable_id_filtering_i.value = 1
+
     # Configure testbench
     tb = get_frontend_bus_if()(dut)
     tb.log = dut._log

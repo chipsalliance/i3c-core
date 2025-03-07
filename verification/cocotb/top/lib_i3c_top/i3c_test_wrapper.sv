@@ -16,6 +16,9 @@ module i3c_test_wrapper #(
     parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
     parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
     parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
+`ifdef AXI_ID_FILTERING
+    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
+`endif
 `endif
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
@@ -86,7 +89,7 @@ module i3c_test_wrapper #(
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds-1],
+    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
 `endif
 `endif
     // I3C Target Simulation model

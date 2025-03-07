@@ -28,6 +28,9 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.tti_ibi_rready_i.value = 0
         self.dut.bypass_i3c_core_i.value = 0
 
+        if hasattr(self.dut, "disable_id_filtering_i"):
+            self.dut.disable_id_filtering_i.value = 1
+
         await super()._setup(get_frontend_bus_if())
 
     async def reset(self):
