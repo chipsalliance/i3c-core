@@ -94,3 +94,29 @@ class CocotbScanner(RDLListener):
 
         field.update({"low": node.low})
         field.update({"mask": field_mask})
+
+        # Collect on-reset value if specified
+        on_reset = node.get_property("reset")
+        if on_reset is not None:
+            field.update({"reset": on_reset})
+
+        # Collect access permissions
+        sw = ""
+        if node.is_sw_readable:
+            sw += "r"
+        if node.is_sw_writable:
+            sw += "w"
+        field.update({"sw": sw if sw != "" else "na"})
+
+        hw = ""
+        if node.is_hw_readable:
+            hw += "r"
+        if node.is_hw_writable:
+            hw += "w"
+        field.update({"hw": hw if hw != "" else "na"})
+
+        woclr = node.get_property("woclr") or node.get_property("onwrite") == "woclr"
+        field.update({"woclr": int(woclr)})
+
+        rclr = node.get_property("rclr") or node.get_property("onread") == "rclr"
+        field.update({"rclr": int(rclr)})
