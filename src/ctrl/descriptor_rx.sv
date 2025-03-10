@@ -36,7 +36,7 @@ module descriptor_rx #(
     output logic [TtiRxDescDataWidth-1:0] tti_rx_desc_queue_wdata_o,
 
     // TTI: RX Data
-    input logic tti_rx_queue_full_i,
+    input logic tti_rx_queue_wready_i,
     output logic tti_rx_queue_wvalid_o,
     output logic tti_rx_queue_flush_o,
     output logic [TtiRxDataWidth-1:0] tti_rx_queue_wdata_o,
@@ -91,7 +91,7 @@ module descriptor_rx #(
   end
 
   assign tti_rx_queue_wvalid_o = rx_byte_valid_i;
-  assign rx_byte_ready_o = ~tti_rx_queue_full_i;
+  assign rx_byte_ready_o = tti_rx_queue_wready_i;
   assign tti_rx_queue_wdata_o = rx_byte_i;
 
   assign rx_descriptor = {rx_error, {12{1'b0}}, byte_counter_q};

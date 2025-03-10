@@ -473,7 +473,6 @@ module controller
       .tx_desc_queue_rvalid_i(tti_tx_desc_queue_rvalid_i),
       .tx_desc_queue_rready_o(tti_tx_desc_queue_rready_o),
       .tx_desc_queue_rdata_i(tti_tx_desc_queue_rdata_i),
-      .rx_queue_full_i(tti_rx_queue_full_i),
       .rx_queue_depth_i(tti_rx_queue_depth_i),
       .rx_queue_start_thld_i(tti_rx_queue_start_thld_i),
       .rx_queue_start_thld_trig_i(tti_rx_queue_start_thld_trig_i),

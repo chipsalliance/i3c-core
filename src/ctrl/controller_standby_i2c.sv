@@ -48,7 +48,6 @@ module controller_standby_i2c
     input logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
 
     // TTI: RX Data
-    input logic rx_queue_full_i,
     input logic [TtiRxThldWidth-1:0] rx_queue_start_thld_i,
     input logic rx_queue_start_thld_trig_i,
     input logic [TtiRxThldWidth-1:0] rx_queue_ready_thld_i,

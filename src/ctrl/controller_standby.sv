@@ -60,7 +60,6 @@ module controller_standby
     input logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
 
     // TTI: RX Data
-    input logic rx_queue_full_i,
     input logic [TtiRxFifoDepthWidth-1:0] rx_queue_depth_i,
     input logic [TtiRxThldWidth-1:0] rx_queue_start_thld_i,
     input logic rx_queue_start_thld_trig_i,
@@ -321,7 +320,6 @@ module controller_standby
       .tx_desc_queue_rvalid_i(tx_desc_queue_rvalid_i),
       .tx_desc_queue_rready_o(i2c_tx_desc_queue_rready_o),
       .tx_desc_queue_rdata_i(tx_desc_queue_rdata_i),
-      .rx_queue_full_i(rx_queue_full_i),
       .rx_queue_start_thld_i(rx_queue_start_thld_i),
       .rx_queue_start_thld_trig_i(rx_queue_start_thld_trig_i),
       .rx_queue_ready_thld_i(rx_queue_ready_thld_i),
@@ -391,7 +389,7 @@ module controller_standby
       .tx_desc_queue_rvalid_i(tx_desc_queue_rvalid_i),
       .tx_desc_queue_rready_o(i3c_tx_desc_queue_rready_o),
       .tx_desc_queue_rdata_i(tx_desc_queue_rdata_i),
-      .rx_queue_full_i(rx_queue_full_i),
+      .rx_queue_wready_i(rx_queue_wready_i),
       .rx_queue_wvalid_o(i3c_rx_queue_wvalid_o),
       .rx_queue_wdata_o(i3c_rx_queue_wdata_o),
       .rx_queue_flush_o(i3c_rx_queue_flush_o),

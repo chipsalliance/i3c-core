@@ -298,9 +298,23 @@ module i3c_target_fsm #(
   assign rx_overflow_err_o = ~rx_overflow_err_q & rx_overflow_err_r;
 
   // RX FIFO valid when we finish reading byte (leave RxPWriteData) and there was no parity error
-  assign rx_fifo_wvalid_o = (state_q == RxPWriteTbit) &
+  logic rx_fifo_wvalid;
+  assign rx_fifo_wvalid = (state_q == RxPWriteTbit) &
                             (state_d != RxPWriteTbit) &
                             ~(parity_err | rx_overflow_err_o);
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_rx_fifo_wvalid
+    if (~rst_ni) begin
+      rx_fifo_wvalid_o <= 1'b0;
+    end else begin
+      if (rx_fifo_wvalid) begin
+        rx_fifo_wvalid_o <= 1'b1;
+      end
+      if (rx_fifo_wvalid_o & rx_fifo_wready_i) begin
+        rx_fifo_wvalid_o <= 1'b0;
+      end
+    end
+  end
   // Last RX byte when we leave Private Write loop
   assign rx_last_byte_o = (state_q == RxPWriteData) & (state_d inside {RxFByte, Idle});
 

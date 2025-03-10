@@ -4,15 +4,12 @@ import logging
 import random
 
 from bus2csr import dword2int, int2dword
+from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, Combine, Event, RisingEdge, Timer
-
-STATIC_ADDR = 0x5A
-VIRT_STATIC_ADDR = 0x5B
-DYNAMIC_ADDR = 0x52
-VIRT_DYNAMIC_ADDR = 0x53
+from cocotb.triggers import ClockCycles, Combine, Event, Join, RisingEdge, Timer
 
 
 async def write_to_indirect_fifo(tb, data=None, format="bytes"):
@@ -180,7 +177,7 @@ async def test_indirect_fifo_write(dut):
     assert (wrptr3, rdptr3) == (0, 0)
 
     # If top pointer is equal to 0, then FIFO should be full after write
-    fifo_full_at_top = (top_ptr == 0)
+    fifo_full_at_top = top_ptr == 0
 
     # Check empty/full progression
     assert (full0, empty0) == (False, True)
@@ -307,12 +304,18 @@ async def test_read(dut):
     assert recovery_data == device_id
 
     # Ensure there is access to rest of basic registers
-    hw_status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.HW_STATUS.base_addr, 4))
+    hw_status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.HW_STATUS.base_addr, 4)
+    )
     assert hw_status == 0x0
 
     device_status = [
-        dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)),
-        dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_1.base_addr, 4)),
+        dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+        ),
+        dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_1.base_addr, 4)
+        ),
     ]
     assert device_status == [0x3, 0x0]  # DEVICE_STATUS_0 was earlier set to 0x3
 
@@ -326,9 +329,12 @@ async def test_payload_available(dut):
     # Initialize
     tb = await initialize(dut, timeout=50)
 
-    payload_size = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4)
-    ) * 4  # Multiply by 4 to get bytes from dwords
+    payload_size = (
+        dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4)
+        )
+        * 4
+    )  # Multiply by 4 to get bytes from dwords
 
     payload_available = dut.xi3c_wrapper.recovery_payload_available_o
 
@@ -419,6 +425,86 @@ async def test_image_activated(dut):
 
 
 @cocotb.test()
+async def test_i3c_bus_traffic_during_loopback(dut):
+    tb = await initialize(dut, timeout=500)
+
+    rtl_target_addr = 0x5A
+    sim_target_addr = 0x23  # Arbitrary
+
+    fbus = 12.5
+    i3c_controller = I3cController(
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_ctrl_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_ctrl_i,
+        debug_state_o=None,
+        speed=fbus * 1e6,
+    )
+
+    i3c_target = I3CTarget(  # noqa
+        sda_i=dut.bus_sda,
+        sda_o=dut.sda_sim_target_i,
+        scl_i=dut.bus_scl,
+        scl_o=dut.scl_sim_target_i,
+        debug_state_o=None,
+        speed=fbus * 1e6,
+        address=sim_target_addr,
+    )
+
+    run_target_bus_traffic = Event()
+
+    async def target_bus_traffic(addr, run_condition):
+        await run_condition.wait()
+        while run_condition.is_set():
+            # Send data to simulated target
+            await i3c_controller.i3c_write(addr, [random.randint(0, 255)])
+
+    fifo_size = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_4.base_addr, 4)
+    )
+
+    for addr in [sim_target_addr, rtl_target_addr]:
+        # Random delay to start transfer in the middle of I3C transaction
+
+        for _ in range(10):  # Arbitrary number of repetitions
+            payload_data = [random.randint(0, 2**32 - 1) for _ in range(fifo_size)]
+            delay_cycles = random.randint(0, 1000)
+            dut._log.info(f"Randomized delay is {delay_cycles} clock cycles")
+
+            # Start I3C traffic
+            bus_traffic = cocotb.start_soon(target_bus_traffic(addr, run_target_bus_traffic))
+            run_target_bus_traffic.set()
+
+            # Wait for random number of cycles and start write to Indirect FIFO via bypass
+            await ClockCycles(tb.clk, delay_cycles)
+            write_fifo = cocotb.start_soon(
+                write_to_indirect_fifo(tb, payload_data, format="dwords")
+            )
+
+            # Wait for random number of cycles and start read from Indirect FIFO via bypass
+            await ClockCycles(tb.clk, delay_cycles)
+            payload_received = []
+            for _ in range(fifo_size):
+                d = dword2int(
+                    await tb.read_csr(
+                        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4
+                    )
+                )
+                payload_received.append(d)
+
+            # Payload write/read to I3C Core finished so disable I3C bus traffic generator
+            await Join(write_fifo)
+            run_target_bus_traffic.clear()
+            await Join(bus_traffic)
+
+            dut._log.info("Received data: " + " ".join([hex(w) for w in payload_received]))
+            dut._log.info("Expected data: " + " ".join([hex(w) for w in payload_data]))
+            assert (
+                payload_data == payload_received
+            ), "Reiceved payload data does not match sent data!"
+
+
+@cocotb.test()
 async def test_recovery_flow(dut):
     """
     Test firmware image transfer
@@ -479,7 +565,7 @@ async def test_recovery_flow(dut):
         # Write image size to Indirect FIFO Control Image size field
         await tb.write_csr_field(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr,
-            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB,
+            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE,
             image_size,
         )
         # Clear Indirect FIFO Reset
