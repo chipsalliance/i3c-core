@@ -1072,6 +1072,63 @@ async def test_image_activated(dut):
 
 
 @cocotb.test()
+async def test_indirect_fifo_reset_access(dut):
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=1000)
+
+    tx_data_length = random.randint(10, 50)
+
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Write data to indirect FIFO through the recovery interface
+    tx_data_before_reset = [random.randint(0, 255) for _ in range(tx_data_length)]
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data_before_reset
+    )
+
+    # Clear FIFO (pointers too)
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, [0x00, 0x01, 0x00, 0x00]
+    )
+
+    # Clear FIFO reset
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr,
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.RESET,
+        0xFF,
+    )
+
+    # Write data to indirect FIFO through the recovery interface
+    tx_data_after_reset = [random.randint(0, 255) for _ in range(tx_data_length)]
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data_after_reset
+    )
+
+    received_data = []
+    for _ in range((tx_data_length + 3) // 4):
+        d = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+        )
+        received_data.append(d)
+
+    tx_data_after_reset_as_dwords = []
+    len_as_dwords = (tx_data_length + 3) // 4
+    last_dword_bytes = (tx_data_length % 4) or 4
+    for i in range(len_as_dwords):
+        dword = 0
+        number_of_bytes = last_dword_bytes if ((len_as_dwords - 1) == i) else 4
+        for k in range(number_of_bytes):
+            dword = dword | (tx_data_after_reset[i * 4 + k] << (k * 8))
+        tx_data_after_reset_as_dwords.append(dword)
+
+    dut._log.info("TX dwords: " + " ".join([hex(w) for w in tx_data_after_reset_as_dwords]))
+    dut._log.info("RX dwords: " + " ".join([hex(w) for w in received_data]))
+    assert tx_data_after_reset_as_dwords == received_data
+
+
+@cocotb.test()
 async def test_recovery_flow(dut):
     """
     Test firmware image transfer
