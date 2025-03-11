@@ -584,7 +584,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `recovery_flow`
 
-Test: [`recovery_flow`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1074)
+Test: [`recovery_flow`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1131)
 
 The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
