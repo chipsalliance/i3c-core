@@ -264,7 +264,7 @@ module flow_active
         // - 6: Defining Byte + 1
         // - 7: Defining Byte + 2
         imm_use_def_byte = immediate_cmd_desc.dtt > 4 ? 1'b1 : 1'b0;
-        data_length = imm_use_def_byte ? immediate_cmd_desc.dtt - 5 : immediate_cmd_desc.dtt;
+        data_length = imm_use_def_byte ? 16'(immediate_cmd_desc.dtt - 5) : 16'(immediate_cmd_desc.dtt);
       end
       AddressAssignment: begin
         // TODO
@@ -398,7 +398,7 @@ module flow_active
       FetchDAT: begin
         // TODO: Optimize DAT read so it takes just 1 cycle
         dat_read_valid_hw_o = 1'b1;
-        dat_index_hw_o = dev_index;
+        dat_index_hw_o = $clog2(`DAT_DEPTH)'(dev_index);
       end
       // I2CWriteImmediate: Execute Immediate Transfer to Legacy I2C Device via I2C Controller
       I2CWriteImmediate: begin

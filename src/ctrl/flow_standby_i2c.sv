@@ -62,7 +62,7 @@ module flow_standby_i2c
   // Are we currently mid-transfer?
   logic transfer_active;
   // Number of data bytes held in `fifo_buf`
-  logic [AcqFifoDepth-1:0] byte_count;  // Note: We handle only 4 entries of `fifo_buf`
+  logic [1:0] byte_count;  // Note: We handle only 4 entries of `fifo_buf`
   // Total number of bytes processed in transaction
   logic [15:0] transaction_byte_count;
   // Read transaction length
@@ -134,7 +134,9 @@ module flow_standby_i2c
   end : accumulate_bytes_in_dword
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : change_byte_count
-    if (!rst_ni | reset_byte_count) begin
+    if (!rst_ni) begin
+      transaction_byte_count <= 0;
+    end else if (reset_byte_count) begin
       transaction_byte_count <= 0;
     end else begin
       if (push_byte) begin
@@ -232,7 +234,7 @@ module flow_standby_i2c
     activate_transfer   = start_detected;
     deactivate_transfer = stop_detected | restart_detected;
 
-    if (xfer_read) tx_fifo_rdata_o = fifo_buf[byte_count];
+    if (xfer_read) tx_fifo_rdata_o = fifo_buf[byte_count][7:0];
     else tx_fifo_rdata_o = 0;
   end : state_outputs
 
