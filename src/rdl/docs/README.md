@@ -1772,10 +1772,10 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x48
 - Size: 0x4
 
-|Bits|Identifier|  Access |Reset|                   Name                   |
-|----|----------|---------|-----|------------------------------------------|
-| 7:0|    CMS   |    rw   | 0x0 |Indirect FIFO memory access configuration.|
-|15:8|   RESET  |rw, woclr| 0x0 |   Indirect memory configuration - reset  |
+|Bits|Identifier|Access|Reset|                   Name                   |
+|----|----------|------|-----|------------------------------------------|
+| 7:0|    CMS   |  rw  | 0x0 |Indirect FIFO memory access configuration.|
+|15:8|   RESET  |  rw  | 0x0 |   Indirect memory configuration - reset  |
 
 #### CMS field
 

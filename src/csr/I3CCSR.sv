@@ -5564,11 +5564,14 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value & ~(decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
+        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value & ~decoded_wr_biten[15:8]) | (decoded_wr_data[15:8] & decoded_wr_biten[15:8]);
             load_next_c = '1;
         end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.next;
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.next = next_c;

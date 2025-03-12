@@ -2423,7 +2423,7 @@ package I3CCSR_uvm;
             this.CMS = new("CMS");
             this.CMS.configure(this, 8, 0, "RW", 1, 'h0, 1, 1, 0);
             this.RESET = new("RESET");
-            this.RESET.configure(this, 8, 8, "W1C", 1, 'h0, 1, 1, 0);
+            this.RESET.configure(this, 8, 8, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CMS_bit_cg[bt]) CMS_bit_cg[bt] = new();
                 foreach(RESET_bit_cg[bt]) RESET_bit_cg[bt] = new();

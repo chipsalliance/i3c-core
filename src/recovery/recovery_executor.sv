@@ -630,6 +630,19 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = tti_rx_rdata_i[31:0];
   end
 
+  logic fifo_reset_clear;
+  assign hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.hwclr = fifo_reset_clear;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      fifo_reset_clear <= '0;
+    end else if (hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value) begin
+      fifo_reset_clear <= 1'b1;
+    end else begin
+      fifo_reset_clear <= '0;
+    end
+  end
+
   // Force the value of FIFO_STATUS.FIFO_SIZE to IndirectFifoDepth.
   always_comb begin
     hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next = IndirectFifoDepth;

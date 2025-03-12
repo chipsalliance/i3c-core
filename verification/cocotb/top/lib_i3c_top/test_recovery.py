@@ -348,7 +348,7 @@ async def test_write(dut):
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
-    assert data0 == 0xBBAA  # 2 MSBs are reserved
+    assert data0 == 0xAA  # 2 MSBs are reserved, 3rd MSB is W1C
     assert data1 == 0x44332211
 
 
@@ -833,7 +833,7 @@ async def test_virtual_read(dut):
             data, pec_ok = await recovery.command_read(VIRT_DYNAMIC_ADDR, cmd)
 
             is_nack = data == None and pec_ok == None
-            pec_ok  = bool(pec_ok)
+            pec_ok = bool(pec_ok)
 
             if is_nack:
                 dut._log.info("NACK")
@@ -962,9 +962,12 @@ async def test_payload_available(dut):
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=200)
 
-    fifo_size = dword2int(
-        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr, 4)
-    ) * 4  # Multiply by 4 to get bytes from dwords
+    fifo_size = (
+        dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr, 4)
+        )
+        * 4
+    )  # Multiply by 4 to get bytes from dwords
 
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
@@ -1100,16 +1103,14 @@ async def test_indirect_fifo_reset_access(dut):
         VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, tx_data_before_reset
     )
 
-    # Clear FIFO (pointers too)
-    await recovery.command_write(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, [0x00, 0x01, 0x00, 0x00]
-    )
+    # Wait until data propagates to Indirect FIFO
+    await ClockCycles(tb.clk, tx_data_length)
 
-    # Clear FIFO reset
+    # Clear FIFO (pointers too)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr,
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.RESET,
-        0xFF,
+        0x1,
     )
 
     # Write data to indirect FIFO through the recovery interface
@@ -1226,13 +1227,6 @@ async def test_recovery_flow(dut):
         )
 
         assert (wrptr, rdptr) == (0, 0)
-
-        # Clear FIFO reset
-        await tb.write_csr_field(
-            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr,
-            tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.RESET,
-            0xFF,
-        )
 
         # Send firmware chunks
         xfer_size = 4

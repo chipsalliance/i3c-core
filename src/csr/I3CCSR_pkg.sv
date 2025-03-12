@@ -497,6 +497,7 @@ package I3CCSR_pkg;
     typedef struct packed{
         logic [7:0] next;
         logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__in_t;
 
     typedef struct packed{
