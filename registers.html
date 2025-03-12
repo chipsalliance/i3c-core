@@ -2128,13 +2128,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#image-size-msb-field" class="md-nav__link">
-    <span class="md-ellipsis">IMAGE_<wbr>SIZE_<wbr>MSB field</span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2149,8 +2142,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#image-size-lsb-field" class="md-nav__link">
-    <span class="md-ellipsis">IMAGE_<wbr>SIZE_<wbr>LSB field</span>
+  <a href="#image-size-field" class="md-nav__link">
+    <span class="md-ellipsis">IMAGE_<wbr>SIZE field</span>
   </a>
   
 </li>
@@ -7648,12 +7641,6 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 <td><p>0x0</p></td>
 <td><p>Indirect memory configuration - reset</p></td>
 </tr>
-<tr class="row-even"><td><p>31:16</p></td>
-<td><p>IMAGE_SIZE_MSB</p></td>
-<td><p>rw</p></td>
-<td><p>0x0</p></td>
-<td><p>Indirect memory configuration - Image Size</p></td>
-</tr>
 </tbody>
 </table>
 <h4 id="id13">CMS field<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
@@ -7676,8 +7663,6 @@ Component Memory Space (CMS):</p>
 <p>0x2 to 0xFF: reserved</p>
 </li>
 </ul>
-<h4 id="image-size-msb-field">IMAGE_SIZE_MSB field<a class="headerlink" href="#image-size-msb-field" title="Link to this heading">¶</a></h4>
-<p>Image Size (2 MSBs): Size of the image to be loaded in 4B units</p>
 <h3 id="indirect-fifo-ctrl-1-register">INDIRECT_FIFO_CTRL_1 register<a class="headerlink" href="#indirect-fifo-ctrl-1-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x14C</p></li>
@@ -7694,16 +7679,16 @@ Component Memory Space (CMS):</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>15:0</p></td>
-<td><p>IMAGE_SIZE_LSB</p></td>
+<tr class="row-even"><td><p>31:0</p></td>
+<td><p>IMAGE_SIZE</p></td>
 <td><p>rw</p></td>
 <td><p>0x0</p></td>
 <td><p>Indirect memory configuration - Image Size</p></td>
 </tr>
 </tbody>
 </table>
-<h4 id="image-size-lsb-field">IMAGE_SIZE_LSB field<a class="headerlink" href="#image-size-lsb-field" title="Link to this heading">¶</a></h4>
-<p>Image Size (2 LSBs): Size of the image to be loaded in 4B units</p>
+<h4 id="image-size-field">IMAGE_SIZE field<a class="headerlink" href="#image-size-field" title="Link to this heading">¶</a></h4>
+<p>Image Size: Size of the image to be loaded in 4B units</p>
 <h3 id="indirect-fifo-status-0-register">INDIRECT_FIFO_STATUS_0 register<a class="headerlink" href="#indirect-fifo-status-0-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x150</p></li>
@@ -11062,7 +11047,7 @@ reaches termination value.</p>
   <small>
     
       Last update:
-      2025-03-11
+      2025-03-12
     
   </small>
 </div>
