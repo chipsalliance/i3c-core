@@ -1317,13 +1317,11 @@
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_fld_cg with function sample(
     input bit [8-1:0] CMS,
-    input bit [8-1:0] RESET,
-    input bit [16-1:0] IMAGE_SIZE_MSB
+    input bit [8-1:0] RESET
     );
         option.per_instance = 1;
         CMS_cp : coverpoint CMS;
         RESET_cp : coverpoint RESET;
-        IMAGE_SIZE_MSB_cp : coverpoint IMAGE_SIZE_MSB;
 
     endgroup
 
@@ -1340,10 +1338,10 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_fld_cg with function sample(
-    input bit [16-1:0] IMAGE_SIZE_LSB
+    input bit [32-1:0] IMAGE_SIZE
     );
         option.per_instance = 1;
-        IMAGE_SIZE_LSB_cp : coverpoint IMAGE_SIZE_LSB;
+        IMAGE_SIZE_cp : coverpoint IMAGE_SIZE;
 
     endgroup
 

@@ -2406,11 +2406,9 @@ package I3CCSR_uvm;
 
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_bit_cg CMS_bit_cg[8];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_bit_cg RESET_bit_cg[8];
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_bit_cg IMAGE_SIZE_MSB_bit_cg[16];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0_fld_cg fld_cg;
         rand uvm_reg_field CMS;
         rand uvm_reg_field RESET;
-        rand uvm_reg_field IMAGE_SIZE_MSB;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2426,12 +2424,9 @@ package I3CCSR_uvm;
             this.CMS.configure(this, 8, 0, "RW", 1, 'h0, 1, 1, 0);
             this.RESET = new("RESET");
             this.RESET.configure(this, 8, 8, "W1C", 1, 'h0, 1, 1, 0);
-            this.IMAGE_SIZE_MSB = new("IMAGE_SIZE_MSB");
-            this.IMAGE_SIZE_MSB.configure(this, 16, 16, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(CMS_bit_cg[bt]) CMS_bit_cg[bt] = new();
                 foreach(RESET_bit_cg[bt]) RESET_bit_cg[bt] = new();
-                foreach(IMAGE_SIZE_MSB_bit_cg[bt]) IMAGE_SIZE_MSB_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -2444,9 +2439,9 @@ package I3CCSR_uvm;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_bit_cg IMAGE_SIZE_LSB_bit_cg[16];
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_bit_cg IMAGE_SIZE_bit_cg[32];
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1_fld_cg fld_cg;
-        rand uvm_reg_field IMAGE_SIZE_LSB;
+        rand uvm_reg_field IMAGE_SIZE;
 
         function new(string name = "I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -2458,10 +2453,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.IMAGE_SIZE_LSB = new("IMAGE_SIZE_LSB");
-            this.IMAGE_SIZE_LSB.configure(this, 16, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.IMAGE_SIZE = new("IMAGE_SIZE");
+            this.IMAGE_SIZE.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(IMAGE_SIZE_LSB_bit_cg[bt]) IMAGE_SIZE_LSB_bit_cg[bt] = new();
+                foreach(IMAGE_SIZE_bit_cg[bt]) IMAGE_SIZE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();

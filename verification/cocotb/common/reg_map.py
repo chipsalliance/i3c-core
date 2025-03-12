@@ -902,18 +902,14 @@ reg_map = Munch.fromDict({
                 "RESET": {
                     "low": 8,
                     "mask": 65280
-                },
-                "IMAGE_SIZE_MSB": {
-                    "low": 16,
-                    "mask": 4294901760
                 }
             },
             "INDIRECT_FIFO_CTRL_1": {
                 "base_addr": 332,
                 "offset": 332,
-                "IMAGE_SIZE_LSB": {
+                "IMAGE_SIZE": {
                     "low": 0,
-                    "mask": 65535
+                    "mask": 4294967295
                 }
             },
             "INDIRECT_FIFO_STATUS_0": {

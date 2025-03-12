@@ -1772,11 +1772,10 @@ When set to 0, it holds execution of enqueued commands and runs current command 
 - Base Offset: 0x48
 - Size: 0x4
 
-| Bits|  Identifier  |  Access |Reset|                   Name                   |
-|-----|--------------|---------|-----|------------------------------------------|
-| 7:0 |      CMS     |    rw   | 0x0 |Indirect FIFO memory access configuration.|
-| 15:8|     RESET    |rw, woclr| 0x0 |   Indirect memory configuration - reset  |
-|31:16|IMAGE_SIZE_MSB|    rw   | 0x0 |Indirect memory configuration - Image Size|
+|Bits|Identifier|  Access |Reset|                   Name                   |
+|----|----------|---------|-----|------------------------------------------|
+| 7:0|    CMS   |    rw   | 0x0 |Indirect FIFO memory access configuration.|
+|15:8|   RESET  |rw, woclr| 0x0 |   Indirect memory configuration - reset  |
 
 #### CMS field
 
@@ -1802,23 +1801,19 @@ Component Memory Space (CMS):</p>
 </li>
 </ul>
 
-#### IMAGE_SIZE_MSB field
-
-<p>Image Size (2 MSBs): Size of the image to be loaded in 4B units</p>
-
 ### INDIRECT_FIFO_CTRL_1 register
 
 - Absolute Address: 0x14C
 - Base Offset: 0x4C
 - Size: 0x4
 
-|Bits|  Identifier  |Access|Reset|                   Name                   |
-|----|--------------|------|-----|------------------------------------------|
-|15:0|IMAGE_SIZE_LSB|  rw  | 0x0 |Indirect memory configuration - Image Size|
+|Bits|Identifier|Access|Reset|                   Name                   |
+|----|----------|------|-----|------------------------------------------|
+|31:0|IMAGE_SIZE|  rw  | 0x0 |Indirect memory configuration - Image Size|
 
-#### IMAGE_SIZE_LSB field
+#### IMAGE_SIZE field
 
-<p>Image Size (2 LSBs): Size of the image to be loaded in 4B units</p>
+<p>Image Size: Size of the image to be loaded in 4B units</p>
 
 ### INDIRECT_FIFO_STATUS_0 register
 

@@ -1579,10 +1579,9 @@
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(CMS_bit_cg[bt]) this.CMS_bit_cg[bt].sample(data[0 + bt]);
             foreach(RESET_bit_cg[bt]) this.RESET_bit_cg[bt].sample(data[8 + bt]);
-            foreach(IMAGE_SIZE_MSB_bit_cg[bt]) this.IMAGE_SIZE_MSB_bit_cg[bt].sample(data[16 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[7:0]/*CMS*/  ,  data[15:8]/*RESET*/  ,  data[31:16]/*IMAGE_SIZE_MSB*/   );
+            this.fld_cg.sample( data[7:0]/*CMS*/  ,  data[15:8]/*RESET*/   );
         end
     endfunction
 
@@ -1590,10 +1589,9 @@
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(CMS_bit_cg[bt]) this.CMS_bit_cg[bt].sample(CMS.get_mirrored_value() >> bt);
             foreach(RESET_bit_cg[bt]) this.RESET_bit_cg[bt].sample(RESET.get_mirrored_value() >> bt);
-            foreach(IMAGE_SIZE_MSB_bit_cg[bt]) this.IMAGE_SIZE_MSB_bit_cg[bt].sample(IMAGE_SIZE_MSB.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( CMS.get_mirrored_value()  ,  RESET.get_mirrored_value()  ,  IMAGE_SIZE_MSB.get_mirrored_value()   );
+            this.fld_cg.sample( CMS.get_mirrored_value()  ,  RESET.get_mirrored_value()   );
         end
     endfunction
 
@@ -1606,19 +1604,19 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(IMAGE_SIZE_LSB_bit_cg[bt]) this.IMAGE_SIZE_LSB_bit_cg[bt].sample(data[0 + bt]);
+            foreach(IMAGE_SIZE_bit_cg[bt]) this.IMAGE_SIZE_bit_cg[bt].sample(data[0 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[15:0]/*IMAGE_SIZE_LSB*/   );
+            this.fld_cg.sample( data[31:0]/*IMAGE_SIZE*/   );
         end
     endfunction
 
     function void I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(IMAGE_SIZE_LSB_bit_cg[bt]) this.IMAGE_SIZE_LSB_bit_cg[bt].sample(IMAGE_SIZE_LSB.get_mirrored_value() >> bt);
+            foreach(IMAGE_SIZE_bit_cg[bt]) this.IMAGE_SIZE_bit_cg[bt].sample(IMAGE_SIZE.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( IMAGE_SIZE_LSB.get_mirrored_value()   );
+            this.fld_cg.sample( IMAGE_SIZE.get_mirrored_value()   );
         end
     endfunction
 

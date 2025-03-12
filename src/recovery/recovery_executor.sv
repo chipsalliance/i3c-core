@@ -324,8 +324,7 @@ module recovery_executor
       CSR_HW_STATUS:       csr_data <= hw_status;
 
       CSR_INDIRECT_FIFO_CTRL_0: csr_data <= indirect_fifo_ctrl_0;
-      CSR_INDIRECT_FIFO_CTRL_1:
-      csr_data <= {16'd0, hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value};
+      CSR_INDIRECT_FIFO_CTRL_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value;
       CSR_INDIRECT_FIFO_STATUS_0: csr_data <= indirect_fifo_status_0;
       CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
       CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
@@ -397,7 +396,7 @@ module recovery_executor
   };
 
   assign indirect_fifo_ctrl_0 = {
-    hwif_rec_i.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value,
+    16'd0,
     hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value,
     hwif_rec_i.INDIRECT_FIFO_CTRL_0.CMS.value
   };
@@ -611,10 +610,9 @@ module recovery_executor
     hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS.we = '0;
     hwif_rec_o.HW_STATUS.CTEMP.we = '0;
     hwif_rec_o.HW_STATUS.VENDOR_HW_STATUS_LEN.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.we = indirect_fifo_ctrl_0_we;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.we = indirect_fifo_ctrl_0_we;
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.we = indirect_fifo_ctrl_0_we;
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we = '0;
     hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.we = '0;
@@ -627,10 +625,9 @@ module recovery_executor
     hwif_rec_o.RECOVERY_CTRL.ACTIVATE_REC_IMG.next = tti_rx_rdata_i[23:16];
     hwif_rec_o.RECOVERY_CTRL.REC_IMG_SEL.next = tti_rx_rdata_i[15:8];
     hwif_rec_o.RECOVERY_CTRL.CMS.next = tti_rx_rdata_i[7:0];
-    hwif_rec_o.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.next = tti_rx_rdata_i[31:16];
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.next = tti_rx_rdata_i[15:8];
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.next = tti_rx_rdata_i[7:0];
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.next = tti_rx_rdata_i[15:0];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = tti_rx_rdata_i[31:0];
   end
 
   // Force the value of FIFO_STATUS.FIFO_SIZE to IndirectFifoDepth.

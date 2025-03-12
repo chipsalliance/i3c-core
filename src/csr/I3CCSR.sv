@@ -945,16 +945,12 @@ module I3CCSR (
                         logic [7:0] next;
                         logic load_next;
                     } RESET;
-                    struct packed{
-                        logic [15:0] next;
-                        logic load_next;
-                    } IMAGE_SIZE_MSB;
                 } INDIRECT_FIFO_CTRL_0;
                 struct packed{
                     struct packed{
-                        logic [15:0] next;
+                        logic [31:0] next;
                         logic load_next;
-                    } IMAGE_SIZE_LSB;
+                    } IMAGE_SIZE;
                 } INDIRECT_FIFO_CTRL_1;
                 struct packed{
                     struct packed{
@@ -2206,14 +2202,11 @@ module I3CCSR (
                     struct packed{
                         logic [7:0] value;
                     } RESET;
-                    struct packed{
-                        logic [15:0] value;
-                    } IMAGE_SIZE_MSB;
                 } INDIRECT_FIFO_CTRL_0;
                 struct packed{
                     struct packed{
-                        logic [15:0] value;
-                    } IMAGE_SIZE_LSB;
+                        logic [31:0] value;
+                    } IMAGE_SIZE;
                 } INDIRECT_FIFO_CTRL_1;
                 struct packed{
                     struct packed{
@@ -5589,54 +5582,30 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value;
-    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB
+    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE
     always_comb begin
-        automatic logic [15:0] next_c;
+        automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value & ~decoded_wr_biten[31:16]) | (decoded_wr_data[31:16] & decoded_wr_biten[31:16]);
-            load_next_c = '1;
-        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.next = next_c;
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.next;
-        end
-    end
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value;
-    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB
-    always_comb begin
-        automatic logic [15:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value;
+        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value & ~decoded_wr_biten[15:0]) | (decoded_wr_data[15:0] & decoded_wr_biten[15:0]);
+            next_c = (field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.next;
+        end else if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.next = next_c;
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.load_next = load_next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = next_c;
+        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.next;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value <= 32'h0;
+        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.load_next) begin
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next;
         end
     end
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY
     always_comb begin
         automatic logic [0:0] next_c;
@@ -9839,9 +9808,8 @@ module I3CCSR (
     assign readback_array[48][31:24] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.HW_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value : '0;
     assign readback_array[49][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value : '0;
     assign readback_array[49][15:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value : '0;
-    assign readback_array[49][31:16] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.IMAGE_SIZE_MSB.value : '0;
-    assign readback_array[50][15:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE_LSB.value : '0;
-    assign readback_array[50][31:16] = '0;
+    assign readback_array[49][31:16] = '0;
+    assign readback_array[50][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value : '0;
     assign readback_array[51][0:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value : '0;
     assign readback_array[51][1:1] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value : '0;
     assign readback_array[51][7:2] = '0;

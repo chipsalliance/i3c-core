@@ -500,23 +500,17 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__in_t;
 
     typedef struct packed{
-        logic [15:0] next;
-        logic we;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__IMAGE_SIZE_MSB__in_t;
-
-    typedef struct packed{
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__in_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__in_t RESET;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__IMAGE_SIZE_MSB__in_t IMAGE_SIZE_MSB;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__in_t;
 
     typedef struct packed{
-        logic [15:0] next;
+        logic [31:0] next;
         logic we;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE_LSB__in_t;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__in_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE_LSB__in_t IMAGE_SIZE_LSB;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__in_t IMAGE_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__in_t;
 
     typedef struct packed{
@@ -1976,21 +1970,16 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__out_t;
 
     typedef struct packed{
-        logic [15:0] value;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__IMAGE_SIZE_MSB__out_t;
-
-    typedef struct packed{
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__out_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__out_t RESET;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__IMAGE_SIZE_MSB__out_t IMAGE_SIZE_MSB;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__out_t;
 
     typedef struct packed{
-        logic [15:0] value;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE_LSB__out_t;
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE_LSB__out_t IMAGE_SIZE_LSB;
+        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__out_t IMAGE_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__out_t;
 
     typedef struct packed{

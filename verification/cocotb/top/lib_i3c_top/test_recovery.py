@@ -326,7 +326,7 @@ async def test_write(dut):
     await recovery.command_write(
         VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22],
+        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
     )
 
     # Wait & read the CSR from the AHB/AXI side
@@ -348,8 +348,8 @@ async def test_write(dut):
     # Check
     protocol_status = (status >> 8) & 0xFF
     assert protocol_status == 0
-    assert data0 == 0xDDCCBBAA
-    assert data1 == 0x2211
+    assert data0 == 0xBBAA  # 2 MSBs are reserved
+    assert data1 == 0x44332211
 
 
 @cocotb.test()
