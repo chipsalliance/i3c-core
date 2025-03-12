@@ -12,7 +12,7 @@ from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, Combine, Event, Timer
+from cocotb.triggers import ClockCycles, Combine, Event, RisingEdge, Timer
 
 STATIC_ADDR = 0x5A
 VIRT_STATIC_ADDR = 0x5B
@@ -959,10 +959,12 @@ async def test_payload_available(dut):
     chunks are written to INDIRECT_FIFO_DATA CSR.
     """
 
-    payload_size = 16  # Bytes
-
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=50)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=200)
+
+    fifo_size = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_3.base_addr, 4)
+    ) * 4  # Multiply by 4 to get bytes from dwords
 
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
@@ -981,26 +983,26 @@ async def test_payload_available(dut):
     ), "Upon initialization payload_available should be deasserted"
 
     # Generate random data payload. Write the payload to INDIRECT_FIFO_DATA
-    payload_data = [random.randint(0, 0xFF) for i in range(payload_size)]
+    payload_data = [random.randint(0, 0xFF) for i in range(fifo_size)]
     await recovery.command_write(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data[:-1]
     )
+    assert not bool(
+        payload_available.value
+    ), "After writing data without filling whole FIFO, payload_available should be deasserted"
 
-    # Wait
-    await Timer(1, "us")
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, [payload_data[-1]]
+    )
 
     # Check if payload_available is asserted
     assert bool(
         payload_available.value
     ), "After reception of a complete write packet targeting INDIRECT_FIFO_DATA payload_available should be asserted"
 
-    # Wait
-    await Timer(100, "ns")
-
     # Read data from the indirect FIFO from the AXI side. payload_available should
     # get deasserted only when the FIFO gets empty.
-    for i in range(payload_size // 4):
-
+    for _ in range(fifo_size // 4):
         # Check the signal
         assert bool(
             payload_available.value
@@ -1008,15 +1010,33 @@ async def test_payload_available(dut):
 
         # Read & wait
         await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
-        await Timer(100, "ns")
+    await RisingEdge(tb.clk)
 
     # Check the signal
     assert not bool(
         payload_available.value
     ), "After emptying indirect FIFO payload_available should be deasserted"
 
-    # Wait
-    await Timer(1, "us")
+    # Write one random byte to Indirect FIFO so it's not empty
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, [random.randint(0, 255)]
+    )
+
+    # Activate an image to indicate transfer is done
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF]
+    )
+
+    assert bool(
+        payload_available.value
+    ), "After activating image, payload_available should be asserted"
+
+    await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
+    await RisingEdge(tb.clk)
+
+    assert not bool(
+        payload_available.value
+    ), "After reading FIFO, payload_available should be deasserted"
 
 
 @cocotb.test()
@@ -1046,9 +1066,6 @@ async def test_image_activated(dut):
         VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_CTRL, [0x0, 0x0, 0xF]
     )
 
-    # Wait
-    await Timer(1, "us")
-
     # Check if image_activated is asserted
     assert bool(
         image_activated.value
@@ -1058,17 +1075,12 @@ async def test_image_activated(dut):
     await tb.write_csr(
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_CTRL.base_addr, int2dword(0xFF << 16), 4
     )
-
-    # Wait
-    await Timer(100, "ns")
+    await RisingEdge(tb.clk)
 
     # Check if image_activated is deasserted
     assert not bool(
         image_activated.value
     ), "Upon writing 0xFF to RECOVERY_CTRL byte 2 image_activated should be deasserted"
-
-    # Wait
-    await Timer(1, "us")
 
 
 @cocotb.test()
