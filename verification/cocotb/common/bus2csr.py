@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from enum import IntEnum
 from functools import reduce
 from importlib import import_module
 from math import log2
+from random import choice, randint
 from typing import List, Tuple
 
 # AHB
@@ -12,7 +14,7 @@ from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager
 from cocotb_AHB.interconnect.SimInterconnect import SimInterconnect
 
 # AXI
-from cocotbext.axi import AxiBus, AxiMaster
+from cocotbext.axi import AxiBus, AxiMaster, AxiResp
 from reg_map import reg_map
 
 # Cocotb
@@ -217,6 +219,63 @@ class AXITestInterface(FrontBusTestInterface):
         """Send a write request & await transfer to finish."""
         # assert not bytes(data)
         return await with_timeout(self.axi_m.write(addr, bytes(data), awid=awid), timeout, units)
+
+    def _report_response(self, got, expected, is_read=False):
+        op = "read" if is_read else "write"
+        name = ["OKAY", "EXOKAY", "SLVERR", "DECERR"]
+        return (
+            f"{hex(expected)} != {hex(got)}."
+            f" Anticipated {op} response: {name[expected]} got: {name[got]}."
+        )
+
+    async def read_access_monitor(self):
+        """
+        Ensures the AXI read response is set appropriately to
+        current filtering configuration and transaction ID.
+        """
+        await RisingEdge(self.dut.areset_n)
+
+        while True:
+            while not (self.dut.arvalid.value and self.dut.arready.value):
+                await RisingEdge(self.dut.aclk)
+            priv_ids = self.dut.priv_ids_i.value
+            filter_off = self.dut.disable_id_filtering_i.value
+
+            while not (self.dut.rvalid.value and self.dut.rready.value):
+                await RisingEdge(self.dut.aclk)
+            rid = self.dut.rid.value
+            rresp = self.dut.rresp.value
+            if filter_off or rid in priv_ids:
+                assert rresp == AxiResp.OKAY, self._report_response(rresp, AxiResp.OKAY, True)
+            else:
+                assert rresp == AxiResp.SLVERR, self._report_response(rresp, AxiResp.SLVERR, True)
+
+            await RisingEdge(self.dut.aclk)
+
+    async def write_access_monitor(self):
+        """
+        Ensures the AXI write response is set appropriately to
+        current filtering configuration and transaction ID.
+        """
+        await RisingEdge(self.dut.areset_n)
+
+        while True:
+            while not (self.dut.awvalid.value and self.dut.awready.value):
+                await RisingEdge(self.dut.aclk)
+            priv_ids = self.dut.priv_ids_i.value
+            filter_off = self.dut.disable_id_filtering_i.value
+
+            while not (self.dut.bvalid.value and self.dut.bready.value):
+                await RisingEdge(self.dut.aclk)
+            bid = self.dut.bid.value
+            bresp = self.dut.bresp.value
+
+            if filter_off or bid in priv_ids:
+                assert bresp == AxiResp.OKAY, self._report_response(bresp, AxiResp.OKAY)
+            else:
+                assert bresp == AxiResp.SLVERR, self._report_response(bresp, AxiResp.SLVERR)
+
+            await RisingEdge(self.dut.aclk)
 
 
 def get_frontend_bus_if():

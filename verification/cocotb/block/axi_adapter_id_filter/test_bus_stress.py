@@ -1,18 +1,17 @@
 # SPDX-License-Identifier: Apache-2.0
 import random
 
-from axi_utils import Access, draw_ids, get_ids, initialize_dut
+from axi_utils import initialize_dut
 from bus2csr import dword2int, int2bytes, int2dword
 from cocotbext.axi.constants import AxiBurstType
+from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
 
 import cocotb
 from cocotb.triggers import ClockCycles, Combine, RisingEdge, with_timeout
 
 
 async def initialize(dut, filter_off=False, priv_ids=None, timeout=50):
-    tb = await initialize_dut(
-        dut, disable_id_filtering=filter_off, priv_ids=priv_ids, timeout=timeout
-    )
+    tb = await initialize_dut(dut, filter_off, priv_ids, timeout)
 
     # Generate test data
     data_len = random.randint(10, 64)
@@ -37,10 +36,10 @@ def verify_data(write_data, awids, read_data, arids, disable_id_filtering=False,
 
 
 async def collision_with_write(dut, filter_off=False, awid_priv=Access.Priv, arid_priv=Access.Priv):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off, priv_ids)
-    awids = get_ids(priv_ids, data_len, awid_priv)
-    arids = get_ids(priv_ids, data_len, arid_priv)
+    awids = get_axi_ids_seq(priv_ids, data_len, awid_priv)
+    arids = get_axi_ids_seq(priv_ids, data_len, arid_priv)
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -96,10 +95,10 @@ async def test_collision_with_write_id_filter_on_mixed(dut):
 
 
 async def collision_with_read(dut, filter_off=False, awid_priv=True, arid_priv=True):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off, priv_ids)
-    awids = get_ids(priv_ids, data_len, awid_priv)
-    arids = get_ids(priv_ids, data_len, arid_priv)
+    awids = get_axi_ids_seq(priv_ids, data_len, awid_priv)
+    arids = get_axi_ids_seq(priv_ids, data_len, arid_priv)
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -162,10 +161,10 @@ async def test_collision_with_read_id_filter_on_mixed(dut):
 
 
 async def write_read_burst(dut, filter_off=False, awid_priv=True, arid_priv=True):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off, priv_ids)
-    awids = get_ids(priv_ids, 1, awid_priv)
-    arids = get_ids(priv_ids, 1, arid_priv)
+    awids = get_axi_ids_seq(priv_ids, 1, awid_priv)
+    arids = get_axi_ids_seq(priv_ids, 1, arid_priv)
     awid, arid = awids[0], arids[0]
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
@@ -198,10 +197,10 @@ async def test_write_read_burst_id_filter_on_non_priv(dut):
 
 
 async def write_burst_collision_with_read(dut, filter_off=False, awid_priv=True, arid_priv=True):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off, priv_ids)
-    awids = get_ids(priv_ids, 1, awid_priv)
-    arids = get_ids(priv_ids, 1, arid_priv)
+    awids = get_axi_ids_seq(priv_ids, 1, awid_priv)
+    arids = get_axi_ids_seq(priv_ids, 1, arid_priv)
     awid, arid = awids[0], arids[0]
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
@@ -249,10 +248,10 @@ async def test_write_burst_collision_with_read_id_filter_non_priv(dut):
 
 
 async def read_burst_collision_with_write(dut, filter_off=False, awid_priv=True, arid_priv=True):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off, priv_ids)
-    awids = get_ids(priv_ids, 1, awid_priv)
-    arids = get_ids(priv_ids, 1, arid_priv)
+    awids = get_axi_ids_seq(priv_ids, 1, awid_priv)
+    arids = get_axi_ids_seq(priv_ids, 1, arid_priv)
     awid, arid = awids[0], arids[0]
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
@@ -311,10 +310,10 @@ async def test_read_burst_collision_with_write_id_filter_on_non_priv(dut):
 
 @cocotb.test()
 async def test_collision_with_write_mixed_priv(dut):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off=False, priv_ids=priv_ids)
-    awids = get_ids(priv_ids, data_len, Access.Mixed)
-    arids = get_ids(priv_ids, data_len, Access.Mixed)
+    awids = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
+    arids = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -348,10 +347,10 @@ async def test_collision_with_write_mixed_priv(dut):
 
 @cocotb.test()
 async def test_collision_with_read_mixed_priv(dut):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off=False, priv_ids=priv_ids)
-    awids = get_ids(priv_ids, data_len, Access.Mixed)
-    arids = get_ids(priv_ids, data_len, Access.Mixed)
+    awids = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
+    arids = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
 
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr

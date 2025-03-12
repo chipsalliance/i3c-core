@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from enum import IntEnum
 from itertools import chain
 from math import ceil, log2
-from random import randint
+from random import choice, randint
 from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar, Union
 
 import colorama
@@ -310,3 +311,28 @@ async def get_interrupt_status(tb):
         intrs[key] = state
 
     return intrs
+
+
+class Access(IntEnum):
+    Priv = 0
+    Unpriv = 1
+    Mixed = 2
+
+
+def draw_axi_priv_ids(id_width=8, num_priv_ids=4):
+    return [randint(0, 2**id_width - 1) for _ in range(num_priv_ids)]
+
+
+def get_axi_ids_seq(priv_ids, count, priv=False, id_width=8):
+    id_space = range(0, (1 << id_width))
+    unpriv = [x for x in id_space if x not in priv_ids]
+
+    is_priv = priv == Access.Priv
+    out = []
+    for _ in range(count):
+        if priv == Access.Mixed:
+            is_priv = randint(0, 1)
+
+        id_scope = priv_ids if is_priv else unpriv
+        out.append(choice(id_scope))
+    return out

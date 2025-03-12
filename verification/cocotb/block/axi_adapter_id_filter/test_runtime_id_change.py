@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 import random
 
-from axi_utils import Access, _wait, draw_ids, get_ids, initialize_dut
+from axi_utils import initialize_dut
 from bus2csr import dword2int, int2bytes
 from cocotbext.axi.constants import AxiBurstType
+from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
 
 import cocotb
 from cocotb.triggers import Combine, RisingEdge
@@ -23,7 +24,8 @@ async def initialize(dut, filter_off=False, priv_ids=None, timeout=50):
 async def id_filter_disable_toggle(dut, cond):
     while True:
         filter_off = int(dut.disable_id_filtering_i.value)
-        await _wait(dut, cond)
+        while not cond:
+            await RisingEdge(dut.aclk)
         dut.disable_id_filtering_i.value = not filter_off
         await RisingEdge(dut.aclk)
 
@@ -32,7 +34,8 @@ async def priv_ids_swapper(dut, cond, new_priv_ids):
     assert isinstance(new_priv_ids, list)
     i, n = 0, len(new_priv_ids)
     while i < n:
-        await _wait(dut, cond)
+        while not cond:
+            await RisingEdge(dut.aclk)
         dut.priv_ids_i.value = new_priv_ids[i]
         i += 1
         await RisingEdge(dut.aclk)
@@ -64,7 +67,7 @@ async def reader(tb, addr, count, tids, return_data):
 
 
 async def toggle_filtering(dut, cond):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -74,8 +77,8 @@ async def toggle_filtering(dut, cond):
 
     cocotb.start_soon(id_filter_disable_toggle(dut, cond))
 
-    awid = get_ids(priv_ids, data_len, Access.Mixed)
-    arid = get_ids(priv_ids, data_len, Access.Mixed)
+    awid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
+    arid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
 
     received_data = []
     w = cocotb.start_soon(writer(tb, waddr, test_data, awid))
@@ -95,7 +98,7 @@ async def test_toggle_filtering_mid_write(dut):
 
 
 async def swap_priv_ids(dut, cond):
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -103,11 +106,11 @@ async def swap_priv_ids(dut, cond):
     # Fill fifo halfway to avoid reads when empty
     await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
 
-    priv_ids_seq = [draw_ids() for _ in range(data_len)]
+    priv_ids_seq = [draw_axi_priv_ids() for _ in range(data_len)]
     cocotb.start_soon(priv_ids_swapper(dut, cond, priv_ids_seq))
 
-    awid = get_ids(priv_ids, data_len, Access.Mixed)
-    arid = get_ids(priv_ids, data_len, Access.Mixed)
+    awid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
+    arid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
 
     received_data = []
     w = cocotb.start_soon(writer(tb, waddr, test_data, awid))
@@ -138,10 +141,10 @@ async def test_randomized_id_configuration_swap(dut):
     async def priv_id_swap_random():
         while True:
             if abs(random.random()) < 0.2:
-                dut.priv_ids_i.value = draw_ids()
+                dut.priv_ids_i.value = draw_axi_priv_ids()
             await RisingEdge(dut.aclk)
 
-    priv_ids = draw_ids()
+    priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
     waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
@@ -152,8 +155,8 @@ async def test_randomized_id_configuration_swap(dut):
     cocotb.start_soon(disable_random())
     cocotb.start_soon(priv_id_swap_random())
 
-    awid = get_ids(priv_ids, data_len, Access.Mixed)
-    arid = get_ids(priv_ids, data_len, Access.Mixed)
+    awid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
+    arid = get_axi_ids_seq(priv_ids, data_len, Access.Mixed)
 
     received_data = []
     w = cocotb.start_soon(writer(tb, waddr, test_data, awid))

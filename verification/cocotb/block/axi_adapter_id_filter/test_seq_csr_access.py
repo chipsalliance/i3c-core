@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-from axi_utils import Access, AxiIdWidth, draw_ids, get_ids, initialize_dut
+from axi_utils import AxiIdWidth, initialize_dut
 from bus2csr import compare_values, int2bytes, int2dword
 from hci import (
     DAT_SECTION_OFFSET_RESET,
@@ -13,7 +13,14 @@ from hci import (
     QUEUE_THLD_CTRL_RESET,
     HCI_VERSION_v1_2_VALUE,
 )
-from utils import mask_bits, rand_bits, rand_bits32
+from utils import (
+    Access,
+    draw_axi_priv_ids,
+    get_axi_ids_seq,
+    mask_bits,
+    rand_bits,
+    rand_bits32,
+)
 
 import cocotb
 
@@ -34,19 +41,19 @@ async def read_hci_version_csr(dut, disable_id_filtering=False, priv_ids=None, t
 
 @cocotb.test()
 async def test_read_hci_version_csr_id_filter_off(dut):
-    await read_hci_version_csr(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await read_hci_version_csr(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_read_hci_version_csr_id_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await read_hci_version_csr(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0])
+    priv_ids = draw_axi_priv_ids()
+    await read_hci_version_csr(dut, False, priv_ids, get_axi_ids_seq(priv_ids, 1, Access.Priv)[0])
 
 
 @cocotb.test()
 async def test_read_hci_version_csr_id_filter_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await read_hci_version_csr(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0])
+    priv_ids = draw_axi_priv_ids()
+    await read_hci_version_csr(dut, False, priv_ids, get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0])
 
 
 async def read_pio_section_offset(dut, disable_id_filtering=False, priv_ids=None, tid=0):
@@ -66,19 +73,21 @@ async def read_pio_section_offset(dut, disable_id_filtering=False, priv_ids=None
 
 @cocotb.test()
 async def test_read_pio_section_offset_filter_off(dut):
-    await read_pio_section_offset(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await read_pio_section_offset(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_read_pio_section_offset_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await read_pio_section_offset(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Priv)[0]
+    await read_pio_section_offset(dut, False, priv_ids, tid)
 
 
 @cocotb.test()
 async def test_read_pio_section_offset_filter_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await read_pio_section_offset(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
+    await read_pio_section_offset(dut, False, priv_ids, tid)
 
 
 async def write_to_controller_device_addr(dut, disable_id_filtering=False, priv_ids=None, tid=0):
@@ -102,23 +111,21 @@ async def write_to_controller_device_addr(dut, disable_id_filtering=False, priv_
 
 @cocotb.test()
 async def test_write_to_controller_device_addr_filter_off(dut):
-    await write_to_controller_device_addr(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await write_to_controller_device_addr(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_write_to_controller_device_addr_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await write_to_controller_device_addr(
-        dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0]
-    )
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Priv)[0]
+    await write_to_controller_device_addr(dut, False, priv_ids, tid)
 
 
 @cocotb.test()
 async def test_write_to_controller_device_addr_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await write_to_controller_device_addr(
-        dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0]
-    )
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
+    await write_to_controller_device_addr(dut, False, priv_ids, tid)
 
 
 async def write_should_not_affect_ro_csr(dut, disable_id_filtering=False, priv_ids=None, tid=0):
@@ -141,21 +148,21 @@ async def write_should_not_affect_ro_csr(dut, disable_id_filtering=False, priv_i
 
 @cocotb.test()
 async def test_write_should_not_affect_ro_csr_filter_off(dut):
-    await write_should_not_affect_ro_csr(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await write_should_not_affect_ro_csr(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_write_should_not_affect_ro_csr_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await write_should_not_affect_ro_csr(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Priv)[0]
+    await write_should_not_affect_ro_csr(dut, False, priv_ids, tid)
 
 
 @cocotb.test()
 async def test_write_should_not_affect_ro_csr_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await write_should_not_affect_ro_csr(
-        dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0]
-    )
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
+    await write_should_not_affect_ro_csr(dut, False, priv_ids, tid)
 
 
 async def sequence_csr_read(dut, disable_id_filtering=False, priv_ids=None, tid=0):
@@ -194,19 +201,21 @@ async def sequence_csr_read(dut, disable_id_filtering=False, priv_ids=None, tid=
 
 @cocotb.test()
 async def test_sequence_csr_read_filter_off(dut):
-    await sequence_csr_read(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await sequence_csr_read(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_sequence_csr_read_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await sequence_csr_read(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Priv)[0]
+    await sequence_csr_read(dut, False, priv_ids, tid)
 
 
 @cocotb.test()
 async def test_sequence_csr_read_filter_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await sequence_csr_read(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
+    await sequence_csr_read(dut, False, priv_ids, tid)
 
 
 async def sequence_csr_write(dut, disable_id_filtering=False, priv_ids=None, tid=0):
@@ -254,16 +263,18 @@ async def sequence_csr_write(dut, disable_id_filtering=False, priv_ids=None, tid
 
 @cocotb.test()
 async def test_sequence_csr_write_filter_off(dut):
-    await sequence_csr_write(dut, True, draw_ids(), rand_bits(AxiIdWidth))
+    await sequence_csr_write(dut, True, draw_axi_priv_ids(), rand_bits(AxiIdWidth))
 
 
 @cocotb.test()
 async def test_sequence_csr_write_filter_on_priv(dut):
-    priv_ids = draw_ids()
-    await sequence_csr_write(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Priv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Priv)[0]
+    await sequence_csr_write(dut, False, priv_ids, tid)
 
 
 @cocotb.test()
 async def test_sequence_csr_write_filter_on_non_priv(dut):
-    priv_ids = draw_ids()
-    await sequence_csr_write(dut, False, priv_ids, get_ids(priv_ids, 1, Access.Unpriv)[0])
+    priv_ids = draw_axi_priv_ids()
+    tid = get_axi_ids_seq(priv_ids, 1, Access.Unpriv)[0]
+    await sequence_csr_write(dut, False, priv_ids, tid)
