@@ -718,12 +718,16 @@ module recovery_executor
   // ....................................................
 
   // Payload availability logic
-  // Assert payload_available_o upon reception of a complete recovery write
-  // packet targeting CSR_INDIRECT_FIFO_DATA. Deassert it when the
+  // Assertion:
+  // The payload_available signal must assert if recovery FIFO indicates full (256B) or image
+  // activation status is asserted (essentially indicating the last transfer is complete).
+  //
+  // De-assertion:
+  // The payload_available signal must reset if recovery FIFO indicates empty.
   always_comb begin : payload_available
     payload_available_d = 1'b0;
     payload_available_write = 1'b0;
-    if (~payload_available_q && indirect_rx_wvalid_o && indirect_rx_wready_i)
+    if (~payload_available_q && (indirect_rx_full_i | image_activated_o))
     begin
       payload_available_d = 1'b1;
       payload_available_write = 1'b1;
