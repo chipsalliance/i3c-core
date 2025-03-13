@@ -306,7 +306,7 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 = cpuif_req_masked & (cpuif_addr == 12'h160);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED = cpuif_req_masked & (cpuif_addr == 12'h164);
         decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA = cpuif_req_masked & (cpuif_addr == 12'h168);
-        is_external |= cpuif_req_masked & (cpuif_addr == 12'h168);
+        is_external |= cpuif_req_masked & (cpuif_addr == 12'h168) & !cpuif_req_is_wr;
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h180);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h188);
@@ -6043,10 +6043,8 @@ module I3CCSR (
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value;
 
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req = decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req = !decoded_req_is_wr ? decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA : '0;
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr = decoded_req_is_wr;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data = decoded_wr_data;
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_biten = decoded_wr_biten;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_ID.value = 8'h12;
     assign hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK
@@ -10057,7 +10055,6 @@ module I3CCSR (
         wr_ack = '0;
         wr_ack |= hwif_in.PIOControl.COMMAND_PORT.wr_ack;
         wr_ack |= hwif_in.PIOControl.TX_DATA_PORT.wr_ack;
-        wr_ack |= hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack;
         wr_ack |= hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack;

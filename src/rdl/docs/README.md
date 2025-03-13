@@ -1932,7 +1932,7 @@ Component Memory Space (CMS):</p>
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|31:0|   DATA   |  rw  | 0x0 |  — |
+|31:0|   DATA   |   r  | 0x0 |  — |
 
 ## StdbyCtrlMode register file
 

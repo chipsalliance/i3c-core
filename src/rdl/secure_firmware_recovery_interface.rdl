@@ -680,7 +680,7 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
         name = "INDIRECT_FIFO_DATA";
         desc = "Indirect memory access to address space configured in INDIRECT_FIFO_CTRL at the Head Pointer offset.";
         field {
-            sw = rw;
+            sw = r;
             hw = rw;
             reset = 32'h0;
         } DATA[31:0];

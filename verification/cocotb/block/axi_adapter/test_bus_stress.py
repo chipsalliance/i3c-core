@@ -78,12 +78,13 @@ async def initialize(dut, timeout=50):
 async def test_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     async def writer():
         # Write sequence should just write data
         for d in test_data:
-            await tb.write_csr(fifo_addr, int2bytes(d))
+            await tb.write_csr(waddr, int2bytes(d))
             # Wait for read to finish in order to avoid multiple writes per read
             await tb.axi_m.wait_read()
 
@@ -98,7 +99,7 @@ async def test_collision_with_write(dut):
             # Awaiting `awvalid` causes reading simultaneously with write data channel activity
             if i < (data_len - read_offset):
                 await RisingEdge(dut.awvalid)
-            return_data.append(dword2int(await tb.read_csr(fifo_addr)))
+            return_data.append(dword2int(await tb.read_csr(raddr)))
 
     received_data = []
     w = cocotb.start_soon(writer())
@@ -115,7 +116,8 @@ async def test_collision_with_write(dut):
 async def test_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     read_offset = 2
 
@@ -129,7 +131,7 @@ async def test_collision_with_read(dut):
                 assert not dut.s_cpuif_req_is_wr.value
                 # Wait additional cycle to line up write with FIFO read delay
                 await RisingEdge(tb.clk)
-            await tb.write_csr(fifo_addr, int2dword(d))
+            await tb.write_csr(waddr, int2dword(d))
 
     async def reader(return_data):
         # Wait until there is data in FIFO
@@ -140,7 +142,7 @@ async def test_collision_with_read(dut):
         for _ in range(data_len):
             # Wait for write to finish to avoid multiple reads per write
             await tb.axi_m.wait_write()
-            return_data.append(dword2int(await tb.read_csr(fifo_addr)))
+            return_data.append(dword2int(await tb.read_csr(raddr)))
             await RisingEdge(tb.clk)
 
     received_data = []
@@ -158,13 +160,14 @@ async def test_collision_with_read(dut):
 async def test_write_read_burst(dut):
     tb, data_len, test_data = await initialize(dut)
 
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Run write burst to fill the FIFO
-    await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+    await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
 
     # Run read burst to empty the FIFO
-    received_data = await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us")
+    received_data = await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us")
 
     assert received_data == test_data, "Received data does not match sent data!"
 
@@ -175,16 +178,17 @@ async def test_write_read_burst(dut):
 async def test_write_burst_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Time in clock cycles to perform single dword write
     single_write_cycles = 3
 
     async def writer():
-        await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+        await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
 
     async def reader(return_data):
-        return_data.extend(await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+        return_data.extend(await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
 
     received_data = []
     half_write_timer = ClockCycles(tb.clk, data_len * single_write_cycles // 2)
@@ -207,16 +211,17 @@ async def test_write_burst_collision_with_read(dut):
 async def test_read_burst_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Time in clock cycles to perform single dword write
     single_write_cycles = 3
 
     async def writer():
-        await with_timeout(tb.axi_m.write_dwords(fifo_addr, test_data, burst=AxiBurstType.FIXED), 1, "us")
+        await with_timeout(tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED), 1, "us")
 
     async def reader(return_data):
-        return_data.extend(await with_timeout(tb.axi_m.read_dwords(fifo_addr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
+        return_data.extend(await with_timeout(tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED), 1, "us"))
 
     received_data1 = []
     received_data2 = []

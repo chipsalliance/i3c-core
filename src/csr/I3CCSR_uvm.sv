@@ -2674,7 +2674,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.DATA = new("DATA");
-            this.DATA.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.DATA.configure(this, 32, 0, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(DATA_bit_cg[bt]) DATA_bit_cg[bt] = new();
             end

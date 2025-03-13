@@ -66,10 +66,11 @@ async def reader(tb, addr, count, tids, return_data):
 async def toggle_filtering(dut, cond):
     priv_ids = draw_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Fill fifo halfway to avoid reads when empty
-    await tb.axi_m.write_dwords(fifo_addr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
+    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
 
     cocotb.start_soon(id_filter_disable_toggle(dut, cond))
 
@@ -77,8 +78,8 @@ async def toggle_filtering(dut, cond):
     arid = get_ids(priv_ids, data_len, Access.Mixed)
 
     received_data = []
-    w = cocotb.start_soon(writer(tb, fifo_addr, test_data, awid))
-    r = cocotb.start_soon(reader(tb, fifo_addr, data_len, arid, received_data))
+    w = cocotb.start_soon(writer(tb, waddr, test_data, awid))
+    r = cocotb.start_soon(reader(tb, raddr, data_len, arid, received_data))
 
     await Combine(w, r)
 
@@ -96,10 +97,11 @@ async def test_toggle_filtering_mid_write(dut):
 async def swap_priv_ids(dut, cond):
     priv_ids = draw_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Fill fifo halfway to avoid reads when empty
-    await tb.axi_m.write_dwords(fifo_addr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
+    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
 
     priv_ids_seq = [draw_ids() for _ in range(data_len)]
     cocotb.start_soon(priv_ids_swapper(dut, cond, priv_ids_seq))
@@ -108,8 +110,8 @@ async def swap_priv_ids(dut, cond):
     arid = get_ids(priv_ids, data_len, Access.Mixed)
 
     received_data = []
-    w = cocotb.start_soon(writer(tb, fifo_addr, test_data, awid))
-    r = cocotb.start_soon(reader(tb, fifo_addr, data_len, arid, received_data))
+    w = cocotb.start_soon(writer(tb, waddr, test_data, awid))
+    r = cocotb.start_soon(reader(tb, raddr, data_len, arid, received_data))
 
     await Combine(w, r)
 
@@ -141,10 +143,11 @@ async def test_randomized_id_configuration_swap(dut):
 
     priv_ids = draw_ids()
     tb, data_len, test_data = await initialize(dut, True, priv_ids)
-    fifo_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
+    waddr = tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr
+    raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Fill fifo halfway to avoid reads when empty
-    await tb.axi_m.write_dwords(fifo_addr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
+    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
 
     cocotb.start_soon(disable_random())
     cocotb.start_soon(priv_id_swap_random())
@@ -153,7 +156,7 @@ async def test_randomized_id_configuration_swap(dut):
     arid = get_ids(priv_ids, data_len, Access.Mixed)
 
     received_data = []
-    w = cocotb.start_soon(writer(tb, fifo_addr, test_data, awid))
-    r = cocotb.start_soon(reader(tb, fifo_addr, data_len, arid, received_data))
+    w = cocotb.start_soon(writer(tb, waddr, test_data, awid))
+    r = cocotb.start_soon(reader(tb, raddr, data_len, arid, received_data))
 
     await Combine(w, r)

@@ -726,7 +726,6 @@ module recovery_executor
     indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
     hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
     hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = indirect_rx_rack_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.wr_ack = '0;  // TODO: support writes
   end
 
   // tie unused signals

@@ -267,7 +267,6 @@ module axi_adapter_wrapper
     hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack = 0;
     hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack = 0;
     hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = 0;
-    hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = 0;
 
     // Unhandled wr/rd_ack (drivers are mising)
@@ -284,7 +283,7 @@ module axi_adapter_wrapper
   always_comb begin : connect_inidrect_fifo
     fifo_wvalid = fifo_wvalid_q;
     fifo_wdata = fifo_wdata_q;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_ack = wr_ack_q;
+    hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = wr_ack_q;
 
     fifo_rready = fifo_rready_q;
     hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = fifo_rdata_q;
@@ -303,9 +302,9 @@ module axi_adapter_wrapper
       wr_ack_q <= fifo_wvalid & fifo_wready;
       rd_ack_q <= fifo_rvalid & fifo_rready;
       fifo_rready_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & ~hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
-      fifo_wvalid_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req & hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.req_is_wr;
+      fifo_wvalid_q <= hwif_out.I3C_EC.TTI.TX_DATA_PORT.req & hwif_out.I3C_EC.TTI.TX_DATA_PORT.req_is_wr;
       fifo_rdata_q <= fifo_rdata;
-      fifo_wdata_q <= hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.wr_data;
+      fifo_wdata_q <= hwif_out.I3C_EC.TTI.TX_DATA_PORT.wr_data;
     end
   end
 endmodule

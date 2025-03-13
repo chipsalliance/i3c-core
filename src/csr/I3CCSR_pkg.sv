@@ -587,7 +587,6 @@ package I3CCSR_pkg;
     typedef struct packed{
         logic rd_ack;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__in_t rd_data;
-        logic wr_ack;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__in_t;
 
     typedef struct packed{
@@ -2054,15 +2053,9 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__out_t;
 
-    typedef struct packed {
-        logic [31:0] DATA;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__out_t;
-
     typedef struct packed{
         logic req;
         logic req_is_wr;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__out_t wr_data;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__out_t wr_biten;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__out_t;
 
     typedef struct packed{
