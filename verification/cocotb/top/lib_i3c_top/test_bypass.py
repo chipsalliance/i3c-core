@@ -202,9 +202,7 @@ async def test_indirect_fifo_overflow(dut):
             tb, [random.randint(2, 2**32 - 1)], format="dwords", timeout=100, units="ns"
         )
     except SimTimeoutError:
-        pass
-    else:
-        assert False, "Write to Indirect FIFO was not rejected while it's full!"
+        assert False, "Write to full Indirect FIFO was rejected while it should be ignored"
 
 
 @cocotb.test()
@@ -215,17 +213,18 @@ async def test_indirect_fifo_underflow(dut):
     tb = await initialize(dut)
 
     # Cause the Indirect FIFO to underflow
+    d = 0
     try:
-        await tb.read_csr(
+        d = dword2int(await tb.read_csr(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr,
             4,
             timeout=100,
             units="ns",
-        )
+        ))
     except SimTimeoutError:
-        pass
+        assert False, "Read from empty Indirect FIFO was rejected while it should return 0"
     else:
-        assert False, "Read from empty Indirect FIFO was not rejected!"
+        assert d == 0, "Read from empty Indirect FIFO did not return 0"
 
 
 @cocotb.test()

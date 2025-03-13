@@ -142,6 +142,7 @@ module recovery_handler
     output logic                          csr_tti_rx_data_queue_ready_thld_trig_o,
 
     // TX data queue
+    output logic                          csr_tti_tx_data_queue_full_o,
     input  logic                          csr_tti_tx_data_queue_req_i,
     output logic                          csr_tti_tx_data_queue_ack_o,
     input  logic [      CsrDataWidth-1:0] csr_tti_tx_data_queue_data_i,
@@ -780,7 +781,9 @@ module recovery_handler
   // ......................
   // TX data queue is always connected. The recovery logic does not use it
   logic exec_tti_tx_data_queue_clr;
+  logic indirect_rx_full;
 
+  assign csr_tti_tx_data_queue_full_o = bypass_i3c_core_i ? indirect_rx_full : tti_tx_data_queue_full;
   assign csr_tti_tx_data_queue_ack_o = tti_tx_data_queue_ack;
   assign csr_tti_tx_data_queue_reg_rst_we_o = tti_tx_data_queue_reg_rst_we;
   assign csr_tti_tx_data_queue_reg_rst_data_o = tti_tx_data_queue_reg_rst_next;
@@ -965,7 +968,6 @@ module recovery_handler
 
   logic                          indirect_rx_clr;
 
-  logic                          indirect_rx_full;
   logic                          indirect_rx_empty;
 
   // Indirect FIFO (RX only)

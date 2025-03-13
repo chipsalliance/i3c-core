@@ -74,6 +74,7 @@ module tti
     output logic                   tx_data_queue_reg_rst_o,
     input  logic                   tx_data_queue_reg_rst_we_i,
     input  logic                   tx_data_queue_reg_rst_data_i,
+    input  logic                   tx_data_queue_full_i,
 
     // In-band Interrupt queue
     output logic                    ibi_queue_req_o,
@@ -83,6 +84,8 @@ module tti
     output logic                    ibi_queue_reg_rst_o,
     input  logic                    ibi_queue_reg_rst_we_i,
     input  logic                    ibi_queue_reg_rst_data_i,
+
+    input logic bypass_i3c_core_i,
 
     // IBI status
     input logic [1:0] ibi_status_i,
@@ -150,6 +153,15 @@ module tti
     ibi_queue_ready_thld_o = IbiThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.value);
   end : wire_hwif_thld
 
+  logic tx_data_queue_full_r;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : register_fifo_status
+    if (~rst_ni) begin
+      tx_data_queue_full_r <= '0;
+    end else begin
+      tx_data_queue_full_r <= tx_data_queue_full_i;
+    end
+  end
+
   always_comb begin : wire_hwif_xfer
     rx_desc_queue_req_o = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
     hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = rx_desc_queue_ack_i;
@@ -169,9 +181,15 @@ module tti
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = rx_data_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.next = rx_data_queue_reg_rst_data_i;
 
-    tx_data_queue_req_o = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
-    tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
-    hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
+    if (bypass_i3c_core_i & tx_data_queue_full_r) begin
+      tx_data_queue_req_o = '0;
+      tx_data_queue_data_o = '0;
+      hwif_tti_o.TX_DATA_PORT.wr_ack = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
+    end else begin
+      tx_data_queue_req_o = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
+      tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
+      hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
+    end
     hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = tx_data_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.TX_DATA_RST.next = tx_data_queue_reg_rst_data_i;
 

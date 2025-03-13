@@ -723,9 +723,15 @@ module recovery_executor
 
   // Connect CSR logic to indirect FIFO rx data port
   always_comb begin
-    indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
-    hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
-    hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = indirect_rx_rack_i;
+    if (~fifo_empty_r) begin
+      indirect_rx_rreq_o = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
+      hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = indirect_rx_rdata_i;
+      hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = indirect_rx_rack_i;
+    end else begin
+      indirect_rx_rreq_o = '0;
+      hwif_rec_o.INDIRECT_FIFO_DATA.rd_data = '0;
+      hwif_rec_o.INDIRECT_FIFO_DATA.rd_ack = hwif_rec_i.INDIRECT_FIFO_DATA.req & !hwif_rec_i.INDIRECT_FIFO_DATA.req_is_wr;
+    end
   end
 
   // tie unused signals

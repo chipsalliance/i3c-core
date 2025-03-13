@@ -911,6 +911,7 @@ module i3c
   logic                          csr_tti_tx_data_reg_rst;
   logic                          csr_tti_tx_data_reg_rst_we;
   logic                          csr_tti_tx_data_reg_rst_data;
+  logic                          csr_tti_tx_data_full;
 
   // TTI In-band Interrupt (IBI) queue
   logic                          csr_tti_ibi_req;
@@ -979,6 +980,7 @@ module i3c
       .tx_data_queue_reg_rst_o     (csr_tti_tx_data_reg_rst),
       .tx_data_queue_reg_rst_we_i  (csr_tti_tx_data_reg_rst_we),
       .tx_data_queue_reg_rst_data_i(csr_tti_tx_data_reg_rst_data),
+      .tx_data_queue_full_i        (csr_tti_tx_data_full),
 
       // TTI In-band Interrupt (IBI) queue
       .ibi_queue_req_o         (csr_tti_ibi_req),
@@ -988,6 +990,8 @@ module i3c
       .ibi_queue_reg_rst_o     (csr_tti_ibi_reg_rst),
       .ibi_queue_reg_rst_we_i  (csr_tti_ibi_reg_rst_we),
       .ibi_queue_reg_rst_data_i(csr_tti_ibi_reg_rst_data),
+
+      .bypass_i3c_core_i(bypass_i3c_core),
 
       .recovery_mode_enabled_i(recovery_mode_enabled),
       .ibi_status_i(ibi_status),
@@ -1083,6 +1087,7 @@ module i3c
       .csr_tti_tx_data_queue_reg_rst_i     (csr_tti_tx_data_reg_rst),
       .csr_tti_tx_data_queue_reg_rst_we_o  (csr_tti_tx_data_reg_rst_we),
       .csr_tti_tx_data_queue_reg_rst_data_o(csr_tti_tx_data_reg_rst_data),
+      .csr_tti_tx_data_queue_full_o        (csr_tti_tx_data_full),
 
       // TTI In-band Interrupt (IBI) queue
       .csr_tti_ibi_queue_req_i         (csr_tti_ibi_req),
