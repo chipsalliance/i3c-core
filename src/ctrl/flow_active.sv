@@ -385,6 +385,8 @@ module flow_active
     dct_wdata_hw_o = '0;
     ibi_queue_wdata_o = '0;
     dct_index_hw_o = '0;
+    resp_data_length_q = '0;
+    resp_queue_wdata_o = '0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -480,7 +482,6 @@ module flow_active
 
         if (resp_queue_wready_i) begin
           resp_queue_wvalid_o = 1'b1;
-          // TODO: Fix inferred latch 'resp_queue_wdata_o'
           resp_queue_wdata_o  = resp_desc;
         end
       end

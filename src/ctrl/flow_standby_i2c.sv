@@ -154,12 +154,16 @@ module flow_standby_i2c
     end
   end : update_transfer_active
 
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : undriven_update_resp_data_length
+    response_fifo_wdata_o.__rsvd23_16 <= '0;
+    // TODO: Implement, controller functionality skipped for now
+    response_fifo_wdata_o.err_status <= i3c_resp_err_status_e'(0);
+    response_fifo_wdata_o.tid <= '0;
+  end
   always_ff @(posedge clk_i or negedge rst_ni) begin : update_resp_data_length
     if (!rst_ni) begin
       response_fifo_wdata_o.data_length <= 0;
-      response_fifo_wdata_o.err_status <= i3c_resp_err_status_e'(0);
-      response_fifo_wdata_o.tid <= '0;
-      response_fifo_wdata_o.__rsvd23_16 <= '0;
     end
     else if (deactivate_transfer) response_fifo_wdata_o.data_length <= transaction_byte_count;
   end : update_resp_data_length
