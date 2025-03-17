@@ -106,6 +106,18 @@ module tti
     output logic irq_o
 );
 
+  // TODO: undriven logic
+  always_comb begin : undriven_logic
+    hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.we = '0;
+    hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.we = '0;
+    hwif_tti_o.QUEUE_THLD_CTRL.IBI_THLD.next = '0;
+  end
+
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
   logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
 
