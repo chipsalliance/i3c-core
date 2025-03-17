@@ -103,6 +103,12 @@ module flow_standby_i2c
       acq_fifo_wdata_byte_id == AcqNackStart );
 
   // TODO: Bug: Set proper ACQ FIFO depth
+  // [LINT_ERROR: CombLoop] The signal 'acq_fifo_depth_o' is on a comb loop
+  // path between the 'flow_standby_i2c' and 'i2c_target_fsm' modules, e.g.:
+  // In 'flow_standby_i2c':
+  //    acq_fifo_wvalid_i -> state_d -> acq_fifo_depth_o
+  // In 'i2c_target_fsm':
+  //    acq_fifo_depth_i -> stretch_addr -> acq_fifo_wvalid_o
   assign acq_fifo_depth_o = xfer_read ? 0 : {{(AcqFifoDepthWidth - 3){1'b0}},
                                              state_d == PushDWordToTTIQueue,
                                              transaction_byte_count[1:0]};
