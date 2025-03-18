@@ -378,9 +378,7 @@ module flow_active
     fmt_flag_start_before_o = 1'b0;
     resp_queue_wvalid_o = 1'b0;
     fmt_flag_stop_after_o = 1'b0;
-    fmt_flag_stop_after_o = 1'b0;
     fmt_byte_o = '0;
-    resp_queue_wvalid_o = 1'b0;
     rx_queue_wdata_o = '0;
     dct_wdata_hw_o = '0;
     ibi_queue_wdata_o = '0;
