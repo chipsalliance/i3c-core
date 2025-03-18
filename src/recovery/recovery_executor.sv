@@ -630,16 +630,17 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = tti_rx_rdata_i[31:0];
   end
 
-  logic fifo_reset_clear;
-  assign hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.hwclr = fifo_reset_clear;
+  logic fifo_reg_reset_clear;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  assign hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.hwclr = fifo_reg_reset_clear;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : fifo_reg_reset_on_write
     if (~rst_ni) begin
-      fifo_reset_clear <= '0;
-    end else if (hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value[0] == 1'b1) begin
-      fifo_reset_clear <= 1'b1;
+      fifo_reg_reset_clear <= '0;
+    end else if (|hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value) begin
+      fifo_reg_reset_clear <= 1'b1;
     end else begin
-      fifo_reset_clear <= '0;
+      fifo_reg_reset_clear <= '0;
     end
   end
 
