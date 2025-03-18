@@ -28,21 +28,25 @@ module width_converter_8toN #(
 
   // Number of bytes of wider data bus
   localparam int unsigned Bytes = Width / 8;
+  localparam int unsigned BytesW = $clog2(Bytes);
 
   // Byte counter
-  logic [$clog2(Bytes):0] bcnt;
+  logic [BytesW:0] bcnt;
+  logic [BytesW:0] s_bytes;
+
+  assign s_bytes = (BytesW+1)'(Bytes);
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
-      if ((bcnt != '0) & sink_flush_i) bcnt <= Bytes;
-      else if ((bcnt != Bytes) & sink_valid_i & sink_ready_o) bcnt <= bcnt + 1;
-      else if ((bcnt == Bytes) & source_valid_o & source_ready_i) bcnt <= '0;
+      if ((bcnt != '0) & sink_flush_i) bcnt <= s_bytes;
+      else if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) bcnt <= bcnt + 1;
+      else if ((bcnt == s_bytes) & source_valid_o & source_ready_i) bcnt <= '0;
     end
 
   // Valid / ready
-  assign sink_ready_o   = (bcnt != Bytes);
-  assign source_valid_o = (bcnt == Bytes);
+  assign sink_ready_o   = (bcnt != s_bytes);
+  assign source_valid_o = (bcnt == s_bytes);
 
   // Data register
   logic [Width-1:0] sreg;
@@ -50,8 +54,8 @@ module width_converter_8toN #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
-      if ((bcnt != Bytes) & sink_valid_i & sink_ready_o) sreg[bcnt*8+:8] <= sink_data_i;
-      else if ((bcnt == Bytes) & source_valid_o & source_ready_i)
+      if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) sreg[bcnt*8+:8] <= sink_data_i;
+      else if ((bcnt == s_bytes) & source_valid_o & source_ready_i)
         sreg <= '0;  // Clear the reg not to leak data
     end
 
