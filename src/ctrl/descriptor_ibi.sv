@@ -94,7 +94,7 @@ module descriptor_ibi #(
       // -1 to compensate for comparison with data_cnt
       data_len   <= ibi_queue_rdata_i[7:0] - 1;
       // Divide by 4 and round up
-      data_words <= ibi_queue_rdata_i[7:2] + |ibi_queue_rdata_i[1:0];
+      data_words <= 8'(ibi_queue_rdata_i[7:2] + |ibi_queue_rdata_i[1:0]);
     end
 
   // Data counter

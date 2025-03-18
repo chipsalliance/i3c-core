@@ -50,7 +50,7 @@ module width_converter_Nto8 #(
     else begin
       if (source_flush_i) sreg <= '0;
       else if ((bcnt == '0) & sink_valid_i & sink_ready_o) sreg <= sink_data_i;
-      else if ((bcnt != '0) & source_valid_o & source_ready_i) sreg <= sreg >> 8;
+      else if ((bcnt != '0) & source_valid_o & source_ready_i) sreg <= Width'(sreg >> 8);
     end
 
   // Data output

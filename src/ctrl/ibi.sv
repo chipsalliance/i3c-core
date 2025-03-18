@@ -201,7 +201,7 @@ module ibi (
       end
       SendTbit: begin
         bus_tx_req_bit_o   = 1'b1;
-        bus_tx_req_value_o = !ibi_byte_last_i;
+        bus_tx_req_value_o = 8'(!ibi_byte_last_i);
         bus_tx_sel_od_pp_o = 1'b1;
       end
       default: begin

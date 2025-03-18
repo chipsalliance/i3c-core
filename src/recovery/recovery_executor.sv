@@ -217,7 +217,7 @@ module recovery_executor
   // ....................................................
 
   // Data counter
-  assign dcnt_next = (|cmd_len_i[1:0]) ? (cmd_len_i / 4 + 1) : (cmd_len_i / 4);  // Divide by 4, round up
+  assign dcnt_next = (|cmd_len_i[1:0]) ? 16'(cmd_len_i / 4 + 1) : 16'(cmd_len_i / 4);  // Divide by 4, round up
 
   always_ff @(posedge clk_i)
     unique case (state_q)
