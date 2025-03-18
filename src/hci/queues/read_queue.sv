@@ -71,8 +71,8 @@ module read_queue #(
       start_thld_trig_o = |start_thld_i && (empty_entries >= FifoDepthWidth'(start_thld_i));
       ready_thld_trig_o = |ready_thld_o && (fifo_depth >= FifoDepthWidth'(ready_thld_o));
     end else begin
-      start_thld_trig_o = (empty_entries >= (1 << (FifoDepthWidth'(start_thld_i) + 1)));
-      ready_thld_trig_o = (fifo_depth >= (1 << (FifoDepthWidth'(ready_thld_o) + 1)));
+      start_thld_trig_o = (empty_entries >= FifoDepthWidth'(1 << ((start_thld_i) + 1)));
+      ready_thld_trig_o = (fifo_depth >= FifoDepthWidth'(1 << ((ready_thld_o) + 1)));
     end
   end : trigger_threshold
 

@@ -105,7 +105,7 @@ module descriptor_tx #(
   assign data_len_words = TtiTxDescDataWidth'(data_len >> 2);
   // Add 1 to depth, because there is one word in the Nto8 converter
   assign tx_start = ~tx_pending && descriptor_valid &&
-                    ((tti_tx_queue_depth_i+1'b1) >= data_len_words);
+                    (TtiTxDescDataWidth'(tti_tx_queue_depth_i+1'b1) >= data_len_words);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_pending
     if (!rst_ni) begin
