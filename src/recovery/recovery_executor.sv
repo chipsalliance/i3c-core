@@ -636,7 +636,7 @@ module recovery_executor
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       fifo_reset_clear <= '0;
-    end else if (hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value) begin
+    end else if (hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value[0] == 1'b1) begin
       fifo_reset_clear <= 1'b1;
     end else begin
       fifo_reset_clear <= '0;

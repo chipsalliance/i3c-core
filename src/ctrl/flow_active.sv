@@ -355,7 +355,7 @@ module flow_active
     end else begin
       if (i3c_fsm_idle_o) begin
         resp_data_length_d <= '0;
-      end else if (resp_data_length_q) begin
+      end else if (|resp_data_length_q) begin
         resp_data_length_d <= resp_data_length_q;
       end else begin
         resp_data_length_d <= resp_data_length_d;
