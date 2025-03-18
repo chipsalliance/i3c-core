@@ -14,7 +14,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "HC_CONTROL": {
@@ -27,7 +28,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTOCMD_DATA_RPT": {
                 "low": 3,
@@ -36,7 +38,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DATA_BYTE_ORDER_MODE": {
                 "low": 4,
@@ -45,7 +48,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "MODE_SELECTOR": {
                 "low": 6,
@@ -54,7 +58,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "I2C_DEV_PRESENT": {
                 "low": 7,
@@ -63,7 +68,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HOT_JOIN_CTRL": {
                 "low": 8,
@@ -72,7 +78,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HALT_ON_CMD_SEQ_TIMEOUT": {
                 "low": 12,
@@ -81,7 +88,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "ABORT": {
                 "low": 29,
@@ -90,7 +98,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESUME": {
                 "low": 30,
@@ -99,7 +108,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "BUS_ENABLE": {
                 "low": 31,
@@ -108,7 +118,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "CONTROLLER_DEVICE_ADDR": {
@@ -121,7 +132,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DYNAMIC_ADDR_VALID": {
                 "low": 31,
@@ -130,7 +142,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "HC_CAPABILITIES": {
@@ -143,7 +156,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTO_COMMAND": {
                 "low": 3,
@@ -152,7 +166,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "STANDBY_CR_CAP": {
                 "low": 5,
@@ -161,7 +176,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HDR_DDR_EN": {
                 "low": 6,
@@ -170,7 +186,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HDR_TS_EN": {
                 "low": 7,
@@ -179,7 +196,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_CCC_DEFBYTE": {
                 "low": 10,
@@ -188,7 +206,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_DATA_ABORT_EN": {
                 "low": 11,
@@ -197,7 +216,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_CREDIT_COUNT_EN": {
                 "low": 12,
@@ -206,7 +226,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SCHEDULED_COMMANDS_EN": {
                 "low": 13,
@@ -215,7 +236,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_SIZE": {
                 "low": 20,
@@ -224,7 +246,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SG_CAPABILITY_CR_EN": {
                 "low": 28,
@@ -233,7 +256,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SG_CAPABILITY_IBI_EN": {
                 "low": 29,
@@ -242,7 +266,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SG_CAPABILITY_DC_EN": {
                 "low": 30,
@@ -251,7 +276,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "RESET_CONTROL": {
@@ -264,7 +290,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_QUEUE_RST": {
                 "low": 1,
@@ -273,7 +300,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_QUEUE_RST": {
                 "low": 2,
@@ -282,7 +310,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TX_FIFO_RST": {
                 "low": 3,
@@ -291,7 +320,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_FIFO_RST": {
                 "low": 4,
@@ -300,7 +330,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_QUEUE_RST": {
                 "low": 5,
@@ -309,7 +340,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PRESENT_STATE": {
@@ -322,7 +354,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "INTR_STATUS": {
@@ -335,7 +368,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_SEQ_CANCEL_STAT": {
                 "low": 11,
@@ -344,7 +378,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_WARN_CMD_SEQ_STALL_STAT": {
                 "low": 12,
@@ -353,7 +388,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_ERR_CMD_SEQ_TIMEOUT_STAT": {
                 "low": 13,
@@ -362,7 +398,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SCHED_CMD_MISSED_TICK_STAT": {
                 "low": 14,
@@ -371,7 +408,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "INTR_STATUS_ENABLE": {
@@ -384,7 +422,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_SEQ_CANCEL_STAT_EN": {
                 "low": 11,
@@ -393,7 +432,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_WARN_CMD_SEQ_STALL_STAT_EN": {
                 "low": 12,
@@ -402,7 +442,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN": {
                 "low": 13,
@@ -411,7 +452,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SCHED_CMD_MISSED_TICK_STAT_EN": {
                 "low": 14,
@@ -420,7 +462,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "INTR_SIGNAL_ENABLE": {
@@ -433,7 +476,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_SEQ_CANCEL_SIGNAL_EN": {
                 "low": 11,
@@ -442,7 +486,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_WARN_CMD_SEQ_STALL_SIGNAL_EN": {
                 "low": 12,
@@ -451,7 +496,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN": {
                 "low": 13,
@@ -460,7 +506,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SCHED_CMD_MISSED_TICK_SIGNAL_EN": {
                 "low": 14,
@@ -469,7 +516,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "INTR_FORCE": {
@@ -482,7 +530,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_SEQ_CANCEL_FORCE": {
                 "low": 11,
@@ -491,7 +540,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_WARN_CMD_SEQ_STALL_FORCE": {
                 "low": 12,
@@ -500,7 +550,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "HC_ERR_CMD_SEQ_TIMEOUT_FORCE": {
                 "low": 13,
@@ -509,7 +560,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "SCHED_CMD_MISSED_TICK_FORCE": {
                 "low": 14,
@@ -518,7 +570,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DAT_SECTION_OFFSET": {
@@ -531,7 +584,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TABLE_SIZE": {
                 "low": 12,
@@ -540,7 +594,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "ENTRY_SIZE": {
                 "low": 28,
@@ -549,7 +604,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DCT_SECTION_OFFSET": {
@@ -562,7 +618,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TABLE_SIZE": {
                 "low": 12,
@@ -571,7 +628,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TABLE_INDEX": {
                 "low": 19,
@@ -580,7 +638,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "ENTRY_SIZE": {
                 "low": 28,
@@ -589,7 +648,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "RING_HEADERS_SECTION_OFFSET": {
@@ -602,7 +662,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_SECTION_OFFSET": {
@@ -615,7 +676,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "EXT_CAPS_SECTION_OFFSET": {
@@ -628,7 +690,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "INT_CTRL_CMDS_EN": {
@@ -641,7 +704,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "MIPI_CMDS_SUPPORTED": {
                 "low": 1,
@@ -650,7 +714,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "IBI_NOTIFY_CTRL": {
@@ -663,7 +728,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "NOTIFY_CRR_REJECTED": {
                 "low": 1,
@@ -672,7 +738,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "NOTIFY_IBI_REJECTED": {
                 "low": 3,
@@ -681,7 +748,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "IBI_DATA_ABORT_CTRL": {
@@ -694,7 +762,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AFTER_N_CHUNKS": {
                 "low": 16,
@@ -703,7 +772,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "MATCH_STATUS_TYPE": {
                 "low": 18,
@@ -712,7 +782,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_DATA_ABORT_MON": {
                 "low": 31,
@@ -721,7 +792,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DEV_CTX_BASE_LO": {
@@ -734,7 +806,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DEV_CTX_BASE_HI": {
@@ -747,7 +820,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DEV_CTX_SG": {
@@ -760,7 +834,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "BLP": {
                 "low": 31,
@@ -769,7 +844,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         }
     },
@@ -784,7 +860,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "RESPONSE_PORT": {
@@ -796,7 +873,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "TX_DATA_PORT": {
@@ -808,7 +886,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "RX_DATA_PORT": {
@@ -820,7 +899,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "IBI_PORT": {
@@ -832,7 +912,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "QUEUE_THLD_CTRL": {
@@ -845,7 +926,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_BUF_THLD": {
                 "low": 8,
@@ -854,7 +936,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_DATA_SEGMENT_SIZE": {
                 "low": 16,
@@ -863,7 +946,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_STATUS_THLD": {
                 "low": 24,
@@ -872,7 +956,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "DATA_BUFFER_THLD_CTRL": {
@@ -885,7 +970,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_BUF_THLD": {
                 "low": 8,
@@ -894,7 +980,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TX_START_THLD": {
                 "low": 16,
@@ -903,7 +990,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_START_THLD": {
                 "low": 24,
@@ -912,7 +1000,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "QUEUE_SIZE": {
@@ -925,7 +1014,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_STATUS_SIZE": {
                 "low": 8,
@@ -934,7 +1024,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_DATA_BUFFER_SIZE": {
                 "low": 16,
@@ -943,7 +1034,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TX_DATA_BUFFER_SIZE": {
                 "low": 24,
@@ -952,7 +1044,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "ALT_QUEUE_SIZE": {
@@ -965,7 +1058,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "ALT_RESP_QUEUE_EN": {
                 "low": 24,
@@ -974,7 +1068,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "EXT_IBI_QUEUE_EN": {
                 "low": 28,
@@ -983,7 +1078,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_INTR_STATUS": {
@@ -996,7 +1092,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_THLD_STAT": {
                 "low": 1,
@@ -1005,7 +1102,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_STATUS_THLD_STAT": {
                 "low": 2,
@@ -1014,7 +1112,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_QUEUE_READY_STAT": {
                 "low": 3,
@@ -1023,7 +1122,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_READY_STAT": {
                 "low": 4,
@@ -1032,7 +1132,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ABORT_STAT": {
                 "low": 5,
@@ -1041,7 +1142,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ERR_STAT": {
                 "low": 9,
@@ -1050,7 +1152,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "w",
                 "woclr": 1,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_INTR_STATUS_ENABLE": {
@@ -1063,7 +1166,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_THLD_STAT_EN": {
                 "low": 1,
@@ -1072,7 +1176,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_STATUS_THLD_STAT_EN": {
                 "low": 2,
@@ -1081,7 +1186,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_QUEUE_READY_STAT_EN": {
                 "low": 3,
@@ -1090,7 +1196,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_READY_STAT_EN": {
                 "low": 4,
@@ -1099,7 +1206,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ABORT_STAT_EN": {
                 "low": 5,
@@ -1108,7 +1216,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ERR_STAT_EN": {
                 "low": 9,
@@ -1117,7 +1226,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_INTR_SIGNAL_ENABLE": {
@@ -1130,7 +1240,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_THLD_SIGNAL_EN": {
                 "low": 1,
@@ -1139,7 +1250,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_STATUS_THLD_SIGNAL_EN": {
                 "low": 2,
@@ -1148,7 +1260,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_QUEUE_READY_SIGNAL_EN": {
                 "low": 3,
@@ -1157,7 +1270,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_READY_SIGNAL_EN": {
                 "low": 4,
@@ -1166,7 +1280,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ABORT_SIGNAL_EN": {
                 "low": 5,
@@ -1175,7 +1290,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ERR_SIGNAL_EN": {
                 "low": 9,
@@ -1184,7 +1300,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "na",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_INTR_FORCE": {
@@ -1197,7 +1314,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RX_THLD_FORCE": {
                 "low": 1,
@@ -1206,7 +1324,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_THLD_FORCE": {
                 "low": 2,
@@ -1215,7 +1334,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CMD_QUEUE_READY_FORCE": {
                 "low": 3,
@@ -1224,7 +1344,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RESP_READY_FORCE": {
                 "low": 4,
@@ -1233,7 +1354,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ABORT_FORCE": {
                 "low": 5,
@@ -1242,7 +1364,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TRANSFER_ERR_FORCE": {
                 "low": 9,
@@ -1251,7 +1374,8 @@ reg_map = Munch.fromDict({
                 "sw": "w",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         },
         "PIO_CONTROL": {
@@ -1264,7 +1388,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RS": {
                 "low": 1,
@@ -1273,7 +1398,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "ABORT": {
                 "low": 2,
@@ -1282,7 +1408,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         }
     },
@@ -1300,7 +1427,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CAP_LENGTH": {
                     "low": 8,
@@ -1309,7 +1437,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "PROT_CAP_0": {
@@ -1322,7 +1451,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "PROT_CAP_1": {
@@ -1335,7 +1465,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "PROT_CAP_2": {
@@ -1348,7 +1479,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "AGENT_CAPS": {
                     "low": 16,
@@ -1357,7 +1489,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "PROT_CAP_3": {
@@ -1370,7 +1503,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "MAX_RESP_TIME": {
                     "low": 8,
@@ -1379,7 +1513,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "HEARTBEAT_PERIOD": {
                     "low": 16,
@@ -1388,7 +1523,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_0": {
@@ -1401,7 +1537,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_SPECIFIC_STR_LENGTH": {
                     "low": 8,
@@ -1410,7 +1547,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DATA": {
                     "low": 16,
@@ -1419,7 +1557,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_1": {
@@ -1432,7 +1571,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_2": {
@@ -1445,7 +1585,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_3": {
@@ -1458,7 +1599,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_4": {
@@ -1471,7 +1613,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_5": {
@@ -1484,7 +1627,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_ID_RESERVED": {
@@ -1497,7 +1641,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_STATUS_0": {
@@ -1510,7 +1655,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PROT_ERROR": {
                     "low": 8,
@@ -1519,7 +1665,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 1
+                    "rclr": 1,
+                    "hwclr": 0
                 },
                 "REC_REASON_CODE": {
                     "low": 16,
@@ -1528,7 +1675,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_STATUS_1": {
@@ -1541,7 +1689,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_STATUS_LENGTH": {
                     "low": 16,
@@ -1550,7 +1699,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_STATUS": {
                     "low": 25,
@@ -1559,7 +1709,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DEVICE_RESET": {
@@ -1572,7 +1723,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "FORCED_RECOVERY": {
                     "low": 8,
@@ -1581,7 +1733,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IF_CTRL": {
                     "low": 16,
@@ -1590,7 +1743,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "RECOVERY_CTRL": {
@@ -1603,7 +1757,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "REC_IMG_SEL": {
                     "low": 8,
@@ -1612,7 +1767,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACTIVATE_REC_IMG": {
                     "low": 16,
@@ -1621,7 +1777,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "RECOVERY_STATUS": {
@@ -1634,7 +1791,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "REC_IMG_INDEX": {
                     "low": 4,
@@ -1643,7 +1801,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_SPECIFIC_STATUS": {
                     "low": 8,
@@ -1652,7 +1811,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "HW_STATUS": {
@@ -1665,7 +1825,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "SOFT_ERR": {
                     "low": 1,
@@ -1674,7 +1835,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "FATAL_ERR": {
                     "low": 2,
@@ -1683,7 +1845,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RESERVED_7_3": {
                     "low": 3,
@@ -1692,7 +1855,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_HW_STATUS": {
                     "low": 8,
@@ -1701,7 +1865,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CTEMP": {
                     "low": 16,
@@ -1710,7 +1875,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VENDOR_HW_STATUS_LEN": {
                     "low": 24,
@@ -1719,7 +1885,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_CTRL_0": {
@@ -1732,7 +1899,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RESET": {
                     "low": 8,
@@ -1741,7 +1909,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 1
                 }
             },
             "INDIRECT_FIFO_CTRL_1": {
@@ -1754,7 +1923,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_STATUS_0": {
@@ -1767,7 +1937,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "FULL": {
                     "low": 1,
@@ -1776,7 +1947,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "REGION_TYPE": {
                     "low": 8,
@@ -1785,7 +1957,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_STATUS_1": {
@@ -1798,7 +1971,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_STATUS_2": {
@@ -1811,7 +1985,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_STATUS_3": {
@@ -1824,7 +1999,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_STATUS_4": {
@@ -1837,7 +2013,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_RESERVED": {
@@ -1850,7 +2027,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INDIRECT_FIFO_DATA": {
@@ -1863,7 +2041,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },
@@ -1879,7 +2058,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CAP_LENGTH": {
                     "low": 8,
@@ -1888,7 +2068,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_CONTROL": {
@@ -1900,7 +2081,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "HANDOFF_DELAY_NACK": {
                     "low": 1,
@@ -1908,7 +2090,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_FSM_OP_SELECT": {
                     "low": 2,
@@ -1916,7 +2099,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PRIME_ACCEPT_GETACCCR": {
                     "low": 3,
@@ -1924,7 +2108,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "HANDOFF_DEEP_SLEEP": {
                     "low": 4,
@@ -1933,7 +2118,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 1
                 },
                 "CR_REQUEST_SEND": {
                     "low": 5,
@@ -1942,7 +2128,8 @@ reg_map = Munch.fromDict({
                     "sw": "w",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "BAST_CCC_IBI_RING": {
                     "low": 8,
@@ -1951,7 +2138,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TARGET_XACT_ENABLE": {
                     "low": 12,
@@ -1960,7 +2148,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_SETAASA_ENABLE": {
                     "low": 13,
@@ -1969,7 +2158,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_SETDASA_ENABLE": {
                     "low": 14,
@@ -1978,7 +2168,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_ENTDAA_ENABLE": {
                     "low": 15,
@@ -1987,7 +2178,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RSTACT_DEFBYTE_02": {
                     "low": 20,
@@ -1996,7 +2188,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ENABLE_INIT": {
                     "low": 30,
@@ -2005,7 +2198,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_DEVICE_ADDR": {
@@ -2018,7 +2212,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STATIC_ADDR_VALID": {
                     "low": 15,
@@ -2027,7 +2222,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DYNAMIC_ADDR": {
                     "low": 16,
@@ -2036,7 +2232,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DYNAMIC_ADDR_VALID": {
                     "low": 31,
@@ -2045,7 +2242,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_CAPABILITIES": {
@@ -2058,7 +2256,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TARGET_XACT_SUPPORT": {
                     "low": 12,
@@ -2067,7 +2266,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_SETAASA_SUPPORT": {
                     "low": 13,
@@ -2076,7 +2276,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_SETDASA_SUPPORT": {
                     "low": 14,
@@ -2085,7 +2286,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DAA_ENTDAA_SUPPORT": {
                     "low": 15,
@@ -2094,7 +2296,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "__RSVD_0": {
@@ -2106,7 +2309,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_STATUS": {
@@ -2118,7 +2322,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "SIMPLE_CRR_STATUS": {
                     "low": 5,
@@ -2126,7 +2331,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "HJ_REQ_STATUS": {
                     "low": 8,
@@ -2134,7 +2340,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_DEVICE_CHAR": {
@@ -2147,7 +2354,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DCR": {
                     "low": 16,
@@ -2156,7 +2364,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "BCR_VAR": {
                     "low": 24,
@@ -2165,7 +2374,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "BCR_FIXED": {
                     "low": 29,
@@ -2174,7 +2384,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_DEVICE_PID_LO": {
@@ -2187,7 +2398,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_INTR_STATUS": {
@@ -2199,7 +2411,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_OK_PRIMED_STAT": {
                     "low": 1,
@@ -2207,7 +2420,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_ERR_FAIL_STAT": {
                     "low": 2,
@@ -2215,7 +2429,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_ERR_M3_STAT": {
                     "low": 3,
@@ -2223,7 +2438,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CRR_RESPONSE_STAT": {
                     "low": 10,
@@ -2231,7 +2447,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_DYN_ADDR_STAT": {
                     "low": 11,
@@ -2239,7 +2456,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_NACKED_STAT": {
                     "low": 12,
@@ -2247,7 +2465,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_OK_STAT": {
                     "low": 13,
@@ -2255,7 +2474,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_ERR_STAT": {
                     "low": 14,
@@ -2263,7 +2483,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_OP_RSTACT_STAT": {
                     "low": 16,
@@ -2272,7 +2493,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_PARAM_MODIFIED_STAT": {
                     "low": 17,
@@ -2280,7 +2502,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_UNHANDLED_NACK_STAT": {
                     "low": 18,
@@ -2288,7 +2511,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_FATAL_RSTDAA_ERR_STAT": {
                     "low": 19,
@@ -2296,7 +2520,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "__RSVD_1": {
@@ -2308,7 +2533,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_INTR_SIGNAL_ENABLE": {
@@ -2320,7 +2546,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_OK_PRIMED_SIGNAL_EN": {
                     "low": 1,
@@ -2328,7 +2555,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_ERR_FAIL_SIGNAL_EN": {
                     "low": 2,
@@ -2336,7 +2564,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "ACR_HANDOFF_ERR_M3_SIGNAL_EN": {
                     "low": 3,
@@ -2344,7 +2573,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CRR_RESPONSE_SIGNAL_EN": {
                     "low": 10,
@@ -2352,7 +2582,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_DYN_ADDR_SIGNAL_EN": {
                     "low": 11,
@@ -2360,7 +2591,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_NACKED_SIGNAL_EN": {
                     "low": 12,
@@ -2368,7 +2600,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_OK_SIGNAL_EN": {
                     "low": 13,
@@ -2376,7 +2609,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_ERR_SIGNAL_EN": {
                     "low": 14,
@@ -2384,7 +2618,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_OP_RSTACT_SIGNAL_EN": {
                     "low": 16,
@@ -2393,7 +2628,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_PARAM_MODIFIED_SIGNAL_EN": {
                     "low": 17,
@@ -2401,7 +2637,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_UNHANDLED_NACK_SIGNAL_EN": {
                     "low": 18,
@@ -2409,7 +2646,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_FATAL_RSTDAA_ERR_SIGNAL_EN": {
                     "low": 19,
@@ -2417,7 +2655,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_INTR_FORCE": {
@@ -2429,7 +2668,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_DYN_ADDR_FORCE": {
                     "low": 11,
@@ -2437,7 +2677,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_NACKED_FORCE": {
                     "low": 12,
@@ -2445,7 +2686,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_OK_FORCE": {
                     "low": 13,
@@ -2453,7 +2695,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_ACCEPT_ERR_FORCE": {
                     "low": 14,
@@ -2461,7 +2704,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "STBY_CR_OP_RSTACT_FORCE": {
                     "low": 16,
@@ -2469,7 +2713,8 @@ reg_map = Munch.fromDict({
                     "sw": "w",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_PARAM_MODIFIED_FORCE": {
                     "low": 17,
@@ -2477,7 +2722,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_UNHANDLED_NACK_FORCE": {
                     "low": 18,
@@ -2485,7 +2731,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CCC_FATAL_RSTDAA_ERR_FORCE": {
                     "low": 19,
@@ -2493,7 +2740,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_CCC_CONFIG_GETCAPS": {
@@ -2505,7 +2753,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "F2_CRCAP2_DEV_INTERACT": {
                     "low": 8,
@@ -2513,7 +2762,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_CCC_CONFIG_RSTACT_PARAMS": {
@@ -2526,7 +2776,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RESET_TIME_PERIPHERAL": {
                     "low": 8,
@@ -2535,7 +2786,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RESET_TIME_TARGET": {
                     "low": 16,
@@ -2544,7 +2796,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RESET_DYNAMIC_ADDR": {
                     "low": 31,
@@ -2553,7 +2806,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STBY_CR_VIRT_DEVICE_ADDR": {
@@ -2566,7 +2820,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VIRT_STATIC_ADDR_VALID": {
                     "low": 15,
@@ -2575,7 +2830,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VIRT_DYNAMIC_ADDR": {
                     "low": 16,
@@ -2584,7 +2840,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VIRT_DYNAMIC_ADDR_VALID": {
                     "low": 31,
@@ -2593,7 +2850,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "__RSVD_3": {
@@ -2605,7 +2863,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },
@@ -2621,7 +2880,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CAP_LENGTH": {
                     "low": 8,
@@ -2630,7 +2890,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "CONTROL": {
@@ -2643,7 +2904,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CRR_EN": {
                     "low": 11,
@@ -2652,7 +2914,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_EN": {
                     "low": 12,
@@ -2661,7 +2924,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_RETRY_NUM": {
                     "low": 13,
@@ -2670,7 +2934,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "STATUS": {
@@ -2683,7 +2948,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "LAST_IBI_STATUS": {
                     "low": 14,
@@ -2692,7 +2958,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "RESET_CONTROL": {
@@ -2705,7 +2972,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_RST": {
                     "low": 1,
@@ -2714,7 +2982,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_RST": {
                     "low": 2,
@@ -2723,7 +2992,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DATA_RST": {
                     "low": 3,
@@ -2732,7 +3002,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_RST": {
                     "low": 4,
@@ -2741,7 +3012,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_QUEUE_RST": {
                     "low": 5,
@@ -2750,7 +3022,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INTERRUPT_STATUS": {
@@ -2763,7 +3036,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_STAT": {
                     "low": 1,
@@ -2772,7 +3046,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_TIMEOUT": {
                     "low": 2,
@@ -2781,7 +3056,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_TIMEOUT": {
                     "low": 3,
@@ -2790,7 +3066,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DATA_THLD_STAT": {
                     "low": 8,
@@ -2799,7 +3076,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_THLD_STAT": {
                     "low": 9,
@@ -2808,7 +3086,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_THLD_STAT": {
                     "low": 10,
@@ -2817,7 +3096,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_THLD_STAT": {
                     "low": 11,
@@ -2826,7 +3106,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_THLD_STAT": {
                     "low": 12,
@@ -2835,7 +3116,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_DONE": {
                     "low": 13,
@@ -2844,7 +3126,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PENDING_INTERRUPT": {
                     "low": 15,
@@ -2853,7 +3136,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ABORT_STAT": {
                     "low": 25,
@@ -2862,7 +3146,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ERR_STAT": {
                     "low": 31,
@@ -2871,7 +3156,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 1,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INTERRUPT_ENABLE": {
@@ -2884,7 +3170,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_STAT_EN": {
                     "low": 1,
@@ -2893,7 +3180,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_TIMEOUT_EN": {
                     "low": 2,
@@ -2902,7 +3190,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_TIMEOUT_EN": {
                     "low": 3,
@@ -2911,7 +3200,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DATA_THLD_STAT_EN": {
                     "low": 8,
@@ -2920,7 +3210,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_THLD_STAT_EN": {
                     "low": 9,
@@ -2929,7 +3220,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_THLD_STAT_EN": {
                     "low": 10,
@@ -2938,7 +3230,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_THLD_STAT_EN": {
                     "low": 11,
@@ -2947,7 +3240,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_THLD_STAT_EN": {
                     "low": 12,
@@ -2956,7 +3250,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_DONE_EN": {
                     "low": 13,
@@ -2965,7 +3260,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ABORT_STAT_EN": {
                     "low": 25,
@@ -2974,7 +3270,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ERR_STAT_EN": {
                     "low": 31,
@@ -2983,7 +3280,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "INTERRUPT_FORCE": {
@@ -2996,7 +3294,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_STAT_FORCE": {
                     "low": 1,
@@ -3005,7 +3304,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_TIMEOUT_FORCE": {
                     "low": 2,
@@ -3014,7 +3314,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_TIMEOUT_FORCE": {
                     "low": 3,
@@ -3023,7 +3324,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DATA_THLD_FORCE": {
                     "low": 8,
@@ -3032,7 +3334,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_THLD_FORCE": {
                     "low": 9,
@@ -3041,7 +3344,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_THLD_FORCE": {
                     "low": 10,
@@ -3050,7 +3354,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_THLD_FORCE": {
                     "low": 11,
@@ -3059,7 +3364,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_THLD_FORCE": {
                     "low": 12,
@@ -3068,7 +3374,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_DONE_FORCE": {
                     "low": 13,
@@ -3077,7 +3384,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ABORT_STAT_FORCE": {
                     "low": 25,
@@ -3086,7 +3394,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TRANSFER_ERR_STAT_FORCE": {
                     "low": 31,
@@ -3095,7 +3404,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "RX_DESC_QUEUE_PORT": {
@@ -3108,7 +3418,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "w",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "RX_DATA_PORT": {
@@ -3121,7 +3432,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "w",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "TX_DESC_QUEUE_PORT": {
@@ -3134,7 +3446,8 @@ reg_map = Munch.fromDict({
                     "sw": "w",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "TX_DATA_PORT": {
@@ -3147,7 +3460,8 @@ reg_map = Munch.fromDict({
                     "sw": "w",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "IBI_PORT": {
@@ -3160,7 +3474,8 @@ reg_map = Munch.fromDict({
                     "sw": "w",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "QUEUE_SIZE": {
@@ -3173,7 +3488,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DESC_BUFFER_SIZE": {
                     "low": 8,
@@ -3182,7 +3498,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_BUFFER_SIZE": {
                     "low": 16,
@@ -3191,7 +3508,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_DATA_BUFFER_SIZE": {
                     "low": 24,
@@ -3200,7 +3518,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "IBI_QUEUE_SIZE": {
@@ -3213,7 +3532,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "QUEUE_THLD_CTRL": {
@@ -3226,7 +3546,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DESC_THLD": {
                     "low": 8,
@@ -3235,7 +3556,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IBI_THLD": {
                     "low": 24,
@@ -3244,7 +3566,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "DATA_BUFFER_THLD_CTRL": {
@@ -3257,7 +3580,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_DATA_THLD": {
                     "low": 8,
@@ -3266,7 +3590,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "TX_START_THLD": {
                     "low": 16,
@@ -3275,7 +3600,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "RX_START_THLD": {
                     "low": 24,
@@ -3284,7 +3610,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },
@@ -3300,7 +3627,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CAP_LENGTH": {
                     "low": 8,
@@ -3309,7 +3637,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_CONTROL": {
@@ -3322,7 +3651,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_STATUS": {
@@ -3335,7 +3665,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_RSVD_0": {
@@ -3348,7 +3679,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_RSVD_1": {
@@ -3361,7 +3693,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_RSVD_2": {
@@ -3374,7 +3707,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_RSVD_3": {
@@ -3387,7 +3721,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_PAD_CONF": {
@@ -3400,7 +3735,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "SCHMITT_EN": {
                     "low": 1,
@@ -3409,7 +3745,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "KEEPER_EN": {
                     "low": 2,
@@ -3418,7 +3755,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PULL_DIR": {
                     "low": 3,
@@ -3427,7 +3765,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PULL_EN": {
                     "low": 4,
@@ -3436,7 +3775,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "IO_INVERSION": {
                     "low": 5,
@@ -3445,7 +3785,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "OD_EN": {
                     "low": 6,
@@ -3454,7 +3795,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "VIRTUAL_OD_EN": {
                     "low": 7,
@@ -3463,7 +3805,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "PAD_TYPE": {
                     "low": 24,
@@ -3472,7 +3815,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_PAD_ATTR": {
@@ -3485,7 +3829,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "DRIVE_STRENGTH": {
                     "low": 24,
@@ -3494,7 +3839,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_FEATURE_2": {
@@ -3507,7 +3853,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "SOC_MGMT_FEATURE_3": {
@@ -3520,7 +3867,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_R_REG": {
@@ -3533,7 +3881,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_F_REG": {
@@ -3546,7 +3895,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_SU_DAT_REG": {
@@ -3559,7 +3909,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_HD_DAT_REG": {
@@ -3572,7 +3923,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_HIGH_REG": {
@@ -3585,7 +3937,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_LOW_REG": {
@@ -3598,7 +3951,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_HD_STA_REG": {
@@ -3611,7 +3965,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_SU_STA_REG": {
@@ -3624,7 +3979,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_SU_STO_REG": {
@@ -3637,7 +3993,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_FREE_REG": {
@@ -3650,7 +4007,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_AVAL_REG": {
@@ -3663,7 +4021,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "T_IDLE_REG": {
@@ -3676,7 +4035,8 @@ reg_map = Munch.fromDict({
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },
@@ -3692,7 +4052,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 },
                 "CAP_LENGTH": {
                     "low": 8,
@@ -3701,7 +4062,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "r",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "CONTROLLER_CONFIG": {
@@ -3714,7 +4076,8 @@ reg_map = Munch.fromDict({
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
-                    "rclr": 0
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },
@@ -3728,7 +4091,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CAP_LENGTH": {
                 "low": 8,
@@ -3737,7 +4101,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         }
     },
@@ -3752,7 +4117,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_PAYLOAD": {
                 "low": 12,
@@ -3760,7 +4126,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "IBI_REJECT": {
                 "low": 13,
@@ -3768,7 +4135,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "CRR_REJECT": {
                 "low": 14,
@@ -3776,7 +4144,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "TS": {
                 "low": 15,
@@ -3784,7 +4153,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DYNAMIC_ADDRESS": {
                 "low": 16,
@@ -3792,7 +4162,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "RING_ID": {
                 "low": 26,
@@ -3800,7 +4171,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DEV_NACK_RETRY_CNT": {
                 "low": 29,
@@ -3808,7 +4180,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DEVICE": {
                 "low": 31,
@@ -3816,7 +4189,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTOCMD_MASK": {
                 "low": 32,
@@ -3824,7 +4198,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTOCMD_VALUE": {
                 "low": 40,
@@ -3832,7 +4207,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTOCMD_MODE": {
                 "low": 48,
@@ -3840,7 +4216,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "AUTOCMD_HDR_CODE": {
                 "low": 51,
@@ -3848,7 +4225,8 @@ reg_map = Munch.fromDict({
                 "sw": "rw",
                 "hw": "r",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         }
     },
@@ -3863,7 +4241,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "PID_LO": {
                 "low": 32,
@@ -3871,7 +4250,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DCR": {
                 "low": 64,
@@ -3879,7 +4259,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "BCR": {
                 "low": 72,
@@ -3887,7 +4268,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             },
             "DYNAMIC_ADDRESS": {
                 "low": 96,
@@ -3895,7 +4277,8 @@ reg_map = Munch.fromDict({
                 "sw": "r",
                 "hw": "rw",
                 "woclr": 0,
-                "rclr": 0
+                "rclr": 0,
+                "hwclr": 0
             }
         }
     }

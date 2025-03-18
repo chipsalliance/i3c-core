@@ -120,3 +120,6 @@ class CocotbScanner(RDLListener):
 
         rclr = node.get_property("rclr") or node.get_property("onread") == "rclr"
         field.update({"rclr": int(rclr)})
+
+        hwclr = node.get_property("hwclr")
+        field.update({"hwclr": int(hwclr)})
