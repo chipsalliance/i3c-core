@@ -270,6 +270,10 @@ module controller_standby_i3c
   // Drive all unused inputs here
   always_comb begin
     ctrl_scl_o = '1;
+    get_acccr = '0;
+    get_mxds = '0;
+    is_hotjoin_done = '0;
+    bus_timeout = '0;
   end
 
   typedef enum logic [1:0] {
