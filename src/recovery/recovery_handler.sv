@@ -48,6 +48,7 @@ module recovery_handler
     output logic                               ctl_tti_rx_desc_queue_wready_o,
     input  logic [     TtiRxDescDataWidth-1:0] ctl_tti_rx_desc_queue_wdata_i,
     output logic [     TtiRxDescThldWidth-1:0] ctl_tti_rx_desc_queue_ready_thld_o,
+    output logic                               ctl_tti_rx_desc_queue_ready_thld_trig_o,
 
     // TX Descriptor queue
     output logic                               ctl_tti_tx_desc_queue_full_o,
@@ -70,6 +71,7 @@ module recovery_handler
     output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_start_thld_o,
     output logic                               ctl_tti_rx_data_queue_start_thld_trig_o,
     output logic [     TtiRxDataThldWidth-1:0] ctl_tti_rx_data_queue_ready_thld_o,
+    output logic                               ctl_tti_rx_data_queue_ready_thld_trig_o,
 
     // TX Data queue
     output logic                               ctl_tti_tx_data_queue_full_o,
@@ -556,6 +558,7 @@ module recovery_handler
 
   // Threshold
   assign ctl_tti_rx_desc_queue_ready_thld_o = tti_rx_desc_queue_ready_thld_o;
+  assign ctl_tti_rx_desc_queue_ready_thld_trig_o = tti_rx_desc_queue_ready_thld_trig;
 
   // TX descriptor queue
   always_comb begin : T1MUX
@@ -623,6 +626,7 @@ module recovery_handler
   // Thresholds
   assign ctl_tti_rx_data_queue_start_thld_o = tti_rx_data_queue_start_thld;
   assign ctl_tti_rx_data_queue_ready_thld_o = tti_rx_data_queue_ready_thld_o;
+  assign ctl_tti_rx_data_queue_ready_thld_trig_o = tti_rx_data_queue_ready_thld_trig;
 
   // ......................
 
