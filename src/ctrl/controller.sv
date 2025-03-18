@@ -240,7 +240,6 @@ module controller
     output logic err_o,
     input  logic recovery_mode_enter_i,
     output logic virtual_device_sel_o,
-    input  logic virtual_device_rdy_i,
     output logic xfer_in_progress_o
 );
 
@@ -567,7 +566,6 @@ module controller
       .escalated_reset_o,
       .recovery_mode_enter_i(recovery_mode_enter_i),
       .virtual_device_sel_o(virtual_device_sel_o),
-      .virtual_device_rdy_i(virtual_device_rdy_i),
       .xfer_in_progress_o(xfer_in_progress_o)
   );
 

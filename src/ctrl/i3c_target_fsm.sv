@@ -123,7 +123,6 @@ module i3c_target_fsm #(
     output logic parity_err_o,
     output logic rx_overflow_err_o,
     output logic virtual_device_sel_o,
-    input  logic virtual_device_rdy_i,
     output logic xfer_in_progress_o,
 
     output logic tx_pr_start_o,

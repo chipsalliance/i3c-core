@@ -507,8 +507,8 @@ module i3c
   logic recovery_mode_enter;
   logic recovery_mode_enabled;
   logic virtual_device_sel;
-  logic virtual_device_rdy;
   logic xfer_in_progress;
+
 
   // HCI
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
@@ -697,7 +697,6 @@ module i3c
       .err_o(controller_error),
       .recovery_mode_enter_i(recovery_mode_enter),
       .virtual_device_sel_o(virtual_device_sel),
-      .virtual_device_rdy_i(virtual_device_rdy),
       .xfer_in_progress_o(xfer_in_progress)
   );
 
@@ -1054,6 +1053,7 @@ module i3c
       .ctl_tti_tx_desc_queue_rready_i(tti_tx_desc_rready),
       .ctl_tti_tx_desc_queue_rdata_o(tti_tx_desc_rdata),
       .ctl_tti_tx_desc_queue_ready_thld_o(tti_tx_desc_ready_thld),
+      .ctl_tti_tx_desc_queue_ready_thld_trig_o(tti_tx_desc_ready_thld_trig),
 
       // TTI RX data queue
       .ctl_tti_rx_data_queue_full_o(tti_rx_full),
