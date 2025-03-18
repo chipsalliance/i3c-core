@@ -66,10 +66,12 @@ module I3CCSR (
         end else begin
             if(external_req & ~external_wr_ack & ~external_rd_ack) external_pending <= '1;
             else if(external_wr_ack | external_rd_ack) external_pending <= '0;
-            assert(!external_wr_ack || (external_pending | external_req))
-                else $error("An external wr_ack strobe was asserted when no external request was active");
-            assert(!external_rd_ack || (external_pending | external_req))
-                else $error("An external rd_ack strobe was asserted when no external request was active");
+            `ifndef SYNTHESIS
+                assert(!external_wr_ack || (external_pending | external_req))
+                    else $error("An external wr_ack strobe was asserted when no external request was active");
+                assert(!external_rd_ack || (external_pending | external_req))
+                    else $error("An external rd_ack strobe was asserted when no external request was active");
+            `endif
         end
     end
 
@@ -2863,8 +2865,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value <= field_combo.I3CBase.HC_CONTROL.IBA_INCLUDE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.IBA_INCLUDE.value = field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value;
@@ -2884,8 +2888,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value <= field_combo.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value = field_storage.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
@@ -2905,8 +2911,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value <= field_combo.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value = field_storage.I3CBase.HC_CONTROL.HOT_JOIN_CTRL.value;
@@ -2926,8 +2934,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value <= field_combo.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value = field_storage.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value;
@@ -2947,8 +2957,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.ABORT.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.ABORT.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.ABORT.value <= field_combo.I3CBase.HC_CONTROL.ABORT.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.ABORT.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.ABORT.value <= field_combo.I3CBase.HC_CONTROL.ABORT.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.ABORT.value = field_storage.I3CBase.HC_CONTROL.ABORT.value;
@@ -2971,8 +2983,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.RESUME.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.RESUME.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.RESUME.value <= field_combo.I3CBase.HC_CONTROL.RESUME.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.RESUME.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.RESUME.value <= field_combo.I3CBase.HC_CONTROL.RESUME.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.RESUME.value = field_storage.I3CBase.HC_CONTROL.RESUME.value;
@@ -2995,8 +3009,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next) begin
-            field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next;
+        end else begin
+            if(field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.load_next) begin
+                field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value <= field_combo.I3CBase.HC_CONTROL.BUS_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.HC_CONTROL.BUS_ENABLE.value = field_storage.I3CBase.HC_CONTROL.BUS_ENABLE.value;
@@ -3019,8 +3035,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= 7'h0;
-        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next;
+        end else begin
+            if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
+                field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.value;
@@ -3043,8 +3061,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= 1'h0;
-        end else if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
-            field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+        end else begin
+            if(field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
+                field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+            end
         end
     end
     assign hwif_out.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
@@ -3067,8 +3087,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.SOFT_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value <= field_combo.I3CBase.RESET_CONTROL.SOFT_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.SOFT_RST.value = field_storage.I3CBase.RESET_CONTROL.SOFT_RST.value;
@@ -3091,8 +3113,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
@@ -3115,8 +3139,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
@@ -3139,8 +3165,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.TX_FIFO_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.TX_FIFO_RST.value = field_storage.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
@@ -3163,8 +3191,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value <= field_combo.I3CBase.RESET_CONTROL.RX_FIFO_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.RX_FIFO_RST.value = field_storage.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
@@ -3187,8 +3217,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= 1'h0;
-        end else if(field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
-            field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next;
+        end else begin
+            if(field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
+                field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next;
+            end
         end
     end
     assign hwif_out.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value = field_storage.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
@@ -3211,8 +3243,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.load_next) begin
+                field_storage.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT
@@ -3234,8 +3268,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.load_next) begin
+                field_storage.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT
@@ -3257,8 +3293,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.load_next) begin
+                field_storage.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT
@@ -3280,8 +3318,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.load_next) begin
+                field_storage.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.value <= field_combo.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT
@@ -3303,8 +3343,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next) begin
-            field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.load_next) begin
+                field_storage.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.value <= field_combo.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS.intr =
@@ -3329,8 +3371,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.load_next) begin
+                field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value;
@@ -3350,8 +3394,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.load_next) begin
+                field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value;
@@ -3371,8 +3417,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.load_next) begin
+                field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value;
@@ -3392,8 +3440,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.load_next) begin
+                field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value;
@@ -3413,8 +3463,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next) begin
-            field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.load_next) begin
+                field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value <= field_combo.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value = field_storage.I3CBase.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value;
@@ -3434,8 +3486,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.load_next) begin
+                field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_INTERNAL_ERR_SIGNAL_EN.value;
@@ -3455,8 +3509,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.load_next) begin
+                field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_SEQ_CANCEL_SIGNAL_EN.value;
@@ -3476,8 +3532,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.load_next) begin
+                field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_WARN_CMD_SEQ_STALL_SIGNAL_EN.value;
@@ -3497,8 +3555,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.load_next) begin
+                field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN.value;
@@ -3518,8 +3578,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next) begin
-            field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.load_next) begin
+                field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value <= field_combo.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value = field_storage.I3CBase.INTR_SIGNAL_ENABLE.SCHED_CMD_MISSED_TICK_SIGNAL_EN.value;
@@ -3539,8 +3601,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.load_next) begin
+                field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value;
@@ -3560,8 +3624,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.load_next) begin
+                field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value;
@@ -3581,8 +3647,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.load_next) begin
+                field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value;
@@ -3602,8 +3670,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.load_next) begin
+                field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value <= field_combo.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value = field_storage.I3CBase.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value;
@@ -3623,8 +3693,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= 1'h0;
-        end else if(field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next) begin
-            field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next;
+        end else begin
+            if(field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.load_next) begin
+                field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value <= field_combo.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value = field_storage.I3CBase.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value;
@@ -3647,8 +3719,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= 5'h0;
-        end else if(field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next) begin
-            field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next;
+        end else begin
+            if(field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.load_next) begin
+                field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value <= field_combo.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next;
+            end
         end
     end
     assign hwif_out.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value = field_storage.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.value;
@@ -3668,8 +3742,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.load_next) begin
+                field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_HJ_REJECTED.value;
@@ -3689,8 +3765,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.load_next) begin
+                field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_CRR_REJECTED.value;
@@ -3710,8 +3788,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next) begin
-            field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.load_next) begin
+                field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value <= field_combo.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value = field_storage.I3CBase.IBI_NOTIFY_CTRL.NOTIFY_IBI_REJECTED.value;
@@ -3731,8 +3811,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= 8'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.load_next) begin
+                field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_IBI_ID.value;
@@ -3752,8 +3834,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= 2'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.load_next) begin
+                field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.AFTER_N_CHUNKS.value;
@@ -3773,8 +3857,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= 3'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.load_next) begin
+                field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.MATCH_STATUS_TYPE.value;
@@ -3797,8 +3883,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= 1'h0;
-        end else if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next) begin
-            field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next;
+        end else begin
+            if(field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.load_next) begin
+                field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value <= field_combo.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next;
+            end
         end
     end
     assign hwif_out.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value = field_storage.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.value;
@@ -3818,8 +3906,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= 1'h0;
-        end else if(field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next) begin
-            field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next;
+        end else begin
+            if(field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.load_next) begin
+                field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value <= field_combo.I3CBase.DEV_CTX_BASE_LO.BASE_LO.next;
+            end
         end
     end
     assign hwif_out.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value = field_storage.I3CBase.DEV_CTX_BASE_LO.BASE_LO.value;
@@ -3839,8 +3929,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= 1'h0;
-        end else if(field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next) begin
-            field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next;
+        end else begin
+            if(field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.load_next) begin
+                field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value <= field_combo.I3CBase.DEV_CTX_BASE_HI.BASE_HI.next;
+            end
         end
     end
     assign hwif_out.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value = field_storage.I3CBase.DEV_CTX_BASE_HI.BASE_HI.value;
@@ -3882,8 +3974,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.load_next) begin
+                field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
@@ -3907,8 +4001,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.load_next) begin
+                field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
@@ -3929,8 +4025,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next;
+        end else begin
+            if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.load_next) begin
+                field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value;
@@ -3950,8 +4048,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= 8'h1;
-        end else if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next) begin
-            field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.load_next) begin
+                field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value <= field_combo.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value = field_storage.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
@@ -3971,8 +4071,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.load_next) begin
+                field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
@@ -3992,8 +4094,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.load_next) begin
+                field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
@@ -4013,8 +4117,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
+                field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
@@ -4034,8 +4140,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= 3'h1;
-        end else if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
-            field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
+        end else begin
+            if(field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
+                field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
+            end
         end
     end
     assign hwif_out.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value = field_storage.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
@@ -4055,8 +4163,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT
@@ -4075,8 +4185,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT
@@ -4095,8 +4207,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT
@@ -4115,8 +4229,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT
@@ -4135,8 +4251,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT
@@ -4158,8 +4276,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT
@@ -4181,8 +4301,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.value <= field_combo.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_STATUS.intr =
@@ -4209,8 +4331,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TX_THLD_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN
@@ -4229,8 +4353,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RX_THLD_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN
@@ -4249,8 +4375,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.IBI_STATUS_THLD_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN
@@ -4269,8 +4397,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.CMD_QUEUE_READY_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN
@@ -4289,8 +4419,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.RESP_READY_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN
@@ -4309,8 +4441,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN
@@ -4329,8 +4463,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.PIOControl.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN
@@ -4349,8 +4485,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TX_THLD_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN
@@ -4369,8 +4507,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RX_THLD_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN
@@ -4389,8 +4529,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.IBI_STATUS_THLD_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN
@@ -4409,8 +4551,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.CMD_QUEUE_READY_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN
@@ -4429,8 +4573,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.RESP_READY_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN
@@ -4449,8 +4595,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ABORT_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN
@@ -4469,8 +4617,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next) begin
-            field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.load_next) begin
+                field_storage.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.value <= field_combo.PIOControl.PIO_INTR_SIGNAL_ENABLE.TRANSFER_ERR_SIGNAL_EN.next;
+            end
         end
     end
     // Field: I3CCSR.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE
@@ -4489,8 +4639,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TX_THLD_FORCE.value;
@@ -4510,8 +4662,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.RX_THLD_FORCE.value;
@@ -4531,8 +4685,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.IBI_THLD_FORCE.value;
@@ -4552,8 +4708,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value;
@@ -4573,8 +4731,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.RESP_READY_FORCE.value;
@@ -4594,8 +4754,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value;
@@ -4615,8 +4777,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next) begin
-            field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.load_next) begin
+                field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value <= field_combo.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value = field_storage.PIOControl.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value;
@@ -4636,8 +4800,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= 1'h1;
-        end else if(field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= field_combo.PIOControl.PIO_CONTROL.ENABLE.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_CONTROL.ENABLE.load_next) begin
+                field_storage.PIOControl.PIO_CONTROL.ENABLE.value <= field_combo.PIOControl.PIO_CONTROL.ENABLE.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_CONTROL.ENABLE.value = field_storage.PIOControl.PIO_CONTROL.ENABLE.value;
@@ -4657,8 +4823,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.RS.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_CONTROL.RS.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.RS.value <= field_combo.PIOControl.PIO_CONTROL.RS.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_CONTROL.RS.load_next) begin
+                field_storage.PIOControl.PIO_CONTROL.RS.value <= field_combo.PIOControl.PIO_CONTROL.RS.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_CONTROL.RS.value = field_storage.PIOControl.PIO_CONTROL.RS.value;
@@ -4678,8 +4846,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.PIOControl.PIO_CONTROL.ABORT.value <= 1'h0;
-        end else if(field_combo.PIOControl.PIO_CONTROL.ABORT.load_next) begin
-            field_storage.PIOControl.PIO_CONTROL.ABORT.value <= field_combo.PIOControl.PIO_CONTROL.ABORT.next;
+        end else begin
+            if(field_combo.PIOControl.PIO_CONTROL.ABORT.load_next) begin
+                field_storage.PIOControl.PIO_CONTROL.ABORT.value <= field_combo.PIOControl.PIO_CONTROL.ABORT.next;
+            end
         end
     end
     assign hwif_out.PIOControl.PIO_CONTROL.ABORT.value = field_storage.PIOControl.PIO_CONTROL.ABORT.value;
@@ -4706,8 +4876,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.value;
@@ -4730,8 +4902,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.value;
@@ -4754,8 +4928,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.value;
@@ -4778,8 +4954,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.value;
@@ -4802,8 +4980,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.value <= field_combo.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.value = field_storage.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.value;
@@ -4826,8 +5006,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.value;
@@ -4850,8 +5032,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.value;
@@ -4874,8 +5058,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.value;
@@ -4898,8 +5084,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.value;
@@ -4922,8 +5110,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.value;
@@ -4946,8 +5136,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.value;
@@ -4970,8 +5162,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.value;
@@ -4994,8 +5188,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.value;
@@ -5019,8 +5215,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.value;
@@ -5046,8 +5244,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.value;
@@ -5070,8 +5270,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.value;
@@ -5094,8 +5296,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.value <= 16'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.value;
@@ -5118,8 +5322,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value <= 9'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.value;
@@ -5142,8 +5348,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.value <= 7'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.value;
@@ -5166,8 +5374,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.RESET_CTRL.value;
@@ -5190,8 +5400,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.FORCED_RECOVERY.value;
@@ -5214,8 +5426,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.value <= field_combo.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.value = field_storage.I3C_EC.SecFwRecoveryIf.DEVICE_RESET.IF_CTRL.value;
@@ -5238,8 +5452,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.CMS.value;
@@ -5263,8 +5479,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.REC_IMG_SEL.value;
@@ -5288,8 +5506,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_CTRL.ACTIVATE_REC_IMG.value;
@@ -5313,8 +5533,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.value <= 4'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.value;
@@ -5337,8 +5559,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.value <= 4'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.value;
@@ -5361,8 +5585,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value = field_storage.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.value;
@@ -5385,8 +5611,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.value;
@@ -5409,8 +5637,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.value;
@@ -5433,8 +5663,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.value;
@@ -5457,8 +5689,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.value <= 5'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.value;
@@ -5481,8 +5715,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.value;
@@ -5505,8 +5741,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.value;
@@ -5529,8 +5767,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value <= field_combo.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value = field_storage.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.value;
@@ -5553,8 +5793,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.CMS.value;
@@ -5580,8 +5822,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value <= 8'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_0.RESET.value;
@@ -5604,8 +5848,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value;
@@ -5625,8 +5871,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value <= 1'h1;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.EMPTY.value;
@@ -5646,8 +5894,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.FULL.value;
@@ -5667,8 +5917,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value <= 3'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value;
@@ -5688,8 +5940,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
@@ -5709,8 +5963,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
@@ -5730,8 +5986,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
@@ -5751,8 +6009,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
@@ -5772,8 +6032,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.load_next) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.next;
+        end else begin
+            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.load_next) begin
+                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value;
@@ -5800,7 +6062,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next;
@@ -5823,7 +6084,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next;
@@ -5846,7 +6106,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next;
@@ -5869,7 +6128,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next;
@@ -5898,8 +6156,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value;
@@ -5919,8 +6179,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value;
@@ -5940,8 +6202,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= 3'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value;
@@ -5964,8 +6228,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
@@ -5988,8 +6254,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value;
@@ -6012,8 +6280,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value;
@@ -6036,8 +6306,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value;
@@ -6057,8 +6329,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value;
@@ -6078,8 +6352,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= 2'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
@@ -6102,8 +6378,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value <= 7'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.value;
@@ -6126,8 +6404,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.value;
@@ -6150,8 +6430,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value <= 7'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.value;
@@ -6174,8 +6456,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
@@ -6195,7 +6479,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
@@ -6221,8 +6504,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
@@ -6245,8 +6530,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
@@ -6269,8 +6556,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
@@ -6293,8 +6582,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
@@ -6314,7 +6605,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next;
@@ -6337,7 +6627,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next;
@@ -6360,7 +6649,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next;
@@ -6383,7 +6671,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next;
@@ -6406,8 +6693,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= 15'h7fff;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value;
@@ -6427,8 +6716,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value <= 8'hbd;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
@@ -6448,8 +6739,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= 5'h6;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value;
@@ -6469,8 +6762,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value <= 3'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value;
@@ -6490,8 +6785,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= 32'h5a00a5;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value;
@@ -6511,7 +6808,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next;
@@ -6534,7 +6830,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next;
@@ -6557,7 +6852,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next;
@@ -6580,7 +6874,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next;
@@ -6603,7 +6896,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next;
@@ -6626,7 +6918,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next;
@@ -6649,7 +6940,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next;
@@ -6672,7 +6962,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next;
@@ -6695,7 +6984,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next;
@@ -6721,8 +7009,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.value;
@@ -6742,7 +7032,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next;
@@ -6765,7 +7054,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next;
@@ -6788,7 +7076,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next;
@@ -6811,7 +7098,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next;
@@ -6834,7 +7120,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next;
@@ -6857,7 +7142,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next;
@@ -6880,7 +7164,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next;
@@ -6903,7 +7186,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next;
@@ -6926,7 +7208,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next;
@@ -6949,7 +7230,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next;
@@ -6972,7 +7252,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next;
@@ -6995,7 +7274,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next;
@@ -7018,7 +7296,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next;
@@ -7044,8 +7321,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value;
@@ -7065,7 +7344,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next;
@@ -7088,7 +7366,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next;
@@ -7111,7 +7388,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next;
@@ -7134,7 +7410,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next;
@@ -7157,7 +7432,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next;
@@ -7180,7 +7454,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next;
@@ -7203,7 +7476,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next;
@@ -7226,7 +7498,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next;
@@ -7249,7 +7520,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next;
@@ -7272,7 +7542,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next;
@@ -7295,7 +7564,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next;
@@ -7318,7 +7586,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next;
@@ -7341,7 +7608,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next;
@@ -7364,7 +7630,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next;
@@ -7387,8 +7652,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value <= 8'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value;
@@ -7411,8 +7678,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value <= 8'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.value;
@@ -7435,8 +7704,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value <= 8'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.value;
@@ -7459,8 +7730,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value <= 1'h1;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value;
@@ -7483,8 +7756,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value <= 7'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.value;
@@ -7507,8 +7782,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.value;
@@ -7531,8 +7808,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value <= 7'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value;
@@ -7555,8 +7834,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value <= 1'h0;
-        end else if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
@@ -7576,7 +7857,6 @@ module I3CCSR (
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = next_c;
         field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next = load_next_c;
     end
-
     always_ff @(posedge clk) begin
         if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next) begin
             field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
@@ -7604,8 +7884,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value <= 1'h1;
-        end else if(field_combo.I3C_EC.TTI.CONTROL.HJ_EN.load_next) begin
-            field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value <= field_combo.I3C_EC.TTI.CONTROL.HJ_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.CONTROL.HJ_EN.load_next) begin
+                field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value <= field_combo.I3C_EC.TTI.CONTROL.HJ_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.HJ_EN.value = field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value;
@@ -7628,8 +7910,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.CONTROL.CRR_EN.load_next) begin
-            field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value <= field_combo.I3C_EC.TTI.CONTROL.CRR_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.CONTROL.CRR_EN.load_next) begin
+                field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value <= field_combo.I3C_EC.TTI.CONTROL.CRR_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.CRR_EN.value = field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value;
@@ -7652,8 +7936,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value <= 1'h1;
-        end else if(field_combo.I3C_EC.TTI.CONTROL.IBI_EN.load_next) begin
-            field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value <= field_combo.I3C_EC.TTI.CONTROL.IBI_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.CONTROL.IBI_EN.load_next) begin
+                field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value <= field_combo.I3C_EC.TTI.CONTROL.IBI_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.IBI_EN.value = field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value;
@@ -7673,8 +7959,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value <= 3'h0;
-        end else if(field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.load_next) begin
-            field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value <= field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.load_next) begin
+                field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value <= field_combo.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value = field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
@@ -7694,8 +7982,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.load_next) begin
-            field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value <= field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.load_next) begin
+                field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value <= field_combo.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value = field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value;
@@ -7715,8 +8005,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= 2'h0;
-        end else if(field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.load_next) begin
-            field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.load_next) begin
+                field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value = field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value;
@@ -7740,8 +8032,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value;
@@ -7764,8 +8058,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value;
@@ -7788,8 +8084,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value;
@@ -7812,8 +8110,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value;
@@ -7836,8 +8136,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value;
@@ -7860,8 +8162,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
-            field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value;
@@ -7884,8 +8188,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value;
@@ -7908,8 +8214,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value;
@@ -7932,8 +8240,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value;
@@ -7956,8 +8266,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value;
@@ -7980,8 +8292,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value;
@@ -8004,8 +8318,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value;
@@ -8028,8 +8344,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value;
@@ -8052,8 +8370,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value;
@@ -8076,8 +8396,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value;
@@ -8100,8 +8422,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value;
@@ -8124,8 +8448,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value <= 4'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
@@ -8148,8 +8474,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value;
@@ -8172,8 +8500,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value;
@@ -8193,8 +8523,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value;
@@ -8214,8 +8546,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value;
@@ -8235,8 +8569,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value;
@@ -8256,8 +8592,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value;
@@ -8277,8 +8615,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value;
@@ -8298,8 +8638,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value;
@@ -8319,8 +8661,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value;
@@ -8340,8 +8684,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value;
@@ -8361,8 +8707,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value;
@@ -8382,8 +8730,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value;
@@ -8403,8 +8753,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value;
@@ -8424,8 +8776,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value;
@@ -8445,8 +8799,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value;
@@ -8466,8 +8822,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value;
@@ -8487,8 +8845,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value;
@@ -8508,8 +8868,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value;
@@ -8529,8 +8891,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value;
@@ -8550,8 +8914,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value;
@@ -8571,8 +8937,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value;
@@ -8592,8 +8960,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value;
@@ -8613,8 +8983,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value;
@@ -8634,8 +9006,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value;
@@ -8655,8 +9029,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value;
@@ -8676,8 +9052,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value <= 1'h0;
-        end else if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.load_next) begin
-            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value;
@@ -8726,8 +9104,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value <= 8'h1;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value;
@@ -8751,8 +9131,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value <= 8'h1;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value;
@@ -8776,8 +9158,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value <= 8'h1;
-        end else if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value <= field_combo.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value = field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value;
@@ -8798,8 +9182,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value <= 3'h1;
-        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value;
@@ -8819,8 +9205,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value <= 3'h1;
-        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value;
@@ -8840,8 +9228,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= 3'h1;
-        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
@@ -8861,8 +9251,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= 3'h1;
-        end else if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
-            field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
+        end else begin
+            if(field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.load_next) begin
+                field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value <= field_combo.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value = field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
@@ -8884,8 +9276,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value;
@@ -8905,8 +9299,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value;
@@ -8926,8 +9322,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_0.PLACEHOLDER.value;
@@ -8947,8 +9345,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_1.PLACEHOLDER.value;
@@ -8968,8 +9368,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value;
@@ -8989,8 +9391,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value;
@@ -9010,8 +9414,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value <= 1'h1;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
@@ -9031,8 +9437,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value;
@@ -9052,8 +9460,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value;
@@ -9073,8 +9483,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value;
@@ -9094,8 +9506,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value;
@@ -9115,8 +9529,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value;
@@ -9136,8 +9552,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value;
@@ -9157,8 +9575,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value <= 1'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value;
@@ -9178,8 +9598,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value <= 8'h1;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value;
@@ -9199,8 +9621,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value <= 8'hf;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value;
@@ -9220,8 +9644,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value <= 8'hf;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value = field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value;
@@ -9241,8 +9667,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value;
@@ -9262,8 +9690,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= 32'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value <= field_combo.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value = field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value;
@@ -9283,8 +9713,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_R_REG.T_R.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value <= field_combo.I3C_EC.SoCMgmtIf.T_R_REG.T_R.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_R_REG.T_R.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value <= field_combo.I3C_EC.SoCMgmtIf.T_R_REG.T_R.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value = field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value;
@@ -9304,8 +9736,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_F_REG.T_F.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value <= field_combo.I3C_EC.SoCMgmtIf.T_F_REG.T_F.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_F_REG.T_F.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value <= field_combo.I3C_EC.SoCMgmtIf.T_F_REG.T_F.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value = field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value;
@@ -9325,8 +9759,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value;
@@ -9346,8 +9782,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value;
@@ -9367,8 +9805,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value <= field_combo.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value <= field_combo.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value = field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value;
@@ -9388,8 +9828,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value <= field_combo.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value <= field_combo.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value = field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value;
@@ -9409,8 +9851,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value;
@@ -9430,8 +9874,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value;
@@ -9451,8 +9897,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value <= 20'h0;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value;
@@ -9472,8 +9920,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value <= 32'hc;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value <= field_combo.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value <= field_combo.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value = field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value;
@@ -9493,8 +9943,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value <= 32'h12c;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value <= field_combo.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value <= field_combo.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value = field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value;
@@ -9514,8 +9966,10 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value <= 32'hea60;
-        end else if(field_combo.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.load_next) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value <= field_combo.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.next;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value <= field_combo.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value = field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value;
@@ -9537,20 +9991,22 @@ module I3CCSR (
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
             field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value <= 2'h1;
-        end else if(field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.load_next) begin
-            field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value <= field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next;
+        end else begin
+            if(field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.load_next) begin
+                field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value <= field_combo.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next;
+            end
         end
     end
     assign hwif_out.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value = field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value;
     assign hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_ID.value = 8'h0;
     assign hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_LENGTH.value = 16'h1;
     assign hwif_out.DAT.req = decoded_reg_strb.DAT;
-    assign hwif_out.DAT.addr = decoded_addr[10:0];
+    assign hwif_out.DAT.addr = decoded_addr[9:0];
     assign hwif_out.DAT.req_is_wr = decoded_req_is_wr;
     assign hwif_out.DAT.wr_data = decoded_wr_data;
     assign hwif_out.DAT.wr_biten = decoded_wr_biten;
     assign hwif_out.DCT.req = decoded_reg_strb.DCT;
-    assign hwif_out.DCT.addr = decoded_addr[11:0];
+    assign hwif_out.DCT.addr = decoded_addr[10:0];
     assign hwif_out.DCT.req_is_wr = decoded_req_is_wr;
     assign hwif_out.DCT.wr_data = decoded_wr_data;
     assign hwif_out.DCT.wr_biten = decoded_wr_biten;
