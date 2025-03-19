@@ -143,6 +143,16 @@ def init_i2c_controller_ports(dut):
     dut.fmt_fifo_depth_i.value = 1
     dut.fmt_fifo_rvalid_i.value = 0
 
+    dut.fmt_byte_i.value = 0
+    dut.fmt_flag_start_before_i.value = 0
+    dut.fmt_flag_stop_after_i.value = 0
+    dut.fmt_flag_read_bytes_i.value = 0
+    dut.fmt_flag_read_continue_i.value = 0
+    dut.fmt_flag_nak_ok_i.value = 0
+    dut.unhandled_unexp_nak_i.value = 0
+    dut.unhandled_nak_timeout_i.value = 0
+
+    dut.host_nack_handler_timeout_i.value = 0
 
 def init_i2c_target_ports(dut, address):
     # Timing
@@ -165,10 +175,9 @@ def init_i2c_target_ports(dut, address):
 
 def MatchOTAcqDataExact(value: int, dut: Any, mask: int = 0x3FF) -> bool:
     """Sequence predicate: Match data in ACQ queue"""
-    breakpoint()
-    if dut.xcontroller_standby_i2c.acq_fifo_valid_int.value:
+    if dut.controller_standby_i2c.acq_fifo_valid_int.value:
         if (
-            dut.xcontroller_standby.xcontroller_standby_i2c.acq_fifo_wdata_int.value & mask
+            dut.controller_standby_i2c.acq_fifo_data_int.value & mask
             == value & mask
         ):
             return True
@@ -178,10 +187,10 @@ def MatchOTAcqDataExact(value: int, dut: Any, mask: int = 0x3FF) -> bool:
 
 def MatchTTIDataExact(value: int, dut: Any, mask: int = 0xFFFF_FFFF) -> bool:
     """Sequence predicate: Match data in TTI RX queue"""
-    if dut.tti_rx_queue_wvalid.value:
-        if (dut.tti_rx_queue_wdata.value & mask) == (
+    if dut.rx_queue_wvalid_o.value:
+        if (dut.rx_queue_wdata_o.value & mask) == (
             value & mask
-        ) and dut.tti_rx_queue_wready.value:
+        ) and dut.rx_queue_wready_i.value:
             return True
         raise SequenceFailed()
     return False
@@ -189,10 +198,10 @@ def MatchTTIDataExact(value: int, dut: Any, mask: int = 0xFFFF_FFFF) -> bool:
 
 def MatchTTIResponseExact(byte_count: int, dut: Any) -> bool:
     """Sequence predicate: Match byte count in TTI response queue"""
-    if dut.tti_rx_desc_queue_wvalid.value:
+    if dut.rx_desc_queue_wvalid_o.value:
         if (
-            dut.tti_rx_desc_queue_wdata.value & 0xFFFF0000
-        ) >> 16 == byte_count and dut.tti_rx_desc_queue_wready.value:
+            dut.rx_desc_queue_wdata_o.value
+        ) == byte_count and dut.rx_desc_queue_wready_i.value:
             return True
         raise SequenceFailed()
     return False

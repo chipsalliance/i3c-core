@@ -31,6 +31,7 @@ module i2c_target_fsm
     input [AcqFifoWidth-1:0] acq_fifo_rdata_i,  // only used for assertion
 
     output logic target_idle_o,  // indicates the target is idle
+    output logic target_rnw_o,            // indicates r/w transaction
 
     input [15:0] t_r_i,             // rise time of both SDA and SCL in clock units
     input [15:0] tsu_dat_i,         // data setup time in clock units
@@ -342,6 +343,7 @@ module i2c_target_fsm
   state_e state_q, state_d;
 
   logic rw_bit_q;
+  assign target_rnw_o = rw_bit_q;
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       rw_bit_q <= '0;

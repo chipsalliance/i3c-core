@@ -35,6 +35,7 @@ def init_i2c_target_ports(dut, address):
     dut.tx_fifo_rvalid_i.value = 0
     dut.tx_fifo_rdata_i.value = 0
 
+    dut.acq_fifo_rdata_i.value = 0
 
 async def read(master: I2cMaster, addr: int, count: int) -> bytearray:
     data = await master.read(addr, count)

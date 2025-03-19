@@ -195,7 +195,7 @@ module axi_adapter #(
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
   end
   generate
-    if (AxiDataWidth === CsrDataWidth) begin
+    if (AxiDataWidth == CsrDataWidth) begin
       assign s_cpuif_wr_biten = i3c_req_wbiten;
       assign s_cpuif_wr_data = i3c_req_wdata;
       assign i3c_req_rdata = s_cpuif_rd_data;

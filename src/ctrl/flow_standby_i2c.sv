@@ -16,6 +16,8 @@ module flow_standby_i2c
     output logic [AcqFifoDepthWidth-1:0] acq_fifo_depth_o,
     input logic acq_fifo_wready_i,
 
+    input logic rnw_i,
+
     output logic tx_fifo_rvalid_o,
     input logic tx_fifo_rready_i,
     output logic [TxFifoWidth-1:0] tx_fifo_rdata_o,
@@ -31,12 +33,12 @@ module flow_standby_i2c
     input logic response_fifo_wready_i,
 
     // TX FIFO
-    input logic [7:0] tx_fifo_rdata_i,
+    input logic [31:0] tx_fifo_rdata_i,
     input logic tx_fifo_rvalid_i,
     output logic tx_fifo_rready_o,
 
     // RX FIFO
-    output logic [7:0] rx_fifo_wdata_o,
+    output logic [31:0] rx_fifo_wdata_o,
     output logic rx_fifo_wvalid_o,
     input logic rx_fifo_wready_i,
 
@@ -59,6 +61,8 @@ module flow_standby_i2c
   state_t state_d, state_q;
   // Buffer for holding elements returned by I2C target FSM
   logic [AcqFifoWidth-1:0] fifo_buf[4];
+  // FF for storing data to be sent over I2C
+  logic [31:0] tx_fifo_rdata_d;
   // Are we currently mid-transfer?
   logic transfer_active;
   // Number of data bytes held in `fifo_buf`
@@ -86,31 +90,65 @@ module flow_standby_i2c
   logic is_start_read;
   logic xfer_read;
   logic pop_command_from_tti;
+  logic pop_dword_from_tti;
   logic pop_data_from_tti;
+  logic acq_fifo_wvalid_d;
 
-  assign rx_fifo_wdata_o = fifo_buf[0][7:0];
+  logic [AcqFifoWidth-1:0] acq_fifo_wdata_d;
+
+  assign rx_fifo_wdata_o = {fifo_buf[3][7:0], fifo_buf[2][7:0], fifo_buf[1][7:0], fifo_buf[0][7:0]};
   assign byte_count = transaction_byte_count[1:0];
 
   assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
-  assign start_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStart);
-  assign stop_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStop);
-  assign data_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqData);
-  assign nack_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqNack);
-  assign restart_detected = acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqRestart);
-  assign is_start_read = acq_fifo_wvalid_i &
-    ( acq_fifo_wdata_byte_id == AcqStart ||
-      acq_fifo_wdata_byte_id == AcqRestart ||
-      acq_fifo_wdata_byte_id == AcqNackStart );
+  always_ff @(posedge clk_i or negedge rst_ni) begin: control_ff
+    if (!rst_ni) begin
+      start_detected <= '0;
+      stop_detected <= '0;
+      data_detected <= '0;
+      nack_detected <= '0;
+      restart_detected <= '0;
+      is_start_read <= '0;
+      acq_fifo_wvalid_d <= '0;
+      acq_fifo_wdata_d <= '0;
+    end else begin
+      start_detected <= acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStart);
+      stop_detected <= acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqStop);
+      data_detected <= acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqData);
+      nack_detected <= acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqNack);
+      restart_detected <= acq_fifo_wvalid_i & (acq_fifo_wdata_byte_id == AcqRestart);
+      is_start_read <= acq_fifo_wvalid_i & rnw_i;
+      acq_fifo_wvalid_d <= acq_fifo_wvalid_i;
+      acq_fifo_wdata_d <= acq_fifo_wdata_i;
+    end
+  end
 
-  // TODO: Bug: Set proper ACQ FIFO depth
-  // [LINT_ERROR: CombLoop] The signal 'acq_fifo_depth_o' is on a comb loop
-  // path between the 'flow_standby_i2c' and 'i2c_target_fsm' modules, e.g.:
-  // In 'flow_standby_i2c':
-  //    acq_fifo_wvalid_i -> state_d -> acq_fifo_depth_o
-  // In 'i2c_target_fsm':
-  //    acq_fifo_depth_i -> stretch_addr -> acq_fifo_wvalid_o
+  // store data to send
+  always_ff @(posedge clk_i or negedge rst_ni) begin: latch_tx_data
+    if (!rst_ni) begin
+      tx_fifo_rdata_d <= '0;
+    end else begin
+      if (tx_fifo_rready_o) tx_fifo_rdata_d <= tx_fifo_rdata_i;
+    end
+  end
+
+  always_comb
+    case(byte_count)
+      0: begin
+        tx_fifo_rdata_o = tx_fifo_rdata_d[7:0];
+      end
+      1: begin
+        tx_fifo_rdata_o = tx_fifo_rdata_d[15:8];
+      end
+      2: begin
+        tx_fifo_rdata_o = tx_fifo_rdata_d[23:16];
+      end
+      3: begin
+        tx_fifo_rdata_o = tx_fifo_rdata_d[31:24];
+      end
+    endcase
+
   assign acq_fifo_depth_o = xfer_read ? 0 : {{(AcqFifoDepthWidth - 3){1'b0}},
-                                             state_d == PushDWordToTTIQueue,
+                                             state_q == PushDWordToTTIQueue,
                                              transaction_byte_count[1:0]};
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
@@ -127,13 +165,7 @@ module flow_standby_i2c
       if (!xfer_read) begin
         // Write transfer
         if (data_detected) begin
-          fifo_buf[byte_count] <= acq_fifo_wdata_i;
-        end
-      end else begin
-        // Read transfer
-        if (pop_data_from_tti) begin
-          // TODO(verilator) fails to consftify loop variable for AstSelExtract
-          fifo_buf[0] <= {AcqData, tx_fifo_rdata_i[7:0]};
+          fifo_buf[byte_count] <= acq_fifo_wdata_d;
         end
       end
     end
@@ -190,7 +222,7 @@ module flow_standby_i2c
   end : get_command_from_tti
 
   // State combo logic
-
+  assign pop_data_from_tti = tx_fifo_rvalid_i & xfer_read & (push_byte | pop_dword_from_tti);
   always_comb begin : state_outputs
     err_o = 0;
     rx_fifo_wvalid_o = 0;
@@ -204,7 +236,7 @@ module flow_standby_i2c
     tx_fifo_rready_o = 0;
     tx_fifo_rvalid_o = 0;
     pop_command_from_tti = 0;
-    pop_data_from_tti = 0;
+    pop_dword_from_tti = 0;
 
     unique case (state_q)
       AwaitStart: begin
@@ -226,21 +258,20 @@ module flow_standby_i2c
         cmd_fifo_rready_o = 1;
         tx_fifo_rready_o = 1;
         pop_command_from_tti = cmd_fifo_rvalid_i;
-        pop_data_from_tti = tx_fifo_rvalid_i;
         xfer_read = 1;
       end
       PopDWordFromTTIQueue: begin
         tx_fifo_rready_o = 1;
-        pop_data_from_tti = tx_fifo_rvalid_i;
         xfer_read = 1;
+        pop_dword_from_tti = 1;
       end
       SendByte: begin
         xfer_read = 1;
-        push_byte = tx_fifo_rready_i;
         tx_fifo_rvalid_o = 1;
       end
       SwitchByteToSend: begin
         xfer_read = 1;
+        push_byte = 1; //tx_fifo_rvalid_i;
       end
       AwaitStopOrRestart: begin
       end
@@ -250,9 +281,6 @@ module flow_standby_i2c
 
     activate_transfer   = start_detected;
     deactivate_transfer = stop_detected | restart_detected;
-
-    if (xfer_read) tx_fifo_rdata_o = fifo_buf[byte_count][7:0];
-    else tx_fifo_rdata_o = 0;
   end : state_outputs
 
   always_comb begin : state_function
@@ -268,7 +296,7 @@ module flow_standby_i2c
         if (stop_detected | restart_detected) begin
           state_d = (byte_count != 0) ? PushDWordToTTIQueue : PushResponseToTTIQueue;
         end else if (data_detected) state_d = (byte_count == 3) ? PushDWordToTTIQueue : ReceiveByte;
-        else if (acq_fifo_wvalid_i) state_d = ReportError;
+        else if (acq_fifo_wvalid_d) state_d = ReportError;
       end
       PushDWordToTTIQueue:
       if (rx_fifo_wready_i) state_d = transfer_active ? ReceiveByte : PushResponseToTTIQueue;
@@ -278,18 +306,18 @@ module flow_standby_i2c
       // but invalidated one cycle later.
       if (stop_detected | restart_detected)
         state_d = PushDWordToTTIQueue;
-      else state_d = acq_fifo_wvalid_i ? ReportError : PushDWordToTTIQueue;
+      else state_d = acq_fifo_wvalid_d ? ReportError : PushDWordToTTIQueue;
       PushResponseToTTIQueue: begin
         state_d = PushResponseToTTIQueue;
         if (response_fifo_wready_i) state_d = AwaitStart;
         // We can't wait any longer if there's a new byte, because we might be full
-        else if (acq_fifo_wvalid_i) state_d = ReportError;
+        else if (acq_fifo_wvalid_d) state_d = ReportError;
       end
       PopCommandFromTTIQueue: begin
         state_d = PopCommandFromTTIQueue;
         if (cmd_fifo_rvalid_i) begin
           if (cmd_fifo_rdata_i.data_length == 0) state_d = ReportError;
-          else state_d = tx_fifo_rvalid_i ? SendByte : PopDWordFromTTIQueue;
+          else state_d = (byte_count == 3) ? PopDWordFromTTIQueue : SendByte;
         end
         if (nack_detected) state_d = ReportError;
       end
@@ -300,17 +328,20 @@ module flow_standby_i2c
       end
       SendByte: begin
         state_d = SendByte;
-        if (tx_fifo_rready_i)
-          if (transaction_byte_count + 1 == read_transaction_length) state_d = AwaitStopOrRestart;
+        if (tx_fifo_rready_i == 1'b1) begin
+          if (transaction_byte_count + 1 == read_transaction_length) begin
+            state_d = AwaitStopOrRestart;
+          end
           else
             // Let the counter increment in a another cycle, so we hold tx_fifo_rvalid
             // with the correct byte set
             state_d = SwitchByteToSend;
+        end
         if (nack_detected) state_d = ReportError;
       end
       SwitchByteToSend: begin
         state_d = SendByte;
-        if ((byte_count == 0) & (transaction_byte_count != read_transaction_length))
+        if ((byte_count == 3) & (transaction_byte_count != read_transaction_length))
           state_d = PopDWordFromTTIQueue;
         if (nack_detected) state_d = ReportError;
       end

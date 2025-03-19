@@ -247,11 +247,53 @@ module controller_standby
 
   assign i2c_rx_queue_flush_o = '0;
 
+  // I2C operates on 32 bit TTI data
+  logic i2c_rx_queue_wvalid_int;
+  logic rx_queue_wready_int;
+  logic [31:0] i2c_rx_queue_wdata_int;
+
+  // 32 -> 8 on rx_queue
+  width_converter_Nto8 xconv_i2c_rx_queue
+  (
+    .clk_i(clk_i),
+    .rst_ni(rst_ni),
+
+    .sink_valid_i(i2c_rx_queue_wvalid_int),
+    .sink_ready_o(rx_queue_wready_int),
+    .sink_data_i (i2c_rx_queue_wdata_int),
+
+    .source_valid_o(i2c_rx_queue_wvalid_o),
+    .source_ready_i(rx_queue_wready_i),
+    .source_data_o(i2c_rx_queue_wdata_o),
+    .source_flush_i(i2c_rx_queue_flush_o)
+  );
+
+
+  logic tx_queue_rvalid_int;
+  logic i2c_tx_queue_rready_int;
+  logic [31:0] tx_queue_rdata_int;
+  // 8 -> 32 on tx_queue
+  width_converter_8toN xconv_i2c_tx_queue
+  (
+
+    .clk_i(clk_i),
+    .rst_ni(rst_ni),
+
+    .sink_valid_i(tx_queue_rvalid_i),
+    .sink_ready_o(i2c_tx_queue_rready_o),
+    .sink_data_i(tx_queue_rdata_i),
+    .sink_flush_i(1'b0),
+
+    .source_valid_o(tx_queue_rvalid_int),
+    .source_ready_i(i2c_tx_queue_rready_int),
+    .source_data_o(tx_queue_rdata_int)
+  );
+
   controller_standby_i2c #(
       .TtiRxDescDataWidth(TtiRxDescDataWidth),
       .TtiTxDescDataWidth(TtiTxDescDataWidth),
-      .TtiRxDataWidth(TtiRxDataWidth),
-      .TtiTxDataWidth(TtiTxDataWidth),
+      .TtiRxDataWidth(32),
+      .TtiTxDataWidth(32),
       .TtiRxDescThldWidth(TtiRxDescThldWidth),
       .TtiTxDescThldWidth(TtiTxDescThldWidth),
       .TtiRxThldWidth(TtiRxThldWidth),
@@ -284,9 +326,9 @@ module controller_standby
       .rx_queue_ready_thld_i(rx_queue_ready_thld_i),
       .rx_queue_ready_thld_trig_i(rx_queue_ready_thld_trig_i),
       .rx_queue_empty_i(rx_queue_empty_i),
-      .rx_queue_wvalid_o(i2c_rx_queue_wvalid_o),
-      .rx_queue_wready_i(rx_queue_wready_i),
-      .rx_queue_wdata_o(i2c_rx_queue_wdata_o),
+      .rx_queue_wvalid_o(i2c_rx_queue_wvalid_int),
+      .rx_queue_wready_i(rx_queue_wready_int),
+      .rx_queue_wdata_o(i2c_rx_queue_wdata_int),
       //      .rx_queue_flush_o(i2c_rx_queue_flush_o), // TODO: Add flush support for I2C
       .tx_queue_full_i(tx_queue_full_i),
       .tx_queue_start_thld_i(tx_queue_start_thld_i),
@@ -294,9 +336,9 @@ module controller_standby
       .tx_queue_ready_thld_i(tx_queue_ready_thld_i),
       .tx_queue_ready_thld_trig_i(tx_queue_ready_thld_trig_i),
       .tx_queue_empty_i(tx_queue_empty_i),
-      .tx_queue_rvalid_i(tx_queue_rvalid_i),
-      .tx_queue_rready_o(i2c_tx_queue_rready_o),
-      .tx_queue_rdata_i(tx_queue_rdata_i),
+      .tx_queue_rvalid_i(tx_queue_rvalid_int),
+      .tx_queue_rready_o(i2c_tx_queue_rready_int),
+      .tx_queue_rdata_i(tx_queue_rdata_int),
       .bus_start_o(i2c_bus_start_o),
       .bus_rstart_o(i2c_bus_rstart_o),
       .bus_stop_o(i2c_bus_stop_o),

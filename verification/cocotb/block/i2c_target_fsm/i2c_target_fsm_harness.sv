@@ -43,13 +43,18 @@ module i2c_target_fsm_harness
     output logic event_cmd_complete_o,  // Command is complete
     output logic event_tx_stretch_o,    // tx transaction is being stretched
     output logic event_unexp_stop_o,    // target received an unexpected stop
-    output logic event_host_timeout_o   // host ceased sending SCL pulses during ongoing transactn
+    output logic event_host_timeout_o,  // host ceased sending SCL pulses during ongoing transaction
+    output logic target_rnw_o
 );
   logic scl_i_q, sda_i_q;
 
   // Synchronize i2c signals
   always_ff @(posedge clk_i) begin
-    if (rst_ni) begin
+    if (~rst_ni) begin
+      scl_i_q <= 0;
+      sda_i_q <= 0;
+    end
+    else begin
       scl_i_q <= scl_i;
       sda_i_q <= sda_i;
     end

@@ -194,61 +194,60 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
 def hci_queues_axi_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
-
-# TODO: reenable test
-# @nox.session(tags=["tests"])
-# @nox.parametrize("test_group", ["i2c"])
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_write",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i2c_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i2c_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
-# TODO: reenable i2c test after connecting configuration.sv to CSRs
-# @nox.session(tags=["tests"])
-# @nox.parametrize("test_group", ["i2c_controller_fsm"])
-# @nox.parametrize(
-#     "test_name",
-#     [
-#         "test_mem_rw",
-#     ],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i2c_controller_fsm_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
+@nox.session(tags=["tests", "i2c"])
+@nox.parametrize("test_group", ["i2c_controller_fsm"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_mem_rw",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i2c_controller_fsm_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
-# TODO: fix tests
-# @nox.session(tags=["tests"])
-# @nox.parametrize("test_group", ["i2c_standby_controller"])
-# @nox.parametrize(
-#     "test_name",
-#     ["test_read", "test_wr_restart_rd"],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i2c_standby_controller_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
+@nox.session(tags=["tests", "i2c"])
+@nox.parametrize("test_group", ["i2c_standby_controller"])
+@nox.parametrize(
+    "test_name",
+    ["test_read", "test_wr_restart_rd"],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i2c_standby_controller_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
-# TODO: fix tests
-# @nox.session(tags=["tests"])
-# @nox.parametrize("test_group", ["i2c_target_fsm"])
-# @nox.parametrize(
-#     "test_name",
-#     ["test_mem_w", "test_mem_r"],
-# )
-# @nox.parametrize("coverage", coverage_types)
-# @nox.parametrize("simulator", simulators)
-# def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
-#     verify_block(session, test_group, test_name, coverage, simulator)
+@nox.session(tags=["tests", "i2c"])
+@nox.parametrize("test_group", ["flow_standby_i2c"])
+@nox.parametrize(
+    "test_name",
+    ["test_flow_standby_i2c"],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def flow_standby_i2c_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "i2c"])
+@nox.parametrize("test_group", ["i2c_target_fsm"])
+@nox.parametrize(
+    "test_name",
+    ["test_mem_w", "test_mem_r"],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 
 @nox.session(tags=["tests", "ahb"])

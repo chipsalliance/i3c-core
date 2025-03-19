@@ -21,6 +21,7 @@ async def reset(dut):
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)
+    dut.i2c_standby_en_i.value = 1
 
 
 async def read(master: I2cMaster, addr: int, count: int) -> bytearray:
@@ -30,11 +31,11 @@ async def read(master: I2cMaster, addr: int, count: int) -> bytearray:
 
 
 def standby_ctrl(dut: Any) -> Any:
-    return dut.i3c.xcontroller.xcontroller_standby
+    return dut
 
 
 def CheckNoStretch(dut: Any) -> bool:
-    if standby_ctrl(dut).i2c_fsm.state_q.value in [0x17, 0x18, 0x19, 0x1A]:
+    if standby_ctrl(dut).controller_standby_i2c.xi2c_target_fsm.state_q.value in [0x17, 0x18, 0x19, 0x1A]:
         raise SequenceFailed()
     return True
 
@@ -44,16 +45,16 @@ def MatchOTAcqDataExact(value, dut, mask=0x3FF) -> bool:
 
 
 def MatchTTIResponseExact(byte_count: int, dut: Any) -> bool:
-    return i2c.MatchTTIResponseExact(byte_count, dut.i3c)
+    return i2c.MatchTTIResponseExact(byte_count, dut)
 
 
 def MatchTTIDataExact(value, dut, mask=0xFFFF_FFFF) -> bool:
-    return i2c.MatchTTIDataExact(value, dut.i3c, mask)
+    return i2c.MatchTTIDataExact(value, dut, mask)
 
 
 def prepare_rx_fifo(dut: any) -> None:
-    dut.i3c.tti_rx_fifo_wready.value = 1
-    dut.i3c.tti_response_fifo_wready.value = 1
+    dut.rx_queue_wready_i.value = 1
+    dut.rx_desc_queue_wready_i.value = 1
 
 
 async def test_write_restart_read_sequence(
@@ -68,18 +69,18 @@ async def test_write_restart_read_sequence(
 
     tx_fifo = TxFifo(
         clk=dut.clk_i,
-        data_port=dut.i3c.tti_tx_fifo_rdata,
-        valid_port=dut.i3c.tti_tx_fifo_rvalid,
-        ready_port=dut.i3c.tti_tx_fifo_rready,
+        data_port=dut.tx_queue_rdata_i,
+        valid_port=dut.tx_queue_rvalid_i,
+        ready_port=dut.tx_queue_rready_o,
         content=tx_fifo_data,
         name="tx_fifo",
     )
 
     cmd_fifo = TxFifo(
         clk=dut.clk_i,
-        data_port=dut.i3c.tti_cmd_fifo_rdata,
-        valid_port=dut.i3c.tti_cmd_fifo_rvalid,
-        ready_port=dut.i3c.tti_cmd_fifo_rready,
+        data_port=dut.tx_desc_queue_rdata_i,
+        valid_port=dut.tx_desc_queue_rvalid_i,
+        ready_port=dut.tx_desc_queue_rready_o,
         content=[len(response_data) << 16],
         name="cmd_fifo",
     )
@@ -152,22 +153,16 @@ async def test_write_restart_read_sequence(
 
     dut._log.info(f"{colorama.Fore.GREEN}==> Response emitted suuccessfully{colorama.Fore.RESET}")
 
-    dut.i3c.tti_rx_fifo_wready.value = 0
-    dut.i3c.tti_response_fifo_wready.value = 0
-    dut.i3c.tti_tx_fifo_rvalid.value = 0
-    dut.i3c.tti_cmd_fifo_rvalid.value = 0
-
-
 @cocotb.test()
 async def test_wr_restart_rd(dut):
     TARGET_ADDR = 12
     CLK_SPEED = 400000
 
     master = I2cMaster(
-        sda=dut.i3c.xi3c_muxed_phy.mux_phy_sda,
-        sda_o=dut.i3c_sda_i,
-        scl=dut.i3c.xi3c_muxed_phy.mux_phy_scl,
-        scl_o=dut.i3c_scl_i,
+        sda=dut.ctrl_sda_o,
+        sda_o=dut.ctrl_sda_i,
+        scl=dut.ctrl_scl_o,
+        scl_o=dut.ctrl_scl_i,
         speed=CLK_SPEED,
     )
 

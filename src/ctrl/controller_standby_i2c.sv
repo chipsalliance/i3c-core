@@ -108,6 +108,8 @@ module controller_standby_i2c
   logic tx_fifo_valid_int;
   logic tx_fifo_ready_int;
 
+  logic rnw_int;
+
   logic [AcqFifoWidth-1:0] acq_fifo_data_int;
   logic [AcqFifoDepthWidth-1:0] acq_fifo_depth_int;
   logic acq_fifo_ready_int;
@@ -131,6 +133,8 @@ module controller_standby_i2c
       .acq_fifo_wvalid_i(acq_fifo_valid_int),
       .acq_fifo_wready_i(acq_fifo_ready_int),
       .acq_fifo_depth_o (acq_fifo_depth_int),
+
+      .rnw_i(rnw_int),
 
       // TTI FIFOs
       .cmd_fifo_rdata_i (tx_desc_queue_rdata_i),
@@ -196,6 +200,7 @@ module controller_standby_i2c
       // Others
       .target_enable_i(i2c_standby_en_i),
       .target_idle_o(unused_target_idle_o),
+      .target_rnw_o(rnw_int),
       .target_sr_p_cond_o(unused_target_sr_p_cond_o),
       .event_target_nack_o(unused_event_target_nack_o),
       .event_cmd_complete_o(unused_event_cmd_complete_o),

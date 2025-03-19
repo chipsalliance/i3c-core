@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
-`timescale 1ns / 1ps
-
 module bufs (
     input logic phy_data_i,
     output wire phy_data_o

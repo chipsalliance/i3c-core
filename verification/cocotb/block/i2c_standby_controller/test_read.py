@@ -20,7 +20,59 @@ async def reset(dut):
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)
+    dut.i2c_standby_en_i.value = 1
 
+    dut.rx_desc_queue_full_i.value = 0
+    dut.rx_desc_queue_ready_thld_i.value = 0
+    dut.rx_desc_queue_ready_thld_trig_i.value = 0
+    dut.rx_desc_queue_empty_i.value = 0
+    dut.rx_desc_queue_wready_i.value = 0
+
+    dut.tx_desc_queue_full_i.value = 0
+    dut.tx_desc_queue_ready_thld_i.value = 0
+    dut.tx_desc_queue_ready_thld_trig_i.value = 0
+    dut.tx_desc_queue_empty_i.value = 0
+    dut.tx_desc_queue_rvalid_i.value = 0
+    dut.tx_desc_queue_rdata_i.value = 0
+
+    dut.rx_queue_full_i.value = 0
+    dut.rx_queue_start_thld_i.value = 0
+    dut.rx_queue_start_thld_trig_i.value = 0
+    dut.rx_queue_ready_thld_i.value = 0
+    dut.rx_queue_ready_thld_trig_i.value = 0
+    dut.rx_queue_empty_i.value = 0
+    dut.rx_queue_wready_i.value = 0
+
+    dut.tx_queue_full_i.value = 0
+    dut.tx_queue_start_thld_i.value = 0
+    dut.tx_queue_start_thld_trig_i.value = 0
+    dut.tx_queue_ready_thld_i.value = 0
+    dut.tx_queue_ready_thld_trig_i.value = 0
+    dut.tx_queue_empty_i.value = 0
+    dut.tx_queue_rvalid_i.value = 0
+    dut.tx_queue_rdata_i.value = 0
+
+    dut.phy_en_i.value = 0
+    dut.phy_mux_select_i.value = 0
+    dut.i2c_active_en_i.value = 0
+    dut.i3c_active_en_i.value = 0
+    dut.i3c_standby_en_i.value = 0
+    dut.t_hd_dat_i.value = 0
+    dut.t_r_i.value = 0
+    dut.t_bus_free_i.value = 0
+    dut.t_bus_idle_i.value = 0
+    dut.t_bus_available_i.value = 0
+    dut.pid_i.value = 0
+    dut.bcr_i.value = 0
+    dut.dcr_i.value = 0
+    dut.target_sta_addr_i.value = 0
+    dut.target_sta_addr_valid_i.value = 0
+    dut.target_dyn_addr_i.value = 0
+    dut.target_dyn_addr_valid_i.value = 0
+    dut.target_ibi_addr_i.value = 0
+    dut.target_ibi_addr_valid_i.value = 0
+    dut.target_hot_join_addr_i.value = 0
+    dut.daa_unique_response_i.value = 0
 
 async def read(master: I2cMaster, addr: int, count: int) -> bytearray:
     data = await master.read(addr, count)
@@ -33,7 +85,7 @@ def standby_ctrl(dut: Any) -> Any:
 
 
 def CheckNoStretch(dut: Any) -> bool:
-    if standby_ctrl(dut).xi2c_target_fsm.state_q.value in [0x17, 0x18, 0x19, 0x1A]:
+    if standby_ctrl(dut).controller_standby_i2c.xi2c_target_fsm.state_q.value in [0x17, 0x18, 0x19, 0x1A]:
         raise SequenceFailed()
     return True
 
@@ -49,18 +101,18 @@ async def test_read_sequence(
 
     tx_fifo = TxFifo(
         clk=dut.clk_i,
-        data_port=dut.tti_tx_queue_rdata_i,
-        valid_port=dut.tti_tx_queue_rvalid_i,
-        ready_port=dut.tti_tx_queue_rready_o,
+        data_port=dut.tx_queue_rdata_i,
+        valid_port=dut.tx_queue_rvalid_i,
+        ready_port=dut.tx_queue_rready_o,
         content=tx_fifo_data,
         name="tti_tx_fifo",
     )
 
     cmd_fifo = TxFifo(
         clk=dut.clk_i,
-        data_port=dut.tti_tx_desc_queue_rdata_i,
-        valid_port=dut.tti_tx_desc_queue_rvalid_i,
-        ready_port=dut.tti_tx_desc_queue_rready_o,
+        data_port=dut.tx_desc_queue_rdata_i,
+        valid_port=dut.tx_desc_queue_rvalid_i,
+        ready_port=dut.tx_desc_queue_rready_o,
         content=[len(data) << 16],
         name="tti_tx_desc_fifo",
     )
@@ -107,8 +159,8 @@ async def test_read(dut):
     CLK_SPEED = 400e3
 
     master = I2cMaster(
-        sda=dut.ctrl_sda_i,
-        sda_o=None,
+        sda=dut.ctrl_sda_o,
+        sda_o=dut.ctrl_sda_i,
         scl=dut.ctrl_scl_i,
         scl_o=None,
         speed=CLK_SPEED,

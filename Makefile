@@ -117,6 +117,10 @@ tests-ahb-ff: ## Run all verification/cocotb/* RTL tests for AHB bus configurati
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
+tests-i2c: ## Run all I2C tests without coverage
+	$(MAKE) config CFG_NAME=ahb
+	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "i2c" --no-venv --forcecolor
+
 # TODO: Enable full coverage flow
 tests-coverage: ## Run all verification/block/* RTL tests with coverage
 	cd $(COCOTB_VERIF_DIR) && BLOCK_COVERAGE_ENABLE=1 $(PYTHON) -m nox -R -k "verify" --no-venv
@@ -138,6 +142,7 @@ tests-uvm-debug: config ## Run debugging I3C Core UVM tests with nox
 
 tests-tool: ## Run all tool tests
 	cd $(TOOL_VERIF_DIR) && $(PYTHON) -m nox -k "verify" --no-venv
+
 
 BLOCKS_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*.hjson" ! -name "target*.hjson" | sort)
 CORE_VERIFICATION_PLANS = $(shell find $(TESTPLAN_DIR) -type f -name "*target*.hjson" | sort)

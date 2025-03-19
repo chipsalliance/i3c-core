@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
-`timescale 1ns / 1ps
-
 /*
     This module provides double flip-flop synchronization to the system clock.
 */

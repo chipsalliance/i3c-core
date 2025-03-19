@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
-`timescale 1ns / 1ps
-
 /*
   This module provides IO definition for the I3C Core.
 */
