@@ -58,7 +58,7 @@ module flow_standby_i2c
   // FSM STATE
   state_t state_d, state_q;
   // Buffer for holding elements returned by I2C target FSM
-  logic [AcqFifoWidth-1:0] fifo_buf[AcqFifoDepth];
+  logic [AcqFifoWidth-1:0] fifo_buf[4];
   // Are we currently mid-transfer?
   logic transfer_active;
   // Number of data bytes held in `fifo_buf`
@@ -120,7 +120,7 @@ module flow_standby_i2c
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : accumulate_bytes_in_dword
     if (!rst_ni) begin
-      for (integer i = 0; i < AcqFifoDepth; i = i + 1) begin : gen_clear_buf
+      for (integer i = 0; i < 4; i = i + 1) begin : gen_clear_buf
         fifo_buf[i] <= 0;
       end
     end else begin
