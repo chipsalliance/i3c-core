@@ -5,8 +5,8 @@ import sys
 from io import StringIO
 
 import pytest
-from i3c_core_config import main, _DEFAULT_OUT_DEFINES_FILE, ConfigException
 from defs import _TEST_CONFIG_FILE_PATH, Configs, Opts
+from i3c_core_config import _DEFAULT_OUT_DEFINES_FILE, ConfigException, main
 
 
 def run_and_capture_output(config_name, config_filename, tool_type):

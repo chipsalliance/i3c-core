@@ -29,7 +29,7 @@ class Opts:
     # Shared patterns
     snake_case = r"[a-z]+[a-z0-9]*(_[a-z0-9]+)*"
     UPPER_SNAKE_CASE = r"[A-Z]+[A-Z0-9]*(_[A-Z0-9]+)*"
-    PascalCase = r"[A-Z][a-z]+(?:[A-Z][a-z]+)*"
+    PascalCase = r"(DisableInputFF|[A-Z][a-z]+(?:[A-Z][a-z]+)*)"
 
     def __pvalue(name):
         return "".join([re.escape("-pvalue+"), name, r"=[0-9]+"])

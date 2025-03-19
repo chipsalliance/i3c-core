@@ -2,9 +2,8 @@
 
 import os
 
-from jinja2 import Environment, FileSystemLoader
-
 from common import I3CCoreConfig, I3CGenericConfig
+from jinja2 import Environment, FileSystemLoader
 
 
 # Traverse I3CCoreConfig and pass it to the SVH configuration template

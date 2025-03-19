@@ -7,10 +7,9 @@ import json
 import os
 
 import yaml
+from common import ConfigException, I3CCoreConfig, I3CGenericConfig, RegGenConfig
 from jsonschema import ValidationError, validate
 from py2svh import cfg2svh
-
-from common import ConfigException, I3CCoreConfig, I3CGenericConfig, RegGenConfig
 
 _DEFAULT_CONFIG_FILE = "i3c_core_configs.yaml"
 _DEFAULT_OUT_DEFINES_FILE = "i3c_defines.svh"

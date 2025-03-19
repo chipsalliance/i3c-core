@@ -52,7 +52,7 @@ def lint(session: nox.Session) -> None:
     session.run("isort", ".", "../../tools")
     # Specify config for black explicitly since it gets "lost" when calling black with multiple
     # paths
-    session.run("black", "--config=../block/pyproject.toml", ".", "../../tools")
+    session.run("black", "--config=../cocotb/pyproject.toml", ".", "../../tools")
     session.run("flake8", ".", "../../tools")
 
 
@@ -64,5 +64,5 @@ def test_lint(session: nox.Session) -> None:
     session.run("isort", "--check", ".", "../../tools")
     # Specify config for black explicitly since it gets "lost" when calling black with multiple
     # paths
-    session.run("black", "--config=../block/pyproject.toml", "--check", ".", "../../tools")
+    session.run("black", "--config=../cocotb/pyproject.toml", "--check", ".", "../../tools")
     session.run("flake8", ".", "../../tools")
