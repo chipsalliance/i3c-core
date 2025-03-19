@@ -82,6 +82,7 @@ module i3c_wrapper #(
 
     input  logic [  AxiDataWidth-1:0] wdata_i,
     input  logic [AxiDataWidth/8-1:0] wstrb_i,
+    input  logic [  AxiUserWidth-1:0] wuser_i,
     input  logic                      wlast_i,
     input  logic                      wvalid_i,
     output logic                      wready_o,
@@ -191,6 +192,7 @@ module i3c_wrapper #(
 
       .wdata_i (wdata_i),
       .wstrb_i (wstrb_i),
+      .wuser_i (wuser_i),
       .wlast_i (wlast_i),
       .wvalid_i(wvalid_i),
       .wready_o(wready_o),
