@@ -54,7 +54,7 @@ module width_converter_8toN #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
-      if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) sreg[bcnt*8+:8] <= sink_data_i;
+      if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) sreg[(BytesW)'(bcnt)*8+:8] <= sink_data_i;
       else if ((bcnt == s_bytes) & source_valid_o & source_ready_i)
         sreg <= '0;  // Clear the reg not to leak data
     end
