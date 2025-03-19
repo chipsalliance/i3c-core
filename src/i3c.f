@@ -1,8 +1,8 @@
 +incdir+${CALIPTRA_ROOT}/src/libs/rtl
 +incdir+${CALIPTRA_ROOT}/src/caliptra_prim/rtl
++incdir+${CALIPTRA_ROOT}/src/axi/rtl
 +incdir+${I3C_ROOT_DIR}/src
 +incdir+${I3C_ROOT_DIR}/src/libs
-+incdir+${I3C_ROOT_DIR}/src/libs/axi
 ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_pkg.sv
 ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv
 ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_count_pkg.sv
