@@ -326,7 +326,7 @@ async def test_write(dut):
     await recovery.command_write(
         VIRT_DYNAMIC_ADDR,
         I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
-        [0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44],
+        [0xAA, 0xBB, 0x11, 0x22, 0x33, 0x44],
     )
 
     # Wait & read the CSR from the AHB/AXI side

@@ -566,6 +566,17 @@ module recovery_executor
     indirect_rx_wdata_o  = tti_rx_rdata_i;
   end
 
+  logic [TtiRxDataDataWidth-1:0] prev_tti_rx_rdata;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : collect_prev_tti_rx_data
+    if (~rst_ni) begin
+      prev_tti_rx_rdata <= '0;
+    end else if (tti_rx_rack_i) begin
+      prev_tti_rx_rdata <= tti_rx_rdata_i;
+    end else begin
+      prev_tti_rx_rdata <= prev_tti_rx_rdata;
+    end
+  end
+
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
   logic device_reset_we;
@@ -627,7 +638,9 @@ module recovery_executor
     hwif_rec_o.RECOVERY_CTRL.CMS.next = tti_rx_rdata_i[7:0];
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.next = tti_rx_rdata_i[15:8];
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.next = tti_rx_rdata_i[7:0];
-    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = tti_rx_rdata_i[31:0];
+    hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.next = {
+      tti_rx_rdata_i[15:0], prev_tti_rx_rdata[31:16]
+    };
   end
 
   logic fifo_reg_reset_clear;
