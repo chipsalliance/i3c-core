@@ -505,7 +505,7 @@ async def test_i3c_bus_traffic_during_loopback(dut):
 
         for _ in range(10):  # Arbitrary number of repetitions
             payload_data = [random.randint(0, 2**32 - 1) for _ in range(fifo_size)]
-            delay_cycles = random.randint(0, 1000)
+            delay_cycles = random.randint(1, 1000)
             dut._log.info(f"Randomized delay is {delay_cycles} clock cycles")
 
             # Start I3C traffic
@@ -805,7 +805,7 @@ def csr_access_test_data(tb, rd_acc=Access.Priv, wr_acc=Access.Priv):
 
 
 @cocotb.test(skip=os.getenv("FrontendBusInterface") != "AXI")
-async def test_check_axi_filtering(dut):
+async def test_axi_filtering(dut):
     """
     Verifies AXI ID filtering in Secure Firmware Recovery registers access.
     """
@@ -850,6 +850,15 @@ async def test_check_axi_filtering(dut):
             awid = get_axi_ids_seq(priv_ids, 1, wr_acc)[0]
         payload_data = [random.randint(0, 2**32 - 1) for _ in range(2)]
         await write_to_indirect_fifo(tb, payload_data, format="dwords", awid=awid)
+
+        # Indicate that payload transfer is finished
+        for done in [1, 0]:
+            await tb.write_csr_field(
+                tb.reg_map.I3C_EC.SOCMGMTIF.REC_INTF_CFG.base_addr,
+                tb.reg_map.I3C_EC.SOCMGMTIF.REC_INTF_CFG.REC_PAYLOAD_DONE,
+                done,
+                awid=awid,
+            )
 
         resp = await tb.read_csr(addr, arid=get_axi_ids_seq(priv_ids, 1, rd_acc)[0])
         exp_rd = 0 if rd_acc == Access.Unpriv or wr_acc == Access.Unpriv else payload_data[0]

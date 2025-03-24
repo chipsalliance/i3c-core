@@ -80,27 +80,33 @@ class FrontBusTestInterface:
         await cocotb.start(setup_dut(self.clk, self.rst_n, (tclk, "ps")))
 
     async def read_csr(
-        self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"
+        self, addr: int, size: int = 4, arid=None, timeout: int = 1, units: str = "us"
     ) -> List[int]:
         """Send a read request & await the response."""
         raise NotImplementedError
 
     async def write_csr(
-        self, addr: int, data: List[int], size: int = 4, timeout: int = 1, units: str = "us"
+        self,
+        addr: int,
+        data: List[int],
+        size: int = 4,
+        awid=None,
+        timeout: int = 1,
+        units: str = "us",
     ) -> None:
         """Send a write request & await transfer to finish."""
         raise NotImplementedError
 
-    async def write_csr_field(self, reg_addr, field, data) -> None:
+    async def write_csr_field(self, reg_addr, field, data, awid=None) -> None:
         """Read -> modify -> write CSR"""
-        value = bytes2int(await self.read_csr(reg_addr))
+        value = bytes2int(await self.read_csr(reg_addr, arid=awid))
         value = value & ~field.mask
         value = value | (data << field.low)
-        await self.write_csr(reg_addr, int2bytes(value))
+        await self.write_csr(reg_addr, int2bytes(value), awid=awid)
 
-    async def read_csr_field(self, reg_addr, field) -> int:
+    async def read_csr_field(self, reg_addr, field, arid=None) -> int:
         """Read -> modify -> write CSR"""
-        value = bytes2int(await self.read_csr(reg_addr))
+        value = bytes2int(await self.read_csr(reg_addr, arid=arid))
         value = value & field.mask
         value = value >> field.low
         return value
@@ -149,18 +155,28 @@ class AHBTestInterface(FrontBusTestInterface):
         await super().register_test_interfaces(*args, **kw)
 
     async def read_csr(
-        self, addr: int, size: int = 4, timeout: int = 1, units: str = "us"
+        self, addr: int, size: int = 4, arid=None, timeout: int = 1, units: str = "us"
     ) -> List[int]:
         """Send a read request & await the response for 'timeout' in 'units'."""
+        if arid:
+            self.dut._log.debug(f"AHB doesn't support transaction IDs, ignoring arid={arid}")
         self.AHBManager.read(addr, size)
         await with_timeout(self.AHBManager.transfer_done(), timeout, units)
         read = self.AHBManager.get_rsp(addr, self.data_byte_width)
         return read
 
     async def write_csr(
-        self, addr: int, data: List[int], size: int = 4, timeout: int = 1, units: str = "us"
+        self,
+        addr: int,
+        data: List[int],
+        size: int = 4,
+        awid=None,
+        timeout: int = 1,
+        units: str = "us",
     ) -> None:
         """Send a write request & await transfer to finish for 'timeout' in 'units'."""
+        if awid:
+            self.dut._log.debug(f"AHB doesn't support transaction IDs, ignoring awid={awid}")
         data_len = len(data)
         # Extend bytes to size if there's less than that
         if data_len <= size:
