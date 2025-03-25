@@ -754,7 +754,7 @@ module recovery_executor
   always_comb begin : payload_available
     payload_available_d = 1'b0;
     payload_available_write = 1'b0;
-    if (~payload_available_q && (indirect_rx_full_i | image_activated_o))
+    if (~payload_available_q && (indirect_rx_full_i | (image_activated_o && ~indirect_rx_empty_i)))
     begin
       payload_available_d = 1'b1;
       payload_available_write = 1'b1;
