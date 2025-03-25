@@ -1037,9 +1037,11 @@ async def test_payload_available(dut):
     await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)
     await RisingEdge(tb.clk)
 
-    assert not bool(
-        payload_available.value
-    ), "After reading FIFO, payload_available should be deasserted"
+    for _ in range(random.randint(5, 100)):
+        assert not bool(
+            payload_available.value
+        ), "After reading FIFO, payload_available should be deasserted"
+        await RisingEdge(tb.clk)
 
 
 @cocotb.test()
