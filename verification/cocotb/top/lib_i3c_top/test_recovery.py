@@ -353,6 +353,102 @@ async def test_write(dut):
 
 
 @cocotb.test()
+async def test_read_fifo_ctrl(dut):
+    """
+    Tests CSR read(s) using the recovery protocol
+    """
+
+    # Initialize
+    i3c_controller, _, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Write to the RESET CSR (one word)
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [0xAA, 0xBB, 0xCC, 0xDD]
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+    dut._log.info(f"DEVICE_RESET = 0x{data:08X}")
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+    assert data == 0xCCBBAA  # 0xDD trimmed because this register is only 3 bytes
+
+    # Data to be written to INDIRECT_FIFO_CTRL
+    fifo_ctrl_data = [random.randint(0, 255) for _ in range(6)]
+
+    # RESET is W1C, expect to read CMS only
+    exp_fifo_ctrl_0 = fifo_ctrl_data[0]
+
+    # IMAGE_SIZE
+    exp_fifo_ctrl_1 = (
+        fifo_ctrl_data[5] << 24
+        | fifo_ctrl_data[4] << 16
+        | fifo_ctrl_data[3] << 8
+        | fifo_ctrl_data[2]
+    )
+
+    # Write to the FIFO_CTRL CSR (two words)
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR,
+        I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,
+        fifo_ctrl_data,
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+
+    # Readback the FIFO_CTRL CSR via I3C
+    data, _ = await recovery.command_read(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL
+    )
+    data0, data1 = data[:2], data[2:]
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+
+    fifo_ctrl_data[1] = 0  # RESET is W1C
+    assert data == fifo_ctrl_data
+    assert data0 == fifo_ctrl_data[:2]
+    assert data1 == fifo_ctrl_data[2:]
+
+    # Ensure the same is read via AXI / AHB
+    bus_data0 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_0 = 0x{bus_data0:08X}")
+    bus_data1 = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4)
+    )
+    dut._log.info(f"INDIRECT_FIFO_CTRL_1 = 0x{bus_data1:08X}")
+
+    assert exp_fifo_ctrl_0 == bus_data0
+    assert exp_fifo_ctrl_1 == bus_data1
+
+
+@cocotb.test()
 async def test_indirect_fifo_write(dut):
     """
     Tests indirect FIFO write operation

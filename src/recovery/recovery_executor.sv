@@ -296,7 +296,7 @@ module recovery_executor
 
   // CSR read data mux (registered)
   logic [31:0] indirect_fifo_status_0;
-  logic [31:0] indirect_fifo_ctrl_0;
+  logic [31:0] indirect_fifo_ctrl_0, indirect_fifo_ctrl_1;
   logic [31:0] prot_cap_2, prot_cap_3;
   logic [31:0] device_id_0;
   logic [31:0] device_status_0, device_status_1;
@@ -324,7 +324,7 @@ module recovery_executor
       CSR_HW_STATUS:       csr_data <= hw_status;
 
       CSR_INDIRECT_FIFO_CTRL_0: csr_data <= indirect_fifo_ctrl_0;
-      CSR_INDIRECT_FIFO_CTRL_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value;
+      CSR_INDIRECT_FIFO_CTRL_1: csr_data <= indirect_fifo_ctrl_1;
       CSR_INDIRECT_FIFO_STATUS_0: csr_data <= indirect_fifo_status_0;
       CSR_INDIRECT_FIFO_STATUS_1: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value;
       CSR_INDIRECT_FIFO_STATUS_2: csr_data <= hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.value;
@@ -396,9 +396,14 @@ module recovery_executor
   };
 
   assign indirect_fifo_ctrl_0 = {
-    16'd0,
+    hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value[15:0],
     hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value,
     hwif_rec_i.INDIRECT_FIFO_CTRL_0.CMS.value
+  };
+
+  assign indirect_fifo_ctrl_1 = {
+    16'h0,
+    hwif_rec_i.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.value[31:16]
   };
 
   // INDIRECT_FIFO_STATUS_0 as a 32-bit word
