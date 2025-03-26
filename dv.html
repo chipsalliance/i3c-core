@@ -2586,7 +2586,7 @@ content matches.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="indirect-fifo-write"><code class="docutils literal notranslate"><span class="pre">indirect_fifo_write</span></code><a class="headerlink" href="#indirect-fifo-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L355"><code class="docutils literal notranslate"><span class="pre">indirect_fifo_write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451"><code class="docutils literal notranslate"><span class="pre">indirect_fifo_write</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Retrieves indirect FIFO status and pointers by reading
 INDIRECT_FIFO_STATUS CSR over AHB/AXI bus. Writes data to the
@@ -2600,7 +2600,7 @@ match the expected behavior.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="write-pec"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code><a class="headerlink" href="#write-pec" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L454"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes some data to DEVICE_RESET register using the recovery
 interface. Then, repeats the write with different data but
@@ -2611,7 +2611,7 @@ transfer.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="read"><code class="docutils literal notranslate"><span class="pre">read</span></code><a class="headerlink" href="#read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L509"><code class="docutils literal notranslate"><span class="pre">read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605"><code class="docutils literal notranslate"><span class="pre">read</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2621,7 +2621,7 @@ written in the beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="read-short"><code class="docutils literal notranslate"><span class="pre">read_short</span></code><a class="headerlink" href="#read-short" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L597"><code class="docutils literal notranslate"><span class="pre">read_short</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693"><code class="docutils literal notranslate"><span class="pre">read_short</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2633,7 +2633,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="read-long"><code class="docutils literal notranslate"><span class="pre">read_long</span></code><a class="headerlink" href="#read-long" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L663"><code class="docutils literal notranslate"><span class="pre">read_long</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759"><code class="docutils literal notranslate"><span class="pre">read_long</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2645,7 +2645,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="virtual-read"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code><a class="headerlink" href="#virtual-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L788"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
 the recovery mode.</p>
 <p>Issues a series of recovery read commands to all CSRs mentioned in the
@@ -2658,7 +2658,7 @@ only in the recovery mode.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="virtual-read-alternating"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code><a class="headerlink" href="#virtual-read-alternating" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L874"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code></a></p>
 <p>Alternates between recovery mode reads and TTI reads. Initially
 sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP register over AHB/AXI, reads
@@ -2672,7 +2672,7 @@ regardless of the recovery mode setting.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="payload-available"><code class="docutils literal notranslate"><span class="pre">payload_available</span></code><a class="headerlink" href="#payload-available" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L955"><code class="docutils literal notranslate"><span class="pre">payload_available</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051"><code class="docutils literal notranslate"><span class="pre">payload_available</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Ensures that initially the recovery_payload_available_o signal
 is deasserted. Then writes data to the indirect FIFO via the
@@ -2682,7 +2682,7 @@ read causes the signal to be deasserted again.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="image-activated"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code><a class="headerlink" href="#image-activated" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1047"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code></a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Ensures that initially the image_activated_o signal is deasserted.
 Writes 0xF to the 3rd byte of the RECOVERY_CTRL register using the
@@ -2692,7 +2692,7 @@ gets deasserted.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz</p>
 <h5 id="recovery-flow"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#recovery-flow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1146"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code></a></p>
 <p>The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.</p>
 <p>The AHB/AXI agent is responsible for recovery operation from the
@@ -2719,7 +2719,7 @@ The I3C bus clock is set to 12.5 MHz</p>
   <small>
     
       Last update:
-      2025-03-25
+      2025-03-26
     
   </small>
 </div>

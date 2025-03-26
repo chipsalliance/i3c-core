@@ -428,7 +428,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `indirect_fifo_write`
 
-Test: [`indirect_fifo_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L355)
+Test: [`indirect_fifo_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -448,7 +448,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `write_pec`
 
-Test: [`write_pec`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L454)
+Test: [`write_pec`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -464,7 +464,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `read`
 
-Test: [`read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L509)
+Test: [`read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -479,7 +479,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `read_short`
 
-Test: [`read_short`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L597)
+Test: [`read_short`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -496,7 +496,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `read_long`
 
-Test: [`read_long`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L663)
+Test: [`read_long`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -513,7 +513,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `virtual_read`
 
-Test: [`virtual_read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L788)
+Test: [`virtual_read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
 the recovery mode.
@@ -532,7 +532,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `virtual_read_alternating`
 
-Test: [`virtual_read_alternating`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L874)
+Test: [`virtual_read_alternating`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970)
 
 Alternates between recovery mode reads and TTI reads. Initially
 sets the TTI and recovery addresses via two SETDASA CCCs.
@@ -553,7 +553,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `payload_available`
 
-Test: [`payload_available`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L955)
+Test: [`payload_available`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -569,7 +569,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `image_activated`
 
-Test: [`image_activated`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1047)
+Test: [`image_activated`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -584,7 +584,7 @@ The I3C bus clock is set to 12.5 MHz
 
 ### `recovery_flow`
 
-Test: [`recovery_flow`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1146)
+Test: [`recovery_flow`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242)
 
 The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
