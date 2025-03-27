@@ -279,6 +279,20 @@ def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["ccc"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_ccc",
+    ],
+)
+@nox.parametrize("coverage", [coverage_types])
+@nox.parametrize("simulator", simulators)
+def ccc_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["ctrl_bus_timers"])
 @nox.parametrize(
     "test_name",
