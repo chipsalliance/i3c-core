@@ -13,6 +13,35 @@ from cocotb.triggers import ClockCycles, RisingEdge, with_timeout
 _STATUS = 0xC64B
 
 
+def initialize_inputs(dut):
+    dut.ccc_i.value = 0
+    dut.ccc_valid_i.value = 0
+    dut.bus_start_det_i.value = 0
+    dut.bus_rstart_det_i.value = 0
+    dut.bus_stop_det_i.value = 0
+    dut.bus_tx_done_i.value = 0
+    dut.bus_rx_data_i.value = 0
+    dut.bus_rx_done_i.value = 0
+    dut.target_sta_address_i.value = 0
+    dut.target_sta_address_valid_i.value = 0
+    dut.target_dyn_address_i.value = 0
+    dut.target_dyn_address_valid_i.value = 0
+    dut.virtual_target_sta_address_i.value = 0
+    dut.virtual_target_sta_address_valid_i.value = 0
+    dut.virtual_target_dyn_address_i.value = 0
+    dut.virtual_target_dyn_address_valid_i.value = 0
+    dut.get_mwl_i.value = 0
+    dut.get_mrl_i.value = 0
+    dut.get_pid_i.value = 0
+    dut.get_bcr_i.value = 0
+    dut.get_dcr_i.value = 0
+    dut.get_status_fmt1_i.value = 0
+    dut.get_acccr_i.value = 0
+    dut.get_mxds_i.value = 0
+    dut.target_reset_detect_i.value = 0
+    dut.peripheral_reset_done_i.value = 0
+
+
 async def setup(dut):
     """
     Initialize inputs of the DUT
@@ -114,6 +143,7 @@ async def test_ccc(dut: SimHandleBase):
     clock = Clock(clk, 2, units="ns")
     cocotb.start_soon(clock.start())
 
+    initialize_inputs(dut)
     await setup(dut)
     await reset_n(clk, rst_n, cycles=5)
 
