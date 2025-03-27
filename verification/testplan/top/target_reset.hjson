@@ -5,26 +5,14 @@
     {
       name: target_peripheral_reset
       desc: Issues I3C target reset pattern and verifies successful peripheral reset
-      tests:
-      [
-        target_peripheral_reset
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["target_peripheral_reset"]
+      tags: ["top"]
     }
     {
       name: target_escalated_reset
       desc: Issues I3C target reset patterns and verifies successful reset escalation
-      tests:
-      [
-        target_escalated_reset
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["target_escalated_reset"]
+      tags: ["top"]
     }
   ]
 }

@@ -11,14 +11,8 @@
         to mimick actual I3C transaction. Checks if data bytes received
         correspond to correct GETSTATUS CCC response.
         '''
-      tests:
-      [
-        ccc
-      ]
-      tags:
-      [
-        ccc
-      ]
+      tests: ["ccc"]
+      tags: ["ccc"]
     }
   ]
 }

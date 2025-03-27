@@ -12,14 +12,8 @@
         a RX descriptor from the TTI RX descriptor queue, ensures that
         irq_o gets deasserted after the read.
         '''
-      tests:
-      [
-        rx_desc_stat
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["rx_desc_stat"]
+      tags: ["top"]
     }
     {
       name: tx_desc_stat
@@ -32,14 +26,8 @@
         asserted clears it by writing 1 to the TX_DESC_STAT fiels of TTI
         INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
         '''
-      tests:
-      [
-        tx_desc_stat
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["tx_desc_stat"]
+      tags: ["top"]
     }
     {
       name: ibi_done
@@ -53,14 +41,8 @@
         STATUS CSR, ensures that irq_o gets deasserted and status bit gets
         cleared afterwards.
         '''
-      tests:
-      [
-        ibi_done
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ibi_done"]
+      tags: ["top"]
     }
     {
       name: interrupt_force
@@ -86,14 +68,8 @@
         TTI INTERRUPT_STATUS CSR, ensures that irq_o gets deasserted and
         the status bit cleared.
         '''
-      tests:
-      [
-        interrupt_force
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["interrupt_force"]
+      tags: ["top"]
     }
   ]
 }

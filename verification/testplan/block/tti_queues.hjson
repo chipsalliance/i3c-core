@@ -9,14 +9,8 @@
         Resets the TTI TX queue and verifies that it is empty
         afterwards
         '''
-      tests:
-      [
-        tti_tx_capacity_status
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_tx_capacity_status"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_tx_desc_capacity_status
@@ -25,14 +19,8 @@
         Resets the TTI TX descriptor queue and verifies that it is empty
         afterwards
         '''
-      tests:
-      [
-        tti_tx_desc_capacity_status
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_tx_desc_capacity_status"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_rx_capacity_status
@@ -41,14 +29,8 @@
         Resets the TTI RX queue and verifies that it is empty
         afterwards
         '''
-      tests:
-      [
-        tti_rx_capacity_status
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_rx_capacity_status"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_rx_desc_capacity_status
@@ -57,14 +39,8 @@
         Resets the TTI RX descriptor queue and verifies that it is empty
         afterwards
         '''
-      tests:
-      [
-        tti_rx_desc_capacity_status
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_rx_desc_capacity_status"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_tx_setup_threshold
@@ -75,14 +51,8 @@
         Verifies that an appropriate value has been written to the CSR.
         Verifies the threshold signal assumes the correct value.
         '''
-      tests:
-      [
-        tti_tx_setup_threshold
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_tx_setup_threshold"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_tx_desc_setup_threshold
@@ -93,14 +63,8 @@
         Verifies that an appropriate value has been written to the CSR.
         Verifies the threshold signal assumes the correct value.
         '''
-      tests:
-      [
-        tti_tx_desc_setup_threshold
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_tx_desc_setup_threshold"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_rx_setup_threshold
@@ -111,14 +75,8 @@
         Verifies that an appropriate value has been written to the CSR.
         Verifies the threshold signal assumes the correct value.
         '''
-      tests:
-      [
-        tti_rx_setup_threshold
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_rx_setup_threshold"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_rx_desc_setup_threshold
@@ -129,14 +87,8 @@
         Verifies that an appropriate value has been written to the CSR.
         Verifies the threshold signal assumes the correct value.
         '''
-      tests:
-      [
-        tti_rx_desc_setup_threshold
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_rx_desc_setup_threshold"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_ibi_setup_threshold
@@ -147,14 +99,8 @@
         Verifies that an appropriate value has been written to the CSR.
         Verifies the threshold signal assumes the correct value.
         '''
-      tests:
-      [
-        tti_ibi_setup_threshold
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_ibi_setup_threshold"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_ibi_should_raise_thld_trig
@@ -164,14 +110,8 @@
         trigger signal is properly asserted at different levels of the
         queue fill.
         '''
-      tests:
-      [
-        tti_ibi_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_ibi_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_rx_desc_should_raise_thld_trig
@@ -181,14 +121,8 @@
         trigger signal is properly asserted at different levels of the
         queue fill.
         '''
-      tests:
-      [
-        tti_rx_desc_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_rx_desc_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: rx_should_raise_thld_trig
@@ -198,14 +132,8 @@
         whether the trigger signals are properly asserted at different
         levels of the queue fill.
         '''
-      tests:
-      [
-        rx_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["rx_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: tx_desc_should_raise_thld_trig
@@ -215,14 +143,8 @@
         whether the trigger is properly asserted at different levels of
         the queue fill.
         '''
-      tests:
-      [
-        tti_tx_desc_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_tx_desc_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: tx_should_raise_thld_trig
@@ -232,14 +154,8 @@
         whether the trigger is properly asserted at different levels of
         the queue fill.
         '''
-      tests:
-      [
-        tx_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tx_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: ibi_should_raise_thld_trig
@@ -249,14 +165,8 @@
         whether the trigger is properly asserted at different levels of
         the queue fill.
         '''
-      tests:
-      [
-        ibi_should_raise_thld_trig
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["ibi_should_raise_thld_trig"]
+      tags: ["tti_queues"]
     }
     {
       name: tti_ibi_capacity_status
@@ -265,14 +175,8 @@
         Resets the TTI TX IBI queue and verifies that it is empty
         afterwards
         '''
-      tests:
-      [
-        tti_ibi_capacity_status
-      ]
-      tags:
-      [
-        tti_queues
-      ]
+      tests: ["tti_ibi_capacity_status"]
+      tags: ["tti_queues"]
     }
   ]
 }

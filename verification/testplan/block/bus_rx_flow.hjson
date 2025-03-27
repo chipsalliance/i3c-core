@@ -10,14 +10,8 @@
         requests, verifies that the module returns correct data sampled
         from the SDA line.
         '''
-      tests:
-      [
-        multiple_bit_reads
-      ]
-      tags:
-      [
-        bus_rx_flow
-      ]
+      tests: ["multiple_bit_reads"]
+      tags: ["bus_rx_flow"]
     }
     {
       name: multiple_byte_reads
@@ -27,14 +21,8 @@
         requests, verifies that the module returns correct data sampled
         from the SDA line.
         '''
-      tests:
-      [
-        multiple_byte_reads
-      ]
-      tags:
-      [
-        bus_rx_flow
-      ]
+      tests: ["multiple_byte_reads"]
+      tags: ["bus_rx_flow"]
     }
   ]
 }

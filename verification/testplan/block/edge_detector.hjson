@@ -11,14 +11,8 @@
         to report the presence of the edge. Verifies that the count is
         equal to the programmed delay.
         '''
-      tests:
-      [
-        pretrigger_with_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["pretrigger_with_delay"]
+      tags: ["edge_detector"]
     }
     {
       name: posttrigger_with_delay
@@ -32,14 +26,8 @@
         Verifies that the number of counted cycles is equal the programmed
         delay.
         '''
-      tests:
-      [
-        posttrigger_with_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["posttrigger_with_delay"]
+      tags: ["edge_detector"]
     }
     {
       name: trigger_with_delay
@@ -50,14 +38,8 @@
         to report the presence of the edge. Verifies that the count is
         equal to the programmed delay.
         '''
-      tests:
-      [
-        trigger_with_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["trigger_with_delay"]
+      tags: ["edge_detector"]
     }
     {
       name: pretrigger_no_delay
@@ -68,14 +50,8 @@
         to report the presence of the edge. Verifies that the count is
         zero as the configured delay is also set to 0.
         '''
-      tests:
-      [
-        pretrigger_no_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["pretrigger_no_delay"]
+      tags: ["edge_detector"]
     }
     {
       name: posttrigger_no_delay
@@ -86,14 +62,8 @@
         to report the presence of the edge. Verifies that the count is
         zero as the configured delay is also set to 0.
         '''
-      tests:
-      [
-        posttrigger_no_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["posttrigger_no_delay"]
+      tags: ["edge_detector"]
     }
     {
       name: trigger_no_delay
@@ -104,14 +74,8 @@
         to report the presence of the edge. Verifies that the count is
         zero as the configured delay is also set to 0.
         '''
-      tests:
-      [
-        trigger_no_delay
-      ]
-      tags:
-      [
-        edge_detector
-      ]
+      tests: ["trigger_no_delay"]
+      tags: ["edge_detector"]
     }
   ]
 }

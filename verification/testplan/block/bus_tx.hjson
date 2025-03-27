@@ -9,14 +9,8 @@
         Requests the bus_tx module to drive SDA right after SCL falling
         edge. Checks if the requested bit value is driven correctly
         '''
-      tests:
-      [
-        bit_tx_negedge
-      ]
-      tags:
-      [
-        bus_tx
-      ]
+      tests: ["bit_tx_negedge"]
+      tags: ["bus_tx"]
     }
     {
       name: bit_tx_pre_posedge
@@ -25,14 +19,8 @@
         Requests the bus_tx module to drive SDA just before SCL rising
         edge. Checks if the requested bit value is driven correctly
         '''
-      tests:
-      [
-        bit_tx_pre_posedge
-      ]
-      tags:
-      [
-        bus_tx
-      ]
+      tests: ["bit_tx_pre_posedge"]
+      tags: ["bus_tx"]
     }
     {
       name: bit_tx_high_level
@@ -41,14 +29,8 @@
         Requests the bus_tx module to drive SDA just before SCL falling
         edge. Checks if the requested bit value is driven correctly
         '''
-      tests:
-      [
-        bit_tx_high_level
-      ]
-      tags:
-      [
-        bus_tx
-      ]
+      tests: ["bit_tx_high_level"]
+      tags: ["bus_tx"]
     }
     {
       name: bit_tx_low_level
@@ -57,14 +39,8 @@
         Requests the bus_tx module to drive SDA when SCL in in stable
         low state. Checks if the requested bit value is driven correctly
         '''
-      tests:
-      [
-        bit_tx_low_level
-      ]
-      tags:
-      [
-        bus_tx
-      ]
+      tests: ["bit_tx_low_level"]
+      tags: ["bus_tx"]
     }
     {
       name: byte_tx
@@ -74,14 +50,8 @@
         a data byte plus T bit to the I3C bus. For each bit sent checks
         if SDA is driven correctly and bus timings are met.
         '''
-      tests:
-      [
-        byte_tx
-      ]
-      tags:
-      [
-        bus_tx
-      ]
+      tests: ["byte_tx"]
+      tags: ["bus_tx"]
     }
   ]
 }

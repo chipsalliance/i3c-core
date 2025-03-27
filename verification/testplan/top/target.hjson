@@ -16,14 +16,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_write
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_write"]
+      tags: ["top"]
     }
     {
       name: i3c_target_read
@@ -45,14 +39,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_read
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_read"]
+      tags: ["top"]
     }
     {
       name: i3c_target_ibi
@@ -74,14 +62,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_ibi
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_ibi"]
+      tags: ["top"]
     }
     {
       name: i3c_target_ibi_retry
@@ -101,14 +83,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_ibi_retry
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_ibi_retry"]
+      tags: ["top"]
     }
     {
       name: i3c_target_ibi_data
@@ -125,14 +101,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_ibi_data
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_ibi_data"]
+      tags: ["top"]
     }
     {
       name: i3c_target_writes_and_reads
@@ -152,14 +122,8 @@
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
         The I3C bus clock is set to 12.5 MHz
         '''
-      tests:
-      [
-        i3c_target_writes_and_reads
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["i3c_target_writes_and_reads"]
+      tags: ["top"]
     }
   ]
 }

@@ -10,14 +10,8 @@
         is in IdleHDR state. Issues HDR exit pattern, verifies that
         the target FSM is back in Idle state.
         '''
-      tests:
-      [
-        enter_exit_hdr_mode
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["enter_exit_hdr_mode"]
+      tags: ["top"]
     }
   ]
 }

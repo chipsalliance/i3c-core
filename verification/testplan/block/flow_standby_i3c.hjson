@@ -11,14 +11,8 @@
         Then it simulates bus start condition followed by data reception
         ended by bus stop condition.
         '''
-      tests:
-      [
-        rx
-      ]
-      tags:
-      [
-        flow_standby_i3c
-      ]
+      tests: ["rx"]
+      tags: ["flow_standby_i3c"]
     }
   ]
 }

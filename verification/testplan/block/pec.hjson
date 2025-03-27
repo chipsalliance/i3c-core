@@ -9,14 +9,8 @@
         Pushes random bytes through the recovery_pec module, compares
         its computed checksum with its correspondent computed in software.
         '''
-      tests:
-      [
-        pec
-      ]
-      tags:
-      [
-        pec
-      ]
+      tests: ["pec"]
+      tags: ["pec"]
     }
   ]
 }

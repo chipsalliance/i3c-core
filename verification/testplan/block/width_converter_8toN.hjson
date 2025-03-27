@@ -11,14 +11,8 @@
         and generates pushback (deasserts ready) at random. Verifies if
         the output data matches the input.
         '''
-      tests:
-      [
-        width_converter_8ton_converter
-      ]
-      tags:
-      [
-        width_converter_8toN
-      ]
+      tests: ["width_converter_8ton_converter"]
+      tags: ["width_converter_8toN"]
     }
     {
       name: flush
@@ -28,14 +22,8 @@
         sink_flush_i signal, receives the output word and checks if it
         matches the input data.
         '''
-      tests:
-      [
-        width_converter_8ton_flush
-      ]
-      tags:
-      [
-        width_converter_8toN
-      ]
+      tests: ["width_converter_8ton_flush"]
+      tags: ["width_converter_8toN"]
     }
   ]
 }

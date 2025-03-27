@@ -12,14 +12,8 @@
         amount of data. Verifies that the module accepted the descriptor
         and allowed the right amount of data bytes to pass through it.
         '''
-      tests:
-      [
-        descriptor_tx
-      ]
-      tags:
-      [
-        descriptor_tx
-      ]
+      tests: ["descriptor_tx"]
+      tags: ["descriptor_tx"]
     }
   ]
 }

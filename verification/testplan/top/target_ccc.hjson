@@ -11,14 +11,8 @@
         target. Finally it compares the interrupt status returned by the
         CCC with the one read from the register.
         '''
-      tests:
-      [
-        ccc_getstatus
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getstatus"]
+      tags: ["top"]
     }
     {
       name: ccc_setdasa
@@ -28,14 +22,8 @@
         sending SETDASA CCC. Then it verifies that correct addresses have
         been set by reading STBY_CR_DEVICE_ADDR CSR.
         '''
-      tests:
-      [
-        ccc_setdasa
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setdasa"]
+      tags: ["top"]
     }
     {
       name: ccc_rstdaa
@@ -44,14 +32,8 @@
         Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
         RSTDAA CCC and verifies that the address got cleared.
         '''
-      tests:
-      [
-        ccc_rstdaa
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_rstdaa"]
+      tags: ["top"]
     }
     {
       name: ccc_getbcr
@@ -60,14 +42,8 @@
         Reads BCR register content by sending GETBCR CCC and examining
         returned data.
         '''
-      tests:
-      [
-        ccc_getbcr
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getbcr"]
+      tags: ["top"]
     }
     {
       name: ccc_getdcr
@@ -76,14 +52,8 @@
         Reads DCR register content by sending GETDCR CCC and examining
         returned data.
         '''
-      tests:
-      [
-        ccc_getdcr
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getdcr"]
+      tags: ["top"]
     }
     {
       name: ccc_getmwl
@@ -92,14 +62,8 @@
         Reads MWL register content by sending GETMWL CCC and examining
         returned data.
         '''
-      tests:
-      [
-        ccc_getmwl
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getmwl"]
+      tags: ["top"]
     }
     {
       name: ccc_getmrl
@@ -108,14 +72,8 @@
         Reads MRL register content by sending GETMWL CCC and examining
         returned data.
         '''
-      tests:
-      [
-        ccc_getmrl
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getmrl"]
+      tags: ["top"]
     }
     {
       name: ccc_setaasa
@@ -125,14 +83,8 @@
         its static address as dynamic by examining STBY_CR_DEVICE_ADDR
         CSR.
         '''
-      tests:
-      [
-        ccc_setaasa
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setaasa"]
+      tags: ["top"]
     }
     {
       name: ccc_getpid
@@ -141,14 +93,8 @@
         Sends the CCC to the target and examines if the returned PID
         matches the expected.
         '''
-      tests:
-      [
-        ccc_getpid
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_getpid"]
+      tags: ["top"]
     }
     {
       name: ccc_enec_disec_direct
@@ -157,14 +103,8 @@
         Sends DISEC CCC to the target and verifies that events are disabled.
         Then, sends ENEC CCC to the target and checks that events are enabled.
         '''
-      tests:
-      [
-        ccc_enec_disec_direct
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_enec_disec_direct"]
+      tags: ["top"]
     }
     {
       name: ccc_enec_disec_bcast
@@ -173,14 +113,8 @@
         Sends boradcast DISEC CCC and verifies that events are disabled.
         Then, sends broadcast ENEC CCC and checks that events are enabled.
         '''
-      tests:
-      [
-        ccc_enec_disec_bcast
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_enec_disec_bcast"]
+      tags: ["top"]
     }
     {
       name: ccc_setmwl_direct
@@ -190,14 +124,8 @@
         register got correctly set. The check is performed by examining
         relevant wires in the target DUT
         '''
-      tests:
-      [
-        ccc_setmwl_direct
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setmwl_direct"]
+      tags: ["top"]
     }
     {
       name: ccc_setmrl_direct
@@ -207,14 +135,8 @@
         register got correctly set. The check is performed by examining
         relevant wires in the target DUT
         '''
-      tests:
-      [
-        ccc_setmrl_direct
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setmrl_direct"]
+      tags: ["top"]
     }
     {
       name: ccc_setmwl_bcast
@@ -224,14 +146,8 @@
         register got correctly set. The check is performed by examining
         relevant wires in the target DUT
         '''
-      tests:
-      [
-        ccc_setmwl_bcast
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setmwl_bcast"]
+      tags: ["top"]
     }
     {
       name: ccc_setmrl_bcast
@@ -241,14 +157,8 @@
         register got correctly set. The check is performed by examining
         relevant wires in the target DUT
         '''
-      tests:
-      [
-        ccc_setmrl_bcast
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_setmrl_bcast"]
+      tags: ["top"]
     }
     {
       name: ccc_rstact_direct
@@ -259,14 +169,8 @@
         done by examining DUT wires. Then, triggers target reset and
         verifies that the peripheral_reset_o signal gets asserted.
         '''
-      tests:
-      [
-        ccc_rstact_direct
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_rstact_direct"]
+      tags: ["top"]
     }
     {
       name: ccc_rstact_bcast
@@ -277,14 +181,8 @@
         done by examining DUT wires. Then, triggers target reset and
         verifies that the escalated_reset_o signal gets asserted.
         '''
-      tests:
-      [
-        ccc_rstact_bcast
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_rstact_bcast"]
+      tags: ["top"]
     }
     {
       name: ccc_direct_multiple_wr
@@ -295,14 +193,8 @@
         to different values. Verify that the target responded to correct
         addresses and executed both CCCs.
         '''
-      tests:
-      [
-        ccc_direct_multiple_wr
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_direct_multiple_wr"]
+      tags: ["top"]
     }
     {
       name: ccc_direct_multiple_rd
@@ -312,14 +204,8 @@
         thee different addresses. Only the one for the target should
         be ACK-ed with the correct MWL content.
         '''
-      tests:
-      [
-        ccc_direct_multiple_rd
-      ]
-      tags:
-      [
-        top
-      ]
+      tests: ["ccc_direct_multiple_rd"]
+      tags: ["top"]
     }
   ]
 }
