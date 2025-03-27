@@ -18,7 +18,7 @@ over I3C. Data sent over I3C is compared with data received by
 the agent.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_read`
 
@@ -38,7 +38,7 @@ the chunk. Verifies that the received data matches with the chunk.
 Repeats the steps N times.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi`
 
@@ -48,23 +48,23 @@ Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
 matches on both sides.
 
-Reads the LAST_IBI_STATUS fiels of the TTI STATUS CSR. Ensures
+Reads the LAST_IBI_STATUS fields of the TTI STATUS CSR. Ensures
 that it is equal to 0 (no error).
 
 Writes an IBI descriptor followed by N bytes of data to the TTI
 IBI queue. Waits until the controller services the IBI. Checks if
 the mandatory byte (MDB) and data matches on both sides.
 
-Repeats the LAST_IBI_STATUS check
+Repeats the LAST_IBI_STATUS check.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_retry`
 
 Test: [`i3c_target_ibi_retry`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392)
 
-Disables ACK-ing IBIs in the I3C controller model, issues an ibi
+Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
 time period - sufficiently long for the target to retry sending
 the IBI, reads LAST_IBI_STATUS from the TTI STATUS CSR, check
@@ -76,7 +76,7 @@ with the one written to the TTI queue. Reads LAST_IBI_STATUS from
 the TTI STATUS CSR, check if it is set to 0 (no error).
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_data`
 
@@ -84,14 +84,14 @@ Test: [`i3c_target_ibi_data`](https://github.com/chipsalliance/i3c-core/tree/mai
 
 Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
-to the TTI IBI queue, checks if the IBI gets serivced correctly,
+to the TTI IBI queue, checks if the IBI gets serviced correctly,
 compares data.
 
 Issues another IBI with data payload within the set limit, checks
 if it gets serviced correctly, compares data.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_writes_and_reads`
 
@@ -109,7 +109,7 @@ Does a private read transfer, compares if the received data equals
 the data written to TTI TX queue in the beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 
 # CCC handling
@@ -198,7 +198,7 @@ Then, sends ENEC CCC to the target and checks that events are enabled.
 
 Test: [`ccc_enec_disec_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329)
 
-Sends boradcast DISEC CCC and verifies that events are disabled.
+Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.
 
 ### `ccc_setmwl_direct`
@@ -207,7 +207,7 @@ Test: [`ccc_setmwl_direct`](https://github.com/chipsalliance/i3c-core/tree/main/
 
 Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
-relevant wires in the target DUT
+relevant wires in the target DUT.
 
 ### `ccc_setmrl_direct`
 
@@ -215,7 +215,7 @@ Test: [`ccc_setmrl_direct`](https://github.com/chipsalliance/i3c-core/tree/main/
 
 Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
-relevant wires in the target DUT
+relevant wires in the target DUT.
 
 ### `ccc_setmwl_bcast`
 
@@ -223,7 +223,7 @@ Test: [`ccc_setmwl_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//
 
 Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
-relevant wires in the target DUT
+relevant wires in the target DUT.
 
 ### `ccc_setmrl_bcast`
 
@@ -231,7 +231,7 @@ Test: [`ccc_setmrl_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//
 
 Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
-relevant wires in the target DUT
+relevant wires in the target DUT.
 
 ### `ccc_rstact_direct`
 
@@ -312,7 +312,7 @@ Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
 a descriptor to TTI TX descriptor queue, sends a private read
 over I3C and waits for irq_o assertion. Once the interrupt is
-asserted clears it by writing 1 to the TX_DESC_STAT fiels of TTI
+asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
 INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
 
 ### `ibi_done`
@@ -384,7 +384,7 @@ reads content of the register via AHB/AXI and verifies that their
 content matches.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_write_alternating`
 
@@ -404,7 +404,7 @@ and repeats the previous steps to test whether the I3C core
 responds both to TTI and virtual addresses.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `write`
 
@@ -424,7 +424,7 @@ reads content of the register via AHB/AXI and verifies that their
 content matches.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `indirect_fifo_write`
 
@@ -444,7 +444,7 @@ After each FIFO status and pointer retrieval checks if both
 match the expected behavior.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `write_pec`
 
@@ -460,7 +460,7 @@ and ensures that it matches with what was written in the first
 transfer.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `read`
 
@@ -475,7 +475,7 @@ the recovery protocol. Checks if the content matches what was
 written in the beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `read_short`
 
@@ -492,7 +492,7 @@ Checks if the content read back matches what was written in the
 beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `read_long`
 
@@ -509,7 +509,7 @@ Checks if the content read back matches what was written in the
 beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_read`
 
@@ -523,12 +523,12 @@ spec. The series is repeated twice - for recovery mode enabled and disabled.
 Each transfer is checked if the response is ACK or NACK and in case of
 ACK if PEC checksum is correct.
 
-Checks if CSRs that sould be available anytime (i.e. when the recovery
+Checks if CSRs that should be available anytime (i.e. when the recovery
 mode is off) are always accessible, checks if other CSRs are accessible
 only in the recovery mode.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_read_alternating`
 
@@ -549,7 +549,7 @@ to ensure that both TTI and recovery transfers are possible
 regardless of the recovery mode setting.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `payload_available`
 
@@ -565,7 +565,7 @@ Reads from INDIRECT_FIFO_DATA CSR over AHB/AXI and checks if the
 read causes the signal to be deasserted again.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `image_activated`
 
@@ -580,7 +580,7 @@ recovery interface. Checks if the signal gets asserted. Then writes
 gets deasserted.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 ### `recovery_flow`
 
@@ -590,14 +590,14 @@ The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
 
 The AHB/AXI agent is responsible for recovery operation from the
-system bus side. It mimicks operation of the recovery handling
+system bus side. It mimics operation of the recovery handling
 firmware.
 
 The BFM agent issues I3C transactions and is responsible for pushing
 a firmware image to the target.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz
+The I3C bus clock is set to 12.5 MHz.
 
 
 # target_peripheral_reset
@@ -612,12 +612,12 @@ The I3C bus clock is set to 12.5 MHz
 
 Test: [`target_peripheral_reset`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L70)
 
-Issues I3C target reset pattern and verifies successful peripheral reset
+Issues I3C target reset pattern and verifies successful peripheral reset.
 
 ### `target_escalated_reset`
 
 Test: [`target_escalated_reset`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L77)
 
-Issues I3C target reset patterns and verifies successful reset escalation
+Issues I3C target reset patterns and verifies successful reset escalation.
 
 

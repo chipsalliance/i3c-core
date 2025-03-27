@@ -72,28 +72,28 @@ required time period.
 Test: `bit_tx_negedge`
 
 Requests the bus_tx module to drive SDA right after SCL falling
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_pre_posedge`
 
 Test: `bit_tx_pre_posedge`
 
 Requests the bus_tx module to drive SDA just before SCL rising
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_high_level`
 
 Test: `bit_tx_high_level`
 
 Requests the bus_tx module to drive SDA just before SCL falling
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_low_level`
 
 Test: `bit_tx_low_level`
 
 Requests the bus_tx module to drive SDA when SCL in in stable
-low state. Checks if the requested bit value is driven correctly
+low state. Checks if the requested bit value is driven correctly.
 
 ### `byte_tx`
 
@@ -117,34 +117,34 @@ if SDA is driven correctly and bus timings are met.
 Test: `bit_tx_negedge`
 
 Requests the bus_tx_flow module to drive SDA right after SCL falling
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_pre_posedge`
 
 Test: `bit_tx_pre_posedge`
 
 Requests the bus_tx_flow module to drive SDA just before SCL rising
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_high_level`
 
 Test: `bit_tx_high_level`
 
 Requests the bus_tx_flow module to drive SDA just before SCL falling
-edge. Checks if the requested bit value is driven correctly
+edge. Checks if the requested bit value is driven correctly.
 
 ### `bit_tx_low_level`
 
 Test: `bit_tx_low_level`
 
 Requests the bus_tx_flow module to drive SDA when SCL in in stable
-low state. Checks if the requested bit value is driven correctly
+low state. Checks if the requested bit value is driven correctly.
 
 ### `byte_tx`
 
 Test: [`byte_tx`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L222)
 
-Requests the bus_tx_flow module to transmitt a data byte along with
+Requests the bus_tx_flow module to transmit a data byte along with
 T-bit. While the transmission is in progress samples SDA on rising
 edges of SCL. Once the transmission finishes compares sampled data
 with what was requested to be sent.
@@ -160,11 +160,11 @@ with what was requested to be sent.
 
 ### `ccc`
 
-Test: `ccc`
+Test: [`ccc`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ccc/test_ccc.py#L134)
 
-Instucts the ccc module to begin servicing GETSTATUS CCC. Feeds
+Instructs the ccc module to begin servicing GETSTATUS CCC. Feeds
 data bytes and bits to the module via its bus_tx/bus_rx interfaces
-to mimick actual I3C transaction. Checks if data bytes received
+to mimic actual I3C transaction. Checks if data bytes received
 correspond to correct GETSTATUS CCC response.
 
 
@@ -180,38 +180,38 @@ correspond to correct GETSTATUS CCC response.
 
 Test: [`read_hci_version_csr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L67)
 
-Reads the HCI version CSR and verifies its content
+Reads the HCI version CSR and verifies its content.
 
 ### `read_pio_section_offset`
 
 Test: [`read_pio_section_offset`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L80)
 
-Reads the PIO_SECTION_OFFSET CSR and verifies its content
+Reads the PIO_SECTION_OFFSET CSR and verifies its content.
 
 ### `write_to_controller_device_addr`
 
 Test: [`write_to_controller_device_addr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L90)
 
-Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful
+Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful.
 
 ### `write_should_not_affect_ro_csr`
 
 Test: [`write_should_not_affect_ro_csr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L104)
 
-Writes to the HC_CAPABILITIES CSR which is read-only for software
+Writes to the HC_CAPABILITIES CSR which is read-only for software.
 Verifies that the write did not succeed.
 
 ### `sequence_csr_read`
 
 Test: [`sequence_csr_read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L120)
 
-Performs a sequence of CSR reads. Verifies that each one succeeds
+Performs a sequence of CSR reads. Verifies that each one succeeds.
 
 ### `sequence_csr_write`
 
 Test: [`sequence_csr_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L154)
 
-Performs a sequence of CSR writes. Verifies that each one succeeds
+Performs a sequence of CSR writes. Verifies that each one succeeds.
 
 
 # descriptor_rx
@@ -386,7 +386,7 @@ Test: [`clear_on_nonempty_rx_queue`](https://github.com/chipsalliance/i3c-core/t
 Puts 10 data words to the HCI RX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
-gets another data word from the queue to check if it was cleared
+gets another data word from the queue to check if it was cleared.
 
 ### `clear_on_nonempty_tx_queue`
 
@@ -395,7 +395,7 @@ Test: [`clear_on_nonempty_tx_queue`](https://github.com/chipsalliance/i3c-core/t
 Puts 10 data words to the HCI TX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
-gets another data word from the queue to check if it was cleared
+gets another data word from the queue to check if it was cleared.
 
 ### `clear_on_nonempty_ibi_queue`
 
@@ -404,42 +404,42 @@ Test: [`clear_on_nonempty_ibi_queue`](https://github.com/chipsalliance/i3c-core/
 Puts 10 data words to the HCI IBI queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
-gets another data word from the queue to check if it was cleared
+gets another data word from the queue to check if it was cleared.
 
 ### `cmd_capacity_status`
 
 Test: [`cmd_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L22)
 
 Resets the HCI command queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `resp_capacity_status`
 
 Test: [`resp_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L32)
 
 Resets the HCI response queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `rx_capacity_status`
 
 Test: [`rx_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L27)
 
 Resets the HCI RX queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `tx_capacity_status`
 
 Test: [`tx_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L37)
 
 Resets the HCI TX queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `ibi_capacity_status`
 
 Test: [`ibi_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L42)
 
 Resets the HCI IBI queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `cmd_setup_threshold`
 
@@ -550,7 +550,7 @@ exit. Checks if it reported exactly one HDR exit event.
 
 Test: [`target_reset_detection`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py#L95)
 
-Issues a target reset patterin to the I3C bus, verifies that the
+Issues a target reset pattern to the I3C bus, verifies that the
 i3c_bus_monitor correctly report it detected.
 
 
@@ -583,28 +583,28 @@ its computed checksum with its correspondent computed in software.
 Test: [`tti_tx_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L62)
 
 Resets the TTI TX queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `tti_tx_desc_capacity_status`
 
 Test: [`tti_tx_desc_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L47)
 
 Resets the TTI TX descriptor queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `tti_rx_capacity_status`
 
 Test: [`tti_rx_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L52)
 
 Resets the TTI RX queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `tti_rx_desc_capacity_status`
 
 Test: [`tti_rx_desc_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L57)
 
 Resets the TTI RX descriptor queue and verifies that it is empty
-afterwards
+afterwards.
 
 ### `tti_tx_setup_threshold`
 
@@ -704,7 +704,7 @@ the queue fill.
 Test: [`tti_ibi_capacity_status`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L67)
 
 Resets the TTI TX IBI queue and verifies that it is empty
-afterwards
+afterwards.
 
 
 # width_converter_8toN
