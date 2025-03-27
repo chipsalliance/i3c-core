@@ -26,7 +26,7 @@
         content matches.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["virtual_write"]
       tags: ["top"]
@@ -49,7 +49,7 @@
         responds both to TTI and virtual addresses.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["virtual_write_alternating"]
       tags: ["top"]
@@ -72,7 +72,7 @@
         content matches.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["write"]
       tags: ["top"]
@@ -95,7 +95,7 @@
         match the expected behavior.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["indirect_fifo_write"]
       tags: ["top"]
@@ -114,7 +114,7 @@
         transfer.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["write_pec"]
       tags: ["top"]
@@ -132,7 +132,7 @@
         written in the beginning of the test.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["read"]
       tags: ["top"]
@@ -152,7 +152,7 @@
         beginning of the test.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["read_short"]
       tags: ["top"]
@@ -172,7 +172,7 @@
         beginning of the test.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["read_long"]
       tags: ["top"]
@@ -189,12 +189,12 @@
         Each transfer is checked if the response is ACK or NACK and in case of
         ACK if PEC checksum is correct.
 
-        Checks if CSRs that sould be available anytime (i.e. when the recovery
+        Checks if CSRs that should be available anytime (i.e. when the recovery
         mode is off) are always accessible, checks if other CSRs are accessible
         only in the recovery mode.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["virtual_read"]
       tags: ["top"]
@@ -218,7 +218,7 @@
         regardless of the recovery mode setting.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["virtual_read_alternating"]
       tags: ["top"]
@@ -237,7 +237,7 @@
         read causes the signal to be deasserted again.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["payload_available"]
       tags: ["top"]
@@ -255,7 +255,7 @@
         gets deasserted.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["image_activated"]
       tags: ["top"]
@@ -268,14 +268,14 @@
         protocol. It consists of two agents running concurrently.
 
         The AHB/AXI agent is responsible for recovery operation from the
-        system bus side. It mimicks operation of the recovery handling
+        system bus side. It mimics operation of the recovery handling
         firmware.
 
         The BFM agent issues I3C transactions and is responsible for pushing
         a firmware image to the target.
 
         The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-        The I3C bus clock is set to 12.5 MHz
+        The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["recovery_flow"]
       tags: ["top"]

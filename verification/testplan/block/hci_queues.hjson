@@ -35,7 +35,7 @@
         Puts 10 data words to the HCI RX data queue. Writes to the
         RESET_CONTROL CSR to the bit responsible for clearing the queue,
         polls the CSR until the bit gets cleared by hardware. Puts and
-        gets another data word from the queue to check if it was cleared
+        gets another data word from the queue to check if it was cleared.
         '''
       tests: ["clear_on_nonempty_rx_queue"]
       tags: ["hci_queues"]
@@ -47,7 +47,7 @@
         Puts 10 data words to the HCI TX data queue. Writes to the
         RESET_CONTROL CSR to the bit responsible for clearing the queue,
         polls the CSR until the bit gets cleared by hardware. Puts and
-        gets another data word from the queue to check if it was cleared
+        gets another data word from the queue to check if it was cleared.
         '''
       tests: ["clear_on_nonempty_tx_queue"]
       tags: ["hci_queues"]
@@ -59,7 +59,7 @@
         Puts 10 data words to the HCI IBI queue. Writes to the
         RESET_CONTROL CSR to the bit responsible for clearing the queue,
         polls the CSR until the bit gets cleared by hardware. Puts and
-        gets another data word from the queue to check if it was cleared
+        gets another data word from the queue to check if it was cleared.
         '''
       tests: ["clear_on_nonempty_ibi_queue"]
       tags: ["hci_queues"]
@@ -69,7 +69,7 @@
       desc:
         '''
         Resets the HCI command queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["cmd_capacity_status"]
       tags: ["hci_queues"]
@@ -79,7 +79,7 @@
       desc:
         '''
         Resets the HCI response queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["resp_capacity_status"]
       tags: ["hci_queues"]
@@ -89,7 +89,7 @@
       desc:
         '''
         Resets the HCI RX queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["rx_capacity_status"]
       tags: ["hci_queues"]
@@ -99,7 +99,7 @@
       desc:
         '''
         Resets the HCI TX queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tx_capacity_status"]
       tags: ["hci_queues"]
@@ -109,7 +109,7 @@
       desc:
         '''
         Resets the HCI IBI queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["ibi_capacity_status"]
       tags: ["hci_queues"]

@@ -23,7 +23,7 @@
         deasserted, writes data to TTI TX data queue followed by writing
         a descriptor to TTI TX descriptor queue, sends a private read
         over I3C and waits for irq_o assertion. Once the interrupt is
-        asserted clears it by writing 1 to the TX_DESC_STAT fiels of TTI
+        asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
         INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
         '''
       tests: ["tx_desc_stat"]

@@ -20,7 +20,7 @@
       name: target_reset_detection
       desc:
         '''
-        Issues a target reset patterin to the I3C bus, verifies that the
+        Issues a target reset pattern to the I3C bus, verifies that the
         i3c_bus_monitor correctly report it detected.
         '''
       tests: ["target_reset_detection"]

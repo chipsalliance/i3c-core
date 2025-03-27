@@ -7,7 +7,7 @@
       desc:
         '''
         Resets the TTI TX queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tti_tx_capacity_status"]
       tags: ["tti_queues"]
@@ -17,7 +17,7 @@
       desc:
         '''
         Resets the TTI TX descriptor queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tti_tx_desc_capacity_status"]
       tags: ["tti_queues"]
@@ -27,7 +27,7 @@
       desc:
         '''
         Resets the TTI RX queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tti_rx_capacity_status"]
       tags: ["tti_queues"]
@@ -37,7 +37,7 @@
       desc:
         '''
         Resets the TTI RX descriptor queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tti_rx_desc_capacity_status"]
       tags: ["tti_queues"]
@@ -173,7 +173,7 @@
       desc:
         '''
         Resets the TTI TX IBI queue and verifies that it is empty
-        afterwards
+        afterwards.
         '''
       tests: ["tti_ibi_capacity_status"]
       tags: ["tti_queues"]

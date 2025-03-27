@@ -110,7 +110,7 @@
       name: ccc_enec_disec_bcast
       desc:
         '''
-        Sends boradcast DISEC CCC and verifies that events are disabled.
+        Sends broadcast DISEC CCC and verifies that events are disabled.
         Then, sends broadcast ENEC CCC and checks that events are enabled.
         '''
       tests: ["ccc_enec_disec_bcast"]
@@ -122,7 +122,7 @@
         '''
         Sends directed SETMWL CCC to the target and verifies that the
         register got correctly set. The check is performed by examining
-        relevant wires in the target DUT
+        relevant wires in the target DUT.
         '''
       tests: ["ccc_setmwl_direct"]
       tags: ["top"]
@@ -133,7 +133,7 @@
         '''
         Sends directed SETMRL CCC to the target and verifies that the
         register got correctly set. The check is performed by examining
-        relevant wires in the target DUT
+        relevant wires in the target DUT.
         '''
       tests: ["ccc_setmrl_direct"]
       tags: ["top"]
@@ -144,7 +144,7 @@
         '''
         Sends broadcast SETMWL CCC and verifies that the
         register got correctly set. The check is performed by examining
-        relevant wires in the target DUT
+        relevant wires in the target DUT.
         '''
       tests: ["ccc_setmwl_bcast"]
       tags: ["top"]
@@ -155,7 +155,7 @@
         '''
         Sends SETMRL CCC and verifies that the
         register got correctly set. The check is performed by examining
-        relevant wires in the target DUT
+        relevant wires in the target DUT.
         '''
       tests: ["ccc_setmrl_bcast"]
       tags: ["top"]
