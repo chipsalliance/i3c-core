@@ -8,7 +8,7 @@
 
 ### `i3c_target_write`
 
-Test: [`i3c_target_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L105)
+Test: [i3c_target_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L105)
 
 Spawns a TTI agent that reads from TTI descriptor and data queues
 and stores received data.
@@ -22,7 +22,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_read`
 
-Test: [`i3c_target_read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L196)
+Test: [i3c_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L196)
 
 Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
@@ -42,7 +42,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi`
 
-Test: [`i3c_target_ibi`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L299)
+Test: [i3c_target_ibi](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L299)
 
 Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
@@ -62,7 +62,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_retry`
 
-Test: [`i3c_target_ibi_retry`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392)
+Test: [i3c_target_ibi_retry](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392)
 
 Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
@@ -80,7 +80,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_data`
 
-Test: [`i3c_target_ibi_data`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L470)
+Test: [i3c_target_ibi_data](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L470)
 
 Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
@@ -95,7 +95,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_writes_and_reads`
 
-Test: [`i3c_target_writes_and_reads`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L541)
+Test: [i3c_target_writes_and_reads](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L541)
 
 Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.
@@ -122,7 +122,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `ccc_getstatus`
 
-Test: [`ccc_getstatus`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L47)
+Test: [ccc_getstatus](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L47)
 
 The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
 status CSR. Next, it issues the GETSTATUS directed CCC to the
@@ -131,7 +131,7 @@ CCC with the one read from the register.
 
 ### `ccc_setdasa`
 
-Test: [`ccc_setdasa`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L81)
+Test: [ccc_setdasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L81)
 
 The test sets dynamic address and virtual dynamic address by
 sending SETDASA CCC. Then it verifies that correct addresses have
@@ -139,42 +139,42 @@ been set by reading STBY_CR_DEVICE_ADDR CSR.
 
 ### `ccc_rstdaa`
 
-Test: [`ccc_rstdaa`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L132)
+Test: [ccc_rstdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L132)
 
 Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
 RSTDAA CCC and verifies that the address got cleared.
 
 ### `ccc_getbcr`
 
-Test: [`ccc_getbcr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L168)
+Test: [ccc_getbcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L168)
 
 Reads BCR register content by sending GETBCR CCC and examining
 returned data.
 
 ### `ccc_getdcr`
 
-Test: [`ccc_getdcr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L186)
+Test: [ccc_getdcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L186)
 
 Reads DCR register content by sending GETDCR CCC and examining
 returned data.
 
 ### `ccc_getmwl`
 
-Test: [`ccc_getmwl`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L202)
+Test: [ccc_getmwl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L202)
 
 Reads MWL register content by sending GETMWL CCC and examining
 returned data.
 
 ### `ccc_getmrl`
 
-Test: [`ccc_getmrl`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L220)
+Test: [ccc_getmrl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L220)
 
 Reads MRL register content by sending GETMWL CCC and examining
 returned data.
 
 ### `ccc_setaasa`
 
-Test: [`ccc_setaasa`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L239)
+Test: [ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L239)
 
 Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
@@ -182,28 +182,28 @@ CSR.
 
 ### `ccc_getpid`
 
-Test: [`ccc_getpid`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L262)
+Test: [ccc_getpid](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L262)
 
 Sends the CCC to the target and examines if the returned PID
 matches the expected.
 
 ### `ccc_enec_disec_direct`
 
-Test: [`ccc_enec_disec_direct`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L295)
+Test: [ccc_enec_disec_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L295)
 
 Sends DISEC CCC to the target and verifies that events are disabled.
 Then, sends ENEC CCC to the target and checks that events are enabled.
 
 ### `ccc_enec_disec_bcast`
 
-Test: [`ccc_enec_disec_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329)
+Test: [ccc_enec_disec_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329)
 
 Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.
 
 ### `ccc_setmwl_direct`
 
-Test: [`ccc_setmwl_direct`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L359)
+Test: [ccc_setmwl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L359)
 
 Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
@@ -211,7 +211,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmrl_direct`
 
-Test: [`ccc_setmrl_direct`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L378)
+Test: [ccc_setmrl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L378)
 
 Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
@@ -219,7 +219,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmwl_bcast`
 
-Test: [`ccc_setmwl_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L397)
+Test: [ccc_setmwl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L397)
 
 Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
@@ -227,7 +227,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmrl_bcast`
 
-Test: [`ccc_setmrl_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L416)
+Test: [ccc_setmrl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L416)
 
 Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
@@ -235,7 +235,7 @@ relevant wires in the target DUT.
 
 ### `ccc_rstact_direct`
 
-Test: [`ccc_rstact_direct`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L435)
+Test: [ccc_rstact_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L435)
 
 Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
@@ -244,7 +244,7 @@ verifies that the peripheral_reset_o signal gets asserted.
 
 ### `ccc_rstact_bcast`
 
-Test: [`ccc_rstact_bcast`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L467)
+Test: [ccc_rstact_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L467)
 
 Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
@@ -253,7 +253,7 @@ verifies that the escalated_reset_o signal gets asserted.
 
 ### `ccc_direct_multiple_wr`
 
-Test: [`ccc_direct_multiple_wr`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L492)
+Test: [ccc_direct_multiple_wr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L492)
 
 Sends a sequence of multiple directed SETMWL CCCs. The first and
 the last have non-matching address. The two middle ones set MWL
@@ -262,7 +262,7 @@ addresses and executed both CCCs.
 
 ### `ccc_direct_multiple_rd`
 
-Test: [`ccc_direct_multiple_rd`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L532)
+Test: [ccc_direct_multiple_rd](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L532)
 
 Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
 thee different addresses. Only the one for the target should
@@ -279,7 +279,7 @@ be ACK-ed with the correct MWL content.
 
 ### `Enter and exit HDR mode`
 
-Test: `enter_exit_hdr_mode`
+Test: enter_exit_hdr_mode
 
 Issues ENTHDR0 CCC to the target, verifies that the target FSM
 is in IdleHDR state. Issues HDR exit pattern, verifies that
@@ -296,7 +296,7 @@ the target FSM is back in Idle state.
 
 ### `rx_desc_stat`
 
-Test: [`rx_desc_stat`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L69)
+Test: [rx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L69)
 
 Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, sends a private write over I3C to the target and
@@ -306,7 +306,7 @@ irq_o gets deasserted after the read.
 
 ### `tx_desc_stat`
 
-Test: [`tx_desc_stat`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L106)
+Test: [tx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L106)
 
 Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
@@ -317,7 +317,7 @@ INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
 
 ### `ibi_done`
 
-Test: [`ibi_done`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153)
+Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153)
 
 Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
@@ -329,7 +329,7 @@ cleared afterwards.
 
 ### `interrupt_force`
 
-Test: `interrupt_force`
+Test: interrupt_force
 
 The test is run for each TTI interrupt:
  - TX_DESC_STAT_EN
@@ -362,7 +362,7 @@ the status bit cleared.
 
 ### `virtual_write`
 
-Test: [`virtual_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L108)
+Test: [virtual_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L108)
 
 Tests CSR write(s) through recovery protocol using the virtual
 target address. In the beginning sets the TTI and recovery
@@ -388,7 +388,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_write_alternating`
 
-Test: [`virtual_write_alternating`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L218)
+Test: [virtual_write_alternating](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L218)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -408,7 +408,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `write`
 
-Test: [`write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L287)
+Test: [write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L287)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -428,7 +428,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `indirect_fifo_write`
 
-Test: [`indirect_fifo_write`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451)
+Test: [indirect_fifo_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -448,7 +448,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `write_pec`
 
-Test: [`write_pec`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550)
+Test: [write_pec](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -464,7 +464,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `read`
 
-Test: [`read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605)
+Test: [read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -479,7 +479,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `read_short`
 
-Test: [`read_short`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693)
+Test: [read_short](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -496,7 +496,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `read_long`
 
-Test: [`read_long`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759)
+Test: [read_long](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -513,7 +513,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_read`
 
-Test: [`virtual_read`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884)
+Test: [virtual_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
 the recovery mode.
@@ -532,7 +532,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `virtual_read_alternating`
 
-Test: [`virtual_read_alternating`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970)
+Test: [virtual_read_alternating](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970)
 
 Alternates between recovery mode reads and TTI reads. Initially
 sets the TTI and recovery addresses via two SETDASA CCCs.
@@ -553,7 +553,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `payload_available`
 
-Test: [`payload_available`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051)
+Test: [payload_available](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -569,7 +569,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `image_activated`
 
-Test: [`image_activated`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143)
+Test: [image_activated](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -584,7 +584,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `recovery_flow`
 
-Test: [`recovery_flow`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242)
+Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242)
 
 The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
@@ -610,13 +610,13 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `target_peripheral_reset`
 
-Test: [`target_peripheral_reset`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L70)
+Test: [target_peripheral_reset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L70)
 
 Issues I3C target reset pattern and verifies successful peripheral reset.
 
 ### `target_escalated_reset`
 
-Test: [`target_escalated_reset`](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L77)
+Test: [target_escalated_reset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L77)
 
 Issues I3C target reset patterns and verifies successful reset escalation.
 

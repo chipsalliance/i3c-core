@@ -1863,7 +1863,7 @@ The core is verified with <a class="reference external" href="https://github.com
 <p><a class="external reference" href="./sim-results/bus_monitor.html">Test results</a></p>
 <h4 id="testpoints">Testpoints<a class="headerlink" href="#testpoints" title="Link to this heading">¶</a></h4>
 <h5 id="id1"><code class="docutils literal notranslate"><span class="pre">bus_monitor</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_monitor/test_bus_monitor.py#L47"><code class="docutils literal notranslate"><span class="pre">bus_monitor</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_monitor/test_bus_monitor.py#L47">bus_monitor</a></p>
 <p>Tests operation of the bus_monitor module along with its sub-modules.
 Performs a number of I3C transactions between a simulated controller
 and a simulated target. Counts start, repeated start and stop events
@@ -1873,12 +1873,12 @@ reported by bus_monitor. Verifies that the counts match what’s expected.</p>
 <p><a class="external reference" href="./sim-results/bus_rx_flow.html">Test results</a></p>
 <h4 id="id2">Testpoints<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
 <h5 id="multiple-bit-reads"><code class="docutils literal notranslate"><span class="pre">multiple_bit_reads</span></code><a class="headerlink" href="#multiple-bit-reads" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_rx_flow/test_bus_rx_flow.py#L57"><code class="docutils literal notranslate"><span class="pre">multiple_bit_reads</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_rx_flow/test_bus_rx_flow.py#L57">multiple_bit_reads</a></p>
 <p>Drives SCL line with a steady clock, issues multiple bit read
 requests, verifies that the module returns correct data sampled
 from the SDA line.</p>
 <h5 id="multiple-byte-reads"><code class="docutils literal notranslate"><span class="pre">multiple_byte_reads</span></code><a class="headerlink" href="#multiple-byte-reads" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_rx_flow/test_bus_rx_flow.py#L88"><code class="docutils literal notranslate"><span class="pre">multiple_byte_reads</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_rx_flow/test_bus_rx_flow.py#L88">multiple_byte_reads</a></p>
 <p>Drives SCL line with a steady clock, issues multiple byte read
 requests, verifies that the module returns correct data sampled
 from the SDA line.</p>
@@ -1887,7 +1887,7 @@ from the SDA line.</p>
 <p><a class="external reference" href="./sim-results/bus_timers.html">Test results</a></p>
 <h4 id="id3">Testpoints<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
 <h5 id="get-status"><code class="docutils literal notranslate"><span class="pre">get_status</span></code><a class="headerlink" href="#get-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L25"><code class="docutils literal notranslate"><span class="pre">bus_timers</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L25">bus_timers</a></p>
 <p>Tests the bus_timers module responsible for tracking bus free,
 idle and available states. Triggers the module and verifies if
 the signals corresponding to bus states get asserted after the
@@ -1897,23 +1897,23 @@ required time period.</p>
 <p><a class="external reference" href="./sim-results/bus_tx.html">Test results</a></p>
 <h4 id="id4">Testpoints<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <h5 id="bit-tx-negedge"><code class="docutils literal notranslate"><span class="pre">bit_tx_negedge</span></code><a class="headerlink" href="#bit-tx-negedge" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_negedge</span></code></p>
+<p>Test: bit_tx_negedge</p>
 <p>Requests the bus_tx module to drive SDA right after SCL falling
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="bit-tx-pre-posedge"><code class="docutils literal notranslate"><span class="pre">bit_tx_pre_posedge</span></code><a class="headerlink" href="#bit-tx-pre-posedge" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_pre_posedge</span></code></p>
+<p>Test: bit_tx_pre_posedge</p>
 <p>Requests the bus_tx module to drive SDA just before SCL rising
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="bit-tx-high-level"><code class="docutils literal notranslate"><span class="pre">bit_tx_high_level</span></code><a class="headerlink" href="#bit-tx-high-level" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_high_level</span></code></p>
+<p>Test: bit_tx_high_level</p>
 <p>Requests the bus_tx module to drive SDA just before SCL falling
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="bit-tx-low-level"><code class="docutils literal notranslate"><span class="pre">bit_tx_low_level</span></code><a class="headerlink" href="#bit-tx-low-level" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_low_level</span></code></p>
+<p>Test: bit_tx_low_level</p>
 <p>Requests the bus_tx module to drive SDA when SCL in in stable
 low state. Checks if the requested bit value is driven correctly.</p>
 <h5 id="byte-tx"><code class="docutils literal notranslate"><span class="pre">byte_tx</span></code><a class="headerlink" href="#byte-tx" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L222"><code class="docutils literal notranslate"><span class="pre">byte_tx</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L222">byte_tx</a></p>
 <p>Drives controls of the bus_tx module in a sequence which sends
 a data byte plus T bit to the I3C bus. For each bit sent checks
 if SDA is driven correctly and bus timings are met.</p>
@@ -1922,23 +1922,23 @@ if SDA is driven correctly and bus timings are met.</p>
 <p><a class="external reference" href="./sim-results/bus_tx_flow.html">Test results</a></p>
 <h4 id="id5">Testpoints<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
 <h5 id="id6"><code class="docutils literal notranslate"><span class="pre">bit_tx_negedge</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_negedge</span></code></p>
+<p>Test: bit_tx_negedge</p>
 <p>Requests the bus_tx_flow module to drive SDA right after SCL falling
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="id7"><code class="docutils literal notranslate"><span class="pre">bit_tx_pre_posedge</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_pre_posedge</span></code></p>
+<p>Test: bit_tx_pre_posedge</p>
 <p>Requests the bus_tx_flow module to drive SDA just before SCL rising
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="id8"><code class="docutils literal notranslate"><span class="pre">bit_tx_high_level</span></code><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_high_level</span></code></p>
+<p>Test: bit_tx_high_level</p>
 <p>Requests the bus_tx_flow module to drive SDA just before SCL falling
 edge. Checks if the requested bit value is driven correctly.</p>
 <h5 id="id9"><code class="docutils literal notranslate"><span class="pre">bit_tx_low_level</span></code><a class="headerlink" href="#id9" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">bit_tx_low_level</span></code></p>
+<p>Test: bit_tx_low_level</p>
 <p>Requests the bus_tx_flow module to drive SDA when SCL in in stable
 low state. Checks if the requested bit value is driven correctly.</p>
 <h5 id="id10"><code class="docutils literal notranslate"><span class="pre">byte_tx</span></code><a class="headerlink" href="#id10" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L222"><code class="docutils literal notranslate"><span class="pre">byte_tx</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L222">byte_tx</a></p>
 <p>Requests the bus_tx_flow module to transmit a data byte along with
 T-bit. While the transmission is in progress samples SDA on rising
 edges of SCL. Once the transmission finishes compares sampled data
@@ -1948,7 +1948,7 @@ with what was requested to be sent.</p>
 <p><a class="external reference" href="./sim-results/ccc.html">Test results</a></p>
 <h4 id="id11">Testpoints<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
 <h5 id="id12"><code class="docutils literal notranslate"><span class="pre">ccc</span></code><a class="headerlink" href="#id12" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ccc/test_ccc.py#L134"><code class="docutils literal notranslate"><span class="pre">ccc</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ccc/test_ccc.py#L134">ccc</a></p>
 <p>Instructs the ccc module to begin servicing GETSTATUS CCC. Feeds
 data bytes and bits to the module via its bus_tx/bus_rx interfaces
 to mimic actual I3C transaction. Checks if data bytes received
@@ -1958,30 +1958,30 @@ correspond to correct GETSTATUS CCC response.</p>
 <p><a class="external reference" href="./sim-results/csr_sw_access.html">Test results</a></p>
 <h4 id="id13">Testpoints<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
 <h5 id="read-hci-version-csr"><code class="docutils literal notranslate"><span class="pre">read_hci_version_csr</span></code><a class="headerlink" href="#read-hci-version-csr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L67"><code class="docutils literal notranslate"><span class="pre">read_hci_version_csr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L67">read_hci_version_csr</a></p>
 <p>Reads the HCI version CSR and verifies its content.</p>
 <h5 id="read-pio-section-offset"><code class="docutils literal notranslate"><span class="pre">read_pio_section_offset</span></code><a class="headerlink" href="#read-pio-section-offset" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L80"><code class="docutils literal notranslate"><span class="pre">read_pio_section_offset</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L80">read_pio_section_offset</a></p>
 <p>Reads the PIO_SECTION_OFFSET CSR and verifies its content.</p>
 <h5 id="write-to-controller-device-addr"><code class="docutils literal notranslate"><span class="pre">write_to_controller_device_addr</span></code><a class="headerlink" href="#write-to-controller-device-addr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L90"><code class="docutils literal notranslate"><span class="pre">write_to_controller_device_addr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L90">write_to_controller_device_addr</a></p>
 <p>Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful.</p>
 <h5 id="write-should-not-affect-ro-csr"><code class="docutils literal notranslate"><span class="pre">write_should_not_affect_ro_csr</span></code><a class="headerlink" href="#write-should-not-affect-ro-csr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L104"><code class="docutils literal notranslate"><span class="pre">write_should_not_affect_ro_csr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L104">write_should_not_affect_ro_csr</a></p>
 <p>Writes to the HC_CAPABILITIES CSR which is read-only for software.
 Verifies that the write did not succeed.</p>
 <h5 id="sequence-csr-read"><code class="docutils literal notranslate"><span class="pre">sequence_csr_read</span></code><a class="headerlink" href="#sequence-csr-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L120"><code class="docutils literal notranslate"><span class="pre">sequence_csr_read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L120">sequence_csr_read</a></p>
 <p>Performs a sequence of CSR reads. Verifies that each one succeeds.</p>
 <h5 id="sequence-csr-write"><code class="docutils literal notranslate"><span class="pre">sequence_csr_write</span></code><a class="headerlink" href="#sequence-csr-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L154"><code class="docutils literal notranslate"><span class="pre">sequence_csr_write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L154">sequence_csr_write</a></p>
 <p>Performs a sequence of CSR writes. Verifies that each one succeeds.</p>
 <h3 id="descriptor-rx">descriptor_rx<a class="headerlink" href="#descriptor-rx" title="Link to this heading">¶</a></h3>
 <p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py">Source file</a></p>
 <p><a class="external reference" href="./sim-results/descriptor_rx.html">Test results</a></p>
 <h4 id="id14">Testpoints<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h4>
 <h5 id="id15"><code class="docutils literal notranslate"><span class="pre">descriptor_rx</span></code><a class="headerlink" href="#id15" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">descriptor_rx</span></code></p>
+<p>Test: descriptor_rx</p>
 <p>Tests the descriptor_rx module responsible for generating TTI RX
 descriptors. The test sends N bytes to the module and verifies
 that it emits a valid descriptor with data length set to N.</p>
@@ -1990,7 +1990,7 @@ that it emits a valid descriptor with data length set to N.</p>
 <p><a class="external reference" href="./sim-results/descriptor_tx.html">Test results</a></p>
 <h4 id="id16">Testpoints<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h4>
 <h5 id="id17"><code class="docutils literal notranslate"><span class="pre">descriptor_tx</span></code><a class="headerlink" href="#id17" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">descriptor_tx</span></code></p>
+<p>Test: descriptor_tx</p>
 <p>Tests the descriptor_tx module responsible for processing TTI TX
 descriptors and controlling TTI data flow during I3C private
 reads. Sends a descriptor to the module followed with the right
@@ -2001,7 +2001,7 @@ and allowed the right amount of data bytes to pass through it.</p>
 <p><a class="external reference" href="./sim-results/drivers.html">Test results</a></p>
 <h4 id="id18">Testpoints<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h4>
 <h5 id="test-drivers"><code class="docutils literal notranslate"><span class="pre">test_drivers</span></code><a class="headerlink" href="#test-drivers" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/i3c_phy_io/test_drivers.py#L44"><code class="docutils literal notranslate"><span class="pre">drivers</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/i3c_phy_io/test_drivers.py#L44">drivers</a></p>
 <p>Tests the I3C PHY module. Loops through all possible states of
 SDA/SCL for OD and PP mode. Checks if driven data matches the
 bus state.</p>
@@ -2010,13 +2010,13 @@ bus state.</p>
 <p><a class="external reference" href="./sim-results/edge_detector.html">Test results</a></p>
 <h4 id="id19">Testpoints<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h4>
 <h5 id="pretrigger-with-delay"><code class="docutils literal notranslate"><span class="pre">pretrigger_with_delay</span></code><a class="headerlink" href="#pretrigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L49"><code class="docutils literal notranslate"><span class="pre">pretrigger_with_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L49">pretrigger_with_delay</a></p>
 <p>Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 equal to the programmed delay.</p>
 <h5 id="posttrigger-with-delay"><code class="docutils literal notranslate"><span class="pre">posttrigger_with_delay</span></code><a class="headerlink" href="#posttrigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L72"><code class="docutils literal notranslate"><span class="pre">posttrigger_with_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L72">posttrigger_with_delay</a></p>
 <p>Emits an edge on the bus, triggers the edge_detector module after
 the edge when the bus line is high. Counts clock cycles it takes
 the detector to report the edge event. The output detect signal
@@ -2025,25 +2025,25 @@ programmed delay time since the assertion of the trigger signal.
 Verifies that the number of counted cycles is equal the programmed
 delay.</p>
 <h5 id="trigger-with-delay"><code class="docutils literal notranslate"><span class="pre">trigger_with_delay</span></code><a class="headerlink" href="#trigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L97"><code class="docutils literal notranslate"><span class="pre">trigger_with_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L97">trigger_with_delay</a></p>
 <p>Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 equal to the programmed delay.</p>
 <h5 id="pretrigger-no-delay"><code class="docutils literal notranslate"><span class="pre">pretrigger_no_delay</span></code><a class="headerlink" href="#pretrigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L121"><code class="docutils literal notranslate"><span class="pre">pretrigger_no_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L121">pretrigger_no_delay</a></p>
 <p>Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.</p>
 <h5 id="posttrigger-no-delay"><code class="docutils literal notranslate"><span class="pre">posttrigger_no_delay</span></code><a class="headerlink" href="#posttrigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L144"><code class="docutils literal notranslate"><span class="pre">posttrigger_no_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L144">posttrigger_no_delay</a></p>
 <p>Triggers the edge_detector module when a bus line is high which
 is after an edge. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.</p>
 <h5 id="trigger-no-delay"><code class="docutils literal notranslate"><span class="pre">trigger_no_delay</span></code><a class="headerlink" href="#trigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L170"><code class="docutils literal notranslate"><span class="pre">trigger_no_delay</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L170">trigger_no_delay</a></p>
 <p>Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
@@ -2053,7 +2053,7 @@ zero as the configured delay is also set to 0.</p>
 <p><a class="external reference" href="./sim-results/flow_standby_i3c.html">Test results</a></p>
 <h4 id="id20">Testpoints<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
 <h5 id="rx"><code class="docutils literal notranslate"><span class="pre">rx</span></code><a class="headerlink" href="#rx" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">rx</span></code></p>
+<p>Test: rx</p>
 <p>Tests basic operation of the flow_standby_i3c module. The test
 instantiates two tasks serving as BFMs for RX and TX queues.
 Then it simulates bus start condition followed by data reception
@@ -2063,109 +2063,109 @@ ended by bus stop condition.</p>
 <p><a class="external reference" href="./sim-results/hci_queues.html">Test results</a></p>
 <h4 id="id21">Testpoints<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
 <h5 id="clear-on-nonempty-resp-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_resp_queue</span></code><a class="headerlink" href="#clear-on-nonempty-resp-queue" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L13"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_resp_queue</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L13">clear_on_nonempty_resp_queue</a></p>
 <p>Writes to the HCI queue RESET_CONTROL CSR bit which causes HCI
 command response queue to be cleared. Then, polls the CSR until the
 bit gets cleared by the hardware. To check if the queue has been
 cleared puts a descriptor to the queue and reads it back. It
 should be the same descriptor.</p>
 <h5 id="clear-on-nonempty-cmd-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_cmd_queue</span></code><a class="headerlink" href="#clear-on-nonempty-cmd-queue" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L41"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_cmd_queue</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L41">clear_on_nonempty_cmd_queue</a></p>
 <p>Puts a command descriptor to the HCI command queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Verifies that
 the queue got cleared by pushing and retrieving another descriptor
 from the queue.</p>
 <h5 id="clear-on-nonempty-rx-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_rx_queue</span></code><a class="headerlink" href="#clear-on-nonempty-rx-queue" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L68"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_rx_queue</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L68">clear_on_nonempty_rx_queue</a></p>
 <p>Puts 10 data words to the HCI RX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
 gets another data word from the queue to check if it was cleared.</p>
 <h5 id="clear-on-nonempty-tx-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_tx_queue</span></code><a class="headerlink" href="#clear-on-nonempty-tx-queue" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L93"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_tx_queue</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L93">clear_on_nonempty_tx_queue</a></p>
 <p>Puts 10 data words to the HCI TX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
 gets another data word from the queue to check if it was cleared.</p>
 <h5 id="clear-on-nonempty-ibi-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_ibi_queue</span></code><a class="headerlink" href="#clear-on-nonempty-ibi-queue" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L118"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_ibi_queue</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear.py#L118">clear_on_nonempty_ibi_queue</a></p>
 <p>Puts 10 data words to the HCI IBI queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
 polls the CSR until the bit gets cleared by hardware. Puts and
 gets another data word from the queue to check if it was cleared.</p>
 <h5 id="cmd-capacity-status"><code class="docutils literal notranslate"><span class="pre">cmd_capacity_status</span></code><a class="headerlink" href="#cmd-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L22"><code class="docutils literal notranslate"><span class="pre">cmd_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L22">cmd_capacity_status</a></p>
 <p>Resets the HCI command queue and verifies that it is empty
 afterwards.</p>
 <h5 id="resp-capacity-status"><code class="docutils literal notranslate"><span class="pre">resp_capacity_status</span></code><a class="headerlink" href="#resp-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L32"><code class="docutils literal notranslate"><span class="pre">resp_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L32">resp_capacity_status</a></p>
 <p>Resets the HCI response queue and verifies that it is empty
 afterwards.</p>
 <h5 id="rx-capacity-status"><code class="docutils literal notranslate"><span class="pre">rx_capacity_status</span></code><a class="headerlink" href="#rx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L27"><code class="docutils literal notranslate"><span class="pre">rx_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L27">rx_capacity_status</a></p>
 <p>Resets the HCI RX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tx-capacity-status"><code class="docutils literal notranslate"><span class="pre">tx_capacity_status</span></code><a class="headerlink" href="#tx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L37"><code class="docutils literal notranslate"><span class="pre">tx_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L37">tx_capacity_status</a></p>
 <p>Resets the HCI TX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="ibi-capacity-status"><code class="docutils literal notranslate"><span class="pre">ibi_capacity_status</span></code><a class="headerlink" href="#ibi-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L42"><code class="docutils literal notranslate"><span class="pre">ibi_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L42">ibi_capacity_status</a></p>
 <p>Resets the HCI IBI queue and verifies that it is empty
 afterwards.</p>
 <h5 id="cmd-setup-threshold"><code class="docutils literal notranslate"><span class="pre">cmd_setup_threshold</span></code><a class="headerlink" href="#cmd-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L419"><code class="docutils literal notranslate"><span class="pre">cmd_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L419">cmd_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the HCI command
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="resp-setup-threshold"><code class="docutils literal notranslate"><span class="pre">resp_setup_threshold</span></code><a class="headerlink" href="#resp-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L439"><code class="docutils literal notranslate"><span class="pre">resp_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L439">resp_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the HCI response
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="rx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">rx_setup_threshold</span></code><a class="headerlink" href="#rx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L425"><code class="docutils literal notranslate"><span class="pre">rx_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L425">rx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the HCI data RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tx_setup_threshold</span></code><a class="headerlink" href="#tx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L432"><code class="docutils literal notranslate"><span class="pre">tx_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L432">tx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the HCI data TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="ibi-setup-threshold"><code class="docutils literal notranslate"><span class="pre">ibi_setup_threshold</span></code><a class="headerlink" href="#ibi-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L445"><code class="docutils literal notranslate"><span class="pre">ibi_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L445">ibi_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the HCI IBI
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="resp-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">resp_should_raise_thld_trig</span></code><a class="headerlink" href="#resp-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L598"><code class="docutils literal notranslate"><span class="pre">resp_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L598">resp_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
 <h5 id="rx-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">rx_should_raise_thld_trig</span></code><a class="headerlink" href="#rx-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L604"><code class="docutils literal notranslate"><span class="pre">rx_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L604">rx_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start thresholds of the read queue and checks
 whether the trigger signals are properly asserted at different
 levels of the queue fill.</p>
 <h5 id="ibi-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">ibi_should_raise_thld_trig</span></code><a class="headerlink" href="#ibi-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L611"><code class="docutils literal notranslate"><span class="pre">ibi_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L611">ibi_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
 <h5 id="cmd-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">cmd_should_raise_thld_trig</span></code><a class="headerlink" href="#cmd-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L747"><code class="docutils literal notranslate"><span class="pre">cmd_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L747">cmd_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the write queue and checks whether
 the trigger is properly asserted at different levels of the queue
 fill.</p>
 <h5 id="tx-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tx_should_raise_thld_trig</span></code><a class="headerlink" href="#tx-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L753"><code class="docutils literal notranslate"><span class="pre">tx_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L753">tx_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
@@ -2174,7 +2174,7 @@ the queue fill.</p>
 <p><a class="external reference" href="./sim-results/i3c_bus_monitor.html">Test results</a></p>
 <h4 id="id22">Testpoints<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
 <h5 id="bus-monitor-hdr-exit"><code class="docutils literal notranslate"><span class="pre">bus_monitor_hdr_exit</span></code><a class="headerlink" href="#bus-monitor-hdr-exit" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py#L49"><code class="docutils literal notranslate"><span class="pre">bus_monitor_hdr_exit</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py#L49">bus_monitor_hdr_exit</a></p>
 <p>Verifies that the i3c_bus_monitor module correctly detects HDR
 exit pattern. Sends the HDR exit pattern and verifies that the
 module does not react - initially the bus is in SDR mode. Instructs
@@ -2182,7 +2182,7 @@ the module that the bus has entered HDR mode, issues the HDR exit
 pattern and counts the number of times the module reported HDR
 exit. Checks if it reported exactly one HDR exit event.</p>
 <h5 id="target-reset-detection"><code class="docutils literal notranslate"><span class="pre">target_reset_detection</span></code><a class="headerlink" href="#target-reset-detection" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py#L95"><code class="docutils literal notranslate"><span class="pre">target_reset_detection</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py#L95">target_reset_detection</a></p>
 <p>Issues a target reset pattern to the I3C bus, verifies that the
 i3c_bus_monitor correctly report it detected.</p>
 <h3 id="pec">pec<a class="headerlink" href="#pec" title="Link to this heading">¶</a></h3>
@@ -2190,7 +2190,7 @@ i3c_bus_monitor correctly report it detected.</p>
 <p><a class="external reference" href="./sim-results/pec.html">Test results</a></p>
 <h4 id="id23">Testpoints<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
 <h5 id="id24"><code class="docutils literal notranslate"><span class="pre">pec</span></code><a class="headerlink" href="#id24" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/recovery_pec/test_pec.py#L13"><code class="docutils literal notranslate"><span class="pre">pec</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/recovery_pec/test_pec.py#L13">pec</a></p>
 <p>Pushes random bytes through the recovery_pec module, compares
 its computed checksum with its correspondent computed in software.</p>
 <h3 id="tti-queues">tti_queues<a class="headerlink" href="#tti-queues" title="Link to this heading">¶</a></h3>
@@ -2198,83 +2198,83 @@ its computed checksum with its correspondent computed in software.</p>
 <p><a class="external reference" href="./sim-results/tti_queues.html">Test results</a></p>
 <h4 id="id25">Testpoints<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
 <h5 id="tti-tx-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_tx_capacity_status</span></code><a class="headerlink" href="#tti-tx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L62"><code class="docutils literal notranslate"><span class="pre">tti_tx_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L62">tti_tx_capacity_status</a></p>
 <p>Resets the TTI TX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-tx-desc-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_capacity_status</span></code><a class="headerlink" href="#tti-tx-desc-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L47"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L47">tti_tx_desc_capacity_status</a></p>
 <p>Resets the TTI TX descriptor queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-rx-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_rx_capacity_status</span></code><a class="headerlink" href="#tti-rx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L52"><code class="docutils literal notranslate"><span class="pre">tti_rx_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L52">tti_rx_capacity_status</a></p>
 <p>Resets the TTI RX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-rx-desc-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_capacity_status</span></code><a class="headerlink" href="#tti-rx-desc-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L57"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L57">tti_rx_desc_capacity_status</a></p>
 <p>Resets the TTI RX descriptor queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-tx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_tx_setup_threshold</span></code><a class="headerlink" href="#tti-tx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L465"><code class="docutils literal notranslate"><span class="pre">tti_tx_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L465">tti_tx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI data TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-tx-desc-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_setup_threshold</span></code><a class="headerlink" href="#tti-tx-desc-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L451"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L451">tti_tx_desc_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI descriptor TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-rx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_rx_setup_threshold</span></code><a class="headerlink" href="#tti-rx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L457"><code class="docutils literal notranslate"><span class="pre">tti_rx_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L457">tti_rx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI data RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-rx-desc-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_setup_threshold</span></code><a class="headerlink" href="#tti-rx-desc-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L473"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L473">tti_rx_desc_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI descriptor RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-ibi-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_ibi_setup_threshold</span></code><a class="headerlink" href="#tti-ibi-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L479"><code class="docutils literal notranslate"><span class="pre">tti_ibi_setup_threshold</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L479">tti_ibi_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI IBI
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-ibi-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tti_ibi_should_raise_thld_trig</span></code><a class="headerlink" href="#tti-ibi-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L778"><code class="docutils literal notranslate"><span class="pre">tti_ibi_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L778">tti_ibi_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the TTI queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
 <h5 id="tti-rx-desc-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_should_raise_thld_trig</span></code><a class="headerlink" href="#tti-rx-desc-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L617"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L617">tti_rx_desc_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
 <h5 id="id26"><code class="docutils literal notranslate"><span class="pre">rx_should_raise_thld_trig</span></code><a class="headerlink" href="#id26" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L604"><code class="docutils literal notranslate"><span class="pre">rx_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L604">rx_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start thresholds of the read queue and checks
 whether the trigger signals are properly asserted at different
 levels of the queue fill.</p>
 <h5 id="tx-desc-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tx_desc_should_raise_thld_trig</span></code><a class="headerlink" href="#tx-desc-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L760"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L760">tti_tx_desc_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
 <h5 id="id27"><code class="docutils literal notranslate"><span class="pre">tx_should_raise_thld_trig</span></code><a class="headerlink" href="#id27" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L753"><code class="docutils literal notranslate"><span class="pre">tx_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L753">tx_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
 <h5 id="id28"><code class="docutils literal notranslate"><span class="pre">ibi_should_raise_thld_trig</span></code><a class="headerlink" href="#id28" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L611"><code class="docutils literal notranslate"><span class="pre">ibi_should_raise_thld_trig</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold.py#L611">ibi_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
 <h5 id="tti-ibi-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_ibi_capacity_status</span></code><a class="headerlink" href="#tti-ibi-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L67"><code class="docutils literal notranslate"><span class="pre">tti_ibi_capacity_status</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty.py#L67">tti_ibi_capacity_status</a></p>
 <p>Resets the TTI TX IBI queue and verifies that it is empty
 afterwards.</p>
 <h3 id="width-converter-8ton">width_converter_8toN<a class="headerlink" href="#width-converter-8ton" title="Link to this heading">¶</a></h3>
@@ -2282,13 +2282,13 @@ afterwards.</p>
 <p><a class="external reference" href="./sim-results/width_converter_8toN.html">Test results</a></p>
 <h4 id="id29">Testpoints<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
 <h5 id="converter"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#converter" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py#L56"><code class="docutils literal notranslate"><span class="pre">width_converter_8ton_converter</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py#L56">width_converter_8ton_converter</a></p>
 <p>Pushes random byte stream to the converter module. After each
 byte waits at random. Simultaneously receives N-bit data words
 and generates pushback (deasserts ready) at random. Verifies if
 the output data matches the input.</p>
 <h5 id="flush"><code class="docutils literal notranslate"><span class="pre">flush</span></code><a class="headerlink" href="#flush" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L59"><code class="docutils literal notranslate"><span class="pre">width_converter_8ton_flush</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L59">width_converter_8ton_flush</a></p>
 <p>Feeds M bytes to the module where M is in [1, 2, 3]. Asserts the
 sink_flush_i signal, receives the output word and checks if it
 matches the input data.</p>
@@ -2297,13 +2297,13 @@ matches the input data.</p>
 <p><a class="external reference" href="./sim-results/width_converter_Nto8.html">Test results</a></p>
 <h4 id="id30">Testpoints<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
 <h5 id="id31"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#id31" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py#L56"><code class="docutils literal notranslate"><span class="pre">width_converter_nto8_converter</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py#L56">width_converter_nto8_converter</a></p>
 <p>Pushes random N-bit word stream to the converter module. After each
 word waits at random. Simultaneously receives bytes and generates
 pushback (deasserts ready) at random. Verifies if the output data
 matches the input.</p>
 <h5 id="id32"><code class="docutils literal notranslate"><span class="pre">flush</span></code><a class="headerlink" href="#id32" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L53"><code class="docutils literal notranslate"><span class="pre">width_converter_nto8_flush</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L53">width_converter_nto8_flush</a></p>
 <p>Feeds an N-bit word to the module. Receives M bytes where M is in
 [1, 2, 3] and asserts source_flush_i. Verifies that the module
 ceases to output data as expected.</p>
@@ -2313,7 +2313,7 @@ ceases to output data as expected.</p>
 <p><a class="external reference" href="./sim-results/target.html">Test results</a></p>
 <h4 id="id33">Testpoints<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
 <h5 id="i3c-target-write"><code class="docutils literal notranslate"><span class="pre">i3c_target_write</span></code><a class="headerlink" href="#i3c-target-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L105"><code class="docutils literal notranslate"><span class="pre">i3c_target_write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L105">i3c_target_write</a></p>
 <p>Spawns a TTI agent that reads from TTI descriptor and data queues
 and stores received data.</p>
 <p>While the agent is running the test issues several private writes
@@ -2322,7 +2322,7 @@ the agent.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="i3c-target-read"><code class="docutils literal notranslate"><span class="pre">i3c_target_read</span></code><a class="headerlink" href="#i3c-target-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L196"><code class="docutils literal notranslate"><span class="pre">i3c_target_read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L196">i3c_target_read</a></p>
 <p>Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
 Repeats the two steps N times.</p>
@@ -2336,7 +2336,7 @@ Repeats the steps N times.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="i3c-target-ibi"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi</span></code><a class="headerlink" href="#i3c-target-ibi" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L299"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L299">i3c_target_ibi</a></p>
 <p>Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
 matches on both sides.</p>
@@ -2349,7 +2349,7 @@ the mandatory byte (MDB) and data matches on both sides.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="i3c-target-ibi-retry"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi_retry</span></code><a class="headerlink" href="#i3c-target-ibi-retry" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi_retry</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392">i3c_target_ibi_retry</a></p>
 <p>Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
 time period - sufficiently long for the target to retry sending
@@ -2362,7 +2362,7 @@ the TTI STATUS CSR, check if it is set to 0 (no error).</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="i3c-target-ibi-data"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi_data</span></code><a class="headerlink" href="#i3c-target-ibi-data" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L470"><code class="docutils literal notranslate"><span class="pre">i3c_target_ibi_data</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L470">i3c_target_ibi_data</a></p>
 <p>Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
 to the TTI IBI queue, checks if the IBI gets serviced correctly,
@@ -2372,7 +2372,7 @@ if it gets serviced correctly, compares data.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="i3c-target-writes-and-reads"><code class="docutils literal notranslate"><span class="pre">i3c_target_writes_and_reads</span></code><a class="headerlink" href="#i3c-target-writes-and-reads" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L541"><code class="docutils literal notranslate"><span class="pre">i3c_target_writes_and_reads</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L541">i3c_target_writes_and_reads</a></p>
 <p>Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.</p>
 <p>Issues private write transfers to the target with randomized
@@ -2388,93 +2388,93 @@ The I3C bus clock is set to 12.5 MHz.</p>
 <p><a class="external reference" href="./sim-results/target_ccc.html">Test results</a></p>
 <h4 id="id34">Testpoints<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
 <h5 id="ccc-getstatus"><code class="docutils literal notranslate"><span class="pre">ccc_getstatus</span></code><a class="headerlink" href="#ccc-getstatus" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L47"><code class="docutils literal notranslate"><span class="pre">ccc_getstatus</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L47">ccc_getstatus</a></p>
 <p>The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
 status CSR. Next, it issues the GETSTATUS directed CCC to the
 target. Finally it compares the interrupt status returned by the
 CCC with the one read from the register.</p>
 <h5 id="ccc-setdasa"><code class="docutils literal notranslate"><span class="pre">ccc_setdasa</span></code><a class="headerlink" href="#ccc-setdasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L81"><code class="docutils literal notranslate"><span class="pre">ccc_setdasa</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L81">ccc_setdasa</a></p>
 <p>The test sets dynamic address and virtual dynamic address by
 sending SETDASA CCC. Then it verifies that correct addresses have
 been set by reading STBY_CR_DEVICE_ADDR CSR.</p>
 <h5 id="ccc-rstdaa"><code class="docutils literal notranslate"><span class="pre">ccc_rstdaa</span></code><a class="headerlink" href="#ccc-rstdaa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L132"><code class="docutils literal notranslate"><span class="pre">ccc_rstdaa</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L132">ccc_rstdaa</a></p>
 <p>Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
 RSTDAA CCC and verifies that the address got cleared.</p>
 <h5 id="ccc-getbcr"><code class="docutils literal notranslate"><span class="pre">ccc_getbcr</span></code><a class="headerlink" href="#ccc-getbcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L168"><code class="docutils literal notranslate"><span class="pre">ccc_getbcr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L168">ccc_getbcr</a></p>
 <p>Reads BCR register content by sending GETBCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getdcr"><code class="docutils literal notranslate"><span class="pre">ccc_getdcr</span></code><a class="headerlink" href="#ccc-getdcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L186"><code class="docutils literal notranslate"><span class="pre">ccc_getdcr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L186">ccc_getdcr</a></p>
 <p>Reads DCR register content by sending GETDCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getmwl"><code class="docutils literal notranslate"><span class="pre">ccc_getmwl</span></code><a class="headerlink" href="#ccc-getmwl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L202"><code class="docutils literal notranslate"><span class="pre">ccc_getmwl</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L202">ccc_getmwl</a></p>
 <p>Reads MWL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-getmrl"><code class="docutils literal notranslate"><span class="pre">ccc_getmrl</span></code><a class="headerlink" href="#ccc-getmrl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L220"><code class="docutils literal notranslate"><span class="pre">ccc_getmrl</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L220">ccc_getmrl</a></p>
 <p>Reads MRL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-setaasa"><code class="docutils literal notranslate"><span class="pre">ccc_setaasa</span></code><a class="headerlink" href="#ccc-setaasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L239"><code class="docutils literal notranslate"><span class="pre">ccc_setaasa</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L239">ccc_setaasa</a></p>
 <p>Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
 CSR.</p>
 <h5 id="ccc-getpid"><code class="docutils literal notranslate"><span class="pre">ccc_getpid</span></code><a class="headerlink" href="#ccc-getpid" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L262"><code class="docutils literal notranslate"><span class="pre">ccc_getpid</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L262">ccc_getpid</a></p>
 <p>Sends the CCC to the target and examines if the returned PID
 matches the expected.</p>
 <h5 id="ccc-enec-disec-direct"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_direct</span></code><a class="headerlink" href="#ccc-enec-disec-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L295"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_direct</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L295">ccc_enec_disec_direct</a></p>
 <p>Sends DISEC CCC to the target and verifies that events are disabled.
 Then, sends ENEC CCC to the target and checks that events are enabled.</p>
 <h5 id="ccc-enec-disec-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_bcast</span></code><a class="headerlink" href="#ccc-enec-disec-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_bcast</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329">ccc_enec_disec_bcast</a></p>
 <p>Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.</p>
 <h5 id="ccc-setmwl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_direct</span></code><a class="headerlink" href="#ccc-setmwl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L359"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_direct</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L359">ccc_setmwl_direct</a></p>
 <p>Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_direct</span></code><a class="headerlink" href="#ccc-setmrl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L378"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_direct</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L378">ccc_setmrl_direct</a></p>
 <p>Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmwl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_bcast</span></code><a class="headerlink" href="#ccc-setmwl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L397"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_bcast</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L397">ccc_setmwl_bcast</a></p>
 <p>Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_bcast</span></code><a class="headerlink" href="#ccc-setmrl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L416"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_bcast</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L416">ccc_setmrl_bcast</a></p>
 <p>Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-rstact-direct"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_direct</span></code><a class="headerlink" href="#ccc-rstact-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L435"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_direct</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L435">ccc_rstact_direct</a></p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the peripheral_reset_o signal gets asserted.</p>
 <h5 id="ccc-rstact-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_bcast</span></code><a class="headerlink" href="#ccc-rstact-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L467"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_bcast</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L467">ccc_rstact_bcast</a></p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the escalated_reset_o signal gets asserted.</p>
 <h5 id="ccc-direct-multiple-wr"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_wr</span></code><a class="headerlink" href="#ccc-direct-multiple-wr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L492"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_wr</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L492">ccc_direct_multiple_wr</a></p>
 <p>Sends a sequence of multiple directed SETMWL CCCs. The first and
 the last have non-matching address. The two middle ones set MWL
 to different values. Verify that the target responded to correct
 addresses and executed both CCCs.</p>
 <h5 id="ccc-direct-multiple-rd"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_rd</span></code><a class="headerlink" href="#ccc-direct-multiple-rd" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L532"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_rd</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L532">ccc_direct_multiple_rd</a></p>
 <p>Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
 thee different addresses. Only the one for the target should
 be ACK-ed with the correct MWL content.</p>
@@ -2483,7 +2483,7 @@ be ACK-ed with the correct MWL content.</p>
 <p><a class="external reference" href="./sim-results/target_hdr.html">Test results</a></p>
 <h4 id="id35">Testpoints<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
 <h5 id="id36"><code class="docutils literal notranslate"><span class="pre">Enter</span> <span class="pre">and</span> <span class="pre">exit</span> <span class="pre">HDR</span> <span class="pre">mode</span></code><a class="headerlink" href="#id36" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">enter_exit_hdr_mode</span></code></p>
+<p>Test: enter_exit_hdr_mode</p>
 <p>Issues ENTHDR0 CCC to the target, verifies that the target FSM
 is in IdleHDR state. Issues HDR exit pattern, verifies that
 the target FSM is back in Idle state.</p>
@@ -2492,14 +2492,14 @@ the target FSM is back in Idle state.</p>
 <p><a class="external reference" href="./sim-results/target_interrupts.html">Test results</a></p>
 <h4 id="id37">Testpoints<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
 <h5 id="rx-desc-stat"><code class="docutils literal notranslate"><span class="pre">rx_desc_stat</span></code><a class="headerlink" href="#rx-desc-stat" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L69"><code class="docutils literal notranslate"><span class="pre">rx_desc_stat</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L69">rx_desc_stat</a></p>
 <p>Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, sends a private write over I3C to the target and
 waits for irq_o assertion. Once the interrupt is asserted reads
 a RX descriptor from the TTI RX descriptor queue, ensures that
 irq_o gets deasserted after the read.</p>
 <h5 id="tx-desc-stat"><code class="docutils literal notranslate"><span class="pre">tx_desc_stat</span></code><a class="headerlink" href="#tx-desc-stat" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L106"><code class="docutils literal notranslate"><span class="pre">tx_desc_stat</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L106">tx_desc_stat</a></p>
 <p>Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
 a descriptor to TTI TX descriptor queue, sends a private read
@@ -2507,7 +2507,7 @@ over I3C and waits for irq_o assertion. Once the interrupt is
 asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
 INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.</p>
 <h5 id="ibi-done"><code class="docutils literal notranslate"><span class="pre">ibi_done</span></code><a class="headerlink" href="#ibi-done" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153"><code class="docutils literal notranslate"><span class="pre">ibi_done</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153">ibi_done</a></p>
 <p>Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
 Issues and IBI, waits for it to be serviced by the controller.
@@ -2516,7 +2516,7 @@ irq_o signal asserted. Reads LAST_IBI_STATUS field from the TTI
 STATUS CSR, ensures that irq_o gets deasserted and status bit gets
 cleared afterwards.</p>
 <h5 id="interrupt-force"><code class="docutils literal notranslate"><span class="pre">interrupt_force</span></code><a class="headerlink" href="#interrupt-force" title="Link to this heading">¶</a></h5>
-<p>Test: <code class="docutils literal notranslate"><span class="pre">interrupt_force</span></code></p>
+<p>Test: interrupt_force</p>
 <p>The test is run for each TTI interrupt:</p>
 <ul class="simple">
 <li><p>TX_DESC_STAT_EN</p></li>
@@ -2540,7 +2540,7 @@ the status bit cleared.</p>
 <p><a class="external reference" href="./sim-results/target_recovery.html">Test results</a></p>
 <h4 id="id38">Testpoints<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
 <h5 id="virtual-write"><code class="docutils literal notranslate"><span class="pre">virtual_write</span></code><a class="headerlink" href="#virtual-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L108"><code class="docutils literal notranslate"><span class="pre">virtual_write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L108">virtual_write</a></p>
 <p>Tests CSR write(s) through recovery protocol using the virtual
 target address. In the beginning sets the TTI and recovery
 addresses via two SETDASA CCCs.</p>
@@ -2559,7 +2559,7 @@ content matches.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-write-alternating"><code class="docutils literal notranslate"><span class="pre">virtual_write_alternating</span></code><a class="headerlink" href="#virtual-write-alternating" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L218"><code class="docutils literal notranslate"><span class="pre">virtual_write_alternating</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L218">virtual_write_alternating</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes to DEVICE_RESET via recovery protocol targeting the virtual
 device address. Reads the register content through AHB/AXI and
@@ -2572,7 +2572,7 @@ responds both to TTI and virtual addresses.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="write"><code class="docutils literal notranslate"><span class="pre">write</span></code><a class="headerlink" href="#write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L287"><code class="docutils literal notranslate"><span class="pre">write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L287">write</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Performs a write to DEVICE_RESET register via the recovery
 protocol targeting the virtual address. Reads the CSR content
@@ -2586,7 +2586,7 @@ content matches.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="indirect-fifo-write"><code class="docutils literal notranslate"><span class="pre">indirect_fifo_write</span></code><a class="headerlink" href="#indirect-fifo-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451"><code class="docutils literal notranslate"><span class="pre">indirect_fifo_write</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451">indirect_fifo_write</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Retrieves indirect FIFO status and pointers by reading
 INDIRECT_FIFO_STATUS CSR over AHB/AXI bus. Writes data to the
@@ -2600,7 +2600,7 @@ match the expected behavior.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="write-pec"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code><a class="headerlink" href="#write-pec" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L550">write_pec</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes some data to DEVICE_RESET register using the recovery
 interface. Then, repeats the write with different data but
@@ -2611,7 +2611,7 @@ transfer.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="read"><code class="docutils literal notranslate"><span class="pre">read</span></code><a class="headerlink" href="#read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605"><code class="docutils literal notranslate"><span class="pre">read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L605">read</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2621,7 +2621,7 @@ written in the beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="read-short"><code class="docutils literal notranslate"><span class="pre">read_short</span></code><a class="headerlink" href="#read-short" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693"><code class="docutils literal notranslate"><span class="pre">read_short</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L693">read_short</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2633,7 +2633,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="read-long"><code class="docutils literal notranslate"><span class="pre">read_long</span></code><a class="headerlink" href="#read-long" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759"><code class="docutils literal notranslate"><span class="pre">read_long</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L759">read_long</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2645,7 +2645,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-read"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code><a class="headerlink" href="#virtual-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L884">virtual_read</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
 the recovery mode.</p>
 <p>Issues a series of recovery read commands to all CSRs mentioned in the
@@ -2658,7 +2658,7 @@ only in the recovery mode.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-read-alternating"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code><a class="headerlink" href="#virtual-read-alternating" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L970">virtual_read_alternating</a></p>
 <p>Alternates between recovery mode reads and TTI reads. Initially
 sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP register over AHB/AXI, reads
@@ -2672,7 +2672,7 @@ regardless of the recovery mode setting.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="payload-available"><code class="docutils literal notranslate"><span class="pre">payload_available</span></code><a class="headerlink" href="#payload-available" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051"><code class="docutils literal notranslate"><span class="pre">payload_available</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051">payload_available</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Ensures that initially the recovery_payload_available_o signal
 is deasserted. Then writes data to the indirect FIFO via the
@@ -2682,7 +2682,7 @@ read causes the signal to be deasserted again.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="image-activated"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code><a class="headerlink" href="#image-activated" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143"><code class="docutils literal notranslate"><span class="pre">image_activated</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143">image_activated</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Ensures that initially the image_activated_o signal is deasserted.
 Writes 0xF to the 3rd byte of the RECOVERY_CTRL register using the
@@ -2692,7 +2692,7 @@ gets deasserted.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="recovery-flow"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#recovery-flow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242">recovery_flow</a></p>
 <p>The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.</p>
 <p>The AHB/AXI agent is responsible for recovery operation from the
@@ -2707,10 +2707,10 @@ The I3C bus clock is set to 12.5 MHz.</p>
 <p><a class="external reference" href="./sim-results/target_reset.html">Test results</a></p>
 <h4 id="id39">Testpoints<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <h5 id="id40"><code class="docutils literal notranslate"><span class="pre">target_peripheral_reset</span></code><a class="headerlink" href="#id40" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L70"><code class="docutils literal notranslate"><span class="pre">target_peripheral_reset</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L70">target_peripheral_reset</a></p>
 <p>Issues I3C target reset pattern and verifies successful peripheral reset.</p>
 <h5 id="target-escalated-reset"><code class="docutils literal notranslate"><span class="pre">target_escalated_reset</span></code><a class="headerlink" href="#target-escalated-reset" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L77"><code class="docutils literal notranslate"><span class="pre">target_escalated_reset</span></code></a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L77">target_escalated_reset</a></p>
 <p>Issues I3C target reset patterns and verifies successful reset escalation.</p>
 
 
@@ -2719,7 +2719,7 @@ The I3C bus clock is set to 12.5 MHz.</p>
   <small>
     
       Last update:
-      2025-03-27
+      2025-03-28
     
   </small>
 </div>
