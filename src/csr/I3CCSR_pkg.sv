@@ -698,34 +698,6 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t;
 
     typedef struct packed{
-        logic next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__in_t;
-
-    typedef struct packed{
-        logic next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__in_t;
-
-    typedef struct packed{
-        logic next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__in_t;
-
-    typedef struct packed{
-        logic next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__in_t;
-
-    typedef struct packed{
-        logic next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__in_t SIMPLE_CRR_SUPPORT;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__in_t TARGET_XACT_SUPPORT;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__in_t DAA_SETAASA_SUPPORT;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__in_t DAA_SETDASA_SUPPORT;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__in_t DAA_ENTDAA_SUPPORT;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__in_t;
-
-    typedef struct packed{
         logic [31:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0____rsvd__in_t;
 
@@ -1022,7 +994,6 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__in_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t STBY_CR_DEVICE_ADDR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__in_t STBY_CR_CAPABILITIES;
         I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__in_t __rsvd_0;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t STBY_CR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__in_t STBY_CR_INTR_STATUS;

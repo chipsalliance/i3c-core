@@ -228,9 +228,9 @@ regfile StandbyControllerModeRegisters#(
 
             1'b1: ENABLED: Supported
             ";
-            hw   = rw;
-            sw   = rw;
-            reset = 1'b1;
+            hw   = r;
+            sw   = r;
+            reset = 1'b0;
         } DAA_ENTDAA_SUPPORT[15:15];
         field {
             name = "DAA_SETDASA_SUPPORT";
@@ -240,8 +240,8 @@ regfile StandbyControllerModeRegisters#(
 
             1'b1: ENABLED: Supported
             ";
-            hw   = rw;
-            sw   = rw;
+            hw   = r;
+            sw   = r;
             reset = 1'b1;
         } DAA_SETDASA_SUPPORT[14:14];
         field {
@@ -252,8 +252,8 @@ regfile StandbyControllerModeRegisters#(
 
             1'b1: ENABLED: Supported
             ";
-            hw   = rw;
-            sw   = rw;
+            hw   = r;
+            sw   = r;
             reset = 1'b1;
         } DAA_SETAASA_SUPPORT[13:13];
         field {
@@ -264,15 +264,16 @@ regfile StandbyControllerModeRegisters#(
 
             1'b1: ENABLED: Supported via vendor-defined Extended Capability structure
             ";
-            hw   = rw;
-            sw   = rw;
+            hw   = r;
+            sw   = r;
             reset = 1'b1;
         } TARGET_XACT_SUPPORT[12:12];
         field {
             name = "SIMPLE_CRR_SUPPORT";
             desc = "";
-            hw   = rw;
-            sw   = rw;
+            hw   = r;
+            sw   = r;
+            reset = 1'b0;
         } SIMPLE_CRR_SUPPORT[5:5];
     } STBY_CR_CAPABILITIES;
     reg {

@@ -545,11 +545,6 @@ module hci
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next = '0;

@@ -1074,28 +1074,6 @@ module I3CCSR (
                 } STBY_CR_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic next;
-                        logic load_next;
-                    } SIMPLE_CRR_SUPPORT;
-                    struct packed{
-                        logic next;
-                        logic load_next;
-                    } TARGET_XACT_SUPPORT;
-                    struct packed{
-                        logic next;
-                        logic load_next;
-                    } DAA_SETAASA_SUPPORT;
-                    struct packed{
-                        logic next;
-                        logic load_next;
-                    } DAA_SETDASA_SUPPORT;
-                    struct packed{
-                        logic next;
-                        logic load_next;
-                    } DAA_ENTDAA_SUPPORT;
-                } STBY_CR_CAPABILITIES;
-                struct packed{
-                    struct packed{
                         logic [31:0] next;
                         logic load_next;
                     } __rsvd;
@@ -2303,23 +2281,6 @@ module I3CCSR (
                         logic value;
                     } DYNAMIC_ADDR_VALID;
                 } STBY_CR_DEVICE_ADDR;
-                struct packed{
-                    struct packed{
-                        logic value;
-                    } SIMPLE_CRR_SUPPORT;
-                    struct packed{
-                        logic value;
-                    } TARGET_XACT_SUPPORT;
-                    struct packed{
-                        logic value;
-                    } DAA_SETAASA_SUPPORT;
-                    struct packed{
-                        logic value;
-                    } DAA_SETDASA_SUPPORT;
-                    struct packed{
-                        logic value;
-                    } DAA_ENTDAA_SUPPORT;
-                } STBY_CR_CAPABILITIES;
                 struct packed{
                     struct packed{
                         logic [31:0] value;
@@ -6463,132 +6424,11 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT
-    always_comb begin
-        automatic logic [0:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next = load_next_c;
-    end
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.next;
-        end
-    end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT
-    always_comb begin
-        automatic logic [0:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value & ~decoded_wr_biten[12:12]) | (decoded_wr_data[12:12] & decoded_wr_biten[12:12]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= 1'h1;
-        end else begin
-            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.load_next) begin
-                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.next;
-            end
-        end
-    end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT
-    always_comb begin
-        automatic logic [0:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value & ~decoded_wr_biten[13:13]) | (decoded_wr_data[13:13] & decoded_wr_biten[13:13]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= 1'h1;
-        end else begin
-            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.load_next) begin
-                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.next;
-            end
-        end
-    end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT
-    always_comb begin
-        automatic logic [0:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value & ~decoded_wr_biten[14:14]) | (decoded_wr_data[14:14] & decoded_wr_biten[14:14]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= 1'h1;
-        end else begin
-            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.load_next) begin
-                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.next;
-            end
-        end
-    end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT
-    always_comb begin
-        automatic logic [0:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
-        load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value & ~decoded_wr_biten[15:15]) | (decoded_wr_data[15:15] & decoded_wr_biten[15:15]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= 1'h1;
-        end else begin
-            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.load_next) begin
-                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.next;
-            end
-        end
-    end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value = 1'h0;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value = 1'h1;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = 1'h1;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = 1'h1;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = 1'h0;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd
     always_comb begin
         automatic logic [31:0] next_c;
@@ -10306,12 +10146,12 @@ module I3CCSR (
     assign readback_array[60][30:23] = '0;
     assign readback_array[60][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.value : '0;
     assign readback_array[61][4:0] = '0;
-    assign readback_array[61][5:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value : '0;
+    assign readback_array[61][5:5] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[61][11:6] = '0;
-    assign readback_array[61][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value : '0;
-    assign readback_array[61][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value : '0;
-    assign readback_array[61][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value : '0;
-    assign readback_array[61][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value : '0;
+    assign readback_array[61][12:12] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h1 : '0;
+    assign readback_array[61][13:13] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h1 : '0;
+    assign readback_array[61][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h1 : '0;
+    assign readback_array[61][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[61][31:16] = '0;
     assign readback_array[62][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value : '0;
     assign readback_array[63][1:0] = '0;

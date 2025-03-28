@@ -3056,15 +3056,15 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.SIMPLE_CRR_SUPPORT = new("SIMPLE_CRR_SUPPORT");
-            this.SIMPLE_CRR_SUPPORT.configure(this, 1, 5, "RW", 1, 'h0, 0, 1, 0);
+            this.SIMPLE_CRR_SUPPORT.configure(this, 1, 5, "RO", 0, 'h0, 1, 1, 0);
             this.TARGET_XACT_SUPPORT = new("TARGET_XACT_SUPPORT");
-            this.TARGET_XACT_SUPPORT.configure(this, 1, 12, "RW", 1, 'h1, 1, 1, 0);
+            this.TARGET_XACT_SUPPORT.configure(this, 1, 12, "RO", 0, 'h1, 1, 1, 0);
             this.DAA_SETAASA_SUPPORT = new("DAA_SETAASA_SUPPORT");
-            this.DAA_SETAASA_SUPPORT.configure(this, 1, 13, "RW", 1, 'h1, 1, 1, 0);
+            this.DAA_SETAASA_SUPPORT.configure(this, 1, 13, "RO", 0, 'h1, 1, 1, 0);
             this.DAA_SETDASA_SUPPORT = new("DAA_SETDASA_SUPPORT");
-            this.DAA_SETDASA_SUPPORT.configure(this, 1, 14, "RW", 1, 'h1, 1, 1, 0);
+            this.DAA_SETDASA_SUPPORT.configure(this, 1, 14, "RO", 0, 'h1, 1, 1, 0);
             this.DAA_ENTDAA_SUPPORT = new("DAA_ENTDAA_SUPPORT");
-            this.DAA_ENTDAA_SUPPORT.configure(this, 1, 15, "RW", 1, 'h1, 1, 1, 0);
+            this.DAA_ENTDAA_SUPPORT.configure(this, 1, 15, "RO", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(SIMPLE_CRR_SUPPORT_bit_cg[bt]) SIMPLE_CRR_SUPPORT_bit_cg[bt] = new();
                 foreach(TARGET_XACT_SUPPORT_bit_cg[bt]) TARGET_XACT_SUPPORT_bit_cg[bt] = new();

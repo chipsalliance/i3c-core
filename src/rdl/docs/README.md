@@ -2124,11 +2124,11 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 |Bits|     Identifier    |Access|Reset|        Name       |
 |----|-------------------|------|-----|-------------------|
-|  5 | SIMPLE_CRR_SUPPORT|  rw  |  —  | SIMPLE_CRR_SUPPORT|
-| 12 |TARGET_XACT_SUPPORT|  rw  | 0x1 |TARGET_XACT_SUPPORT|
-| 13 |DAA_SETAASA_SUPPORT|  rw  | 0x1 |DAA_SETAASA_SUPPORT|
-| 14 |DAA_SETDASA_SUPPORT|  rw  | 0x1 |DAA_SETDASA_SUPPORT|
-| 15 | DAA_ENTDAA_SUPPORT|  rw  | 0x1 | DAA_ENTDAA_SUPPORT|
+|  5 | SIMPLE_CRR_SUPPORT|   r  | 0x0 | SIMPLE_CRR_SUPPORT|
+| 12 |TARGET_XACT_SUPPORT|   r  | 0x1 |TARGET_XACT_SUPPORT|
+| 13 |DAA_SETAASA_SUPPORT|   r  | 0x1 |DAA_SETAASA_SUPPORT|
+| 14 |DAA_SETDASA_SUPPORT|   r  | 0x1 |DAA_SETDASA_SUPPORT|
+| 15 | DAA_ENTDAA_SUPPORT|   r  | 0x0 | DAA_ENTDAA_SUPPORT|
 
 #### SIMPLE_CRR_SUPPORT field
 
