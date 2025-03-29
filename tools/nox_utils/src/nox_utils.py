@@ -101,11 +101,13 @@ class VerificationTest:
         defaultNameVCD = "dump.vcd"
         defaultNameCoverage = "coverage.dat"
         defaultTestNameLog = f"{testName}.log"
+        defaultNameVDB = f"sim_build-{testName}-{coverage}/simv.vdb"
 
-        testNameVCD = f"dump_{testName}.vcd"
+        testNameVCD = f"{testName}.vcd"
         testNameXML = f"{testName}.xml"
-        testCoverageName = f"coverage_{testName}_{coverage}.dat"
+        testCoverageName = f"{testName}_{coverage}.dat"
         testNameLog = f"{testName}_{coverage}.log"
+        testNameVDB = f"{testName}.vdb"
 
         self.filenames = {
             "vcd_default": defaultNameVCD,
@@ -115,6 +117,8 @@ class VerificationTest:
             "log": testNameLog,
             "cov_default": defaultNameCoverage,
             "cov": testCoverageName,
+            "vdb_default": defaultNameVDB,
+            "vdb": testNameVDB,
         }
 
         def get_path(name):
@@ -128,19 +132,24 @@ class VerificationTest:
             "log": get_path(testNameLog),
             "cov_default": get_path(defaultNameCoverage),
             "cov": get_path(testCoverageName),
+            "vdb_default": get_path(defaultNameVDB),
+            "vdb": get_path(testNameVDB),
         }
 
     def rename_default(self, dest: str):
         source = self.paths[f"{dest}_default"]
-        if not os.path.isfile(source):
+        if (not os.path.isfile(source)) and (not os.path.isdir(source)):
             print(f"Warning!  Can't find file to rename: {source}")
             return
         os.rename(source, self.paths[dest])
 
-    def rename_defaults(self, coverage: str | None):
+    def rename_defaults(self, coverage: str | None, simulator: str | None):
         if coverage:
-            self.rename_default("cov")
             self.rename_default("log")
+            if simulator is not None and "vcs" in simulator:
+                self.rename_default("vdb")
+            else:
+                self.rename_default("cov")
         self.rename_default("vcd")
 
 

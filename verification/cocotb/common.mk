@@ -57,14 +57,28 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += -debug_access+all +memcbk
     SIM_ARGS += +dumpon
     EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd
+
+    ifneq ($(COVERAGE_TYPE),)
+        EXTRA_ARGS += -cm line+cond+fsm+tgl+branch
+    endif
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 10ps
 
 # Build directory
+comma := ,
 ifneq ($(COVERAGE_TYPE),)
-    SIM_BUILD := sim-build-$(COVERAGE_TYPE)
+    # Check if more than one test is provided
+    ifeq ($(findstring $(comma),$(MODULE)),$(comma))
+        # To collect accurate coverage results each tests needs to have a unique SIM_BUILD directory to store
+        # the results. If multiple tests were to use the same directory they would override each others coverage reports
+        # causing the reported values to be incorrect.
+        $(error Collecting coverage for multiple tests is not supported. Either unset 'COVERAGE_TYPE' to run tests without coverage reporting or use nox.)
+    else
+        # Construct a unique directory for each test and coverage type
+        SIM_BUILD := sim_build-$(MODULE)-$(COVERAGE_TYPE)
+    endif
 endif
 
 include $(shell cocotb-config --makefiles)/Makefile.sim

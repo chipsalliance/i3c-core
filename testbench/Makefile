@@ -11,6 +11,10 @@ BUILD_ARGS += -debug_access+all +memcbk -timescale=1ns/1ps
 SIM_ARGS += +dumpon
 EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd +warn=noLINX_KRNL
 
+ifneq ($(COVERAGE_TYPE),)
+	EXTRA_ARGS += -cm line+cond+fsm+tgl+branch
+endif
+
 .PHONY: all vcs-build vcs-sim clean
 all: vcs-sim
 

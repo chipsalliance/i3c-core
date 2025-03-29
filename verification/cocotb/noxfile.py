@@ -15,11 +15,13 @@ nox = nox_config(nox)
 # Test configuration
 pip_requirements_path = "../../requirements.txt"
 
-# Coverage types to collect
-coverage_types = ["all", "branch", "toggle"] if os.getenv("TEST_COVERAGE_ENABLE") else None
-
 simulators = [os.getenv("SIMULATOR", "verilator")]
 
+# Coverage types to collect
+if os.getenv("TEST_COVERAGE_ENABLE", "0") == "1":
+    coverage_types = ["vcs"] if "vcs" in simulators else ["branch", "toggle"]
+else:
+    coverage_types = None
 
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     # session.install("-r", pip_requirements_path)
@@ -64,7 +66,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             stderr=test_log,
         )
     # Prevent coverage.dat and test log from being overwritten
-    test.rename_defaults(coverage)
+    test.rename_defaults(coverage, simulator)
 
     # Add check from results.xml to notify nox that test failed
     isTBFailure = isCocotbSimFailure(resultsFile=test.paths["xml"])
@@ -286,7 +288,7 @@ def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
         "test_ccc",
     ],
 )
-@nox.parametrize("coverage", [coverage_types])
+@nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)
 def ccc_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
