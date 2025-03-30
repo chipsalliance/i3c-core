@@ -139,6 +139,7 @@ module i3c
     output logic [AxiDataWidth-1:0] rdata_o,
     output logic [             1:0] rresp_o,
     output logic [  AxiIdWidth-1:0] rid_o,
+    output logic [AxiUserWidth-1:0] ruser_o,
     output logic                    rlast_o,
     output logic                    rvalid_o,
     input  logic                    rready_i,
@@ -161,10 +162,11 @@ module i3c
     input  logic                      wvalid_i,
     output logic                      wready_o,
 
-    output logic [           1:0] bresp_o,
-    output logic [AxiIdWidth-1:0] bid_o,
-    output logic                  bvalid_o,
-    input  logic                  bready_i,
+    output logic [           1:0]   bresp_o,
+    output logic [AxiIdWidth-1:0]   bid_o,
+    output logic [AxiUserWidth-1:0] buser_o,
+    output logic                    bvalid_o,
+    input  logic                    bready_i,
 
 `endif
 
