@@ -13,6 +13,8 @@
 // Note that the write mask needs to be per Byte if parity is enabled. If ECC is enabled, the write
 // mask cannot be used and has to be tied to {Width{1'b1}}.
 
+`include "i3c_sva.svh"
+
 module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
   parameter  int Depth                = 512,
   parameter  int Width                = 32,
@@ -48,8 +50,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
   input ram_1p_cfg_t         cfg_i
 );
 
-
-  `CALIPTRA_ASSERT_INIT(CannotHaveEccAndParity_A, !(EnableParity && EnableECC))
+  `I3C_ASSERT_INIT(CannotHaveEccAndParity_A, !(EnableParity && EnableECC))
 
   // Calculate ECC width
   localparam int ParWidth  = (EnableParity) ? Width/8 :
@@ -123,11 +124,11 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
     logic unused_wmask;
     assign unused_wmask = ^wmask_i;
 
-    // check supported widths
-    `CALIPTRA_ASSERT_INIT(SecDecWidth_A, Width inside {16, 32})
+    //I3Csupported widths
+    `I3C_ASSERT_INIT(SecDecWidth_A, Width inside {16, 32})
 
-    // the wmask is constantly set to 1 in this case
-    `CALIPTRA_ASSERT(OnlyWordWritePossibleWithEccPortA_A, req_i |->
+    //I3Cask is constantly set to 1 in this case
+    `I3C_ASSERT(OnlyWordWritePossibleWithEccPortA_A, req_i |->
           wmask_i == {Width{1'b1}})
 
     assign wmask_d = {TotalWidth{1'b1}};
@@ -185,8 +186,8 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
 
   end else if (EnableParity) begin : gen_byte_parity
 
-    `CALIPTRA_ASSERT_INIT(WidthNeedsToBeByteAligned_A, Width % 8 == 0)
-    `CALIPTRA_ASSERT_INIT(ParityNeedsByteWriteMask_A, DataBitsPerMask == 8)
+    `I3C_ASSERT_INIT(WidthNeedsToBeByteAligned_A, Width % 8 == 0)
+    `I3C_ASSERT_INIT(ParityNeedsByteWriteMask_A, DataBitsPerMask == 8)
 
     always_comb begin : p_parity
       rerror_d = '0;

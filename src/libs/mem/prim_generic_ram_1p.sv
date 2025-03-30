@@ -4,6 +4,8 @@
 //
 // Synchronous single-port SRAM model
 
+`include "i3c_sva.svh"
+
 module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
   parameter  int Width           = 32, // bit
   parameter  int Depth           = 128,
@@ -34,7 +36,7 @@ module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
 // `ifndef SYNTHESIS_MEMORY_BLACK_BOXING
 
   // Width must be fully divisible by DataBitsPerMask
-  `CALIPTRA_ASSERT_INIT(DataBitsPerMaskCheck_A, (Width % DataBitsPerMask) == 0)
+  `I3C_ASSERT_INIT(DataBitsPerMaskCheck_A, (Width % DataBitsPerMask) == 0)
 
   logic unused_cfg;
   assign unused_cfg = ^cfg_i;
@@ -50,7 +52,7 @@ module prim_generic_ram_1p import prim_ram_1p_pkg::*; #(
     assign wmask[k] = &wmask_i[k*DataBitsPerMask +: DataBitsPerMask];
 
     // Ensure that all mask bits within a group have the same value for a write
-    `CALIPTRA_ASSERT(MaskCheck_A, req_i && write_i |->
+    `I3C_ASSERT(MaskCheck_A, req_i && write_i |->
         wmask_i[k*DataBitsPerMask +: DataBitsPerMask] inside {{DataBitsPerMask{1'b1}}, '0},
         clk_i, '0)
   end

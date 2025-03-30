@@ -4,6 +4,8 @@
 //
 // Description: I2C finite state machine
 
+`include "i3c_sva.svh"
+
 module i2c_controller_fsm
   import controller_pkg::*;
 #(
@@ -938,7 +940,7 @@ module i2c_controller_fsm
                                    (stretch_idle_cnt[30:0] > stretch_timeout_i) && timeout_enable_i;
 
   // Make sure we never attempt to send a single cycle glitch
-  `CALIPTRA_ASSERT(SclOutputGlitch_A, $rose(scl_o) |-> ##1 scl_o)
+  `I3C_ASSERT(SclOutputGlitch_A, $rose(scl_o) |-> ##1 scl_o)
 
   // TODO: Handle the assertion below
   //  // I2C bus outputs

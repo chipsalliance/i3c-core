@@ -28,7 +28,7 @@ def postprocess_sv(fname):
 
     found_hard_reset = None
     declared_includes = False
-    extra_includes = ["caliptra_sva.svh"]
+    extra_includes = ["i3c_sva.svh"]
 
     # Line by line manipulation
     # Look for unpacked arrays (could be struct arrays or signal arrays)
@@ -74,7 +74,7 @@ def postprocess_sv(fname):
             mod_cnt += 1
         elif is_endmodule is not None:
             mod_lines += "\n"
-            mod_lines += "`CALIPTRA_ASSERT_KNOWN(ERR_HWIF_IN, hwif_in, clk, !" + reset_name + ")\n"
+            mod_lines += "`I3C_ASSERT_KNOWN(ERR_HWIF_IN, hwif_in, clk, !" + reset_name + ")\n"
             mod_lines += "\n"
             mod_lines += line
         # Include caliptra asserts header
