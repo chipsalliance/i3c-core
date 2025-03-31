@@ -180,6 +180,7 @@ module i3c_wrapper #(
       .rlast_o(rlast_o),
       .rvalid_o(rvalid_o),
       .rready_i(rready_i),
+      .ruser_o(ruser_o),
 
       // AXI Write Channels
       .awaddr_i(awaddr_i),
@@ -203,6 +204,7 @@ module i3c_wrapper #(
       .bid_o(bid_o),
       .bvalid_o(bvalid_o),
       .bready_i(bready_i),
+      .buser_o(buser_o),
 `endif
 
       .i3c_scl_i  (scl_io2phy),

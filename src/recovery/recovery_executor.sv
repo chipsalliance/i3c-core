@@ -60,7 +60,6 @@ module recovery_executor
     output logic indirect_rx_clr_o,
 
     // Others
-    output logic pending_o,
     input  logic host_abort_i,
 
     // queues clr signals

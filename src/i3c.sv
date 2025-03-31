@@ -410,6 +410,7 @@ module i3c
       .rlast_o(rlast_o),
       .rvalid_o(rvalid_o),
       .rready_i(rready_i),
+      .ruser_o(ruser_o),
 
       // AXI Write Channels
       .awaddr_i(awaddr_i),
@@ -433,6 +434,7 @@ module i3c
       .bid_o(bid_o),
       .bvalid_o(bvalid_o),
       .bready_i(bready_i),
+      .buser_o(buser_o),
 
       // I3C SW CSR access interface
       .s_cpuif_req(s_cpuif_req),

@@ -967,7 +967,8 @@ module recovery_handler
       .ready_thld_i       ('0),
       .ready_thld_o       (),
       .start_thld_trig_o  (),
-      .ready_thld_trig_o  ()
+      .ready_thld_trig_o  (),
+      .depth_o            ()
   );
 
   // ....................................................
