@@ -291,6 +291,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#i3c-timing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">I3C timing configuration</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -427,6 +434,27 @@ Considering these limitations, PHY is being tested functionally using Cocotb and
 Additionally, there is an RTL testbench run in Verilator and Icarus simulators that checks whether High-Z is set properly on I3C bus lines when the controller requests a high bus state.</p>
 <h3 id="clock-synchronization-5-1-7">Clock synchronization (5.1.7)<a class="headerlink" href="#clock-synchronization-5-1-7" title="Link to this heading">¶</a></h3>
 <p>The entire core functions in a single clock domain - all I3C bus signals are sampled with this clock.</p>
+<h3 id="i3c-timing-configuration">I3C timing configuration<a class="headerlink" href="#i3c-timing-configuration" title="Link to this heading">¶</a></h3>
+<p>The core implements 4 CSRs for controlling timings of the I3C bus:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T_F_REG</span></code> - SCL falling time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T_R_REG</span></code> - SCL rise time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T_HD_DAT_REG</span></code> - SDA hold time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG</span></code> - SDA setup time</p></li>
+</ul>
+<p>In the target configuration, the first three should be set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, the <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG</span></code> should be set according to the following equation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>reg_val = $ceil(3 / system_clock_period) - 1
+T_SU_DAT_REG = reg_val &gt; 0 ? reg_val : 0
+</code></pre></div>
+</div>
+<p>For system clock frequencies below 320MHz, the core should be configured with the <code class="docutils literal notranslate"><span class="pre">DisableInputFF</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code> (see <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49">example configuration</a>)
+This parameter removes one flipflop on the input lines, shortening the response latency.</p>
+<p>Example configurations:</p>
+<ul class="simple">
+<li><p>160MHz system clock (minimal operting clock) - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=True</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=0</span></code></p></li>
+<li><p>400MHz system clock - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=False</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=0</span></code></p></li>
+<li><p>1GHz system clock - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=False</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=2</span></code></p></li>
+</ul>
 
 
   <hr>

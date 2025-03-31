@@ -53,3 +53,28 @@ Additionally, there is an RTL testbench run in Verilator and Icarus simulators t
 ### Clock synchronization (5.1.7)
 
 The entire core functions in a single clock domain - all I3C bus signals are sampled with this clock.
+
+### I3C timing configuration
+
+The core implements 4 CSRs for controlling timings of the I3C bus:
+
+* `T_F_REG` - SCL falling time
+* `T_R_REG` - SCL rise time
+* `T_HD_DAT_REG` - SDA hold time
+* `T_SU_DAT_REG` - SDA setup time
+
+In the target configuration, the first three should be set to `0`, the `T_SU_DAT_REG` should be set according to the following equation:
+
+```
+reg_val = $ceil(3 / system_clock_period) - 1
+T_SU_DAT_REG = reg_val > 0 ? reg_val : 0
+```
+
+For system clock frequencies below 320MHz, the core should be configured with the `DisableInputFF` parameter set to `True` (see [example configuration](https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49))
+This parameter removes one flipflop on the input lines, shortening the response latency.
+
+Example configurations:
+
+* 160MHz system clock (minimal operting clock) - `DisableInputFF=True`, `T_SU_DAT_REG=0`
+* 400MHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=0`
+* 1GHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=2`
