@@ -18,7 +18,8 @@ VERILOG_INCLUDE_DIRS= \
     $(CALIPTRA_ROOT)/src/libs/rtl \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
     $(I3C_ROOT)/src \
-    $(I3C_ROOT)/src/libs/axi
+    $(I3C_ROOT)/src/libs/axi \
+    $(I3C_ROOT_DIR)/src/libs
 
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
