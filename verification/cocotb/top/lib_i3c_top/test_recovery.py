@@ -4,7 +4,7 @@ import logging
 import random
 
 from boot import boot_init
-from bus2csr import bytes2int, dword2int, int2bytes, int2dword
+from bus2csr import bytes2int, compare_values, dword2int, int2bytes, int2dword
 from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_recovery_interface import I3cRecoveryInterface
@@ -1419,3 +1419,98 @@ async def test_recovery_flow(dut):
 
     # Check
     assert image_words == xferd_words
+
+
+def csr_access_test_data(tb):
+    test_data = []
+    for reg_name in tb.reg_map.I3C_EC.SECFWRECOVERYIF:
+        if reg_name in ["start_addr", "INDIRECT_FIFO_DATA", "DEVICE_RESET"]:
+            continue
+        reg = getattr(tb.reg_map.I3C_EC.SECFWRECOVERYIF, reg_name)
+        addr = reg.base_addr
+        wdata = random.randint(0, 2**32 - 1)
+        exp_rd = 0
+        for f_name in reg:
+            if f_name in ["base_addr", "offset"]:
+                continue
+            f = getattr(reg, f_name)
+            if f.sw == "r":
+                data = (f.reset << f.low) & f.mask
+            elif f.woclr or f.hwclr:
+                data = 0
+                if wdata % 2:
+                    data = (f.reset << f.low) & f.mask
+            else:
+                data = wdata & f.mask
+            # The reset value of 'INDIRECT_FIFO_STATUS_3' is 0 but it's set
+            # by 'recovery_executor' to 'IndirectFifoDepth' parameter
+            if reg_name == "INDIRECT_FIFO_STATUS_3" and f_name == "FIFO_SIZE":
+                data = 0x40
+            # The reset value of 'INDIRECT_FIFO_STATUS_4' is currently unused
+            # and tied to 0
+            if reg_name == "INDIRECT_FIFO_STATUS_4" and f_name == "MAX_TRANSFER_SIZE":
+                data = 0x0
+
+            exp_rd |= data
+        test_data.append([reg_name, addr, wdata, exp_rd])
+    return test_data
+
+
+@cocotb.test()
+async def test_ocp_csr_access(dut):
+    # Perform the recovery protocol to obtain access to CSRs
+    i3c_controller, _, tb, recovery = await initialize(dut)
+
+    # set regular device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    # set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Write to the RESET CSR (one word)
+    b0, b1, b2, b3 = [random.randint(0, 255) for _ in range(4)]
+    await recovery.command_write(
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.DEVICE_RESET, [b3, b2, b1, b0]
+    )
+
+    # Wait & read the CSR from the AHB/AXI side
+    await Timer(1, "us")
+
+    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4))
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+
+    # Check
+    protocol_status = (status >> 8) & 0xFF
+    assert protocol_status == 0
+    assert data == b1 << 16 | b2 << 8 | b3
+
+    reg_test_data = csr_access_test_data(tb)
+
+    for name, addr, wdata, exp_rd in reg_test_data:
+        if name == "INDIRECT_FIFO_CTRL_0":
+            exp_rd &= 0xFFFF00FF  # 2nd byte is W1C
+        elif name == "RECOVERY_CTRL":
+            exp_rd &= 0xFF00FFFF  # 3rd byte is W1C
+        elif name == "DEVICE_STATUS_0":
+            recovery_status = wdata
+            exp_recovery_status = exp_rd
+            continue  # Do not disable recovery mode
+
+        await tb.write_csr(addr, int2dword(wdata), 4)
+        # Ensure the data is committed before making a read access
+        await RisingEdge(tb.clk)
+        rd_data = await tb.read_csr(addr)
+        compare_values(int2dword(exp_rd), rd_data, addr)
+
+    # DEVICE_STATUS_0 CSR was skipped in previous iteration as it can disable the
+    # recovery mode necessary for other CSRs
+    recovery_status_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(recovery_status), 4
+    )
+
+    rd_data = await tb.read_csr(recovery_status_addr)
+    compare_values(int2dword(exp_recovery_status), rd_data, recovery_status_addr)
