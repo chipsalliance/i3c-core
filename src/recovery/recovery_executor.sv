@@ -149,8 +149,7 @@ module recovery_executor
   logic [15:0] csr_length;
   logic        csr_writeable;
 
-  logic payload_available_d, payload_available_q;
-  logic payload_available_write;
+  logic payload_available_q;
   assign payload_available_o = payload_available_q;
 
   // ....................................................
@@ -755,22 +754,11 @@ module recovery_executor
   //
   // De-assertion:
   // The payload_available signal must reset if recovery FIFO indicates empty.
-  always_comb begin : payload_available
-    payload_available_d = 1'b0;
-    payload_available_write = 1'b0;
-    if (~payload_available_q && (indirect_rx_full_i | (image_activated_o && ~indirect_rx_empty_i)))
-    begin
-      payload_available_d = 1'b1;
-      payload_available_write = 1'b1;
-    end
-    if ( payload_available_q && indirect_rx_empty_i) begin
-      payload_available_d = 1'b0;
-      payload_available_write = 1'b1;
-    end
-  end : payload_available
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) payload_available_q <= '0;
-    else payload_available_q <= payload_available_write ? payload_available_d : payload_available_q;
+    if (!rst_ni) payload_available_q <= 1'b0;
+    else if (indirect_rx_full_i | (image_activated_o && ~indirect_rx_empty_i)) payload_available_q <= 1'b1;
+    else if (indirect_rx_empty_i) payload_available_q <= 1'b0;
+    else payload_available_q <= payload_available_q;
 
   // Image activation logic.
   assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.ACTIVATE_REC_IMG.value == 8'h0F);
