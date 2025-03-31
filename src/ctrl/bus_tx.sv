@@ -149,6 +149,12 @@ module bus_tx (
           tx_done_o = '1;
         end
       end
+      default: begin
+        sda_o = '1;
+        tx_done_o = '0;  // Assign to 1 only after transmitting a bit
+        load_tcount = '0;
+        tcount_sel = tNoDelay;
+      end
     endcase
   end
 
@@ -180,6 +186,9 @@ module bus_tx (
       HoldData: begin
         if (tcount_q == 20'd0 & scl_stable_low_i)
           state_d = Idle;
+      end
+      default: begin
+        state_d = state_q;
       end
     endcase
 
