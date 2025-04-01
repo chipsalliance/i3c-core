@@ -300,7 +300,7 @@ Don't override. Generated from: I3CCSR
 
 |Bits|  Identifier  |Access|Reset|     Name     |
 |----|--------------|------|-----|--------------|
-|  2 |AC_CURRENT_OWN|   r  | 0x1 |AC_CURRENT_OWN|
+|  2 |AC_CURRENT_OWN|   r  | 0x0 |AC_CURRENT_OWN|
 
 #### AC_CURRENT_OWN field
 

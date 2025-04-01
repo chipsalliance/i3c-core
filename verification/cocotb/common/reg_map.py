@@ -350,7 +350,7 @@ reg_map = Munch.fromDict({
             "AC_CURRENT_OWN": {
                 "low": 2,
                 "mask": 4,
-                "reset": 1,
+                "reset": 0,
                 "sw": "r",
                 "hw": "w",
                 "woclr": 0,

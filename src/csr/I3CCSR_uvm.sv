@@ -310,7 +310,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.AC_CURRENT_OWN = new("AC_CURRENT_OWN");
-            this.AC_CURRENT_OWN.configure(this, 1, 2, "RO", 1, 'h1, 1, 1, 0);
+            this.AC_CURRENT_OWN.configure(this, 1, 2, "RO", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(AC_CURRENT_OWN_bit_cg[bt]) AC_CURRENT_OWN_bit_cg[bt] = new();
             end

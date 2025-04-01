@@ -375,7 +375,7 @@ regfile BaseRegs #(
                 1 - bus owner";
             sw = r;
             hw = w;
-            reset = 1'b1;
+            reset = 1'b0;
         } AC_CURRENT_OWN[2:2];
     } PRESENT_STATE @ 0x14;
     reg {
