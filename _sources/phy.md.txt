@@ -66,12 +66,28 @@ The core implements 4 CSRs for controlling timings of the I3C bus:
 In the target configuration, the first three should be set to `0`, the `T_SU_DAT_REG` should be set according to the following equation:
 
 ```
-reg_val = $ceil(3 / system_clock_period) - 1
+reg_val = $floor(3 / system_clock_period) - 1
 T_SU_DAT_REG = reg_val > 0 ? reg_val : 0
 ```
 
 For system clock frequencies below 320MHz, the core should be configured with the `DisableInputFF` parameter set to `True` (see [example configuration](https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49))
 This parameter removes one flipflop on the input lines, shortening the response latency.
+
+The core provides 2 configurations with the `DisableInputFF` parameter set to `True`.
+In order to generate a configuration with the parameter set, run the following command from the top level of the I3C repository:
+
+```
+  make generate CFG_NAME=ahb CFG_FILE=i3c_core_configs.yaml
+```
+
+or
+
+```
+  make generate CFG_NAME=axi CFG_FILE=i3c_core_configs.yaml
+```
+
+Depending on the chosen bus interface.
+More Information about the configuration tool can be found in the relevant [README](https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md)
 
 Example configurations:
 

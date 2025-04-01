@@ -443,12 +443,23 @@ Additionally, there is an RTL testbench run in Verilator and Icarus simulators t
 <li><p><code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG</span></code> - SDA setup time</p></li>
 </ul>
 <p>In the target configuration, the first three should be set to <code class="docutils literal notranslate"><span class="pre">0</span></code>, the <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG</span></code> should be set according to the following equation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>reg_val = $ceil(3 / system_clock_period) - 1
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>reg_val = $floor(3 / system_clock_period) - 1
 T_SU_DAT_REG = reg_val &gt; 0 ? reg_val : 0
 </code></pre></div>
 </div>
 <p>For system clock frequencies below 320MHz, the core should be configured with the <code class="docutils literal notranslate"><span class="pre">DisableInputFF</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code> (see <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49">example configuration</a>)
 This parameter removes one flipflop on the input lines, shortening the response latency.</p>
+<p>The core provides 2 configurations with the <code class="docutils literal notranslate"><span class="pre">DisableInputFF</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+In order to generate a configuration with the parameter set, run the following command from the top level of the I3C repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  <span class="n">make</span> <span class="n">generate</span> <span class="n">CFG_NAME</span><span class="o">=</span><span class="n">ahb</span> <span class="n">CFG_FILE</span><span class="o">=</span><span class="n">i3c_core_configs</span><span class="o">.</span><span class="n">yaml</span>
+</code></pre></div>
+</div>
+<p>or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  <span class="n">make</span> <span class="n">generate</span> <span class="n">CFG_NAME</span><span class="o">=</span><span class="n">axi</span> <span class="n">CFG_FILE</span><span class="o">=</span><span class="n">i3c_core_configs</span><span class="o">.</span><span class="n">yaml</span>
+</code></pre></div>
+</div>
+<p>Depending on the chosen bus interface.
+More Information about the configuration tool can be found in the relevant <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">README</a></p>
 <p>Example configurations:</p>
 <ul class="simple">
 <li><p>160MHz system clock (minimal operting clock) - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=True</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=0</span></code></p></li>
@@ -462,7 +473,7 @@ This parameter removes one flipflop on the input lines, shortening the response 
   <small>
     
       Last update:
-      2025-03-31
+      2025-04-01
     
   </small>
 </div>
