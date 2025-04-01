@@ -89,7 +89,9 @@ module i3c
     parameter int unsigned TtiTxDescThldWidth = 8,
     parameter int unsigned TtiRxThldWidth = 3,
     parameter int unsigned TtiTxThldWidth = 3,
-    parameter int unsigned TtiIbiThldWidth = 8
+    parameter int unsigned TtiIbiThldWidth = 8,
+
+    parameter int unsigned IndirectFifoDepth = 64
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
@@ -975,12 +977,23 @@ module i3c
 
   // Recovery handler
   recovery_handler #(
+      .TtiRxDescDataWidth(TtiRxDescDataWidth),
+      .TtiRxDescThldWidth(TtiRxDescThldWidth),
+      .TtiRxDescFifoDepth(TtiRxDescFifoDepth),
       .TtiRxDataDataWidth(TtiRxDataWidth),
       .TtiRxDataThldWidth(TtiRxThldWidth),
       .TtiRxDataFifoDepth(TtiRxFifoDepth),
+      .TtiTxDescDataWidth(TtiTxDescDataWidth),
+      .TtiTxDescThldWidth(TtiTxDescThldWidth),
+      .TtiTxDescFifoDepth(TtiTxDescFifoDepth),
       .TtiTxDataDataWidth(TtiTxDataWidth),
       .TtiTxDataThldWidth(TtiTxThldWidth),
-      .TtiTxDataFifoDepth(TtiTxFifoDepth)
+      .TtiTxDataFifoDepth(TtiTxFifoDepth),
+      .TtiIbiDataWidth(TtiIbiDataWidth),
+      .TtiIbiThldWidth(TtiIbiThldWidth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth),
+      .CsrDataWidth(CsrDataWidth),
+      .IndirectFifoDepth(IndirectFifoDepth)
   ) xrecovery_handler (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
