@@ -57,7 +57,7 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
     COMPILE_ARGS += -debug_access+all +memcbk
     SIM_ARGS += +dumpon
-    EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd
+    EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd +vcs+lic+wait
 
     ifneq ($(COVERAGE_TYPE),)
         EXTRA_ARGS += -cm line+cond+fsm+tgl+branch
