@@ -648,11 +648,11 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
         name = "Indirect FIFO Status 3";
         field {
             name = "Indirect FIFO size";
-            desc = "Size of memory window specified in 4B units";
+            desc = "Size of memory window specified in 4B units. Current implementation supports only a constant size of 64.";
             sw = r;
             hw = rw;
             we = true;
-            reset = 32'h0;
+            reset = 32'h40;
         } FIFO_SIZE[31:0];
     } INDIRECT_FIFO_STATUS_3;
     reg {
