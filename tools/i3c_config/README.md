@@ -13,11 +13,14 @@ axi:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 32
-  DctDepth: 32
+  DatDepth: 128
+  DctDepth: 128
   FrontendBusInterface: "AXI"
-  FrontendBusAddrWidth: 32
-  FrontendBusDataWidth: 64
+  FrontendBusAddrWidth: 12
+  FrontendBusDataWidth: 32
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 8
+  DisableInputFF: True
 ```
 
 ## Usage
