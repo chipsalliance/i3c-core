@@ -1892,11 +1892,11 @@ Component Memory Space (CMS):</p>
 
 |Bits|Identifier|Access|Reset|       Name       |
 |----|----------|------|-----|------------------|
-|31:0| FIFO_SIZE|   r  | 0x0 |Indirect FIFO size|
+|31:0| FIFO_SIZE|   r  | 0x40|Indirect FIFO size|
 
 #### FIFO_SIZE field
 
-<p>Size of memory window specified in 4B units</p>
+<p>Size of memory window specified in 4B units. Current implementation supports only a constant size of 64.</p>
 
 ### INDIRECT_FIFO_STATUS_4 register
 

@@ -5946,7 +5946,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= 32'h0;
+            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= 32'h40;
         end else begin
             if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.load_next) begin
                 field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next;

@@ -1995,7 +1995,7 @@ reg_map = Munch.fromDict({
                 "FIFO_SIZE": {
                     "low": 0,
                     "mask": 4294967295,
-                    "reset": 0,
+                    "reset": 64,
                     "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
