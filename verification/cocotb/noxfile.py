@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
-
 import os
 import random
 import time
+import shutil
 
 import nox
 from nox_utils import VerificationTest, isCocotbSimFailure, nox_config
@@ -23,55 +23,63 @@ if os.getenv("TEST_COVERAGE_ENABLE", "0") == "1":
 else:
     coverage_types = None
 
+
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     # session.install("-r", pip_requirements_path)
-    test = VerificationTest(test_group, test_type, test_name, coverage)
 
-    # Translate session options to plusargs
-    plusargs = list(session.posargs)
+    test_iterations = int(os.getenv("TEST_ITERATIONS", 1))
+    for i in range(test_iterations):
+        pfx = "" if test_iterations == 1 else f"_{i}"
+        test = VerificationTest(test_group, test_type, test_name, coverage, pfx)
+        # Translate session options to plusargs
+        plusargs = list(session.posargs)
 
-    # Randomize seed for initialization of undefined signals in the simulation
-    random.seed(time.time_ns())
-    seed = random.randint(1, 10000)
+        # Randomize seed for initialization of undefined signals in the simulation
+        random.seed(time.time_ns())
+        seed = random.randint(1, 10000)
 
-    with open(test.paths["log_default"], "w") as test_log:
+        with open(test.paths["log_default"], "w") as test_log:
+            # Remove simulation build artifacts
+            # When collecting coverage and renaming `vdb` database
+            # the following simulations will fail due to non-existent database
+            if simulator == "vcs" and i > 0:
+                shutil.rmtree(os.path.join(test.testPath, test.sim_build))
 
-        args = [
-            "make",
-            "-C",
-            test.testPath,
-            "all",
-            "MODULE=" + test_name,
-            "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
-        ]
-        if simulator == "verilator":
-            plusargs.extend(
-                [
-                    "+verilator+rand+reset+2",
-                    f"+verilator+seed+{seed}",
-                ]
+            args = [
+                "make",
+                "-C",
+                test.testPath,
+                "all",
+                "MODULE=" + test_name,
+                "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
+            ]
+            if simulator == "verilator":
+                plusargs.extend(
+                    [
+                        "+verilator+rand+reset+2",
+                        f"+verilator+seed+{seed}",
+                    ]
+                )
+            if coverage:
+                args.append("COVERAGE_TYPE=" + coverage)
+
+            if simulator:
+                args.append("SIM=" + simulator)
+
+            args.append("PLUSARGS=" + " ".join(plusargs))
+
+            session.run(
+                *args,
+                external=True,
+                stdout=test_log,
+                stderr=test_log,
             )
-        if coverage:
-            args.append("COVERAGE_TYPE=" + coverage)
+        # Prevent coverage.dat and test log from being overwritten
+        test.rename_defaults(coverage, simulator)
 
-        if simulator:
-            args.append("SIM=" + simulator)
-
-        args.append("PLUSARGS=" + " ".join(plusargs))
-
-        session.run(
-            *args,
-            external=True,
-            stdout=test_log,
-            stderr=test_log,
-        )
-    # Prevent coverage.dat and test log from being overwritten
-    test.rename_defaults(coverage, simulator)
-
-    # Add check from results.xml to notify nox that test failed
-    isTBFailure = isCocotbSimFailure(resultsFile=test.paths["xml"])
-    if isTBFailure:
-        raise Exception("SimFailure: cocotb failed. See test logs for more information.")
+        # Add check from results.xml to notify nox that test failed
+        if isCocotbSimFailure(resultsFile=test.paths["xml"]):
+            raise Exception("SimFailure: cocotb failed. See test logs for more information.")
 
 
 def verify_block(session, test_group, test_name, coverage=None, simulator=None):

@@ -87,12 +87,14 @@ class VerificationTest:
     Useful to manage files produced by Cocotb+Verilator in I3C_ROOT_DIR/verification/block
     """
 
-    def __init__(self, blockName: str, blockPath: str, testName: str, coverage: str | None):
+    def __init__(self, blockName: str, blockPath: str, testName: str, coverage: str | None, pfx=""):
         self.blockName = blockName
         self.blockPath = blockPath
         self.testName = testName
         self.coverage = coverage
+        self.pfx = pfx
         self.testPath = os.path.join(blockPath, blockName)
+        self.sim_build = "sim_build" if coverage is None else f"sim_build-{self.testName}-{coverage}"
 
         # Convert NoneType to empty string
         coverage = "" if coverage is None else str(coverage)
@@ -100,14 +102,14 @@ class VerificationTest:
         # Defaults from verilator
         defaultNameVCD = "dump.vcd"
         defaultNameCoverage = "coverage.dat"
-        defaultTestNameLog = f"{testName}.log"
-        defaultNameVDB = f"sim_build-{testName}-{coverage}/simv.vdb"
+        defaultTestNameLog = f"{self.testName}{pfx}.log"
+        defaultNameVDB = f"{self.sim_build}/simv.vdb"
 
-        testNameVCD = f"{testName}.vcd"
-        testNameXML = f"{testName}.xml"
-        testCoverageName = f"{testName}_{coverage}.dat"
-        testNameLog = f"{testName}_{coverage}.log"
-        testNameVDB = f"{testName}.vdb"
+        testNameVCD = f"{self.testName}{pfx}.vcd"
+        testNameXML = f"{self.testName}{pfx}.xml"
+        testCoverageName = f"{self.testName}{pfx}_{coverage}.dat"
+        testNameLog = f"{self.testName}{pfx}_{coverage}.log"
+        testNameVDB = f"{self.testName}{pfx}.vdb"
 
         self.filenames = {
             "vcd_default": defaultNameVCD,
