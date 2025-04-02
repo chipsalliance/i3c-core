@@ -74,7 +74,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt -qqy update && sudo apt -qqy --no-install-recommends install \
-            python3 python3-pip python3-venv
+            python3 python3-pip python3-venv git
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -106,6 +106,8 @@ jobs:
             TZ=UTC make html
           popd
           ls -lah doc/build
+          git clone https://github.com/antmicro/i3c-core-coverage-results || exit 0
+          cp i3c-core-coverage-results/*html doc/build/html
 
       - name: Pack artifacts
         if: always()
