@@ -71,6 +71,7 @@ def csr_access_test_data(reg_if, skip_regs=[]):
           at the depth `1` of the `reg_if`.
           Will skip registers that are contained within the additional regfiles of the `reg_if`.
     """
+    skip_regs = skip_regs.copy()
     skip_regs.extend(["start_addr"])
     test_data = []
     for reg_name in reg_if:
@@ -140,20 +141,34 @@ async def test_ec_sec_fw_rec_csr_access(dut):
 
 @cocotb.test()
 async def test_ec_stdby_ctrl_mode_csr_access(dut):
-    exceptions = [
-        "STBY_CR_CONTROL",
+    unhandled = [
         "__RSVD_0",
+        "STBY_CR_STATUS",
         "__RSVD_1",
         "STBY_CR_INTR_FORCE",
-        "__RSVD_3",
-        "STBY_CR_INTR_STATUS",
-        "STBY_CR_STATUS",
-        "STBY_CR_INTR_SIGNAL_ENABLE",
         "STBY_CR_CCC_CONFIG_GETCAPS",
+        "__RSVD_3",
+    ]
+    exceptions = [
+        "STBY_CR_CONTROL",
+        "STBY_CR_INTR_STATUS",
+        "STBY_CR_INTR_SIGNAL_ENABLE",
         "STBY_CR_CCC_CONFIG_RSTACT_PARAMS",
     ]
+    exceptions.extend(unhandled)
     tb = await initialize(dut)
     await run_basic_csr_access(tb, tb.reg_map.I3C_EC.STDBYCTRLMODE, exceptions)
+
+    # Standby Controller Mode CSRs that are not supported or are reserved
+    # should not be updated with writes and should return `0` upon read
+    for reg_name in unhandled:
+        reg = getattr(tb.reg_map.I3C_EC.STDBYCTRLMODE, reg_name)
+        addr = reg.base_addr
+        exp_rd = 0
+
+        await tb.write_csr(addr, int2dword(rand_reg_val(reg)[0]), 4)
+        rd_data = await tb.read_csr(addr)
+        compare_values(int2dword(exp_rd), rd_data, addr)
 
 
 @cocotb.test()
