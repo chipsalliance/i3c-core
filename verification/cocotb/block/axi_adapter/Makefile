@@ -22,12 +22,12 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/i3c_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
-    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_arb.sv \
-    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_rd.sv \
-    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_addr.v \
     $(CALIPTRA_ROOT)/src/libs/rtl/skidbuffer.v \
-    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_wr.sv \
+    $(SRC_DIR)/libs/axi_sub/axi_sub_wr.sv \
+    $(SRC_DIR)/libs/axi_sub/axi_sub_arb.sv \
+    $(SRC_DIR)/libs/axi_sub/axi_sub_rd.sv \
+    $(SRC_DIR)/libs/axi_sub/axi_sub.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \
     $(SRC_DIR)/hci/axi_adapter.sv \
