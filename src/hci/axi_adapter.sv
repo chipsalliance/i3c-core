@@ -70,9 +70,14 @@ module axi_adapter #(
     input  logic                    s_cpuif_wr_err
 );
 
+  localparam LowerAddrBits = $clog2(CsrDataWidth/8);
+  localparam AxiCSRDataShift = $clog2(AxiDataWidth/CsrDataWidth);
+  localparam UpperAddrBits = LowerAddrBits + AxiCSRDataShift;
+  localparam ShiftWidth = $clog2(CsrDataWidth);
+
   axi_if #(
       .AW(CsrAddrWidth),
-      .DW(CsrDataWidth),
+      .DW(AxiDataWidth),
       .UW(AxiDataWidth),
       .IW(AxiIdWidth)
   ) axi (
@@ -131,19 +136,21 @@ module axi_adapter #(
   logic cpuif_req_stall;
   logic i3c_req_write;
   logic i3c_req_last;
-  logic [CsrDataWidth-1:0] i3c_req_wdata;
+  logic [AxiDataWidth-1:0] i3c_req_wdata;
+  logic [AxiDataWidth-1:0] i3c_req_wbiten;
   logic [AxiDataWidth/8-1:0] i3c_req_wstrb;
   logic [2:0] i3c_req_size;
   logic [AxiAddrWidth-1:0] i3c_req_addr;
-  logic [CsrDataWidth-1:0] i3c_req_rdata;
+  logic [AxiDataWidth-1:0] i3c_req_rdata;
   logic [AxiIdWidth-1:0] i3c_req_id;
-  logic [CsrDataWidth-1:0] i3c_req_user;
+  logic [AxiDataWidth-1:0] i3c_req_user;
 
   // Instantiate AXI subordinate to component interface module
-  axi_sub #(
+  i3c_axi_sub #(
       .AW(CsrAddrWidth),
-      .DW(CsrDataWidth),
-      .UW(AxiDataWidth),
+      .AG($clog2(CsrDataWidth/8)),
+      .DW(AxiDataWidth),
+      .UW(AxiUserWidth),
       .IW(AxiIdWidth)
   ) axi_sif_i3c (
       .clk  (clk_i),
@@ -172,7 +179,7 @@ module axi_adapter #(
   genvar i;
   for (i = 0; i < AxiDataWidth / 8; i = i + 1) begin : g_replicate_strb_bits
     always_comb begin
-      s_cpuif_wr_biten[i*8+:8] = i3c_req_wstrb[i] ? 8'hFF : 8'h00;
+      i3c_req_wbiten[i*8+:8] = i3c_req_wstrb[i] ? 8'hFF : 8'h00;
     end
   end
 
@@ -186,9 +193,22 @@ module axi_adapter #(
     s_cpuif_req = i3c_req_dv & ~i3c_req_hld_ext;
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
-    s_cpuif_wr_data = i3c_req_wdata;
-    i3c_req_rdata = s_cpuif_rd_data;
   end
+  generate
+    if (AxiDataWidth === CsrDataWidth) begin
+      assign s_cpuif_wr_biten = i3c_req_wbiten;
+      assign s_cpuif_wr_data = i3c_req_wdata;
+      assign i3c_req_rdata = s_cpuif_rd_data;
+    end else if (AxiDataWidth >= CsrDataWidth) begin
+      assign s_cpuif_wr_biten = i3c_req_wbiten >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+      assign s_cpuif_wr_data = i3c_req_wdata >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+      assign i3c_req_rdata = s_cpuif_rd_data << {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+`ifndef SYNTHESIS
+    end else begin
+      $error("No implementation for CSR width > interface width");
+`endif
+    end
+  endgenerate
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin

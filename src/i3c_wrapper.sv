@@ -139,6 +139,11 @@ module i3c_wrapper #(
 `ifdef I3C_USE_AHB
       .AhbDataWidth(AhbDataWidth),
       .AhbAddrWidth(AhbAddrWidth),
+`elsif I3C_USE_AXI
+      .AxiDataWidth(AxiDataWidth),
+      .AxiAddrWidth(AxiAddrWidth),
+      .AxiUserWidth(AxiUserWidth),
+      .AxiIdWidth(AxiIdWidth),
 `endif
       .CsrDataWidth(CsrDataWidth),
       .CsrAddrWidth(CsrAddrWidth),

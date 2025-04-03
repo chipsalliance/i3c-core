@@ -27,11 +27,12 @@
 //
 // -------------------------------------------------------------
 
-module axi_sub import axi_pkg::*; #(
+module i3c_axi_sub import axi_pkg::*; #(
     parameter AW = 32,         // Address Width
     parameter DW = 32,         // Data Width
               BC = DW/8,       // Byte Count
               BW = $clog2(BC), // Byte count Width
+    parameter AG = $clog2(BC), // Address access granularity
     parameter UW = 32,         // User Width
     parameter IW = 1,          // ID Width
               ID_NUM = 1 << IW, // Don't override
@@ -101,8 +102,9 @@ module axi_sub import axi_pkg::*; #(
     logic          w_err;
 
 
-    axi_sub_wr #(
+    i3c_axi_sub_wr #(
         .AW   (AW   ),
+        .AG   (AG   ),
         .DW   (DW   ),
         .UW   (UW   ),
         .IW   (IW   )
@@ -135,8 +137,9 @@ module axi_sub import axi_pkg::*; #(
 
     );
 
-    axi_sub_rd #(
+    i3c_axi_sub_rd #(
         .AW(AW),
+        .AG(AG),
         .DW(DW),
         .UW(UW),
         .IW(IW),
@@ -169,7 +172,7 @@ module axi_sub import axi_pkg::*; #(
         .rdata(r_rdata)
     );
 
-    axi_sub_arb #(
+    i3c_axi_sub_arb #(
         .AW(AW),
         .DW(DW),
         .UW(UW),

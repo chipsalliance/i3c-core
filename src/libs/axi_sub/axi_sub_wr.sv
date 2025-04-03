@@ -27,11 +27,12 @@
 //
 // -------------------------------------------------------------
 
-module axi_sub_wr import axi_pkg::*; #(
+module i3c_axi_sub_wr import axi_pkg::*; #(
     parameter AW = 32,         // Address Width
     parameter DW = 32,         // Data Width
               BC = DW/8,       // Byte Count
               BW = $clog2(BC), // Byte count Width
+    parameter AG = $clog2(BC), // Address access granularity
     parameter UW = 32,         // User Width
     parameter IW = 1,          // ID Width
               ID_NUM = 1 << IW  // Don't override
@@ -251,7 +252,7 @@ module axi_sub_wr import axi_pkg::*; #(
     // Address Calculations                    //
     // --------------------------------------- //
     // Force aligned address to component
-    always_comb addr = {txn_ctx.addr[AW-1:BW],BW'(0)};
+    always_comb addr = {txn_ctx.addr[AW-1:AG],AG'(0)};
     always_comb user = txn_ctx.user;
     always_comb id   = txn_ctx.id;
     always_comb wsize = txn_ctx.size;
