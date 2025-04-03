@@ -55,7 +55,7 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += +libext+.sv +libext+.v
     COMPILE_ARGS += +define+DIGITAL_IO_I3C
     COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
-    COMPILE_ARGS += -debug_access+all +memcbk
+    COMPILE_ARGS += -debug_access+all +memcbk -assert svaext
     SIM_ARGS += +dumpon
     EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd +vcs+lic+wait
 
