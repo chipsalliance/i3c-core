@@ -32,10 +32,10 @@ ${I3C_ROOT_DIR}/src/phy/i3c_phy.sv
 ${I3C_ROOT_DIR}/src/phy/i3c_io.sv
 ${I3C_ROOT_DIR}/src/csr/I3CCSR.sv
 ${I3C_ROOT_DIR}/src/interrupt.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/axi_sub_arb.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/axi_sub_rd.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/axi_sub.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/axi_sub_wr.sv
+${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_arb.sv
+${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_rd.sv
+${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub.sv
+${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_wr.sv
 ${I3C_ROOT_DIR}/src/hci/queues/read_queue.sv
 ${I3C_ROOT_DIR}/src/hci/queues/write_queue.sv
 ${I3C_ROOT_DIR}/src/hci/ahb_if.sv
