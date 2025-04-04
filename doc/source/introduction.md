@@ -8,10 +8,12 @@ The implementation follows the Errata 01 for MIPI I3C Basic Specification Versio
 
 This documentation comprises the following chapters:
 
-* [I3C core overview](overview.md) - summarizes the main notions of the project
-* [I3C Common Command Codes (CCC)](ccc.md)
-* [Physical Layer](phy.md) - provides a description of the I3C PHY Layer logic
-* [Design Verification](dv.md) - describes verification tooling and testplans
-* [Specification for I3C Vendor-Specific Extended Capabilities](ext_cap.md) - provides a description of Target Transaction Interface
-* [Recovery flow](recovery_flow.md) - describes the Recovery mode workflow
-* [Register descriptions](registers.md) - provides auto-generated register descriptions
+* {doc}`overview` - summarizes the main notions of the project
+* {doc}`ccc` - provides an overview of the CCCs implemented by the core
+* {doc}`phy` - provides a description of the I3C PHY Layer logic
+* {doc}`dv` - describes verification tooling and testplans
+* {doc}`ext_cap` - provides a description of Target Transaction Interface
+* {doc}`i3c_recovery_flow` - describes the I3C-based Recovery mode workflow
+* {doc}`axi_id_filtering` - provides information about the AXI transactions filtering feature
+* {doc}`axi_recovery_flow` - describes the alternative, optional, recovery flow where the recovery data is transferred to the core over the AXI bus
+* {doc}`registers` - provides auto-generated register descriptions
