@@ -3953,6 +3953,7 @@ package I3CCSR_uvm;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg IBI_DONE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg PENDING_INTERRUPT_bit_cg[4];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TRANSFER_ABORT_STAT_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TX_DESC_COMPLETE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_bit_cg TRANSFER_ERR_STAT_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC_STAT;
@@ -3967,6 +3968,7 @@ package I3CCSR_uvm;
         rand uvm_reg_field IBI_DONE;
         rand uvm_reg_field PENDING_INTERRUPT;
         rand uvm_reg_field TRANSFER_ABORT_STAT;
+        rand uvm_reg_field TX_DESC_COMPLETE;
         rand uvm_reg_field TRANSFER_ERR_STAT;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS");
@@ -4003,6 +4005,8 @@ package I3CCSR_uvm;
             this.PENDING_INTERRUPT.configure(this, 4, 15, "W1C", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT = new("TRANSFER_ABORT_STAT");
             this.TRANSFER_ABORT_STAT.configure(this, 1, 25, "W1C", 1, 'h0, 1, 1, 0);
+            this.TX_DESC_COMPLETE = new("TX_DESC_COMPLETE");
+            this.TX_DESC_COMPLETE.configure(this, 1, 26, "W1C", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ERR_STAT = new("TRANSFER_ERR_STAT");
             this.TRANSFER_ERR_STAT.configure(this, 1, 31, "W1C", 1, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
@@ -4018,6 +4022,7 @@ package I3CCSR_uvm;
                 foreach(IBI_DONE_bit_cg[bt]) IBI_DONE_bit_cg[bt] = new();
                 foreach(PENDING_INTERRUPT_bit_cg[bt]) PENDING_INTERRUPT_bit_cg[bt] = new();
                 foreach(TRANSFER_ABORT_STAT_bit_cg[bt]) TRANSFER_ABORT_STAT_bit_cg[bt] = new();
+                foreach(TX_DESC_COMPLETE_bit_cg[bt]) TX_DESC_COMPLETE_bit_cg[bt] = new();
                 foreach(TRANSFER_ERR_STAT_bit_cg[bt]) TRANSFER_ERR_STAT_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
@@ -4042,6 +4047,7 @@ package I3CCSR_uvm;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg IBI_THLD_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg IBI_DONE_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TRANSFER_ABORT_STAT_EN_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TX_DESC_COMPLETE_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_bit_cg TRANSFER_ERR_STAT_EN_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC_STAT_EN;
@@ -4055,6 +4061,7 @@ package I3CCSR_uvm;
         rand uvm_reg_field IBI_THLD_STAT_EN;
         rand uvm_reg_field IBI_DONE_EN;
         rand uvm_reg_field TRANSFER_ABORT_STAT_EN;
+        rand uvm_reg_field TX_DESC_COMPLETE_EN;
         rand uvm_reg_field TRANSFER_ERR_STAT_EN;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE");
@@ -4089,6 +4096,8 @@ package I3CCSR_uvm;
             this.IBI_DONE_EN.configure(this, 1, 13, "RW", 0, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT_EN = new("TRANSFER_ABORT_STAT_EN");
             this.TRANSFER_ABORT_STAT_EN.configure(this, 1, 25, "RW", 0, 'h0, 1, 1, 0);
+            this.TX_DESC_COMPLETE_EN = new("TX_DESC_COMPLETE_EN");
+            this.TX_DESC_COMPLETE_EN.configure(this, 1, 26, "RW", 0, 'h0, 1, 1, 0);
             this.TRANSFER_ERR_STAT_EN = new("TRANSFER_ERR_STAT_EN");
             this.TRANSFER_ERR_STAT_EN.configure(this, 1, 31, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
@@ -4103,6 +4112,7 @@ package I3CCSR_uvm;
                 foreach(IBI_THLD_STAT_EN_bit_cg[bt]) IBI_THLD_STAT_EN_bit_cg[bt] = new();
                 foreach(IBI_DONE_EN_bit_cg[bt]) IBI_DONE_EN_bit_cg[bt] = new();
                 foreach(TRANSFER_ABORT_STAT_EN_bit_cg[bt]) TRANSFER_ABORT_STAT_EN_bit_cg[bt] = new();
+                foreach(TX_DESC_COMPLETE_EN_bit_cg[bt]) TX_DESC_COMPLETE_EN_bit_cg[bt] = new();
                 foreach(TRANSFER_ERR_STAT_EN_bit_cg[bt]) TRANSFER_ERR_STAT_EN_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
@@ -4127,6 +4137,7 @@ package I3CCSR_uvm;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg IBI_THLD_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg IBI_DONE_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TRANSFER_ABORT_STAT_FORCE_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TX_DESC_COMPLETE_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_bit_cg TRANSFER_ERR_STAT_FORCE_bit_cg[1];
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE_fld_cg fld_cg;
         rand uvm_reg_field RX_DESC_STAT_FORCE;
@@ -4140,6 +4151,7 @@ package I3CCSR_uvm;
         rand uvm_reg_field IBI_THLD_FORCE;
         rand uvm_reg_field IBI_DONE_FORCE;
         rand uvm_reg_field TRANSFER_ABORT_STAT_FORCE;
+        rand uvm_reg_field TX_DESC_COMPLETE_FORCE;
         rand uvm_reg_field TRANSFER_ERR_STAT_FORCE;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE");
@@ -4174,6 +4186,8 @@ package I3CCSR_uvm;
             this.IBI_DONE_FORCE.configure(this, 1, 13, "RW", 0, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT_FORCE = new("TRANSFER_ABORT_STAT_FORCE");
             this.TRANSFER_ABORT_STAT_FORCE.configure(this, 1, 25, "RW", 0, 'h0, 1, 1, 0);
+            this.TX_DESC_COMPLETE_FORCE = new("TX_DESC_COMPLETE_FORCE");
+            this.TX_DESC_COMPLETE_FORCE.configure(this, 1, 26, "RW", 0, 'h0, 1, 1, 0);
             this.TRANSFER_ERR_STAT_FORCE = new("TRANSFER_ERR_STAT_FORCE");
             this.TRANSFER_ERR_STAT_FORCE.configure(this, 1, 31, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
@@ -4188,6 +4202,7 @@ package I3CCSR_uvm;
                 foreach(IBI_THLD_FORCE_bit_cg[bt]) IBI_THLD_FORCE_bit_cg[bt] = new();
                 foreach(IBI_DONE_FORCE_bit_cg[bt]) IBI_DONE_FORCE_bit_cg[bt] = new();
                 foreach(TRANSFER_ABORT_STAT_FORCE_bit_cg[bt]) TRANSFER_ABORT_STAT_FORCE_bit_cg[bt] = new();
+                foreach(TX_DESC_COMPLETE_FORCE_bit_cg[bt]) TX_DESC_COMPLETE_FORCE_bit_cg[bt] = new();
                 foreach(TRANSFER_ERR_STAT_FORCE_bit_cg[bt]) TRANSFER_ERR_STAT_FORCE_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))

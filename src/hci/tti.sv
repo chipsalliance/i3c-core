@@ -91,6 +91,7 @@ module tti
     input logic recovery_mode_enabled_i,
     // Private read status
     input logic tx_pr_end_i,
+    input logic tx_pr_start_i,
 
     input logic enec_ibi_i,
     input logic enec_crr_i,
@@ -225,7 +226,7 @@ module tti
   assign hwif_tti_o.STATUS.PROTOCOL_ERROR.next = err_i;
 
   // Interrupts
-  logic [4:0] irqs;
+  logic [5:0] irqs;
 
   // Delay queue write monitor signals by 1 cycle to align them with
   // full/empty/threshold trigger update.
@@ -310,7 +311,7 @@ module tti
     .irq_o          (irqs[3])
   );
 
-  // TX_DESC_STAT
+  // TX_DESC_COMPLETE
   // set: A private read transfer has completed
   // clr: None, need to clear via INTERRUPT_STATUS
   interrupt xintr4 (
@@ -318,13 +319,30 @@ module tti
     .rst_ni         (rst_ni),
     .irq_i          (~recovery_mode_enabled_i & tx_pr_end_i),
     .clr_i          ('0),
+    .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value),
+    .sts_o          (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_COMPLETE.next),
+    .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_COMPLETE.we),
+    .sts_i          (hwif_tti_i.INTERRUPT_STATUS.TX_DESC_COMPLETE.value),
+    .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value),
+    .sig_ena_i      ('1),
+    .irq_o          (irqs[4])
+  );
+
+  // TX_DESC_STAT
+  // set: A private read transfer has started
+  // clr: None, need to clear via INTERRUPT_STATUS
+  interrupt xintr5 (
+    .clk_i          (clk_i),
+    .rst_ni         (rst_ni),
+    .irq_i          (~recovery_mode_enabled_i & tx_pr_start_i),
+    .clr_i          ('0),
     .irq_force_i    (hwif_tti_i.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value),
     .sts_o          (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.next),
     .sts_we_o       (hwif_tti_o.INTERRUPT_STATUS.TX_DESC_STAT.we),
     .sts_i          (hwif_tti_i.INTERRUPT_STATUS.TX_DESC_STAT.value),
     .sts_ena_i      (hwif_tti_i.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value),
     .sig_ena_i      ('1),
-    .irq_o          (irqs[4])
+    .irq_o          (irqs[5])
   );
 
   // Interrupt output

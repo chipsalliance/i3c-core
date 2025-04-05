@@ -113,14 +113,15 @@ async def test_tx_desc_stat(dut):
     # Enable the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
     await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT_EN, 1)
+    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_COMPLETE_EN, 1)
 
     # Ensure that irq is low
     await ClockCycles(tb.clk, 10)
     assert irq.value == 0
 
-    # Write data and descriptor
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(0xDEADBEEF), 4)
-    await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(4), 4)
+    ## Write data and descriptor
+    #await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(0xDEADBEEF), 4)
+    #await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(4), 4)
 
     # Send a private read to the target
     async def i3c_task(evt):
@@ -128,27 +129,39 @@ async def test_tx_desc_stat(dut):
         assert data == [0xEF, 0xBE, 0xAD, 0xDE]
         evt.set()
 
-    done = Event()
-    cocotb.start_soon(i3c_task(done))
+    async def bus_task(evt):
+        # Wait for the interrupt
+        while irq.value == 0:
+            await RisingEdge(tb.clk)
+        # Write data and descriptor
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(0xDEADBEEF), 4)
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(4), 4)
+        # Clear the interrupt
+        csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
+        await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT, 1)
+        evt.set()
 
-    # Wait for the interrupt
-    while irq.value == 0:
-        await RisingEdge(tb.clk)
+    done_i3c = Event()
+    done_bus = Event()
+    cocotb.start_soon(i3c_task(done_i3c))
+    cocotb.start_soon(bus_task(done_bus))
+
+    # Wait for the I3C transfer to complete
+    await done_i3c.wait()
+
+    # Wait for the bus task transfer to complete
+    await done_bus.wait()
 
     # Clear the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
-    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT, 1)
+    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_COMPLETE, 1)
 
     # Ensure that irq is low
     await ClockCycles(tb.clk, 10)
     assert irq.value == 0
 
-    # Wait for the I3C transfer to complete
-    await done.wait()
-
     # Dummy wait
     await ClockCycles(tb.clk, 10)
-
 
 @cocotb.test()
 async def test_ibi_done(dut):
