@@ -1428,6 +1428,10 @@ module I3CCSR (
                     struct packed{
                         logic next;
                         logic load_next;
+                    } TX_DESC_COMPLETE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
                     } TRANSFER_ERR_STAT;
                 } INTERRUPT_STATUS;
                 struct packed{
@@ -1478,6 +1482,10 @@ module I3CCSR (
                     struct packed{
                         logic next;
                         logic load_next;
+                    } TX_DESC_COMPLETE_EN;
+                    struct packed{
+                        logic next;
+                        logic load_next;
                     } TRANSFER_ERR_STAT_EN;
                 } INTERRUPT_ENABLE;
                 struct packed{
@@ -1525,6 +1533,10 @@ module I3CCSR (
                         logic next;
                         logic load_next;
                     } TRANSFER_ABORT_STAT_FORCE;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } TX_DESC_COMPLETE_FORCE;
                     struct packed{
                         logic next;
                         logic load_next;
@@ -2556,6 +2568,9 @@ module I3CCSR (
                     } TRANSFER_ABORT_STAT;
                     struct packed{
                         logic value;
+                    } TX_DESC_COMPLETE;
+                    struct packed{
+                        logic value;
                     } TRANSFER_ERR_STAT;
                 } INTERRUPT_STATUS;
                 struct packed{
@@ -2594,6 +2609,9 @@ module I3CCSR (
                     } TRANSFER_ABORT_STAT_EN;
                     struct packed{
                         logic value;
+                    } TX_DESC_COMPLETE_EN;
+                    struct packed{
+                        logic value;
                     } TRANSFER_ERR_STAT_EN;
                 } INTERRUPT_ENABLE;
                 struct packed{
@@ -2630,6 +2648,9 @@ module I3CCSR (
                     struct packed{
                         logic value;
                     } TRANSFER_ABORT_STAT_FORCE;
+                    struct packed{
+                        logic value;
+                    } TX_DESC_COMPLETE_FORCE;
                     struct packed{
                         logic value;
                     } TRANSFER_ERR_STAT_FORCE;
@@ -8321,6 +8342,32 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
+            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value & ~(decoded_wr_data[26:26] & decoded_wr_biten[26:26]);
+            load_next_c = '1;
+        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value <= 1'h0;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT
     always_comb begin
         automatic logic [0:0] next_c;
@@ -8600,6 +8647,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value & ~decoded_wr_biten[26:26]) | (decoded_wr_data[26:26] & decoded_wr_biten[26:26]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value <= 1'h0;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value <= field_combo.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value = field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN
     always_comb begin
         automatic logic [0:0] next_c;
@@ -8876,6 +8946,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value & ~decoded_wr_biten[26:26]) | (decoded_wr_data[26:26] & decoded_wr_biten[26:26]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value <= 1'h0;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value <= field_combo.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value = field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE
     always_comb begin
         automatic logic [0:0] next_c;
@@ -10261,7 +10354,8 @@ module I3CCSR (
     assign readback_array[78][18:15] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value : '0;
     assign readback_array[78][24:19] = '0;
     assign readback_array[78][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
-    assign readback_array[78][30:26] = '0;
+    assign readback_array[78][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value : '0;
+    assign readback_array[78][30:27] = '0;
     assign readback_array[78][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value : '0;
     assign readback_array[79][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value : '0;
     assign readback_array[79][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value : '0;
@@ -10276,7 +10370,8 @@ module I3CCSR (
     assign readback_array[79][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value : '0;
     assign readback_array[79][24:14] = '0;
     assign readback_array[79][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value : '0;
-    assign readback_array[79][30:26] = '0;
+    assign readback_array[79][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value : '0;
+    assign readback_array[79][30:27] = '0;
     assign readback_array[79][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value : '0;
     assign readback_array[80][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value : '0;
     assign readback_array[80][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value : '0;
@@ -10291,7 +10386,8 @@ module I3CCSR (
     assign readback_array[80][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value : '0;
     assign readback_array[80][24:14] = '0;
     assign readback_array[80][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value : '0;
-    assign readback_array[80][30:26] = '0;
+    assign readback_array[80][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value : '0;
+    assign readback_array[80][30:27] = '0;
     assign readback_array[80][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value : '0;
     assign readback_array[81] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
     assign readback_array[82] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;

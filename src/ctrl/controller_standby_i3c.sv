@@ -94,6 +94,7 @@ module controller_standby_i3c
     output logic rst_action_valid_o,
     output logic tx_host_nack_o,
     output logic tx_pr_end_o,
+    output logic tx_pr_start_o,
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic set_dasa_virtual_device_o,
@@ -242,7 +243,6 @@ module controller_standby_i3c
   logic is_hotjoin_done;
 
   //
-  logic tx_pr_start;
   logic tx_pr_abort;
 
   logic rx_overflow_err;
@@ -414,7 +414,7 @@ module controller_standby_i3c
       .bus_rx_data_i        (fsm_bus_rx_data),
       .bus_rx_error_i       (fsm_bus_rx_error),
 
-      .tx_pr_start_o              (tx_pr_start),
+      .tx_pr_start_o              (tx_pr_start_o),
       .tx_pr_abort_o              (tx_pr_abort),
       .tx_desc_avail_i            (tx_desc_avail),
       .tx_fifo_rvalid_i           (tx_fifo_rvalid),
@@ -677,7 +677,7 @@ module controller_standby_i3c
       .tti_tx_queue_rdata_i      (tx_queue_rdata_i),
       .tti_tx_queue_empty_i      (tx_queue_empty_i),
       .tx_queue_flush_o          (tx_queue_flush_o),
-      .tx_start_i                (tx_pr_start),
+      .tx_start_i                (tx_pr_start_o),
       .tx_abort_i                (tx_pr_abort | tx_host_nack),
       .tx_desc_avail_o           (tx_desc_avail),
       .tx_byte_o                 (tx_fifo_rdata),
