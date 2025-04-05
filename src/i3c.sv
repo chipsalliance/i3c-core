@@ -332,6 +332,7 @@ module i3c
 
   logic                               tti_tx_host_nack;
   logic                               tti_tx_pr_end;
+  logic                               tti_tx_pr_start;
 
   // In-band Interrupt queue
   logic                               tti_ibi_full;
@@ -639,6 +640,7 @@ module i3c
       .tti_tx_queue_flush_o(tti_tx_flush),
       .tti_tx_host_nack_o(tti_tx_host_nack),
       .tti_tx_pr_end_o(tti_tx_pr_end),
+      .tti_tx_pr_start_o(tti_tx_pr_start),
 
       // TTI: In-band Interrupt queue
       .tti_ibi_queue_full_i(tti_ibi_full),
@@ -962,6 +964,7 @@ module i3c
       .ibi_status_i(ibi_status),
       .ibi_status_we_i(ibi_status_we),
       .tx_pr_end_i(tti_tx_pr_end),
+      .tx_pr_start_i(tti_tx_pr_start),
 
       .enec_ibi_i (enec_ibi),
       .enec_crr_i (enec_crr),

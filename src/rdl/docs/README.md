@@ -2793,6 +2793,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 |  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
 |18:15| PENDING_INTERRUPT |rw, woclr| 0x0 | PENDING_INTERRUPT |
 |  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
+|  26 |  TX_DESC_COMPLETE |rw, woclr| 0x0 |  TX_DESC_COMPLETE |
 |  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
 
 #### RX_DESC_STAT field
@@ -2843,6 +2844,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 
 <p>Bus aborted transaction</p>
 
+#### TX_DESC_COMPLETE field
+
+<p>Read Transaction on the I3C Bus completede</p>
+
 #### TRANSFER_ERR_STAT field
 
 <p>Bus error occurred</p>
@@ -2868,6 +2873,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 | 12 |   IBI_THLD_STAT_EN   |  rw  | 0x0 |   IBI_THLD_STAT_EN   |
 | 13 |      IBI_DONE_EN     |  rw  | 0x0 |      IBI_DONE_EN     |
 | 25 |TRANSFER_ABORT_STAT_EN|  rw  | 0x0 |TRANSFER_ABORT_STAT_EN|
+| 26 |  TX_DESC_COMPLETE_EN |  rw  | 0x0 |  TX_DESC_COMPLETE_EN |
 | 31 | TRANSFER_ERR_STAT_EN |  rw  | 0x0 | TRANSFER_ERR_STAT_EN |
 
 #### RX_DESC_STAT_EN field
@@ -2914,6 +2920,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT</code></p>
 
+#### TX_DESC_COMPLETE_EN field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_COMPLETE_EN</code></p>
+
 #### TRANSFER_ERR_STAT_EN field
 
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT</code></p>
@@ -2939,6 +2949,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 | 12 |      IBI_THLD_FORCE     |  rw  | 0x0 |      IBI_THLD_FORCE     |
 | 13 |      IBI_DONE_FORCE     |  rw  | 0x0 |      IBI_DONE_FORCE     |
 | 25 |TRANSFER_ABORT_STAT_FORCE|  rw  | 0x0 |TRANSFER_ABORT_STAT_FORCE|
+| 26 |  TX_DESC_COMPLETE_FORCE |  rw  | 0x0 |  TX_DESC_COMPLETE_FORCE |
 | 31 | TRANSFER_ERR_STAT_FORCE |  rw  | 0x0 | TRANSFER_ERR_STAT_FORCE |
 
 #### RX_DESC_STAT_FORCE field
@@ -2984,6 +2995,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 #### TRANSFER_ABORT_STAT_FORCE field
 
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT_FORCE</code></p>
+
+#### TX_DESC_COMPLETE_FORCE field
+
+<p>Enables the corresponding interrupt bit <code>TX_DESC_COMPLETE_FORCE</code></p>
 
 #### TRANSFER_ERR_STAT_FORCE field
 

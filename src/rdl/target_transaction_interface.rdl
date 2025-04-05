@@ -197,6 +197,15 @@ regfile TargetTransactionInterfaceRegisters #(
             reset = 1'b0;
         } TRANSFER_ERR_STAT[31:31];
         field {
+            name = "TX_DESC_COMPLETE";
+            desc = "Read Transaction on the I3C Bus completede";
+            sw = rw;
+            hw = rw;
+            woclr = true;
+            we = true;
+            reset = 1'b0;
+        } TX_DESC_COMPLETE[26:26];
+        field {
             name = "TRANSFER_ABORT_STAT";
             desc = "Bus aborted transaction";
             sw = rw;
@@ -316,6 +325,13 @@ regfile TargetTransactionInterfaceRegisters #(
             reset = 1'b0;
         } TRANSFER_ERR_STAT_EN[31:31];
         field {
+            name = "TX_DESC_COMPLETE_EN";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_COMPLETE_EN`";
+            sw = rw;
+            hw = r;
+            reset = 1'b0;
+        } TX_DESC_COMPLETE_EN[26:26];
+        field {
             name = "TRANSFER_ABORT_STAT_EN";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT`";
             sw = rw;
@@ -403,6 +419,13 @@ regfile TargetTransactionInterfaceRegisters #(
             hw = r;
             reset = 1'b0;
         } TRANSFER_ERR_STAT_FORCE[31:31];
+        field {
+            name = "TX_DESC_COMPLETE_FORCE";
+            desc = "Enables the corresponding interrupt bit `TX_DESC_COMPLETE_FORCE`";
+            sw = rw;
+            hw = r;
+            reset = 1'b0;
+        } TX_DESC_COMPLETE_FORCE[26:26];
         field {
             name = "TRANSFER_ABORT_STAT_FORCE";
             desc = "Enables the corresponding interrupt bit `TRANSFER_ABORT_STAT_FORCE`";
