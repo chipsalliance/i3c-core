@@ -2062,6 +2062,7 @@
     input bit [1-1:0] IBI_DONE,
     input bit [4-1:0] PENDING_INTERRUPT,
     input bit [1-1:0] TRANSFER_ABORT_STAT,
+    input bit [1-1:0] TX_DESC_COMPLETE,
     input bit [1-1:0] TRANSFER_ERR_STAT
     );
         option.per_instance = 1;
@@ -2077,6 +2078,7 @@
         IBI_DONE_cp : coverpoint IBI_DONE;
         PENDING_INTERRUPT_cp : coverpoint PENDING_INTERRUPT;
         TRANSFER_ABORT_STAT_cp : coverpoint TRANSFER_ABORT_STAT;
+        TX_DESC_COMPLETE_cp : coverpoint TX_DESC_COMPLETE;
         TRANSFER_ERR_STAT_cp : coverpoint TRANSFER_ERR_STAT;
 
     endgroup
@@ -2105,6 +2107,7 @@
     input bit [1-1:0] IBI_THLD_STAT_EN,
     input bit [1-1:0] IBI_DONE_EN,
     input bit [1-1:0] TRANSFER_ABORT_STAT_EN,
+    input bit [1-1:0] TX_DESC_COMPLETE_EN,
     input bit [1-1:0] TRANSFER_ERR_STAT_EN
     );
         option.per_instance = 1;
@@ -2119,6 +2122,7 @@
         IBI_THLD_STAT_EN_cp : coverpoint IBI_THLD_STAT_EN;
         IBI_DONE_EN_cp : coverpoint IBI_DONE_EN;
         TRANSFER_ABORT_STAT_EN_cp : coverpoint TRANSFER_ABORT_STAT_EN;
+        TX_DESC_COMPLETE_EN_cp : coverpoint TX_DESC_COMPLETE_EN;
         TRANSFER_ERR_STAT_EN_cp : coverpoint TRANSFER_ERR_STAT_EN;
 
     endgroup
@@ -2147,6 +2151,7 @@
     input bit [1-1:0] IBI_THLD_FORCE,
     input bit [1-1:0] IBI_DONE_FORCE,
     input bit [1-1:0] TRANSFER_ABORT_STAT_FORCE,
+    input bit [1-1:0] TX_DESC_COMPLETE_FORCE,
     input bit [1-1:0] TRANSFER_ERR_STAT_FORCE
     );
         option.per_instance = 1;
@@ -2161,6 +2166,7 @@
         IBI_THLD_FORCE_cp : coverpoint IBI_THLD_FORCE;
         IBI_DONE_FORCE_cp : coverpoint IBI_DONE_FORCE;
         TRANSFER_ABORT_STAT_FORCE_cp : coverpoint TRANSFER_ABORT_STAT_FORCE;
+        TX_DESC_COMPLETE_FORCE_cp : coverpoint TX_DESC_COMPLETE_FORCE;
         TRANSFER_ERR_STAT_FORCE_cp : coverpoint TRANSFER_ERR_STAT_FORCE;
 
     endgroup

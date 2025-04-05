@@ -171,6 +171,7 @@ module controller
     input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
     output logic tti_tx_host_nack_o,
     output logic tti_tx_pr_end_o,
+    output logic tti_tx_pr_start_o,
 
     // TTI: In-band Interrupt queue
     input logic tti_ibi_queue_full_i,
@@ -542,6 +543,7 @@ module controller
       .daa_unique_response_i(daa_unique_response),
       .tx_host_nack_o(tti_tx_host_nack_o),
       .tx_pr_end_o(tti_tx_pr_end_o),
+      .tx_pr_start_o(tti_tx_pr_start_o),
       .set_dasa_o(set_dasa_o),
       .set_dasa_valid_o(set_dasa_valid_o),
       .set_dasa_virtual_device_o(set_dasa_virtual_device_o),

@@ -492,7 +492,8 @@ module i3c_target_fsm #(
       CheckSByte: begin
         if ((is_our_addr_match || is_virtual_addr_match) && (tx_desc_avail_i | ~bus_rnw_q)) begin
             state_d = TxAckSByte;
-        end else begin
+        end
+        else if (bus_timeout_i) begin
             state_d = Wait;
         end
       end

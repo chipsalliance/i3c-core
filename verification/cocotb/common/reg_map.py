@@ -3149,6 +3149,16 @@ reg_map = Munch.fromDict({
                     "rclr": 0,
                     "hwclr": 0
                 },
+                "TX_DESC_COMPLETE": {
+                    "low": 26,
+                    "mask": 67108864,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "rw",
+                    "woclr": 1,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
                 "TRANSFER_ERR_STAT": {
                     "low": 31,
                     "mask": 2147483648,
@@ -3273,6 +3283,16 @@ reg_map = Munch.fromDict({
                     "rclr": 0,
                     "hwclr": 0
                 },
+                "TX_DESC_COMPLETE_EN": {
+                    "low": 26,
+                    "mask": 67108864,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
                 "TRANSFER_ERR_STAT_EN": {
                     "low": 31,
                     "mask": 2147483648,
@@ -3390,6 +3410,16 @@ reg_map = Munch.fromDict({
                 "TRANSFER_ABORT_STAT_FORCE": {
                     "low": 25,
                     "mask": 33554432,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "TX_DESC_COMPLETE_FORCE": {
+                    "low": 26,
+                    "mask": 67108864,
                     "reset": 0,
                     "sw": "rw",
                     "hw": "r",
