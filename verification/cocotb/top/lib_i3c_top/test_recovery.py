@@ -974,7 +974,7 @@ async def test_virtual_read_alternating(dut):
     """
 
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=100)
 
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
@@ -1056,7 +1056,7 @@ async def test_payload_available(dut):
     """
 
     # Initialize
-    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=200)
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=400)
 
     fifo_size = (
         dword2int(

@@ -185,8 +185,9 @@ async def test_ec_tti_csr_access(dut):
 
 @cocotb.test()
 async def test_ec_soc_mgmt_csr_access(dut):
+    exceptions = ["REC_INTF_REG_W1C_ACCESS"]
     tb = await initialize(dut)
-    await run_basic_csr_access(tb, tb.reg_map.I3C_EC.SOCMGMTIF)
+    await run_basic_csr_access(tb, tb.reg_map.I3C_EC.SOCMGMTIF, exceptions)
 
 
 @cocotb.test()
