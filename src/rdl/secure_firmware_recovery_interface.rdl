@@ -659,11 +659,12 @@ regfile SecureFirmwareRecoveryInterfaceRegisters{
         name = "Indirect FIFO Status 4";
         field {
             name = "Max transfer size";
-            desc = "Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units";
+            desc = "Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units
+
+                    Enforced to 256 bytes (64 DWORDs) by Caliptra Subsystem Recovery Sequence";
             sw = r;
-            hw = rw;
-            we = true;
-            reset = 32'h0;
+            hw = r;
+            reset = 32'd64;
         } MAX_TRANSFER_SIZE[31:0];
     } INDIRECT_FIFO_STATUS_4;
     reg {

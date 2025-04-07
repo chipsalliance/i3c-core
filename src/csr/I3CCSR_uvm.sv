@@ -2614,7 +2614,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.MAX_TRANSFER_SIZE = new("MAX_TRANSFER_SIZE");
-            this.MAX_TRANSFER_SIZE.configure(this, 32, 0, "RO", 1, 'h0, 1, 1, 0);
+            this.MAX_TRANSFER_SIZE.configure(this, 32, 0, "RO", 0, 'h40, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(MAX_TRANSFER_SIZE_bit_cg[bt]) MAX_TRANSFER_SIZE_bit_cg[bt] = new();
             end

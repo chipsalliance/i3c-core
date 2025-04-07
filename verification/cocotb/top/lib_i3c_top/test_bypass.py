@@ -793,8 +793,6 @@ def csr_access_test_data(tb, rd_acc=Access.Priv, wr_acc=Access.Priv):
             # by 'recovery_executor' to 'IndirectFifoDepth' parameter
             if reg_name == "INDIRECT_FIFO_STATUS_3" and f_name == "FIFO_SIZE":
                 data = 0x40
-            if reg_name == "INDIRECT_FIFO_STATUS_4" and f_name == "MAX_TRANSFER_SIZE":
-                data = 0x40
 
             if rd_acc == Access.Unpriv:
                 data = 0x0

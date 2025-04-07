@@ -565,15 +565,6 @@ package I3CCSR_pkg;
     typedef struct packed{
         logic [31:0] next;
         logic we;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__in_t MAX_TRANSFER_SIZE;
-    } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-        logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__in_t;
 
     typedef struct packed{
@@ -610,7 +601,6 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__in_t INDIRECT_FIFO_STATUS_1;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__in_t INDIRECT_FIFO_STATUS_2;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__in_t INDIRECT_FIFO_STATUS_3;
-        I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__in_t INDIRECT_FIFO_STATUS_4;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__in_t INDIRECT_FIFO_RESERVED;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__in_t INDIRECT_FIFO_DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__in_t;

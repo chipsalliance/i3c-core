@@ -990,12 +990,6 @@ module I3CCSR (
                     struct packed{
                         logic [31:0] next;
                         logic load_next;
-                    } MAX_TRANSFER_SIZE;
-                } INDIRECT_FIFO_STATUS_4;
-                struct packed{
-                    struct packed{
-                        logic [31:0] next;
-                        logic load_next;
                     } DATA;
                 } INDIRECT_FIFO_RESERVED;
             } SecFwRecoveryIf;
@@ -2238,11 +2232,6 @@ module I3CCSR (
                         logic [31:0] value;
                     } FIFO_SIZE;
                 } INDIRECT_FIFO_STATUS_3;
-                struct packed{
-                    struct packed{
-                        logic [31:0] value;
-                    } MAX_TRANSFER_SIZE;
-                } INDIRECT_FIFO_STATUS_4;
                 struct packed{
                     struct packed{
                         logic [31:0] value;
@@ -5996,29 +5985,7 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value;
-    // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE
-    always_comb begin
-        automatic logic [31:0] next_c;
-        automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
-        load_next_c = '0;
-        if(hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next;
-            load_next_c = '1;
-        end
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = next_c;
-        field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.load_next = load_next_c;
-    end
-    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
-        if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value <= 32'h0;
-        end else begin
-            if(field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.load_next) begin
-                field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value <= field_combo.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next;
-            end
-        end
-    end
-    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value = field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value;
+    assign hwif_out.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value = 32'h40;
     // Field: I3CCSR.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA
     always_comb begin
         automatic logic [31:0] next_c;
@@ -10312,7 +10279,7 @@ module I3CCSR (
     assign readback_array[52][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value : '0;
     assign readback_array[53][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value : '0;
     assign readback_array[54][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value : '0;
-    assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value : '0;
+    assign readback_array[55][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4 && !decoded_req_is_wr) ? 32'h40 : '0;
     assign readback_array[56][31:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED && !decoded_req_is_wr) ? field_storage.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value : '0;
     assign readback_array[57] = hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack ? hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data : '0;
     assign readback_array[58][7:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h12 : '0;

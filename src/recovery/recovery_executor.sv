@@ -681,7 +681,6 @@ module recovery_executor
     hwif_rec_o.INDIRECT_FIFO_CTRL_0.CMS.we = indirect_fifo_ctrl_0_we;
     hwif_rec_o.INDIRECT_FIFO_CTRL_1.IMAGE_SIZE.we = tti_rx_rack_i & (csr_sel == CSR_INDIRECT_FIFO_CTRL_1);
     hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.we = 1'b1;
     hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.we = '0;
   end
 
@@ -739,7 +738,6 @@ module recovery_executor
     hwif_rec_o.PROT_CAP_3.NUM_OF_CMS_REGIONS.next = '0;
     hwif_rec_o.PROT_CAP_3.MAX_RESP_TIME.next = '0;
     hwif_rec_o.PROT_CAP_3.HEARTBEAT_PERIOD.next = '0;
-    hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.next = 32'd64;  // Caliptra Subsystem Recovery Sequence specifies this to 256 bytes (64 DWORDs)
     hwif_rec_o.PROT_CAP_2.REC_PROT_VERSION.next = '0;
     hwif_rec_o.PROT_CAP_2.AGENT_CAPS.next = '0;
     hwif_rec_o.HW_STATUS.TEMP_CRITICAL.next = '0;

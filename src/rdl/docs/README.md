@@ -1906,11 +1906,12 @@ Component Memory Space (CMS):</p>
 
 |Bits|    Identifier   |Access|Reset|       Name      |
 |----|-----------------|------|-----|-----------------|
-|31:0|MAX_TRANSFER_SIZE|   r  | 0x0 |Max transfer size|
+|31:0|MAX_TRANSFER_SIZE|   r  | 0x40|Max transfer size|
 
 #### MAX_TRANSFER_SIZE field
 
 <p>Max size of the data payload in each read/write to INDIRECT_FIFO_DATA in 4B units</p>
+<p>Enforced to 256 bytes (64 DWORDs) by Caliptra Subsystem Recovery Sequence</p>
 
 ### INDIRECT_FIFO_RESERVED register
 

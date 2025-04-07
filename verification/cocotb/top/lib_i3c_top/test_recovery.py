@@ -1446,10 +1446,6 @@ def csr_access_test_data(tb):
             # by 'recovery_executor' to 'IndirectFifoDepth' parameter
             if reg_name == "INDIRECT_FIFO_STATUS_3" and f_name == "FIFO_SIZE":
                 data = 0x40
-            # The reset value of 'INDIRECT_FIFO_STATUS_4' is currently unused
-            # and tied to 0
-            if reg_name == "INDIRECT_FIFO_STATUS_4" and f_name == "MAX_TRANSFER_SIZE":
-                data = 0x0
 
             exp_rd |= data
         test_data.append([reg_name, addr, wdata, exp_rd])

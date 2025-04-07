@@ -2009,9 +2009,9 @@ reg_map = Munch.fromDict({
                 "MAX_TRANSFER_SIZE": {
                     "low": 0,
                     "mask": 4294967295,
-                    "reset": 0,
+                    "reset": 64,
                     "sw": "r",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0
