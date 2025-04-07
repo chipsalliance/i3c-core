@@ -7819,13 +7819,13 @@ Component Memory Space (CMS):</p>
 <tr class="row-even"><td><p>31:0</p></td>
 <td><p>FIFO_SIZE</p></td>
 <td><p>r</p></td>
-<td><p>0x0</p></td>
+<td><p>0x40</p></td>
 <td><p>Indirect FIFO size</p></td>
 </tr>
 </tbody>
 </table>
 <h4 id="fifo-size-field">FIFO_SIZE field<a class="headerlink" href="#fifo-size-field" title="Link to this heading">¶</a></h4>
-<p>Size of memory window specified in 4B units</p>
+<p>Size of memory window specified in 4B units. Current implementation supports only a constant size of 64.</p>
 <h3 id="indirect-fifo-status-4-register">INDIRECT_FIFO_STATUS_4 register<a class="headerlink" href="#indirect-fifo-status-4-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x160</p></li>
@@ -11047,7 +11047,7 @@ reaches termination value.</p>
   <small>
     
       Last update:
-      2025-04-02
+      2025-04-07
     
   </small>
 </div>
