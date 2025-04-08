@@ -108,7 +108,7 @@ async def i2c_mem_read(dut, i2c_addr, mem_addr, length=1):
 
 async def reset_controller(dut):
     dut.rst_ni.value = 0
-    await ClockCycles(dut.clk_i, 100)
+    await RisingEdge(dut.clk_i)
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)

@@ -57,11 +57,7 @@ async def setup_test(dut, timings=None, scl_clk_ratio=SCL_CLK_RATIO):
     dut.scl_stable_low_i.value = 0
     dut.sel_od_pp_i.value = 0
 
-    await ClockCycles(dut.clk_i, 10)
-
     await reset(dut)
-
-    await ClockCycles(dut.clk_i, 10)
 
     assert dut.tx_idle_o.value == 1
     assert dut.tx_done_o.value == 0
@@ -158,7 +154,6 @@ async def test_bit_tx_negedge(dut, value, timings, ratio):
     dut.drive_value_i.value = value
 
     await assert_drive_start(dut, value)
-    await ClockCycles(dut.clk_i, 10)
 
 
 tf = TestFactory(test_function=test_bit_tx_negedge)
@@ -177,7 +172,6 @@ async def test_bit_tx_pre_posedge(dut, value):
     dut.drive_value_i.value = value
 
     await assert_drive_start(dut, value)
-    await ClockCycles(dut.clk_i, 10)
 
 
 tf = TestFactory(test_function=test_bit_tx_pre_posedge)
@@ -194,7 +188,6 @@ async def test_bit_tx_high_level(dut, value):
     dut.drive_value_i.value = value
 
     await assert_drive_start(dut, value)
-    await ClockCycles(dut.clk_i, 10)
 
 
 tf = TestFactory(test_function=test_bit_tx_high_level)
@@ -211,7 +204,6 @@ async def test_bit_tx_low_level(dut, value):
     dut.drive_value_i.value = value
 
     await assert_drive_start(dut, value)
-    await ClockCycles(dut.clk_i, 10)
 
 
 tf = TestFactory(test_function=test_bit_tx_low_level)
@@ -241,4 +233,3 @@ async def test_byte_tx(dut):
 
     # Ensure that the bus is free
     assert dut.sda_o.value == 1
-    await ClockCycles(dut.clk_i, 10)

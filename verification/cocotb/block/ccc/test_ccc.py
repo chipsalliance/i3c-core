@@ -126,8 +126,6 @@ async def get_status(dut):
 
     # Stop the frame
     await cycle(dut.clk_i, dut.bus_stop_det_i)
-    await ClockCycles(dut.clk_i, 5)
-
     return status
 
 

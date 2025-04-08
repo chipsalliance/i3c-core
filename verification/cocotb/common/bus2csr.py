@@ -21,7 +21,7 @@ from reg_map import reg_map
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, RisingEdge, Timer, with_timeout
+from cocotb.triggers import ClockCycles, RisingEdge, with_timeout
 
 
 # Helpers
@@ -31,9 +31,8 @@ async def setup_dut(clk, rst_n, clk_period: Tuple[int, str]) -> None:
     """
     await cocotb.start(Clock(clk, *clk_period).start())
     rst_n.value = 0
-    await ClockCycles(clk, 10)
+    await ClockCycles(clk, 2)
     await RisingEdge(clk)
-    await Timer(1, units="ns")
     rst_n.value = 1
     await ClockCycles(clk, 1)
 
@@ -202,10 +201,7 @@ class AXITestInterface(FrontBusTestInterface):
 
     async def register_test_interfaces(self, *args, **kw):
         await super().register_test_interfaces(*args, **kw)
-        # TODO: Investigate if there's a neater solution
-        # wait before issuing any transactions:
-        # workaround for cocotbext-axi issuing transactions during reset
-        await ClockCycles(self.clk, 10)
+        await RisingEdge(self.rst_n)
 
     async def read_csr(
         self,

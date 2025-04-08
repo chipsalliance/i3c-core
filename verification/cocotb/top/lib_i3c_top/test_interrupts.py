@@ -12,7 +12,7 @@ from utils import format_ibi_data, get_interrupt_status
 
 import cocotb
 from cocotb.regression import TestFactory
-from cocotb.triggers import ClockCycles, Event, RisingEdge, Timer
+from cocotb.triggers import ClockCycles, Combine, RisingEdge, Timer
 
 # =============================================================================
 
@@ -63,6 +63,14 @@ async def test_setup(dut, timeout_us=50):
     return i3c_controller, i3c_target, tb
 
 
+async def wait_with_timeout(clk, sig, exp, timeout=10):
+    while sig.value != exp and timeout > 0:
+        timeout -= 1
+        await RisingEdge(clk)
+
+    assert sig.value == exp
+
+
 # =============================================================================
 
 
@@ -78,15 +86,14 @@ async def test_rx_desc_stat(dut):
     await tb.write_csr_field(csr.base_addr, csr.RX_DESC_STAT_EN, 1)
 
     # Ensure that irq is low
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
+    await wait_with_timeout(tb.clk, irq, 0)
 
     # Send a private write to the target
     async def i3c_task():
         data = [random.randint(0, 255) for i in range(4)]
         await i3c_controller.i3c_write(TARGET_ADDRESS, data)
 
-    cocotb.start_soon(i3c_task())
+    task = cocotb.start_soon(i3c_task())
 
     # Wait for the interrupt
     while irq.value == 0:
@@ -96,11 +103,9 @@ async def test_rx_desc_stat(dut):
     await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
 
     # Ensure that irq is low
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
-
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
+    await wait_with_timeout(tb.clk, irq, 0)
+    # Wait for the I3C transfer to complete
+    await task
 
 
 @cocotb.test()
@@ -124,12 +129,11 @@ async def test_tx_desc_stat(dut):
     #await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(4), 4)
 
     # Send a private read to the target
-    async def i3c_task(evt):
+    async def i3c_task():
         data = list(await i3c_controller.i3c_read(TARGET_ADDRESS, 4))
         assert data == [0xEF, 0xBE, 0xAD, 0xDE]
-        evt.set()
 
-    async def bus_task(evt):
+    async def bus_task():
         # Wait for the interrupt
         while irq.value == 0:
             await RisingEdge(tb.clk)
@@ -139,29 +143,20 @@ async def test_tx_desc_stat(dut):
         # Clear the interrupt
         csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
         await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT, 1)
-        evt.set()
 
-    done_i3c = Event()
-    done_bus = Event()
-    cocotb.start_soon(i3c_task(done_i3c))
-    cocotb.start_soon(bus_task(done_bus))
+    i3c_t = cocotb.start_soon(i3c_task())
+    bus_t = cocotb.start_soon(bus_task())
 
-    # Wait for the I3C transfer to complete
-    await done_i3c.wait()
-
-    # Wait for the bus task transfer to complete
-    await done_bus.wait()
+    # Wait for the I3C transfer and bus task to complete
+    await Combine(i3c_t, bus_t)
 
     # Clear the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
     await tb.write_csr_field(csr.base_addr, csr.TX_DESC_COMPLETE, 1)
 
     # Ensure that irq is low
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
+    await wait_with_timeout(tb.clk, irq, 0)
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
 
 @cocotb.test()
 async def test_ibi_done(dut):
@@ -181,8 +176,7 @@ async def test_ibi_done(dut):
     await tb.write_csr_field(csr.base_addr, csr.IBI_DONE_EN, 1)
 
     # Ensure interrupt status
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
+    await wait_with_timeout(tb.clk, irq, 0)
 
     intrs = await get_interrupt_status(tb)
     assert intrs["IBI_DONE"] == 0
@@ -197,8 +191,7 @@ async def test_ibi_done(dut):
     await i3c_controller.wait_for_ibi()
 
     # Ensure interrupt status
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 1
+    await wait_with_timeout(tb.clk, irq, 1)
 
     intrs = await get_interrupt_status(tb)
     assert intrs["IBI_DONE"] == 1
@@ -207,14 +200,10 @@ async def test_ibi_done(dut):
     dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
 
     # Ensure interrupt status
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
+    await wait_with_timeout(tb.clk, irq, 0)
 
     intrs = await get_interrupt_status(tb)
     assert intrs["IBI_DONE"] == 0
-
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
 
 
 async def test_interrupt_force(dut, fields):
@@ -229,8 +218,7 @@ async def test_interrupt_force(dut, fields):
     f_ena, f_force, f_sts = fields
 
     # Ensure that irq is low
-    await ClockCycles(tb.clk, 10)
-    assert irq.value == 0
+    await wait_with_timeout(tb.clk, irq, 0)
 
     # Disable the interrupt
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
@@ -242,8 +230,9 @@ async def test_interrupt_force(dut, fields):
     await tb.write_csr_field(csr.base_addr, getattr(csr, f_force), 0)
 
     # Ensure that interrupt does not get asserted
-    await ClockCycles(tb.clk, 20)
-    assert irq.value == 0
+    for _ in range(20):
+        await RisingEdge(tb.clk)
+        assert irq.value == 0
 
     # Ensure that the status is 0
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
@@ -280,9 +269,6 @@ async def test_interrupt_force(dut, fields):
     csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
     sts = await tb.read_csr_field(csr.base_addr, getattr(csr, f_sts))
     assert sts == 0
-
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
 
 
 tf = TestFactory(test_function=test_interrupt_force)

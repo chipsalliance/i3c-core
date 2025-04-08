@@ -19,7 +19,6 @@ async def setup(dut):
     dut.t_bus_available_i.value = 10
     dut.t_bus_idle_i.value = 50
     dut.restart_counter_i.value = 0
-    await ClockCycles(dut.clk_i, 10)
 
 
 @cocotb.test()

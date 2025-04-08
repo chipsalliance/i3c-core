@@ -8,7 +8,7 @@ from cocotbext_i3c.i3c_controller import I3cController
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge
+from cocotb.triggers import ReadOnly, RisingEdge
 
 TGT_ADR = 0x5A
 
@@ -37,7 +37,6 @@ async def test_setup(dut):
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-    await ClockCycles(tb.clk, 50)
     await boot_init(tb)
     return i3c_controller, tb
 
@@ -84,7 +83,5 @@ async def test_target_escalated_reset(dut):
     await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=TGT_ADR, count=2)
 
     await do_pattern_reset(dut, tb, i3c_controller)
-    await ClockCycles(tb.clk, 10)
 
     await do_pattern_reset(dut, tb, i3c_controller, True)
-    await ClockCycles(tb.clk, 10)
