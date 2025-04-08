@@ -19,7 +19,6 @@ async def setup(dut):
     dut.t_hd_dat_i.value = 0x05
     dut.t_r_i.value = 0x02
     dut.t_f_i.value = 0x02
-    await ClockCycles(dut.clk_i, 10)
 
 
 async def count_high_cycles(clk, sig, e_terminate):
@@ -100,5 +99,3 @@ async def test_bus_monitor(dut: SimHandleBase):
         assert num_stops == 1
 
         e_terminate.clear()
-
-    await ClockCycles(clk, 10)

@@ -10,7 +10,6 @@ from cocotbext_i3c.i3c_controller import I3cController
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles
 
 TGT_ADR = 0x5A
 
@@ -39,7 +38,6 @@ async def test_setup(dut):
 
     tb = I3CTopTestInterface(dut)
     await tb.setup()
-    await ClockCycles(tb.clk, 50)
     await boot_init(tb)
     return i3c_controller, i3c_target, tb
 
@@ -50,7 +48,6 @@ async def test_ccc_getstatus(dut):
     PENDING_INTERRUPT_MASK = 0b1111
 
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
     interrupt_status_reg_addr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr
     pending_interrupt_field = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
     interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
@@ -87,7 +84,6 @@ async def test_ccc_setdasa(dut):
     VIRT_DYNAMIC_ADDR = 0x53
 
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
         ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
@@ -140,7 +136,6 @@ async def test_ccc_setnewda(dut):
     NEW_VIRT_DYNAMIC_ADDR = 0x21
 
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
@@ -197,7 +192,6 @@ async def test_ccc_rstdaa(dut):
 
     DYNAMIC_ADDR = 0x52
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
     dynamic_address_reg_valid = (
@@ -238,7 +232,6 @@ async def test_ccc_getbcr(dut):
     command = CCC.DIRECT.GETBCR
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
     bcr = responses[0][1]
@@ -254,7 +247,6 @@ async def test_ccc_getdcr(dut):
     command = CCC.DIRECT.GETDCR
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
     dcr = responses[0][1]
@@ -271,7 +263,6 @@ async def test_ccc_getmwl(dut):
     command = CCC.DIRECT.GETMWL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=2)
     [mwl_msb, mwl_lsb] = responses[0][1]
@@ -289,7 +280,6 @@ async def test_ccc_getmrl(dut):
     command = CCC.DIRECT.GETMRL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=3)
     [mrl_msb, mrl_lsb, ibi_payload_size] = responses[0][1]
@@ -305,7 +295,6 @@ async def test_ccc_setaasa(dut):
     STATIC_ADDR = 0x5A
     I3C_BCAST_SETAASA = 0x29
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR
     dynamic_address_reg_valid = tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID
@@ -330,7 +319,6 @@ async def test_ccc_getpid(dut):
     command = CCC.DIRECT.GETPID
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=6)
     pid = responses[0][1]
@@ -364,7 +352,6 @@ async def test_ccc_enec_disec_direct(dut):
     _EVENT_TOGGLE_BYTE = 0b00001011
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Read default values
     event_en = await read_target_events(tb)
@@ -398,7 +385,6 @@ async def test_ccc_enec_disec_bcast(dut):
     _EVENT_TOGGLE_BYTE = 0b00001011
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Read default values
     event_en = await read_target_events(tb)
@@ -425,7 +411,6 @@ async def test_ccc_setmwl_direct(dut):
     command = CCC.DIRECT.SETMWL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send direct SETMWL
     mwl_msb = 0xAB
@@ -444,7 +429,6 @@ async def test_ccc_setmrl_direct(dut):
     command = CCC.DIRECT.SETMRL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send direct SETMRL
     mrl_msb = 0xAB
@@ -463,7 +447,6 @@ async def test_ccc_setmwl_bcast(dut):
     command = CCC.BCAST.SETMWL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send direct SETMWL
     mwl_msb = 0xAB
@@ -482,7 +465,6 @@ async def test_ccc_setmrl_bcast(dut):
     command = CCC.BCAST.SETMRL
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send direct SETMRL
     mrl_msb = 0xAB
@@ -500,7 +482,6 @@ async def test_ccc_rstact_direct(dut):
     command = CCC.DIRECT.RSTACT
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send directed RSTACT
     rst_action = 0xAA
@@ -524,7 +505,6 @@ async def test_ccc_rstact_direct(dut):
     await i3c_controller.target_reset(I3cTargetResetAction.RESET_PERIPHERAL_ONLY)
     assert dut.peripheral_reset_o == 1
     assert dut.escalated_reset_o == 0
-    await ClockCycles(tb.clk, 50)
 
 
 @cocotb.test()
@@ -532,7 +512,6 @@ async def test_ccc_rstact_bcast(dut):
     command = CCC.BCAST.RSTACT
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Send broadcast RSTACT
     rst_action = 0xAA
@@ -549,7 +528,6 @@ async def test_ccc_rstact_bcast(dut):
     await i3c_controller.target_reset(I3cTargetResetAction.RESET_WHOLE_TARGET)
     assert dut.peripheral_reset_o == 0
     assert dut.escalated_reset_o == 1
-    await ClockCycles(tb.clk, 50)
 
 
 @cocotb.test()
@@ -565,7 +543,6 @@ async def test_ccc_direct_multiple_wr(dut):
     result = True
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     cccs = [
         (TGT_ADR - 1, (0x00, 0xA0)),
@@ -603,7 +580,6 @@ async def test_ccc_direct_multiple_rd(dut):
     result = True
 
     i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
 
     # Set MWL in the target
     acks = await i3c_controller.i3c_ccc_write(
@@ -612,8 +588,6 @@ async def test_ccc_direct_multiple_rd(dut):
     if acks != [True]:
         dut._log.error("Initial SETMWL failed")
         assert False
-
-    await ClockCycles(tb.clk, 50)
 
     # Issue multiple directed GETMWL
     addrs = [TGT_ADR - 1, TGT_ADR, TGT_ADR, TGT_ADR + 2]

@@ -139,5 +139,3 @@ async def test_rx(dut: SimHandleBase):
     cocotb.start_soon(tx_queue.bfm(dut))
 
     await bus_tx(dut)
-
-    await ClockCycles(clk, 50)

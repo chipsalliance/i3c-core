@@ -12,7 +12,7 @@ from utils import SequenceFailed
 
 import cocotb
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, RisingEdge, Timer
+from cocotb.triggers import ClockCycles, RisingEdge
 
 # TODO: obtain numbers from RDL description
 
@@ -202,9 +202,8 @@ class HCIBaseTestInterface:
 
     async def _reset(self):
         self.rst_n.value = 0
-        await ClockCycles(self.clk, 10)
+        await ClockCycles(self.clk, 2)
         await RisingEdge(self.clk)
-        await Timer(1, units="ns")
         self.rst_n.value = 1
         await RisingEdge(self.clk)
 

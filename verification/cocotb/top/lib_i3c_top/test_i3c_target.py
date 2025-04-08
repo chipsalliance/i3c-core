@@ -158,7 +158,7 @@ async def test_i3c_target_write(dut):
             recv_data.append(rx_data)
 
     # Start the device firmware agent
-    cocotb.start_soon(rx_agent())
+    rx = cocotb.start_soon(rx_agent())
 
     # Send Private Writes on I3C. The agent will handle them as their come
     for test_vec in test_data:
@@ -166,7 +166,7 @@ async def test_i3c_target_write(dut):
         await ClockCycles(tb.clk, 10)
 
     # Wait
-    await ClockCycles(tb.clk, 100)
+    await rx
 
     # Compare
     dut._log.info(
@@ -228,10 +228,7 @@ async def test_i3c_target_read(dut):
         tx_data = await make_transfer()
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
         rx_data = list(rx_data)
-        await Timer(1, "us")
         compare(tx_data, rx_data)
-
-    await Timer(1, "us")
 
     # Test N consecutive transfers. First enqueue, then service
     dut._log.info("N consecutive transfers, enqueued then serviced")
@@ -242,10 +239,7 @@ async def test_i3c_target_read(dut):
     for i in range(3):
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data[i]))
         rx_data = list(rx_data)
-        await Timer(1, "us")
         compare(tx_data[i], rx_data)
-
-    await Timer(1, "us")
 
     # Test N consecutive transfers. First enqueue, then service. Occasionally
     # read less data.
@@ -263,10 +257,7 @@ async def test_i3c_target_read(dut):
 
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, lnt)
         rx_data = list(rx_data)
-        await Timer(1, "us")
         compare(tx_data[i], rx_data, lnt)
-
-    await Timer(1, "us")
 
     # Test N consecutive transfers. Do not queue new transfers before completion
     dut._log.info("N consecutive transfers, one at a time (again)")
@@ -274,11 +265,7 @@ async def test_i3c_target_read(dut):
         tx_data = await make_transfer()
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
         rx_data = list(rx_data)
-        await Timer(1, "us")
         compare(tx_data, rx_data)
-
-    # Dummy wait
-    await Timer(1, "us")
 
 
 @cocotb.test()
@@ -330,8 +317,6 @@ async def test_i3c_target_ibi(dut):
         )
         result = False
 
-    await ClockCycles(tb.clk, 50)
-
     # Write descriptor to the TTI IBI queue with some data. Check different
     # data lengths to exercise 32-bit to 8-bit conversion that happens inside
     # IBI module
@@ -367,8 +352,6 @@ async def test_i3c_target_ibi(dut):
                 f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
             )
             result = False
-
-        await ClockCycles(tb.clk, 50)
 
     # Report the test result
     assert result
@@ -445,9 +428,6 @@ async def test_i3c_target_ibi_retry(dut):
         )
         result = False
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
-
     # Report the test result
     assert result
 
@@ -492,9 +472,6 @@ async def test_i3c_target_ibi_data(dut):
         )
         result = False
 
-    # Wait
-    await ClockCycles(tb.clk, 50)
-
     # Do another IBI to check if remaining data from the TTI IBI queue got
     # flushed correctly.
     mdb = 0xAA
@@ -515,9 +492,6 @@ async def test_i3c_target_ibi_data(dut):
             )
         )
         result = False
-
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
 
     # Report the test result
     assert result
@@ -603,9 +577,6 @@ async def test_i3c_target_writes_and_reads(dut):
 
     assert tx_test_data == recv_data
 
-    # Dummy wait
-    await ClockCycles(tb.clk, 10)
-
 
 @cocotb.test()
 async def test_i3c_target_pwrite_err_detection(dut):
@@ -658,6 +629,3 @@ async def test_i3c_target_pwrite_err_detection(dut):
             tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
         )
         assert err_status == 0, "Unexpected error detected"
-        await ClockCycles(tb.clk, 100)
-
-    await ClockCycles(tb.clk, 100)

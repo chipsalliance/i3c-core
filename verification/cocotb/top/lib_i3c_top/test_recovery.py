@@ -120,7 +120,7 @@ async def test_virtual_write(dut):
         tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
     )
 
-    await ClockCycles(tb.clk, 50)
+    await ClockCycles(tb.clk, 2)
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
         ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
@@ -281,7 +281,6 @@ async def test_virtual_write_alternating(dut):
         await tb.write_csr(
             tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, int2dword(status), 4
         )
-        await ClockCycles(tb.clk, 50)
 
 
 @cocotb.test()

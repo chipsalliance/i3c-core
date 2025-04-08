@@ -20,7 +20,6 @@ async def setup(dut):
     dut.t_r_i.value = 0x02
     dut.t_f_i.value = 0x02
     dut.is_in_hdr_mode_i.value = 0
-    await ClockCycles(dut.clk_i, 10)
 
 
 async def count_high_cycles(clk, sig, e_terminate):
@@ -114,7 +113,7 @@ async def test_target_reset_detection(dut: SimHandleBase):
     )
     await i3c_controller.target_reset()
 
-    await ClockCycles(dut.clk_i, 32)
+    await ClockCycles(dut.clk_i, 10)
     e_terminate.set()
     await RisingEdge(dut.clk_i)
 
@@ -123,5 +122,3 @@ async def test_target_reset_detection(dut: SimHandleBase):
     assert num_resets == 1
 
     e_terminate.clear()
-
-    await ClockCycles(dut.clk_i, 10)

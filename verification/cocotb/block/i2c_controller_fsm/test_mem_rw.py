@@ -38,13 +38,12 @@ async def test_mem_rw(dut):
 
     # Execute single I2C command test -----------------------------------------
     await i2c_cmd(dut, I2C_REG_ADDR << 1, sta_before=True, sto_after=True)
-    await ClockCycles(dut.clk_i, 100)
 
     # Execute single read & write test ----------------------------------------
     # Write single byte to I2C memory
     TEST_PAYLOAD = [random.randint(0, 255)]
     await i2c_mem_write(dut, I2C_DEV_ADDR, I2C_REG_ADDR, TEST_PAYLOAD)
-    await ClockCycles(dut.clk_i, 100)
+    await ClockCycles(dut.clk_i, 10)
 
     # Read the byte I2C memory
     received = await i2c_mem_read(dut, I2C_DEV_ADDR, I2C_REG_ADDR, 1)
@@ -57,11 +56,8 @@ async def test_mem_rw(dut):
     # Write test payload to I2C memory
     TEST_PAYLOAD = [random.randint(0, 255) for _ in range(20)]
     await i2c_mem_write(dut, I2C_DEV_ADDR, I2C_REG_ADDR, TEST_PAYLOAD)
-    await ClockCycles(dut.clk_i, 100)
+    await ClockCycles(dut.clk_i, 10)
 
     # Read payload from I2C memory
     received = await i2c_mem_read(dut, I2C_DEV_ADDR, I2C_REG_ADDR, len(TEST_PAYLOAD))
     assert received == TEST_PAYLOAD
-
-    # Dummy
-    await ClockCycles(dut.clk_i, 100)

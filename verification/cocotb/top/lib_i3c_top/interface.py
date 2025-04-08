@@ -6,7 +6,6 @@ from reg_map import reg_map
 
 import cocotb
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles
 
 
 class I3CTopTestInterface:
@@ -39,5 +38,4 @@ class I3CTopTestInterface:
             self.dut.disable_id_filtering_i.value = 1
 
         await self.busIf.register_test_interfaces(fclk)
-        await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)

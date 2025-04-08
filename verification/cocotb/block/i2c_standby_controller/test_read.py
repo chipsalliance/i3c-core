@@ -16,7 +16,7 @@ from cocotb.triggers import ClockCycles, FallingEdge
 
 async def reset(dut):
     dut.rst_ni.value = 0
-    await ClockCycles(dut.clk_i, 100)
+    await ClockCycles(dut.clk_i, 2)
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)

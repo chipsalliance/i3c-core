@@ -59,7 +59,6 @@ async def initialize(dut, timeout=50):
     tb = get_frontend_bus_if()(dut)
     tb.log = dut._log
     await tb.register_test_interfaces()
-    await ClockCycles(tb.clk, 20)
     await reset_n(tb.clk, tb.rst_n, cycles=5)
 
     # Generate test data

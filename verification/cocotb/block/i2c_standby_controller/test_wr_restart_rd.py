@@ -17,7 +17,7 @@ from cocotb.triggers import ClockCycles, FallingEdge
 
 async def reset(dut):
     dut.rst_ni.value = 0
-    await ClockCycles(dut.clk_i, 100)
+    await ClockCycles(dut.clk_i, 2)
     await FallingEdge(dut.clk_i)
     dut.rst_ni.value = 1
     await ClockCycles(dut.clk_i, 2)
@@ -185,7 +185,6 @@ async def test_wr_restart_rd(dut):
     for request, response in test_data:
         dut._log.info(f"Testing stimuli: {(request, response)}")
         await test_write_restart_read_sequence(dut, master, TARGET_ADDR, request, response, 6000)
-        await ClockCycles(dut.clk_i, 100)
 
     # for request, response in test_data:
     #    await master.write(TARGET_ADDR, request)
