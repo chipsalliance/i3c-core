@@ -5,7 +5,7 @@ attrs==23.2.0
 black==24.4.2
 click==8.1.7
 cocotb==1.8.1
-cocotb-AHB @ git+https://github.com/antmicro/cocotb-ahb@30715dcee02d038a7527767fe478d68815343c87
+cocotb-AHB @ git+https://github.com/antmicro/cocotb-ahb@964eca08f2b524e68af9e002e48812649bc9308c
 cocotb-bus==0.2.1
 cocotb-coverage==1.2.0
 cocotb-test==0.2.5
