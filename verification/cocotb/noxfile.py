@@ -19,7 +19,7 @@ simulators = [os.getenv("SIMULATOR", "verilator")]
 
 # Coverage types to collect
 if os.getenv("TEST_COVERAGE_ENABLE", "0") == "1":
-    coverage_types = ["vcs"] if "vcs" in simulators else ["branch", "toggle"]
+    coverage_types = ["vcs"] if "vcs" in simulators else ["all"]
 else:
     coverage_types = None
 
