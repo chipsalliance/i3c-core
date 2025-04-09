@@ -317,7 +317,7 @@ INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
 
 ### `ibi_done`
 
-Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153)
+Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L166)
 
 Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.

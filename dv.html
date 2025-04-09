@@ -2507,7 +2507,7 @@ over I3C and waits for irq_o assertion. Once the interrupt is
 asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
 INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.</p>
 <h5 id="ibi-done"><code class="docutils literal notranslate"><span class="pre">ibi_done</span></code><a class="headerlink" href="#ibi-done" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L153">ibi_done</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L166">ibi_done</a></p>
 <p>Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
 Issues and IBI, waits for it to be serviced by the controller.
@@ -2719,7 +2719,7 @@ The I3C bus clock is set to 12.5 MHz.</p>
   <small>
     
       Last update:
-      2025-04-07
+      2025-04-09
     
   </small>
 </div>

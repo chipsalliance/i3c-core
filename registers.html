@@ -3318,6 +3318,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tx-desc-complete-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>COMPLETE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#id29" class="md-nav__link">
     <span class="md-ellipsis">TRANSFER_<wbr>ERR_<wbr>STAT field</span>
   </a>
@@ -3415,6 +3422,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tx-desc-complete-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>COMPLETE_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#id31" class="md-nav__link">
     <span class="md-ellipsis">TRANSFER_<wbr>ERR_<wbr>STAT_<wbr>EN field</span>
   </a>
@@ -3507,6 +3521,13 @@
           <li class="md-nav__item">
   <a href="#transfer-abort-stat-force-field" class="md-nav__link">
     <span class="md-ellipsis">TRANSFER_<wbr>ABORT_<wbr>STAT_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-desc-complete-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>COMPLETE_<wbr>FORCE field</span>
   </a>
   
 </li>
@@ -9321,7 +9342,13 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p>0x0</p></td>
 <td><p>TRANSFER_ABORT_STAT</p></td>
 </tr>
-<tr class="row-even"><td><p>31</p></td>
+<tr class="row-even"><td><p>26</p></td>
+<td><p>TX_DESC_COMPLETE</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DESC_COMPLETE</p></td>
+</tr>
+<tr class="row-odd"><td><p>31</p></td>
 <td><p>TRANSFER_ERR_STAT</p></td>
 <td><p>rw, woclr</p></td>
 <td><p>0x0</p></td>
@@ -9353,6 +9380,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.</p>
 <h4 id="id28">TRANSFER_ABORT_STAT field<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
 <p>Bus aborted transaction</p>
+<h4 id="tx-desc-complete-field">TX_DESC_COMPLETE field<a class="headerlink" href="#tx-desc-complete-field" title="Link to this heading">¶</a></h4>
+<p>Read Transaction on the I3C Bus completede</p>
 <h4 id="id29">TRANSFER_ERR_STAT field<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
 <p>Bus error occurred</p>
 <h3 id="interrupt-enable-register">INTERRUPT_ENABLE register<a class="headerlink" href="#interrupt-enable-register" title="Link to this heading">¶</a></h3>
@@ -9438,7 +9467,13 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p>0x0</p></td>
 <td><p>TRANSFER_ABORT_STAT_EN</p></td>
 </tr>
-<tr class="row-odd"><td><p>31</p></td>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>TX_DESC_COMPLETE_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DESC_COMPLETE_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>31</p></td>
 <td><p>TRANSFER_ERR_STAT_EN</p></td>
 <td><p>rw</p></td>
 <td><p>0x0</p></td>
@@ -9468,6 +9503,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Enables the corresponding interrupt bit <code>IBI_DONE</code></p>
 <h4 id="id30">TRANSFER_ABORT_STAT_EN field<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT</code></p>
+<h4 id="tx-desc-complete-en-field">TX_DESC_COMPLETE_EN field<a class="headerlink" href="#tx-desc-complete-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TX_DESC_COMPLETE_EN</code></p>
 <h4 id="id31">TRANSFER_ERR_STAT_EN field<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT</code></p>
 <h3 id="interrupt-force-register">INTERRUPT_FORCE register<a class="headerlink" href="#interrupt-force-register" title="Link to this heading">¶</a></h3>
@@ -9553,7 +9590,13 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p>0x0</p></td>
 <td><p>TRANSFER_ABORT_STAT_FORCE</p></td>
 </tr>
-<tr class="row-odd"><td><p>31</p></td>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>TX_DESC_COMPLETE_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DESC_COMPLETE_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>31</p></td>
 <td><p>TRANSFER_ERR_STAT_FORCE</p></td>
 <td><p>rw</p></td>
 <td><p>0x0</p></td>
@@ -9583,6 +9626,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Enables the corresponding interrupt bit <code>IBI_DONE_FORCE</code></p>
 <h4 id="transfer-abort-stat-force-field">TRANSFER_ABORT_STAT_FORCE field<a class="headerlink" href="#transfer-abort-stat-force-field" title="Link to this heading">¶</a></h4>
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ABORT_STAT_FORCE</code></p>
+<h4 id="tx-desc-complete-force-field">TX_DESC_COMPLETE_FORCE field<a class="headerlink" href="#tx-desc-complete-force-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TX_DESC_COMPLETE_FORCE</code></p>
 <h4 id="transfer-err-stat-force-field">TRANSFER_ERR_STAT_FORCE field<a class="headerlink" href="#transfer-err-stat-force-field" title="Link to this heading">¶</a></h4>
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT_FORCE</code></p>
 <h3 id="rx-desc-queue-port-register">RX_DESC_QUEUE_PORT register<a class="headerlink" href="#rx-desc-queue-port-register" title="Link to this heading">¶</a></h3>
@@ -11047,7 +11092,7 @@ reaches termination value.</p>
   <small>
     
       Last update:
-      2025-04-07
+      2025-04-09
     
   </small>
 </div>
