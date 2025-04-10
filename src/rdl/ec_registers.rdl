@@ -5,6 +5,7 @@
 `include "soc_management_interface.rdl"
 `include "controller_config.rdl"
 `include "standby_controller_mode.rdl"
+`include "../i3c_defines.svh"
 
 regfile ECRegisters #(
     bit tti_rx_desc_fifo_size = 0x5, // 64 DWORDs by default
@@ -18,13 +19,16 @@ regfile ECRegisters #(
     bit virtual_pid_lo = 0x0
 ){
     name = "Extended Capabilities";
+`ifdef TARGET_SUPPORT
     SecureFirmwareRecoveryInterfaceRegisters SecFwRecoveryIf @ 0x0;
+`endif
     StandbyControllerModeRegisters #(
         .pid_hi(pid_hi),
         .pid_lo(pid_lo),
         .virtual_pid_hi(virtual_pid_hi),
         .virtual_pid_lo(virtual_pid_lo)
     ) StdbyCtrlMode;
+`ifdef TARGET_SUPPORT
     TargetTransactionInterfaceRegisters #(
         .rx_desc_fifo_size(tti_rx_desc_fifo_size),
         .tx_desc_fifo_size(tti_tx_desc_fifo_size),
@@ -32,6 +36,7 @@ regfile ECRegisters #(
         .tx_fifo_size(tti_tx_fifo_size),
         .ibi_fifo_size(tti_ibi_fifo_size)
     ) TTI;
+`endif
     SoCManagementInterfaceRegisters SoCMgmtIf;
     ControllerConfigRegisters CtrlCfg;
     reg {

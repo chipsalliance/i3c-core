@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 `include "i3c_defines.svh"
 
-module axi_adapter #(
-    localparam int unsigned CsrAddrWidth = 12,
-    localparam int unsigned CsrDataWidth = 32,
+module axi_adapter
+  import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
+  import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
+#(
+    localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
+    localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
     parameter int unsigned AxiDataWidth = 64,
     parameter int unsigned AxiAddrWidth = 32,
@@ -136,7 +139,7 @@ module axi_adapter #(
     axi.arvalid = arvalid_i;
     arready_o = axi.arready;
     axi.arid = arid_i;
-    axi.araddr = araddr_i;
+    axi.araddr = araddr_i[CsrAddrWidth-1:0];
     axi.arsize = arsize_i;
     axi.arlen = arlen_i;
     axi.arburst = arburst_i;
@@ -157,7 +160,7 @@ module axi_adapter #(
     axi.awvalid = awvalid_i;
     awready_o   = axi.awready;
     axi.awid    = awid_i;
-    axi.awaddr  = awaddr_i;
+    axi.awaddr  = awaddr_i[CsrAddrWidth-1:0];
     axi.awsize  = awsize_i;
     axi.awlen   = awlen_i;
     axi.awburst = awburst_i;
@@ -209,7 +212,7 @@ module axi_adapter #(
 
       // Component interface
       .dv(i3c_req_dv),
-      .addr(i3c_req_addr),
+      .addr(i3c_req_addr[CsrAddrWidth-1:0]),
       .write(i3c_req_write),
       .user(i3c_req_user),
       .id(i3c_req_id),

@@ -21,7 +21,7 @@ module tti
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-    // I3C CSR access interface
+    // Target Transaction Interface CSRs
     input  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_i,
     output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t  hwif_tti_o,
 

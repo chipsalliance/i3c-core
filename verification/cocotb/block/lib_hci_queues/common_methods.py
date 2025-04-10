@@ -1,17 +1,43 @@
-# SPDX-License-Identifier: Apache-2.0
-
 from random import randint
 
+from hci_queues import HCIQueuesTestInterface
+from tti_queues import TTIQueuesTestInterface
+
+from cocotb.handle import SimHandleBase
 from bus2csr import dword2int, int2dword
 from hci import HCIBaseTestInterface
-from hci_queues import HCIQueuesTestInterface
 from reg_map import reg_map
-from tti_queues import TTIQueuesTestInterface
 from utils import clog2
 
-import cocotb
-from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge
+
+
+async def should_be_empty_after_rst(dut: SimHandleBase, if_name: str, queue: str):
+    assert if_name in ["hci", "tti"]
+    if if_name == "hci":
+        interface = HCIQueuesTestInterface(dut)
+    elif if_name == "tti":
+        interface = TTIQueuesTestInterface(dut)
+    else:
+        raise ValueError(f"Unsupported Queues type: {if_name}")
+    await interface.setup()  # Reset is performed with the setup
+    assert interface.get_empty(queue) == 1, "Command queue should be empty after reset"
+
+
+async def test_write(data, write_handle):
+    for e in data:
+        await write_handle(e)
+
+
+async def test_read(data, read_handle):
+    for e in data:
+        received_desc = await read_handle()
+        assert e == received_desc, f"Expected: {hex(e)}, got: {hex(received_desc)}"
+
+
+async def test_write_read(data, write_handle, read_handle):
+    await test_write(data, write_handle)
+    await test_read(data, read_handle)
 
 
 class QueueThldHandler:
@@ -63,9 +89,7 @@ class QueueThldHandler:
             self.thld_reg_addr = reg_map.PIOCONTROL.QUEUE_THLD_CTRL.base_addr
             self.thld_reg_field_size = 8
         else:
-            raise ValueError(
-                f"Unsupported Queue name '{name}', should be one of: {list(offset.keys())}"
-            )
+            raise ValueError(f"Unsupported Queue name '{name}', should be one of: {list(offset.keys())}")
         self.name = name.removeprefix("tti_")
 
     async def adjust_thld_to_boundary(self, interface, new_thld):
@@ -112,16 +136,12 @@ class QueueThldHandler:
 
     async def set_new_start_thld(self, interface, new_thld):
         interface.log.debug(f"Setting start threshold value to {new_thld}")
-        new_thld_reg_value = await self.get_new_thld_reg_value(
-            interface.read_csr, self.thld_start_field_off, new_thld
-        )
+        new_thld_reg_value = await self.get_new_thld_reg_value(interface.read_csr, self.thld_start_field_off, new_thld)
         await interface.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
 
     async def set_new_ready_thld(self, interface, new_thld):
         interface.log.debug(f"Setting ready threshold value to {new_thld}")
-        new_thld_reg_value = await self.get_new_thld_reg_value(
-            interface.read_csr, self.thld_ready_field_off, new_thld
-        )
+        new_thld_reg_value = await self.get_new_thld_reg_value(interface.read_csr, self.thld_ready_field_off, new_thld)
         await interface.write_csr(self.thld_reg_addr, new_thld_reg_value, 4)
 
     async def get_curr_thld(self, read_handle, field_off):
@@ -387,9 +407,7 @@ async def should_setup_ready_threshold(interface: HCIBaseTestInterface, q: Queue
     """
     ready_thld = randint(1, 2**q.thld_reg_field_size - 1)
     expected_ready_thld = (
-        await q.adjust_thld_to_boundary(interface, ready_thld)
-        if q.should_limit_ready_thld()
-        else ready_thld
+        await q.adjust_thld_to_boundary(interface, ready_thld) if q.should_limit_ready_thld() else ready_thld
     )
 
     # Setup threshold through appropriate register
@@ -416,75 +434,7 @@ async def should_setup_ready_threshold(interface: HCIBaseTestInterface, q: Queue
     await RisingEdge(interface.clk)
 
 
-@cocotb.test()
-async def test_cmd_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_setup_ready_threshold(interface, CmdQueueThldHandler())
-
-
-@cocotb.test()
-async def test_rx_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_setup_start_threshold(interface, RxQueueThldHandler())
-    await should_setup_ready_threshold(interface, RxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tx_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_setup_start_threshold(interface, TxQueueThldHandler())
-    await should_setup_ready_threshold(interface, TxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_resp_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_setup_ready_threshold(interface, RespQueueThldHandler())
-
-
-@cocotb.test()
-async def test_ibi_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_setup_ready_threshold(interface, IbiQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_tx_desc_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_setup_ready_threshold(interface, TTITxDescQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_rx_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    # TODO: Enable start threshold test once it's added to the design
-    # await should_setup_start_threshold(interface, TTIRxQueueThldHandler())
-    await should_setup_ready_threshold(interface, TTIRxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_tx_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    # TODO: Enable start threshold test once it's added to the design
-    # await should_setup_start_threshold(interface, TTITxQueueThldHandler())
-    await should_setup_ready_threshold(interface, TTITxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_rx_desc_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_setup_ready_threshold(interface, TTIRxDescQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_ibi_setup_threshold(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_setup_ready_threshold(interface, TtiIbiQueueThldHandler())
-
-
-async def should_raise_start_thld_trig_receiver(
-    interface: HCIBaseTestInterface, q: QueueThldHandler
-):
+async def should_raise_start_thld_trig_receiver(interface: HCIBaseTestInterface, q: QueueThldHandler):
     """
     Sets up a start threshold of the read queue and checks whether the trigger
     is properly raised at different levels of the queue fill.
@@ -542,9 +492,7 @@ async def should_raise_start_thld_trig_receiver(
     )
 
 
-async def should_raise_ready_thld_trig_receiver(
-    interface: HCIBaseTestInterface, q: QueueThldHandler
-):
+async def should_raise_ready_thld_trig_receiver(interface: HCIBaseTestInterface, q: QueueThldHandler):
     """
     Sets up a ready threshold of the read queue and checks whether the trigger
     is properly raised at different levels of the queue fill.
@@ -595,95 +543,7 @@ async def should_raise_ready_thld_trig_receiver(
     )
 
 
-@cocotb.test()
-async def test_resp_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_raise_ready_thld_trig_receiver(interface, RespQueueThldHandler())
-
-
-@cocotb.test()
-async def test_rx_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_raise_start_thld_trig_receiver(interface, RxQueueThldHandler())
-    await should_raise_ready_thld_trig_receiver(interface, RxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_ibi_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_raise_ready_thld_trig_receiver(interface, IbiQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_rx_desc_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_raise_ready_thld_trig_receiver(interface, TTIRxDescQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_rx_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    # TODO: Enable start threshold test once it's added to the design
-    await should_raise_start_thld_trig_receiver(interface, TTIRxQueueThldHandler())
-    await should_raise_ready_thld_trig_receiver(interface, TTIRxQueueThldHandler())
-
-
-async def should_raise_start_thld_trig_transmitter(
-    interface: HCIBaseTestInterface, q: QueueThldHandler
-):
-    """
-    Sets up a start threshold of the write queue and checks whether the trigger
-    is properly raised at different levels of the queue fill.
-    """
-    if not isinstance(
-        q,
-        (CmdQueueThldHandler, TxQueueThldHandler, TTITxDescQueueThldHandler, TTITxQueueThldHandler),
-    ):
-        raise ValueError("This test supports write queues only.")
-
-    # Clear the queue
-    await q.read_until_empty(interface)
-
-    max_start_thld = await q.adjust_thld_to_boundary(interface, 2**q.thld_reg_field_size - 1)
-    start_thld = randint(2, max_start_thld)
-    # Setup threshold through appropriate register
-    await q.set_new_start_thld(interface, start_thld)
-    s_start_thld_trig = interface.get_thld_status(q.name, "start")
-    assert s_start_thld_trig == 0, (
-        f"{q} queue: Threshold trigger should not be raised with an empty queue. "
-        f"Threshold: {start_thld} currently enqueued elements: 0"
-    )
-
-    # Fill queue with random data just below the threshold level
-    start_thld_cnt = q.get_thld_in_entries(start_thld)
-    for _ in range(start_thld_cnt - 1):
-        await q.enqueue(interface)
-    await ClockCycles(interface.clk, 5)
-
-    # Ensure that the trigger is not set before reaching the threshold
-    s_start_thld_trig = interface.get_thld_status(q.name, "start")
-    assert s_start_thld_trig == 0, (
-        f"{q} queue: Threshold trigger should be raised with number of empty"
-        " entries above threshold level. "
-        f"Threshold: {start_thld_cnt} currently enqueued elements {start_thld_cnt - 1}"
-    )
-
-    # Reach the threshold
-    await q.enqueue(interface)
-    await ClockCycles(interface.clk, 2)
-
-    # Verify the signal is risen
-    s_start_thld_trig = interface.get_thld_status(q.name, "start")
-    assert s_start_thld_trig == 1, (
-        f"{q} queue: Threshold trigger should be raised with number of empty"
-        " entries above threshold level. "
-        f"Threshold: {start_thld_cnt} currently enqueued elements {start_thld_cnt}"
-    )
-
-
-async def should_raise_ready_thld_trig_transmitter(
-    interface: HCIBaseTestInterface, q: QueueThldHandler
-):
+async def should_raise_ready_thld_trig_transmitter(interface: HCIBaseTestInterface, q: QueueThldHandler):
     """
     Sets up a ready threshold of the write queue and checks whether the trigger
     is properly raised at different levels of the queue fill.
@@ -744,38 +604,52 @@ async def should_raise_ready_thld_trig_transmitter(
     )
 
 
-@cocotb.test()
-async def test_cmd_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_raise_ready_thld_trig_transmitter(interface, CmdQueueThldHandler())
+async def should_raise_start_thld_trig_transmitter(interface: HCIBaseTestInterface, q: QueueThldHandler):
+    """
+    Sets up a start threshold of the write queue and checks whether the trigger
+    is properly raised at different levels of the queue fill.
+    """
+    if not isinstance(
+        q,
+        (CmdQueueThldHandler, TxQueueThldHandler, TTITxDescQueueThldHandler, TTITxQueueThldHandler),
+    ):
+        raise ValueError("This test supports write queues only.")
 
+    # Clear the queue
+    await q.read_until_empty(interface)
 
-@cocotb.test()
-async def test_tx_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "hci")
-    await should_raise_start_thld_trig_transmitter(interface, TxQueueThldHandler())
-    await should_raise_ready_thld_trig_transmitter(interface, TxQueueThldHandler())
+    max_start_thld = await q.adjust_thld_to_boundary(interface, 2**q.thld_reg_field_size - 1)
+    start_thld = randint(2, max_start_thld)
+    # Setup threshold through appropriate register
+    await q.set_new_start_thld(interface, start_thld)
+    s_start_thld_trig = interface.get_thld_status(q.name, "start")
+    assert s_start_thld_trig == 0, (
+        f"{q} queue: Threshold trigger should not be raised with an empty queue. "
+        f"Threshold: {start_thld} currently enqueued elements: 0"
+    )
 
+    # Fill queue with random data just below the threshold level
+    start_thld_cnt = q.get_thld_in_entries(start_thld)
+    for _ in range(start_thld_cnt - 1):
+        await q.enqueue(interface)
+    await ClockCycles(interface.clk, 5)
 
-@cocotb.test()
-async def test_tti_tx_desc_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_raise_ready_thld_trig_transmitter(interface, TTITxDescQueueThldHandler())
+    # Ensure that the trigger is not set before reaching the threshold
+    s_start_thld_trig = interface.get_thld_status(q.name, "start")
+    assert s_start_thld_trig == 0, (
+        f"{q} queue: Threshold trigger should be raised with number of empty"
+        " entries above threshold level. "
+        f"Threshold: {start_thld_cnt} currently enqueued elements {start_thld_cnt - 1}"
+    )
 
+    # Reach the threshold
+    await q.enqueue(interface)
+    await ClockCycles(interface.clk, 2)
 
-# FIXME: TODO: This test fails due to the presence of N-to-8 data width converter
-# between the TTI TX queue and I3C FSM. The frst word written to the queue
-# falls through it hence is not accounted by the threshold counter. Fixing this
-# requires reworking the converter itself or the queue - converter interface.
-@cocotb.test(skip=True)
-async def test_tti_tx_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    # TODO: Enable start threshold test once it's added to the design
-    await should_raise_start_thld_trig_transmitter(interface, TTITxQueueThldHandler())
-    await should_raise_ready_thld_trig_transmitter(interface, TTITxQueueThldHandler())
-
-
-@cocotb.test()
-async def test_tti_ibi_should_raise_thld_trig(dut: SimHandleBase):
-    interface = await setup_sim(dut, "tti")
-    await should_raise_ready_thld_trig_transmitter(interface, TtiIbiQueueThldHandler())
+    # Verify the signal is risen
+    s_start_thld_trig = interface.get_thld_status(q.name, "start")
+    assert s_start_thld_trig == 1, (
+        f"{q} queue: Threshold trigger should be raised with number of empty"
+        " entries above threshold level. "
+        f"Threshold: {start_thld_cnt} currently enqueued elements {start_thld_cnt}"
+    )

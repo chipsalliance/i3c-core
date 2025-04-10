@@ -69,7 +69,7 @@ regfile PIORegs #(
         } IBI_STATUS_THLD[31:24];
         field {
             name = "IBI_DATA_SEGMENT_SIZE";
-            desc = "IBI Queue data segment size. Valida values are 1:63";
+            desc = "IBI Queue data segment size. Valid values are 1:63";
             sw = rw;
             hw = r;
             reset = 8'h1;

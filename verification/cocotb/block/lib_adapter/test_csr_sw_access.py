@@ -72,7 +72,7 @@ async def write_csr_and_verify(
 
 
 # Common test cases for frontend adapters:
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_read_hci_version_csr(dut: SimHandleBase):
     """Run test to read HCI version register."""
     disable_id_filtering(dut)
@@ -85,7 +85,7 @@ async def test_read_hci_version_csr(dut: SimHandleBase):
     )
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_read_pio_section_offset(dut: SimHandleBase):
     """Run test to read PIO section offset register."""
     disable_id_filtering(dut)
@@ -95,7 +95,7 @@ async def test_read_pio_section_offset(dut: SimHandleBase):
     await read_csr_and_verify(tb, tb.reg_map.I3CBASE.PIO_SECTION_OFFSET.base_addr, PIO_ADDR)
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_write_to_controller_device_addr(dut: SimHandleBase):
     """Run test to write & read from Controller Device Address."""
     disable_id_filtering(dut)
@@ -109,7 +109,7 @@ async def test_write_to_controller_device_addr(dut: SimHandleBase):
     await write_csr_and_verify(tb, tb.reg_map.I3CBASE.CONTROLLER_DEVICE_ADDR.base_addr, wdata)
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_write_should_not_affect_ro_csr(dut: SimHandleBase):
     """Run test to write to RO HC Capabilities."""
     disable_id_filtering(dut)
@@ -125,7 +125,7 @@ async def test_write_should_not_affect_ro_csr(dut: SimHandleBase):
     compare_values(hc_cap, resp, addr)
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_sequence_csr_read(dut: SimHandleBase):
     disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)
@@ -160,7 +160,7 @@ async def test_sequence_csr_read(dut: SimHandleBase):
             raise Exception(f"{name} register verification failed:\n{e}")
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_sequence_csr_write(dut: SimHandleBase):
     disable_id_filtering(dut)
     tb = get_frontend_bus_if()(dut)

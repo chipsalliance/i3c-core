@@ -144,9 +144,26 @@ i3c_bus_harness #(
 
 logic sel_od_pp;
 
-i3c_wrapper xi3c_wrapper (
-    .clk_i,
-    .rst_ni,
+  i3c_wrapper #(
+`ifdef I3C_USE_AHB
+      .AhbDataWidth(AhbDataWidth),
+      .AhbAddrWidth(AhbAddrWidth),
+`elsif I3C_USE_AXI
+      .AxiDataWidth(AxiDataWidth),
+      .AxiAddrWidth(AxiAddrWidth),
+      .AxiUserWidth(AxiUserWidth),
+      .AxiIdWidth(AxiIdWidth),
+`ifdef AXI_ID_FILTERING
+      .NumPrivIds(NumPrivIds),
+`endif
+`endif
+      .DatAw(DatAw),
+      .DctAw(DctAw),
+      .CsrAddrWidth(CsrAddrWidth),
+      .CsrDataWidth(CsrDataWidth)
+  ) xi3c_wrapper (
+      .clk_i,
+      .rst_ni,
 
 `ifdef I3C_USE_AHB
     .haddr_i(haddr),

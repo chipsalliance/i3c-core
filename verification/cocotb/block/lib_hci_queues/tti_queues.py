@@ -16,20 +16,23 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         super().__init__(dut, "tti")
 
     async def setup(self):
-        # Set queue's ready to 0 (hold accepting the data)
-        self.dut.hci_cmd_rready_i.value = 0
-        self.dut.hci_tx_rready_i.value = 0
         self.dut.tti_tx_rready_i.value = 0
         self.dut.tti_tx_desc_rready_i.value = 0
-        self.dut.hci_rx_wvalid_i.value = 0
-        self.dut.hci_ibi_wvalid_i.value = 0
-        self.dut.hci_resp_wvalid_i.value = 0
         self.dut.tti_rx_wvalid_i.value = 0
         self.dut.tti_rx_desc_wvalid_i.value = 0
         self.dut.tti_ibi_rready_i.value = 0
         self.dut.tti_rx_flush_i.value = 0
         self.dut.tti_tx_flush_i.value = 0
         self.dut.bypass_i3c_core_i.value = 0
+        self.dut.tti_tx_host_nack_i.value = 0
+        self.dut.tti_rx_wdata_i.value = 0
+        self.dut.tti_rx_desc_wdata_i.value = 0
+        self.dut.tti_ibi_wr_data_i.value = 0
+        self.dut.rst_action_i.value = 0
+        self.dut.bus_start_i.value = 0
+        self.dut.bus_stop_i.value = 0
+        self.dut.bus_addr_i.value = 0
+        self.dut.bus_addr_valid_i.value = 0
 
         if hasattr(self.dut, "disable_id_filtering_i"):
             self.dut.disable_id_filtering_i.value = 1
@@ -60,9 +63,7 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
         self.dut.tti_rx_desc_wvalid_i.value = 0
 
     async def get_rx_desc(self) -> int:
-        return dword2int(
-            await self.read_csr(self.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
-        )
+        return dword2int(await self.read_csr(self.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
 
     async def get_tx_desc(self, timeout: int = 20, units: str = "us") -> int:
         self.dut.tti_tx_desc_rready_i.value = 1
@@ -74,9 +75,7 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
     async def put_tx_desc(self, data: int = None) -> None:
         if not data:
             data = randint(1, 2**32 - 1)
-        await self.write_csr(
-            self.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data), 4
-        )
+        await self.write_csr(self.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data), 4)
 
     async def get_tx_data(self, timeout: int = 20, units: str = "us") -> int:
 

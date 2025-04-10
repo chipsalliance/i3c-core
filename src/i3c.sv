@@ -40,6 +40,7 @@ module i3c
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH,
 
+`ifdef CONTROLLER_SUPPORT
     parameter int unsigned HciRespFifoDepth = `RESP_FIFO_DEPTH,
     parameter int unsigned HciCmdFifoDepth = `CMD_FIFO_DEPTH,
     parameter int unsigned HciRxFifoDepth = `RX_FIFO_DEPTH,
@@ -67,7 +68,8 @@ module i3c
     parameter int unsigned HciRxThldWidth   = 3,
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
-
+`endif // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
     parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
     parameter int unsigned TtiTxDescFifoDepth = `CMD_FIFO_DEPTH,
     parameter int unsigned TtiRxFifoDepth = `RX_FIFO_DEPTH,
@@ -94,7 +96,7 @@ module i3c
     parameter int unsigned TtiRxThldWidth = 3,
     parameter int unsigned TtiTxThldWidth = 3,
     parameter int unsigned TtiIbiThldWidth = 8,
-
+`endif // TARGET_SUPPORT
     parameter int unsigned IndirectFifoDepth = 64
 ) (
     input clk_i,  // clock
@@ -192,6 +194,7 @@ module i3c
 
     output logic sel_od_pp_o,  // 0 - Open Drain, 1 - Push Pull
 
+`ifdef CONTROLLER_SUPPORT
     // DAT memory export interface
     input  dat_mem_src_t  dat_mem_src_i,
     output dat_mem_sink_t dat_mem_sink_o,
@@ -199,6 +202,7 @@ module i3c
     // DCT memory export interface
     input  dct_mem_src_t  dct_mem_src_i,
     output dct_mem_sink_t dct_mem_sink_o,
+`endif // CONTROLLER_SUPPORT
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
@@ -213,85 +217,90 @@ module i3c
 );
 
   // I3C SW CSR IF
-  logic                               s_cpuif_req;
-  logic                               s_cpuif_req_is_wr;
-  logic [           CsrAddrWidth-1:0] s_cpuif_addr;
-  logic [           CsrDataWidth-1:0] s_cpuif_wr_data;
-  logic [           CsrDataWidth-1:0] s_cpuif_wr_biten;
-  logic                               s_cpuif_req_stall_wr;
-  logic                               s_cpuif_req_stall_rd;
-  logic                               s_cpuif_rd_ack;
-  logic                               s_cpuif_rd_err;
-  logic [           CsrDataWidth-1:0] s_cpuif_rd_data;
-  logic                               s_cpuif_wr_ack;
-  logic                               s_cpuif_wr_err;
+  logic                    s_cpuif_req;
+  logic                    s_cpuif_req_is_wr;
+  logic [CsrAddrWidth-1:0] s_cpuif_addr;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_data;
+  logic [CsrDataWidth-1:0] s_cpuif_wr_biten;
+  logic                    s_cpuif_req_stall_wr;
+  logic                    s_cpuif_req_stall_rd;
+  logic                    s_cpuif_rd_ack;
+  logic                    s_cpuif_rd_err;
+  logic [CsrDataWidth-1:0] s_cpuif_rd_data;
+  logic                    s_cpuif_wr_ack;
+  logic                    s_cpuif_wr_err;
 
+`ifdef CONTROLLER_SUPPORT
   // Response queue
-  logic                               hci_resp_full;
-  logic [  HciRespFifoDepthWidth-1:0] hci_resp_depth;
-  logic [       HciRespThldWidth-1:0] hci_resp_ready_thld;
-  logic                               hci_resp_ready_thld_trig;
-  logic                               hci_resp_empty;
-  logic                               hci_resp_wvalid;
-  logic                               hci_resp_wready;
-  logic [       HciRespDataWidth-1:0] hci_resp_wdata;
+  logic                             hci_resp_full;
+  logic [HciRespFifoDepthWidth-1:0] hci_resp_depth;
+  logic [     HciRespThldWidth-1:0] hci_resp_ready_thld;
+  logic                             hci_resp_ready_thld_trig;
+  logic                             hci_resp_empty;
+  logic                             hci_resp_wvalid;
+  logic                             hci_resp_wready;
+  logic [     HciRespDataWidth-1:0] hci_resp_wdata;
 
   // Command queue
-  logic                               hci_cmd_full;
-  logic [   HciCmdFifoDepthWidth-1:0] hci_cmd_depth;
-  logic [        HciCmdThldWidth-1:0] hci_cmd_ready_thld;
-  logic                               hci_cmd_ready_thld_trig;
-  logic                               hci_cmd_empty;
-  logic                               hci_cmd_rvalid;
-  logic                               hci_cmd_rready;
-  logic [        HciCmdDataWidth-1:0] hci_cmd_rdata;
+  logic                             hci_cmd_full;
+  logic [ HciCmdFifoDepthWidth-1:0] hci_cmd_depth;
+  logic [      HciCmdThldWidth-1:0] hci_cmd_ready_thld;
+  logic                             hci_cmd_ready_thld_trig;
+  logic                             hci_cmd_empty;
+  logic                             hci_cmd_rvalid;
+  logic                             hci_cmd_rready;
+  logic [      HciCmdDataWidth-1:0] hci_cmd_rdata;
 
   // RX queue
-  logic                               hci_rx_full;
-  logic [    HciRxFifoDepthWidth-1:0] hci_rx_depth;
-  logic [         HciRxThldWidth-1:0] hci_rx_start_thld;
-  logic                               hci_rx_start_thld_trig;
-  logic [         HciRxThldWidth-1:0] hci_rx_ready_thld;
-  logic                               hci_rx_ready_thld_trig;
-  logic                               hci_rx_empty;
-  logic                               hci_rx_wvalid;
-  logic                               hci_rx_wready;
-  logic [         HciRxDataWidth-1:0] hci_rx_wdata;
+  logic                             hci_rx_full;
+  logic [  HciRxFifoDepthWidth-1:0] hci_rx_depth;
+  logic [       HciRxThldWidth-1:0] hci_rx_start_thld;
+  logic                             hci_rx_start_thld_trig;
+  logic [       HciRxThldWidth-1:0] hci_rx_ready_thld;
+  logic                             hci_rx_ready_thld_trig;
+  logic                             hci_rx_empty;
+  logic                             hci_rx_wvalid;
+  logic                             hci_rx_wready;
+  logic [       HciRxDataWidth-1:0] hci_rx_wdata;
 
   // TX queue
-  logic                               hci_tx_full;
-  logic [    HciTxFifoDepthWidth-1:0] hci_tx_depth;
-  logic [         HciTxThldWidth-1:0] hci_tx_start_thld;
-  logic                               hci_tx_start_thld_trig;
-  logic [         HciTxThldWidth-1:0] hci_tx_ready_thld;
-  logic                               hci_tx_ready_thld_trig;
-  logic                               hci_tx_empty;
-  logic                               hci_tx_rvalid;
-  logic                               hci_tx_rready;
-  logic [         HciTxDataWidth-1:0] hci_tx_rdata;
+  logic                             hci_tx_full;
+  logic [  HciTxFifoDepthWidth-1:0] hci_tx_depth;
+  logic [       HciTxThldWidth-1:0] hci_tx_start_thld;
+  logic                             hci_tx_start_thld_trig;
+  logic [       HciTxThldWidth-1:0] hci_tx_ready_thld;
+  logic                             hci_tx_ready_thld_trig;
+  logic                             hci_tx_empty;
+  logic                             hci_tx_rvalid;
+  logic                             hci_tx_rready;
+  logic [       HciTxDataWidth-1:0] hci_tx_rdata;
 
   // IBI queue
-  logic                               hci_ibi_full;
-  logic [   HciIbiFifoDepthWidth-1:0] hci_ibi_depth;
-  logic [        HciIbiThldWidth-1:0] hci_ibi_ready_thld;
-  logic                               hci_ibi_ready_thld_trig;
-  logic                               hci_ibi_empty;
-  logic                               hci_ibi_wvalid;
-  logic                               hci_ibi_wready;
-  logic [        HciIbiDataWidth-1:0] hci_ibi_wdata;
+  logic                             hci_ibi_full;
+  logic [ HciIbiFifoDepthWidth-1:0] hci_ibi_depth;
+  logic [      HciIbiThldWidth-1:0] hci_ibi_ready_thld;
+  logic                             hci_ibi_ready_thld_trig;
+  logic                             hci_ibi_empty;
+  logic                             hci_ibi_wvalid;
+  logic                             hci_ibi_wready;
+  logic [      HciIbiDataWidth-1:0] hci_ibi_wdata;
 
+`ifdef CONTROLLER_SUPPORT
   // DAT <-> Controller interface
-  logic                               dat_read_valid_hw;
-  logic [     $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
-  logic [                       63:0] dat_rdata_hw;
+  logic                             dat_read_valid_hw;
+  logic [   $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
+  logic [                     63:0] dat_rdata_hw;
 
   // DCT <-> Controller interface
-  logic                               dct_write_valid_hw;
-  logic                               dct_read_valid_hw;
-  logic [     $clog2(`DCT_DEPTH)-1:0] dct_index_hw;
-  logic [                      127:0] dct_wdata_hw;
-  logic [                      127:0] dct_rdata_hw;
+  logic                             dct_write_valid_hw;
+  logic                             dct_read_valid_hw;
+  logic [   $clog2(`DCT_DEPTH)-1:0] dct_index_hw;
+  logic [                    127:0] dct_wdata_hw;
+  logic [                    127:0] dct_rdata_hw;
+`endif // CONTROLLER_SUPPORT
 
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
   // TTI RX descriptors queue
   logic                               tti_tx_desc_full;
   logic [TtiRxDescFifoDepthWidth-1:0] tti_tx_desc_depth;
@@ -352,10 +361,11 @@ module i3c
   logic                               tti_ibi_rvalid;
   logic                               tti_ibi_rready;
   logic [        TtiIbiDataWidth-1:0] tti_ibi_rdata;
+`endif  // TARGET_SUPPORT
 
   // TODO: Fix these signals
   // Originally only used in active, should be removed and replaced with signal from CSR
-  logic                               i3c_fsm_en_i;
+  logic i3c_fsm_en_i;
   assign i3c_fsm_en_i = 1'b0;
   // This signal should only be used on level of fsm/flow modules. Expose it via CSR, if needed.
   logic i3c_fsm_idle_o;
@@ -400,9 +410,8 @@ module i3c
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
       .AxiIdWidth  (AxiIdWidth)
-`ifdef AXI_ID_FILTERING
-        ,
-      .NumPrivIds(NumPrivIds)
+`ifdef AXI_ID_FILTERING,
+      .NumPrivIds  (NumPrivIds)
 `endif
   ) i3c_axi_if (
       .clk_i (clk_i),
@@ -525,7 +534,6 @@ module i3c
   logic [7:0] rst_action;
   logic rst_action_valid;
 
-  I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   // Status
   logic [1:0] ibi_status;
@@ -542,15 +550,40 @@ module i3c
 
   assign arbitration_lost = i3c_sda_i != i3c_sda_o;
 
-  // HCI
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t              hwif_tti_inp;
+  // CSR Interface
+`ifdef TARGET_SUPPORT
+  // Target Transaction CSR Interface
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t hwif_tti_in;
+  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_out;
 
-  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_inp;
-
+  // Recovery CSR Interface
+  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t hwif_rec_in;
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_out;
-  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
+
+  // SoC Management CSR Interface
+  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t hwif_soc_mgmt_in;
+  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_soc_mgmt_out;
+`endif  // TARGET_SUPPORT
+
+`ifdef CONTROLLER_SUPPORT
+  // PIO CONTROL CSR interface
+  I3CCSR_pkg::I3CCSR__PIOControl__in_t hwif_pio_control_in;
+  I3CCSR_pkg::I3CCSR__PIOControl__out_t hwif_pio_control_out;
+
+  // I3C BASE CSR interface
+  I3CCSR_pkg::I3CCSR__I3CBase__in_t hwif_base_in;
+  I3CCSR_pkg::I3CCSR__I3CBase__out_t hwif_base_out;
+
+  // DAT CSR interface
+  I3CCSR_pkg::I3CCSR__DAT__in_t dat_in;
+  I3CCSR_pkg::I3CCSR__DAT__out_t dat_out;
+
+  // DCT CSR interface
+  I3CCSR_pkg::I3CCSR__DCT__in_t dct_in;
+  I3CCSR_pkg::I3CCSR__DCT__out_t dct_out;
+`endif  // CONTROLLER_SUPPORT
+
+  I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   logic bypass_i3c_core;
 `ifndef DISABLE_LOOPBACK
@@ -573,6 +606,7 @@ module i3c
       .sel_od_pp_o(ctrl_sel_od_pp),
       .arbitration_lost_i(arbitration_lost),
 
+`ifdef CONTROLLER_SUPPORT
       // HCI Response queue
       .hci_resp_queue_empty_i(hci_resp_empty),
       .hci_resp_queue_full_i(hci_resp_full),
@@ -617,7 +651,7 @@ module i3c
       .hci_tx_queue_rready_o(hci_tx_rready),
       .hci_tx_queue_rdata_i(hci_tx_rdata),
 
-      // In-band Interrut queue
+      // In-band Interrupt queue
       .hci_ibi_queue_full_i(hci_ibi_full),
       .hci_ibi_queue_depth_i(hci_ibi_depth),
       .hci_ibi_queue_ready_thld_i(hci_ibi_ready_thld),
@@ -626,7 +660,9 @@ module i3c
       .hci_ibi_queue_wvalid_o(hci_ibi_wvalid),
       .hci_ibi_queue_wready_i(hci_ibi_wready),
       .hci_ibi_queue_wdata_o(hci_ibi_wdata),
+`endif  // CONTROLLER_SUPPORT
 
+`ifdef TARGET_SUPPORT
       // TTI: RX Descriptor
       .tti_rx_desc_queue_full_i(tti_rx_desc_full),
       .tti_rx_desc_queue_depth_i(tti_rx_desc_depth),
@@ -685,6 +721,7 @@ module i3c
       .tti_ibi_queue_rvalid_i(tti_ibi_rvalid),
       .tti_ibi_queue_rready_o(tti_ibi_rready),
       .tti_ibi_queue_rdata_i(tti_ibi_rdata),
+`endif  // TARGET_SUPPORT
 
       // I2C/I3C bus condition detection
       .bus_start_o (bus_start),
@@ -694,7 +731,7 @@ module i3c
       // I2C/I3C received address (with RnW# bit) for the recovery handler
       .bus_addr_o(rx_bus_addr),
       .bus_addr_valid_o(rx_bus_addr_valid),
-
+`ifdef CONTROLLER_SUPPORT
       // DAT <-> Controller interface
       .dat_read_valid_hw_o(dat_read_valid_hw),
       .dat_index_hw_o(dat_index_hw),
@@ -706,7 +743,7 @@ module i3c
       .dct_index_hw_o(dct_index_hw),
       .dct_wdata_hw_o(dct_wdata_hw),
       .dct_rdata_hw_i(dct_rdata_hw),
-
+`endif
       //TODO: Rename
       .i3c_fsm_en_i  (i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
@@ -748,6 +785,7 @@ module i3c
   );
 
   // HCI
+`ifdef CONTROLLER_SUPPORT
   hci #(
       .CsrAddrWidth(CsrAddrWidth),
       .CsrDataWidth(CsrDataWidth),
@@ -767,20 +805,8 @@ module i3c
       .HciRxThldWidth(HciRxThldWidth),
       .HciTxThldWidth(HciTxThldWidth)
   ) xhci (
-      .clk_i(clk_i),
+      .clk_i (clk_i),
       .rst_ni(rst_ni),
-      .s_cpuif_req(s_cpuif_req),
-      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
-      .s_cpuif_addr(s_cpuif_addr),
-      .s_cpuif_wr_data(s_cpuif_wr_data),
-      .s_cpuif_wr_biten(s_cpuif_wr_biten),
-      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
-      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
-      .s_cpuif_rd_ack(s_cpuif_rd_ack),
-      .s_cpuif_rd_err(s_cpuif_rd_err),
-      .s_cpuif_rd_data(s_cpuif_rd_data),
-      .s_cpuif_wr_ack(s_cpuif_wr_ack),
-      .s_cpuif_wr_err(s_cpuif_wr_err),
 
       .dat_read_valid_hw_i(dat_read_valid_hw),
       .dat_index_hw_i(dat_index_hw),
@@ -798,14 +824,15 @@ module i3c
       .dct_mem_src_i (dct_mem_src_i),
       .dct_mem_sink_o(dct_mem_sink_o),
 
-      .hwif_tti_o(hwif_tti_out),
-      .hwif_tti_i(hwif_tti_inp),
-
-      .hwif_socmgmt_o(hwif_socmgmt_out),
-      .hwif_socmgmt_i(hwif_socmgmt_inp),
-
-      .hwif_rec_o(hwif_rec_out),
-      .hwif_rec_i(hwif_rec_inp),
+      // CSR Interface
+      .hwif_pio_control_i(hwif_pio_control_out),
+      .hwif_pio_control_o(hwif_pio_control_in),
+      .hwif_base_i(hwif_base_out),
+      .hwif_base_o(hwif_base_in),
+      .dat_i(dat_out),
+      .dat_o(dat_in),
+      .dct_i(dct_out),
+      .dct_o(dct_in),
 
       // HCI Response queue
       .hci_resp_full_o(hci_resp_full),
@@ -860,20 +887,12 @@ module i3c
       .hci_ibi_wready_o(hci_ibi_wready),
       .hci_ibi_wdata_i(hci_ibi_wdata),
 
-      .hwif_out_o(hwif_out),
-
-      .set_dasa_i(set_dasa),
-      .set_dasa_valid_i(set_dasa_valid),
-      .set_dasa_virtual_device_i(set_dasa_virtual_device),
-      .rstdaa_i(rstdaa),
-      .set_newda_i(set_newda),
-      .set_newda_virtual_device_i(set_newda_virtual_device),
-      .newda_i(newda),
-
       .rst_action_i(rst_action),
       .rst_action_valid_i(rst_action_valid)
   );
+`endif  // CONTROLLER_SUPPORT
 
+`ifdef TARGET_SUPPORT
   // TTI RX Descriptor queue
   logic                          csr_tti_rx_desc_req;
   logic                          csr_tti_rx_desc_ack;
@@ -936,28 +955,30 @@ module i3c
   logic                          csr_tti_ibi_reg_rst;
   logic                          csr_tti_ibi_reg_rst_we;
   logic                          csr_tti_ibi_reg_rst_data;
+`endif  // TARGET_SUPPORT
 
+`ifdef TARGET_SUPPORT
   tti xtti (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
       .hwif_tti_i(hwif_tti_out),
-      .hwif_tti_o(hwif_tti_inp),
+      .hwif_tti_o(hwif_tti_in),
 
       // TTI RX descriptors queue
-      .rx_desc_queue_req_o         (csr_tti_rx_desc_req),
-      .rx_desc_queue_ack_i         (csr_tti_rx_desc_ack),
-      .rx_desc_queue_data_i        (csr_tti_rx_desc_data),
-      .rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_ready_thld_i),
-      .rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_ready_thld_o),
-      .rx_desc_queue_reg_rst_o     (csr_tti_rx_desc_reg_rst),
-      .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_reg_rst_we),
-      .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_reg_rst_data),
-      .rx_desc_queue_ready_thld_trig_i (csr_tti_rx_desc_ready_trig),
+      .rx_desc_queue_req_o            (csr_tti_rx_desc_req),
+      .rx_desc_queue_ack_i            (csr_tti_rx_desc_ack),
+      .rx_desc_queue_data_i           (csr_tti_rx_desc_data),
+      .rx_desc_queue_ready_thld_o     (csr_tti_rx_desc_ready_thld_i),
+      .rx_desc_queue_ready_thld_i     (csr_tti_rx_desc_ready_thld_o),
+      .rx_desc_queue_reg_rst_o        (csr_tti_rx_desc_reg_rst),
+      .rx_desc_queue_reg_rst_we_i     (csr_tti_rx_desc_reg_rst_we),
+      .rx_desc_queue_reg_rst_data_i   (csr_tti_rx_desc_reg_rst_data),
+      .rx_desc_queue_ready_thld_trig_i(csr_tti_rx_desc_ready_trig),
 
-      .rx_desc_queue_empty_i       (tti_rx_desc_empty),
-      .rx_desc_queue_full_i        (tti_rx_desc_full),
-      .rx_desc_queue_write_i       (tti_rx_desc_wvalid & tti_rx_desc_wready),
+      .rx_desc_queue_empty_i(tti_rx_desc_empty),
+      .rx_desc_queue_full_i (tti_rx_desc_full),
+      .rx_desc_queue_write_i(tti_rx_desc_wvalid & tti_rx_desc_wready),
 
       // TTI TX descriptors queue
       .tx_desc_queue_req_o         (csr_tti_tx_desc_req),
@@ -971,20 +992,20 @@ module i3c
       .tx_desc_queue_full_i        (csr_tti_tx_desc_full),
 
       // TTI RX queue
-      .rx_data_queue_req_o         (csr_tti_rx_data_req),
-      .rx_data_queue_ack_i         (csr_tti_rx_data_ack),
-      .rx_data_queue_data_i        (csr_tti_rx_data_data),
-      .rx_data_queue_start_thld_o  (csr_tti_rx_data_start_thld),
-      .rx_data_queue_ready_thld_o  (csr_tti_rx_data_ready_thld_i),
-      .rx_data_queue_ready_thld_i  (csr_tti_rx_data_ready_thld_o),
-      .rx_data_queue_reg_rst_o     (csr_tti_rx_data_reg_rst),
-      .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_reg_rst_we),
-      .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_reg_rst_data),
-      .rx_data_queue_ready_thld_trig_i (csr_tti_rx_data_ready_trig),
+      .rx_data_queue_req_o            (csr_tti_rx_data_req),
+      .rx_data_queue_ack_i            (csr_tti_rx_data_ack),
+      .rx_data_queue_data_i           (csr_tti_rx_data_data),
+      .rx_data_queue_start_thld_o     (csr_tti_rx_data_start_thld),
+      .rx_data_queue_ready_thld_o     (csr_tti_rx_data_ready_thld_i),
+      .rx_data_queue_ready_thld_i     (csr_tti_rx_data_ready_thld_o),
+      .rx_data_queue_reg_rst_o        (csr_tti_rx_data_reg_rst),
+      .rx_data_queue_reg_rst_we_i     (csr_tti_rx_data_reg_rst_we),
+      .rx_data_queue_reg_rst_data_i   (csr_tti_rx_data_reg_rst_data),
+      .rx_data_queue_ready_thld_trig_i(csr_tti_rx_data_ready_trig),
 
-      .rx_data_queue_empty_i       (tti_rx_empty),
-      .rx_data_queue_full_i        (tti_rx_full),
-      .rx_data_queue_write_i       (tti_rx_wvalid & tti_rx_wready),
+      .rx_data_queue_empty_i(tti_rx_empty),
+      .rx_data_queue_full_i (tti_rx_full),
+      .rx_data_queue_write_i(tti_rx_wvalid & tti_rx_wready),
 
       // TTI TX queue
       .tx_data_queue_req_o         (csr_tti_tx_data_req),
@@ -1025,9 +1046,66 @@ module i3c
 
       .err_i(controller_error),
 
-      .irq_o (tti_irq)
+      .irq_o(tti_irq)
+  );
+`else
+  assign tti_irq = '0;
+`endif  // TARGET_SUPPORT
+
+  csri #(
+      .CsrAddrWidth(CsrAddrWidth),
+      .CsrDataWidth(CsrDataWidth)
+  ) xcsri (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .s_cpuif_req(s_cpuif_req),
+      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
+      .s_cpuif_addr(s_cpuif_addr),
+      .s_cpuif_wr_data(s_cpuif_wr_data),
+      .s_cpuif_wr_biten(s_cpuif_wr_biten),
+      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
+      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
+      .s_cpuif_rd_ack(s_cpuif_rd_ack),
+      .s_cpuif_rd_err(s_cpuif_rd_err),
+      .s_cpuif_rd_data(s_cpuif_rd_data),
+      .s_cpuif_wr_ack(s_cpuif_wr_ack),
+      .s_cpuif_wr_err(s_cpuif_wr_err),
+
+      // CSR Interface
+`ifdef TARGET_SUPPORT
+      .hwif_tti_i(hwif_tti_in),
+      .hwif_tti_o(hwif_tti_out),
+      .hwif_rec_i(hwif_rec_in),
+      .hwif_rec_o(hwif_rec_out),
+      .hwif_socmgmt_i(hwif_soc_mgmt_in),
+      .hwif_socmgmt_o(hwif_soc_mgmt_out),
+`endif
+`ifdef CONTROLLER_SUPPORT
+      .hwif_pio_control_i(hwif_pio_control_in),
+      .hwif_pio_control_o(hwif_pio_control_out),
+      .hwif_base_i(hwif_base_in),
+      .hwif_base_o(hwif_base_out),
+      .dat_i(dat_in),
+      .dat_o(dat_out),
+      .dct_i(dct_in),
+      .dct_o(dct_out),
+`endif
+      .hwif_out_o(hwif_out),
+
+      // Controller configuration status
+      .set_dasa_i(set_dasa),
+      .set_dasa_valid_i(set_dasa_valid),
+      .set_dasa_virtual_device_i(set_dasa_virtual_device),
+      .rstdaa_i(rstdaa),
+      .set_newda_i(set_newda),
+      .set_newda_virtual_device_i(set_newda_virtual_device),
+      .newda_i(newda),
+
+      .rst_action_i(rst_action),
+      .rst_action_valid_i(rst_action_valid)
   );
 
+`ifdef TARGET_SUPPORT
   // Recovery handler
   recovery_handler #(
       .TtiRxDescDataWidth(TtiRxDescDataWidth),
@@ -1051,26 +1129,26 @@ module i3c
       .clk_i (clk_i),
       .rst_ni(rst_ni),
 
-      // SoC Managment CSR interface
-      .hwif_socmgmt_i(hwif_socmgmt_out),
-      .hwif_socmgmt_o(hwif_socmgmt_inp),
+      // SoC Management CSR interface
+      .hwif_socmgmt_i(hwif_soc_mgmt_out),
+      .hwif_socmgmt_o(hwif_soc_mgmt_in),
 
       // Recovery CSR interface
       .hwif_rec_i(hwif_rec_out),
-      .hwif_rec_o(hwif_rec_inp),
+      .hwif_rec_o(hwif_rec_in),
 
       .bypass_i3c_core_i(bypass_i3c_core),
 
       // TTI RX descriptors queue
-      .csr_tti_rx_desc_queue_req_i         (csr_tti_rx_desc_req),
-      .csr_tti_rx_desc_queue_ack_o         (csr_tti_rx_desc_ack),
-      .csr_tti_rx_desc_queue_data_o        (csr_tti_rx_desc_data),
-      .csr_tti_rx_desc_queue_ready_thld_i  (csr_tti_rx_desc_ready_thld_i),
-      .csr_tti_rx_desc_queue_ready_thld_o  (csr_tti_rx_desc_ready_thld_o),
-      .csr_tti_rx_desc_queue_reg_rst_i     (csr_tti_rx_desc_reg_rst),
-      .csr_tti_rx_desc_queue_reg_rst_we_o  (csr_tti_rx_desc_reg_rst_we),
-      .csr_tti_rx_desc_queue_reg_rst_data_o(csr_tti_rx_desc_reg_rst_data),
-      .csr_tti_rx_desc_queue_ready_thld_trig_o (csr_tti_rx_desc_ready_trig),
+      .csr_tti_rx_desc_queue_req_i            (csr_tti_rx_desc_req),
+      .csr_tti_rx_desc_queue_ack_o            (csr_tti_rx_desc_ack),
+      .csr_tti_rx_desc_queue_data_o           (csr_tti_rx_desc_data),
+      .csr_tti_rx_desc_queue_ready_thld_i     (csr_tti_rx_desc_ready_thld_i),
+      .csr_tti_rx_desc_queue_ready_thld_o     (csr_tti_rx_desc_ready_thld_o),
+      .csr_tti_rx_desc_queue_reg_rst_i        (csr_tti_rx_desc_reg_rst),
+      .csr_tti_rx_desc_queue_reg_rst_we_o     (csr_tti_rx_desc_reg_rst_we),
+      .csr_tti_rx_desc_queue_reg_rst_data_o   (csr_tti_rx_desc_reg_rst_data),
+      .csr_tti_rx_desc_queue_ready_thld_trig_o(csr_tti_rx_desc_ready_trig),
 
       // TTI TX descriptors queue
       .csr_tti_tx_desc_queue_req_i         (csr_tti_tx_desc_req),
@@ -1084,16 +1162,16 @@ module i3c
       .csr_tti_tx_desc_queue_full_o        (csr_tti_tx_desc_full),
 
       // TTI RX queue
-      .csr_tti_rx_data_queue_req_i         (csr_tti_rx_data_req),
-      .csr_tti_rx_data_queue_ack_o         (csr_tti_rx_data_ack),
-      .csr_tti_rx_data_queue_data_o        (csr_tti_rx_data_data),
-      .csr_tti_rx_data_queue_start_thld_i  (csr_tti_rx_data_start_thld),
-      .csr_tti_rx_data_queue_ready_thld_i  (csr_tti_rx_data_ready_thld_i),
-      .csr_tti_rx_data_queue_ready_thld_o  (csr_tti_rx_data_ready_thld_o),
-      .csr_tti_rx_data_queue_reg_rst_i     (csr_tti_rx_data_reg_rst),
-      .csr_tti_rx_data_queue_reg_rst_we_o  (csr_tti_rx_data_reg_rst_we),
-      .csr_tti_rx_data_queue_reg_rst_data_o(csr_tti_rx_data_reg_rst_data),
-      .csr_tti_rx_data_queue_ready_thld_trig_o (csr_tti_rx_data_ready_trig),
+      .csr_tti_rx_data_queue_req_i            (csr_tti_rx_data_req),
+      .csr_tti_rx_data_queue_ack_o            (csr_tti_rx_data_ack),
+      .csr_tti_rx_data_queue_data_o           (csr_tti_rx_data_data),
+      .csr_tti_rx_data_queue_start_thld_i     (csr_tti_rx_data_start_thld),
+      .csr_tti_rx_data_queue_ready_thld_i     (csr_tti_rx_data_ready_thld_i),
+      .csr_tti_rx_data_queue_ready_thld_o     (csr_tti_rx_data_ready_thld_o),
+      .csr_tti_rx_data_queue_reg_rst_i        (csr_tti_rx_data_reg_rst),
+      .csr_tti_rx_data_queue_reg_rst_we_o     (csr_tti_rx_data_reg_rst_we),
+      .csr_tti_rx_data_queue_reg_rst_data_o   (csr_tti_rx_data_reg_rst_data),
+      .csr_tti_rx_data_queue_ready_thld_trig_o(csr_tti_rx_data_ready_trig),
 
       // TTI TX queue
       .csr_tti_tx_data_queue_req_i         (csr_tti_tx_data_req),
@@ -1191,6 +1269,9 @@ module i3c
       .virtual_device_sel_i(virtual_device_sel),
       .xfer_in_progress_i(xfer_in_progress)
   );
+`else
+  assign recovery_irq = '0;
+`endif  // TARGET_SUPPORT
 
   // I3C PHY
   i3c_phy xphy (
