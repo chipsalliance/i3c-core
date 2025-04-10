@@ -20,7 +20,7 @@ all: vcs-sim
 
 vcs-build:
 	mkdir -p $(BUILD_DIR) && cd $(BUILD_DIR) && \
-	$(VCS) $(BUILD_ARGS) $(EXTRA_ARGS) -f $(I3C_ROOT_DIR)/src/i3c.f $(I3C_ROOT_DIR)/testbench/tb.sv
+	$(VCS) $(BUILD_ARGS) $(EXTRA_ARGS) -f $(I3C_ROOT_DIR)/src/i3c_target.f $(I3C_ROOT_DIR)/testbench/tb.sv
 
 vcs-sim: vcs-build
 	$(BUILD_DIR)/simv $(SIM_ARGS) $(EXTRA_ARGS) && vpd2vcd -full64 dump.vpd dump.vcd +splitpacked

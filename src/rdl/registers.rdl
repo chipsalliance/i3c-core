@@ -5,7 +5,7 @@
 `include "ec_registers.rdl"
 `include "DAT_structure.rdl"
 `include "DCT_structure.rdl"
-
+`include "../i3c_defines.svh"
 
 addrmap I3CCSR #(
     bit PIO_offset = 0x080,
@@ -31,6 +31,7 @@ addrmap I3CCSR #(
     bit virtual_pid_lo = 0x005A10A5 // Virtual device Vendor-specific values, test value
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
+`ifdef CONTROLLER_SUPPORT
     BaseRegs #(
         .PIO_offset(PIO_offset),
         .DMA_support(false),
@@ -62,6 +63,8 @@ addrmap I3CCSR #(
         .DCT_table_size(dct_depth),
         .DCT_offset(DCT_offset)
     ) I3CBase @ 0x0;
+`endif
+`ifdef CONTROLLER_SUPPORT
     PIORegs #(
         .cmd_fifo_size(cmd_fifo_size),
         .resp_fifo_size(resp_fifo_size),
@@ -70,6 +73,7 @@ addrmap I3CCSR #(
         .tx_fifo_size(tx_fifo_size),
         .ext_ibi_size(ext_ibi_size)
     ) PIOControl @ PIO_offset;
+`endif
     ECRegisters #(
         .tti_rx_desc_fifo_size(tti_rx_desc_fifo_size),
         .tti_tx_desc_fifo_size(tti_tx_desc_fifo_size),
@@ -81,6 +85,7 @@ addrmap I3CCSR #(
         .virtual_pid_hi(virtual_pid_hi),
         .virtual_pid_lo(virtual_pid_lo)
     ) I3C_EC @ EC_offset;
+`ifdef CONTROLLER_SUPPORT
     mem {
         name = "Device Address Table";
         mementries = 128;
@@ -95,4 +100,5 @@ addrmap I3CCSR #(
         sw = rw;
         DCT_structure DCT_MEMORY [128];
     } external DCT @ DCT_offset;
+`endif
 };

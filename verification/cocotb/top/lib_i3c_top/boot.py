@@ -58,7 +58,7 @@ async def boot_init(tb: I3CTopTestInterface, timings=None):
 
     Standby Controller Mode by default, TODO: add Active Controller Mode procedure
     """
-    core_config = await common_procedure(tb)  # noqa
+    # core_config = await common_procedure(tb)  # noqa
 
     # Write configuration to the device
 
@@ -246,12 +246,12 @@ async def umbrella_stby_init(tb):
         1,
     )
 
-    # Enable bus
-    await tb.write_csr_field(
-        tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
-        tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
-        1,
-    )
+    # # Enable bus
+    # await tb.write_csr_field(
+    #     tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
+    #     tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
+    #     1,
+    # )
 
 
 async def tti_init(tb):

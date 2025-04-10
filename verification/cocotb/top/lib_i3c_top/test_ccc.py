@@ -289,7 +289,7 @@ async def test_ccc_getmrl(dut):
     assert ibi_payload_size == _IBI_PAYLOAD_SIZE
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_ccc_setaasa(dut):
 
     STATIC_ADDR = 0x5A

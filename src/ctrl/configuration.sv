@@ -81,7 +81,11 @@ module configuration (
 
   // Bus Configuration
   logic i2c_dev_present;
+`ifdef CONTROLLER_SUPPORT
   assign i2c_dev_present = hwif_out_i.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
+`else
+  assign i2c_dev_present = '0;
+`endif // CONTROLLER_SUPPORT
 
   // Disables the TTI
   logic target_xact_enable;
@@ -92,17 +96,29 @@ module configuration (
   logic bus_enable;
   logic resume;
   logic abort;
+`ifdef CONTROLLER_SUPPORT
   assign bus_enable = hwif_out_i.I3CBase.HC_CONTROL.BUS_ENABLE.value;
   assign resume = hwif_out_i.I3CBase.HC_CONTROL.RESUME.value;
   assign abort = hwif_out_i.I3CBase.HC_CONTROL.ABORT.value;
+`else
+  assign bus_enable = 1'b1;
+  assign resume = '0;
+  assign abort = '0;
+`endif // CONTROLLER_SUPPORT
 
   // These affect queue ctrl logic
   logic pio_enable;
   logic pio_abort;
   logic pio_rs;
+`ifdef CONTROLLER_SUPPORT
   assign pio_enable = hwif_out_i.PIOControl.PIO_CONTROL.ENABLE.value;
   assign pio_abort = hwif_out_i.PIOControl.PIO_CONTROL.ABORT.value;
   assign pio_rs = hwif_out_i.PIOControl.PIO_CONTROL.RS.value;
+`else
+  assign pio_enable = '0;
+  assign pio_abort = '0;
+  assign pio_rs = '0;
+`endif // CONTROLLER_SUPPORT
 
   assign i2c_active_en_o = 1'b0;
   assign i2c_standby_en_o = 1'b0;

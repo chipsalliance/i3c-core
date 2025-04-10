@@ -23,11 +23,15 @@ if os.getenv("TEST_COVERAGE_ENABLE", "0") == "1":
 else:
     coverage_types = None
 
+i3c_root = os.getenv("I3C_ROOT_DIR")
+
 
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     # session.install("-r", pip_requirements_path)
-
     test_iterations = int(os.getenv("TEST_ITERATIONS", 1))
+    target_support = os.getenv("TARGET_SUPPORT", True)
+    controller_support = os.getenv("CONTROLLER_SUPPORT", False)
+
     for i in range(test_iterations):
         pfx = "" if test_iterations == 1 else f"_{i}"
         test = VerificationTest(test_group, test_type, test_name, coverage, pfx)
@@ -45,6 +49,19 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             if simulator == "vcs" and i > 0:
                 shutil.rmtree(os.path.join(test.testPath, test.sim_build))
 
+            filelist = None
+
+            if target_support:
+                plusargs.extend(["+TargetSupport"])
+                filelist = f"{i3c_root}/src/i3c_target.f"
+
+            if controller_support:
+                plusargs.extend(["+ControllerSupport"])
+                filelist = f"{i3c_root}/src/i3c_controller.f"
+
+            if controller_support and target_support:
+                filelist = f"{i3c_root}/src/i3c.f"
+
             args = [
                 "make",
                 "-C",
@@ -52,6 +69,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 "all",
                 "MODULE=" + test_name,
                 "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
+                "FILELIST=" + filelist,
             ]
             if simulator == "verilator":
                 plusargs.extend(
@@ -66,7 +84,10 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             if simulator:
                 args.append("SIM=" + simulator)
 
+            # plusargs.extend([f"+{name}={val}" for name, val in targs])
             args.append("PLUSARGS=" + " ".join(plusargs))
+
+            print(args)
 
             session.run(
                 *args,
@@ -181,10 +202,10 @@ def bus_tx_flow_verify(session, test_group, test_name, coverage, simulator):
 @nox.parametrize(
     "test_name",
     [
-        "test_clear",
-        "test_empty",
-        "test_read_write_ports",
-        "test_threshold",
+        "test_clear_hci",
+        "test_empty_hci",
+        "test_read_write_ports_hci",
+        "test_threshold_hci",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
@@ -198,16 +219,49 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
 @nox.parametrize(
     "test_name",
     [
-        "test_clear",
-        "test_empty",
-        "test_read_write_ports",
-        "test_threshold",
+        "test_clear_hci",
+        "test_empty_hci",
+        "test_read_write_ports_hci",
+        "test_threshold_hci",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)
 def hci_queues_axi_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "ahb"])
+@nox.parametrize("test_group", ["tti_queues_ahb"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_empty_tti",
+        "test_read_write_ports_tti",
+        "test_threshold_tti",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def tti_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "axi"])
+@nox.parametrize("test_group", ["tti_queues_axi"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_empty_tti",
+        "test_read_write_ports_tti",
+        "test_threshold_tti",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def tti_queues_axi_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
 
 @nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)

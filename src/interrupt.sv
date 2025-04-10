@@ -13,10 +13,10 @@ module interrupt # (
     input  logic clr_i,         // Status clear from logic
 
     output logic sts_o,         // Status next state
-    output logic sts_we_o,      // Status wrtie enable
+    output logic sts_we_o,      // Status write enable
     input  logic sts_i,         // Status state
 
-    input  logic sts_ena_i,     // IRQ status nable input
+    input  logic sts_ena_i,     // IRQ status enable input
     input  logic sig_ena_i,     // IRQ signal enable input
 
     output logic irq_o          // IRQ output

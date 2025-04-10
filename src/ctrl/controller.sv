@@ -10,8 +10,9 @@ module controller
   import i3c_pkg::*;
 #(
     parameter int unsigned DatAw = i3c_pkg::DatAw,
-    parameter int unsigned DctAw = i3c_pkg::DctAw,
+    parameter int unsigned DctAw = i3c_pkg::DctAw
 
+`ifdef CONTROLLER_SUPPORT,
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
     parameter int unsigned HciRxFifoDepth   = 64,
@@ -31,11 +32,12 @@ module controller
     parameter int unsigned HciIbiDataWidth  = 32,
 
     parameter int unsigned HciRespThldWidth = 8,
-    parameter int unsigned HciCmdThldWidth  = 8,
-    parameter int unsigned HciRxThldWidth   = 3,
-    parameter int unsigned HciTxThldWidth   = 3,
-    parameter int unsigned HciIbiThldWidth  = 8,
-
+    parameter int unsigned HciCmdThldWidth = 8,
+    parameter int unsigned HciRxThldWidth = 3,
+    parameter int unsigned HciTxThldWidth = 3,
+    parameter int unsigned HciIbiThldWidth = 8
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT,
     parameter int unsigned TtiRxDescFifoDepth = 64,
     parameter int unsigned TtiTxDescFifoDepth = 64,
     parameter int unsigned TtiRxFifoDepth = 64,
@@ -59,6 +61,7 @@ module controller
     parameter int unsigned TtiRxThldWidth = 3,
     parameter int unsigned TtiTxThldWidth = 3,
     parameter int unsigned TtiIbiThldWidth = 8
+`endif  // TARGET_SUPPORT
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -70,6 +73,7 @@ module controller
     output logic sel_od_pp_o,
     input logic arbitration_lost_i,
 
+`ifdef CONTROLLER_SUPPORT
     // HCI queues
     // Command FIFO
     input logic hci_cmd_queue_full_i,
@@ -122,8 +126,21 @@ module controller
     input logic hci_ibi_queue_wready_i,
     output logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_o,
 
-    // Target Transaction Interface
+    // DAT <-> Controller interface
+    output logic             dat_read_valid_hw_o,
+    output logic [DatAw-1:0] dat_index_hw_o,
+    input  logic [     63:0] dat_rdata_hw_i,
 
+    // DCT <-> Controller interface
+    output logic             dct_write_valid_hw_o,
+    output logic             dct_read_valid_hw_o,
+    output logic [DctAw-1:0] dct_index_hw_o,
+    output logic [    127:0] dct_wdata_hw_o,
+    input  logic [    127:0] dct_rdata_hw_i,
+
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
+    // Target Transaction Interface
     // TTI: RX Descriptor
     input logic tti_rx_desc_queue_full_i,
     input logic [TtiRxDescFifoDepthWidth-1:0] tti_rx_desc_queue_depth_i,
@@ -182,18 +199,7 @@ module controller
     input logic tti_ibi_queue_rvalid_i,
     output logic tti_ibi_queue_rready_o,
     input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_i,
-
-    // DAT <-> Controller interface
-    output logic             dat_read_valid_hw_o,
-    output logic [DatAw-1:0] dat_index_hw_o,
-    input  logic [     63:0] dat_rdata_hw_i,
-
-    // DCT <-> Controller interface
-    output logic             dct_write_valid_hw_o,
-    output logic             dct_read_valid_hw_o,
-    output logic [DctAw-1:0] dct_index_hw_o,
-    output logic [    127:0] dct_wdata_hw_o,
-    input  logic [    127:0] dct_rdata_hw_i,
+`endif  // TARGET_SUPPORT
 
     // I2C/I3C Bus condition detection
     output logic bus_start_o,
@@ -292,18 +298,18 @@ module controller
   // I2C/I3C Bus state monitor
   bus_state_t bus;
   bus_monitor xbus_monitor (
-    .clk_i,
-    .rst_ni,
+      .clk_i,
+      .rst_ni,
 
-    .sda_i,
-    .scl_i,
+      .sda_i,
+      .scl_i,
 
-    .enable_i   (1'b1),
-    .t_hd_dat_i (t_hd_dat),
-    .t_r_i      (t_r),
-    .t_f_i      (t_f),
+      .enable_i  (1'b1),
+      .t_hd_dat_i(t_hd_dat),
+      .t_r_i     (t_r),
+      .t_f_i     (t_f),
 
-    .state_o    (bus)
+      .state_o(bus)
   );
 
   // 4:1 multiplexer for signals between PHY and controllers.
@@ -320,66 +326,67 @@ module controller
     sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];
 
     // Default
-    for (int i=0; i<4; i++) begin
-        ctrl_bus_i[i] = '0;
-        ctrl_bus_i[i].sda.value = '1;
-        ctrl_bus_i[i].scl.value = '1;
-        ctrl_bus_i[i].sda.stable_high = '1;
-        ctrl_bus_i[i].scl.stable_high = '1;
+    for (int i = 0; i < 4; i++) begin
+      ctrl_bus_i[i] = '0;
+      ctrl_bus_i[i].sda.value = '1;
+      ctrl_bus_i[i].scl.value = '1;
+      ctrl_bus_i[i].sda.stable_high = '1;
+      ctrl_bus_i[i].scl.stable_high = '1;
     end
 
     // Muxed
     ctrl_bus_i[phy_mux_select] = bus;
-    end
+  end
 
   configuration xconfiguration (
-      .clk_i                           (clk_i),
-      .rst_ni                          (rst_ni),
-      .hwif_out_i                      (hwif_out_i),
-      .phy_en_o                        (phy_en),
-      .phy_mux_select_o                (phy_mux_select),
-      .i2c_active_en_o                 (i2c_active_en),
-      .i2c_standby_en_o                (i2c_standby_en),
-      .i3c_active_en_o                 (i3c_active_en),
-      .i3c_standby_en_o                (i3c_standby_en),
-      .t_su_dat_o                      (t_su_dat),
-      .t_hd_dat_o                      (t_hd_dat),
-      .t_r_o                           (t_r),
-      .t_f_o                           (t_f),
-      .t_bus_free_o                    (t_bus_free),
-      .t_bus_idle_o                    (t_bus_idle),
-      .t_bus_available_o               (t_bus_available),
-      .get_mwl_o                       (get_mwl),
-      .get_mrl_o                       (get_mrl),
-      .get_status_fmt1_o               (get_status_fmt1),
-      .pid_o                           (pid),
-      .bcr_o                           (bcr),
-      .dcr_o                           (dcr),
-      .virtual_pid_o                   (virtual_pid),
-      .virtual_bcr_o                   (virtual_bcr),
-      .virtual_dcr_o                   (virtual_dcr),
-      .target_sta_addr_o               (target_sta_addr),
-      .target_sta_addr_valid_o         (target_sta_addr_valid),
-      .target_dyn_addr_o               (target_dyn_addr),
-      .target_dyn_addr_valid_o         (target_dyn_addr_valid),
-      .virtual_target_sta_addr_o       (virtual_target_sta_addr),
-      .virtual_target_sta_addr_valid_o (virtual_target_sta_addr_valid),
-      .virtual_target_dyn_addr_o       (virtual_target_dyn_addr),
-      .virtual_target_dyn_addr_valid_o (virtual_target_dyn_addr_valid),
-      .target_ibi_addr_o               (target_ibi_addr),
-      .target_ibi_addr_valid_o         (target_ibi_addr_valid),
-      .target_hot_join_addr_o          (target_hot_join_addr),
-      .daa_unique_response_o           (daa_unique_response),
-      .ibi_enable_o                    (ibi_enable),
-      .ibi_retry_num_o                 (ibi_retry_num),
-      .set_mwl_i                       (set_mwl),
-      .set_mrl_i                       (set_mrl),
-      .mwl_i                           (mwl),
-      .mrl_i                           (mrl)
+      .clk_i                          (clk_i),
+      .rst_ni                         (rst_ni),
+      .hwif_out_i                     (hwif_out_i),
+      .phy_en_o                       (phy_en),
+      .phy_mux_select_o               (phy_mux_select),
+      .i2c_active_en_o                (i2c_active_en),
+      .i2c_standby_en_o               (i2c_standby_en),
+      .i3c_active_en_o                (i3c_active_en),
+      .i3c_standby_en_o               (i3c_standby_en),
+      .t_su_dat_o                     (t_su_dat),
+      .t_hd_dat_o                     (t_hd_dat),
+      .t_r_o                          (t_r),
+      .t_f_o                          (t_f),
+      .t_bus_free_o                   (t_bus_free),
+      .t_bus_idle_o                   (t_bus_idle),
+      .t_bus_available_o              (t_bus_available),
+      .get_mwl_o                      (get_mwl),
+      .get_mrl_o                      (get_mrl),
+      .get_status_fmt1_o              (get_status_fmt1),
+      .pid_o                          (pid),
+      .bcr_o                          (bcr),
+      .dcr_o                          (dcr),
+      .virtual_pid_o                  (virtual_pid),
+      .virtual_bcr_o                  (virtual_bcr),
+      .virtual_dcr_o                  (virtual_dcr),
+      .target_sta_addr_o              (target_sta_addr),
+      .target_sta_addr_valid_o        (target_sta_addr_valid),
+      .target_dyn_addr_o              (target_dyn_addr),
+      .target_dyn_addr_valid_o        (target_dyn_addr_valid),
+      .virtual_target_sta_addr_o      (virtual_target_sta_addr),
+      .virtual_target_sta_addr_valid_o(virtual_target_sta_addr_valid),
+      .virtual_target_dyn_addr_o      (virtual_target_dyn_addr),
+      .virtual_target_dyn_addr_valid_o(virtual_target_dyn_addr_valid),
+      .target_ibi_addr_o              (target_ibi_addr),
+      .target_ibi_addr_valid_o        (target_ibi_addr_valid),
+      .target_hot_join_addr_o         (target_hot_join_addr),
+      .daa_unique_response_o          (daa_unique_response),
+      .ibi_enable_o                   (ibi_enable),
+      .ibi_retry_num_o                (ibi_retry_num),
+      .set_mwl_i                      (set_mwl),
+      .set_mrl_i                      (set_mrl),
+      .mwl_i                          (mwl),
+      .mrl_i                          (mrl)
   );
 
   assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
 
+`ifdef CONTROLLER_SUPPORT
   // Active controller
   controller_active xcontroller_active (
       .clk_i(clk_i),
@@ -457,7 +464,19 @@ module controller
       .t_bus_idle_i(t_bus_idle),
       .t_bus_available_i(t_bus_available)
   );
-
+`else
+always_comb begin
+  err = '0;
+  irq = '0;
+  ctrl_scl_o[0] = 1'b1;
+  ctrl_scl_o[1] = 1'b1;
+  ctrl_sda_o[0] = 1'b1;
+  ctrl_sda_o[1] = 1'b1;
+  ctrl_sel_od_pp_i[0] = 1'b0;
+  ctrl_sel_od_pp_i[1] = 1'b0;
+end
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
   // Standby (Secondary) Controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
@@ -585,5 +604,15 @@ module controller
       .virtual_device_sel_o(virtual_device_sel_o),
       .xfer_in_progress_o(xfer_in_progress_o)
   );
+`else
+always_comb begin
+  ctrl_scl_o[2] = 1'b1;
+  ctrl_scl_o[3] = 1'b1;
+  ctrl_sda_o[2] = 1'b1;
+  ctrl_sda_o[3] = 1'b1;
+  ctrl_sel_od_pp_i[2] = 1'b0;
+  ctrl_sel_od_pp_i[3] = 1'b0;
+end
+`endif  // TARGET_SUPPORT
 
 endmodule

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-
+`ifdef CONTROLLER_SUPPORT
 // I3C Host Controller Interface
 module hci
   import i3c_pkg::*;
@@ -36,20 +36,6 @@ module hci
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
-
-    // I3C SW CSR access interface
-    input  logic                    s_cpuif_req,
-    input  logic                    s_cpuif_req_is_wr,
-    input  logic [CsrAddrWidth-1:0] s_cpuif_addr,
-    input  logic [CsrDataWidth-1:0] s_cpuif_wr_data,
-    input  logic [CsrDataWidth-1:0] s_cpuif_wr_biten,
-    output logic                    s_cpuif_req_stall_wr,
-    output logic                    s_cpuif_req_stall_rd,
-    output logic                    s_cpuif_rd_ack,
-    output logic                    s_cpuif_rd_err,
-    output logic [CsrDataWidth-1:0] s_cpuif_rd_data,
-    output logic                    s_cpuif_wr_ack,
-    output logic                    s_cpuif_wr_err,
 
     // DAT <-> Controller interface
     input  logic             dat_read_valid_hw_i,
@@ -125,19 +111,21 @@ module hci
     output logic hci_ibi_wready_o,
     input logic [HciIbiDataWidth-1:0] hci_ibi_wdata_i,
 
-    // Target Transaction Interface CSRs
-    output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_o,
-    input  I3CCSR_pkg::I3CCSR__I3C_EC__TTI__in_t  hwif_tti_i,
-    // SoC Managment CSR interface
-    output I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__out_t hwif_socmgmt_o,
-    input  I3CCSR_pkg::I3CCSR__I3C_EC__SoCMgmtIf__in_t  hwif_socmgmt_i,
+    // PIO CONTROL CSR interface
+    input  I3CCSR_pkg::I3CCSR__PIOControl__out_t hwif_pio_control_i,
+    output I3CCSR_pkg::I3CCSR__PIOControl__in_t  hwif_pio_control_o,
 
-    // Recovery interface CSRs
-    output I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_o,
-    input  I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_i,
+    // I3C BASE CSR interface
+    input  I3CCSR_pkg::I3CCSR__I3CBase__out_t hwif_base_i,
+    output I3CCSR_pkg::I3CCSR__I3CBase__in_t  hwif_base_o,
 
-    // Controller configuration
-    output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
+    // DAT CSR interface
+    input  I3CCSR_pkg::I3CCSR__DAT__out_t dat_i,
+    output I3CCSR_pkg::I3CCSR__DAT__in_t  dat_o,
+
+    // DCT CSR interface
+    input  I3CCSR_pkg::I3CCSR__DCT__out_t dct_i,
+    output I3CCSR_pkg::I3CCSR__DCT__in_t  dct_o,
 
     input logic [6:0] set_dasa_i,
     input logic       set_dasa_valid_i,
@@ -150,34 +138,6 @@ module hci
     input logic [7:0] rst_action_i,
     input logic rst_action_valid_i
 );
-
-  I3CCSR_pkg::I3CCSR__in_t hwif_in;
-
-  // Propagate reset to CSRs
-  assign hwif_in.rst_ni = rst_ni;
-
-  // DAT CSR interface
-  I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;
-  I3CCSR_pkg::I3CCSR__DAT__in_t  dat_i;
-
-  // DCT CSR interface
-  I3CCSR_pkg::I3CCSR__DCT__out_t dct_o;
-  I3CCSR_pkg::I3CCSR__DCT__in_t  dct_i;
-
-
-  // TTI CSR interface
-  assign hwif_tti_o = hwif_out_o.I3C_EC.TTI;
-  assign hwif_in.I3C_EC.TTI = hwif_tti_i;
-
-  // SoC Managment CSR interface
-  assign hwif_socmgmt_o = hwif_out_o.I3C_EC.SoCMgmtIf;
-  assign hwif_in.I3C_EC.SoCMgmtIf = hwif_socmgmt_i;
-
-  // Recovery CSR interface
-  assign hwif_rec_o = hwif_out_o.I3C_EC.SecFwRecoveryIf;
-
-  // TODO: Use this if
-  assign hwif_in.I3C_EC.SecFwRecoveryIf = hwif_rec_i;
 
   // Reset control
   logic cmd_reset_ctrl_we;
@@ -226,143 +186,77 @@ module hci
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
     if (!rst_ni) begin
-      cmd_ready_thld_we  <= '0;
+      cmd_ready_thld_we <= '0;
       resp_ready_thld_we <= '0;
       cmd_ready_thld_swmod_q <= '0;
       resp_ready_thld_swmod_q <= '0;
     end else begin
-      cmd_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
+      cmd_ready_thld_swmod_q <= hwif_pio_control_i.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.swmod;
       cmd_ready_thld_we <= cmd_ready_thld_swmod_q;
-      resp_ready_thld_swmod_q <= hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
+      resp_ready_thld_swmod_q <= hwif_pio_control_i.QUEUE_THLD_CTRL.RESP_BUF_THLD.swmod;
       resp_ready_thld_we <= resp_ready_thld_swmod_q;
     end
   end
 
   always_comb begin : wire_hwif
     // Reset control
-    cmdrst = hwif_out_o.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.value;
-    rxrst = hwif_out_o.I3CBase.RESET_CONTROL.RX_FIFO_RST.value;
-    txrst = hwif_out_o.I3CBase.RESET_CONTROL.TX_FIFO_RST.value;
-    resprst = hwif_out_o.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.value;
+    cmdrst = hwif_base_i.RESET_CONTROL.CMD_QUEUE_RST.value;
+    rxrst = hwif_base_i.RESET_CONTROL.RX_FIFO_RST.value;
+    txrst = hwif_base_i.RESET_CONTROL.TX_FIFO_RST.value;
+    resprst = hwif_base_i.RESET_CONTROL.RESP_QUEUE_RST.value;
 
-    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
+    hwif_base_o.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.we = rx_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.next = rx_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.RX_FIFO_RST.we = rx_reset_ctrl_we;
+    hwif_base_o.RESET_CONTROL.RX_FIFO_RST.next = rx_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.we = tx_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.next = tx_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.TX_FIFO_RST.we = tx_reset_ctrl_we;
+    hwif_base_o.RESET_CONTROL.TX_FIFO_RST.next = tx_reset_ctrl_next;
 
-    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we = resp_reset_ctrl_we;
-    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next = resp_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.RESP_QUEUE_RST.we = resp_reset_ctrl_we;
+    hwif_base_o.RESET_CONTROL.RESP_QUEUE_RST.next = resp_reset_ctrl_next;
 
     // Threshold
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = cmd_ready_thld_we;
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = resp_ready_thld_we;
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = hci_cmd_ready_thld_o;
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = hci_resp_ready_thld_o;
-    cmd_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
-    hci_rx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
-    rx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
-    hci_tx_start_thld_o = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
-    tx_ready_thld = hwif_out_o.PIOControl.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
-    resp_ready_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
+    hwif_pio_control_o.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = cmd_ready_thld_we;
+    hwif_pio_control_o.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = resp_ready_thld_we;
+    hwif_pio_control_o.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next = hci_cmd_ready_thld_o;
+    hwif_pio_control_o.QUEUE_THLD_CTRL.RESP_BUF_THLD.next = hci_resp_ready_thld_o;
+    cmd_ready_thld = hwif_pio_control_i.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.value;
+    hci_rx_start_thld_o = hwif_pio_control_i.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value;
+    rx_ready_thld = hwif_pio_control_i.DATA_BUFFER_THLD_CTRL.RX_BUF_THLD.value;
+    hci_tx_start_thld_o = hwif_pio_control_i.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value;
+    tx_ready_thld = hwif_pio_control_i.DATA_BUFFER_THLD_CTRL.TX_BUF_THLD.value;
+    resp_ready_thld = hwif_pio_control_i.QUEUE_THLD_CTRL.RESP_BUF_THLD.value;
 
     // HCI queue port handling
 
     // HCI PIOControl ports requests
-    xfer_req = hwif_out_o.PIOControl.RX_DATA_PORT.req | hwif_out_o.PIOControl.TX_DATA_PORT.req;
-    xfer_req_is_wr = hwif_out_o.PIOControl.RX_DATA_PORT.req_is_wr
-      | hwif_out_o.PIOControl.TX_DATA_PORT.req_is_wr;
+    xfer_req = hwif_pio_control_i.RX_DATA_PORT.req | hwif_pio_control_i.TX_DATA_PORT.req;
+    xfer_req_is_wr = hwif_pio_control_i.RX_DATA_PORT.req_is_wr
+      | hwif_pio_control_i.TX_DATA_PORT.req_is_wr;
 
-    cmd_req = hwif_out_o.PIOControl.COMMAND_PORT.req & hwif_out_o.PIOControl.COMMAND_PORT.req_is_wr;
+    cmd_req = hwif_pio_control_i.COMMAND_PORT.req & hwif_pio_control_i.COMMAND_PORT.req_is_wr;
     rx_req = xfer_req && !xfer_req_is_wr;
     tx_req = xfer_req && xfer_req_is_wr;
-    resp_req = hwif_out_o.PIOControl.RESPONSE_PORT.req;
+    resp_req = hwif_pio_control_i.RESPONSE_PORT.req;
 
     // Reading commands from the command port
-    hwif_in.PIOControl.COMMAND_PORT.wr_ack = cmd_wr_ack;
-    cmd_wr_data = hwif_out_o.PIOControl.COMMAND_PORT.wr_data;
+    hwif_pio_control_o.COMMAND_PORT.wr_ack = cmd_wr_ack;
+    cmd_wr_data = hwif_pio_control_i.COMMAND_PORT.wr_data;
 
     // Writing data to the rx port
-    hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
-    hwif_in.PIOControl.RX_DATA_PORT.rd_data = rx_rd_data;
+    hwif_pio_control_o.RX_DATA_PORT.rd_ack = rx_rd_ack;
+    hwif_pio_control_o.RX_DATA_PORT.rd_data = rx_rd_data;
 
     // Reading data from the tx port
-    hwif_in.PIOControl.TX_DATA_PORT.wr_ack = tx_wr_ack;
-    tx_wr_data = hwif_out_o.PIOControl.TX_DATA_PORT.wr_data;
+    hwif_pio_control_o.TX_DATA_PORT.wr_ack = tx_wr_ack;
+    tx_wr_data = hwif_pio_control_i.TX_DATA_PORT.wr_data;
 
     // Writing response to the resp port
-    hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
-    hwif_in.PIOControl.RESPONSE_PORT.rd_data = resp_rd_data;
-
-    // DXT
-    hwif_in.DAT = dat_i;
-    hwif_in.DCT = dct_i;
-    dat_o = hwif_out_o.DAT;
-    dct_o = hwif_out_o.DCT;
+    hwif_pio_control_o.RESPONSE_PORT.rd_ack = resp_rd_ack;
+    hwif_pio_control_o.RESPONSE_PORT.rd_data = resp_rd_data;
   end : wire_hwif
-
-  always_comb begin : wire_hwif_rstact
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_valid_i ? rst_action_i : '0;
-  end
-
-  always_comb begin : wire_address_setting
-    // Target address
-    if (set_dasa_valid_i | rstdaa_i) begin
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = (set_dasa_valid_i | rstdaa_i) && ~(set_dasa_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = (rstdaa_i && ~(set_dasa_virtual_device_i)) ? '0: set_dasa_valid_i;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = (set_dasa_valid_i | rstdaa_i) && ~(set_dasa_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = (rstdaa_i && ~(set_dasa_virtual_device_i)) ? 1'b0 : set_dasa_i;
-      // Virtual device address
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.we = (set_dasa_valid_i | rstdaa_i) && (set_dasa_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next = rstdaa_i && set_dasa_virtual_device_i ? '0: set_dasa_valid_i;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = (set_dasa_valid_i | rstdaa_i) && (set_dasa_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next = rstdaa_i && set_dasa_virtual_device_i ? 1'b0 : set_dasa_i;
-    end else if (set_newda_i | set_newda_virtual_device_i) begin
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_newda_i && ~(set_newda_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = 1'b1;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = set_newda_i && ~(set_newda_virtual_device_i);
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = newda_i;
-      // Virtual device address
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.we = set_newda_i && set_newda_virtual_device_i;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next = 1'b1;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = set_newda_i && set_newda_virtual_device_i;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next = newda_i;
-    end else begin
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 1'b0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = 1'b0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
-      // Virtual device address
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.we = 1'b0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.next = '0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = 1'b0;
-      hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next = '0;
-    end
-  end
-
-  I3CCSR i3c_csr (
-      .clk(clk_i),
-      .rst('0),  // Unused, CSRs are reset through hwif_in.rst_ni
-
-      .s_cpuif_req(s_cpuif_req),
-      .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
-      .s_cpuif_addr(s_cpuif_addr),
-      .s_cpuif_wr_data(s_cpuif_wr_data),
-      .s_cpuif_wr_biten(s_cpuif_wr_biten),  // Write strobes not handled by AHB-Lite interface
-      .s_cpuif_req_stall_wr(s_cpuif_req_stall_wr),
-      .s_cpuif_req_stall_rd(s_cpuif_req_stall_rd),
-      .s_cpuif_rd_ack(s_cpuif_rd_ack),  // Ignored by AHB component
-      .s_cpuif_rd_err(s_cpuif_rd_err),
-      .s_cpuif_rd_data(s_cpuif_rd_data),
-      .s_cpuif_wr_ack(s_cpuif_wr_ack),  // Ignored by AHB component
-      .s_cpuif_wr_err(s_cpuif_wr_err),
-
-      .hwif_in (hwif_in),
-      .hwif_out(hwif_out_o)
-  );
 
   dxt #(
       .DatAw(DatAw),
@@ -381,11 +275,11 @@ module hci
       .dct_wdata_hw_i,
       .dct_rdata_hw_o,
 
-      .csr_dat_hwif_i(dat_o),
-      .csr_dat_hwif_o(dat_i),
+      .csr_dat_hwif_i(dat_i),
+      .csr_dat_hwif_o(dat_o),
 
-      .csr_dct_hwif_i(dct_o),
-      .csr_dct_hwif_o(dct_i),
+      .csr_dct_hwif_i(dct_i),
+      .csr_dct_hwif_o(dct_o),
 
       .dat_mem_src_i,
       .dat_mem_sink_o,
@@ -488,8 +382,6 @@ module hci
       .tx_reg_rst_data_o(tx_reset_ctrl_next)
   );
 
-
-
   // In-band Interrupt queue
   logic hci_ibi_rst;
   logic hci_ibi_rst_we;
@@ -501,15 +393,15 @@ module hci
   logic [HciIbiDataWidth-1:0] hci_ibi_rd_data;
 
   always_comb begin
-    hci_ibi_rst = hwif_out_o.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we = hci_ibi_rst_we;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next = hci_ibi_rst_next;
+    hci_ibi_rst = hwif_base_i.RESET_CONTROL.IBI_QUEUE_RST.value;
+    hwif_base_o.RESET_CONTROL.IBI_QUEUE_RST.we = hci_ibi_rst_we;
+    hwif_base_o.RESET_CONTROL.IBI_QUEUE_RST.next = hci_ibi_rst_next;
 
-    hci_ibi_thld = hwif_out_o.PIOControl.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
+    hci_ibi_thld = hwif_pio_control_i.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
 
-    hci_ibi_req = hwif_out_o.PIOControl.IBI_PORT.req;
-    hwif_in.PIOControl.IBI_PORT.rd_ack = hci_ibi_rd_ack;
-    hwif_in.PIOControl.IBI_PORT.rd_data = hci_ibi_rd_data;
+    hci_ibi_req = hwif_pio_control_i.IBI_PORT.req;
+    hwif_pio_control_o.IBI_PORT.rd_ack = hci_ibi_rd_ack;
+    hwif_pio_control_o.IBI_PORT.rd_data = hci_ibi_rd_data;
   end
 
   read_queue #(
@@ -545,111 +437,35 @@ module hci
   );
 
   always_comb begin : wire_unconnected_regs
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next = '0;
-    hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.hwclr = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next= '0;
+    hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
+    hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
+    hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
+    hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
+    hwif_base_o.HC_CONTROL.RESUME.we = '0;
+    hwif_base_o.HC_CONTROL.RESUME.next = '0;
+    hwif_base_o.HC_CONTROL.BUS_ENABLE.we = '0;
+    hwif_base_o.HC_CONTROL.BUS_ENABLE.next = '0;
+    hwif_base_o.RESET_CONTROL.SOFT_RST.we = '0;
+    hwif_base_o.RESET_CONTROL.SOFT_RST.next = '0;
+    hwif_base_o.PRESENT_STATE.AC_CURRENT_OWN.next = '0;
+    hwif_base_o.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = '0;
+    hwif_base_o.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = '0;
+    hwif_base_o.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = '0;
+    hwif_base_o.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = '0;
+    hwif_base_o.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = '0;
+    hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.we = '0;
+    hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.next = '0;
+    hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = '0;
+    hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;
 
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.we = '0;
-
-    hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = '0;
-
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
-    hwif_in.I3CBase.HC_CONTROL.RESUME.we = '0;
-    hwif_in.I3CBase.HC_CONTROL.RESUME.next = '0;
-    hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = '0;
-    hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.next = '0;
-    hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we = '0;
-    hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.next = '0;
-    hwif_in.I3CBase.PRESENT_STATE.AC_CURRENT_OWN.next = '0;
-    hwif_in.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = '0;
-    hwif_in.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = '0;
-    hwif_in.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = '0;
-    hwif_in.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = '0;
-    hwif_in.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = '0;
-    hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = '0;
-    hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next = '0;
-    hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = '0;
-    hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;
-
-    hwif_in.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = '0;
-    hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.RESP_READY_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = '0;
   end
 
 endmodule : hci
+`endif // CONTROLLER_SUPPORT

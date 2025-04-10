@@ -18,15 +18,9 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         # Set queue's ready to 0 (hold accepting the data)
         self.dut.hci_cmd_rready_i.value = 0
         self.dut.hci_tx_rready_i.value = 0
-        self.dut.tti_tx_rready_i.value = 0
-        self.dut.tti_tx_desc_rready_i.value = 0
         self.dut.hci_rx_wvalid_i.value = 0
         self.dut.hci_ibi_wvalid_i.value = 0
         self.dut.hci_resp_wvalid_i = 0
-        self.dut.tti_rx_wvalid_i.value = 0
-        self.dut.tti_rx_desc_wvalid_i.value = 0
-        self.dut.tti_ibi_rready_i.value = 0
-        self.dut.bypass_i3c_core_i.value = 0
 
         if hasattr(self.dut, "disable_id_filtering_i"):
             self.dut.disable_id_filtering_i.value = 1
@@ -45,9 +39,7 @@ class HCIQueuesTestInterface(HCIBaseTestInterface):
         if queue in ["cmd", "ibi"]:
             return (queue_size >> off[queue]) & mask_bits(8)
         # Size of the response queue
-        alt_queue_size = bytes2int(
-            await self.read_csr(self.reg_map.PIOCONTROL.ALT_QUEUE_SIZE.base_addr, 4)
-        )
+        alt_queue_size = bytes2int(await self.read_csr(self.reg_map.PIOCONTROL.ALT_QUEUE_SIZE.base_addr, 4))
         cr_size = queue_size & mask_bits(8)
         alt_resp_size = alt_queue_size & mask_bits(8)
         alt_resp_en = (alt_queue_size >> 24) & 0x1
