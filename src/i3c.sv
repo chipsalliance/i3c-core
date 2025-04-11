@@ -179,7 +179,7 @@ module i3c
 `ifdef AXI_ID_FILTERING
     // ID Filtering
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
+    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
 `endif
 `endif
 

@@ -61,7 +61,7 @@ module axi_adapter #(
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i[NumPrivIds],
+    input logic [AxiUserWidth-1:0] priv_ids_i[NumPrivIds],
 `endif
 
     // I3C SW CSR access interface
@@ -123,8 +123,8 @@ module axi_adapter #(
         rsel[j] = '0;
         wsel[j] = '0;
       end else begin
-        rsel[j] = arid_i == priv_ids_i[j];
-        wsel[j] = awid_i == priv_ids_i[j];
+        rsel[j] = aruser_i == priv_ids_i[j];
+        wsel[j] = awuser_i == priv_ids_i[j];
       end
     end
   end

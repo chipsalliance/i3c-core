@@ -99,7 +99,7 @@ module i3c_wrapper #(
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds],
+    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
 `endif
 `endif
 

@@ -105,7 +105,6 @@ class FrontBusTestInterface:
         await self.write_csr(reg_addr, int2bytes(value), awid=awid)
 
     async def read_csr_field(self, reg_addr, field, arid=None) -> int:
-        """Read -> modify -> write CSR"""
         value = bytes2int(await self.read_csr(reg_addr, arid=arid))
         value = value & field.mask
         value = value >> field.low
@@ -159,7 +158,7 @@ class AHBTestInterface(FrontBusTestInterface):
     ) -> List[int]:
         """Send a read request & await the response for 'timeout' in 'units'."""
         if arid:
-            self.dut._log.debug(f"AHB doesn't support transaction IDs, ignoring arid={arid}")
+            self.dut._log.debug(f"AHB doesn't support user id, ignoring arid={arid}")
         self.AHBManager.read(addr, size)
         await with_timeout(self.AHBManager.transfer_done(), timeout, units)
         read = self.AHBManager.get_rsp(addr, self.data_byte_width)
@@ -176,7 +175,7 @@ class AHBTestInterface(FrontBusTestInterface):
     ) -> None:
         """Send a write request & await transfer to finish for 'timeout' in 'units'."""
         if awid:
-            self.dut._log.debug(f"AHB doesn't support transaction IDs, ignoring awid={awid}")
+            self.dut._log.debug(f"AHB doesn't support user_id, ignoring aw_user={awid}")
         data_len = len(data)
         # Extend bytes to size if there's less than that
         if data_len <= size:
@@ -218,7 +217,10 @@ class AXITestInterface(FrontBusTestInterface):
         ret_data_only=True,
     ) -> List[int]:
         """Send a read request & await the response."""
-        resp = await with_timeout(self.axi_m.read(addr, size, arid=arid), timeout, units)
+        if arid is not None:
+            resp = await with_timeout(self.axi_m.read(addr, size, user=arid), timeout, units)
+        else:
+            resp = await with_timeout(self.axi_m.read(addr, size), timeout, units)
         if ret_data_only:
             return resp.data
         return resp
@@ -234,7 +236,10 @@ class AXITestInterface(FrontBusTestInterface):
     ) -> None:
         """Send a write request & await transfer to finish."""
         # assert not bytes(data)
-        return await with_timeout(self.axi_m.write(addr, bytes(data), awid=awid), timeout, units)
+        if awid is not None:
+            return await with_timeout(self.axi_m.write(addr, bytes(data), user=awid), timeout, units)
+        else:
+            return await with_timeout(self.axi_m.write(addr, bytes(data)), timeout, units)
 
     def _report_response(self, got, expected, is_read=False):
         op = "read" if is_read else "write"
@@ -259,7 +264,7 @@ class AXITestInterface(FrontBusTestInterface):
 
             while not (self.dut.rvalid.value and self.dut.rready.value):
                 await RisingEdge(self.dut.aclk)
-            rid = self.dut.rid.value
+            rid = self.dut.aruser.value
             rresp = self.dut.rresp.value
             if filter_off or rid in priv_ids:
                 assert rresp == AxiResp.OKAY, self._report_response(rresp, AxiResp.OKAY, True)
@@ -284,7 +289,7 @@ class AXITestInterface(FrontBusTestInterface):
 
             while not (self.dut.bvalid.value and self.dut.bready.value):
                 await RisingEdge(self.dut.aclk)
-            bid = self.dut.bid.value
+            bid = self.dut.awuser.value
             bresp = self.dut.bresp.value
 
             if filter_off or bid in priv_ids:

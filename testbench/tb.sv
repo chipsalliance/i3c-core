@@ -89,7 +89,7 @@ logic rst_n;
 
 `ifdef AXI_ID_FILTERING
     logic disable_id_filtering_i;
-    logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds];
+    logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds];
 `endif
 `endif
 

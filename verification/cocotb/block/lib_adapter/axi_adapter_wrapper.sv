@@ -71,7 +71,7 @@ module axi_adapter_wrapper
     output logic                  fifo_full_o
 `ifdef AXI_ID_FILTERING,
     input logic disable_id_filtering_i,
-    input logic [AxiIdWidth-1:0] priv_ids_i [NumPrivIds]
+    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds]
 `endif
 );
   // I3C SW CSR access interface

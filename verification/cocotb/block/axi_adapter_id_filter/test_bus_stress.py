@@ -171,11 +171,11 @@ async def write_read_burst(dut, filter_off=False, awid_priv=True, arid_priv=True
     raddr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr
 
     # Run write burst to fill the FIFO
-    write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, awid=awid)
+    write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, user=awid)
     await with_timeout(write, 1, "us")
 
     # Run read burst to empty the FIFO
-    read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, arid=arid)
+    read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, user=arid)
     received_data = await with_timeout(read, 1, "us")
 
     verify_data(test_data, awids, received_data, arids, filter_off, priv_ids)
@@ -210,11 +210,11 @@ async def write_burst_collision_with_read(dut, filter_off=False, awid_priv=True,
     single_write_cycles = 3
 
     async def writer():
-        write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, awid=awid)
+        write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, user=awid)
         await with_timeout(write, 1, "us")
 
     async def reader(return_data):
-        read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, arid=arid)
+        read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, user=arid)
         return_data.extend(await with_timeout(read, 1, "us"))
 
     received_data = []
@@ -237,7 +237,7 @@ async def test_write_burst_collision_with_read_id_filter_off(dut):
     await write_burst_collision_with_read(dut, True)
 
 
-@cocotb.test()
+@cocotb.test(skip=False)
 async def test_write_burst_collision_with_read_id_filter_on_priv(dut):
     await write_burst_collision_with_read(dut, False, Access.Priv, Access.Priv)
 
@@ -261,11 +261,11 @@ async def read_burst_collision_with_write(dut, filter_off=False, awid_priv=True,
     single_write_cycles = 3
 
     async def writer():
-        write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, awid=awid)
+        write = tb.axi_m.write_dwords(waddr, test_data, burst=AxiBurstType.FIXED, user=awid)
         await with_timeout(write, 1, "us")
 
     async def reader(return_data):
-        read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, arid=arid)
+        read = tb.axi_m.read_dwords(raddr, count=data_len, burst=AxiBurstType.FIXED, user=arid)
         return_data.extend(await with_timeout(read, 1, "us"))
 
     received_data1 = []
@@ -338,7 +338,7 @@ async def test_collision_with_write_mixed_priv(dut):
             _ = await tb.read_csr(raddr, arid=arids[i])
 
     # Fill fifo halfway to avoid reads when empty
-    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
+    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, user=priv_ids[0])
 
     w = cocotb.start_soon(writer())
     r = cocotb.start_soon(reader())
@@ -381,7 +381,7 @@ async def test_collision_with_read_mixed_priv(dut):
             _ = await tb.read_csr(raddr, arid=arids[i])
             await RisingEdge(tb.clk)
 
-    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, awid=priv_ids[0])
+    await tb.axi_m.write_dwords(waddr, range(64), burst=AxiBurstType.FIXED, user=priv_ids[0])
 
     w = cocotb.start_soon(writer())
     r = cocotb.start_soon(reader())
