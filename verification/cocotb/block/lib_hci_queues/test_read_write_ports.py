@@ -254,26 +254,6 @@ async def write_read_tti_tx_desc_queue(dut: SimHandleBase):
     await ClockCycles(tb.clk, 10)
 
 
-@cocotb.test()
-async def overflow_tti_tx_desc_queue(dut: SimHandleBase):
-    """
-    Enqueue multiple transfers through COMMAND_PORT and verify
-    whether the data matches after fetching it from the controller
-    """
-    tb = TTIQueuesTestInterface(dut)
-    await tb.setup()
-
-    data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
-    await test_write(data[:-TEST_SIZE], tb.put_tx_desc)
-
-    write_coroutine = cocotb.start_soon(test_write(data[-TEST_SIZE:], tb.put_tx_desc))
-    await ClockCycles(tb.clk, 10)
-
-    read_coroutine = cocotb.start_soon(test_read(data, tb.get_tx_desc))
-
-    await Combine(write_coroutine, read_coroutine)
-    await ClockCycles(tb.clk, 10)
-
 
 @cocotb.test()
 async def underflow_tti_tx_desc_queue(dut: SimHandleBase):
@@ -304,27 +284,6 @@ async def write_read_tti_tx_queue(dut: SimHandleBase):
 
     tx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(tx_data, tb.put_tx_data, tb.get_tx_data)
-    await ClockCycles(tb.clk, 10)
-
-
-@cocotb.test()
-async def overflow_tti_tx_queue(dut: SimHandleBase):
-    """
-    Place TX data through XFER_DATA_PORT (and overflow it) & verify it from the
-    other (controller's) side of the queue
-    """
-    tb = TTIQueuesTestInterface(dut)
-    await tb.setup()
-
-    tx_data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
-    await test_write(tx_data[:-TEST_SIZE], tb.put_tx_data)
-
-    write_coroutine = cocotb.start_soon(test_write(tx_data[-TEST_SIZE:], tb.put_tx_data))
-    await ClockCycles(tb.clk, 10)
-
-    read_coroutine = cocotb.start_soon(test_read(tx_data, tb.get_tx_data))
-
-    await Combine(write_coroutine, read_coroutine)
     await ClockCycles(tb.clk, 10)
 
 
@@ -380,24 +339,6 @@ async def overflow_tti_rx_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def underflow_tti_rx_queue(dut: SimHandleBase):
-    """
-    Fetch data from RX Queue to cause underflow and write the data to ensure
-    it's correct when available
-    """
-    tb = TTIQueuesTestInterface(dut)
-    await tb.setup()
-
-    rx_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
-    read_coroutine = cocotb.start_soon(test_read(rx_data, tb.get_rx_data))
-    await ClockCycles(tb.clk, 10)
-    write_coroutine = cocotb.start_soon(test_write(rx_data, tb.put_rx_data))
-
-    await Combine(write_coroutine, read_coroutine)
-    await ClockCycles(tb.clk, 10)
-
-
-@cocotb.test()
 async def fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
     """
     Put response into the response queue (from controller logic) & fetch it from
@@ -433,24 +374,6 @@ async def overflow_tti_rx_desc_queue(dut: SimHandleBase):
 
 
 @cocotb.test()
-async def underflow_tti_rx_desc_queue(dut: SimHandleBase):
-    """
-    Fetch data from Response Queue to cause underflow and write the data to ensure
-    it's correct when available
-    """
-    tb = TTIQueuesTestInterface(dut)
-    await tb.setup()
-
-    data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
-    read_coroutine = cocotb.start_soon(test_read(data, tb.get_rx_desc))
-    await ClockCycles(tb.clk, 10)
-    write_coroutine = cocotb.start_soon(test_write(data, tb.put_rx_desc))
-
-    await Combine(write_coroutine, read_coroutine)
-    await ClockCycles(tb.clk, 10)
-
-
-@cocotb.test()
 async def write_read_ibi_queue(dut: SimHandleBase):
     """
     Put read data onto the IBI queue & fetch it through IBI_PORT
@@ -460,26 +383,6 @@ async def write_read_ibi_queue(dut: SimHandleBase):
 
     ibi_data = [randint(1, 2**32 - 1) for _ in range(TEST_SIZE)]
     await test_write_read(ibi_data, tb.put_ibi_data, tb.get_ibi_data)
-    await ClockCycles(tb.clk, 10)
-
-
-@cocotb.test()
-async def overflow_ibi_queue(dut: SimHandleBase):
-    """
-    Put read data onto the IBI queue (and overflow it) & fetch it through IBI_PORT
-    """
-    tb = HCIQueuesTestInterface(dut)
-    await tb.setup()
-
-    ibi_data = [randint(1, 2**32 - 1) for _ in range(QUEUE_SIZE + TEST_SIZE)]
-    await test_write(ibi_data[:-TEST_SIZE], tb.put_ibi_data)
-
-    write_coroutine = cocotb.start_soon(test_write(ibi_data[-TEST_SIZE:], tb.put_ibi_data))
-    await ClockCycles(tb.clk, 10)
-
-    read_coroutine = cocotb.start_soon(test_read(ibi_data, tb.get_ibi_data))
-
-    await Combine(write_coroutine, read_coroutine)
     await ClockCycles(tb.clk, 10)
 
 

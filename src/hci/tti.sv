@@ -63,6 +63,7 @@ module tti
     output logic                       tx_desc_queue_reg_rst_o,
     input  logic                       tx_desc_queue_reg_rst_we_i,
     input  logic                       tx_desc_queue_reg_rst_data_i,
+    input  logic                       tx_desc_queue_full_i,
 
     // TX data queue
     output logic                   tx_data_queue_req_o,
@@ -77,6 +78,7 @@ module tti
     input  logic                   tx_data_queue_full_i,
 
     // In-band Interrupt queue
+    input  logic                    ibi_queue_full_i,
     output logic                    ibi_queue_req_o,
     input  logic                    ibi_queue_ack_i,
     output logic [CsrDataWidth-1:0] ibi_queue_data_o,
@@ -153,35 +155,51 @@ module tti
     ibi_queue_ready_thld_o = IbiThldWidth'(hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.value);
   end : wire_hwif_thld
 
-  logic tx_data_queue_full_r;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_fifo_status
-    if (~rst_ni) begin
-      tx_data_queue_full_r <= '0;
-    end else begin
-      tx_data_queue_full_r <= tx_data_queue_full_i;
-    end
-  end
-
   always_comb begin : wire_hwif_xfer
-    rx_desc_queue_req_o = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
-    hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = rx_desc_queue_ack_i;
-    hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = rx_desc_queue_data_i;
+
+    // RX_DESC_QUEUE_PORT
     hwif_tti_o.RESET_CONTROL.RX_DESC_RST.we = rx_desc_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.RX_DESC_RST.next = rx_desc_queue_reg_rst_data_i;
+    if (rx_desc_queue_empty_i && hwif_tti_i.RX_DESC_QUEUE_PORT.req) begin
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = hwif_tti_i.RX_DESC_QUEUE_PORT.req & ~hwif_tti_i.RX_DESC_QUEUE_PORT.req_is_wr;
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = '0;
+      rx_desc_queue_req_o = '0;
+    end else begin
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = rx_desc_queue_ack_i;
+      hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = rx_desc_queue_data_i;
+      rx_desc_queue_req_o = hwif_tti_i.RX_DESC_QUEUE_PORT.req;
+    end
 
-    tx_desc_queue_req_o  = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
-    tx_desc_queue_data_o = hwif_tti_i.TX_DESC_QUEUE_PORT.wr_data;
-    hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = tx_desc_queue_ack_i;
+    // TX_DESC_QUEUE_PORT
     hwif_tti_o.RESET_CONTROL.TX_DESC_RST.we = tx_desc_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.TX_DESC_RST.next = tx_desc_queue_reg_rst_data_i;
+    if (tx_desc_queue_full_i && hwif_tti_i.TX_DESC_QUEUE_PORT.req) begin
+      hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
+      tx_desc_queue_req_o  = '0;
+      tx_desc_queue_data_o = '0;
+    end else begin
+      hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = tx_desc_queue_ack_i;
+      tx_desc_queue_req_o  = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
+      tx_desc_queue_data_o = hwif_tti_i.TX_DESC_QUEUE_PORT.wr_data;
+    end
 
-    rx_data_queue_req_o = hwif_tti_i.RX_DATA_PORT.req;
-    hwif_tti_o.RX_DATA_PORT.rd_ack = rx_data_queue_ack_i;
-    hwif_tti_o.RX_DATA_PORT.rd_data = rx_data_queue_data_i;
+    // RX_DATA_PORT
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = rx_data_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.next = rx_data_queue_reg_rst_data_i;
+    if (rx_data_queue_empty_i && hwif_tti_i.RX_DATA_PORT.req) begin
+      hwif_tti_o.RX_DATA_PORT.rd_ack = hwif_tti_i.RX_DATA_PORT.req & ~hwif_tti_i.RX_DATA_PORT.req_is_wr;;
+      hwif_tti_o.RX_DATA_PORT.rd_data = '0;
+      rx_data_queue_req_o = '0;
+    end else begin
+      hwif_tti_o.RX_DATA_PORT.rd_ack = rx_data_queue_ack_i;
+      hwif_tti_o.RX_DATA_PORT.rd_data = rx_data_queue_data_i;
+      rx_data_queue_req_o = hwif_tti_i.RX_DATA_PORT.req;
+    end
 
-    if (bypass_i3c_core_i & tx_data_queue_full_r) begin
+    // TX_DATA_PORT
+    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = tx_data_queue_reg_rst_we_i;
+    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.next = tx_data_queue_reg_rst_data_i;
+    if (tx_data_queue_full_i && hwif_tti_i.TX_DATA_PORT.req) begin
       tx_data_queue_req_o = '0;
       tx_data_queue_data_o = '0;
       hwif_tti_o.TX_DATA_PORT.wr_ack = hwif_tti_i.TX_DATA_PORT.req & hwif_tti_i.TX_DATA_PORT.req_is_wr;
@@ -190,14 +208,19 @@ module tti
       tx_data_queue_data_o = hwif_tti_i.TX_DATA_PORT.wr_data;
       hwif_tti_o.TX_DATA_PORT.wr_ack = tx_data_queue_ack_i;
     end
-    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = tx_data_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.next = tx_data_queue_reg_rst_data_i;
 
-    ibi_queue_req_o = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
-    ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
-    hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
+    // IBI_PORT
     hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = ibi_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.next = ibi_queue_reg_rst_data_i;
+    if (ibi_queue_full_i && hwif_tti_i.IBI_PORT.req) begin
+      ibi_queue_req_o = '0;
+      ibi_queue_data_o = '0;
+      hwif_tti_o.IBI_PORT.wr_ack = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
+    end else begin
+      ibi_queue_req_o = hwif_tti_i.IBI_PORT.req & hwif_tti_i.IBI_PORT.req_is_wr;
+      ibi_queue_data_o = hwif_tti_i.IBI_PORT.wr_data;
+      hwif_tti_o.IBI_PORT.wr_ack = ibi_queue_ack_i;
+    end
   end : wire_hwif_xfer
 
   always_comb begin : wire_hwif_rst
