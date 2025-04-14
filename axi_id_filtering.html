@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Common Command Codes (CCC) - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>AXI Transaction ID Filtering - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Common Command Codes (CCC)
+              AXI Transaction ID Filtering
             
           </span>
         </div>
@@ -300,12 +300,20 @@
 
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="axi_id_filtering.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">AXI Transaction ID Filtering</span>
       </a>
+      
     </li>
   
 
@@ -356,36 +364,30 @@
                   
 
 
-<h1 id="i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)<a class="headerlink" href="#i3c-common-command-codes-ccc" title="Link to this heading">¶</a></h1>
-<p>The I3C core supports all CCCs required by the I3C Basic spec, please see “Table 16 I3C Common Command Codes” for a full reference.</p>
-<p>All CCCs are exercised with Cocotb tests.</p>
-<h2 id="broadcast-cccs">Broadcast CCCs<a class="headerlink" href="#broadcast-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):</p>
+<h1 id="axi-transaction-id-filtering">AXI Transaction ID Filtering<a class="headerlink" href="#axi-transaction-id-filtering" title="Link to this heading">¶</a></h1>
+<p>In order to facilitate constraining the recovery core’s accessibility, the I3C core implements an AXI transaction ID filtering mechanism.</p>
+<p>Transaction IDs are passed using the <code class="docutils literal notranslate"><span class="pre">aruser</span></code> and <code class="docutils literal notranslate"><span class="pre">awuser</span></code> signals.</p>
+<p>The ID filtering logic is optional and depends on the <code class="docutils literal notranslate"><span class="pre">AXI_ID_FILTERING</span></code> macro definition.</p>
+<p>Recovery core configuration includes a parameter denoting the <code class="docutils literal notranslate"><span class="pre">NUM_PRIV_IDS</span></code> - number of privileged IDs that are granted read and write access when the filtering mechanism is enabled.</p>
+<p>Having <code class="docutils literal notranslate"><span class="pre">AXI_ID_FILTERING</span></code> defined requires <code class="docutils literal notranslate"><span class="pre">NUM_PRIV_IDS</span></code> to be greater than 0. This is verified with an assertion.</p>
+<p>Undefined <code class="docutils literal notranslate"><span class="pre">AXI_ID_FILTERING</span></code> and non-zero <code class="docutils literal notranslate"><span class="pre">NUM_PRIV_IDS</span></code> are considered a legal configuration and causes the ID filtering logic <strong>to not be included</strong> in the design.</p>
+<p>The filtering mechanism is controlled via:</p>
 <ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>SETAASA (O) - Set All Addresses to Static Adresses</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">disable_axi_filtering_i</span></code> recovery core port to disable the filtering mechanism</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">1'b0</span></code> - enable AXI filtering</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1'b1</span></code> - disable AXI filtering</p></li>
 </ul>
-<h2 id="direct-cccs">Direct CCCs<a class="headerlink" href="#direct-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec</p></li>
-<li><p>SETDASA (O) - Set Dynamic Address from Static Address</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETMWL (R) - Get Max Write Length</p></li>
-<li><p>GETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETPID (C) - Get Provisioned ID</p></li>
-<li><p>GETBCR (C) - Get Bus Characteristics Register</p></li>
-<li><p>GETDCR (C) - Get Device Characteristics Register</p></li>
-<li><p>GETSTATUS (R) - Get Device Status</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[0:AXI_ID_WIDTH-1]</span> <span class="pre">priv_ids_i</span> <span class="pre">[0:NUM_PRIV_IDS-1]</span></code> recovery core port containing privileged IDs</p>
+<ul>
+<li><p>Each privileged ID should be of width <code class="docutils literal notranslate"><span class="pre">AXI_ID_WIDTH</span></code> passed at <code class="docutils literal notranslate"><span class="pre">priv_ids_i[k]</span></code> for each <strong>k</strong> in <strong>{0 … NUM_PRIV_IDS - 1}</strong></p></li>
+<li><p>All <code class="docutils literal notranslate"><span class="pre">NUM_PRIV_IDS</span></code> entries are expected to be set to valid privileged IDs</p></li>
 </ul>
+</li>
+</ul>
+<p>When the filtering is enabled, any transaction attempt outside of the privileged IDs will be met with a <code class="docutils literal notranslate"><span class="pre">SLVERR</span></code> (<code class="docutils literal notranslate"><span class="pre">0b10</span></code>) error on the respective AXI response channel.</p>
+<p>The above-mentioned <code class="docutils literal notranslate"><span class="pre">disable_axi_filtering_i</span></code> and <code class="docutils literal notranslate"><span class="pre">priv_ids_i</span></code> ports will not be included in the design if <code class="docutils literal notranslate"><span class="pre">AXI_ID_FILTERING</span></code> is not defined.</p>
 
 
   <hr>
@@ -412,6 +414,42 @@
       </main>
       
         <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="recovery_flow.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Recovery flow" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Recovery flow
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="axi_recovery_flow.html" class="md-footer__link md-footer__link--next" aria-label="Next: AXI driven Caliptra recovery flow" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              AXI driven Caliptra recovery flow
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   
   

@@ -8,7 +8,7 @@
 
 ### `i3c_target_write`
 
-Test: [i3c_target_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L105)
+Test: [i3c_target_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L92)
 
 Spawns a TTI agent that reads from TTI descriptor and data queues
 and stores received data.
@@ -22,7 +22,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_read`
 
-Test: [i3c_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L196)
+Test: [i3c_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L181)
 
 Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
@@ -42,7 +42,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi`
 
-Test: [i3c_target_ibi](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L299)
+Test: [i3c_target_ibi](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L284)
 
 Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
@@ -62,7 +62,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_retry`
 
-Test: [i3c_target_ibi_retry](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L392)
+Test: [i3c_target_ibi_retry](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L377)
 
 Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
@@ -80,7 +80,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_data`
 
-Test: [i3c_target_ibi_data](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L470)
+Test: [i3c_target_ibi_data](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L455)
 
 Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
@@ -95,7 +95,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_writes_and_reads`
 
-Test: [i3c_target_writes_and_reads](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L541)
+Test: [i3c_target_writes_and_reads](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py#L526)
 
 Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.
@@ -598,6 +598,105 @@ a firmware image to the target.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
+
+
+# Recovery bypass
+
+[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py)
+
+[Test results](./sim-results/target_recovery_bypass.html){.external}
+
+## Testpoints
+
+### `simple_write_read`
+
+Test: [indirect_fifo_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L451)
+
+Verify basic bypass functionality
+- Enable I3C Core bypass in the Recovery Handler via CSR
+- Write to the TTI TX Data Queue and read from the Indirect FIFO Queue
+- Compare the data and verify it hasn't changed
+
+### `check_csr_access`
+
+Tests:
+- [ocp_csr_access_bypass_enabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L995)
+- [ocp_csr_access_bypass_disabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1000)
+
+
+Verify accessibility of CSRs as specified in the OCP Secure Firmware Recovery
+specification with additional bypass features
+- Write to all RW and read from all RO Secure Firmware Recovery Registers
+- Write to bypass registers with W1C property
+- Ensure the reserved fields of tested registers were not written
+- Ensure RW registers can be written and read back
+- Ensure RO registers cannot be written
+- Perform checks with bypass disabled and enabled
+
+### `recovery_status_wires`
+
+Tests:
+- [payload_available](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1051)
+- [image_activated](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1143)
+
+
+Verify recovery status wires as specified in the Caliptra SS Hardware Specification
+- Write to the TTI TX Queue and read from the Indirect FIFO Queue.
+- Ensuring correct state of the `payload_available` wire
+- Write to the Recovery Control CSR to activate an image
+- Ensure correct state of the `image_activated` wire
+
+### `indirect_fifo_overflow`
+
+Test: [indirect_fifo_overflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L183)
+
+Verify that access is rejected when the Indirect FIFO Queue overflows
+
+### `indirect_fifo_underflow`
+
+Test: [indirect_fifo_underflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L208)
+
+Verify that access is rejected when the Indirect FIFO Queue underflows
+
+### `i3c_bus_traffic_during_loopback`
+
+Test: [i3c_bus_traffic_during_loopback](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L463)
+
+Verify that Recovery Handler with bypass enabled is not in any way interfered by any
+I3C bus traffic
+
+### `check_axi_filtering`
+
+Test: [axi_filtering](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L805)
+
+Verify that AXI access to Secure Firmware Recovery registers is filtered
+- AXI IDs from privileged ID list should always grant access to all registers
+- Once ID filtering is disabled, register access should be granted regardless of the
+  transaction ID
+- With ID filtering enabled, all transactions with ID outside of the privileged ID list
+  should be rejected with SLVERR response and register access request should not be
+  propagated to the CPUIF
+
+### `recovery_flow`
+
+Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1242)
+
+Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
+as specified in the Caliptra Root of Trust specification
+
+### `cptra_mcu_recovery`
+
+Test: cptra_mcu_recovery
+
+Verify that Caliptra Subsystem can perform full Recovery Sequence with I3C Core with
+bypass feature enabled. This test will run software on both Caliptra core and Caliptra
+MCU to interact with the I3C Core and Caliptra RoT.
+- MCU should initialize I3C Core with bypass enabled
+- Caliptra ROM should enable Recovery Mode
+- MCU should load image to Indirect FIFO Queue which will be read by Caliptra ROM
+- MCU should activate an image
+- Caliptra ROM should write an image to MCU SRAM
+- The image should be identical with the one read form simulated QSPI
 
 
 # target_peripheral_reset

@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Common Command Codes (CCC) - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>AXI driven Caliptra recovery flow - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Common Command Codes (CCC)
+              AXI driven Caliptra recovery flow
             
           </span>
         </div>
@@ -316,12 +316,77 @@
 
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="axi_recovery_flow.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#axi-recovery-flow-implementation" class="md-nav__link">
+    <span class="md-ellipsis">AXI Recovery flow implementation</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AXI Recovery flow implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axi-based-recovery-procedure" class="md-nav__link">
+    <span class="md-ellipsis">AXI-<wbr>based recovery procedure</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovery-handler-bypass" class="md-nav__link">
+    <span class="md-ellipsis">Recovery Handler bypass</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secure-firmware-recovery-csrs" class="md-nav__link">
+    <span class="md-ellipsis">Secure Firmware Recovery CSRs</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -356,36 +421,62 @@
                   
 
 
-<h1 id="i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)<a class="headerlink" href="#i3c-common-command-codes-ccc" title="Link to this heading">¶</a></h1>
-<p>The I3C core supports all CCCs required by the I3C Basic spec, please see “Table 16 I3C Common Command Codes” for a full reference.</p>
-<p>All CCCs are exercised with Cocotb tests.</p>
-<h2 id="broadcast-cccs">Broadcast CCCs<a class="headerlink" href="#broadcast-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>SETAASA (O) - Set All Addresses to Static Adresses</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
-</ul>
-<h2 id="direct-cccs">Direct CCCs<a class="headerlink" href="#direct-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec</p></li>
-<li><p>SETDASA (O) - Set Dynamic Address from Static Address</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETMWL (R) - Get Max Write Length</p></li>
-<li><p>GETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETPID (C) - Get Provisioned ID</p></li>
-<li><p>GETBCR (C) - Get Bus Characteristics Register</p></li>
-<li><p>GETDCR (C) - Get Device Characteristics Register</p></li>
-<li><p>GETSTATUS (R) - Get Device Status</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
-</ul>
+<h1 id="axi-driven-caliptra-recovery-flow">AXI driven Caliptra recovery flow<a class="headerlink" href="#axi-driven-caliptra-recovery-flow" title="Link to this heading">¶</a></h1>
+<p>This chapter discusses the implementation of AXI based recovery flow, which is an alternative to the standard I3C based flow (see <a class="reference internal" href="recovery_flow.html"><span class="doc">Recovery flow</span></a>).
+This feature allows driving the recovery data from within the SoC integrating the I3C core over the AXI bus, bypassing I3C communication.</p>
+<h2 id="axi-recovery-flow-implementation">AXI Recovery flow implementation<a class="headerlink" href="#axi-recovery-flow-implementation" title="Link to this heading">¶</a></h2>
+<p>The AXI recovery flow reuses the logic already present in the I3C core used in the Caliptra-SS design, with a runtime option essentially bypassing most of the I3C core communication logic (including the I3C recovery flow logic).</p>
+<p>The loopback functionality is configurable via a CSR, with the I3C mode set as the default.</p>
+<p>Recovery CSRs are accessible from the internal AXI bus.
+The transactions to the core may be filtered using the AXI ID field (see <a class="reference internal" href="axi_id_filtering.html"><span class="doc">AXI Transaction ID Filtering</span></a>)</p>
+<p>The logic is implemented so that the recovery firmware in the Caliptra RoT ROM can operate without any changes.</p>
+<h3 id="axi-based-recovery-procedure">AXI-based recovery procedure<a class="headerlink" href="#axi-based-recovery-procedure" title="Link to this heading">¶</a></h3>
+<p>The Caliptra MCU RISC-V core is responsible for driving the data copied from an external memory (e.g. QSPI interface) to the recovery FIFOs.
+The ROM running on the MCU core monitors the recovery block registers and performs the recovery flow.
+During the boot procedure the ROM will have to follow the following procedure:</p>
+<ol class="arabic">
+<li><p>Set the I3C block to the “direct AXI” mode</p></li>
+<li><p>Poll the <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS</span></code> register and wait for the recovery to be enabled by the Caliptra core</p></li>
+<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register and check if the recovery flow started</p></li>
+<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CONTROL</span></code> register to set the recovery image configuration</p></li>
+<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> register to set the recovery image size</p></li>
+<li><p>Push the recovery image to the recovery interface FIFOs:</p>
+<p>a. Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO
+b. If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> register
+c. The above steps should be repeated until the whole recovery image is written to the FIFO</p>
+</li>
+<li><p>Activate the new image by writing to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register</p></li>
+<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p></li>
+</ol>
+<p>The recovery image will be written in chunks with length equal to or less than <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">transfer</span> <span class="pre">size</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register.
+Once the last data chunk is written to the FIFO, the Caliptra MCU ROM will write a CSR in the Secure Firmware Recovery register file indicating the transfer is complete.</p>
+<h2 id="recovery-handler-bypass">Recovery Handler bypass<a class="headerlink" href="#recovery-handler-bypass" title="Link to this heading">¶</a></h2>
+<p>In the regular (I3C) mode of the core, the Recovery Handler strongly relies on communication with the I3C Core internal logic by interfacing with TTI Queues.
+The bypass implementation modifies the I3C Core logic to allow direct access over the AXI bus to the structures specified by the OCP Secure Firmware Recovery for compliance with the <a class="reference external" href="https://github.com/chipsalliance/Caliptra/blob/main/doc/Caliptra.md#caliptra-subsystem-recovery-interface-hardware">Caliptra Subsystem Recovery Sequence</a>.</p>
+<p>The default design of the Recovery Handler includes many blocks specifically designed to translate I3C bus traffic into recovery messages.
+It also automatically responds to the I3C commands by writing transaction descriptors and data for the TTI Queues.
+Such a recovery flow is presented in the diagram below.</p>
+<figure class="align-default" id="recovery-handler">
+<img alt="" src="_images/recovery_handler_flow.png" />
+<figcaption>
+<p><span class="caption-number">Figure 10 </span><span class="caption-text"><span class="caption-text">
+Recovery Handler in the I3C Core</span><a class="headerlink" href="#recovery-handler" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<p>In order enable an alternative recovery mechanism while reusing the existing logic and keeping compliance with Caliptra, the I3C core provides a custom bypass feature allowing direct communication with the Recovery Handler via the AXI bus.
+The bypass disables the I3C communication logic.
+Data is routed from the TTI TX Queue to the Recovery Executor block, and written directly to the Indirect Data FIFO.
+The Caliptra ROM can access the data from the Indirect FIFO over the AXI bus (the same way it does in the regular I3C recovery flow).
+Data flow in bypass mode, marked with green arrows, is depicted in the diagram below.</p>
+<figure class="align-default" id="recovery-handler-with-bypass">
+<img alt="" src="_images/recovery_handler_with_bypass.png" />
+<figcaption>
+<p><span class="caption-number">Figure 11 </span><span class="caption-text"><span class="caption-text">
+Recovery Handler with the I3C Core logic bypass</span><a class="headerlink" href="#recovery-handler-with-bypass" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h2 id="secure-firmware-recovery-csrs">Secure Firmware Recovery CSRs<a class="headerlink" href="#secure-firmware-recovery-csrs" title="Link to this heading">¶</a></h2>
+<p>With the bypass feature enabled, the FIFO status CSRs in the Secure Firmware Recovery CSR file will be updated by the Recovery Handler module.
+However, some registers like e.g. <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> which are updated by I3C commands in a standard recovery flow, will have to be accessed and configured properly from the software running on the Caliptra MCU via the AXI bus.
+All configurable registers are writable from software, read only registers provide status information about Recovery Handler internals, e.g. details about size and fill level of the Indirect FIFO.</p>
 
 
   <hr>
@@ -412,6 +503,42 @@
       </main>
       
         <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="axi_id_filtering.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: AXI Transaction ID Filtering" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              AXI Transaction ID Filtering
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="registers.html" class="md-footer__link md-footer__link--next" aria-label="Next: Register descriptions" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Register descriptions
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   
   

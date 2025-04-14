@@ -1,3 +1,81 @@
+# axi_filtering
+
+[Test results](./sim-results/axi_filtering.html){.external}
+
+## Testpoints
+
+### `axi_filtering_disabled`
+
+Tests:
+- [read_hci_version_csr_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L42)
+- [read_pio_section_offset_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L74)
+- [write_to_controller_device_addr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L112)
+- [write_should_not_affect_ro_csr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L149)
+- [sequence_csr_read_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L202)
+- [sequence_csr_write_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L264)
+- [collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L77)
+- [collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L143)
+- [write_read_burst_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L184)
+- [write_burst_collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L235)
+- [read_burst_collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L296)
+
+
+Verifies CSR access is granted when the AXI filtering feature is disabled.
+Verifies transaction response and contents.
+
+### `axi_filtering_priv`
+
+Tests:
+- [read_hci_version_csr_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L47)
+- [read_pio_section_offset_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L79)
+- [write_to_controller_device_addr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L117)
+- [write_should_not_affect_ro_csr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L154)
+- [sequence_csr_read_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L207)
+- [sequence_csr_write_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L269)
+- [collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L82)
+- [collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L148)
+- [write_read_burst_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L189)
+- [write_burst_collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L240)
+- [read_burst_collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L301)
+
+
+Verifies CSR access is granted when the AXI filtering is enabled
+and the transaction has a privileged ID.
+Verifies transaction response and contents.
+
+### `axi_filtering_non_priv`
+
+Tests:
+- [read_hci_version_csr_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L53)
+- [read_pio_section_offset_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L86)
+- [write_to_controller_device_addr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L124)
+- [write_should_not_affect_ro_csr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L161)
+- [sequence_csr_read_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L214)
+- [sequence_csr_write_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L276)
+- [collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L87)
+- [collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L153)
+- [write_read_burst_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L194)
+- [write_burst_collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L245)
+- [read_burst_collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L306)
+
+
+Verifies CSR access is denied when the AXI filtering feature is enabled
+and the transaction ID doesn't match any of the privileged IDs.
+
+### `axi_filtering_mixed_priv`
+
+Tests:
+- [collision_with_write_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L92)
+- [collision_with_read_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L158)
+- [collision_with_write_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L311)
+- [collision_with_read_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L348)
+
+
+Issues an ID-randomized colliding read and write transactions sequence.
+Verifies AXI CSR access response for each separate transaction.
+Ensures that access errors are raised only for unprivileged transactions.
+
+
 # bus_monitor
 
 [Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_monitor/test_bus_monitor.py)
@@ -178,38 +256,38 @@ correspond to correct GETSTATUS CCC response.
 
 ### `read_hci_version_csr`
 
-Test: [read_hci_version_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L67)
+Test: [read_hci_version_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L75)
 
 Reads the HCI version CSR and verifies its content.
 
 ### `read_pio_section_offset`
 
-Test: [read_pio_section_offset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L80)
+Test: [read_pio_section_offset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L88)
 
 Reads the PIO_SECTION_OFFSET CSR and verifies its content.
 
 ### `write_to_controller_device_addr`
 
-Test: [write_to_controller_device_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L90)
+Test: [write_to_controller_device_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L98)
 
 Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful.
 
 ### `write_should_not_affect_ro_csr`
 
-Test: [write_should_not_affect_ro_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L104)
+Test: [write_should_not_affect_ro_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L112)
 
 Writes to the HC_CAPABILITIES CSR which is read-only for software.
 Verifies that the write did not succeed.
 
 ### `sequence_csr_read`
 
-Test: [sequence_csr_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L120)
+Test: [sequence_csr_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L128)
 
 Performs a sequence of CSR reads. Verifies that each one succeeds.
 
 ### `sequence_csr_write`
 
-Test: [sequence_csr_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L154)
+Test: [sequence_csr_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L163)
 
 Performs a sequence of CSR writes. Verifies that each one succeeds.
 
