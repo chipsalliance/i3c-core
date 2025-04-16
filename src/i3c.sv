@@ -201,7 +201,9 @@ module i3c
     output logic escalated_reset_o,
 
     // Interrupt output
-    output logic irq_o
+    output logic irq_o,
+
+    output logic sda_oe_o
 );
 
   // I3C SW CSR IF
@@ -707,7 +709,8 @@ module i3c
       .err_o(controller_error),
       .recovery_mode_enter_i(recovery_mode_enter),
       .virtual_device_sel_o(virtual_device_sel),
-      .xfer_in_progress_o(xfer_in_progress)
+      .xfer_in_progress_o(xfer_in_progress),
+      .sda_oe_o
   );
 
   // HCI

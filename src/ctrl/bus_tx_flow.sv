@@ -46,7 +46,8 @@ module bus_tx_flow (
     input  logic sel_od_pp_i,
     output logic sel_od_pp_o,
 
-    output logic sda_o  // Output I3C SDA bus line
+    output logic sda_o,  // Output I3C SDA bus line
+    output logic sda_oe_o
 );
   logic drive_bit_en;
   logic drive_bit_value;
@@ -208,7 +209,8 @@ module bus_tx_flow (
       .sel_od_pp_o,
       .tx_idle_o(tx_idle),
       .tx_done_o(tx_done),
-      .sda_o
+      .sda_o,
+      .sda_oe_o
   );
 
   assign req_error_o   = req_error;

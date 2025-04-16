@@ -127,7 +127,9 @@ module controller_standby_i3c
     // recovery mode
     input  logic recovery_mode_enter_i,
     output logic virtual_device_sel_o,
-    output logic xfer_in_progress_o
+    output logic xfer_in_progress_o,
+
+    output logic sda_oe_o
 );
   logic i3c_standby_en;
   assign i3c_standby_en = i3c_standby_en_i;
@@ -601,7 +603,8 @@ module controller_standby_i3c
       .bus_error_o     (bus_error),
       .sel_od_pp_i     (bus_tx_sel_od_pp),
       .sel_od_pp_o     (phy_sel_od_pp_o),
-      .sda_o           (tx_sda)
+      .sda_o           (tx_sda),
+      .sda_oe_o
   );
 
   bus_rx_flow xbus_rx_flow (

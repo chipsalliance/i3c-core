@@ -117,7 +117,9 @@ module i3c_wrapper #(
     input  logic peripheral_reset_done_i,
     output logic escalated_reset_o,
 
-    output irq_o
+    output irq_o,
+
+    output logic sda_oe_o
 );
 
   // DAT memory export interface
@@ -230,7 +232,8 @@ module i3c_wrapper #(
       .peripheral_reset_o,
       .peripheral_reset_done_i,
       .escalated_reset_o,
-      .irq_o
+      .irq_o,
+      .sda_oe_o
   );
 
   prim_ram_1p_adv #(

@@ -30,7 +30,8 @@ module bus_tx (
     output logic tx_done_o,  // Indicate finished bit write
 
     output logic sel_od_pp_o,
-    output logic sda_o  // Output I3C SDA bus line
+    output logic sda_o,  // Output I3C SDA bus line
+    output logic sda_oe_o
 );
 
   logic [19:0] tcount_q;    // current counter for setting delays
@@ -111,6 +112,7 @@ module bus_tx (
     tx_done_o = '0;  // Assign to 1 only after transmitting a bit
     load_tcount = '0;
     tcount_sel = tNoDelay;
+    sda_oe_o = '0;
 
     unique case (state_q)
       Idle: begin
@@ -119,6 +121,7 @@ module bus_tx (
           load_tcount = '1;
           if (t_sd_z & (scl_stable_low_i | scl_negedge_i)) begin
             sda_o = drive_value_i;
+            sda_oe_o = '1;
           end
         end
       end
@@ -127,15 +130,18 @@ module bus_tx (
         load_tcount = '1;
         if (t_sd_z & scl_negedge_i) begin
           sda_o = drive_value_i;
+          sda_oe_o = '1;
         end
       end
       SetupData: begin
         if (tcount_q == 20'd1) begin
           sda_o = drive_value_i;
+          sda_oe_o = '1;
         end
       end
       TransmitData: begin
         sda_o = drive_value_i;
+        sda_oe_o = '1;
         if (scl_negedge_i) begin
           tcount_sel  = tHoldData;
           load_tcount = '1;
@@ -145,12 +151,14 @@ module bus_tx (
       HoldData: begin
         if (tcount_q != 20'd0) begin
           sda_o = drive_value_i;
+          sda_oe_o = '1;
         end else begin
           tx_done_o = '1;
         end
       end
       default: begin
         sda_o = '1;
+        sda_oe_o = '0;
         tx_done_o = '0;  // Assign to 1 only after transmitting a bit
         load_tcount = '0;
         tcount_sel = tNoDelay;
