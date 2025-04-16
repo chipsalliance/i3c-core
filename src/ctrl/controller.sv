@@ -62,6 +62,7 @@ module controller
 ) (
     input logic clk_i,
     input logic rst_ni,
+    input logic [47:0] id_i,
 
     // Interface to SDA/SCL
     input  logic scl_i,
@@ -453,6 +454,7 @@ module controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .id_i(id_i),
       .ctrl_bus_i(ctrl_bus_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
       .ctrl_sda_o(ctrl_sda_o[2:3]),
