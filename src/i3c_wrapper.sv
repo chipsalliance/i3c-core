@@ -22,6 +22,7 @@ module i3c_wrapper #(
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
+    input logic [47:0] id_i,
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -162,6 +163,7 @@ module i3c_wrapper #(
   ) i3c (
       .clk_i,
       .rst_ni,
+      .id_i,
 
 `ifdef I3C_USE_AHB
       .haddr_i,

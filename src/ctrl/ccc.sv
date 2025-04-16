@@ -89,6 +89,7 @@ module ccc
 (
     input logic clk_i,  // Clock
     input logic rst_ni, // Async reset, active low
+    input logic [47:0] id_i,
 
     // CC is decoded from the frame by the primary FSM
     input logic [7:0] ccc_i,
@@ -459,8 +460,10 @@ module ccc
           // have defining byte
           if (have_defining_byte) state_d = RxDefByte;
           else begin
+            // ENTDAA is special
+            if (command_code == ENTDAA) state_d = HandleENTDAA;
             // broadcast CCCs
-            if (~is_direct_cmd) state_d = RxData;
+            else if (~is_direct_cmd) state_d = RxData;
             // direct CCCs
             else
               state_d = RxByte;

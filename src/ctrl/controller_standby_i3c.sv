@@ -16,6 +16,7 @@ module controller_standby_i3c
 ) (
     input logic clk_i,
     input logic rst_ni,
+    input logic [47:0] id_i,
 
     // Interface to SDA/SCL
     input bus_state_t ctrl_bus_i,
@@ -466,6 +467,7 @@ module controller_standby_i3c
   ccc xccc (
       .clk_i,
       .rst_ni,
+      .id_i,
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),

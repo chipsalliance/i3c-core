@@ -30,6 +30,7 @@ module controller_standby
 ) (
     input logic clk_i,
     input logic rst_ni,
+    input logic [47:0] id_i,
 
     // Interface to SDA/SCL
     input bus_state_t ctrl_bus_i[2],
@@ -380,6 +381,7 @@ module controller_standby
   ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .id_i(id_i)
       .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
