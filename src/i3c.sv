@@ -541,7 +541,7 @@ module i3c
 
   logic arbitration_lost;
 
-  assign arbitration_lost = sda_i != sda_o;
+  assign arbitration_lost = i3c_sda_i != i3c_sda_o;
 
   // HCI
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
