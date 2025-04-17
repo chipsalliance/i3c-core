@@ -115,6 +115,7 @@ module ccc
     input logic bus_rx_done_i,
     output logic bus_rx_req_bit_o,
     output logic bus_rx_req_byte_o,
+    input logic arbitration_lost_i,
 
     // Addr match interface
     input logic [6:0] target_sta_address_i,
@@ -334,6 +335,29 @@ module ccc
     end
   end
 
+  // Mux TX access between regular CCC and ENTDAA
+  logic entdaa_tx_req_bit;
+  logic entdaa_tx_req_byte;
+  logic entdaa_tx_req_value;
+  logic entdaa_tx_sel_od_pp;
+  logic entdaa_rx_req_bit;
+  logic entdaa_rx_req_byte;
+  logic ccc_tx_req_bit;
+  logic ccc_tx_req_byte;
+  logic ccc_tx_req_value;
+  logic ccc_tx_sel_od_pp;
+  logic ccc_rx_req_bit;
+  logic ccc_rx_req_byte;
+
+  always_comb begin: mux_bus_access
+    bus_tx_req_bit_o = entdaa_o ? entdaa_tx_req_bit : ccc_tx_req_bit;
+    bus_tx_req_byte_o = entdaa_o ? entdaa_tx_req_byte : ccc_tx_req_byte;
+    bus_tx_req_value_o = entdaa_o ? entdaa_tx_req_value : ccc_tx_req_value;
+    bus_tx_sel_od_pp_o = entdaa_o ? entdaa_tx_sel_od_pp : ccc_tx_sel_od_pp;
+    bus_rx_req_bit_o = entdaa_o ? entdaa_rx_req_bit : ccc_rx_req_bit;
+    bus_rx_req_byte_o = entdaa_o ? entdaa_rx_req_byte : ccc_rx_req_byte;
+  end
+
   logic have_defining_byte;
   always_comb begin : defining_byte_ccc
     case (command_code)
@@ -346,7 +370,6 @@ module ccc
     endcase
   end
 
-  // TODO: Handle Bcast CCCs
   typedef enum logic [7:0] {
     Idle,
     WaitCCC,
@@ -364,12 +387,14 @@ module ccc
     TxDataTbit,
     WaitForBusCond,
     WaitForStop,
-    DoneCCC
+    DoneCCC,
+    HandleENTDAA
   } state_e;
 
   state_e state_q, state_d;
 
   assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
+  assign entdaa_o = (state_q == HandleENTDAA);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
     if (~rst_ni) begin
@@ -399,6 +424,8 @@ module ccc
   logic is_byte_virtual_addr;
 
   logic [7:0] rx_data_count;
+
+  logic entdaa_start, entdaa_done;
 
   always_comb begin : addr_matching
     if (target_dyn_address_valid_i) begin
@@ -461,7 +488,7 @@ module ccc
           if (have_defining_byte) state_d = RxDefByte;
           else begin
             // ENTDAA is special
-            if (command_code == ENTDAA) state_d = HandleENTDAA;
+            if (command_code == `I3C_BCAST_ENTDAA) state_d = HandleENTDAA;
             // broadcast CCCs
             else if (~is_direct_cmd) state_d = RxData;
             // direct CCCs
@@ -469,6 +496,9 @@ module ccc
               state_d = RxByte;
           end
         end
+      end
+      HandleENTDAA: begin
+        if (entdaa_done) state_d = Idle;
       end
       RxDefByte: begin
         if (bus_rx_done_i) state_d = RxDefByteTbit;
@@ -545,13 +575,13 @@ module ccc
 
 
   always_comb begin : state_outputs
-    bus_rx_req_bit_o = '0;
-    bus_rx_req_byte_o = '0;
+    ccc_rx_req_bit = '0;
+    ccc_rx_req_byte = '0;
 
-    bus_tx_req_byte_o = '0;
-    bus_tx_req_bit_o = '0;
-    bus_tx_req_value_o = '0;
-    bus_tx_sel_od_pp_o = '0;
+    ccc_tx_req_byte = '0;
+    ccc_tx_req_bit = '0;
+    ccc_tx_req_value = '0;
+    ccc_tx_sel_od_pp = '0;
 
     done_fsm_o = '0;
     unique case (state_q)
@@ -562,57 +592,57 @@ module ccc
 
       end
       RxTbit: begin
-        bus_rx_req_bit_o  = '1;
-        bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '1;
+        ccc_rx_req_byte = '0;
       end
       RxDefByte: begin
-        bus_rx_req_bit_o  = '0;
-        bus_rx_req_byte_o = '1;
+        ccc_rx_req_bit  = '0;
+        ccc_rx_req_byte = '1;
       end
       RxDefByteTbit: begin
-        bus_rx_req_bit_o  = '1;
-        bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '1;
+        ccc_rx_req_byte = '0;
       end
       RxByte: begin
-        bus_rx_req_bit_o  = '0;
-        bus_rx_req_byte_o = '1;
-        if (bus_rstart_det_i) bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '0;
+        ccc_rx_req_byte = '1;
+        if (bus_rstart_det_i) ccc_rx_req_byte = '0;
       end
       RxDirectDefByteTbit: begin
-        bus_rx_req_bit_o  = '1;
-        bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '1;
+        ccc_rx_req_byte = '0;
       end
       RxDirectAddr: begin
-        bus_rx_req_bit_o  = '0;
-        bus_rx_req_byte_o = '1;
+        ccc_rx_req_bit  = '0;
+        ccc_rx_req_byte = '1;
       end
       TxDirectAddrAck: begin
-        bus_tx_req_byte_o  = '0;
-        bus_tx_req_bit_o   = '1;
-        bus_tx_req_value_o = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr)};
+        ccc_tx_req_byte  = '0;
+        ccc_tx_req_bit   = '1;
+        ccc_tx_req_value = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr)};
       end
       RxSubCmdByte: begin
       end
       RxData: begin
-        bus_rx_req_bit_o  = '0;
-        bus_rx_req_byte_o = '1;
-        if (bus_rstart_det_i) bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '0;
+        ccc_rx_req_byte = '1;
+        if (bus_rstart_det_i) ccc_rx_req_byte = '0;
       end
       RxDataTbit: begin
-        bus_rx_req_bit_o  = '1;
-        bus_rx_req_byte_o = '0;
+        ccc_rx_req_bit  = '1;
+        ccc_rx_req_byte = '0;
       end
       TxData: begin
-        bus_tx_req_byte_o  = '1;
-        bus_tx_req_bit_o   = '0;
-        bus_tx_req_value_o = tx_data;
-        bus_tx_sel_od_pp_o = '1;
+        ccc_tx_req_byte  = '1;
+        ccc_tx_req_bit   = '0;
+        ccc_tx_req_value = tx_data;
+        ccc_tx_sel_od_pp = '1;
       end
       TxDataTbit: begin
-        bus_tx_req_byte_o  = '0;
-        bus_tx_req_bit_o   = '1;
-        bus_tx_req_value_o = {7'h00, ~tx_data_done};
-        bus_tx_sel_od_pp_o = '1;
+        ccc_tx_req_byte  = '0;
+        ccc_tx_req_bit   = '1;
+        ccc_tx_req_value = {7'h00, ~tx_data_done};
+        ccc_tx_sel_od_pp = '1;
       end
       DoneCCC: begin
         done_fsm_o = '1;
@@ -947,7 +977,38 @@ module ccc
   assign ent_hdr_5_o = '0;
   assign ent_hdr_6_o = '0;
   assign ent_hdr_7_o = '0;
-  assign set_newda_o = '0;
-  assign newda_o = '0;
 
+
+  ccc_entdaa xccc_entdaa (
+    .clk_i,  // Clock
+    .rst_ni, // Async reset, active low
+    .id_i,
+
+    .start_daa_i(entdaa_start),
+    .done_daa_o(entdaa_done),
+
+    // Bus RX interface
+    .bus_rx_data_i,
+    .bus_rx_done_i,
+    .bus_rx_req_bit_o(entdaa_rx_req_bit),
+    .bus_rx_req_byte_o(entdaa_rx_req_byte),
+
+    // Bus TX interface
+    .bus_tx_done_i,
+    .bus_tx_req_byte_o(entdaa_tx_req_byte),
+    .bus_tx_req_bit_o(entdaa_tx_req_bit),
+    .bus_tx_req_value_o(entdaa_tx_req_value),
+    .bus_tx_sel_od_pp_o(entdaa_tx_sel_od_pp),
+
+    // Bus Monitor interface
+    .bus_rstart_det_i,
+    .bus_stop_det_i,
+
+    // bus access
+    .arbitration_lost_i,
+
+    // addr
+    .address_o(newda_o),
+    .address_valid_o(set_newda_o)
+  );
 endmodule
