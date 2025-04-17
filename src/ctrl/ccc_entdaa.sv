@@ -62,35 +62,35 @@ module ccc_entdaa
     unique case (state_q)
       Idle: begin
         if (start_daa_i) begin
-          state_d <= WaitStart;
+          state_d = WaitStart;
         end
       end
       WaitStart: begin
         if (bus_rstart_det_i) begin
-          state_d <= ReceiveRsvdByte;
+          state_d = ReceiveRsvdByte;
         end
       end
       ReceiveRsvdByte: begin
         if (bus_rx_done_i) begin
-          if (reserved_word_det) state_d <= AckRsvdByte;
-          else state_d <= SendNack;
+          if (reserved_word_det) state_d = AckRsvdByte;
+          else state_d = SendNack;
         end
       end
       AckRsvdByte: begin
         if (bus_tx_done_i) begin
-	  state_d <= SendID;
+	  state_d = SendID;
 	end
       end
       SendNack: begin
         if (bus_tx_done_i) begin
-          state_d <= Error;
+          state_d = Error;
 	end
       end
       SendID: begin
         if (bus_tx_done_i) begin
           // our Id was overwritten by some other device
           if (arbitration_lost_i) begin
-            state_d <= LostArbitration;
+            state_d = LostArbitration;
           end
         end
       end
@@ -98,8 +98,8 @@ module ccc_entdaa
       end
       ReceiveAddr: begin
         if (bus_rx_done_i) begin
-          if (parity_ok) state_d <= AckAddr;
-          else state_d <= SendNack;
+          if (parity_ok) state_d = AckAddr;
+          else state_d = SendNack;
         end
       end
       Done: begin
