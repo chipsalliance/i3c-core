@@ -91,6 +91,7 @@ module ccc
     input logic rst_ni, // Async reset, active low
     input logic [47:0] id_i,
 
+    input logic arbitration_lost_i,
     // CC is decoded from the frame by the primary FSM
     input logic [7:0] ccc_i,
     // Assert valid when you want to give control to this FSM

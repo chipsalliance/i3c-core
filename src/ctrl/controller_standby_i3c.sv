@@ -23,6 +23,7 @@ module controller_standby_i3c
     output logic ctrl_scl_o,
     output logic ctrl_sda_o,
     output logic phy_sel_od_pp_o,
+    input logic arbitration_lost_i,
 
     // Target Transaction Interface
 
@@ -468,6 +469,7 @@ module controller_standby_i3c
       .clk_i,
       .rst_ni,
       .id_i,
+      .arbitration_lost_i,
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),
