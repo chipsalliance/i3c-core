@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
 import logging
 import random
 from math import ceil
@@ -17,13 +18,23 @@ from cocotb.triggers import ClockCycles, RisingEdge, Timer
 TARGET_ADDRESS = 0x5A
 
 
-async def timeout_task(timeout_us=5):
-    """
-    A generic task for handling test timeout. Waits a fixed amount of
-    simulation time and then throws an exception.
-    """
-    await Timer(timeout_us, "us")
-    raise TimeoutError("Timeout!")
+# Wraps cocotb.test with a default timeout
+def cocotb_test(timeout=200, unit="us", expect_fail=False, expect_error=(), skip=False, stage=0):
+    def wrapper(func):
+        @cocotb.test(
+            timeout_time=timeout,
+            timeout_unit=unit,
+            expect_fail=expect_fail,
+            expect_error=expect_error,
+            skip=skip,
+            stage=stage,
+        )
+        @functools.wraps(func)
+        async def runCocotb(*args, **kwargs):
+            await func(*args, **kwargs)
+
+        return runCocotb
+    return wrapper
 
 
 async def test_setup(dut, fclk=100.0, fbus=12.5):
@@ -32,7 +43,6 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
     """
 
     cocotb.log.setLevel(logging.INFO)
-    cocotb.start_soon(timeout_task(200))
 
     dut._log.info(f"fclk = {fclk:.3f} MHz")
     dut._log.info(f"fbus = {fbus:.3f} MHz")
@@ -89,7 +99,7 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
     return i3c_controller, i3c_target, tb
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_write(dut):
 
     test_data = [[0xAA, 0x00, 0xBB, 0xCC, 0xDD], [0xDE, 0xAD, 0xBA, 0xBE]]
@@ -178,7 +188,7 @@ async def test_i3c_target_write(dut):
     assert test_data == recv_data
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_read(dut):
 
     # Setup
@@ -268,7 +278,7 @@ async def test_i3c_target_read(dut):
         compare(tx_data, rx_data)
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_ibi(dut):
     """
     IBI test. Sends an IBI with no data and then subsequently IBIs with
@@ -357,7 +367,7 @@ async def test_i3c_target_ibi(dut):
     assert result
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_ibi_retry(dut):
     """
     Disables IBI ACK-ing in controller, sends an IBI, waits some time for the
@@ -432,7 +442,7 @@ async def test_i3c_target_ibi_retry(dut):
     assert result
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_ibi_data(dut):
     """
     Set a limit on how many IBI data bytes the controller may accept. Issue
@@ -497,7 +507,7 @@ async def test_i3c_target_ibi_data(dut):
     assert result
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_writes_and_reads(dut):
 
     # Setup
@@ -578,7 +588,7 @@ async def test_i3c_target_writes_and_reads(dut):
     assert tx_test_data == recv_data
 
 
-@cocotb.test()
+@cocotb_test()
 async def test_i3c_target_pwrite_err_detection(dut):
     I3C_DIRECT_GETSTATUS = 0x90
     TRANSFER_LENGTH = 4
