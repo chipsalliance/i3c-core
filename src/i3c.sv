@@ -539,6 +539,9 @@ module i3c
   logic virtual_device_sel;
   logic xfer_in_progress;
 
+  logic arbitration_lost;
+
+  assign arbitration_lost = sda_i != sda_o;
 
   // HCI
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
@@ -566,6 +569,7 @@ module i3c
       .scl_o(ctrl2phy_scl),
       .sda_o(ctrl2phy_sda),
       .sel_od_pp_o(ctrl_sel_od_pp),
+      .arbitration_lost_i(arbitration_lost),
 
       // HCI Response queue
       .hci_resp_queue_empty_i(hci_resp_empty),

@@ -37,6 +37,7 @@ module controller_standby
     output logic ctrl_scl_o[2],
     output logic ctrl_sda_o[2],
     output logic phy_sel_od_pp_o[2],
+    input logic arbitration_lost_i,
 
     // Target Transaction Interface
 
@@ -385,6 +386,7 @@ module controller_standby
       .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
+      .arbitration_lost_i(arbitration_lost_i),
       .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
       .rx_desc_queue_wvalid_o(i3c_rx_desc_queue_wvalid_o),
       .rx_desc_queue_wdata_o(i3c_rx_desc_queue_wdata_o),

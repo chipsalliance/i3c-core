@@ -70,6 +70,7 @@ module controller
     output logic scl_o,
     output logic sda_o,
     output logic sel_od_pp_o,
+    input logic arbitration_lost_i,
 
     // HCI queues
     // Command FIFO
@@ -459,6 +460,7 @@ module controller
       .ctrl_scl_o(ctrl_scl_o[2:3]),
       .ctrl_sda_o(ctrl_sda_o[2:3]),
       .phy_sel_od_pp_o(ctrl_sel_od_pp_i[2:3]),
+      .arbitration_lost_i(arbitration_lost_i),
       .rx_desc_queue_full_i(tti_rx_desc_queue_full_i),
       .rx_desc_queue_depth_i(tti_rx_desc_queue_depth_i),
       .rx_desc_queue_ready_thld_i(tti_rx_desc_queue_ready_thld_i),
