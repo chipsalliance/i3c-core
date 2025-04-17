@@ -36,17 +36,17 @@ module ccc_entdaa
 
 
   typedef enum logic [7:0] {
-    Idle,
-    WaitStart,
-    ReceiveRsvdByte,
-    AckRsvdByte,
-    SendNack,
-    SendID,
-    LostArbitration,
-    ReceiveAddr,
-    AckAddr,
-    Done,
-    Error
+    Idle = 'h0,
+    WaitStart = 'h1,
+    ReceiveRsvdByte = 'h2,
+    AckRsvdByte = 'h3,
+    SendNack = 'h4,
+    SendID = 'h5,
+    LostArbitration = 'h6,
+    ReceiveAddr = 'h7,
+    AckAddr = 'h8,
+    Done = 'h9,
+    Error = 'ha
   } state_e;
 
   state_e state_q, state_d;
@@ -55,7 +55,7 @@ module ccc_entdaa
 
   logic parity_ok;
 
-  assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 0);
+  assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 1'b1);
 
   always_comb begin: state_functions
     state_d = state_q;
@@ -77,16 +77,24 @@ module ccc_entdaa
         end
       end
       AckRsvdByte: begin
-        state_d <= SendID;
+        if (bus_tx_done_i) begin
+	  state_d <= SendID;
+	end
       end
       SendNack: begin
-        state_d <= Error;
+        if (bus_tx_done_i) begin
+          state_d <= Error;
+	end
       end
       SendID: begin
-        // our Id was overwritten by some other device
-        if (arbitration_lost_i) begin
-          state_d <= LostArbitration;
+        if (bus_tx_done_i) begin
+          // our Id was overwritten by some other device
+          if (arbitration_lost_i) begin
+            state_d <= LostArbitration;
+          end
         end
+      end
+      LostArbitration: begin
       end
       ReceiveAddr: begin
         if (bus_rx_done_i) begin
@@ -106,7 +114,9 @@ module ccc_entdaa
 
   always_comb begin : state_outputs
     bus_rx_req_byte_o = '0;
+    bus_rx_req_bit_o = '0;
 
+    bus_tx_req_byte_o = '0;
     bus_tx_req_bit_o = '0;
     bus_tx_req_value_o = '0;
     bus_tx_sel_od_pp_o = '0;
@@ -119,12 +129,13 @@ module ccc_entdaa
         bus_rx_req_byte_o = '1;
       end
       AckRsvdByte: begin
+        bus_tx_req_byte_o = '0;
         bus_tx_req_bit_o = '1;
         bus_tx_req_value_o = '0;
       end
       SendNack: begin
         bus_tx_req_bit_o = '1;
-        bus_tx_req_value_o = '0;
+        bus_tx_req_value_o = '1;
       end
       SendID: begin
       end

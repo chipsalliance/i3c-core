@@ -91,7 +91,6 @@ module ccc
     input logic rst_ni, // Async reset, active low
     input logic [47:0] id_i,
 
-    input logic arbitration_lost_i,
     // CC is decoded from the frame by the primary FSM
     input logic [7:0] ccc_i,
     // Assert valid when you want to give control to this FSM
@@ -339,13 +338,13 @@ module ccc
   // Mux TX access between regular CCC and ENTDAA
   logic entdaa_tx_req_bit;
   logic entdaa_tx_req_byte;
-  logic entdaa_tx_req_value;
+  logic [7:0] entdaa_tx_req_value;
   logic entdaa_tx_sel_od_pp;
   logic entdaa_rx_req_bit;
   logic entdaa_rx_req_byte;
   logic ccc_tx_req_bit;
   logic ccc_tx_req_byte;
-  logic ccc_tx_req_value;
+  logic [7:0] ccc_tx_req_value;
   logic ccc_tx_sel_od_pp;
   logic ccc_rx_req_bit;
   logic ccc_rx_req_byte;
@@ -967,7 +966,6 @@ module ccc
   assign entas1_o = '0;
   assign entas2_o = '0;
   assign entas3_o = '0;
-  assign entdaa_o = '0;
   assign ent_tm_o = '0;
   assign tm_o = '0;
   assign ent_hdr_0_o = '0;
@@ -985,7 +983,7 @@ module ccc
     .rst_ni, // Async reset, active low
     .id_i,
 
-    .start_daa_i(entdaa_start),
+    .start_daa_i(entdaa_o),
     .done_daa_o(entdaa_done),
 
     // Bus RX interface
@@ -995,7 +993,7 @@ module ccc
     .bus_rx_req_byte_o(entdaa_rx_req_byte),
 
     // Bus TX interface
-    .bus_tx_done_i,
+    .bus_tx_done_i(bus_tx_done_i),
     .bus_tx_req_byte_o(entdaa_tx_req_byte),
     .bus_tx_req_bit_o(entdaa_tx_req_bit),
     .bus_tx_req_value_o(entdaa_tx_req_value),
