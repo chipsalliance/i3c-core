@@ -34,7 +34,7 @@ async def test_setup(dut, timeout_us=50):
     """
 
     cocotb.log.setLevel(logging.INFO)
-    cocotb.start_soon(timeout_task(timeout_us))
+    await cocotb.start(timeout_task(timeout_us))
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
