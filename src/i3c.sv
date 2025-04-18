@@ -304,7 +304,7 @@ module i3c
 
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
-  // TTI RX descriptors queue
+  // TTI TX descriptors queue
   logic                               tti_tx_desc_full;
   logic [TtiRxDescFifoDepthWidth-1:0] tti_tx_desc_depth;
   logic [     TtiRxDescThldWidth-1:0] tti_tx_desc_ready_thld;
@@ -314,7 +314,7 @@ module i3c
   logic                               tti_tx_desc_rready;
   logic [     TtiRxDescDataWidth-1:0] tti_tx_desc_rdata;
 
-  // TTI TX descriptors queue
+  // TTI RX descriptors queue
   logic                               tti_rx_desc_full;
   logic [TtiTxDescFifoDepthWidth-1:0] tti_rx_desc_depth;
   logic [     TtiTxDescThldWidth-1:0] tti_rx_desc_ready_thld;
