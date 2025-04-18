@@ -48,19 +48,20 @@ module i3c_test_wrapper #(
     input logic areset_n,
     // AXI4 Interface
     // AXI Read Channels
-    input  logic [AxiAddrWidth-1:0] araddr,
-    input  logic [             1:0] arburst,
-    input  logic [             2:0] arsize,
-    input  logic [             7:0] arlen,
-    input  logic [AxiUserWidth-1:0] aruser,
-    input  logic [  AxiIdWidth-1:0] arid,
-    input  logic                    arlock,
-    input  logic                    arvalid,
-    output logic                    arready,
+    input  logic [  AxiAddrWidth-1:0] araddr,
+    input  logic [               1:0] arburst,
+    input  logic [               2:0] arsize,
+    input  logic [               7:0] arlen,
+    input  logic [  AxiUserWidth-1:0] aruser,
+    input  logic [    AxiIdWidth-1:0] arid,
+    input  logic                      arlock,
+    input  logic                      arvalid,
+    output logic                      arready,
 
     output logic [AxiDataWidth-1:0] rdata,
     output logic [             1:0] rresp,
     output logic [  AxiIdWidth-1:0] rid,
+    output logic [AxiUserWidth-1:0] ruser,
     output logic                    rlast,
     output logic                    rvalid,
     input  logic                    rready,
@@ -76,16 +77,18 @@ module i3c_test_wrapper #(
     input  logic                    awvalid,
     output logic                    awready,
 
-    input  logic [AxiDataWidth-1:0] wdata,
+    input  logic [  AxiDataWidth-1:0] wdata,
     input  logic [AxiDataWidth/8-1:0] wstrb,
-    input  logic                    wlast,
-    input  logic                    wvalid,
-    output logic                    wready,
+    input  logic [  AxiUserWidth-1:0] wuser,
+    input  logic                      wlast,
+    input  logic                      wvalid,
+    output logic                      wready,
 
-    output logic [           1:0] bresp,
-    output logic [AxiIdWidth-1:0] bid,
-    output logic                  bvalid,
-    input  logic                  bready,
+    output logic [             1:0] bresp,
+    output logic [  AxiIdWidth-1:0] bid,
+    output logic [AxiUserWidth-1:0] buser,
+    output logic                    bvalid,
+    input  logic                    bready,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
@@ -107,9 +110,14 @@ module i3c_test_wrapper #(
     output logic bus_sda,
     output logic bus_scl,
 
+    output logic recovery_payload_available_o,
+    output logic recovery_image_activated_o,
+
     output logic peripheral_reset_o,
     input  logic peripheral_reset_done_i,
-    output logic escalated_reset_o
+    output logic escalated_reset_o,
+
+    output irq_o
 );
 
 logic clk_i;
@@ -193,6 +201,7 @@ logic sel_od_pp;
     .rdata_o(rdata),
     .rresp_o(rresp),
     .rid_o(rid),
+    .ruser_o(ruser),
     .rlast_o(rlast),
     .rvalid_o(rvalid),
     .rready_i(rready),
@@ -209,12 +218,14 @@ logic sel_od_pp;
 
     .wdata_i(wdata),
     .wstrb_i(wstrb),
+    .wuser_i(wuser),
     .wlast_i(wlast),
     .wvalid_i(wvalid),
     .wready_o(wready),
 
     .bresp_o(bresp),
     .bid_o(bid),
+    .buser_o(buser),
     .bvalid_o(bvalid),
     .bready_i(bready),
 
@@ -230,9 +241,12 @@ logic sel_od_pp;
     .sda_o(sda_i[2]),
     .sel_od_pp_o(sel_od_pp),
 
+    .recovery_payload_available_o,
+    .recovery_image_activated_o,
     .peripheral_reset_o,
     .peripheral_reset_done_i,
-    .escalated_reset_o
+    .escalated_reset_o,
+    .irq_o
 );
 
 endmodule
