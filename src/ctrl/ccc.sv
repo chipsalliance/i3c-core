@@ -982,6 +982,8 @@ module ccc
     .clk_i,  // Clock
     .rst_ni, // Async reset, active low
     .id_i,
+    .bcr_i(get_bcr_i),
+    .dcr_i(get_dcr_i),
 
     .start_daa_i(entdaa_o),
     .done_daa_o(entdaa_done),
