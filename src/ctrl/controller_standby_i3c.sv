@@ -552,6 +552,8 @@ module controller_standby_i3c
       .escalate_reset_o          (escalate_reset)
   );
 
+  logic unused_ibi_byte_err;
+
   ibi u_ibi (
       .clk_i,
       .rst_ni,
@@ -571,7 +573,7 @@ module controller_standby_i3c
       .ibi_byte_ready_o(ibi_fifo_rready),
       .ibi_byte_i      (ibi_fifo_rdata),
       .ibi_byte_last_i (ibi_last_byte),
-      .ibi_byte_err_o  (),                 // FIXME
+      .ibi_byte_err_o  (unused_ibi_byte_err), // FIXME
 
       .scl_negedge_i  (ctrl_bus_i.scl.neg_edge),
       .scl_posedge_i  (ctrl_bus_i.scl.pos_edge),
