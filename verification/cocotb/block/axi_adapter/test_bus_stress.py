@@ -10,6 +10,8 @@ from cocotbext.axi.constants import AxiBurstType
 import cocotb
 from cocotb.triggers import ClockCycles, Combine, RisingEdge, Timer, with_timeout
 
+from utils import target_test
+
 
 async def timeout_task(timeout):
     await Timer(timeout, "us")
@@ -70,7 +72,7 @@ async def initialize(dut, timeout=50):
     return tb, data_len, test_data
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 
@@ -108,7 +110,7 @@ async def test_collision_with_write(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
@@ -152,7 +154,7 @@ async def test_collision_with_read(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test()
+@target_test()
 async def test_write_read_burst(dut):
     tb, data_len, test_data = await initialize(dut)
 
@@ -174,7 +176,7 @@ async def test_write_read_burst(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test()
+@target_test()
 async def test_write_burst_collision_with_read(dut):
     tb, data_len, test_data = await initialize(dut)
 
@@ -213,7 +215,7 @@ async def test_write_burst_collision_with_read(dut):
     tb.log.info("Test finished!")
 
 
-@cocotb.test()
+@target_test()
 async def test_read_burst_collision_with_write(dut):
     tb, data_len, test_data = await initialize(dut)
 

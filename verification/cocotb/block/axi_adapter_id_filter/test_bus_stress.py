@@ -4,7 +4,7 @@ import random
 from axi_utils import initialize_dut
 from bus2csr import dword2int, int2bytes, int2dword
 from cocotbext.axi.constants import AxiBurstType
-from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
+from utils import Access, draw_axi_priv_ids, get_axi_ids_seq, target_test
 
 import cocotb
 from cocotb.triggers import ClockCycles, Combine, RisingEdge, with_timeout
@@ -74,22 +74,22 @@ async def collision_with_write(dut, filter_off=False, awid_priv=Access.Priv, ari
     verify_data(test_data, awids, received_data, arids, filter_off, priv_ids)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write_id_filter_off(dut):
     await collision_with_write(dut, True)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write_id_filter_on_priv(dut):
     await collision_with_write(dut, False, Access.Priv, Access.Priv)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write_id_filter_on_non_priv(dut):
     await collision_with_write(dut, False, Access.Priv, Access.Unpriv)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write_id_filter_on_mixed(dut):
     await collision_with_write(dut, False, Access.Priv, Access.Mixed)
 
@@ -140,22 +140,22 @@ async def collision_with_read(dut, filter_off=False, awid_priv=True, arid_priv=T
     verify_data(test_data, awids, received_data, arids, filter_off, priv_ids)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read_id_filter_off(dut):
     await collision_with_read(dut, True)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read_id_filter_on_priv(dut):
     await collision_with_read(dut, False, Access.Priv, Access.Priv)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read_id_filter_on_non_priv(dut):
     await collision_with_read(dut, False, Access.Priv, Access.Unpriv)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read_id_filter_on_mixed(dut):
     await collision_with_read(dut, False, Access.Priv, Access.Mixed)
 
@@ -181,17 +181,17 @@ async def write_read_burst(dut, filter_off=False, awid_priv=True, arid_priv=True
     verify_data(test_data, awids, received_data, arids, filter_off, priv_ids)
 
 
-@cocotb.test()
+@target_test()
 async def test_write_read_burst_id_filter_off(dut):
     await write_read_burst(dut, True)
 
 
-@cocotb.test()
+@target_test()
 async def test_write_read_burst_id_filter_on_priv(dut):
     await write_read_burst(dut, False, Access.Priv, Access.Priv)
 
 
-@cocotb.test()
+@target_test()
 async def test_write_read_burst_id_filter_on_non_priv(dut):
     await write_read_burst(dut, False, Access.Priv, Access.Unpriv)
 
@@ -232,17 +232,17 @@ async def write_burst_collision_with_read(dut, filter_off=False, awid_priv=True,
     verify_data(test_data, awids, received_data, arids, filter_off, priv_ids)
 
 
-@cocotb.test()
+@target_test()
 async def test_write_burst_collision_with_read_id_filter_off(dut):
     await write_burst_collision_with_read(dut, True)
 
 
-@cocotb.test(skip=False)
+@target_test()
 async def test_write_burst_collision_with_read_id_filter_on_priv(dut):
     await write_burst_collision_with_read(dut, False, Access.Priv, Access.Priv)
 
 
-@cocotb.test()
+@target_test()
 async def test_write_burst_collision_with_read_id_filter_on_non_priv(dut):
     await write_burst_collision_with_read(dut, False, Access.Priv, Access.Unpriv)
 
@@ -293,22 +293,22 @@ async def read_burst_collision_with_write(dut, filter_off=False, awid_priv=True,
     verify_data(test_data, awids, received_data2, arids, filter_off, priv_ids)
 
 
-@cocotb.test()
+@target_test()
 async def test_read_burst_collision_with_write_id_filter_off(dut):
     await read_burst_collision_with_write(dut, True)
 
 
-@cocotb.test()
+@target_test()
 async def test_read_burst_collision_with_write_id_filter_on_priv(dut):
     await read_burst_collision_with_write(dut, False, Access.Priv, Access.Priv)
 
 
-@cocotb.test()
+@target_test()
 async def test_read_burst_collision_with_write_id_filter_on_non_priv(dut):
     await read_burst_collision_with_write(dut, False, Access.Priv, Access.Unpriv)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_write_mixed_priv(dut):
     priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off=False, priv_ids=priv_ids)
@@ -345,7 +345,7 @@ async def test_collision_with_write_mixed_priv(dut):
     await Combine(w, r)
 
 
-@cocotb.test()
+@target_test()
 async def test_collision_with_read_mixed_priv(dut):
     priv_ids = draw_axi_priv_ids()
     tb, data_len, test_data = await initialize(dut, filter_off=False, priv_ids=priv_ids)

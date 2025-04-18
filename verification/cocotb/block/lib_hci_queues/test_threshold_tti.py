@@ -14,17 +14,17 @@ from common_methods import (
     should_raise_start_thld_trig_transmitter,
 )
 
-import cocotb
 from cocotb.handle import SimHandleBase
+from utils import target_test
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_tx_desc_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTITxDescQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
@@ -32,7 +32,7 @@ async def test_tti_rx_setup_threshold(dut: SimHandleBase):
     await should_setup_ready_threshold(interface, TTIRxQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_tx_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
@@ -40,25 +40,25 @@ async def test_tti_tx_setup_threshold(dut: SimHandleBase):
     await should_setup_ready_threshold(interface, TTITxQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_desc_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TTIRxDescQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_ibi_setup_threshold(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_setup_ready_threshold(interface, TtiIbiQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_desc_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_receiver(interface, TTIRxDescQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
@@ -66,7 +66,7 @@ async def test_tti_rx_should_raise_thld_trig(dut: SimHandleBase):
     await should_raise_ready_thld_trig_receiver(interface, TTIRxQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_tx_desc_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_transmitter(interface, TTITxDescQueueThldHandler())
@@ -76,7 +76,7 @@ async def test_tti_tx_desc_should_raise_thld_trig(dut: SimHandleBase):
 # between the TTI TX queue and I3C FSM. The frst word written to the queue
 # falls through it hence is not accounted by the threshold counter. Fixing this
 # requires reworking the converter itself or the queue - converter interface.
-@cocotb.test(skip=True)
+@target_test(skip=True)
 async def test_tti_tx_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     # TODO: Enable start threshold test once it's added to the design
@@ -84,7 +84,7 @@ async def test_tti_tx_should_raise_thld_trig(dut: SimHandleBase):
     await should_raise_ready_thld_trig_transmitter(interface, TTITxQueueThldHandler())
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_ibi_should_raise_thld_trig(dut: SimHandleBase):
     interface = await setup_sim(dut, "tti")
     await should_raise_ready_thld_trig_transmitter(interface, TtiIbiQueueThldHandler())

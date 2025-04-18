@@ -4,7 +4,7 @@ import random
 from axi_utils import initialize_dut
 from bus2csr import dword2int, int2bytes
 from cocotbext.axi.constants import AxiBurstType
-from utils import Access, draw_axi_priv_ids, get_axi_ids_seq
+from utils import Access, draw_axi_priv_ids, get_axi_ids_seq, target_test
 
 import cocotb
 from cocotb.triggers import Combine, RisingEdge
@@ -87,12 +87,12 @@ async def toggle_filtering(dut, cond):
     await Combine(w, r)
 
 
-@cocotb.test()
+@target_test()
 async def test_toggle_filtering_mid_read(dut):
     await toggle_filtering(dut, lambda: dut.arready.value and dut.arvalid.value)
 
 
-@cocotb.test()
+@target_test()
 async def test_toggle_filtering_mid_write(dut):
     await toggle_filtering(dut, lambda: dut.wready.value and dut.wvalid.value)
 
@@ -119,17 +119,17 @@ async def swap_priv_ids(dut, cond):
     await Combine(w, r)
 
 
-@cocotb.test()
+@target_test()
 async def test_swap_priv_ids_mid_read(dut):
     await swap_priv_ids(dut, lambda: dut.arready.value and dut.arvalid.value)
 
 
-@cocotb.test()
+@target_test()
 async def test_swap_priv_ids_mid_write(dut):
     await swap_priv_ids(dut, lambda: dut.wready.value and dut.wvalid.value)
 
 
-@cocotb.test()
+@target_test()
 async def test_randomized_id_configuration_swap(dut):
     async def disable_random():
         while True:
