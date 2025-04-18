@@ -25,10 +25,10 @@ module i3c_test_wrapper #(
 
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
-)(
+) (
 `ifdef I3C_USE_AHB
-    input logic hclk,
-    input logic hreset_n,
+    input  logic                      hclk,
+    input  logic                      hreset_n,
     // AHB-Lite interface
     input  logic [  AhbAddrWidth-1:0] haddr,
     input  logic [               2:0] hburst,
@@ -44,8 +44,8 @@ module i3c_test_wrapper #(
     input  logic                      hsel,
     input  logic                      hready,
 `elsif I3C_USE_AXI
-    input logic aclk,
-    input logic areset_n,
+    input  logic                      aclk,
+    input  logic                      areset_n,
     // AXI4 Interface
     // AXI Read Channels
     input  logic [  AxiAddrWidth-1:0] araddr,
@@ -92,7 +92,7 @@ module i3c_test_wrapper #(
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
+    input logic [AxiUserWidth-1:0] priv_ids_i[NumPrivIds],
 `endif
 `endif
     // I3C Target Simulation model
@@ -120,37 +120,37 @@ module i3c_test_wrapper #(
     output irq_o
 );
 
-logic clk_i;
-logic rst_ni;
+  logic clk_i;
+  logic rst_ni;
 
 `ifdef I3C_USE_AHB
-assign clk_i = hclk;
-assign rst_ni = hreset_n;
+  assign clk_i  = hclk;
+  assign rst_ni = hreset_n;
 `elsif I3C_USE_AXI
-assign clk_i = aclk;
-assign rst_ni = areset_n;
+  assign clk_i  = aclk;
+  assign rst_ni = areset_n;
 `endif
 
-localparam int unsigned NumDevices = 3; // 2 Targets, 1 Controller
+  localparam int unsigned NumDevices = 3;  // 2 Targets, 1 Controller
 
-logic [NumDevices-1:0] sda_i;
-logic [NumDevices-1:0] scl_i;
+  logic [NumDevices-1:0] sda_i;
+  logic [NumDevices-1:0] scl_i;
 
-assign sda_i[0] = sda_sim_ctrl_i;
-assign scl_i[0] = scl_sim_ctrl_i;
-assign sda_i[1] = sda_sim_target_i;
-assign scl_i[1] = scl_sim_target_i;
+  assign sda_i[0] = sda_sim_ctrl_i;
+  assign scl_i[0] = scl_sim_ctrl_i;
+  assign sda_i[1] = sda_sim_target_i;
+  assign scl_i[1] = scl_sim_target_i;
 
-i3c_bus_harness #(
-    .NumDevices(NumDevices)
-) xi3_bus_harness (
-    .sda_i(sda_i),
-    .scl_i(scl_i),
-    .sda_o(bus_sda),
-    .scl_o(bus_scl)
-);
+  i3c_bus_harness #(
+      .NumDevices(NumDevices)
+  ) xi3_bus_harness (
+      .sda_i(sda_i),
+      .scl_i(scl_i),
+      .sda_o(bus_sda),
+      .scl_o(bus_scl)
+  );
 
-logic sel_od_pp;
+  logic sel_od_pp;
 
   i3c_wrapper #(
 `ifdef I3C_USE_AHB
@@ -174,60 +174,60 @@ logic sel_od_pp;
       .rst_ni,
 
 `ifdef I3C_USE_AHB
-    .haddr_i(haddr),
-    .hburst_i(hburst),
-    .hprot_i(hprot),
-    .hsize_i(hsize),
-    .htrans_i(htrans),
-    .hwdata_i(hwdata),
-    .hwstrb_i(hwstrb),
-    .hwrite_i(hwrite),
-    .hrdata_o(hrdata),
-    .hreadyout_o(hreadyout),
-    .hresp_o(hresp),
-    .hsel_i(hsel),
-    .hready_i(hready),
+      .haddr_i(haddr),
+      .hburst_i(hburst),
+      .hprot_i(hprot),
+      .hsize_i(hsize),
+      .htrans_i(htrans),
+      .hwdata_i(hwdata),
+      .hwstrb_i(hwstrb),
+      .hwrite_i(hwrite),
+      .hrdata_o(hrdata),
+      .hreadyout_o(hreadyout),
+      .hresp_o(hresp),
+      .hsel_i(hsel),
+      .hready_i(hready),
 `elsif I3C_USE_AXI
-    .araddr_i(araddr),
-    .arburst_i(arburst),
-    .arsize_i(arsize),
-    .arlen_i(arlen),
-    .aruser_i(aruser),
-    .arid_i(arid),
-    .arlock_i(arlock),
-    .arvalid_i(arvalid),
-    .arready_o(arready),
+      .araddr_i(araddr),
+      .arburst_i(arburst),
+      .arsize_i(arsize),
+      .arlen_i(arlen),
+      .aruser_i(aruser),
+      .arid_i(arid),
+      .arlock_i(arlock),
+      .arvalid_i(arvalid),
+      .arready_o(arready),
 
-    .rdata_o(rdata),
-    .rresp_o(rresp),
-    .rid_o(rid),
-    .ruser_o(ruser),
-    .rlast_o(rlast),
-    .rvalid_o(rvalid),
-    .rready_i(rready),
+      .rdata_o(rdata),
+      .rresp_o(rresp),
+      .rid_o(rid),
+      .ruser_o(ruser),
+      .rlast_o(rlast),
+      .rvalid_o(rvalid),
+      .rready_i(rready),
 
-    .awaddr_i(awaddr),
-    .awburst_i(awburst),
-    .awsize_i(awsize),
-    .awlen_i(awlen),
-    .awuser_i(awuser),
-    .awid_i(awid),
-    .awlock_i(awlock),
-    .awvalid_i(awvalid),
-    .awready_o(awready),
+      .awaddr_i(awaddr),
+      .awburst_i(awburst),
+      .awsize_i(awsize),
+      .awlen_i(awlen),
+      .awuser_i(awuser),
+      .awid_i(awid),
+      .awlock_i(awlock),
+      .awvalid_i(awvalid),
+      .awready_o(awready),
 
-    .wdata_i(wdata),
-    .wstrb_i(wstrb),
-    .wuser_i(wuser),
-    .wlast_i(wlast),
-    .wvalid_i(wvalid),
-    .wready_o(wready),
+      .wdata_i (wdata),
+      .wstrb_i (wstrb),
+      .wuser_i (wuser),
+      .wlast_i (wlast),
+      .wvalid_i(wvalid),
+      .wready_o(wready),
 
-    .bresp_o(bresp),
-    .bid_o(bid),
-    .buser_o(buser),
-    .bvalid_o(bvalid),
-    .bready_i(bready),
+      .bresp_o(bresp),
+      .bid_o(bid),
+      .buser_o(buser),
+      .bvalid_o(bvalid),
+      .bready_i(bready),
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
@@ -235,18 +235,18 @@ logic sel_od_pp;
 `endif
 `endif
 
-    .scl_i(bus_scl),
-    .sda_i(bus_sda),
-    .scl_o(scl_i[2]),
-    .sda_o(sda_i[2]),
-    .sel_od_pp_o(sel_od_pp),
+      .scl_i(bus_scl),
+      .sda_i(bus_sda),
+      .scl_o(scl_i[2]),
+      .sda_o(sda_i[2]),
+      .sel_od_pp_o(sel_od_pp),
 
-    .recovery_payload_available_o,
-    .recovery_image_activated_o,
-    .peripheral_reset_o,
-    .peripheral_reset_done_i,
-    .escalated_reset_o,
-    .irq_o
-);
+      .recovery_payload_available_o,
+      .recovery_image_activated_o,
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o,
+      .irq_o
+  );
 
 endmodule
