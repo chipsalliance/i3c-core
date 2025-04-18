@@ -42,20 +42,37 @@ module ccc_entdaa
     AckRsvdByte = 'h3,
     SendNack = 'h4,
     SendID = 'h5,
-    LostArbitration = 'h6,
-    ReceiveAddr = 'h7,
-    AckAddr = 'h8,
-    Done = 'h9,
-    Error = 'ha
+    PrepareIDBit = 'h6,
+    SendIDBit = 'h7,
+    LostArbitration = 'h8,
+    ReceiveAddr = 'h9,
+    AckAddr = 'ha,
+    Done = 'hb,
+    Error = 'hc
   } state_e;
 
   state_e state_q, state_d;
   logic [5:0] id_bit_count;
+  logic load_id_counter, tick_id_counter;
   logic reserved_word_det;
 
   logic parity_ok;
 
   assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 1'b1);
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin: id_bit_counter
+    if (!rst_ni) begin
+      id_bit_count <= '0;
+    end else begin
+      if (load_id_counter) begin
+        id_bit_count <= 6'd48;
+      end else if (tick_id_counter) begin
+        id_bit_count <= id_bit_count - 1'b1;
+      end else begin
+        id_bit_count <= id_bit_count;
+      end
+    end
+  end
 
   always_comb begin: state_functions
     state_d = state_q;
@@ -78,19 +95,33 @@ module ccc_entdaa
       end
       AckRsvdByte: begin
         if (bus_tx_done_i) begin
-	  state_d = SendID;
-	end
+    	  state_d = SendID;
+    	end
       end
       SendNack: begin
         if (bus_tx_done_i) begin
           state_d = Error;
-	end
+    	end
       end
       SendID: begin
+        // load ID counter
+        state_d = PrepareIDBit;
+      end
+      PrepareIDBit: begin
+        if (id_bit_count != '0) begin
+          state_d = SendIDBit;
+        end
+      end
+      SendIDBit: begin
         if (bus_tx_done_i) begin
           // our Id was overwritten by some other device
           if (arbitration_lost_i) begin
             state_d = LostArbitration;
+          end
+          if (id_bit_count == '0) begin
+            state_d = ReceiveAddr;
+          end else begin
+            state_d = PrepareIDBit;
           end
         end
       end
@@ -120,6 +151,9 @@ module ccc_entdaa
     bus_tx_req_bit_o = '0;
     bus_tx_req_value_o = '0;
     bus_tx_sel_od_pp_o = '0;
+
+    load_id_counter = '0;
+    tick_id_counter = '0;
     unique case (state_q)
       Idle: begin
       end
@@ -138,6 +172,14 @@ module ccc_entdaa
         bus_tx_req_value_o = '1;
       end
       SendID: begin
+        load_id_counter = '1;
+      end
+      PrepareIDBit: begin
+        tick_id_counter = '1;
+      end
+      SendIDBit: begin
+        bus_tx_req_bit_o = '1;
+        bus_tx_req_value_o = id_i[id_bit_count];
       end
       ReceiveAddr: begin
         bus_rx_req_byte_o = '1;
