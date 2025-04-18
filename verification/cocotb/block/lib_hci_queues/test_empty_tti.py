@@ -2,30 +2,30 @@
 
 from common_methods import should_be_empty_after_rst
 
-import cocotb
 from cocotb.handle import SimHandleBase
+from utils import target_test
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_tx_desc_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "tx_desc")
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "rx")
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_rx_desc_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "rx_desc")
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_tx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "tx")
 
 
-@cocotb.test()
+@target_test()
 async def test_tti_ibi_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "tti", "ibi")

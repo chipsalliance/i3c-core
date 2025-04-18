@@ -8,12 +8,12 @@ from tti_queues import TTIQueuesTestInterface
 import cocotb
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import ClockCycles, Combine
-
+from utils import target_test
 TEST_SIZE = 5
 QUEUE_SIZE = 64
 
 
-@cocotb.test()
+@target_test()
 async def write_read_tti_tx_desc_queue(dut: SimHandleBase):
     """
     Enqueue multiple transfers through TTI_TX_DESC_QUEUE_PORT and verify
@@ -26,7 +26,7 @@ async def write_read_tti_tx_desc_queue(dut: SimHandleBase):
     await test_write_read(data, tb.put_tx_desc, tb.get_tx_desc)
 
 
-@cocotb.test()
+@target_test()
 async def underflow_tti_tx_desc_queue(dut: SimHandleBase):
     """
     Fetch data from Command Queue to cause underflow and write the data to ensure
@@ -43,7 +43,7 @@ async def underflow_tti_tx_desc_queue(dut: SimHandleBase):
     await Combine(write_coroutine, read_coroutine)
 
 
-@cocotb.test()
+@target_test()
 async def write_read_tti_tx_queue(dut: SimHandleBase):
     """
     Place TX data through XFER_DATA_PORT & verify it from the other (controller's)
@@ -56,7 +56,7 @@ async def write_read_tti_tx_queue(dut: SimHandleBase):
     await test_write_read(tx_data, tb.put_tx_data, tb.get_tx_data)
 
 
-@cocotb.test()
+@target_test()
 async def underflow_tti_tx_queue(dut: SimHandleBase):
     """
     Fetch data from TX Queue to cause underflow and write the data to ensure
@@ -73,7 +73,7 @@ async def underflow_tti_tx_queue(dut: SimHandleBase):
     await Combine(write_coroutine, read_coroutine)
 
 
-@cocotb.test()
+@target_test()
 async def write_read_tti_rx_queue(dut: SimHandleBase):
     """
     Put read data onto the RX queue & fetch it through XFER_DATA_PORT
@@ -85,7 +85,7 @@ async def write_read_tti_rx_queue(dut: SimHandleBase):
     await test_write_read(rx_data, tb.put_rx_data, tb.get_rx_data)
 
 
-@cocotb.test()
+@target_test()
 async def overflow_tti_rx_queue(dut: SimHandleBase):
     """
     Put read data onto the RX queue (and overflow it) & fetch it through XFER_DATA_PORT
@@ -104,7 +104,7 @@ async def overflow_tti_rx_queue(dut: SimHandleBase):
     await Combine(write_coroutine, read_coroutine)
 
 
-@cocotb.test()
+@target_test()
 async def fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
     """
     Put response into the response queue (from controller logic) & fetch it from
@@ -117,7 +117,7 @@ async def fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
     await test_write_read(data, tb.put_rx_desc, tb.get_rx_desc)
 
 
-@cocotb.test()
+@target_test()
 async def overflow_tti_rx_desc_queue(dut: SimHandleBase):
     """
     Put multiple response data into the response queue (from controller logic)
