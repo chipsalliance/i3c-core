@@ -5,6 +5,8 @@ module ccc_entdaa
     input logic clk_i,  // Clock
     input logic rst_ni, // Async reset, active low
     input logic [47:0] id_i,
+    input logic [7:0] dcr_i,
+    input logic [7:0] bcr_i,
 
     input logic start_daa_i,
     output logic done_daa_o,
@@ -52,20 +54,22 @@ module ccc_entdaa
   } state_e;
 
   state_e state_q, state_d;
-  logic [5:0] id_bit_count;
+  logic [6:0] id_bit_count;
   logic load_id_counter, tick_id_counter;
   logic reserved_word_det;
 
+  logic [63:0] device_id;
   logic parity_ok;
 
   assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 1'b1);
+  assign device_id = {id_i, bcr_i, dcr_i};
 
   always_ff @(posedge clk_i or negedge rst_ni) begin: id_bit_counter
     if (!rst_ni) begin
       id_bit_count <= '0;
     end else begin
       if (load_id_counter) begin
-        id_bit_count <= 6'd48;
+        id_bit_count <= 7'd64;
       end else if (tick_id_counter) begin
         id_bit_count <= id_bit_count - 1'b1;
       end else begin
@@ -179,7 +183,7 @@ module ccc_entdaa
       end
       SendIDBit: begin
         bus_tx_req_bit_o = '1;
-        bus_tx_req_value_o = id_i[id_bit_count];
+        bus_tx_req_value_o = device_id[id_bit_count];
       end
       ReceiveAddr: begin
         bus_rx_req_byte_o = '1;
