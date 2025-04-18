@@ -37,7 +37,7 @@ def cocotb_test(timeout=200, unit="us", expect_fail=False, expect_error=(), skip
     return wrapper
 
 
-async def test_setup(dut, fclk=100.0, fbus=12.5):
+async def test_setup(dut, fclk=100.0, fbus=12.5, verify_boot=True):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -81,7 +81,7 @@ async def test_setup(dut, fclk=100.0, fbus=12.5):
     for k, v in timings.items():
         dut._log.info(f"{k} = {v}")
 
-    await boot_init(tb, timings)
+    await boot_init(tb, timings, verify_boot)
 
     # Set TTI queues thresholds
     await tb.write_csr_field(
@@ -287,7 +287,7 @@ async def test_i3c_target_ibi(dut):
     """
 
     # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    i3c_controller, i3c_target, tb = await test_setup(dut, verify_boot=True)
 
     target = i3c_controller.add_target(TARGET_ADDRESS)
     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)
@@ -376,7 +376,7 @@ async def test_i3c_target_ibi_retry(dut):
     """
 
     # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    i3c_controller, i3c_target, tb = await test_setup(dut, verify_boot=True)
 
     # Enable indefinite IBI retries
     #  TTI.CONTROL.IBI_EN        = 1
@@ -452,7 +452,7 @@ async def test_i3c_target_ibi_data(dut):
     """
 
     # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    i3c_controller, i3c_target, tb = await test_setup(dut, verify_boot=True)
 
     target = i3c_controller.add_target(TARGET_ADDRESS)
     target.set_bcr_fields(ibi_req_capable=True, ibi_payload=True)

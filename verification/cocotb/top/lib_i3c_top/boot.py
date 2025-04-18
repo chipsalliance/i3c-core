@@ -52,7 +52,7 @@ async def common_procedure(tb: I3CTopTestInterface):
     return core_config
 
 
-async def boot_init(tb: I3CTopTestInterface, timings=None):
+async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False):
     """
     Boot sequence model should match the description in "Boot and Initialization" chapter of the documentation.
 
@@ -79,7 +79,7 @@ async def boot_init(tb: I3CTopTestInterface, timings=None):
     await setup_hci_thresholds(tb)
 
     # Start the device
-    await umbrella_stby_init(tb)
+    await umbrella_stby_init(tb, verify)
 
 
 async def check_version(tb):
@@ -193,7 +193,7 @@ async def define_supported_ccc(tb):
     pass
 
 
-async def umbrella_stby_init(tb):
+async def umbrella_stby_init(tb, verify=False):
     """
     Set the BCR bits and the DCR value in register STBY_CR_DEVICE_CHAR.
 
@@ -252,6 +252,48 @@ async def umbrella_stby_init(tb):
     #     tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
     #     1,
     # )
+
+    # Check if CSRs have been set properly
+    if verify:
+        mode = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT,
+        )
+        assert mode == 2
+
+        # Set static address and valid
+        static_addr = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
+        )
+        assert static_addr == 0x5A
+
+        static_addr_valid = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
+        )
+        assert static_addr_valid == 0x1
+
+        # Set static address and valid for virtual device
+        virt_static_addr = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
+        )
+        assert virt_static_addr == 0x5B
+
+        virt_static_addr_valid = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
+            0x1,
+        )
+        assert virt_static_addr_valid == 0x1
+
+        # Enable Target Interface
+        tgt_en = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.TARGET_XACT_ENABLE,
+        )
+        assert tgt_en == 1
 
 
 async def tti_init(tb):
