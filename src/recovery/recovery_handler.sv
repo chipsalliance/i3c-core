@@ -972,6 +972,13 @@ module recovery_handler
 
   logic                          indirect_rx_empty;
 
+  logic [$clog2(IndirectFifoDepth + 1)-1:0] unused_depth_o;
+  logic                                     unused_start_thld_trig_o;
+  logic                                     unused_ready_thld_trig_o;
+  logic [                              2:0] unused_ready_thld_o;
+  logic                                     unused_reg_rst_we_o;
+  logic                                     unused_reg_rst_data_o;
+
   // Indirect FIFO (RX only)
   read_queue #(
       .Depth    (IndirectFifoDepth),
@@ -992,8 +999,8 @@ module recovery_handler
 
       // Clear port
       .reg_rst_i     (indirect_rx_clr),
-      .reg_rst_we_o  (),
-      .reg_rst_data_o(),
+      .reg_rst_we_o  (unused_reg_rst_we_o),
+      .reg_rst_data_o(unused_reg_rst_data_o),
 
       // Status
       .full_o (indirect_rx_full),
@@ -1002,10 +1009,10 @@ module recovery_handler
       // Threshold logic (unused)
       .start_thld_i     ('0),
       .ready_thld_i     ('0),
-      .ready_thld_o     (),
-      .start_thld_trig_o(),
-      .ready_thld_trig_o(),
-      .depth_o          ()
+      .ready_thld_o     (unused_ready_thld_o),
+      .start_thld_trig_o(unused_start_thld_trig_o),
+      .ready_thld_trig_o(unused_ready_thld_trig_o),
+      .depth_o          (unused_depth_o)
   );
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : indirect_fifo_access_permissions

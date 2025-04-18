@@ -620,6 +620,8 @@ module hci_queues_wrapper
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
 
+  logic unused_irq;
+
   tti xtti (
       .clk_i (clk_i),
       .rst_ni(rst_ni),

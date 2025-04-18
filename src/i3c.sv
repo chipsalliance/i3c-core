@@ -590,6 +590,7 @@ module i3c
 
   logic bypass_i3c_core;
   assign bypass_i3c_core = hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
+  logic unused_err;
 
   controller #(
       .DatAw(DatAw),
@@ -747,7 +748,7 @@ module i3c
       .i3c_fsm_en_i  (i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
-      .err(),  // TODO: Handle errors
+      .err(unused_err),  // TODO: Handle errors
       .irq(ctl_irq),
       .hwif_out_i(hwif_out),
       .hwif_rec_i(hwif_rec_out),
