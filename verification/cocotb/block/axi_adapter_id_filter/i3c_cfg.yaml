@@ -17,5 +17,5 @@ axi:
   FrontendBusIdFiltering: True
   NumPrivIds: 4
   DisableInputFF: True
-  ControllerSupport: True
+  ControllerSupport: False
   TargetSupport: True
