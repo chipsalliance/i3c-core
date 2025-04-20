@@ -196,7 +196,7 @@ module ccc_entdaa
       end
       SendIDBit: begin
         bus_tx_req_bit_o = '1;
-        bus_tx_req_value_o = device_id[id_bit_count];
+        bus_tx_req_value_o = {7'h0, device_id[id_bit_count[5:0]]};
       end
       ReceiveAddr: begin
         bus_rx_req_byte_o = '1;
