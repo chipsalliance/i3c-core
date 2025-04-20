@@ -324,6 +324,7 @@ module ccc
 
   logic entdaa_addres_valid;
   logic [6:0] entdaa_address;
+  logic entdaa_process_virtual;
 
   logic       get_status_in_progress;
 
@@ -413,6 +414,7 @@ module ccc
 
   assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
   assign entdaa_o = (state_q == HandleENTDAA || state_q == HandleTargetENTDAA || state_q == HandleVirtualTargetENTDAA);
+  assign entdaa_process_virtual = (state_q == HandleVirtualTargetENTDAA);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
     if (~rst_ni) begin
@@ -1044,6 +1046,8 @@ module ccc
 
     .start_daa_i(entdaa_o),
     .done_daa_o(entdaa_done),
+
+    .process_virtual_i(entdaa_process_virtual),
 
     // Bus RX interface
     .bus_rx_data_i,

@@ -15,6 +15,8 @@ module ccc_entdaa
     input logic start_daa_i,
     output logic done_daa_o,
 
+    input logic process_virtual_i,
+
     // Bus RX interface
     input logic [7:0] bus_rx_data_i,
     input logic bus_rx_done_i,
@@ -67,7 +69,7 @@ module ccc_entdaa
   logic parity_ok;
 
   assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 1'b1);
-  assign device_id = {id_i, bcr_i, dcr_i};
+  assign device_id = process_virtual_i ? {virtual_id_i, virtual_bcr_i, virtual_dcr_i} : {id_i, bcr_i, dcr_i};
   assign calculated_parity = ~(bus_rx_data_i[7] ^ bus_rx_data_i[6] ^ bus_rx_data_i[5] ^ bus_rx_data_i[4] ^ bus_rx_data_i[3] ^ bus_rx_data_i[2] ^ bus_rx_data_i[1]);
   assign parity_ok = (calculated_parity == bus_rx_data_i[0]);
   assign done_daa_o = (state_q == Done);
