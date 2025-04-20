@@ -215,7 +215,9 @@ module ccc
 
     // Set New Dynamic Address
     // I3C_DIRECT_SETNEWDA
+    // those ouptuts are also used by ENTDAA
     output logic set_newda_o,
+    output logic set_newda_virtual_device_o,
     output logic [6:0] newda_o,
 
     // Get Max Write Length
@@ -309,6 +311,9 @@ module ccc
   logic       set_aasa_valid;
   logic [6:0] set_aasa_addr;
 
+  logic entdaa_addres_valid;
+  logic entdaa_addres;
+
   logic       get_status_in_progress;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : report_get_status_done
@@ -388,13 +393,15 @@ module ccc
     WaitForBusCond,
     WaitForStop,
     DoneCCC,
-    HandleENTDAA
+    HandleENTDAA,
+    HandleTargetENTDAA,
+    HandleVirtualTargetENTDAA
   } state_e;
 
   state_e state_q, state_d;
 
   assign last_tbit_valid = (state_q == RxTbit || state_q == RxDataTbit) && bus_rx_done_i;
-  assign entdaa_o = (state_q == HandleENTDAA);
+  assign entdaa_o = (state_q == HandleENTDAA || state_q == HandleTargetENTDAA || state_q == HandleVirtualTargetENTDAA);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
     if (~rst_ni) begin
@@ -488,17 +495,45 @@ module ccc
           if (have_defining_byte) state_d = RxDefByte;
           else begin
             // ENTDAA is special
-            if (command_code == `I3C_BCAST_ENTDAA) state_d = HandleENTDAA;
+            if (command_code == `I3C_BCAST_ENTDAA) begin
+              // ignore ENTDAA if we already have dynamic addresses
+              if (~target_dyn_address_valid_i || ~virtual_target_dyn_address_valid_i) begin
+                state_d = HandleENTDAA;
+              end else begin
+                state_d = Idle;
+              end
+            end
             // broadcast CCCs
             else if (~is_direct_cmd) state_d = RxData;
             // direct CCCs
-            else
-              state_d = RxByte;
+            else state_d = RxByte;
           end
         end
       end
       HandleENTDAA: begin
-        if (entdaa_done) state_d = Idle;
+        // First get target dynamic address
+        if (~target_dyn_address_valid_i) begin
+          state_d = HandleTargetENTDAA;
+        // then vitual device dynamic address
+        end else if (~virtual_target_dyn_address_valid_i) begin
+          state_d = HandleVirtualTargetENTDAA;
+        end else begin
+          state_d = Idle;
+        end
+      end
+      HandleTargetENTDAA: begin
+        if (entdaa_done) begin
+          if (~virtual_target_dyn_address_valid_i) begin
+            state_d = HandleVirtualTargetENTDAA;
+          end else begin
+            state_d = Idle;
+          end
+        end
+      end
+      HandleVirtualTargetENTDAA: begin
+        if (entdaa_done) begin
+          state_d = Idle;
+        end
       end
       RxDefByte: begin
         if (bus_rx_done_i) state_d = RxDefByteTbit;
@@ -748,6 +783,13 @@ module ccc
     set_dasa_valid_o = set_aasa_valid ? set_aasa_valid : set_dasa_valid;
     set_dasa_o = set_aasa_valid ? set_aasa_addr : set_dasa_addr;
     set_dasa_virtual_device_o = is_byte_virtual_addr ? (set_aasa_valid ? set_aasa_valid : set_dasa_valid) : 1'b0;
+  end
+
+  // connect entdaa/setnewda
+  always_comb begin: entdaa_setnewda_mux
+   set_newda_o = entdaa_addres_valid && (state_q == HandleTargetENTDAA);
+   set_newda_virtual_device_o = entdaa_addres_valid && (state_q == HandleVirtualTargetENTDAA);
+   newda_o = entdaa_addres;
   end
 
   // Handle DIRECT SET CCCs
@@ -1009,7 +1051,7 @@ module ccc
     .arbitration_lost_i,
 
     // addr
-    .address_o(newda_o),
-    .address_valid_o(set_newda_o)
+    .address_o(entdaa_addres),
+    .address_valid_o(entdaa_addres_valid)
   );
 endmodule
