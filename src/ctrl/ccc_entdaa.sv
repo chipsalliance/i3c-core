@@ -32,7 +32,7 @@ module ccc_entdaa
     input logic arbitration_lost_i,
 
     // addr
-    output logic [7:0] address_o,
+    output logic [6:0] address_o,
     output logic address_valid_o
 );
 
@@ -59,10 +59,13 @@ module ccc_entdaa
   logic reserved_word_det;
 
   logic [63:0] device_id;
+  logic calculated_parity;
   logic parity_ok;
 
   assign reserved_word_det = (bus_rx_data_i[7:1] == 7'h7e && bus_rx_data_i[0] == 1'b1);
   assign device_id = {id_i, bcr_i, dcr_i};
+  assign calculated_parity = ~(bus_rx_data_i[7] ^ bus_rx_data_i[6] ^ bus_rx_data_i[5] ^ bus_rx_data_i[4] ^ bus_rx_data_i[3] ^ bus_rx_data_i[2] ^ bus_rx_data_i[1]);
+  assign parity_ok = (calculated_parity == bus_rx_data_i[0]);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin: id_bit_counter
     if (!rst_ni) begin
@@ -130,6 +133,7 @@ module ccc_entdaa
         end
       end
       LostArbitration: begin
+        state_d = Error;
       end
       ReceiveAddr: begin
         if (bus_rx_done_i) begin
@@ -137,7 +141,13 @@ module ccc_entdaa
           else state_d = SendNack;
         end
       end
+      AckAddr: begin
+        if (bus_tx_done_i) begin
+          state_d = Done;
+        end
+      end
       Done: begin
+
       end
       Error: begin
       // we wait here until we receive Stop
@@ -158,6 +168,8 @@ module ccc_entdaa
 
     load_id_counter = '0;
     tick_id_counter = '0;
+    address_o = '0;
+    address_valid_o = '0;
     unique case (state_q)
       Idle: begin
       end
@@ -187,6 +199,14 @@ module ccc_entdaa
       end
       ReceiveAddr: begin
         bus_rx_req_byte_o = '1;
+        if (bus_rx_done_i) begin
+          address_valid_o = '1;
+          address_o = bus_rx_data_i[7:1];
+        end
+      end
+      AckAddr: begin
+        bus_tx_req_bit_o = '1;
+        bus_tx_req_value_o = '0;
       end
       Done: begin
       end
