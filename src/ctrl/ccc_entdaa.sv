@@ -157,7 +157,8 @@ module ccc_entdaa
         state_d = Idle;
       end
       Error: begin
-      // we wait here until we receive Stop
+        // go back to idle and wait for next addressing round
+        state_d = Idle;
       end
       default: begin
       end
