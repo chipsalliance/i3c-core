@@ -100,6 +100,9 @@ module controller_standby_i3c
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic set_dasa_virtual_device_o,
+    output logic set_newda_o,
+    output logic set_newda_virtual_device_o,
+    output logic [6:0] newda_o,
     output logic rstdaa_o,
 
     output logic enec_ibi_o,
@@ -260,8 +263,6 @@ module controller_standby_i3c
   logic ent_tm;
   logic [7:0] tm;
   logic ent_hdr_0, ent_hdr_1, ent_hdr_2, ent_hdr_3, ent_hdr_4, ent_hdr_5, ent_hdr_6, ent_hdr_7;
-  logic set_newda;
-  logic [6:0] newda;
   logic get_acccr;
   logic set_brgtgt;
   logic get_mxds;
@@ -524,8 +525,9 @@ module controller_standby_i3c
       .set_dasa_virtual_device_o (set_dasa_virtual_device_o),
       .rst_action_o,
       .rst_action_valid_o,
-      .set_newda_o               (set_newda),
-      .newda_o                   (newda),
+      .set_newda_o,
+      .set_newda_virtual_device_o,
+      .newda_o,
       .get_mwl_i                 (get_mwl_i),
       .get_mrl_i                 (get_mrl_i),
       .get_pid_i                 (pid_i),

@@ -514,6 +514,9 @@ module i3c
   logic [6:0] set_dasa;
   logic set_dasa_valid;
   logic set_dasa_virtual_device;
+  logic set_newda;
+  logic set_newda_virtual_device;
+  logic [6:0] newda;
   logic rstdaa;
 
   logic enec_ibi;
@@ -721,6 +724,9 @@ module i3c
       .set_dasa_valid_o(set_dasa_valid),
       .set_dasa_virtual_device_o(set_dasa_virtual_device),
       .rstdaa_o(rstdaa),
+      .set_newda_o(set_newda),
+      .set_newda_virtual_device_o(set_newda_virtual_device),
+      .newda_o(newda),
 
       .rst_action_o(rst_action),
       .rst_action_valid_o(rst_action_valid),
@@ -861,6 +867,9 @@ module i3c
       .set_dasa_valid_i(set_dasa_valid),
       .set_dasa_virtual_device_i(set_dasa_virtual_device),
       .rstdaa_i(rstdaa),
+      .set_newda_i(set_newda),
+      .set_newda_virtual_device_i(set_newda_virtual_device),
+      .newda_i(newda),
 
       .rst_action_i(rst_action),
       .rst_action_valid_i(rst_action_valid)
