@@ -1939,8 +1939,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRUTAL_DEVICE_CHAR SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRTUAL_DEVICE_CHAR SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -1958,7 +1958,7 @@
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR::sample_values();
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(PID_HI_bit_cg[bt]) this.PID_HI_bit_cg[bt].sample(PID_HI.get_mirrored_value() >> bt);
             foreach(DCR_bit_cg[bt]) this.DCR_bit_cg[bt].sample(DCR.get_mirrored_value() >> bt);

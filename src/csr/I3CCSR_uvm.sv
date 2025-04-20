@@ -3077,23 +3077,23 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES
 
-    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR
-    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg PID_HI_bit_cg[15];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg DCR_bit_cg[8];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg BCR_VAR_bit_cg[5];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg BCR_FIXED_bit_cg[3];
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_fld_cg fld_cg;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR_bit_cg PID_HI_bit_cg[15];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR_bit_cg DCR_bit_cg[8];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR_bit_cg BCR_VAR_bit_cg[5];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR_bit_cg BCR_FIXED_bit_cg[3];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR_fld_cg fld_cg;
         rand uvm_reg_field PID_HI;
         rand uvm_reg_field DCR;
         rand uvm_reg_field BCR_VAR;
         rand uvm_reg_field BCR_FIXED;
 
-        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR");
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3120,7 +3120,7 @@ package I3CCSR_uvm;
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR
 
     // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS
     class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS extends uvm_reg;
@@ -3678,7 +3678,7 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL STBY_CR_CONTROL;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR STBY_CR_DEVICE_ADDR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES STBY_CR_CAPABILITIES;
-        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR STBY_CR_VIRUTAL_DEVICE_CHAR;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR STBY_CR_VIRTUAL_DEVICE_CHAR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS STBY_CR_STATUS;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR STBY_CR_DEVICE_CHAR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO STBY_CR_DEVICE_PID_LO;
@@ -3717,11 +3717,11 @@ package I3CCSR_uvm;
 
             this.STBY_CR_CAPABILITIES.build();
             this.default_map.add_reg(this.STBY_CR_CAPABILITIES, 'hc);
-            this.STBY_CR_VIRUTAL_DEVICE_CHAR = new("STBY_CR_VIRUTAL_DEVICE_CHAR");
-            this.STBY_CR_VIRUTAL_DEVICE_CHAR.configure(this);
+            this.STBY_CR_VIRTUAL_DEVICE_CHAR = new("STBY_CR_VIRTUAL_DEVICE_CHAR");
+            this.STBY_CR_VIRTUAL_DEVICE_CHAR.configure(this);
 
-            this.STBY_CR_VIRUTAL_DEVICE_CHAR.build();
-            this.default_map.add_reg(this.STBY_CR_VIRUTAL_DEVICE_CHAR, 'h10);
+            this.STBY_CR_VIRTUAL_DEVICE_CHAR.build();
+            this.default_map.add_reg(this.STBY_CR_VIRTUAL_DEVICE_CHAR, 'h10);
             this.STBY_CR_STATUS = new("STBY_CR_STATUS");
             this.STBY_CR_STATUS.configure(this);
 

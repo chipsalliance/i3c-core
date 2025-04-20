@@ -2300,7 +2300,7 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "STBY_CR_VIRUTAL_DEVICE_CHAR": {
+            "STBY_CR_VIRTUAL_DEVICE_CHAR": {
                 "base_addr": 400,
                 "offset": 400,
                 "PID_HI": {

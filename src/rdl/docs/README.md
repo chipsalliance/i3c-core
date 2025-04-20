@@ -1947,7 +1947,7 @@ Component Memory Space (CMS):</p>
 | 0x04 |         STBY_CR_CONTROL        |            Standby Controller Control           |
 | 0x08 |       STBY_CR_DEVICE_ADDR      |        Standby Controller Device Address        |
 | 0x0C |      STBY_CR_CAPABILITIES      |         Standby Controller Capabilities         |
-| 0x10 |   STBY_CR_VIRUTAL_DEVICE_CHAR  |Standby Controller Virtual Device Characteristics|
+| 0x10 |   STBY_CR_VIRTUAL_DEVICE_CHAR  |Standby Controller Virtual Device Characteristics|
 | 0x14 |         STBY_CR_STATUS         |            Standby Controller Status            |
 | 0x18 |       STBY_CR_DEVICE_CHAR      |    Standby Controller Device Characteristics    |
 | 0x1C |      STBY_CR_DEVICE_PID_LO     |        Standby Controller Device PID Low        |
@@ -2159,7 +2159,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>1'b0: DISABLED: Not supported</p>
 <p>1'b1: ENABLED: Supported</p>
 
-### STBY_CR_VIRUTAL_DEVICE_CHAR register
+### STBY_CR_VIRTUAL_DEVICE_CHAR register
 
 - Absolute Address: 0x190
 - Base Offset: 0x10

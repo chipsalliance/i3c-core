@@ -2194,26 +2194,26 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [14:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__PID_HI__out_t;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__PID_HI__out_t;
 
     typedef struct packed{
         logic [7:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__DCR__out_t;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__DCR__out_t;
 
     typedef struct packed{
         logic [4:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_VAR__out_t;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_VAR__out_t;
 
     typedef struct packed{
         logic [2:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_FIXED__out_t;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_FIXED__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__PID_HI__out_t PID_HI;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__DCR__out_t DCR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
-    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__out_t;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__PID_HI__out_t PID_HI;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__DCR__out_t DCR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__out_t;
 
     typedef struct packed{
         logic value;
@@ -2528,7 +2528,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__out_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__out_t STBY_CR_DEVICE_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__out_t STBY_CR_CAPABILITIES;
-        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__out_t STBY_CR_VIRUTAL_DEVICE_CHAR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__out_t STBY_CR_VIRTUAL_DEVICE_CHAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__out_t STBY_CR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__out_t STBY_CR_DEVICE_CHAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__out_t STBY_CR_DEVICE_PID_LO;

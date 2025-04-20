@@ -327,7 +327,7 @@ regfile StandbyControllerModeRegisters#(
             sw   = rw;
             reset = pid_hi;
         } PID_HI[15:1];
-    } STBY_CR_VIRUTAL_DEVICE_CHAR;
+    } STBY_CR_VIRTUAL_DEVICE_CHAR;
     reg {
         name = "Standby Controller Status";
         desc = "";
