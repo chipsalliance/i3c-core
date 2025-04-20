@@ -66,7 +66,7 @@ module ccc_entdaa
   assign device_id = {id_i, bcr_i, dcr_i};
   assign calculated_parity = ~(bus_rx_data_i[7] ^ bus_rx_data_i[6] ^ bus_rx_data_i[5] ^ bus_rx_data_i[4] ^ bus_rx_data_i[3] ^ bus_rx_data_i[2] ^ bus_rx_data_i[1]);
   assign parity_ok = (calculated_parity == bus_rx_data_i[0]);
-  assign done_daa_o = (state == Done);
+  assign done_daa_o = (state_q == Done);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin: id_bit_counter
     if (!rst_ni) begin
