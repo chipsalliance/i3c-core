@@ -1941,24 +1941,24 @@ Component Memory Space (CMS):</p>
 - Base Offset: 0x80
 - Size: 0x40
 
-|Offset|           Identifier           |                    Name                    |
-|------|--------------------------------|--------------------------------------------|
-| 0x00 |          EXTCAP_HEADER         |                      —                     |
-| 0x04 |         STBY_CR_CONTROL        |         Standby Controller Control         |
-| 0x08 |       STBY_CR_DEVICE_ADDR      |      Standby Controller Device Address     |
-| 0x0C |      STBY_CR_CAPABILITIES      |       Standby Controller Capabilities      |
-| 0x10 |            __rsvd_0            |                 Reserved 0                 |
-| 0x14 |         STBY_CR_STATUS         |          Standby Controller Status         |
-| 0x18 |       STBY_CR_DEVICE_CHAR      |  Standby Controller Device Characteristics |
-| 0x1C |      STBY_CR_DEVICE_PID_LO     |      Standby Controller Device PID Low     |
-| 0x20 |       STBY_CR_INTR_STATUS      |     Standby Controller Interrupt Status    |
-| 0x24 |            __rsvd_1            |                 Reserved 1                 |
-| 0x28 |   STBY_CR_INTR_SIGNAL_ENABLE   | Standby Controller Interrupt Signal Enable |
-| 0x2C |       STBY_CR_INTR_FORCE       |     Standby Controller Interrupt Force     |
-| 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |Standby Controller CCC Configuration GETCAPS|
-| 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS| Standby Controller CCC Configuration RSTACT|
-| 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |  Standby Virtual Controller Device Address |
-| 0x3C |            __rsvd_3            |                 Reserved 3                 |
+|Offset|           Identifier           |                       Name                      |
+|------|--------------------------------|-------------------------------------------------|
+| 0x00 |          EXTCAP_HEADER         |                        —                        |
+| 0x04 |         STBY_CR_CONTROL        |            Standby Controller Control           |
+| 0x08 |       STBY_CR_DEVICE_ADDR      |        Standby Controller Device Address        |
+| 0x0C |      STBY_CR_CAPABILITIES      |         Standby Controller Capabilities         |
+| 0x10 |   STBY_CR_VIRUTAL_DEVICE_CHAR  |Standby Controller Virtual Device Characteristics|
+| 0x14 |         STBY_CR_STATUS         |            Standby Controller Status            |
+| 0x18 |       STBY_CR_DEVICE_CHAR      |    Standby Controller Device Characteristics    |
+| 0x1C |      STBY_CR_DEVICE_PID_LO     |        Standby Controller Device PID Low        |
+| 0x20 |       STBY_CR_INTR_STATUS      |       Standby Controller Interrupt Status       |
+| 0x24 |  STBY_CR_VIRTUAL_DEVICE_PID_LO |    Standby Controller Virtual Device PID Low    |
+| 0x28 |   STBY_CR_INTR_SIGNAL_ENABLE   |    Standby Controller Interrupt Signal Enable   |
+| 0x2C |       STBY_CR_INTR_FORCE       |        Standby Controller Interrupt Force       |
+| 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |   Standby Controller CCC Configuration GETCAPS  |
+| 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS|   Standby Controller CCC Configuration RSTACT   |
+| 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |    Standby Virtual Controller Device Address    |
+| 0x3C |            __rsvd_3            |                    Reserved 3                   |
 
 ### EXTCAP_HEADER register
 
@@ -2159,7 +2159,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>1'b0: DISABLED: Not supported</p>
 <p>1'b1: ENABLED: Supported</p>
 
-### __rsvd_0 register
+### STBY_CR_VIRUTAL_DEVICE_CHAR register
 
 - Absolute Address: 0x190
 - Base Offset: 0x10
@@ -2167,13 +2167,48 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 
 
 
-|Bits|Identifier|Access|Reset|  Name  |
-|----|----------|------|-----|--------|
-|31:0|  __rsvd  |  rw  |  —  |Reserved|
+| Bits|Identifier|Access| Reset|   Name  |
+|-----|----------|------|------|---------|
+| 15:1|  PID_HI  |  rw  |0x7FFF|  PID_HI |
+|23:16|    DCR   |  rw  | 0xBD |   DCR   |
+|28:24|  BCR_VAR |  rw  |  0x6 | BCR_VAR |
+|31:29| BCR_FIXED|  rw  |  0x1 |BCR_FIXED|
 
-#### __rsvd field
+#### PID_HI field
 
+<p>High part of the 48-bit Target Device Provisioned ID.</p>
 
+#### DCR field
+
+<p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
+
+#### BCR_VAR field
+
+<p>Bus Characteristics, Variable Part.</p>
+<p>Reset value is set to 5'b00110, because this device:</p>
+<ul>
+<li>
+<p>[bit4] is not a Virtual Target</p>
+</li>
+<li>
+<p>[bit3] is not Offline Capable</p>
+</li>
+<li>
+<p>[bit2] uses the MDB in the IBI Payload</p>
+</li>
+<li>
+<p>[bit1] is capable of IBI requests</p>
+</li>
+<li>
+<p>[bit0] has no speed limitation</p>
+</li>
+</ul>
+
+#### BCR_FIXED field
+
+<p>Bus Characteristics, Fixed Part.</p>
+<p>Reset value is set to 3'b001, because this device is an I3C Target,
+which supports extended capabilities</p>
 
 ### STBY_CR_STATUS register
 
@@ -2346,7 +2381,7 @@ by the Target Reset Pattern.</p>
 
 
 
-### __rsvd_1 register
+### STBY_CR_VIRTUAL_DEVICE_PID_LO register
 
 - Absolute Address: 0x1A4
 - Base Offset: 0x24
@@ -2354,13 +2389,13 @@ by the Target Reset Pattern.</p>
 
 
 
-|Bits|Identifier|Access|Reset|  Name  |
-|----|----------|------|-----|--------|
-|31:0|  __rsvd  |  rw  |  —  |Reserved|
+|Bits|Identifier|Access|  Reset | Name |
+|----|----------|------|--------|------|
+|31:0|  PID_LO  |  rw  |0x5A00A5|PID_LO|
 
-#### __rsvd field
+#### PID_LO field
 
-
+<p>Low part of the 48-bit Target Virtual Device Provisioned ID.</p>
 
 ### STBY_CR_INTR_SIGNAL_ENABLE register
 

@@ -1939,8 +1939,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_0 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRUTAL_DEVICE_CHAR SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -1948,19 +1948,25 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(data[0 + bt]);
+            foreach(PID_HI_bit_cg[bt]) this.PID_HI_bit_cg[bt].sample(data[1 + bt]);
+            foreach(DCR_bit_cg[bt]) this.DCR_bit_cg[bt].sample(data[16 + bt]);
+            foreach(BCR_VAR_bit_cg[bt]) this.BCR_VAR_bit_cg[bt].sample(data[24 + bt]);
+            foreach(BCR_FIXED_bit_cg[bt]) this.BCR_FIXED_bit_cg[bt].sample(data[29 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*__rsvd*/   );
+            this.fld_cg.sample( data[15:1]/*PID_HI*/  ,  data[23:16]/*DCR*/  ,  data[28:24]/*BCR_VAR*/  ,  data[31:29]/*BCR_FIXED*/   );
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0::sample_values();
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(__rsvd.get_mirrored_value() >> bt);
+            foreach(PID_HI_bit_cg[bt]) this.PID_HI_bit_cg[bt].sample(PID_HI.get_mirrored_value() >> bt);
+            foreach(DCR_bit_cg[bt]) this.DCR_bit_cg[bt].sample(DCR.get_mirrored_value() >> bt);
+            foreach(BCR_VAR_bit_cg[bt]) this.BCR_VAR_bit_cg[bt].sample(BCR_VAR.get_mirrored_value() >> bt);
+            foreach(BCR_FIXED_bit_cg[bt]) this.BCR_FIXED_bit_cg[bt].sample(BCR_FIXED.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( __rsvd.get_mirrored_value()   );
+            this.fld_cg.sample( PID_HI.get_mirrored_value()  ,  DCR.get_mirrored_value()  ,  BCR_VAR.get_mirrored_value()  ,  BCR_FIXED.get_mirrored_value()   );
         end
     endfunction
 
@@ -2098,8 +2104,8 @@
         end
     endfunction
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_1 SAMPLE FUNCTIONS -----------------------*/
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1::sample(uvm_reg_data_t  data,
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRTUAL_DEVICE_PID_LO SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
                                                    bit             is_read,
                                                    uvm_reg_map     map);
@@ -2107,19 +2113,19 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(data[0 + bt]);
+            foreach(PID_LO_bit_cg[bt]) this.PID_LO_bit_cg[bt].sample(data[0 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[31:0]/*__rsvd*/   );
+            this.fld_cg.sample( data[31:0]/*PID_LO*/   );
         end
     endfunction
 
-    function void I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1::sample_values();
+    function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(__rsvd_bit_cg[bt]) this.__rsvd_bit_cg[bt].sample(__rsvd.get_mirrored_value() >> bt);
+            foreach(PID_LO_bit_cg[bt]) this.PID_LO_bit_cg[bt].sample(PID_LO.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( __rsvd.get_mirrored_value()   );
+            this.fld_cg.sample( PID_LO.get_mirrored_value()   );
         end
     endfunction
 

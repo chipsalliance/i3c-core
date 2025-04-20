@@ -161,12 +161,12 @@ module I3CCSR (
                 logic STBY_CR_CONTROL;
                 logic STBY_CR_DEVICE_ADDR;
                 logic STBY_CR_CAPABILITIES;
-                logic __rsvd_0;
+                logic STBY_CR_VIRUTAL_DEVICE_CHAR;
                 logic STBY_CR_STATUS;
                 logic STBY_CR_DEVICE_CHAR;
                 logic STBY_CR_DEVICE_PID_LO;
                 logic STBY_CR_INTR_STATUS;
-                logic __rsvd_1;
+                logic STBY_CR_VIRTUAL_DEVICE_PID_LO;
                 logic STBY_CR_INTR_SIGNAL_ENABLE;
                 logic STBY_CR_INTR_FORCE;
                 logic STBY_CR_CCC_CONFIG_GETCAPS;
@@ -311,12 +311,12 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL = cpuif_req_masked & (cpuif_addr == 12'h184);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h188);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES = cpuif_req_masked & (cpuif_addr == 12'h18c);
-        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 = cpuif_req_masked & (cpuif_addr == 12'h190);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR = cpuif_req_masked & (cpuif_addr == 12'h190);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h194);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR = cpuif_req_masked & (cpuif_addr == 12'h198);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO = cpuif_req_masked & (cpuif_addr == 12'h19c);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS = cpuif_req_masked & (cpuif_addr == 12'h1a0);
-        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 = cpuif_req_masked & (cpuif_addr == 12'h1a4);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO = cpuif_req_masked & (cpuif_addr == 12'h1a4);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE = cpuif_req_masked & (cpuif_addr == 12'h1a8);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE = cpuif_req_masked & (cpuif_addr == 12'h1ac);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS = cpuif_req_masked & (cpuif_addr == 12'h1b0);
@@ -1068,10 +1068,22 @@ module I3CCSR (
                 } STBY_CR_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic [14:0] next;
                         logic load_next;
-                    } __rsvd;
-                } __rsvd_0;
+                    } PID_HI;
+                    struct packed{
+                        logic [7:0] next;
+                        logic load_next;
+                    } DCR;
+                    struct packed{
+                        logic [4:0] next;
+                        logic load_next;
+                    } BCR_VAR;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } BCR_FIXED;
+                } STBY_CR_VIRUTAL_DEVICE_CHAR;
                 struct packed{
                     struct packed{
                         logic next;
@@ -1168,8 +1180,8 @@ module I3CCSR (
                     struct packed{
                         logic [31:0] next;
                         logic load_next;
-                    } __rsvd;
-                } __rsvd_1;
+                    } PID_LO;
+                } STBY_CR_VIRTUAL_DEVICE_PID_LO;
                 struct packed{
                     struct packed{
                         logic next;
@@ -2296,9 +2308,18 @@ module I3CCSR (
                 } STBY_CR_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } __rsvd;
-                } __rsvd_0;
+                        logic [14:0] value;
+                    } PID_HI;
+                    struct packed{
+                        logic [7:0] value;
+                    } DCR;
+                    struct packed{
+                        logic [4:0] value;
+                    } BCR_VAR;
+                    struct packed{
+                        logic [2:0] value;
+                    } BCR_FIXED;
+                } STBY_CR_VIRUTAL_DEVICE_CHAR;
                 struct packed{
                     struct packed{
                         logic value;
@@ -2373,8 +2394,8 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [31:0] value;
-                    } __rsvd;
-                } __rsvd_1;
+                    } PID_LO;
+                } STBY_CR_VIRTUAL_DEVICE_PID_LO;
                 struct packed{
                     struct packed{
                         logic value;
@@ -6436,28 +6457,98 @@ module I3CCSR (
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value = 1'h1;
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value = 1'h1;
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value = 1'h0;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [14:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value & ~decoded_wr_biten[15:1]) | (decoded_wr_data[15:1] & decoded_wr_biten[15:1]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next;
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value <= 15'h7fff;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.next;
+            end
         end
     end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value & ~decoded_wr_biten[23:16]) | (decoded_wr_data[23:16] & decoded_wr_biten[23:16]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value <= 8'hbd;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR
+    always_comb begin
+        automatic logic [4:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value & ~decoded_wr_biten[28:24]) | (decoded_wr_data[28:24] & decoded_wr_biten[28:24]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value <= 5'h6;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value & ~decoded_wr_biten[31:29]) | (decoded_wr_data[31:29] & decoded_wr_biten[31:29]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value <= 3'h1;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN
     always_comb begin
         automatic logic [0:0] next_c;
@@ -6929,28 +7020,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO
     always_comb begin
         automatic logic [31:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next;
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value <= 32'h5a00a5;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.next;
+            end
         end
     end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value;
     // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN
     always_comb begin
         automatic logic [0:0] next_c;
@@ -10315,7 +10407,11 @@ module I3CCSR (
     assign readback_array[61][14:14] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h1 : '0;
     assign readback_array[61][15:15] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES && !decoded_req_is_wr) ? 1'h0 : '0;
     assign readback_array[61][31:16] = '0;
-    assign readback_array[62][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_0 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.value : '0;
+    assign readback_array[62][0:0] = '0;
+    assign readback_array[62][15:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.PID_HI.value : '0;
+    assign readback_array[62][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.DCR.value : '0;
+    assign readback_array[62][28:24] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_VAR.value : '0;
+    assign readback_array[62][31:29] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR.BCR_FIXED.value : '0;
     assign readback_array[63][1:0] = '0;
     assign readback_array[63][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value : '0;
     assign readback_array[63][4:3] = '0;
@@ -10344,7 +10440,7 @@ module I3CCSR (
     assign readback_array[66][18:18] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.value : '0;
     assign readback_array[66][19:19] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.value : '0;
     assign readback_array[66][31:20] = '0;
-    assign readback_array[67][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_1 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.value : '0;
+    assign readback_array[67][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO.value : '0;
     assign readback_array[68][0:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value : '0;
     assign readback_array[68][1:1] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value : '0;
     assign readback_array[68][2:2] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value : '0;

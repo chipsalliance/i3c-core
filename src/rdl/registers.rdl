@@ -26,7 +26,9 @@ addrmap I3CCSR #(
     bit tti_tx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_ibi_fifo_size = 0x5, // 64 DWORDs by default
     bit pid_hi = 0x7FFF, // Vendor-specific values
-    bit pid_lo = 0x005A00A5 // Vendor-specific values, test value
+    bit pid_lo = 0x005A00A5, // Vendor-specific values, test value
+    bit virtual_pid_hi = 0x7FFF, // Virtual device Vendor-specific values
+    bit virtual_pid_lo = 0x005A10A5 // Virtual device Vendor-specific values, test value
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
     BaseRegs #(
@@ -75,7 +77,9 @@ addrmap I3CCSR #(
         .tti_tx_fifo_size(tti_tx_fifo_size),
         .tti_ibi_fifo_size(tti_ibi_fifo_size),
         .pid_hi(pid_hi),
-        .pid_lo(pid_lo)
+        .pid_lo(pid_lo),
+        .virtual_pid_hi(virtual_pid_hi),
+        .virtual_pid_lo(virtual_pid_lo)
     ) I3C_EC @ EC_offset;
     mem {
         name = "Device Address Table";

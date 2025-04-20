@@ -3,7 +3,9 @@
 
 regfile StandbyControllerModeRegisters#(
     bit pid_hi,
-    bit pid_lo
+    bit pid_lo,
+    bit virtual_pid_hi,
+    bit virtual_pid_lo
 ){
     name = "Standby Controller Mode";
     default regwidth = 32;
@@ -277,15 +279,55 @@ regfile StandbyControllerModeRegisters#(
         } SIMPLE_CRR_SUPPORT[5:5];
     } STBY_CR_CAPABILITIES;
     reg {
-        name = "Reserved 0";
+        name = "Standby Controller Virtual Device Characteristics";
         desc = "";
         field {
-            name = "Reserved";
-            desc = "";
-            hw   = rw;
+            name = "BCR_FIXED";
+            desc = "Bus Characteristics, Fixed Part.
+
+            Reset value is set to 3'b001, because this device is an I3C Target,
+            which supports extended capabilities
+            ";
+            hw   = r;
             sw   = rw;
-        } __rsvd[31:0];
-    } __rsvd_0;
+            reset = 3'b001;
+        } BCR_FIXED[31:29];
+        field {
+            name = "BCR_VAR";
+            desc = "Bus Characteristics, Variable Part.
+
+            Reset value is set to 5'b00110, because this device:
+
+
+            - [bit4] is not a Virtual Target
+
+            - [bit3] is not Offline Capable
+
+            - [bit2] uses the MDB in the IBI Payload
+
+            - [bit1] is capable of IBI requests
+
+            - [bit0] has no speed limitation
+            ";
+            hw   = r;
+            sw   = rw;
+            reset = 5'b00110;
+        } BCR_VAR[28:24];
+        field {
+            name = "DCR";
+            desc = "Device Characteristics Register. Value represents an OCP Recovery Device.";
+            hw   = r;
+            sw   = rw;
+            reset = 8'hBD;
+        } DCR[23:16];
+        field {
+            name = "PID_HI";
+            desc = "High part of the 48-bit Target Device Provisioned ID.";
+            hw   = r;
+            sw   = rw;
+            reset = pid_hi;
+        } PID_HI[15:1];
+    } STBY_CR_VIRUTAL_DEVICE_CHAR;
     reg {
         name = "Standby Controller Status";
         desc = "";
@@ -456,15 +498,16 @@ regfile StandbyControllerModeRegisters#(
         } ACR_HANDOFF_OK_REMAIN_STAT[0:0];
     } STBY_CR_INTR_STATUS;
     reg {
-        name = "Reserved 1";
+        name = "Standby Controller Virtual Device PID Low";
         desc = "";
         field {
-            name = "Reserved";
-            desc = "";
-            hw   = rw;
+            name = "PID_LO";
+            desc = "Low part of the 48-bit Target Virtual Device Provisioned ID.";
+            hw   = r;
             sw   = rw;
-        } __rsvd[31:0];
-    } __rsvd_1;
+            reset = pid_lo;
+        } PID_LO[31:0];
+    } STBY_CR_VIRTUAL_DEVICE_PID_LO;
     reg {
         name = "Standby Controller Interrupt Signal Enable";
         desc = "When set to 1'b1, and the corresponding interrupt status field is set in register

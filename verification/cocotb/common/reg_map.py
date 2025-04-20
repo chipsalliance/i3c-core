@@ -2300,14 +2300,45 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "__RSVD_0": {
+            "STBY_CR_VIRUTAL_DEVICE_CHAR": {
                 "base_addr": 400,
                 "offset": 400,
-                "__rsvd": {
-                    "low": 0,
-                    "mask": 4294967295,
+                "PID_HI": {
+                    "low": 1,
+                    "mask": 65534,
+                    "reset": 32767,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "DCR": {
+                    "low": 16,
+                    "mask": 16711680,
+                    "reset": 189,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "BCR_VAR": {
+                    "low": 24,
+                    "mask": 520093696,
+                    "reset": 6,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "BCR_FIXED": {
+                    "low": 29,
+                    "mask": 3758096384,
+                    "reset": 1,
+                    "sw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0
@@ -2524,14 +2555,15 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "__RSVD_1": {
+            "STBY_CR_VIRTUAL_DEVICE_PID_LO": {
                 "base_addr": 420,
                 "offset": 420,
-                "__rsvd": {
+                "PID_LO": {
                     "low": 0,
                     "mask": 4294967295,
+                    "reset": 5898405,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0

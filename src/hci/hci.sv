@@ -553,10 +553,8 @@ module hci
     hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.we = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_0.__rsvd.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.hwclr = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_1.__rsvd.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next= '0;
 

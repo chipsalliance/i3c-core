@@ -3077,17 +3077,23 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES
 
-    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_0
-    class I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRUTAL_DEVICE_CHAR
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_bit_cg __rsvd_bit_cg[32];
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_fld_cg fld_cg;
-        rand uvm_reg_field __rsvd;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg PID_HI_bit_cg[15];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg DCR_bit_cg[8];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg BCR_VAR_bit_cg[5];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg BCR_FIXED_bit_cg[3];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_fld_cg fld_cg;
+        rand uvm_reg_field PID_HI;
+        rand uvm_reg_field DCR;
+        rand uvm_reg_field BCR_VAR;
+        rand uvm_reg_field BCR_FIXED;
 
-        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0");
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3097,15 +3103,24 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.__rsvd = new("__rsvd");
-            this.__rsvd.configure(this, 32, 0, "RW", 1, 'h0, 0, 1, 0);
+            this.PID_HI = new("PID_HI");
+            this.PID_HI.configure(this, 15, 1, "RW", 0, 'h7fff, 1, 1, 0);
+            this.DCR = new("DCR");
+            this.DCR.configure(this, 8, 16, "RW", 0, 'hbd, 1, 1, 0);
+            this.BCR_VAR = new("BCR_VAR");
+            this.BCR_VAR.configure(this, 5, 24, "RW", 0, 'h6, 1, 1, 0);
+            this.BCR_FIXED = new("BCR_FIXED");
+            this.BCR_FIXED.configure(this, 3, 29, "RW", 0, 'h1, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(__rsvd_bit_cg[bt]) __rsvd_bit_cg[bt] = new();
+                foreach(PID_HI_bit_cg[bt]) PID_HI_bit_cg[bt] = new();
+                foreach(DCR_bit_cg[bt]) DCR_bit_cg[bt] = new();
+                foreach(BCR_VAR_bit_cg[bt]) BCR_VAR_bit_cg[bt] = new();
+                foreach(BCR_FIXED_bit_cg[bt]) BCR_FIXED_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR
 
     // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS
     class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS extends uvm_reg;
@@ -3312,17 +3327,17 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS
 
-    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_1
-    class I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_PID_LO
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_bit_cg __rsvd_bit_cg[32];
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_fld_cg fld_cg;
-        rand uvm_reg_field __rsvd;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO_bit_cg PID_LO_bit_cg[32];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO_fld_cg fld_cg;
+        rand uvm_reg_field PID_LO;
 
-        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1");
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3332,15 +3347,15 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.__rsvd = new("__rsvd");
-            this.__rsvd.configure(this, 32, 0, "RW", 1, 'h0, 0, 1, 0);
+            this.PID_LO = new("PID_LO");
+            this.PID_LO.configure(this, 32, 0, "RW", 0, 'h5a00a5, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(__rsvd_bit_cg[bt]) __rsvd_bit_cg[bt] = new();
+                foreach(PID_LO_bit_cg[bt]) PID_LO_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO
 
     // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE
     class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE extends uvm_reg;
@@ -3663,12 +3678,12 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL STBY_CR_CONTROL;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR STBY_CR_DEVICE_ADDR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES STBY_CR_CAPABILITIES;
-        rand I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0 __rsvd_0;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR STBY_CR_VIRUTAL_DEVICE_CHAR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS STBY_CR_STATUS;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR STBY_CR_DEVICE_CHAR;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO STBY_CR_DEVICE_PID_LO;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS STBY_CR_INTR_STATUS;
-        rand I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1 __rsvd_1;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO STBY_CR_VIRTUAL_DEVICE_PID_LO;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE STBY_CR_INTR_SIGNAL_ENABLE;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE STBY_CR_INTR_FORCE;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS STBY_CR_CCC_CONFIG_GETCAPS;
@@ -3702,11 +3717,11 @@ package I3CCSR_uvm;
 
             this.STBY_CR_CAPABILITIES.build();
             this.default_map.add_reg(this.STBY_CR_CAPABILITIES, 'hc);
-            this.__rsvd_0 = new("__rsvd_0");
-            this.__rsvd_0.configure(this);
+            this.STBY_CR_VIRUTAL_DEVICE_CHAR = new("STBY_CR_VIRUTAL_DEVICE_CHAR");
+            this.STBY_CR_VIRUTAL_DEVICE_CHAR.configure(this);
 
-            this.__rsvd_0.build();
-            this.default_map.add_reg(this.__rsvd_0, 'h10);
+            this.STBY_CR_VIRUTAL_DEVICE_CHAR.build();
+            this.default_map.add_reg(this.STBY_CR_VIRUTAL_DEVICE_CHAR, 'h10);
             this.STBY_CR_STATUS = new("STBY_CR_STATUS");
             this.STBY_CR_STATUS.configure(this);
 
@@ -3727,11 +3742,11 @@ package I3CCSR_uvm;
 
             this.STBY_CR_INTR_STATUS.build();
             this.default_map.add_reg(this.STBY_CR_INTR_STATUS, 'h20);
-            this.__rsvd_1 = new("__rsvd_1");
-            this.__rsvd_1.configure(this);
+            this.STBY_CR_VIRTUAL_DEVICE_PID_LO = new("STBY_CR_VIRTUAL_DEVICE_PID_LO");
+            this.STBY_CR_VIRTUAL_DEVICE_PID_LO.configure(this);
 
-            this.__rsvd_1.build();
-            this.default_map.add_reg(this.__rsvd_1, 'h24);
+            this.STBY_CR_VIRTUAL_DEVICE_PID_LO.build();
+            this.default_map.add_reg(this.STBY_CR_VIRTUAL_DEVICE_PID_LO, 'h24);
             this.STBY_CR_INTR_SIGNAL_ENABLE = new("STBY_CR_INTR_SIGNAL_ENABLE");
             this.STBY_CR_INTR_SIGNAL_ENABLE.configure(this);
 

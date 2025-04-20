@@ -1609,8 +1609,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_0 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRUTAL_DEVICE_CHAR COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1621,11 +1621,17 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0_fld_cg with function sample(
-    input bit [32-1:0] __rsvd
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR_fld_cg with function sample(
+    input bit [15-1:0] PID_HI,
+    input bit [8-1:0] DCR,
+    input bit [5-1:0] BCR_VAR,
+    input bit [3-1:0] BCR_FIXED
     );
         option.per_instance = 1;
-        __rsvd_cp : coverpoint __rsvd;
+        PID_HI_cp : coverpoint PID_HI;
+        DCR_cp : coverpoint DCR;
+        BCR_VAR_cp : coverpoint BCR_VAR;
+        BCR_FIXED_cp : coverpoint BCR_FIXED;
 
     endgroup
 
@@ -1743,8 +1749,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_1 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_VIRTUAL_DEVICE_PID_LO COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1755,11 +1761,11 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1_fld_cg with function sample(
-    input bit [32-1:0] __rsvd
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO_fld_cg with function sample(
+    input bit [32-1:0] PID_LO
     );
         option.per_instance = 1;
-        __rsvd_cp : coverpoint __rsvd;
+        PID_LO_cp : coverpoint PID_LO;
 
     endgroup
 

@@ -687,14 +687,6 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t;
 
     typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0____rsvd__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0____rsvd__in_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__in_t;
-
-    typedef struct packed{
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__AC_CURRENT_OWN__in_t;
 
@@ -780,14 +772,6 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__in_t CCC_UNHANDLED_NACK_STAT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__in_t CCC_FATAL_RSTDAA_ERR_STAT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__in_t;
-
-    typedef struct packed{
-        logic [31:0] next;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1____rsvd__in_t;
-
-    typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1____rsvd__in_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1__in_t;
 
     typedef struct packed{
         logic next;
@@ -983,10 +967,8 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__in_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t STBY_CR_DEVICE_ADDR;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__in_t __rsvd_0;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t STBY_CR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__in_t STBY_CR_INTR_STATUS;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1__in_t __rsvd_1;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__in_t STBY_CR_INTR_SIGNAL_ENABLE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__in_t STBY_CR_INTR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__in_t STBY_CR_CCC_CONFIG_GETCAPS;
@@ -2211,12 +2193,27 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__out_t;
 
     typedef struct packed{
-        logic [31:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0____rsvd__out_t;
+        logic [14:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__PID_HI__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0____rsvd__out_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__out_t;
+        logic [7:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__DCR__out_t;
+
+    typedef struct packed{
+        logic [4:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_VAR__out_t;
+
+    typedef struct packed{
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_FIXED__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__PID_HI__out_t PID_HI;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__DCR__out_t DCR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__out_t;
 
     typedef struct packed{
         logic value;
@@ -2337,11 +2334,11 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [31:0] value;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1____rsvd__out_t;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__PID_LO__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1____rsvd__out_t __rsvd;
-    } I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1__out_t;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__PID_LO__out_t PID_LO;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__out_t;
 
     typedef struct packed{
         logic value;
@@ -2531,12 +2528,12 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__out_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__out_t STBY_CR_DEVICE_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__out_t STBY_CR_CAPABILITIES;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_0__out_t __rsvd_0;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRUTAL_DEVICE_CHAR__out_t STBY_CR_VIRUTAL_DEVICE_CHAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__out_t STBY_CR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__out_t STBY_CR_DEVICE_CHAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__out_t STBY_CR_DEVICE_PID_LO;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__out_t STBY_CR_INTR_STATUS;
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_1__out_t __rsvd_1;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__out_t STBY_CR_VIRTUAL_DEVICE_PID_LO;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__out_t STBY_CR_INTR_SIGNAL_ENABLE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__out_t STBY_CR_INTR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__out_t STBY_CR_CCC_CONFIG_GETCAPS;
