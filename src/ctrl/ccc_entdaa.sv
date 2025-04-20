@@ -147,7 +147,7 @@ module ccc_entdaa
         end
       end
       Done: begin
-
+        state_d = Idle;
       end
       Error: begin
       // we wait here until we receive Stop
