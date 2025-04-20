@@ -102,7 +102,6 @@ module i3c
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
-    input logic [47:0] id_i,
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -565,7 +564,6 @@ module i3c
   ) xcontroller (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
-      .id_i  (id_i),
 
       .scl_i(phy2ctrl_scl),
       .sda_i(phy2ctrl_sda),

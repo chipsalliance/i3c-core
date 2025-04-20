@@ -89,7 +89,6 @@ module ccc
 (
     input logic clk_i,  // Clock
     input logic rst_ni, // Async reset, active low
-    input logic [47:0] id_i,
 
     // CC is decoded from the frame by the primary FSM
     input logic [7:0] ccc_i,
@@ -239,6 +238,18 @@ module ccc
     // Get Device Characteristics Register
     // I3C_DIRECT_GETDCR
     input logic [7:0] get_dcr_i,
+
+    // Get virtual device Provisioned ID
+    // I3C_DIRECT_GETPID
+    input logic [47:0] virtual_get_pid_i,
+
+    // Get virtual device Bus Characteristics Register
+    // I3C_DIRECT_GETBCR
+    input logic [7:0] virtual_get_bcr_i,
+
+    // Get virtual Device Characteristics Register
+    // I3C_DIRECT_GETDCR
+    input logic [7:0] virtual_get_dcr_i,
 
     // Get Device Status
     // [15:8] Reserved for vendor-specific meaning, expected to be unused.
@@ -1023,9 +1034,13 @@ module ccc
   ccc_entdaa xccc_entdaa (
     .clk_i,  // Clock
     .rst_ni, // Async reset, active low
-    .id_i,
+    .id_i(get_pid_i),
     .bcr_i(get_bcr_i),
     .dcr_i(get_dcr_i),
+
+    .virtual_id_i(virtual_get_pid_i),
+    .virtual_bcr_i(virtual_get_bcr_i),
+    .virtual_dcr_i(virtual_get_dcr_i),
 
     .start_daa_i(entdaa_o),
     .done_daa_o(entdaa_done),

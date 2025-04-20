@@ -35,6 +35,9 @@ module configuration (
     output logic [47:0] pid_o,  // Target ID
     output logic [ 7:0] bcr_o,  // Bus Characteristics Register
     output logic [ 7:0] dcr_o,  // Device Characteristics Register
+    output logic [47:0] virtual_pid_o,  // Target ID
+    output logic [ 7:0] virtual_bcr_o,  // Bus Characteristics Register
+    output logic [ 7:0] virtual_dcr_o,  // Device Characteristics Register
 
     // Output effective target address (static or dynamic or recovery)
     output logic [6:0] target_sta_addr_o,
@@ -180,6 +183,18 @@ module configuration (
   };
 
   assign dcr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
+  assign virtual_pid_o = {
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.PID_HI.value,
+    1'b0,
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_PID_LO.PID_LO.value
+  };
+
+  assign virtual_bcr_o = {
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value,
+    hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value
+  };
+
+  assign virtual_dcr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.DCR.value;
   assign daa_unique_response_o = {pid_o, bcr_o, dcr_o};
 
   assign target_ibi_addr_o = target_dyn_addr_valid_o ? target_dyn_addr_o : target_sta_addr_o;

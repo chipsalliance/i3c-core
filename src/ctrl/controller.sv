@@ -62,8 +62,6 @@ module controller
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input logic [47:0] id_i,
-
     // Interface to SDA/SCL
     input  logic scl_i,
     input  logic sda_i,
@@ -268,6 +266,9 @@ module controller
   logic [47:0] pid;
   logic [7:0] bcr;
   logic [7:0] dcr;
+  logic [47:0] virtual_pid;
+  logic [7:0] virtual_bcr;
+  logic [7:0] virtual_dcr;
   logic [6:0] target_sta_addr;
   logic target_sta_addr_valid;
   logic [6:0] target_dyn_addr;
@@ -354,6 +355,9 @@ module controller
       .pid_o                           (pid),
       .bcr_o                           (bcr),
       .dcr_o                           (dcr),
+      .virtual_pid_o                   (virtual_pid),
+      .virtual_bcr_o                   (virtual_bcr),
+      .virtual_dcr_o                   (virtual_dcr),
       .target_sta_addr_o               (target_sta_addr),
       .target_sta_addr_valid_o         (target_sta_addr_valid),
       .target_dyn_addr_o               (target_dyn_addr),
@@ -458,7 +462,6 @@ module controller
   controller_standby xcontroller_standby (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .id_i(id_i),
       .ctrl_bus_i(ctrl_bus_i[2:3]),
       .ctrl_scl_o(ctrl_scl_o[2:3]),
       .ctrl_sda_o(ctrl_sda_o[2:3]),
@@ -533,6 +536,9 @@ module controller
       .pid_i(pid),
       .bcr_i(bcr),
       .dcr_i(dcr),
+      .virtual_pid_i(virtual_pid),
+      .virtual_bcr_i(virtual_bcr),
+      .virtual_dcr_i(virtual_dcr),
       .target_sta_addr_i(target_sta_addr),
       .target_sta_addr_valid_i(target_sta_addr_valid),
       .target_dyn_addr_i(target_dyn_addr),

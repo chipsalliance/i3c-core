@@ -8,6 +8,10 @@ module ccc_entdaa
     input logic [7:0] dcr_i,
     input logic [7:0] bcr_i,
 
+    input logic [47:0] virtual_id_i,
+    input logic [7:0] virtual_dcr_i,
+    input logic [7:0] virtual_bcr_i,
+
     input logic start_daa_i,
     output logic done_daa_o,
 

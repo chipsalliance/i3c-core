@@ -16,7 +16,6 @@ module controller_standby_i3c
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input logic [47:0] id_i,
 
     // Interface to SDA/SCL
     input bus_state_t ctrl_bus_i,
@@ -77,6 +76,9 @@ module controller_standby_i3c
     input logic [47:0] pid_i,
     input logic [7:0] bcr_i,
     input logic [7:0] dcr_i,
+    input logic [47:0] virtual_pid_i,
+    input logic [7:0] virtual_bcr_i,
+    input logic [7:0] virtual_dcr_i,
     input logic [6:0] target_sta_addr_i,
     input logic target_sta_addr_valid_i,
     input logic [6:0] target_dyn_addr_i,
@@ -469,7 +471,6 @@ module controller_standby_i3c
   ccc xccc (
       .clk_i,
       .rst_ni,
-      .id_i,
       .arbitration_lost_i,
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
@@ -533,6 +534,9 @@ module controller_standby_i3c
       .get_pid_i                 (pid_i),
       .get_bcr_i                 (bcr_i),
       .get_dcr_i                 (dcr_i),
+      .virtual_get_pid_i         (virtual_pid_i),
+      .virtual_get_bcr_i         (virtual_bcr_i),
+      .virtual_get_dcr_i         (virtual_dcr_i),
       .get_status_fmt1_i         (get_status_fmt1_i),
       .get_acccr_i               (get_acccr),
       .set_brgtgt_o              (set_brgtgt),

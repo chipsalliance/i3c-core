@@ -30,8 +30,6 @@ module controller_standby
 ) (
     input logic clk_i,
     input logic rst_ni,
-    input logic [47:0] id_i,
-
     // Interface to SDA/SCL
     input bus_state_t ctrl_bus_i[2],
     output logic ctrl_scl_o[2],
@@ -125,6 +123,9 @@ module controller_standby
     input logic [47:0] pid_i,
     input logic [7:0] bcr_i,
     input logic [7:0] dcr_i,
+    input logic [47:0] virtual_pid_i,
+    input logic [7:0] virtual_bcr_i,
+    input logic [7:0] virtual_dcr_i,
     input logic [6:0] target_sta_addr_i,
     input logic target_sta_addr_valid_i,
     input logic [6:0] target_dyn_addr_i,
@@ -385,7 +386,6 @@ module controller_standby
   ) xcontroller_standby_i3c (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .id_i(id_i),
       .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
@@ -428,6 +428,9 @@ module controller_standby
       .pid_i(pid_i),
       .bcr_i(bcr_i),
       .dcr_i(dcr_i),
+      .virtual_pid_i(virtual_pid_i),
+      .virtual_bcr_i(virtual_bcr_i),
+      .virtual_dcr_i(virtual_dcr_i),
       .target_sta_addr_i(target_sta_addr_i),
       .target_sta_addr_valid_i(target_sta_addr_valid_i),
       .target_dyn_addr_i(target_dyn_addr_i),
