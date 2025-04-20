@@ -142,9 +142,7 @@ async def test_ec_sec_fw_rec_csr_access(dut):
 @cocotb.test()
 async def test_ec_stdby_ctrl_mode_csr_access(dut):
     unhandled = [
-        "__RSVD_0",
         "STBY_CR_STATUS",
-        "__RSVD_1",
         "STBY_CR_INTR_FORCE",
         "STBY_CR_CCC_CONFIG_GETCAPS",
         "__RSVD_3",
