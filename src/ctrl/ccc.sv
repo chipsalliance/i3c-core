@@ -312,7 +312,7 @@ module ccc
   logic [6:0] set_aasa_addr;
 
   logic entdaa_addres_valid;
-  logic entdaa_addres;
+  logic [6:0] entdaa_address;
 
   logic       get_status_in_progress;
 
@@ -789,7 +789,7 @@ module ccc
   always_comb begin: entdaa_setnewda_mux
    set_newda_o = entdaa_addres_valid && (state_q == HandleTargetENTDAA);
    set_newda_virtual_device_o = entdaa_addres_valid && (state_q == HandleVirtualTargetENTDAA);
-   newda_o = entdaa_addres;
+   newda_o = entdaa_address;
   end
 
   // Handle DIRECT SET CCCs
@@ -1051,7 +1051,7 @@ module ccc
     .arbitration_lost_i,
 
     // addr
-    .address_o(entdaa_addres),
+    .address_o(entdaa_address),
     .address_valid_o(entdaa_addres_valid)
   );
 endmodule
