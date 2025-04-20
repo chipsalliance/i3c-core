@@ -2561,7 +2561,7 @@ reg_map = Munch.fromDict({
                 "PID_LO": {
                     "low": 0,
                     "mask": 4294967295,
-                    "reset": 5898405,
+                    "reset": 5902501,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,

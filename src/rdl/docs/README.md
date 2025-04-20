@@ -2391,7 +2391,7 @@ by the Target Reset Pattern.</p>
 
 |Bits|Identifier|Access|  Reset | Name |
 |----|----------|------|--------|------|
-|31:0|  PID_LO  |  rw  |0x5A00A5|PID_LO|
+|31:0|  PID_LO  |  rw  |0x5A10A5|PID_LO|
 
 #### PID_LO field
 
