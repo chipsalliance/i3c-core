@@ -247,6 +247,7 @@ module controller_standby_i3c
   logic [7:0] ccc;
   logic ccc_valid;
   logic is_ccc_done;
+  logic is_next_ccc;
   logic is_hotjoin_done;
 
   //
@@ -303,7 +304,7 @@ module controller_standby_i3c
         2'b10:   xfer_mux_sel <= Ibi;
         default: xfer_mux_sel <= Fsm;
       endcase
-    else if (xfer_mux_sel == Ccc && is_ccc_done) xfer_mux_sel <= Fsm;
+    else if ((xfer_mux_sel == Ccc && is_ccc_done) || (xfer_mux_sel == Ccc && is_next_ccc)) xfer_mux_sel <= Fsm;
     else if (xfer_mux_sel == Ibi && ibi_done) xfer_mux_sel <= Fsm;
   end
 
@@ -455,6 +456,7 @@ module controller_standby_i3c
       .ccc_o                      (ccc),
       .ccc_valid_o                (ccc_valid),
       .is_ccc_done_i              (is_ccc_done),
+      .is_next_ccc_i              (is_next_ccc),
       .is_hotjoin_done_i          (is_hotjoin_done),
       .last_addr_o                (bus_addr_o),
       .last_addr_valid_o          (bus_addr_valid_o),
@@ -475,6 +477,7 @@ module controller_standby_i3c
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),
+      .next_ccc_o                (is_next_ccc),
       .bus_start_det_i           (ctrl_bus_i.start_det),
       .bus_rstart_det_i          (ctrl_bus_i.rstart_det),
       .bus_stop_det_i            (ctrl_bus_i.stop_det),

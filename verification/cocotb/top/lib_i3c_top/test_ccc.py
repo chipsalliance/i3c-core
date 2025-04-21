@@ -90,7 +90,7 @@ async def test_ccc_setdasa(dut):
     await ClockCycles(tb.clk, 50)
     # set regular device dynamic address
     await i3c_controller.i3c_ccc_write(
-        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
     )
     # set virtual device dynamic address
     await i3c_controller.i3c_ccc_write(

@@ -109,6 +109,7 @@ module i3c_target_fsm #(
     output logic [7:0] ccc_o,
     output logic ccc_valid_o,
     input logic is_ccc_done_i,
+    input logic is_next_ccc_i,
 
     input logic is_hotjoin_done_i,
 
@@ -557,6 +558,7 @@ module i3c_target_fsm #(
 
       DoCCC: begin
         if (is_ccc_done_i) state_d = DoneCCC;
+        else if (is_next_ccc_i) state_d = RxSByte;
       end
       DoneCCC: begin
         state_d = Idle;

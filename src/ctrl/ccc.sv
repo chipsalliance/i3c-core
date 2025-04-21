@@ -96,6 +96,7 @@ module ccc
     input logic ccc_valid_i,
 
     output logic done_fsm_o,
+    output logic next_ccc_o,
 
     // Bus Monitor interface
     input logic bus_start_det_i,
@@ -403,7 +404,7 @@ module ccc
     TxData,
     TxDataTbit,
     WaitForBusCond,
-    WaitForStop,
+    NextCCC,
     DoneCCC,
     HandleENTDAA,
     HandleTargetENTDAA,
@@ -576,7 +577,7 @@ module ccc
       end
       TxDirectAddrAck: begin
         if (bus_tx_done_i) begin
-          if (is_byte_rsvd_addr) state_d = WaitForStop;
+          if (is_byte_rsvd_addr) state_d = NextCCC;
           else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw) state_d = TxData;
           else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw) begin
             if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
@@ -610,8 +611,8 @@ module ccc
       WaitForBusCond: begin
         if (bus_rstart_det_i) state_d = RxDirectAddr;
       end
-      WaitForStop: begin
-        state_d = WaitForStop; // Bus stop always goes to DoneCCC
+      NextCCC: begin
+        state_d = WaitCCC; // Bus stop always goes to DoneCCC
       end
       DoneCCC: begin
         state_d = Idle;
@@ -632,6 +633,7 @@ module ccc
     ccc_tx_sel_od_pp = '0;
 
     done_fsm_o = '0;
+    next_ccc_o = '0;
     unique case (state_q)
       Idle: begin
 
@@ -691,6 +693,9 @@ module ccc
         ccc_tx_req_bit   = '1;
         ccc_tx_req_value = {7'h00, ~tx_data_done};
         ccc_tx_sel_od_pp = '1;
+      end
+      NextCCC: begin
+        next_ccc_o = '1;
       end
       DoneCCC: begin
         done_fsm_o = '1;
