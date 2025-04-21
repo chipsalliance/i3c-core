@@ -323,6 +323,8 @@ module ccc
   logic       set_aasa_valid;
   logic [6:0] set_aasa_addr;
 
+  logic       set_newda_valid;
+  logic [6:0] set_newda_addr;
   logic entdaa_addres_valid;
   logic [6:0] entdaa_address;
   logic entdaa_process_virtual;
@@ -441,6 +443,10 @@ module ccc
   logic is_byte_rsvd_addr;
   assign is_byte_rsvd_addr = (rx_data == {7'h7E, 1'b0}) | (command_addr == 7'h7E);
 
+  logic is_byte_our_dynamic_addr;
+  logic is_byte_our_virtual_dynamic_addr;
+  logic is_byte_our_static_addr;
+  logic is_byte_our_virtual_static_addr;
   logic is_byte_our_addr;
   logic is_byte_virtual_addr;
 
@@ -448,25 +454,13 @@ module ccc
 
   logic entdaa_start, entdaa_done;
 
-  always_comb begin : addr_matching
-    if (target_dyn_address_valid_i) begin
-      is_byte_our_addr = command_addr == target_dyn_address_i;
-    end else if (target_sta_address_valid_i) begin
-      is_byte_our_addr = command_addr == target_sta_address_i;
-    end else begin
-      is_byte_our_addr = '0;
-    end
-  end
+  assign is_byte_our_dynamic_addr = ((command_addr == target_dyn_address_i) && target_dyn_address_valid_i);
+  assign is_byte_our_static_addr = ((command_addr == target_sta_address_i) && target_sta_address_valid_i);
+  assign is_byte_our_addr = is_byte_our_dynamic_addr | is_byte_our_static_addr;
 
-  always_comb begin : virtual_addr_matching
-    if (virtual_target_dyn_address_valid_i) begin
-      is_byte_virtual_addr = command_addr == virtual_target_dyn_address_i;
-    end else if (virtual_target_sta_address_valid_i) begin
-      is_byte_virtual_addr = command_addr == virtual_target_sta_address_i;
-    end else begin
-      is_byte_virtual_addr = '0;
-    end
-  end
+  assign is_byte_our_virtual_dynamic_addr = ((command_addr == virtual_target_dyn_address_i) && virtual_target_dyn_address_valid_i);
+  assign is_byte_our_virtual_static_addr = ((command_addr == virtual_target_sta_address_i) && virtual_target_sta_address_valid_i);
+  assign is_byte_virtual_addr = is_byte_our_virtual_dynamic_addr | is_byte_our_virtual_static_addr;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_addr
     if (~rst_ni) begin
@@ -598,7 +592,6 @@ module ccc
       RxDataTbit: begin
         if (bus_rx_done_i) state_d = RxData;
       end
-
       TxData: begin
         if (bus_rstart_det_i) state_d = RxDirectAddr;
         else if (bus_tx_done_i) state_d = TxDataTbit;
@@ -805,9 +798,9 @@ module ccc
 
   // connect entdaa/setnewda
   always_comb begin: entdaa_setnewda_mux
-   set_newda_o = entdaa_addres_valid && (state_q == HandleTargetENTDAA);
-   set_newda_virtual_device_o = entdaa_addres_valid && (state_q == HandleVirtualTargetENTDAA);
-   newda_o = entdaa_address;
+   set_newda_o = set_newda_valid | (entdaa_addres_valid && ((state_q == HandleTargetENTDAA) || (state_q == HandleVirtualTargetENTDAA)));
+   set_newda_virtual_device_o = set_newda_valid ? is_byte_our_virtual_dynamic_addr : (entdaa_addres_valid && (state_q == HandleVirtualTargetENTDAA));
+   newda_o = set_newda_valid ? set_newda_addr : entdaa_address;
   end
 
   // Handle DIRECT SET CCCs
@@ -815,6 +808,8 @@ module ccc
     if (~rst_ni) begin
       set_dasa_valid <= 1'b0;
       set_dasa_addr  <= '0;
+      set_newda_valid <= 1'b0;
+      set_newda_addr <= '0;
     end else begin
       case (command_code)
         // setdasa has only one data byte - dynamic address
@@ -828,6 +823,15 @@ module ccc
           end
         end
         default: begin
+        end
+        `I3C_DIRECT_SETNEWDA: begin
+          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr &&
+              rx_data_count == 8'd0) begin
+            set_newda_addr <= rx_data[7:1];
+            set_newda_valid <= 1'b1;
+          end else begin
+            set_newda_valid <= 1'b0;
+          end
         end
       endcase
     end
