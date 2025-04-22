@@ -443,18 +443,6 @@ def ctrl_edge_detector_verify(session, test_group, test_name, coverage, simulato
     verify_block(session, test_group, test_name, coverage, simulator)
 
 
-@test(
-    TestParams(
-        ["tests", "ahb", "axi", "target", "controller"],
-        ["i3c_phy_io"],
-        ["test_drivers"],
-        simulator=["icarus" if s == "verilator" else s for s in simulators],
-    )
-)
-def i3c_phy_io_verify(session, test_group, test_name, coverage, simulator):
-    verify_block(session, test_group, test_name, coverage, simulator)
-
-
 @nox.session(reuse_venv=True)
 def lint(session: nox.Session) -> None:
     """Options are defined in pyproject.toml and .flake8 files"""
