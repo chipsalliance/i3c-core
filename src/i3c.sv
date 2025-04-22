@@ -17,9 +17,6 @@
       - sel_od_pp_o: Select driver
 
       The sel_od_pp_o signal is synchronized with the {scl,sda} pins.
-
-    The Open-Drain and Push-Pull driver behavior is modelled in the i3c_io module
-    and instantiated in the appropriate i3c_wrapper.
 */
 module i3c
   import i3c_pkg::*;
