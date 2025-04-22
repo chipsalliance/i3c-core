@@ -103,18 +103,15 @@ module i3c_wrapper #(
 `endif
 `endif
 
-    // digital I3C input and output signals are exposed for the purpose of simulation
-`ifdef DIGITAL_IO_I3C
+    // I3C bus driver signals
     input  logic scl_i,
     input  logic sda_i,
     output logic scl_o,
     output logic sda_o,
+    output logic scl_oe,
+    output logic sda_oe,
+
     output logic sel_od_pp_o,
-`else
-    // I3C bus IO
-    inout  wire  i3c_scl_io,
-    inout  wire  i3c_sda_io,
-`endif
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
@@ -136,13 +133,6 @@ module i3c_wrapper #(
   i3c_pkg::dct_mem_src_t dct_mem_src;
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
 `endif // CONTROLLER_SUPPORT
-
-  logic scl_phy2io;
-  logic sda_phy2io;
-  logic scl_io2phy;
-  logic sda_io2phy;
-  logic sel_od_pp;
-
 
   i3c #(
 `ifdef I3C_USE_AHB
@@ -229,11 +219,11 @@ module i3c_wrapper #(
 `endif
 `endif
 
-      .i3c_scl_i  (scl_io2phy),
-      .i3c_scl_o  (scl_phy2io),
-      .i3c_sda_i  (sda_io2phy),
-      .i3c_sda_o  (sda_phy2io),
-      .sel_od_pp_o(sel_od_pp),
+      .i3c_scl_i  (scl_i),
+      .i3c_scl_o  (scl_o),
+      .i3c_sda_i  (sda_i),
+      .i3c_sda_o  (sda_o),
+      .sel_od_pp_o(sel_od_pp_o),
 
 `ifdef CONTROLLER_SUPPORT
       .dat_mem_src_i (dat_mem_src),
@@ -290,33 +280,18 @@ module i3c_wrapper #(
   );
 `endif // CONTROLLER_SUPPORT
 
-`ifdef DIGITAL_IO_I3C
-  assign scl_io2phy = scl_i;
-  assign sda_io2phy = sda_i;
-  assign scl_o = scl_phy2io;
-  assign sda_o = sda_phy2io;
-  assign sel_od_pp_o = sel_od_pp;
-`else
-  logic scl_drive_low, sda_drive_low;
-  logic sda_od, scl_od;
-  wire i3c_scl_pp_io, i3c_sda_pp_io;
-  assign scl_drive_low = ~scl_phy2io;
-  assign sda_drive_low = ~sda_phy2io;
+/*
+  Truth table.
 
-  i3c_io xio (
-      .scl_i(scl_phy2io),
-      .sda_i(sda_phy2io),
-      .scl_o(scl_io2phy),
-      .sda_o(sda_io2phy),
-      .scl_io(i3c_scl_pp_io),
-      .sda_io(i3c_sda_pp_io)
-  );
+  sel_od_pp_o | sda_o  || sda_oe | IO state
+  ------------+--------++--------+-----------
+       0      |   0    ||   1    |    0
+       0      |   1    ||   0    |   hi-z
+       1      |   0    ||   1    |    0
+       1      |   1    ||   1    |    1
+*/
 
-  assign sda_od = sda_drive_low ? 1'b0 : 1'bz;
-  assign scl_od = scl_drive_low ? 1'b0 : 1'bz;
-  assign i3c_sda_io = sel_od_pp ? i3c_sda_pp_io : sda_od;
-  assign i3c_scl_io = sel_od_pp ? i3c_scl_pp_io : scl_od;
-
-`endif
+  assign sda_oe = sel_od_pp_o || !sda_o;
+  assign scl_oe = 1'b0;
 
 endmodule
