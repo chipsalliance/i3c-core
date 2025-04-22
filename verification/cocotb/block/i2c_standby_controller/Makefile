@@ -37,7 +37,6 @@ VERILOG_SOURCES  = \
     $(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/phy/buf_pp.sv \
     $(SRC_DIR)/phy/bufs.sv \
-    $(SRC_DIR)/phy/i3c_io.sv \
     $(SRC_DIR)/phy/i3c_phy.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \
     ${SRC_DIR}/hci/queues/read_queue.sv \

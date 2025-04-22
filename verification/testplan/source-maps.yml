@@ -9,8 +9,6 @@ testplans:
     - verification/cocotb/top/lib_i3c_top/test_target_reset.py
   - pec:
     - verification/cocotb/block/recovery_pec/test_pec.py
-  - drivers:
-    - verification/cocotb/block/i3c_phy_io/test_drivers.py
   - CCC handling:
     - verification/cocotb/top/lib_i3c_top/test_ccc.py
   - width_converter_[N8]to[N8]:
