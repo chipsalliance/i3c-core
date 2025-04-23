@@ -82,6 +82,19 @@ ifeq ($(SIM), vcs)
 
     ifneq ($(COVERAGE_TYPE),)
         EXTRA_ARGS += -cm line+cond+fsm+tgl+branch
+
+        # Generate cm.cfg file based on cm.cfg.tmpl with `+tree $(TOPLEVEL)` and `-module $(TOPLEVEL)` on top.
+        ifeq ($(TOPLEVEL),)
+            $(error TOPLEVEL undefined!)
+        endif
+        CM_FILE := $(TEST_DIR)/sim_build/cm.cfg
+        CM_FILE_TMPL := $(I3C_ROOT)/verification/cm.cfg.tmpl
+        $(shell mkdir -p $(TEST_DIR)/sim_build)
+        $(shell echo "+tree $(TOPLEVEL)" >$(CM_FILE))
+        $(shell echo "-module $(TOPLEVEL)" >>$(CM_FILE))
+        $(shell echo "$$(cat $(CM_FILE_TMPL))" >>$(CM_FILE))
+
+        COMPILE_ARGS += -cm_hier $(CM_FILE)
     endif
 endif
 
