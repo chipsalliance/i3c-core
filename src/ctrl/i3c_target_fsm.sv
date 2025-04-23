@@ -120,6 +120,7 @@ module i3c_target_fsm #(
     input logic scl_posedge_i,
     input logic sda_negedge_i,
     input logic sda_posedge_i,
+    input logic bus_free_i,
 
     output logic parity_err_o,
     output logic rx_overflow_err_o,
@@ -374,7 +375,7 @@ module i3c_target_fsm #(
 
     case (state_q)
       Idle:
-      ibi_begin_o = target_enable_i && !target_reset_detect_i && ibi_enable_i && ibi_pending_i;
+      ibi_begin_o = target_enable_i && !target_reset_detect_i && ibi_enable_i && ibi_pending_i && bus_free_i;
       RxFByte: begin
         bus_rx_req_byte_o = ~bus_start_det;
         if (bus_rx_done_i) begin
@@ -473,7 +474,7 @@ module i3c_target_fsm #(
           state_d = target_reset_detect_i ? DoRstAction :
           // TODO: Add flow for Hot-Join
           // do_hot_join        ? DoHotJoin :
-          (ibi_pending_i && ibi_enable_i) ? DoIBI : bus_start_det ? RxFByte : Idle;
+          (ibi_pending_i && ibi_enable_i && bus_free_i) ? DoIBI : bus_start_det ? RxFByte : Idle;
       end
       RxFByte: begin
         if (bus_rx_done_i) begin
