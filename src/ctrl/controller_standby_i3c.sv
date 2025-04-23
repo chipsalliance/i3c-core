@@ -464,6 +464,7 @@ module controller_standby_i3c
       .scl_posedge_i              (ctrl_bus_i.scl.pos_edge),
       .sda_negedge_i              (ctrl_bus_i.sda.neg_edge),
       .sda_posedge_i              (ctrl_bus_i.sda.pos_edge),
+      .bus_free_i                 (bus_free),
       .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err),
       .virtual_device_sel_o       (virtual_device_sel_o),
