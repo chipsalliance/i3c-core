@@ -189,7 +189,7 @@ module ibi (
     case (state_q)
       DriveAddr: begin
         bus_tx_req_byte_o  = 1'b1;
-        bus_tx_req_value_o = {target_ibi_addr_i, 1'b0};
+        bus_tx_req_value_o = {target_ibi_addr_i, 1'b1};
       end
       ReadAck: begin
         bus_rx_req_bit_o = 1'b1;
