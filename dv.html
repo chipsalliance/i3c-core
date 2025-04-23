@@ -2640,82 +2640,82 @@ CCC with the one read from the register.</p>
 sending SETDASA CCC. Then it verifies that correct addresses have
 been set by reading STBY_CR_DEVICE_ADDR CSR.</p>
 <h5 id="ccc-rstdaa"><code class="docutils literal notranslate"><span class="pre">ccc_rstdaa</span></code><a class="headerlink" href="#ccc-rstdaa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L132">ccc_rstdaa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L195">ccc_rstdaa</a></p>
 <p>Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
 RSTDAA CCC and verifies that the address got cleared.</p>
 <h5 id="ccc-getbcr"><code class="docutils literal notranslate"><span class="pre">ccc_getbcr</span></code><a class="headerlink" href="#ccc-getbcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L168">ccc_getbcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L231">ccc_getbcr</a></p>
 <p>Reads BCR register content by sending GETBCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getdcr"><code class="docutils literal notranslate"><span class="pre">ccc_getdcr</span></code><a class="headerlink" href="#ccc-getdcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L186">ccc_getdcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L249">ccc_getdcr</a></p>
 <p>Reads DCR register content by sending GETDCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getmwl"><code class="docutils literal notranslate"><span class="pre">ccc_getmwl</span></code><a class="headerlink" href="#ccc-getmwl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L202">ccc_getmwl</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L265">ccc_getmwl</a></p>
 <p>Reads MWL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-getmrl"><code class="docutils literal notranslate"><span class="pre">ccc_getmrl</span></code><a class="headerlink" href="#ccc-getmrl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L220">ccc_getmrl</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L283">ccc_getmrl</a></p>
 <p>Reads MRL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-setaasa"><code class="docutils literal notranslate"><span class="pre">ccc_setaasa</span></code><a class="headerlink" href="#ccc-setaasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L239">ccc_setaasa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L302">ccc_setaasa</a></p>
 <p>Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
 CSR.</p>
 <h5 id="ccc-getpid"><code class="docutils literal notranslate"><span class="pre">ccc_getpid</span></code><a class="headerlink" href="#ccc-getpid" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L262">ccc_getpid</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L325">ccc_getpid</a></p>
 <p>Sends the CCC to the target and examines if the returned PID
 matches the expected.</p>
 <h5 id="ccc-enec-disec-direct"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_direct</span></code><a class="headerlink" href="#ccc-enec-disec-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L295">ccc_enec_disec_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L358">ccc_enec_disec_direct</a></p>
 <p>Sends DISEC CCC to the target and verifies that events are disabled.
 Then, sends ENEC CCC to the target and checks that events are enabled.</p>
 <h5 id="ccc-enec-disec-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_bcast</span></code><a class="headerlink" href="#ccc-enec-disec-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L329">ccc_enec_disec_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L392">ccc_enec_disec_bcast</a></p>
 <p>Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.</p>
 <h5 id="ccc-setmwl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_direct</span></code><a class="headerlink" href="#ccc-setmwl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L359">ccc_setmwl_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L422">ccc_setmwl_direct</a></p>
 <p>Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_direct</span></code><a class="headerlink" href="#ccc-setmrl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L378">ccc_setmrl_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L441">ccc_setmrl_direct</a></p>
 <p>Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmwl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_bcast</span></code><a class="headerlink" href="#ccc-setmwl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L397">ccc_setmwl_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L460">ccc_setmwl_bcast</a></p>
 <p>Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_bcast</span></code><a class="headerlink" href="#ccc-setmrl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L416">ccc_setmrl_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L479">ccc_setmrl_bcast</a></p>
 <p>Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-rstact-direct"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_direct</span></code><a class="headerlink" href="#ccc-rstact-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L435">ccc_rstact_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L498">ccc_rstact_direct</a></p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the peripheral_reset_o signal gets asserted.</p>
 <h5 id="ccc-rstact-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_bcast</span></code><a class="headerlink" href="#ccc-rstact-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L467">ccc_rstact_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L530">ccc_rstact_bcast</a></p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the escalated_reset_o signal gets asserted.</p>
 <h5 id="ccc-direct-multiple-wr"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_wr</span></code><a class="headerlink" href="#ccc-direct-multiple-wr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L492">ccc_direct_multiple_wr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L555">ccc_direct_multiple_wr</a></p>
 <p>Sends a sequence of multiple directed SETMWL CCCs. The first and
 the last have non-matching address. The two middle ones set MWL
 to different values. Verify that the target responded to correct
 addresses and executed both CCCs.</p>
 <h5 id="ccc-direct-multiple-rd"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_rd</span></code><a class="headerlink" href="#ccc-direct-multiple-rd" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L532">ccc_direct_multiple_rd</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L595">ccc_direct_multiple_rd</a></p>
 <p>Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
 thee different addresses. Only the one for the target should
 be ACK-ed with the correct MWL content.</p>
@@ -3039,7 +3039,7 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
   <small>
     
       Last update:
-      2025-04-18
+      2025-04-23
     
   </small>
 </div>
