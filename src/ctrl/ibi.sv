@@ -98,6 +98,8 @@ module ibi (
     DriveAddr,
     // Receive ACK/NACK
     ReadAck,
+    // Wait for falling SCL (do not change sel_od_pp_o when SCL is high)
+    WaitForSclNegedgeAfterAck,
     // Transmitt data byte
     SendData,
     // Transmitt T bit
@@ -144,7 +146,10 @@ module ibi (
           if (bus_rx_req_nack)  // NACK
             state_q <= WaitStop;
           else  // ACK
-            state_q <= SendData;
+            state_q <= WaitForSclNegedgeAfterAck;
+
+        WaitForSclNegedgeAfterAck:
+        if (scl_negedge_i) state_q <= SendData;
 
         SendData:
         if (bus_stop_i) state_q <= Flush;
