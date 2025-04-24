@@ -1,0 +1,66 @@
+axi-adapter-hci-queues-i3c-test-waivers:
+  only:
+  - axi_adapter_wrapper
+  - hci_queues_wrapper
+  - i3c_test_wrapper
+  signals:
+  # Following registers are currently not handled
+  # Tied to '0
+  - hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.*
+  - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.*
+  - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.*
+  - hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.*
+  - hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.*
+  # Read-only by both SW and HW, tied to const
+  - hwif_out.I3C_EC.CtrlCfg.EXTCAP_HEADER.*
+  - hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.*
+  - hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.*
+  - hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.*
+  - hwif_out.I3C_EC.TTI.QUEUE_SIZE.*
+  # Reserved, some of them are signals in some cases and groups of signals in the other
+  - DEVICE_ID_RESERVED
+  - DEVICE_ID_RESERVED.*
+  - INDIRECT_FIFO_RESERVED
+  - INDIRECT_FIFO_RESERVED.*
+  - RESERVED_7_3.*
+  - SOC_MGMT_RSVD_2
+  - SOC_MGMT_RSVD_2.*
+  - SOC_MGMT_RSVD_3
+  - SOC_MGMT_RSVD_3.*
+  - __rsvd_3
+  - __rsvd_3.*
+
+i2c-and-i3c-test-waivers:
+  only:
+  - controller_standby_i2c_harness
+  - flow_standby_i2c_harness
+  - i3c_test_wrapper
+  signals:
+  # Reserved
+  - __rsvd14_0
+  - __rsvd23_16
