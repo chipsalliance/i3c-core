@@ -577,6 +577,7 @@ module controller_standby_i3c
       .scl_posedge_i  (ctrl_bus_i.scl.pos_edge),
       .bus_available_i(bus_available),
       .bus_stop_i     (ctrl_bus_i.stop_det),
+      .bus_rstart_i   (ctrl_bus_i.rstart_det),
 
       .bus_tx_done_i     (ibi_bus_tx_done),
       .bus_tx_req_byte_o (ibi_bus_tx_req_byte),
