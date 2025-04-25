@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from xml.etree import ElementTree
+from pathlib import Path
 
 """
 Common functions and utilities for noxfile.py
@@ -18,6 +19,10 @@ def nox_config(nox):
     nox.options.reuse_existing_virtualenvs = True
     nox.options.no_install = True
     return nox
+
+
+def sim_repeater_path():
+    return str((Path(__file__).parent / ".." / ".." / "sim_repeater.sh").resolve())
 
 
 def setupLogger(verbose=False, filename="setup_logger.log"):

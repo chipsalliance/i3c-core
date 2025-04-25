@@ -5,7 +5,7 @@ import time
 import shutil
 
 import nox
-from nox_utils import VerificationTest, isCocotbSimFailure, nox_config
+from nox_utils import VerificationTest, isCocotbSimFailure, nox_config, sim_repeater_path
 
 # Common nox configuration
 nox = nox_config(nox)
@@ -46,6 +46,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 shutil.rmtree(os.path.join(test.testPath, test.sim_build))
 
             args = [
+                sim_repeater_path(),
                 "make",
                 "-C",
                 test.testPath,
@@ -53,6 +54,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 "MODULE=" + test_name,
                 "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
             ]
+
             if simulator == "verilator":
                 plusargs.extend(
                     [

@@ -4,7 +4,7 @@ import logging
 import os
 import nox
 
-from nox_utils import nox_config, isUVMSimFailure, create_test_id
+from nox_utils import nox_config, isUVMSimFailure, create_test_id, sim_repeater_path
 
 nox = nox_config(nox)
 
@@ -42,7 +42,7 @@ def verify_uvm(
     root_dir = setup_root_dir()
 
     make_targets = ["config", simulator]
-    args = ["make", "-C", root_dir, *make_targets, f"UVM_TB_FILES={tb_files}"]
+    args = [sim_repeater_path(), "make", "-C", root_dir, *make_targets, f"UVM_TB_FILES={tb_files}"]
 
     if uvm_testname != "":
         args.append(f"UVM_TESTNAME={uvm_testname}")
