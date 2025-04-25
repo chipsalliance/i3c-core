@@ -1,0 +1,54 @@
+// Following registers are currently not handled
+// Tied to '0
+-node *.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID*
+-node *.hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR*
+-node *.hwif_in.I3CBase.HC_CONTROL.RESUME*
+-node *.hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.*
+-node *.hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.*
+-node *.hwif_in.I3CBase.PRESENT_STATE.*
+-node *.hwif_in.I3CBase.INTR_STATUS.*
+-node *.hwif_in.I3CBase.DCT_SECTION_OFFSET.*
+-node *.hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.*
+-node *.hwif_in.PIOControl.PIO_INTR_STATUS.*
+-node *.hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.*
+-node *.hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.*
+-node *.hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.*
+-node *.hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.*
+-node *.hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.*
+
+// Read-only by both SW & HW, tied to const
+-node *.hwif_out.I3C_EC.TERMINATION_EXTCAP_HEADER.*
+-node *.hwif_out.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.*
+-node *.hwif_out.I3C_EC.CtrlCfg.EXTCAP_HEADER.*
+-node *.hwif_out.I3C_EC.TTI.QUEUE_SIZE.*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT*
+-node *.hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT*
+
+// Reserved
+-node *.DEVICE_ID_RESERVED*
+-node *.HW_STATUS.RESERVED_7_3*
+-node *.INDIRECT_FIFO_RESERVED*
+-node *.SOC_MGMT_RSVD*
+-node *.__rsvd*
