@@ -3,7 +3,6 @@
 This chapter presents the available models and tools which are used for I3C verification.
 The core is verified with [the Cocotb + unit tests](https://github.com/chipsalliance/i3c-core/tree/main/verification/cocotb/block) and [the UVM test suite](https://github.com/chipsalliance/i3c-core/tree/main/verification/uvm_i3c).
 
-There are also non-public tests which utilize Avery I3C VIP framework. The tests include: `private_read`, `private_write` and `recovery` and verify operation of target mode private reads and writes and the secure firmware recovery flow respectively.
 
 This section contains testplans for the verification.
 
@@ -29,3 +28,9 @@ Full overview of tests can be found in [Testplan summary](./sim-results/index.ht
 ```{include} ../../verification/testplan/generated/testplans_core.md
 :heading-offset: 2
 ```
+
+## Compliance test suite
+
+The list of non-public tests which utilize Avery I3C VIP framework and have been successfully ran against the design is available in the [CTS list](https://github.com/chipsalliance/i3c-core/blob/main/doc/cts-list.md).
+
+

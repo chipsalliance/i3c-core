@@ -1911,6 +1911,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#compliance-test-suite" class="md-nav__link">
+    <span class="md-ellipsis">Compliance test suite</span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2016,7 +2023,6 @@
 <h1 id="design-verification">Design verification<a class="headerlink" href="#design-verification" title="Link to this heading">¶</a></h1>
 <p>This chapter presents the available models and tools which are used for I3C verification.
 The core is verified with <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/verification/cocotb/block">the Cocotb + unit tests</a> and <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/verification/uvm_i3c">the UVM test suite</a>.</p>
-<p>There are also non-public tests which utilize Avery I3C VIP framework. The tests include: <code class="docutils literal notranslate"><span class="pre">private_read</span></code>, <code class="docutils literal notranslate"><span class="pre">private_write</span></code> and <code class="docutils literal notranslate"><span class="pre">recovery</span></code> and verify operation of target mode private reads and writes and the secure firmware recovery flow respectively.</p>
 <p>This section contains testplans for the verification.</p>
 <p>Definitions:</p>
 <ul class="simple">
@@ -3031,6 +3037,8 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
 <h5 id="target-escalated-reset"><code class="docutils literal notranslate"><span class="pre">target_escalated_reset</span></code><a class="headerlink" href="#target-escalated-reset" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L76">target_escalated_reset</a></p>
 <p>Issues I3C target reset patterns and verifies successful reset escalation.</p>
+<h2 id="compliance-test-suite">Compliance test suite<a class="headerlink" href="#compliance-test-suite" title="Link to this heading">¶</a></h2>
+<p>The list of non-public tests which utilize Avery I3C VIP framework and have been successfully ran against the design is available in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/doc/cts-list.md">CTS list</a>.</p>
 
 
   <hr>
@@ -3038,7 +3046,7 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
   <small>
     
       Last update:
-      2025-04-24
+      2025-04-27
     
   </small>
 </div>
