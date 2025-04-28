@@ -652,4 +652,12 @@ module hci
     hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = '0;
   end
 
+    `I3C_ASSERT(CMD_WR_ACK_O, rst_ni |-> cmd_wr_ack == 1'b0);
+    `I3C_ASSERT(HCI_IBI_RD_ACK_O, rst_ni |-> hci_ibi_rd_ack == 1'b0);
+    `I3C_ASSERT(RESP_RD_ACK_O, rst_ni |-> resp_rd_ack == 1'b0);
+    `I3C_ASSERT(RX_RD_ACK_O, rst_ni |-> rx_rd_ack == 1'b0);
+    `I3C_ASSERT(TX_WR_ACK_O, rst_ni |-> tx_wr_ack == 1'b0);
+    `I3C_ASSERT(IBI_QUEUE_DATA_O, rst_ni |-> hci_ibi_rd_data == '0);
+    `I3C_ASSERT(RX_DESC_DATA_O, rst_ni |-> resp_rd_data == '0);
+
 endmodule : hci
