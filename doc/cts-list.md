@@ -16,4 +16,9 @@
 | tc_sync        | 5.1.8.2 Synchronous Systems and Events                                            |
 | ccc_bc_setaasa | 5.1.9.3.22 Set All Addresses to Static Address (SETAASA)                          |
 | slv_no_rst     | 5.1.11 Slave Reset <br /> 5.1.11.1 Theory of Operation <br /> 5.1.11.2 RSTACT CCC |
+| slv_rst        | 5.1.11 Slave Reset <br /> 5.1.11.3 Slave Reset Pattern                            |
+| pvt_read       | 5.1.2.3.3 Ninth Bit of SDR Slave Returned (Read) Data as End-of-Data              |
+| pvt_write      | 5.1.2.3.1 Transition from Address ACK to SDR Master Write Data                    |
+| slv_intr_req   | 5.1.6 In-Band Interrupt <br /> 5.1.6.2 I3C Slave Interrupt Request                |
+
 
