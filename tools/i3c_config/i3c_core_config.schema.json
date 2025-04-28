@@ -103,6 +103,10 @@
         "DisableInputFF": {
             "description": "Disable input synchronization flip-flops on SDA and SCL lines.",
             "type": "boolean"
+        },
+        "DisableLoopback": {
+            "description": "Disable recovery loopback mode allowing perforing OCP recovery flow from internal bus (instead of I3C).",
+            "type": "boolean"
         }
     },
     "if": {

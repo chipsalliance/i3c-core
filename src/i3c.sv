@@ -553,7 +553,11 @@ module i3c
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
 
   logic bypass_i3c_core;
+`ifndef DISABLE_LOOPBACK
   assign bypass_i3c_core = hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
+`else
+  assign bypass_i3c_core = '0;
+`endif
 
   controller #(
       .DatAw(DatAw),
