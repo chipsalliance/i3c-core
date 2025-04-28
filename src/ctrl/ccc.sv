@@ -923,7 +923,7 @@ module ccc
         end
         // rstact (broadcast)
         `I3C_BCAST_RSTACT: begin
-          if (state_q == RxDefByteTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+          if (state_q == RxDefByteTbit && bus_rx_done_i) begin
             rst_action_valid <= 1'b1;
           end else begin
             rst_action_valid <= 1'b0;
