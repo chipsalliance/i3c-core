@@ -1591,60 +1591,60 @@ reg_map = Munch.fromDict({
                     "mask": 1,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 },
                 "TX_DESC_RST": {
                     "low": 1,
                     "mask": 2,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 },
                 "RX_DESC_RST": {
                     "low": 2,
                     "mask": 4,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 },
                 "TX_DATA_RST": {
                     "low": 3,
                     "mask": 8,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 },
                 "RX_DATA_RST": {
                     "low": 4,
                     "mask": 16,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 },
                 "IBI_QUEUE_RST": {
                     "low": 5,
                     "mask": 32,
                     "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
-                    "hwclr": 0
+                    "hwclr": 1
                 }
             },
             "INTERRUPT_STATUS": {

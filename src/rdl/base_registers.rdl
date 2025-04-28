@@ -319,48 +319,48 @@ regfile BaseRegs #(
             name = "IBI_QUEUE_RST";
             desc = "Clear IBI queue from software. Valid only in PIO mode.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } IBI_QUEUE_RST[5:5];
         field {
             name = "RX_FIFO_RST";
             desc = "Clear RX FIFO from software. Valid only in PIO mode.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } RX_FIFO_RST[4:4];
         field {
             name = "TX_FIFO_RST";
             desc = "Clear TX FIFO from software. Valid only in PIO mode.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } TX_FIFO_RST[3:3];
         field {
             name = "RESP_QUEUE_RST";
             desc = "Clear response queue from software. Valid only in PIO mode.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } RESP_QUEUE_RST[2:2];
         field {
             name = "CMD_QUEUE_RST";
             desc = "Clear command queue from software. Valid only in PIO mode.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } CMD_QUEUE_RST[1:1];
         field {
             name = "SOFT_RST";
             desc = "Reset controller from software.";
             sw = rw;
-            hw = rw;
-            we = true;
+            hw = r;
+            hwclr;
             reset = 1'b0;
         } SOFT_RST[0:0];
     } RESET_CONTROL @ 0x10;

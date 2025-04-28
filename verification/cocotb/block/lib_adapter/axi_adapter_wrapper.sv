@@ -226,16 +226,15 @@ module axi_adapter_wrapper
     hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we = 0;
     hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
     hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
     hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
 
+    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.hwclr = '0;
+    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.hwclr = '0;
+    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.hwclr = '0;
+    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.hwclr = '0;
+    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.hwclr = '0;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = 0;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = 0;
 `endif // CONTROLLER_SUPPORT
@@ -248,12 +247,12 @@ module axi_adapter_wrapper
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
 
 `ifdef TARGET_SUPPORT
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.hwclr = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.hwclr = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.hwclr = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.hwclr = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.hwclr = 0;
+    hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.hwclr = 0;
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.we = 0;
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.we = 0;
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.we = 0;

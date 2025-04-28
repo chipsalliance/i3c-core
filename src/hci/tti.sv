@@ -158,8 +158,7 @@ module tti
   always_comb begin : wire_hwif_xfer
 
     // RX_DESC_QUEUE_PORT
-    hwif_tti_o.RESET_CONTROL.RX_DESC_RST.we = rx_desc_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.RX_DESC_RST.next = rx_desc_queue_reg_rst_data_i;
+    hwif_tti_o.RESET_CONTROL.RX_DESC_RST.hwclr = rx_desc_queue_reg_rst_we_i & !rx_desc_queue_reg_rst_data_i;
     if (rx_desc_queue_empty_i && hwif_tti_i.RX_DESC_QUEUE_PORT.req) begin
       hwif_tti_o.RX_DESC_QUEUE_PORT.rd_ack = hwif_tti_i.RX_DESC_QUEUE_PORT.req & ~hwif_tti_i.RX_DESC_QUEUE_PORT.req_is_wr;
       hwif_tti_o.RX_DESC_QUEUE_PORT.rd_data = '0;
@@ -171,8 +170,7 @@ module tti
     end
 
     // TX_DESC_QUEUE_PORT
-    hwif_tti_o.RESET_CONTROL.TX_DESC_RST.we = tx_desc_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.TX_DESC_RST.next = tx_desc_queue_reg_rst_data_i;
+    hwif_tti_o.RESET_CONTROL.TX_DESC_RST.hwclr = tx_desc_queue_reg_rst_we_i & !tx_desc_queue_reg_rst_data_i;
     if (tx_desc_queue_full_i && hwif_tti_i.TX_DESC_QUEUE_PORT.req) begin
       hwif_tti_o.TX_DESC_QUEUE_PORT.wr_ack = hwif_tti_i.TX_DESC_QUEUE_PORT.req & hwif_tti_i.TX_DESC_QUEUE_PORT.req_is_wr;
       tx_desc_queue_req_o  = '0;
@@ -184,8 +182,7 @@ module tti
     end
 
     // RX_DATA_PORT
-    hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = rx_data_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.RX_DATA_RST.next = rx_data_queue_reg_rst_data_i;
+    hwif_tti_o.RESET_CONTROL.RX_DATA_RST.hwclr = rx_data_queue_reg_rst_we_i & !rx_data_queue_reg_rst_data_i;
     if (rx_data_queue_empty_i && hwif_tti_i.RX_DATA_PORT.req) begin
       hwif_tti_o.RX_DATA_PORT.rd_ack = hwif_tti_i.RX_DATA_PORT.req & ~hwif_tti_i.RX_DATA_PORT.req_is_wr;;
       hwif_tti_o.RX_DATA_PORT.rd_data = '0;
@@ -197,8 +194,7 @@ module tti
     end
 
     // TX_DATA_PORT
-    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.we = tx_data_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.next = tx_data_queue_reg_rst_data_i;
+    hwif_tti_o.RESET_CONTROL.TX_DATA_RST.hwclr = tx_data_queue_reg_rst_we_i & !tx_data_queue_reg_rst_data_i;
     if (tx_data_queue_full_i && hwif_tti_i.TX_DATA_PORT.req) begin
       tx_data_queue_req_o = '0;
       tx_data_queue_data_o = '0;
@@ -210,8 +206,7 @@ module tti
     end
 
     // IBI_PORT
-    hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.we = ibi_queue_reg_rst_we_i;
-    hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.next = ibi_queue_reg_rst_data_i;
+    hwif_tti_o.RESET_CONTROL.IBI_QUEUE_RST.hwclr = ibi_queue_reg_rst_we_i & !ibi_queue_reg_rst_data_i;
     if (ibi_queue_full_i && hwif_tti_i.IBI_PORT.req) begin
       ibi_queue_req_o = '0;
       ibi_queue_data_o = '0;
@@ -247,8 +242,7 @@ module tti
 
   always_comb begin : wire_unconnected_regs
 
-    hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
-    hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
+    hwif_tti_o.RESET_CONTROL.SOFT_RST.hwclr = '0;
 
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = '0;
     hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = '0;

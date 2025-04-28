@@ -205,17 +205,10 @@ module hci
     txrst = hwif_base_i.RESET_CONTROL.TX_FIFO_RST.value;
     resprst = hwif_base_i.RESET_CONTROL.RESP_QUEUE_RST.value;
 
-    hwif_base_o.RESET_CONTROL.CMD_QUEUE_RST.we = cmd_reset_ctrl_we;
-    hwif_base_o.RESET_CONTROL.CMD_QUEUE_RST.next = cmd_reset_ctrl_next;
-
-    hwif_base_o.RESET_CONTROL.RX_FIFO_RST.we = rx_reset_ctrl_we;
-    hwif_base_o.RESET_CONTROL.RX_FIFO_RST.next = rx_reset_ctrl_next;
-
-    hwif_base_o.RESET_CONTROL.TX_FIFO_RST.we = tx_reset_ctrl_we;
-    hwif_base_o.RESET_CONTROL.TX_FIFO_RST.next = tx_reset_ctrl_next;
-
-    hwif_base_o.RESET_CONTROL.RESP_QUEUE_RST.we = resp_reset_ctrl_we;
-    hwif_base_o.RESET_CONTROL.RESP_QUEUE_RST.next = resp_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.CMD_QUEUE_RST.hwclr = cmd_reset_ctrl_we & !cmd_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.RX_FIFO_RST.hwclr = rx_reset_ctrl_we & !rx_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.TX_FIFO_RST.hwclr = tx_reset_ctrl_we & !tx_reset_ctrl_next;
+    hwif_base_o.RESET_CONTROL.RESP_QUEUE_RST.hwclr = resp_reset_ctrl_we & !resp_reset_ctrl_next;
 
     // Threshold
     hwif_pio_control_o.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = cmd_ready_thld_we;
@@ -393,9 +386,8 @@ module hci
   logic [HciIbiDataWidth-1:0] hci_ibi_rd_data;
 
   always_comb begin
-    hci_ibi_rst = hwif_base_i.RESET_CONTROL.IBI_QUEUE_RST.value;
-    hwif_base_o.RESET_CONTROL.IBI_QUEUE_RST.we = hci_ibi_rst_we;
-    hwif_base_o.RESET_CONTROL.IBI_QUEUE_RST.next = hci_ibi_rst_next;
+    hci_ibi_rst = hwif_out_o.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.value;
+    hwif_base_o.RESET_CONTROL.IBI_QUEUE_RST.hwclr = hci_ibi_rst_we & !hci_ibi_rst_next;
 
     hci_ibi_thld = hwif_pio_control_i.QUEUE_THLD_CTRL.IBI_STATUS_THLD.value;
 

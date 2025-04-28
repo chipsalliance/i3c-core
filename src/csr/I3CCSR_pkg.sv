@@ -782,33 +782,27 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__STATUS__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DATA_RST__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DATA_RST__in_t;
 
     typedef struct packed{
-        logic next;
-        logic we;
+        logic hwclr;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__in_t;
 
     typedef struct packed{

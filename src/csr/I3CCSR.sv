@@ -5196,8 +5196,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next = next_c;
@@ -5222,8 +5222,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value & ~decoded_wr_biten[1:1]) | (decoded_wr_data[1:1] & decoded_wr_biten[1:1]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next = next_c;
@@ -5248,8 +5248,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value & ~decoded_wr_biten[2:2]) | (decoded_wr_data[2:2] & decoded_wr_biten[2:2]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next = next_c;
@@ -5274,8 +5274,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value & ~decoded_wr_biten[3:3]) | (decoded_wr_data[3:3] & decoded_wr_biten[3:3]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next = next_c;
@@ -5300,8 +5300,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value & ~decoded_wr_biten[4:4]) | (decoded_wr_data[4:4] & decoded_wr_biten[4:4]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next = next_c;
@@ -5326,8 +5326,8 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value & ~decoded_wr_biten[5:5]) | (decoded_wr_data[5:5] & decoded_wr_biten[5:5]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.we) begin // HW Write - we
-            next_c = hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next;
+        end else if(hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.hwclr) begin // HW Clear
+            next_c = '0;
             load_next_c = '1;
         end
         field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next = next_c;
