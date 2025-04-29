@@ -62,6 +62,7 @@ async def test_width_converter_8ton_converter(dut):
 
     # Reset
     dut.rst_ni.value = 0
+    dut.soft_reset_ni.value = 1
     dut.sink_flush_i = 0
     dut.sink_valid_i = 0
     await ClockCycles(dut.clk_i, 5)

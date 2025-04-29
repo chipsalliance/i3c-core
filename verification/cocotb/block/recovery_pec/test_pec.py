@@ -37,6 +37,7 @@ async def test_pec(dut):
     await cocotb.start(clock.start())
 
     dut.rst_ni.value = 0
+    dut.soft_reset_ni.value = 1
     dut.valid_i = 0
     dut.init_i = 0
 

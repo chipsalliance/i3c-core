@@ -13,6 +13,7 @@ module width_converter_Nto8 #(
 
     input logic clk_i,
     input logic rst_ni,
+    input logic soft_reset_ni,
 
     input  logic             sink_valid_i,
     output logic             sink_ready_o,
@@ -33,9 +34,13 @@ module width_converter_Nto8 #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
-      if ((bcnt != '0) & source_flush_i) bcnt <= '0;
-      else if ((bcnt == '0) & sink_valid_i & sink_ready_o & ~source_flush_i) bcnt <= Bytes;
-      else if ((bcnt != '0) & source_valid_o & source_ready_i) bcnt <= bcnt - 1;
+      if (!soft_reset_ni) begin
+        bcnt <= '0;
+      end else begin
+        if ((bcnt != '0) & source_flush_i) bcnt <= '0;
+        else if ((bcnt == '0) & sink_valid_i & sink_ready_o & ~source_flush_i) bcnt <= Bytes;
+        else if ((bcnt != '0) & source_valid_o & source_ready_i) bcnt <= bcnt - 1;
+      end
     end
 
   // Valid / ready
@@ -48,9 +53,13 @@ module width_converter_Nto8 #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
-      if (source_flush_i) sreg <= '0;
-      else if ((bcnt == '0) & sink_valid_i & sink_ready_o) sreg <= sink_data_i;
-      else if ((bcnt != '0) & source_valid_o & source_ready_i) sreg <= Width'(sreg >> 8);
+      if (!soft_reset_ni) begin
+        sreg <= '0;
+      end else begin
+        if (source_flush_i) sreg <= '0;
+        else if ((bcnt == '0) & sink_valid_i & sink_ready_o) sreg <= sink_data_i;
+        else if ((bcnt != '0) & source_valid_o & source_ready_i) sreg <= Width'(sreg >> 8);
+      end
     end
 
   // Data output
