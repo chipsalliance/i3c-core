@@ -361,7 +361,8 @@ module recovery_handler
 
   ) tti_conv_8toN (
       .clk_i,
-      .rst_ni(rst_ni & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(~bypass_i3c_core_i),
 
       .sink_valid_i(tti_rx_data_queue_wvalid),
       .sink_ready_o(tti_rx_data_queue_wready),
@@ -378,7 +379,8 @@ module recovery_handler
 
   ) tti_conv_Nto8 (
       .clk_i,
-      .rst_ni(rst_ni & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(~bypass_i3c_core_i),
 
       .sink_valid_i(tti_tx_data_queue_rvalid_conv_sink),
       .sink_ready_o(tti_tx_data_queue_rready_conv_sink),
@@ -833,7 +835,8 @@ module recovery_handler
 
   recovery_pec xrecovery_rx_pec (
       .clk_i,
-      .rst_ni(rst_ni & !rx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(!rx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
 
       .dat_i  (rx_pec_data),
       .valid_i(rx_pec_valid | virtual_device_cec_shreg[0]),
@@ -854,7 +857,9 @@ module recovery_handler
   // Recovery packet reception handler
   recovery_receiver xrecovery_receiver (
       .clk_i,
-      .rst_ni(rst_ni & recovery_enable & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .recovery_enable_i(recovery_enable),
+      .bypass_i3c_core_i(bypass_i3c_core_i),
 
       .desc_valid_i(recv_tti_rx_desc_valid),
       .desc_ready_o(recv_tti_rx_desc_ready),
@@ -909,7 +914,8 @@ module recovery_handler
 
   recovery_pec xrecovery_tx_pec (
       .clk_i,
-      .rst_ni(rst_ni & !tx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(!tx_pec_clear & recovery_enable & ~bypass_i3c_core_i),
 
       .dat_i  (tx_pec_data),
       .valid_i(tx_pec_valid),
@@ -930,7 +936,8 @@ module recovery_handler
   // Recovery packet transmitter
   recovery_transmitter xrecovery_transmitter (
       .clk_i,
-      .rst_ni(rst_ni & recovery_enable & ~bypass_i3c_core_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(recovery_enable & ~bypass_i3c_core_i),
 
       .desc_valid_o(send_tti_tx_desc_valid),
       .desc_ready_i(send_tti_tx_desc_ready),
@@ -1101,7 +1108,8 @@ module recovery_handler
       .CsrDataWidth      (CsrDataWidth)
   ) xrecovery_executor (
       .clk_i,
-      .rst_ni(rst_ni & (recovery_enable | bypass_i3c_core_i)),
+      .rst_ni(rst_ni),
+      .recovery_enable_i(recovery_enable),
 
       .cmd_valid_i(exec_cmd_valid),
       .cmd_is_rd_i(exec_cmd_is_rd),

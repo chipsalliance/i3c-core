@@ -10,6 +10,7 @@ module recovery_pec (
 
     input logic clk_i,
     input logic rst_ni,
+    input logic soft_reset_ni,
 
     input  logic       valid_i,  // Data valid
     input  logic       init_i,   // When 1 assume that previous CRC was 0
@@ -36,9 +37,12 @@ module recovery_pec (
   assign crc_i = (init_i) ? 8'h00 : crc_o;
 
   // Output register
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni)
       crc_o <= 8'h00;  // FIXME: The recovery spec doesn't define CRC init value, assuming 0
-    else if (valid_i) crc_o <= crc_x;
+    else begin
+      if (!soft_reset_ni) crc_o <= 8'h00;
+      else if (valid_i) crc_o <= crc_x;
+    end
 
 endmodule

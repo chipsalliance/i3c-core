@@ -17,6 +17,8 @@ module recovery_executor
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)
 
+    input logic recovery_enable_i,
+
     // Command interface
     input  logic        cmd_valid_i,
     input  logic        cmd_is_rd_i,
@@ -157,6 +159,9 @@ module recovery_executor
   logic payload_available_q;
   assign payload_available_o = payload_available_q;
 
+  logic soft_reset;
+  assign soft_reset = ~(recovery_enable_i | bypass_i3c_core_i);
+
   // Bypass of SW write to W1C registers
   logic sw_device_reset_ctrl_swmod;
   logic sw_recovery_ctrl_activate_rec_img_swmod;
@@ -178,9 +183,15 @@ module recovery_executor
       sw_recovery_ctrl_activate_rec_img_swmod <= '0;
       sw_indirect_fifo_ctrl_reset_swmod <= '0;
     end else begin
-      sw_device_reset_ctrl_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.swmod;
-      sw_recovery_ctrl_activate_rec_img_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.swmod;
-      sw_indirect_fifo_ctrl_reset_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.swmod;
+      if (soft_reset) begin
+          sw_device_reset_ctrl_swmod <= '0;
+          sw_recovery_ctrl_activate_rec_img_swmod <= '0;
+          sw_indirect_fifo_ctrl_reset_swmod <= '0;
+      end else begin
+          sw_device_reset_ctrl_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.swmod;
+          sw_recovery_ctrl_activate_rec_img_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.swmod;
+          sw_indirect_fifo_ctrl_reset_swmod <= hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.swmod;
+      end
     end
   end
 
@@ -220,7 +231,10 @@ module recovery_executor
   // State transition
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) state_q <= Idle;
-    else state_q <= state_d;
+    else begin
+      if (soft_reset) state_q <= Idle;
+      else state_q <= state_d;
+    end
 
   // Next state
   always_comb begin
@@ -522,8 +536,13 @@ module recovery_executor
       fifo_full_r  <= '0;
       fifo_empty_r <= '1;
     end else begin
-      fifo_full_r  <= indirect_rx_full_i;
-      fifo_empty_r <= indirect_rx_empty_i;
+      if (soft_reset) begin
+        fifo_full_r  <= '0;
+        fifo_empty_r <= '1;
+      end else begin
+        fifo_full_r  <= indirect_rx_full_i;
+        fifo_empty_r <= indirect_rx_empty_i;
+      end
     end
 
   always_comb begin
@@ -626,12 +645,17 @@ module recovery_executor
   always_ff @(posedge clk_i or negedge rst_ni) begin : collect_prev_tti_rx_data
     if (~rst_ni) begin
       prev_tti_rx_rdata <= '0;
-    end else if (tti_rx_rack_i) begin
-      prev_tti_rx_rdata <= tti_rx_rdata_i;
     end else begin
-      prev_tti_rx_rdata <= prev_tti_rx_rdata;
+      if (soft_reset) begin
+        prev_tti_rx_rdata <= '0;
+      end else
+        if (tti_rx_rack_i) begin
+          prev_tti_rx_rdata <= tti_rx_rdata_i;
+        end else begin
+          prev_tti_rx_rdata <= prev_tti_rx_rdata;
+        end
+      end
     end
-  end
 
   // CSR write. Only applicable for writable CSRs as per the OCP
   // recovery spec.
@@ -705,10 +729,14 @@ module recovery_executor
   always_ff @(posedge clk_i or negedge rst_ni) begin : fifo_reg_reset_on_write
     if (~rst_ni) begin
       fifo_reg_reset_clear <= '0;
-    end else if (|hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value) begin
-      fifo_reg_reset_clear <= 1'b1;
-    end else begin
+    end else if (soft_reset) begin
       fifo_reg_reset_clear <= '0;
+    end else begin
+      if (|hwif_rec_i.INDIRECT_FIFO_CTRL_0.RESET.value) begin
+        fifo_reg_reset_clear <= 1'b1;
+      end else begin
+        fifo_reg_reset_clear <= '0;
+      end
     end
   end
 
@@ -818,9 +846,13 @@ module recovery_executor
 
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) payload_available_q <= 1'b0;
-    else if (payload_high_en) payload_available_q <= 1'b1;
-    else if (indirect_rx_empty_i) payload_available_q <= 1'b0;
-    else payload_available_q <= payload_available_q;
+    else if (soft_reset) begin
+      payload_available_q <= 1'b0;
+    end else begin
+      if (payload_high_en) payload_available_q <= 1'b1;
+      else if (indirect_rx_empty_i) payload_available_q <= 1'b0;
+      else payload_available_q <= payload_available_q;
+    end
 
   // Image activation logic.
   assign image_activated_o = (hwif_rec_i.RECOVERY_CTRL.ACTIVATE_REC_IMG.value == 8'h0F);

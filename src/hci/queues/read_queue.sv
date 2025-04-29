@@ -47,7 +47,6 @@ module read_queue #(
     output logic reg_rst_data_o
 );
 
-  logic rst;
   logic fifo_clr;
   logic [FifoDepthWidth-1:0] fifo_depth;
   logic fifo_rvalid;
@@ -55,8 +54,6 @@ module read_queue #(
   logic [DataWidth-1:0] fifo_rdata;
 
   logic [FifoDepthWidth-1:0] empty_entries;
-
-  assign rst = ~rst_ni | reg_rst_i;
 
   assign fifo_clr = reg_rst_i;
   assign reg_rst_data_o = 1'b0;
@@ -116,23 +113,29 @@ module read_queue #(
     end
   end : csr_rst_control
 
-  always_ff @(posedge clk_i or posedge rst) begin : fifo_to_port
-    if (rst) begin : fifo_to_port_rst
+  always_ff @(posedge clk_i or negedge rst_ni) begin : fifo_to_port
+    if (!rst_ni) begin : fifo_to_port_rst
       fifo_rready <= '0;
       data_o <= '0;
       ack_o <= '0;
     end else begin : push_to_port
-      if (req_i) begin
-        fifo_rready <= 1'b1;
-      end
-
-      if (fifo_rready & fifo_rvalid) begin
-        fifo_rready <= 1'b0;
-        data_o <= fifo_rdata;
-        ack_o <= 1'b1;
-      end else begin
+      if (reg_rst_i) begin
+        fifo_rready <= '0;
         data_o <= '0;
-        ack_o  <= 1'b0;
+        ack_o <= '0;
+      end else begin
+        if (req_i) begin
+          fifo_rready <= 1'b1;
+        end
+
+        if (fifo_rready & fifo_rvalid) begin
+          fifo_rready <= 1'b0;
+          data_o <= fifo_rdata;
+          ack_o <= 1'b1;
+        end else begin
+          data_o <= '0;
+          ack_o  <= 1'b0;
+        end
       end
     end : push_to_port
   end : fifo_to_port

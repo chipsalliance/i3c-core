@@ -6,6 +6,8 @@ module recovery_receiver
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)
+    input logic recovery_enable_i,
+    input logic bypass_i3c_core_i,
 
     // TTI RX descriptor
     input  logic                          desc_valid_i,
@@ -71,10 +73,19 @@ module recovery_receiver
 
   state_e state_q, state_d;
 
+  logic recovery_enable;
+  logic bypass_i3c_core;
+
+  assign recovery_enable = ~recovery_enable_i;
+  assign bypass_i3c_core = bypass_i3c_core_i;
+
   // State transition
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) state_q <= Idle;
-    else state_q <= state_d;
+    else begin
+      if (recovery_enable | bypass_i3c_core) state_q <= Idle;
+      else state_q <= state_d;
+    end
 
   always_comb begin
     state_d = state_q;
@@ -126,32 +137,44 @@ module recovery_receiver
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bus_start_r <= '0;
     else
-      unique case (state_q)
-        CmdIsRd, Cmd, Busy: begin
-          if (bus_start_i) bus_start_r <= '1;
-        end
-        default: bus_start_r <= '0;
-      endcase
+      if (bypass_i3c_core | recovery_enable) bus_start_r <= '0;
+      else begin
+        unique case (state_q)
+          CmdIsRd, Cmd, Busy: begin
+            if (bus_start_i) bus_start_r <= '1;
+          end
+          default: bus_start_r <= '0;
+        endcase
+      end
 
   // Data ready
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_ready_o <= '0;
     else
-      unique case (state_q)
-        RxCmd:   data_ready_o <= 1'b1;
-        RxPec:   if (rx_flow) data_ready_o <= '0;
-        default: data_ready_o <= data_ready_o;
-      endcase
+      if (bypass_i3c_core | recovery_enable) data_ready_o <= '0;
+      else begin
+        unique case (state_q)
+          RxCmd:   data_ready_o <= 1'b1;
+          RxPec:   if (rx_flow) data_ready_o <= '0;
+          default: data_ready_o <= data_ready_o;
+        endcase
+      end
 
   // Data queue mux select
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_queue_select_o <= 1'b1;
-    else if (state_q == RxData) data_queue_select_o <= (data_queue_flow_i & dcnt == 1);
+    else begin
+      if (bypass_i3c_core | recovery_enable) data_queue_select_o <= 1'b1;
+      else if (state_q == RxData) data_queue_select_o <= (data_queue_flow_i & dcnt == 1);
+    end
 
   // Data queue flush signal. Flush if data length is not divisible by 4
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) data_queue_flush_o <= 1'b0;
-    else data_queue_flush_o <= (state_q == Cmd) && |(len_lsb[1:0]);
+    else begin
+      if (bypass_i3c_core | recovery_enable) data_queue_flush_o <= 1'b1;
+      else data_queue_flush_o <= (state_q == Cmd) && |(len_lsb[1:0]);
+    end
 
   // Data counter
   always_ff @(posedge clk_i)
@@ -170,29 +193,36 @@ module recovery_receiver
       len_lsb   <= '0;
       len_msb   <= '0;
     end else begin
-      cmd_cmd_o <= cmd_cmd_o;
-      len_lsb   <= len_lsb;
-      len_msb   <= len_msb;
-      pec_recv  <= pec_recv;
-      unique case (state_q)
-        RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
-        RxLenL: if (rx_flow) len_lsb <= data_data_i;
-        RxLenH: if (rx_flow) len_msb <= data_data_i;
-        RxPec:  if (rx_flow) pec_recv <= data_data_i;
+      if (bypass_i3c_core | recovery_enable) begin
+        pec_recv  <= '0;
+        cmd_cmd_o <= '0;
+        len_lsb   <= '0;
+        len_msb   <= '0;
+      end else begin
+        cmd_cmd_o <= cmd_cmd_o;
+        len_lsb   <= len_lsb;
+        len_msb   <= len_msb;
+        pec_recv  <= pec_recv;
+        unique case (state_q)
+          RxCmd:  if (rx_flow) cmd_cmd_o <= data_data_i;
+          RxLenL: if (rx_flow) len_lsb <= data_data_i;
+          RxLenH: if (rx_flow) len_msb <= data_data_i;
+          RxPec:  if (rx_flow) pec_recv <= data_data_i;
 
-        CmdIsRd: begin
-          len_lsb  <= '0;
-          len_msb  <= '0;
-          pec_recv <= len_lsb;
-        end
+          CmdIsRd: begin
+            len_lsb  <= '0;
+            len_msb  <= '0;
+            pec_recv <= len_lsb;
+          end
 
-        default: begin
-          cmd_cmd_o <= cmd_cmd_o;
-          len_lsb   <= len_lsb;
-          len_msb   <= len_msb;
-          pec_recv  <= pec_recv;
-        end
-      endcase
+          default: begin
+            cmd_cmd_o <= cmd_cmd_o;
+            len_lsb   <= len_lsb;
+            len_msb   <= len_msb;
+            pec_recv  <= pec_recv;
+          end
+        endcase
+      end
     end
   end
 
@@ -204,11 +234,15 @@ module recovery_receiver
     if (!rst_ni) begin
       pec_calc <= 0;
     end else begin
-      unique case (state_q)
-        RxPec:   if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
-        RxLenL:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
-        default: pec_calc <= pec_calc;
-      endcase
+      if (bypass_i3c_core | recovery_enable) begin
+        pec_calc <= 0;
+      end else begin
+        unique case (state_q)
+          RxPec:   if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a write command
+          RxLenL:  if (rx_flow) pec_calc <= pec_crc_i;  // PEC of a read command
+          default: pec_calc <= pec_calc;
+        endcase
+      end
     end
 
   // PEC comparator
@@ -220,10 +254,15 @@ module recovery_receiver
       cmd_valid_o <= '0;
       cmd_is_rd_o <= '0;
     end else begin
-      cmd_valid_o <= (state_q == Cmd);
+      if (bypass_i3c_core | recovery_enable) begin
+        cmd_valid_o <= '0;
+        cmd_is_rd_o <= '0;
+      end else begin
+        cmd_valid_o <= (state_q == Cmd);
 
-      if (state_q == CmdIsRd) cmd_is_rd_o <= 1'b1;
-      if (state_q == Idle) cmd_is_rd_o <= '0;
+        if (state_q == CmdIsRd) cmd_is_rd_o <= 1'b1;
+        if (state_q == Idle) cmd_is_rd_o <= '0;
+      end
     end
 
   assign cmd_len_o = {len_msb, len_lsb};

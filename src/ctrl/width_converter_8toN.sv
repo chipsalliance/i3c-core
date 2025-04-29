@@ -15,6 +15,7 @@ module width_converter_8toN #(
 
     input logic clk_i,
     input logic rst_ni,
+    input logic soft_reset_ni,
 
     input  logic       sink_valid_i,
     output logic       sink_ready_o,
@@ -39,9 +40,13 @@ module width_converter_8toN #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) bcnt <= '0;
     else begin
-      if ((bcnt != '0) & sink_flush_i) bcnt <= s_bytes;
-      else if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) bcnt <= bcnt + 1;
-      else if ((bcnt == s_bytes) & source_valid_o & source_ready_i) bcnt <= '0;
+      if (!soft_reset_ni) begin
+        bcnt <= '0;
+      end else begin
+        if ((bcnt != '0) & sink_flush_i) bcnt <= s_bytes;
+        else if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) bcnt <= bcnt + 1;
+        else if ((bcnt == s_bytes) & source_valid_o & source_ready_i) bcnt <= '0;
+      end
     end
 
   // Valid / ready
@@ -54,9 +59,13 @@ module width_converter_8toN #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) sreg <= '0;
     else begin
-      if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) sreg[(BytesW)'(bcnt)*8+:8] <= sink_data_i;
-      else if ((bcnt == s_bytes) & source_valid_o & source_ready_i)
-        sreg <= '0;  // Clear the reg not to leak data
+      if (!soft_reset_ni) begin
+        sreg <= '0;
+      end else begin
+        if ((bcnt != s_bytes) & sink_valid_i & sink_ready_o) sreg[(BytesW)'(bcnt)*8+:8] <= sink_data_i;
+        else if ((bcnt == s_bytes) & source_valid_o & source_ready_i)
+          sreg <= '0;  // Clear the reg not to leak data
+      end
     end
 
   // Data output

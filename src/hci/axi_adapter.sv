@@ -119,13 +119,8 @@ module axi_adapter #(
   genvar j;
   for (j = 0; j < NumPrivIds; j = j + 1) begin : g_match_id
     always_comb begin
-      if (!rst_ni) begin
-        rsel[j] = '0;
-        wsel[j] = '0;
-      end else begin
-        rsel[j] = aruser_i == priv_ids_i[j];
-        wsel[j] = awuser_i == priv_ids_i[j];
-      end
+      rsel[j] = aruser_i == priv_ids_i[j];
+      wsel[j] = awuser_i == priv_ids_i[j];
     end
   end
 

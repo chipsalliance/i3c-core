@@ -62,6 +62,7 @@ async def test_width_converter_nto8_converter(dut):
 
     # Reset
     dut.rst_ni.value = 0
+    dut.soft_reset_ni.value = 1
     dut.sink_valid_i.value = 0
     dut.source_ready_i.value = 0
     dut.source_flush_i.value = 0

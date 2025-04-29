@@ -5,6 +5,7 @@ module recovery_transmitter
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Reset (active low)
+    input logic soft_reset_ni,
 
     // TTI TX descriptor
     output logic                          desc_valid_o,
@@ -62,7 +63,10 @@ module recovery_transmitter
   // State transition
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) state_q <= Idle;
-    else state_q <= state_d;
+    else begin
+      if (!soft_reset_ni) state_q <= Idle;
+      else state_q <= state_d;
+    end
 
   // Next state
   always_comb begin

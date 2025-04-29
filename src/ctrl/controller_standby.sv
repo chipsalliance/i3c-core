@@ -263,6 +263,7 @@ module controller_standby
   (
     .clk_i(clk_i),
     .rst_ni(rst_ni),
+    .soft_reset_ni(1'b1),
 
     .sink_valid_i(i2c_rx_queue_wvalid_int),
     .sink_ready_o(rx_queue_wready_int),
@@ -284,6 +285,7 @@ module controller_standby
 
     .clk_i(clk_i),
     .rst_ni(rst_ni),
+    .soft_reset_ni(1'b1),
 
     .sink_valid_i(tx_queue_rvalid_i),
     .sink_ready_o(i2c_tx_queue_rready_o),
