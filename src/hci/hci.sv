@@ -285,17 +285,11 @@ module hci
     hwif_in.PIOControl.COMMAND_PORT.wr_ack = cmd_wr_ack;
     cmd_wr_data = hwif_out_o.PIOControl.COMMAND_PORT.wr_data;
 
-    // Writing data to the rx port
-    hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
-    hwif_in.PIOControl.RX_DATA_PORT.rd_data = rx_rd_data;
 
     // Reading data from the tx port
     hwif_in.PIOControl.TX_DATA_PORT.wr_ack = tx_wr_ack;
     tx_wr_data = hwif_out_o.PIOControl.TX_DATA_PORT.wr_data;
 
-    // Writing response to the resp port
-    hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
-    hwif_in.PIOControl.RESPONSE_PORT.rd_data = resp_rd_data;
 
     // DXT
     hwif_in.DAT = dat_i;
@@ -303,6 +297,24 @@ module hci
     dat_o = hwif_out_o.DAT;
     dct_o = hwif_out_o.DCT;
   end : wire_hwif
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin: hci_data_ff
+    if (!rst_ni) begin
+      // Writing data to the rx port
+      hwif_in.PIOControl.RX_DATA_PORT.rd_ack = '0;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_data = '0;
+      // Writing response to the resp port
+      hwif_in.PIOControl.RESPONSE_PORT.rd_ack = '0;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_data = '0;
+    end else begin
+      // Writing data to the rx port
+      hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_data = rx_rd_data;
+      // Writing response to the resp port
+      hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_data = resp_rd_data;
+    end
+  end
 
   always_comb begin : wire_hwif_rstact
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_valid_i ? rst_action_i : '0;
