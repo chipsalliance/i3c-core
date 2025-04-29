@@ -301,18 +301,18 @@ module hci
   always_ff @(posedge clk_i or negedge rst_ni) begin: hci_data_ff
     if (!rst_ni) begin
       // Writing data to the rx port
-      hwif_in.PIOControl.RX_DATA_PORT.rd_ack = '0;
-      hwif_in.PIOControl.RX_DATA_PORT.rd_data = '0;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_ack <= '0;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_data <= '0;
       // Writing response to the resp port
-      hwif_in.PIOControl.RESPONSE_PORT.rd_ack = '0;
-      hwif_in.PIOControl.RESPONSE_PORT.rd_data = '0;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_ack <= '0;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_data <= '0;
     end else begin
       // Writing data to the rx port
-      hwif_in.PIOControl.RX_DATA_PORT.rd_ack = rx_rd_ack;
-      hwif_in.PIOControl.RX_DATA_PORT.rd_data = rx_rd_data;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_ack <= rx_rd_ack;
+      hwif_in.PIOControl.RX_DATA_PORT.rd_data <= rx_rd_data;
       // Writing response to the resp port
-      hwif_in.PIOControl.RESPONSE_PORT.rd_ack = resp_rd_ack;
-      hwif_in.PIOControl.RESPONSE_PORT.rd_data = resp_rd_data;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_ack <= resp_rd_ack;
+      hwif_in.PIOControl.RESPONSE_PORT.rd_data <= resp_rd_data;
     end
   end
 
