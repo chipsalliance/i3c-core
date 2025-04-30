@@ -57,17 +57,36 @@ Activate script creates a virtual environment with Python3.11 and installs pytho
 
 ## Verification
 
-This core is verified by 2 approaches:
-* rapid tests written in cocotb
-* UVM test suite
+Tools used for the core verification
 
-To check if the environment is properly configured, run tests:
+* Simulation:
+
+  * VCS R-2020.12-SP2-8
+  * Verilator v5.024
+
+* Lint:
+
+  * Spyglass VC Static U-2023.03-SP2-4
+
+* RDC:
+
+  * Spyglass VC Static U-2023.03-SP2-4
+  * MeridianRDC 2022.A.P10.2.RDC for RHEL7.0-64, Rev 189206
+
+This core is verified with the following set of tests:
+* rapid tests written in cocotb
+* Avery I3C VIP based tests
+* [Selected tests](doc/cts-list.md) from the Avery I3C Compliance Test Suite
+
+To check if the environment is properly configured, run the cocotb tests:
 
 ```{bash}
 make tests
 ```
 
 More details can be found in [`verification README`](./verification/README.md).
+
+Coverage data is available in [GitHub pages](https://chipsalliance.github.io/i3c-core/coverview.html?path=release-v2.0.zip).
 
 ## Tools
 
