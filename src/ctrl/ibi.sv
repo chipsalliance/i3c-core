@@ -61,6 +61,7 @@ module ibi (
 
     // Bus drive interface
     input  logic [19:0] t_hd_dat_i,
+    input logic arbitration_lost_i,
     output logic sda_o
 );
 
@@ -140,6 +141,7 @@ module ibi (
         DriveAddr:
         if (bus_stop_i) state_q <= Done;
         else if (bus_tx_done_i) state_q <= ReadAck;
+        else if (arbitration_lost_i) state_q <= WaitStopOrRstart;
 
         ReadAck:
         if (bus_stop_i) state_q <= Done;

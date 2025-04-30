@@ -20,5 +20,6 @@
 | pvt_read       | 5.1.2.3.3 Ninth Bit of SDR Slave Returned (Read) Data as End-of-Data              |
 | pvt_write      | 5.1.2.3.1 Transition from Address ACK to SDR Master Write Data                    |
 | slv_intr_req   | 5.1.6 In-Band Interrupt <br /> 5.1.6.2 I3C Slave Interrupt Request                |
+| slv_addr_arb   | 5.1.2.2.1 I3C Address Arbitration <br /> 5.1.6 In-Band Interrupt                  |
 
 
