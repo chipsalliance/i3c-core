@@ -802,7 +802,7 @@ the output data matches the input.
 
 ### `flush`
 
-Test: [width_converter_8ton_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L59)
+Test: [width_converter_8ton_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L60)
 
 Feeds M bytes to the module where M is in [1, 2, 3]. Asserts the
 sink_flush_i signal, receives the output word and checks if it
@@ -828,7 +828,7 @@ matches the input.
 
 ### `flush`
 
-Test: [width_converter_nto8_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L53)
+Test: [width_converter_nto8_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L54)
 
 Feeds an N-bit word to the module. Receives M bytes where M is in
 [1, 2, 3] and asserts source_flush_i. Verifies that the module
