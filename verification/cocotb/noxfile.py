@@ -355,8 +355,6 @@ def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
         ["tests", "ahb", "target"],
         ["i3c_ahb"],
         [
-            "test_i3c_target",
-            "test_recovery",
             "test_interrupts",
             # "test_enter_exit_hdr_mode",
             "test_target_reset",
@@ -371,11 +369,31 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
 
 @test(
     TestParams(
+        ["tests", "ahb", "target"],
+        ["i3c_ahb"],
+        ["test_i3c_target"],
+    )
+)
+def i3c_ahb_target_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
+        ["tests", "ahb", "target"],
+        ["i3c_ahb"],
+        ["test_recovery"],
+    )
+)
+def i3c_ahb_recovery_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
         ["tests", "axi", "target"],
         ["i3c_axi"],
         [
-            "test_i3c_target",
-            "test_recovery",
             # "test_enter_exit_hdr_mode",
             "test_target_reset",
             "test_ccc",
@@ -385,6 +403,28 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
     )
 )
 def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
+        ["tests", "axi", "target"],
+        ["i3c_axi"],
+        ["test_i3c_target"],
+    )
+)
+def i3c_axi_target_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
+        ["tests", "axi", "target"],
+        ["i3c_axi"],
+        ["test_recovery"],
+    )
+)
+def i3c_axi_recovery_verify(session, test_group, test_name, coverage, simulator):
     verify_top(session, test_group, test_name, coverage, simulator)
 
 
