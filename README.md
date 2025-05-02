@@ -86,7 +86,7 @@ make tests
 
 More details can be found in [`verification README`](./verification/README.md).
 
-Coverage data is available in [GitHub pages](https://chipsalliance.github.io/i3c-core/coverview.html?path=release-v2.0.zip).
+Coverage data is available in [GitHub pages](https://chipsalliance.github.io/i3c-core/coverview.html).
 
 ## Tools
 
