@@ -82,10 +82,10 @@ package i3c_pkg;
     NotSupported = 4'b1010,
     Reserved = 4'b1011,
     // Transfer Type Specific Errors
-    C = 4'b1100,
-    D = 4'b1101,
-    E = 4'b1110,
-    F = 4'b1111
+    ErrorC = 4'b1100,
+    ErrorD = 4'b1101,
+    ErrorE = 4'b1110,
+    ErrorF = 4'b1111
   } i3c_resp_err_status_e;
 
   // Response descriptor (See TCRI 7.1.3 Table 11)
