@@ -18,7 +18,7 @@ for (( i=1; i<="${SIM_TRIES}"; i++ )); do
     "$@" 2>&1 | tee "${TEMP_LOGS}/${i}"
     RESULT=$?
 
-    if [ -n "${SIM_RETRY_CONDITION}" ] && [ $RESULT != 0 ]; then
+    if [[ -n "${SIM_RETRY_CONDITION}" && ( $RESULT != 0 || $SIM_RETRY_IGNORE_EXIT_CODE = 1 ) ]]; then
         if grep -E "${SIM_RETRY_CONDITION}" "${TEMP_LOGS}/${i}" &> /dev/null; then
             echo "Retry condition encountered. Retrying in ${RETRY_COOLDOWN}s"
             echo ''
