@@ -14,6 +14,7 @@ override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = axi_adapter_wrapper
+override CFG_NAME = axi
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \

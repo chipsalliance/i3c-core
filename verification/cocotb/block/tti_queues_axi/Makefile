@@ -11,6 +11,7 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = hci_queues_wrapper
+override CFG_NAME = axi
 
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))

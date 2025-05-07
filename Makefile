@@ -96,30 +96,25 @@ build-verilator:
 #
 # Tests
 #
-test: config ## Run single module test (use `TEST=<test_name>` flag)
+test: ## Run single module test (use `TEST=<test_name>` flag)
 	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -s $(TEST)_verify --no-venv --forcecolor
 
 tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
-	$(MAKE) config CFG_NAME=axi
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor
 
 tests-axi-ff: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage (input FF enabled)
-	$(MAKE) config CFG_NAME=axi_ff
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ff $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
 
 tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
-	$(MAKE) config CFG_NAME=ahb
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=ahb $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor
 
 tests-ahb-ff: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage (input FF enabled)
-	$(MAKE) config CFG_NAME=ahb_ff
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=ahb_ff $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
 tests-i2c: ## Run all I2C tests without coverage
-	$(MAKE) config CFG_NAME=ahb
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "i2c" --no-venv --forcecolor
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=ahb $(PYTHON) -m nox -R -t "i2c" --no-venv --forcecolor
 
 # TODO: Enable full coverage flow
 tests-coverage: ## Run all verification/block/* RTL tests with coverage

@@ -14,7 +14,7 @@ override PLUSARGS := $(strip +FrontendBusInterface=AHB $(PLUSARGS))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = ahb_if_wrapper
-CFG_NAME     = ahb
+override CFG_NAME = ahb
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \

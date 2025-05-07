@@ -12,7 +12,7 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_test_wrapper
-CFG_NAME     = ahb
+override CFG_NAME = ahb
 
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AHB $(PLUSARGS))
