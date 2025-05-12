@@ -2786,5 +2786,6 @@ reg_map = Munch.fromDict({
                 "hwclr": 0
             }
         }
-    }
+    },
+    "start_addr": 0
 })

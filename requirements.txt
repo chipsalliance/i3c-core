@@ -16,7 +16,7 @@ git+https://github.com/antmicro/testplanner.git
 -e ${I3C_ROOT_DIR}/tools/nox_utils
 -e ${I3C_ROOT_DIR}/tools/cocotb_helpers
 -e ${I3C_ROOT_DIR}/tools/vcd2pulseview
-${I3C_ROOT_DIR}/tools/peakrdl_cocotb
+git+https://github.com/antmicro/peakrdl-cocotb.git
 colorama==0.4.6
 colorlog==6.8.2
 comm==0.2.2
