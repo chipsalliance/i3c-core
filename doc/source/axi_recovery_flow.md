@@ -28,7 +28,9 @@ During the boot procedure the ROM will have to follow the following procedure:
 6. Push the recovery image to the recovery interface FIFOs:
 
    a. Read the `INDIRECT_FIFO_STATUS` register to determine remaining space in the indirect FIFO
-   b. If the indirect FIFO is not full, write a chunk of data to the `INDIRECT_FIFO_DATA` register
+
+   b. If the indirect FIFO is not full, write a chunk of data to the `TX_DATA_PORT` register
+
    c. The above steps should be repeated until the whole recovery image is written to the FIFO
 
 7. Activate the new image by writing to the `RECOVERY_CTRL` register
