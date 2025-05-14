@@ -441,9 +441,9 @@ During the boot procedure the ROM will have to follow the following procedure:</
 <li><p>Write to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CONTROL</span></code> register to set the recovery image configuration</p></li>
 <li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> register to set the recovery image size</p></li>
 <li><p>Push the recovery image to the recovery interface FIFOs:</p>
-<p>a. Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO
-b. If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_DATA</span></code> register
-c. The above steps should be repeated until the whole recovery image is written to the FIFO</p>
+<p>a. Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO</p>
+<p>b. If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">TX_DATA_PORT</span></code> register</p>
+<p>c. The above steps should be repeated until the whole recovery image is written to the FIFO</p>
 </li>
 <li><p>Activate the new image by writing to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register</p></li>
 <li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p></li>
@@ -484,7 +484,7 @@ All configurable registers are writable from software, read only registers provi
   <small>
     
       Last update:
-      2025-05-06
+      2025-05-14
     
   </small>
 </div>
