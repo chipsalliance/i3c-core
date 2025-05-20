@@ -14,6 +14,8 @@ The transactions to the core may be filtered using the AXI ID field (see {doc}`a
 
 The logic is implemented so that the recovery firmware in the Caliptra RoT ROM can operate without any changes.
 
+In order to enable setting W1C recovery registers, AXI recovery mode introduces additional register - `REC_INTF_REG_W1C_ACCESS`.
+
 ### AXI-based recovery procedure
 
 The Caliptra MCU RISC-V core is responsible for driving the data copied from an external memory (e.g. QSPI interface) to the recovery FIFOs.
@@ -33,7 +35,7 @@ During the boot procedure the ROM will have to follow the following procedure:
 
    c. The above steps should be repeated until the whole recovery image is written to the FIFO
 
-7. Activate the new image by writing to the `RECOVERY_CTRL` register
+7. Activate the new image setting `RECOVERY_CTRL` register by writing to the `REC_INTF_REG_W1C_ACCESS` register
 8. Read the `RECOVERY_STATUS` register to ensure the image has been activated
 
 The recovery image will be written in chunks with length equal to or less than `Max transfer size` defined in the `INDIRECT_FIFO_STATUS` register.
