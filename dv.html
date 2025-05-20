@@ -2938,7 +2938,7 @@ gets deasserted.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="recovery-flow"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#recovery-flow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L548">recovery_flow</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562">recovery_flow</a></p>
 <p>The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.</p>
 <p>The AHB/AXI agent is responsible for recovery operation from the
@@ -2963,8 +2963,8 @@ The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="check-csr-access"><code class="docutils literal notranslate"><span class="pre">check_csr_access</span></code><a class="headerlink" href="#check-csr-access" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L995">ocp_csr_access_bypass_enabled</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1000">ocp_csr_access_bypass_disabled</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1009">ocp_csr_access_bypass_enabled</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1014">ocp_csr_access_bypass_disabled</a></p></li>
 </ul>
 <p>Verify accessibility of CSRs as specified in the OCP Secure Firmware Recovery
 specification with additional bypass features</p>
@@ -2996,11 +2996,11 @@ specification with additional bypass features</p>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L208">indirect_fifo_underflow</a></p>
 <p>Verify that access is rejected when the Indirect FIFO Queue underflows</p>
 <h5 id="i3c-bus-traffic-during-loopback"><code class="docutils literal notranslate"><span class="pre">i3c_bus_traffic_during_loopback</span></code><a class="headerlink" href="#i3c-bus-traffic-during-loopback" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L463">i3c_bus_traffic_during_loopback</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L477">i3c_bus_traffic_during_loopback</a></p>
 <p>Verify that Recovery Handler with bypass enabled is not in any way interfered by any
 I3C bus traffic</p>
 <h5 id="check-axi-filtering"><code class="docutils literal notranslate"><span class="pre">check_axi_filtering</span></code><a class="headerlink" href="#check-axi-filtering" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L805">axi_filtering</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L819">axi_filtering</a></p>
 <p>Verify that AXI access to Secure Firmware Recovery registers is filtered</p>
 <ul class="simple">
 <li><p>AXI IDs from privileged ID list should always grant access to all registers</p></li>
@@ -3011,7 +3011,7 @@ should be rejected with SLVERR response and register access request should not b
 propagated to the CPUIF</p></li>
 </ul>
 <h5 id="id41"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#id41" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L548">recovery_flow</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562">recovery_flow</a></p>
 <p>Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
 as specified in the Caliptra Root of Trust specification</p>
 <h5 id="cptra-mcu-recovery"><code class="docutils literal notranslate"><span class="pre">cptra_mcu_recovery</span></code><a class="headerlink" href="#cptra-mcu-recovery" title="Link to this heading">¶</a></h5>
@@ -3046,7 +3046,7 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
   <small>
     
       Last update:
-      2025-05-14
+      2025-05-20
     
   </small>
 </div>

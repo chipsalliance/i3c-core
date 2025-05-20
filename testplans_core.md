@@ -584,7 +584,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `recovery_flow`
 
-Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L548)
+Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
 
 The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
@@ -620,8 +620,8 @@ Verify basic bypass functionality
 ### `check_csr_access`
 
 Tests:
-- [ocp_csr_access_bypass_enabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L995)
-- [ocp_csr_access_bypass_disabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1000)
+- [ocp_csr_access_bypass_enabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1009)
+- [ocp_csr_access_bypass_disabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1014)
 
 
 Verify accessibility of CSRs as specified in the OCP Secure Firmware Recovery
@@ -660,14 +660,14 @@ Verify that access is rejected when the Indirect FIFO Queue underflows
 
 ### `i3c_bus_traffic_during_loopback`
 
-Test: [i3c_bus_traffic_during_loopback](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L463)
+Test: [i3c_bus_traffic_during_loopback](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L477)
 
 Verify that Recovery Handler with bypass enabled is not in any way interfered by any
 I3C bus traffic
 
 ### `check_axi_filtering`
 
-Test: [axi_filtering](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L805)
+Test: [axi_filtering](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L819)
 
 Verify that AXI access to Secure Firmware Recovery registers is filtered
 - AXI IDs from privileged ID list should always grant access to all registers
@@ -679,7 +679,7 @@ Verify that AXI access to Secure Firmware Recovery registers is filtered
 
 ### `recovery_flow`
 
-Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L548)
+Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
 
 Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
 as specified in the Caliptra Root of Trust specification

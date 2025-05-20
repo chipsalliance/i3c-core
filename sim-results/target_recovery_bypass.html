@@ -1,7 +1,8 @@
 
 <center>
 <link rel='stylesheet' type='text/css' href='main.css'><link rel='stylesheet' type='text/css' href='cov.css'><h1>Simulation Results</h1>
-<h2>Run on 05/14/25/23/2025 20:23</h2>
+<h2>Run on 05/20/25/29/2025 17:29</h2>
+<p><a href="./testplan-summary.html">&lt;- back to summary</a></p>
 <h3>Test Results</h3>
 <table class="dv">
 <thead>
@@ -19,7 +20,7 @@
 <tr>
 <td align="center">simple_write_read</td>
 <td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L96">indirect_fifo_write</a></td>
-<td align="center">3.832</td>
+<td align="center">3.795</td>
 <td align="center">14700.010</td>
 <td align="center">2</td>
 <td align="center">2</td>
@@ -27,8 +28,8 @@
 </tr>
 <tr>
 <td align="center">check_csr_access</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L995">ocp_csr_access_bypass_enabled</a></td>
-<td align="center">0.118</td>
+<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1009">ocp_csr_access_bypass_enabled</a></td>
+<td align="center">0.116</td>
 <td align="center">434.010</td>
 <td align="center">1</td>
 <td align="center">1</td>
@@ -36,8 +37,8 @@
 </tr>
 <tr>
 <td align="center"></td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1000">ocp_csr_access_bypass_disabled</a></td>
-<td align="center">3.890</td>
+<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1014">ocp_csr_access_bypass_disabled</a></td>
+<td align="center">3.865</td>
 <td align="center">14326.010</td>
 <td align="center">1</td>
 <td align="center">1</td>
@@ -46,8 +47,8 @@
 <tr>
 <td align="center">recovery_status_wires</td>
 <td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362">payload_available</a></td>
-<td align="center">14.291</td>
-<td align="center">109201.010</td>
+<td align="center">13.751</td>
+<td align="center">109141.010</td>
 <td align="center">2</td>
 <td align="center">2</td>
 <td align="center">100.00 %</td>
@@ -55,8 +56,8 @@
 <tr>
 <td align="center"></td>
 <td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426">image_activated</a></td>
-<td align="center">1.437</td>
-<td align="center">6979.010</td>
+<td align="center">1.402</td>
+<td align="center">6980.010</td>
 <td align="center">2</td>
 <td align="center">2</td>
 <td align="center">100.00 %</td>
@@ -64,7 +65,7 @@
 <tr>
 <td align="center">indirect_fifo_overflow</td>
 <td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L183">indirect_fifo_overflow</a></td>
-<td align="center">0.198</td>
+<td align="center">0.187</td>
 <td align="center">830.010</td>
 <td align="center">1</td>
 <td align="center">1</td>
@@ -73,7 +74,7 @@
 <tr>
 <td align="center">indirect_fifo_underflow</td>
 <td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L208">indirect_fifo_underflow</a></td>
-<td align="center">0.023</td>
+<td align="center">0.020</td>
 <td align="center">54.010</td>
 <td align="center">1</td>
 <td align="center">1</td>
@@ -81,17 +82,17 @@
 </tr>
 <tr>
 <td align="center">i3c_bus_traffic_during_loopback</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L463">i3c_bus_traffic_during_loopback</a></td>
-<td align="center">19.025</td>
-<td align="center">75466.040</td>
+<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L477">i3c_bus_traffic_during_loopback</a></td>
+<td align="center">18.127</td>
+<td align="center">70602.040</td>
 <td align="center">1</td>
 <td align="center">1</td>
 <td align="center">100.00 %</td>
 </tr>
 <tr>
 <td align="center">check_axi_filtering</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L805">axi_filtering</a></td>
-<td align="center">0.561</td>
+<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L819">axi_filtering</a></td>
+<td align="center">0.558</td>
 <td align="center">2012.010</td>
 <td align="center">1</td>
 <td align="center">1</td>
@@ -99,9 +100,9 @@
 </tr>
 <tr>
 <td align="center">recovery_flow</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L548">recovery_flow</a></td>
-<td align="center">37.720</td>
-<td align="center">347194.175</td>
+<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562">recovery_flow</a></td>
+<td align="center">37.446</td>
+<td align="center">346452.175</td>
 <td align="center">2</td>
 <td align="center">2</td>
 <td align="center">100.00 %</td>
