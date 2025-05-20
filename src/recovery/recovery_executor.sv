@@ -840,7 +840,7 @@ module recovery_executor
   // The payload_available signal must reset if recovery FIFO indicates empty.
   logic payload_high_en, bypass_xfer_done;
   assign payload_high_en = bypass_i3c_core_i ?
-                            (bypass_xfer_done | hwif_socmgmt_i.REC_INTF_CFG.REC_PAYLOAD_DONE.value) :
+                            (bypass_xfer_done | hwif_socmgmt_i.REC_INTF_CFG.REC_PAYLOAD_DONE.value | image_activated_o) :
                             fifo_xfer_done;
   assign bypass_xfer_done = (state_q == FifoWrite) & (state_d == Done);
 

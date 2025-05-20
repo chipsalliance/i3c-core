@@ -428,11 +428,17 @@ async def test_image_activated(dut):
     tb = await initialize(dut)
 
     image_activated = dut.xi3c_wrapper.recovery_image_activated_o
+    payload_available = dut.xi3c_wrapper.recovery_payload_available_o
 
     # Check if image_activated is deasserted
     assert not bool(
         image_activated.value
     ), "Upon initialization image_activated should be deasserted"
+
+    # Check if payload_available is deasserted
+    assert not bool(
+        payload_available.value
+    ), "Upon initialization payload_availablei should be deasserted"
 
     # Write 0xF to byte 2 of RECOVERY_CTRL
     await tb.write_csr_field(
@@ -446,6 +452,14 @@ async def test_image_activated(dut):
     assert bool(
         image_activated.value
     ), "Upon writing 0xF to RECOVERY_CTRL byte 2 image_activated should be asserted"
+
+    # payload_available is asserted one clk cycle after image activation
+    await RisingEdge(tb.clk)
+    # Check if payload_available is asserted
+    assert bool(
+        payload_available.value
+    ), "Upon writing 0xF to RECOVERY_CTRL byte 2 payload_available should be asserted"
+
 
     # Write 0xFF to byte 2 of RECOVERY_CTRL from the HCI side
     await tb.write_csr_field(
