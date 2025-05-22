@@ -446,7 +446,7 @@ During the boot procedure the ROM will have to follow the following procedure:</
 <p>b. If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">TX_DATA_PORT</span></code> register</p>
 <p>c. The above steps should be repeated until the whole recovery image is written to the FIFO</p>
 </li>
-<li><p>Activate the new image setting <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register by writing to the <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> register</p></li>
+<li><p>Activate the new image setting <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register by writing <code class="docutils literal notranslate"><span class="pre">0xf00</span></code> to the <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> register</p></li>
 <li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p></li>
 </ol>
 <p>The recovery image will be written in chunks with length equal to or less than <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">transfer</span> <span class="pre">size</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register.
@@ -485,7 +485,7 @@ All configurable registers are writable from software, read only registers provi
   <small>
     
       Last update:
-      2025-05-20
+      2025-05-22
     
   </small>
 </div>
