@@ -1,24 +1,25 @@
 testplans:
-  - Recovery mode tests:
-    - verification/cocotb/top/lib_i3c_top/test_recovery.py
-  - Enter and exit HDR mode:
-    - verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py
-  - target_interrupts:
-    - verification/cocotb/top/lib_i3c_top/test_interrupts.py
-  - target_peripheral_reset:
-    - verification/cocotb/top/lib_i3c_top/test_target_reset.py
-  - pec:
-    - verification/cocotb/block/recovery_pec/test_pec.py
-  - CCC handling:
-    - verification/cocotb/top/lib_i3c_top/test_ccc.py
-  - width_converter_[N8]to[N8]:
-    - verification/cocotb/block/{name}/test_converter.py
-  - Target:
-    - verification/cocotb/top/lib_i3c_top/test_i3c_target.py
-  - Recovery bypass:
-    - verification/cocotb/top/lib_i3c_top/test_bypass.py
-  - .*:
-    - verification/cocotb/block/ctrl_{name}/test_{name}.py
-    - verification/cocotb/block/{name}/test_{name}.py
-    - verification/cocotb/block/lib_adapter/test_{name}.py
-    - verification/cocotb/block/lib_hci_queues/{name}.py
+  - name: Recovery mode tests
+    source: verification/cocotb/top/lib_i3c_top/test_recovery.py
+  - name: "Enter and exit HDR mode"
+    source: verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py
+  - name: target_interrupts
+    source: verification/cocotb/top/lib_i3c_top/test_interrupts.py
+  - name: target_peripheral_reset
+    source: verification/cocotb/top/lib_i3c_top/test_target_reset.py
+  - name: pec
+    source: verification/cocotb/block/recovery_pec/test_pec.py
+  - name: CCC handling
+    source: verification/cocotb/top/lib_i3c_top/test_ccc.py
+  - name: width_converter_[N8]to[N8]
+    source: verification/cocotb/block/{name}/test_converter.py
+  - name: Target
+    source: verification/cocotb/top/lib_i3c_top/test_i3c_target.py
+  - name: Recovery bypass
+    source: verification/cocotb/top/lib_i3c_top/test_bypass.py
+  - name: "csr_sw_access"
+    source: "verification/cocotb/block/lib_adapter/test_csr_sw_access.py"
+  - filename: ".*/verification/testplan/(.*)/(.*).hjson"
+    source: "verification/cocotb/{{regex_groups['testplan'][0]}}/**/test_{{testplan}}.py"
+  - filename: ".*"
+    docs_html: "dv.html#{{testplan.lower().replace('_', '-').replace(' ', '-')}}"
