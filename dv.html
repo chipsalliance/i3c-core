@@ -2045,34 +2045,34 @@ The core is verified with <a class="reference external" href="https://github.com
 <h5 id="axi-filtering-disabled"><code class="docutils literal notranslate"><span class="pre">axi_filtering_disabled</span></code><a class="headerlink" href="#axi-filtering-disabled" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L43">read_hci_version_csr_id_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L75">read_pio_section_offset_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L113">write_to_controller_device_addr_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L150">write_should_not_affect_ro_csr_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L203">sequence_csr_read_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L265">sequence_csr_write_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L77">collision_with_write_id_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L143">collision_with_read_id_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L184">write_read_burst_id_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L235">write_burst_collision_with_read_id_filter_off</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L296">read_burst_collision_with_write_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L43">read_hci_version_csr_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L75">read_pio_section_offset_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L113">write_to_controller_device_addr_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L150">write_should_not_affect_ro_csr_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L203">sequence_csr_read_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L265">sequence_csr_write_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L77">collision_with_write_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L143">collision_with_read_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L184">write_read_burst_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L235">write_burst_collision_with_read_id_filter_off</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L296">read_burst_collision_with_write_id_filter_off</a></p></li>
 </ul>
 <p>Verifies CSR access is granted when the AXI filtering feature is disabled.
 Verifies transaction response and contents.</p>
 <h5 id="axi-filtering-priv"><code class="docutils literal notranslate"><span class="pre">axi_filtering_priv</span></code><a class="headerlink" href="#axi-filtering-priv" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L48">read_hci_version_csr_id_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L80">read_pio_section_offset_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L118">write_to_controller_device_addr_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L155">write_should_not_affect_ro_csr_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L208">sequence_csr_read_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L270">sequence_csr_write_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L82">collision_with_write_id_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L148">collision_with_read_id_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L189">write_read_burst_id_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L240">write_burst_collision_with_read_id_filter_on_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L301">read_burst_collision_with_write_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L48">read_hci_version_csr_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L80">read_pio_section_offset_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L118">write_to_controller_device_addr_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L155">write_should_not_affect_ro_csr_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L208">sequence_csr_read_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L270">sequence_csr_write_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L82">collision_with_write_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L148">collision_with_read_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L189">write_read_burst_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L240">write_burst_collision_with_read_id_filter_on_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L301">read_burst_collision_with_write_id_filter_on_priv</a></p></li>
 </ul>
 <p>Verifies CSR access is granted when the AXI filtering is enabled
 and the transaction has a privileged ID.
@@ -2080,27 +2080,27 @@ Verifies transaction response and contents.</p>
 <h5 id="axi-filtering-non-priv"><code class="docutils literal notranslate"><span class="pre">axi_filtering_non_priv</span></code><a class="headerlink" href="#axi-filtering-non-priv" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L54">read_hci_version_csr_id_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87">read_pio_section_offset_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L125">write_to_controller_device_addr_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L162">write_should_not_affect_ro_csr_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L215">sequence_csr_read_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L277">sequence_csr_write_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87">collision_with_write_id_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L153">collision_with_read_id_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L194">write_read_burst_id_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L245">write_burst_collision_with_read_id_filter_on_non_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L306">read_burst_collision_with_write_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L54">read_hci_version_csr_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L87">read_pio_section_offset_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L125">write_to_controller_device_addr_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L162">write_should_not_affect_ro_csr_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L215">sequence_csr_read_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L277">sequence_csr_write_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L87">collision_with_write_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L153">collision_with_read_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L194">write_read_burst_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L245">write_burst_collision_with_read_id_filter_on_non_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L306">read_burst_collision_with_write_id_filter_on_non_priv</a></p></li>
 </ul>
 <p>Verifies CSR access is denied when the AXI filtering feature is enabled
 and the transaction ID doesn’t match any of the privileged IDs.</p>
 <h5 id="axi-filtering-mixed-priv"><code class="docutils literal notranslate"><span class="pre">axi_filtering_mixed_priv</span></code><a class="headerlink" href="#axi-filtering-mixed-priv" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L92">collision_with_write_id_filter_on_mixed</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L158">collision_with_read_id_filter_on_mixed</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L311">collision_with_write_mixed_priv</a></p></li>
-<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L348">collision_with_read_mixed_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L92">collision_with_write_id_filter_on_mixed</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L158">collision_with_read_id_filter_on_mixed</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L311">collision_with_write_mixed_priv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L348">collision_with_read_mixed_priv</a></p></li>
 </ul>
 <p>Issues an ID-randomized colliding read and write transactions sequence.
 Verifies AXI CSR access response for each separate transaction.
@@ -2205,23 +2205,23 @@ correspond to correct GETSTATUS CCC response.</p>
 <p><a class="external reference" href="./sim-results/csr_sw_access.html">Test results</a></p>
 <h4 id="id14">Testpoints<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h4>
 <h5 id="read-hci-version-csr"><code class="docutils literal notranslate"><span class="pre">read_hci_version_csr</span></code><a class="headerlink" href="#read-hci-version-csr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L74">read_hci_version_csr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L74">read_hci_version_csr</a></p>
 <p>Reads the HCI version CSR and verifies its content.</p>
 <h5 id="read-pio-section-offset"><code class="docutils literal notranslate"><span class="pre">read_pio_section_offset</span></code><a class="headerlink" href="#read-pio-section-offset" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87">read_pio_section_offset</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L87">read_pio_section_offset</a></p>
 <p>Reads the PIO_SECTION_OFFSET CSR and verifies its content.</p>
 <h5 id="write-to-controller-device-addr"><code class="docutils literal notranslate"><span class="pre">write_to_controller_device_addr</span></code><a class="headerlink" href="#write-to-controller-device-addr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L97">write_to_controller_device_addr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L97">write_to_controller_device_addr</a></p>
 <p>Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful.</p>
 <h5 id="write-should-not-affect-ro-csr"><code class="docutils literal notranslate"><span class="pre">write_should_not_affect_ro_csr</span></code><a class="headerlink" href="#write-should-not-affect-ro-csr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L111">write_should_not_affect_ro_csr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L111">write_should_not_affect_ro_csr</a></p>
 <p>Writes to the HC_CAPABILITIES CSR which is read-only for software.
 Verifies that the write did not succeed.</p>
 <h5 id="sequence-csr-read"><code class="docutils literal notranslate"><span class="pre">sequence_csr_read</span></code><a class="headerlink" href="#sequence-csr-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L127">sequence_csr_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L127">sequence_csr_read</a></p>
 <p>Performs a sequence of CSR reads. Verifies that each one succeeds.</p>
 <h5 id="sequence-csr-write"><code class="docutils literal notranslate"><span class="pre">sequence_csr_write</span></code><a class="headerlink" href="#sequence-csr-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L162">sequence_csr_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L162">sequence_csr_write</a></p>
 <p>Performs a sequence of CSR writes. Verifies that each one succeeds.</p>
 <h3 id="descriptor-rx">descriptor_rx<a class="headerlink" href="#descriptor-rx" title="Link to this heading">¶</a></h3>
 <p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py">Source file</a></p>
@@ -2305,7 +2305,6 @@ instantiates two tasks serving as BFMs for RX and TX queues.
 Then it simulates bus start condition followed by data reception
 ended by bus stop condition.</p>
 <h3 id="hci-queues">hci_queues<a class="headerlink" href="#hci-queues" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/hci_queues.py">Source file</a></p>
 <p><a class="external reference" href="./sim-results/hci_queues.html">Test results</a></p>
 <h4 id="id22">Testpoints<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
 <h5 id="clear-on-nonempty-resp-queue"><code class="docutils literal notranslate"><span class="pre">clear_on_nonempty_resp_queue</span></code><a class="headerlink" href="#clear-on-nonempty-resp-queue" title="Link to this heading">¶</a></h5>
@@ -2440,62 +2439,61 @@ i3c_bus_monitor correctly report it detected.</p>
 <p>Pushes random bytes through the recovery_pec module, compares
 its computed checksum with its correspondent computed in software.</p>
 <h3 id="tti-queues">tti_queues<a class="headerlink" href="#tti-queues" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/tti_queues.py">Source file</a></p>
 <p><a class="external reference" href="./sim-results/tti_queues.html">Test results</a></p>
 <h4 id="id26">Testpoints<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
 <h5 id="tti-tx-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_tx_capacity_status</span></code><a class="headerlink" href="#tti-tx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L24">tti_tx_capacity_status</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L24">tti_tx_capacity_status</a></p>
 <p>Resets the TTI TX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-tx-desc-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_capacity_status</span></code><a class="headerlink" href="#tti-tx-desc-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L9">tti_tx_desc_capacity_status</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L9">tti_tx_desc_capacity_status</a></p>
 <p>Resets the TTI TX descriptor queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-rx-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_rx_capacity_status</span></code><a class="headerlink" href="#tti-rx-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L14">tti_rx_capacity_status</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L14">tti_rx_capacity_status</a></p>
 <p>Resets the TTI RX queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-rx-desc-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_capacity_status</span></code><a class="headerlink" href="#tti-rx-desc-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L19">tti_rx_desc_capacity_status</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L19">tti_rx_desc_capacity_status</a></p>
 <p>Resets the TTI RX descriptor queue and verifies that it is empty
 afterwards.</p>
 <h5 id="tti-tx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_tx_setup_threshold</span></code><a class="headerlink" href="#tti-tx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L35">tti_tx_setup_threshold</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L35">tti_tx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI data TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-tx-desc-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_tx_desc_setup_threshold</span></code><a class="headerlink" href="#tti-tx-desc-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L21">tti_tx_desc_setup_threshold</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L21">tti_tx_desc_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI descriptor TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-rx-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_rx_setup_threshold</span></code><a class="headerlink" href="#tti-rx-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L27">tti_rx_setup_threshold</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L27">tti_rx_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI data RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-rx-desc-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_setup_threshold</span></code><a class="headerlink" href="#tti-rx-desc-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L43">tti_rx_desc_setup_threshold</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L43">tti_rx_desc_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI descriptor RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-ibi-setup-threshold"><code class="docutils literal notranslate"><span class="pre">tti_ibi_setup_threshold</span></code><a class="headerlink" href="#tti-ibi-setup-threshold" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L49">tti_ibi_setup_threshold</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L49">tti_ibi_setup_threshold</a></p>
 <p>Writes the threshold to appropriate register for the TTI IBI
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
 Verifies that an appropriate value has been written to the CSR.
 Verifies the threshold signal assumes the correct value.</p>
 <h5 id="tti-ibi-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tti_ibi_should_raise_thld_trig</span></code><a class="headerlink" href="#tti-ibi-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87">tti_ibi_should_raise_thld_trig</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L87">tti_ibi_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the TTI queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
 <h5 id="tti-rx-desc-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tti_rx_desc_should_raise_thld_trig</span></code><a class="headerlink" href="#tti-rx-desc-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L55">tti_rx_desc_should_raise_thld_trig</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L55">tti_rx_desc_should_raise_thld_trig</a></p>
 <p>Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.</p>
@@ -2505,7 +2503,7 @@ queue fill.</p>
 whether the trigger signals are properly asserted at different
 levels of the queue fill.</p>
 <h5 id="tx-desc-should-raise-thld-trig"><code class="docutils literal notranslate"><span class="pre">tx_desc_should_raise_thld_trig</span></code><a class="headerlink" href="#tx-desc-should-raise-thld-trig" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L69">tti_tx_desc_should_raise_thld_trig</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L69">tti_tx_desc_should_raise_thld_trig</a></p>
 <p>Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
@@ -2520,11 +2518,10 @@ the queue fill.</p>
 whether the trigger is properly asserted at different levels of
 the queue fill.</p>
 <h5 id="tti-ibi-capacity-status"><code class="docutils literal notranslate"><span class="pre">tti_ibi_capacity_status</span></code><a class="headerlink" href="#tti-ibi-capacity-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L29">tti_ibi_capacity_status</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L29">tti_ibi_capacity_status</a></p>
 <p>Resets the TTI TX IBI queue and verifies that it is empty
 afterwards.</p>
 <h3 id="width-converter-8ton">width_converter_8toN<a class="headerlink" href="#width-converter-8ton" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py">Source file</a></p>
 <p><a class="external reference" href="./sim-results/width_converter_8toN.html">Test results</a></p>
 <h4 id="id30">Testpoints<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
 <h5 id="converter"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#converter" title="Link to this heading">¶</a></h5>
@@ -2539,7 +2536,6 @@ the output data matches the input.</p>
 sink_flush_i signal, receives the output word and checks if it
 matches the input data.</p>
 <h3 id="width-converter-nto8">width_converter_Nto8<a class="headerlink" href="#width-converter-nto8" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py">Source file</a></p>
 <p><a class="external reference" href="./sim-results/width_converter_Nto8.html">Test results</a></p>
 <h4 id="id31">Testpoints<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
 <h5 id="id32"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#id32" title="Link to this heading">¶</a></h5>
@@ -3046,7 +3042,7 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
   <small>
     
       Last update:
-      2025-05-22
+      2025-06-11
     
   </small>
 </div>

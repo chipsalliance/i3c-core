@@ -1,130 +1,95 @@
-<center>
-<link rel='stylesheet' type='text/css' href='main.css'><link rel='stylesheet' type='text/css' href='cov.css'><h1>Tests for individual blocks</h1>
-<table class="dv">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+
+                    <span class="container-title">
+                        <h3> Tests for individual blocks
+ </h3>
+
+                    </span>
+
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        i3c-core
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        main
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        fe68e0df
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    <table>
 <thead>
-<tr>
-<th align="center">Name</th>
-<th align="right">Passing</th>
-<th align="right">Total</th>
-<th align="right">Pass Rate</th>
-</tr>
+<tr><th style="text-align: center;">                             Name                             </th><th style="text-align: right;">  Passing</th><th style="text-align: right;">  Total</th><th style="text-align: right;">  Pass Rate</th></tr>
 </thead>
 <tbody>
-<tr>
-<td align="center"><a href="axi_filtering.html">axi_filtering</a></td>
-<td align="right">19</td>
-<td align="right">37</td>
-<td align="right">51.35 %</td>
-</tr>
-<tr>
-<td align="center"><a href="bus_monitor.html">bus_monitor</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="bus_rx_flow.html">bus_rx_flow</a></td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="bus_timers.html">bus_timers</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="bus_tx.html">bus_tx</a></td>
-<td align="right">28</td>
-<td align="right">28</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="bus_tx_flow.html">bus_tx_flow</a></td>
-<td align="right">28</td>
-<td align="right">28</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="ccc.html">ccc</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="csr_sw_access.html">csr_sw_access</a></td>
-<td align="right">0</td>
-<td align="right">6</td>
-<td align="right">0.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="descriptor_rx.html">descriptor_rx</a></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">-- %</td>
-</tr>
-<tr>
-<td align="center"><a href="descriptor_tx.html">descriptor_tx</a></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">-- %</td>
-</tr>
-<tr>
-<td align="center"><a href="drivers.html">drivers</a></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">-- %</td>
-</tr>
-<tr>
-<td align="center"><a href="edge_detector.html">edge_detector</a></td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="flow_standby_i3c.html">flow_standby_i3c</a></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">-- %</td>
-</tr>
-<tr>
-<td align="center"><a href="hci_queues.html">hci_queues</a></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">-- %</td>
-</tr>
-<tr>
-<td align="center"><a href="i3c_bus_monitor.html">i3c_bus_monitor</a></td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="pec.html">pec</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="tti_queues.html">tti_queues</a></td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="width_converter_8toN.html">width_converter_8toN</a></td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">100.00 %</td>
-</tr>
-<tr>
-<td align="center"><a href="width_converter_Nto8.html">width_converter_Nto8</a></td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">100.00 %</td>
-</tr>
+<tr><td style="text-align: center;">       <a href='./axi_filtering.html'>axi_filtering</a>       </td><td style="text-align: right;">       19</td><td style="text-align: right;">     37</td><td style="text-align: right;">    51.35 %</td></tr>
+<tr><td style="text-align: center;">         <a href='./bus_monitor.html'>bus_monitor</a>         </td><td style="text-align: right;">        1</td><td style="text-align: right;">      1</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">         <a href='./bus_rx_flow.html'>bus_rx_flow</a>         </td><td style="text-align: right;">        2</td><td style="text-align: right;">      2</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">          <a href='./bus_timers.html'>bus_timers</a>          </td><td style="text-align: right;">        1</td><td style="text-align: right;">      1</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">              <a href='./bus_tx.html'>bus_tx</a>              </td><td style="text-align: right;">       28</td><td style="text-align: right;">     28</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">         <a href='./bus_tx_flow.html'>bus_tx_flow</a>         </td><td style="text-align: right;">       28</td><td style="text-align: right;">     28</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">                 <a href='./ccc.html'>ccc</a>                 </td><td style="text-align: right;">        1</td><td style="text-align: right;">      1</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">       <a href='./csr_sw_access.html'>csr_sw_access</a>       </td><td style="text-align: right;">        0</td><td style="text-align: right;">      6</td><td style="text-align: right;">     0.00 %</td></tr>
+<tr><td style="text-align: center;">       <a href='./descriptor_rx.html'>descriptor_rx</a>       </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
+<tr><td style="text-align: center;">       <a href='./descriptor_tx.html'>descriptor_tx</a>       </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
+<tr><td style="text-align: center;">             <a href='./drivers.html'>drivers</a>             </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
+<tr><td style="text-align: center;">       <a href='./edge_detector.html'>edge_detector</a>       </td><td style="text-align: right;">        6</td><td style="text-align: right;">      6</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">    <a href='./flow_standby_i3c.html'>flow_standby_i3c</a>    </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
+<tr><td style="text-align: center;">          <a href='./hci_queues.html'>hci_queues</a>          </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
+<tr><td style="text-align: center;">     <a href='./i3c_bus_monitor.html'>i3c_bus_monitor</a>     </td><td style="text-align: right;">        2</td><td style="text-align: right;">      2</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">                 <a href='./pec.html'>pec</a>                 </td><td style="text-align: right;">        1</td><td style="text-align: right;">      1</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">          <a href='./tti_queues.html'>tti_queues</a>          </td><td style="text-align: right;">       13</td><td style="text-align: right;">     13</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;"><a href='./width_converter_8toN.html'>width_converter_8toN</a></td><td style="text-align: right;">        2</td><td style="text-align: right;">      2</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;"><a href='./width_converter_Nto8.html'>width_converter_Nto8</a></td><td style="text-align: right;">        2</td><td style="text-align: right;">      2</td><td style="text-align: right;">   100.00 %</td></tr>
 </tbody>
 </table>
 
-</center>
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+</html>

@@ -7,17 +7,17 @@
 ### `axi_filtering_disabled`
 
 Tests:
-- [read_hci_version_csr_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L43)
-- [read_pio_section_offset_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L75)
-- [write_to_controller_device_addr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L113)
-- [write_should_not_affect_ro_csr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L150)
-- [sequence_csr_read_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L203)
-- [sequence_csr_write_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L265)
-- [collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L77)
-- [collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L143)
-- [write_read_burst_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L184)
-- [write_burst_collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L235)
-- [read_burst_collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L296)
+- [read_hci_version_csr_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L43)
+- [read_pio_section_offset_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L75)
+- [write_to_controller_device_addr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L113)
+- [write_should_not_affect_ro_csr_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L150)
+- [sequence_csr_read_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L203)
+- [sequence_csr_write_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L265)
+- [collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L77)
+- [collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L143)
+- [write_read_burst_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L184)
+- [write_burst_collision_with_read_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L235)
+- [read_burst_collision_with_write_id_filter_off](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L296)
 
 
 Verifies CSR access is granted when the AXI filtering feature is disabled.
@@ -26,17 +26,17 @@ Verifies transaction response and contents.
 ### `axi_filtering_priv`
 
 Tests:
-- [read_hci_version_csr_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L48)
-- [read_pio_section_offset_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L80)
-- [write_to_controller_device_addr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L118)
-- [write_should_not_affect_ro_csr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L155)
-- [sequence_csr_read_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L208)
-- [sequence_csr_write_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L270)
-- [collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L82)
-- [collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L148)
-- [write_read_burst_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L189)
-- [write_burst_collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L240)
-- [read_burst_collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L301)
+- [read_hci_version_csr_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L48)
+- [read_pio_section_offset_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L80)
+- [write_to_controller_device_addr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L118)
+- [write_should_not_affect_ro_csr_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L155)
+- [sequence_csr_read_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L208)
+- [sequence_csr_write_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L270)
+- [collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L82)
+- [collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L148)
+- [write_read_burst_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L189)
+- [write_burst_collision_with_read_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L240)
+- [read_burst_collision_with_write_id_filter_on_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L301)
 
 
 Verifies CSR access is granted when the AXI filtering is enabled
@@ -46,17 +46,17 @@ Verifies transaction response and contents.
 ### `axi_filtering_non_priv`
 
 Tests:
-- [read_hci_version_csr_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L54)
-- [read_pio_section_offset_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87)
-- [write_to_controller_device_addr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L125)
-- [write_should_not_affect_ro_csr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L162)
-- [sequence_csr_read_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L215)
-- [sequence_csr_write_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L277)
-- [collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87)
-- [collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L153)
-- [write_read_burst_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L194)
-- [write_burst_collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L245)
-- [read_burst_collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L306)
+- [read_hci_version_csr_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L54)
+- [read_pio_section_offset_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L87)
+- [write_to_controller_device_addr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L125)
+- [write_should_not_affect_ro_csr_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L162)
+- [sequence_csr_read_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L215)
+- [sequence_csr_write_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py#L277)
+- [collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L87)
+- [collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L153)
+- [write_read_burst_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L194)
+- [write_burst_collision_with_read_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L245)
+- [read_burst_collision_with_write_id_filter_on_non_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L306)
 
 
 Verifies CSR access is denied when the AXI filtering feature is enabled
@@ -65,10 +65,10 @@ and the transaction ID doesn't match any of the privileged IDs.
 ### `axi_filtering_mixed_priv`
 
 Tests:
-- [collision_with_write_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L92)
-- [collision_with_read_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L158)
-- [collision_with_write_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L311)
-- [collision_with_read_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L348)
+- [collision_with_write_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L92)
+- [collision_with_read_id_filter_on_mixed](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L158)
+- [collision_with_write_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L311)
+- [collision_with_read_mixed_priv](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py#L348)
 
 
 Issues an ID-randomized colliding read and write transactions sequence.
@@ -256,38 +256,38 @@ correspond to correct GETSTATUS CCC response.
 
 ### `read_hci_version_csr`
 
-Test: [read_hci_version_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L74)
+Test: [read_hci_version_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L74)
 
 Reads the HCI version CSR and verifies its content.
 
 ### `read_pio_section_offset`
 
-Test: [read_pio_section_offset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87)
+Test: [read_pio_section_offset](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L87)
 
 Reads the PIO_SECTION_OFFSET CSR and verifies its content.
 
 ### `write_to_controller_device_addr`
 
-Test: [write_to_controller_device_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L97)
+Test: [write_to_controller_device_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L97)
 
 Writes to the CONTROLLER_DEVICE_ADDR CSR and verifies if the write was successful.
 
 ### `write_should_not_affect_ro_csr`
 
-Test: [write_should_not_affect_ro_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L111)
+Test: [write_should_not_affect_ro_csr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L111)
 
 Writes to the HC_CAPABILITIES CSR which is read-only for software.
 Verifies that the write did not succeed.
 
 ### `sequence_csr_read`
 
-Test: [sequence_csr_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L127)
+Test: [sequence_csr_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L127)
 
 Performs a sequence of CSR reads. Verifies that each one succeeds.
 
 ### `sequence_csr_write`
 
-Test: [sequence_csr_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L162)
+Test: [sequence_csr_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_adapter/test_csr_sw_access.py#L162)
 
 Performs a sequence of CSR writes. Verifies that each one succeeds.
 
@@ -428,8 +428,6 @@ ended by bus stop condition.
 
 
 # hci_queues
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/hci_queues.py)
 
 [Test results](./sim-results/hci_queues.html){.external}
 
@@ -648,43 +646,41 @@ its computed checksum with its correspondent computed in software.
 
 # tti_queues
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/tti_queues.py)
-
 [Test results](./sim-results/tti_queues.html){.external}
 
 ## Testpoints
 
 ### `tti_tx_capacity_status`
 
-Test: [tti_tx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L24)
+Test: [tti_tx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L24)
 
 Resets the TTI TX queue and verifies that it is empty
 afterwards.
 
 ### `tti_tx_desc_capacity_status`
 
-Test: [tti_tx_desc_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L9)
+Test: [tti_tx_desc_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L9)
 
 Resets the TTI TX descriptor queue and verifies that it is empty
 afterwards.
 
 ### `tti_rx_capacity_status`
 
-Test: [tti_rx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L14)
+Test: [tti_rx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L14)
 
 Resets the TTI RX queue and verifies that it is empty
 afterwards.
 
 ### `tti_rx_desc_capacity_status`
 
-Test: [tti_rx_desc_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L19)
+Test: [tti_rx_desc_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L19)
 
 Resets the TTI RX descriptor queue and verifies that it is empty
 afterwards.
 
 ### `tti_tx_setup_threshold`
 
-Test: [tti_tx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L35)
+Test: [tti_tx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L35)
 
 Writes the threshold to appropriate register for the TTI data TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -693,7 +689,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tti_tx_desc_setup_threshold`
 
-Test: [tti_tx_desc_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L21)
+Test: [tti_tx_desc_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L21)
 
 Writes the threshold to appropriate register for the TTI descriptor TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -702,7 +698,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tti_rx_setup_threshold`
 
-Test: [tti_rx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L27)
+Test: [tti_rx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L27)
 
 Writes the threshold to appropriate register for the TTI data RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -711,7 +707,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tti_rx_desc_setup_threshold`
 
-Test: [tti_rx_desc_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L43)
+Test: [tti_rx_desc_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L43)
 
 Writes the threshold to appropriate register for the TTI descriptor RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -720,7 +716,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tti_ibi_setup_threshold`
 
-Test: [tti_ibi_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L49)
+Test: [tti_ibi_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L49)
 
 Writes the threshold to appropriate register for the TTI IBI
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -729,7 +725,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tti_ibi_should_raise_thld_trig`
 
-Test: [tti_ibi_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87)
+Test: [tti_ibi_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L87)
 
 Sets up a ready threshold of the TTI queue and checks whether the
 trigger signal is properly asserted at different levels of the
@@ -737,7 +733,7 @@ queue fill.
 
 ### `tti_rx_desc_should_raise_thld_trig`
 
-Test: [tti_rx_desc_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L55)
+Test: [tti_rx_desc_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L55)
 
 Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
@@ -753,7 +749,7 @@ levels of the queue fill.
 
 ### `tx_desc_should_raise_thld_trig`
 
-Test: [tti_tx_desc_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L69)
+Test: [tti_tx_desc_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L69)
 
 Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
@@ -777,15 +773,13 @@ the queue fill.
 
 ### `tti_ibi_capacity_status`
 
-Test: [tti_ibi_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L29)
+Test: [tti_ibi_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py#L29)
 
 Resets the TTI TX IBI queue and verifies that it is empty
 afterwards.
 
 
 # width_converter_8toN
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py)
 
 [Test results](./sim-results/width_converter_8toN.html){.external}
 
@@ -810,8 +804,6 @@ matches the input data.
 
 
 # width_converter_Nto8
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py)
 
 [Test results](./sim-results/width_converter_Nto8.html){.external}
 

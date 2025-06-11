@@ -1,204 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+                    <div class="nav-urls">
+                        <a href="./index-blocks.html" class="button tooltip">
+                            <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
+                            <span class="tooltip-text">Go Back</span>
+                        </a>
+                    </div>
+                    
 
-<center>
-<link rel='stylesheet' type='text/css' href='main.css'><link rel='stylesheet' type='text/css' href='cov.css'><h1>Simulation Results</h1>
-<h2>Run on 05/22/25/32/2025 20:32</h2>
-<h3>Test Results</h3>
-<table class="dv">
+                    <span class="container-title">
+                        tti_queues
+                    </span>
+
+                    
+                    <div class="nav-urls">
+                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#tti-queues" class="button tooltip">
+                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text">Go to documentation</span>
+                        </a>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        06/11/25/56/2025 15:56
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        i3c-core
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        main
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        fe68e0df
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    
+<h3> Test Results
+ </h3><table>
 <thead>
-<tr>
-<th align="center">Name</th>
-<th align="left">Tests</th>
-<th align="center">Max Job Runtime</th>
-<th align="center">Simulated Time</th>
-<th align="center">Passing</th>
-<th align="center">Total</th>
-<th align="center">Pass Rate</th>
-</tr>
+<tr><th style="text-align: center;">               Name               </th><th>Tests                                                                                                                                                             </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
 </thead>
 <tbody>
-<tr>
-<td align="center">tti_tx_capacity_status</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L24">tti_tx_capacity_status</a></td>
-<td align="center">0.008</td>
-<td align="center">14.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_tx_desc_capacity_status</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L9">tti_tx_desc_capacity_status</a></td>
-<td align="center">0.015</td>
-<td align="center">12.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_rx_capacity_status</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L14">tti_rx_capacity_status</a></td>
-<td align="center">0.008</td>
-<td align="center">14.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_rx_desc_capacity_status</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L19">tti_rx_desc_capacity_status</a></td>
-<td align="center">0.008</td>
-<td align="center">14.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_tx_setup_threshold</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L35">tti_tx_setup_threshold</a></td>
-<td align="center">0.015</td>
-<td align="center">48.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_tx_desc_setup_threshold</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L21">tti_tx_desc_setup_threshold</a></td>
-<td align="center">0.025</td>
-<td align="center">52.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_rx_setup_threshold</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L27">tti_rx_setup_threshold</a></td>
-<td align="center">0.015</td>
-<td align="center">48.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_rx_desc_setup_threshold</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L43">tti_rx_desc_setup_threshold</a></td>
-<td align="center">0.016</td>
-<td align="center">54.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_ibi_setup_threshold</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L49">tti_ibi_setup_threshold</a></td>
-<td align="center">0.015</td>
-<td align="center">48.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_ibi_should_raise_thld_trig</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L87">tti_ibi_should_raise_thld_trig</a></td>
-<td align="center">0.126</td>
-<td align="center">594.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tti_rx_desc_should_raise_thld_trig</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L55">tti_rx_desc_should_raise_thld_trig</a></td>
-<td align="center">0.025</td>
-<td align="center">100.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">rx_should_raise_thld_trig</td>
-<td align="left">rx_should_raise_thld_trig</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">-- %</td>
-</tr>
-<tr>
-<td align="center">tx_desc_should_raise_thld_trig</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L69">tti_tx_desc_should_raise_thld_trig</a></td>
-<td align="center">0.078</td>
-<td align="center">390.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center">tx_should_raise_thld_trig</td>
-<td align="left">tx_should_raise_thld_trig</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">-- %</td>
-</tr>
-<tr>
-<td align="center">ibi_should_raise_thld_trig</td>
-<td align="left">ibi_should_raise_thld_trig</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">-- %</td>
-</tr>
-<tr>
-<td align="center">tti_ibi_capacity_status</td>
-<td align="left"><a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/common/utils.py#L29">tti_ibi_capacity_status</a></td>
-<td align="center">0.008</td>
-<td align="center">14.010</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center"></td>
-<td align="left"><strong>TOTAL</strong></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">13</td>
-<td align="center">13</td>
-<td align="center">100.00 %</td>
-</tr>
-<tr>
-<td align="center"></td>
-<td align="left"><strong>TOTAL</strong></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">13</td>
-<td align="center">13</td>
-<td align="center">100.00 %</td>
-</tr>
-</tbody>
-</table>
-<h3>Testplan Progress</h3>
-<table class="dv">
-<thead>
-<tr>
-<th align="center">Total</th>
-<th align="center">Written</th>
-<th align="center">Passing</th>
-<th align="center">Progress</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">16</td>
-<td align="center">13</td>
-<td align="center">13</td>
-<td align="center">81.25 %</td>
-</tr>
+<tr><td style="text-align: center;">      tti_tx_capacity_status      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py>tti_tx_capacity_status</a>                </td><td style="text-align: center;">      0.010      </td><td style="text-align: center;">     14.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   tti_tx_desc_capacity_status    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py>tti_tx_desc_capacity_status</a>           </td><td style="text-align: center;">      0.018      </td><td style="text-align: center;">     12.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">      tti_rx_capacity_status      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py>tti_rx_capacity_status</a>                </td><td style="text-align: center;">      0.010      </td><td style="text-align: center;">     14.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   tti_rx_desc_capacity_status    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py>tti_rx_desc_capacity_status</a>           </td><td style="text-align: center;">      0.010      </td><td style="text-align: center;">     14.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">      tti_tx_setup_threshold      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_tx_setup_threshold</a>            </td><td style="text-align: center;">      0.015      </td><td style="text-align: center;">     48.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   tti_tx_desc_setup_threshold    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_tx_desc_setup_threshold</a>       </td><td style="text-align: center;">      0.029      </td><td style="text-align: center;">     52.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">      tti_rx_setup_threshold      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_rx_setup_threshold</a>            </td><td style="text-align: center;">      0.015      </td><td style="text-align: center;">     48.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   tti_rx_desc_setup_threshold    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_rx_desc_setup_threshold</a>       </td><td style="text-align: center;">      0.016      </td><td style="text-align: center;">     54.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">     tti_ibi_setup_threshold      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_ibi_setup_threshold</a>           </td><td style="text-align: center;">      0.015      </td><td style="text-align: center;">     48.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">  tti_ibi_should_raise_thld_trig  </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_ibi_should_raise_thld_trig</a>    </td><td style="text-align: center;">      0.119      </td><td style="text-align: center;">    618.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">tti_rx_desc_should_raise_thld_trig</td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_rx_desc_should_raise_thld_trig</a></td><td style="text-align: center;">      0.020      </td><td style="text-align: center;">     72.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">    rx_should_raise_thld_trig     </td><td>rx_should_raise_thld_trig                                                                                                                                         </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
+<tr><td style="text-align: center;">  tx_desc_should_raise_thld_trig  </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py>tti_tx_desc_should_raise_thld_trig</a></td><td style="text-align: center;">      0.097      </td><td style="text-align: center;">    498.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">    tx_should_raise_thld_trig     </td><td>tx_should_raise_thld_trig                                                                                                                                         </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
+<tr><td style="text-align: center;">    ibi_should_raise_thld_trig    </td><td>ibi_should_raise_thld_trig                                                                                                                                        </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
+<tr><td style="text-align: center;">     tti_ibi_capacity_status      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_tti.py>tti_ibi_capacity_status</a>               </td><td style="text-align: center;">      0.010      </td><td style="text-align: center;">     14.010     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">                                  </td><td><b>TOTAL</b>                                                                                                                                                      </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   13    </td><td style="text-align: center;">  13   </td><td style="text-align: center;"> 100.00 %  </td></tr>
 </tbody>
 </table>
 
-</center>
-            
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+<h3> Testplan Progress
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">  16   </td><td style="text-align: center;">   13    </td><td style="text-align: center;">   13    </td><td style="text-align: center;"> 81.25 %  </td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+</html>
