@@ -16,72 +16,64 @@ from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, with_timeout
 _T = TypeVar("_T")
 
 
-def target_test(
-    timeout_time=None,
-    timeout_unit="step",
-    expect_fail=False,
-    expect_error=(),
-    skip=False,
-    stage=0,
-):
+class target_test(cocotb.test):
     """
     Custom decorator wrapping cocotb.test to automatically skip test when its run without
     I3C target support configured.
     Has an effect only when test suite is executed within nox session.
     """
-    if os.getenv("NOX_SESSION", False):
-        skip = any([skip, "TargetSupport" not in cocotb.plusargs])
+    def __init__(
+        self,
+        f,
+        timeout_time=None,
+        timeout_unit="step",
+        expect_fail=False,
+        expect_error=(),
+        skip=False,
+        stage=0,
+    ):
+        if os.getenv("NOX_SESSION", False):
+            skip = any([skip, "TargetSupport" not in cocotb.plusargs])
 
-    def wrapper(func):
-        @cocotb.test(
-            timeout_time=timeout_time,
-            timeout_unit=timeout_unit,
-            expect_fail=expect_fail,
-            expect_error=expect_error,
-            skip=skip,
-            stage=stage,
+        super().__init__(
+            f,
+            timeout_time,
+            timeout_unit,
+            expect_fail,
+            expect_error,
+            skip,
+            stage
         )
-        @functools.wraps(func)
-        async def run(*args, **kwargs):
-            await func(*args, **kwargs)
-
-        return run
-
-    return wrapper
 
 
-def controller_test(
-    timeout_time=None,
-    timeout_unit="step",
-    expect_fail=False,
-    expect_error=(),
-    skip=False,
-    stage=0,
-):
+class controller_test(cocotb.test):
     """
     Custom decorator wrapping cocotb.test to automatically skip test when its run without
     I3C controller support configured.
     Has an effect only when test suite is executed within nox session.
     """
-    if os.getenv("NOX_SESSION", False):
-        skip = any([skip, "ControllerSupport" not in cocotb.plusargs])
+    def __init__(
+        self,
+        f,
+        timeout_time=None,
+        timeout_unit="step",
+        expect_fail=False,
+        expect_error=(),
+        skip=False,
+        stage=0,
+    ):
+        if os.getenv("NOX_SESSION", False):
+            skip = any([skip, "ControllerSupport" not in cocotb.plusargs])
 
-    def wrapper(func):
-        @cocotb.test(
-            timeout_time=timeout_time,
-            timeout_unit=timeout_unit,
-            expect_fail=expect_fail,
-            expect_error=expect_error,
-            skip=skip,
-            stage=stage,
+        super().__init__(
+            f,
+            timeout_time,
+            timeout_unit,
+            expect_fail,
+            expect_error,
+            skip,
+            stage
         )
-        @functools.wraps(func)
-        async def run(*args, **kwargs):
-            await func(*args, **kwargs)
-
-        return run
-
-    return wrapper
 
 
 def get_current_time_ns():
