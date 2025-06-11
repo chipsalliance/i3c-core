@@ -11,7 +11,7 @@ cocotb-coverage==1.2.0
 cocotb-test==0.2.5
 cocotbext-axi==0.1.24
 -e git+https://github.com/alexforencich/cocotbext-i2c@e5f4aa040e3c3ce2d7deced7caabfa91321d036a#egg=cocotbext_i2c
-git+https://github.com/antmicro/testplanner.git@f1ed4ea90a054392cf08d7cf9ee60cc23e66b7d4
+git+https://github.com/antmicro/testplanner.git@4195d890b4e27b2d7b1d81cc625cbc51ce284472
 -e ${I3C_ROOT_DIR}/third_party/cocotbext-i3c
 -e ${I3C_ROOT_DIR}/tools/nox_utils
 -e ${I3C_ROOT_DIR}/tools/cocotb_helpers
