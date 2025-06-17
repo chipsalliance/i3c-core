@@ -44,8 +44,9 @@ jobs:
 
       - name: Build Verilator
         run: |
-          git clone https://github.com/verilator/verilator -b v5.024
+          git clone https://github.com/verilator/verilator
           cd verilator
+          git checkout 5b410e9331b1543889287a965d0ea016d9a6b6d7
           autoconf
           ./configure
           make -j$(nproc)
