@@ -1,3 +1,1 @@
-include:
-  - project: chipsalliance-ci-scripts
-    file: i3c-core.yaml
+include: chipsalliance-ci-scripts@main:i3c-core.yaml
