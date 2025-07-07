@@ -126,6 +126,42 @@ async def test_ccc_setdasa(dut):
 
 
 @cocotb.test()
+async def test_ccc_setdasa_nack(dut):
+
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
+    DYNAMIC_ADDR = 0x52
+    VIRT_DYNAMIC_ADDR = 0x53
+
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+    # set regular device dynamic address
+    ack = await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
+    )
+    # check ACK
+    assert ack[0] == True
+
+    # try to send SETDASA again (should be NACKed)
+    ack = await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
+    )
+    assert ack[0] == False
+
+    # set virtual device dynamic address
+    ack = await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+    # check ACK
+    assert ack[0] == True
+
+    # try to send SETDASA again (should be NACKed)
+    ack = await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+    assert ack[0] == False
+
+
+@cocotb.test()
 async def test_ccc_setnewda(dut):
 
     STATIC_ADDR = 0x5A
