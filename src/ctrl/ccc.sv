@@ -462,6 +462,11 @@ module ccc
   assign is_byte_our_virtual_static_addr = ((command_addr == virtual_target_sta_address_i) && virtual_target_sta_address_valid_i);
   assign is_byte_virtual_addr = is_byte_our_virtual_dynamic_addr | is_byte_our_virtual_static_addr;
 
+  logic direct_addr_ack;
+
+  assign direct_addr_ack = (command_code == `I3C_DIRECT_SETDASA) ? ((is_byte_our_static_addr && ~target_dyn_address_valid_i) | (is_byte_our_virtual_static_addr && ~virtual_target_dyn_address_valid_i)) :
+                                                                 (is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr);
+
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_addr
     if (~rst_ni) begin
       command_addr  <= '0;
@@ -571,12 +576,19 @@ module ccc
       end
       TxDirectAddrAck: begin
         if (bus_tx_done_i) begin
-          if (is_byte_rsvd_addr) state_d = NextCCC;
-          else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw) state_d = TxData;
-          else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw) begin
-            if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
+          if (command_code == `I3C_DIRECT_SETDASA) begin
+            if (is_byte_our_static_addr && target_dyn_address_valid_i) state_d = WaitForBusCond;
+            else if (is_byte_our_virtual_static_addr && virtual_target_dyn_address_valid_i) state_d = WaitForBusCond;
             else state_d = RxData;
-          end else state_d = WaitForBusCond;
+          end
+          else begin
+            if (is_byte_rsvd_addr) state_d = NextCCC;
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw) state_d = TxData;
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw) begin
+              if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
+              else state_d = RxData;
+            end else state_d = WaitForBusCond;
+          end
         end
       end
 
@@ -662,7 +674,7 @@ module ccc
       TxDirectAddrAck: begin
         ccc_tx_req_byte  = '0;
         ccc_tx_req_bit   = '1;
-        ccc_tx_req_value = {7'h00, ~(is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr)};
+        ccc_tx_req_value = {7'h00, ~direct_addr_ack};
       end
       RxSubCmdByte: begin
       end
