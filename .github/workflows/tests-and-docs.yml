@@ -3,6 +3,8 @@ name: Run Tests
 on:
   push:
   workflow_dispatch:
+  schedule:
+    - cron:  '30 3 * * *' # Run everyday at 3:30AM
 
 permissions:
   contents: write
