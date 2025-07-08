@@ -194,6 +194,8 @@ module ccc
     output logic [6:0] set_dasa_o,
     output logic set_dasa_valid_o,
     output logic set_dasa_virtual_device_o,
+    output logic set_aasa_o,
+    output logic set_aasa_virt_o,
 
     // Target Reset Action
     // I3C_BCAST_RSTACT
@@ -321,7 +323,7 @@ module ccc
   logic       set_dasa_valid;
   logic [6:0] set_dasa_addr;
   logic       set_aasa_valid;
-  logic [6:0] set_aasa_addr;
+  logic       set_aasa_virt_valid;
 
   logic       set_newda_valid;
   logic [6:0] set_newda_addr;
@@ -801,12 +803,11 @@ module ccc
     endcase
   end
 
-  // Connect dynamic address setter mux
-  always_comb begin : dyn_addr_set_mux
-    set_dasa_valid_o = set_aasa_valid ? set_aasa_valid : set_dasa_valid;
-    set_dasa_o = set_aasa_valid ? set_aasa_addr : set_dasa_addr;
-    set_dasa_virtual_device_o = is_byte_virtual_addr ? (set_aasa_valid ? set_aasa_valid : set_dasa_valid) : 1'b0;
-  end
+  assign set_dasa_valid_o = set_dasa_valid;
+  assign set_dasa_o = set_dasa_addr;
+  assign set_dasa_virtual_device_o = is_byte_virtual_addr ? set_dasa_valid : 1'b0;
+  assign set_aasa_o = set_aasa_valid;
+  assign set_aasa_virt_o = set_aasa_virt_valid;
 
   // connect entdaa/setnewda
   always_comb begin: entdaa_setnewda_mux
@@ -951,8 +952,8 @@ module ccc
   always_ff @(posedge clk_i or negedge rst_ni) begin : bcast_ccc
     if (~rst_ni) begin
       rstdaa_o <= '0;
-      set_aasa_addr <= '0;
       set_aasa_valid <= 1'b0;
+      set_aasa_virt_valid <= 1'b0;
     end else begin
       case (command_code)
         `I3C_BCAST_RSTDAA: begin
@@ -967,10 +968,15 @@ module ccc
         // be set
         `I3C_BCAST_SETAASA: begin
           if (state_q == RxTbit && bus_rx_done_i) begin
-            set_aasa_addr  <= target_sta_address_i;
-            set_aasa_valid <= 1'b1;
+            if (~target_dyn_address_valid_i) begin
+              set_aasa_valid <= 1'b1;
+            end
+            if (~virtual_target_dyn_address_valid_i) begin
+              set_aasa_virt_valid <= 1'b1;
+            end
           end else begin
             set_aasa_valid <= 1'b0;
+            set_aasa_virt_valid <= 1'b0;
           end
         end
         default: begin
