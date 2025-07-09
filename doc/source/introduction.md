@@ -17,3 +17,4 @@ This documentation comprises the following chapters:
 * {doc}`axi_id_filtering` - provides information about the AXI transactions filtering feature
 * {doc}`axi_recovery_flow` - describes the alternative, optional, recovery flow where the recovery data is transferred to the core over the AXI bus
 * {doc}`registers` - provides auto-generated register descriptions
+* {doc}`known_limitations` - provides information about known core limitaions in specific releases
