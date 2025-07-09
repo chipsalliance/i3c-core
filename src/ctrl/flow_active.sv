@@ -385,6 +385,9 @@ module flow_active
     dct_index_hw_o = '0;
     resp_data_length_q = '0;
     resp_queue_wdata_o = '0;
+    resp_desc.err_status = i3c_resp_err_status_e'(0);
+    resp_desc.tid = '0;
+    resp_desc.data_length = '0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -472,7 +475,6 @@ module flow_active
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
-        // TODO: Fix inferred latch 'resp_queue_wvalid_o'
         resp_queue_wvalid_o = 1'b0;
         resp_desc.err_status = resp_err_status_d;
         resp_desc.tid = cmd_tid;
@@ -484,7 +486,9 @@ module flow_active
         end
       end
       default: begin
-        // TODO
+        resp_desc.err_status = i3c_resp_err_status_e'(0);
+        resp_desc.tid = '0;
+        resp_desc.data_length = '0;
       end
     endcase
   end
