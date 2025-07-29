@@ -522,7 +522,7 @@ module i3c_target_fsm #(
             state_d = Wait;
           end
         end
-        else if (bus_timeout_i) begin
+        else begin
             state_d = Wait;
         end
       end
