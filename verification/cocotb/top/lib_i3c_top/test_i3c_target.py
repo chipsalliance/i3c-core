@@ -227,7 +227,7 @@ async def test_i3c_target_read(dut):
     for i in range(2):
         tx_data = await make_transfer()
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
-        rx_data = list(rx_data)
+        rx_data = list(rx_data.data)
         await Timer(1, "us")
         compare(tx_data, rx_data)
 
@@ -241,7 +241,7 @@ async def test_i3c_target_read(dut):
 
     for i in range(3):
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data[i]))
-        rx_data = list(rx_data)
+        rx_data = list(rx_data.data)
         await Timer(1, "us")
         compare(tx_data[i], rx_data)
 
@@ -262,7 +262,7 @@ async def test_i3c_target_read(dut):
             lnt -= random.randint(1, 3)
 
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, lnt)
-        rx_data = list(rx_data)
+        rx_data = list(rx_data.data)
         await Timer(1, "us")
         compare(tx_data[i], rx_data, lnt)
 
@@ -273,7 +273,7 @@ async def test_i3c_target_read(dut):
     for i in range(2):
         tx_data = await make_transfer()
         rx_data = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data))
-        rx_data = list(rx_data)
+        rx_data = list(rx_data.data)
         await Timer(1, "us")
         compare(tx_data, rx_data)
 
@@ -599,7 +599,7 @@ async def test_i3c_target_writes_and_reads(dut):
 
     # Issue a private read
     recv_data = await i3c_controller.i3c_read(TARGET_ADDRESS, 16)
-    recv_data = list(recv_data)
+    recv_data = list(recv_data.data)
 
     assert tx_test_data == recv_data
 

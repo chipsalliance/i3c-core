@@ -125,8 +125,11 @@ async def test_tx_desc_stat(dut):
 
     # Send a private read to the target
     async def i3c_task(evt):
-        data = list(await i3c_controller.i3c_read(TARGET_ADDRESS, 4))
-        assert data == [0xEF, 0xBE, 0xAD, 0xDE]
+        # First read should ba NACKed. as there is no data in the FIFOs
+        response = await i3c_controller.i3c_read(TARGET_ADDRESS, 4)
+        assert response.nack
+        data = await i3c_controller.i3c_read(TARGET_ADDRESS, 4)
+        assert list(data.data) == [0xEF, 0xBE, 0xAD, 0xDE]
         evt.set()
 
     async def bus_task(evt):
