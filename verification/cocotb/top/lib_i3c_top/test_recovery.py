@@ -1035,7 +1035,7 @@ async def test_virtual_read_alternating(dut):
         # Wait and do a private read
         await Timer(1, "us")
         readback = await i3c_controller.i3c_read(DYNAMIC_ADDR, len(data))
-        assert data == list(readback)
+        assert data == list(readback.data)
 
         # ..........
 

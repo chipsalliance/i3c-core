@@ -506,8 +506,15 @@ module i3c_target_fsm #(
         end
       end
       CheckSByte: begin
-        if ((is_our_addr_match || is_virtual_addr_match) && (tx_desc_avail_i | ~bus_rnw_q)) begin
+        if (is_our_addr_match || is_virtual_addr_match) begin
+          // ACK the transaction if it is write
+          // If read, ACK only if we have data to send
+          if (tx_desc_avail_i | ~bus_rnw_q) begin
             state_d = TxAckSByte;
+          end else begin
+            // if there is no data to be sent, NACK the transaction
+            state_d = Wait;
+          end
         end
         else if (bus_timeout_i) begin
             state_d = Wait;
