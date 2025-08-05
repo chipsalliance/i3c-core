@@ -196,6 +196,7 @@ async def test_ccc_setnewda(dut):
 async def test_ccc_rstdaa(dut):
 
     DYNAMIC_ADDR = 0x52
+    VIRT_DYNAMIC_ADDR = 0x53
     i3c_controller, i3c_target, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
@@ -203,18 +204,50 @@ async def test_ccc_rstdaa(dut):
     dynamic_address_reg_valid = (
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID
     )
+    virtual_dynamic_address_reg_addr = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr
+    )
+    virtual_dynamic_address_reg_value = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR
+    )
+    virtual_dynamic_address_reg_valid = (
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID
+    )
+
+    virt_dynamic_address = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value
+    )
+    virt_dynamic_address_valid = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_valid
+    )
 
     # set dynamic address CSR
     await tb.write_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value, DYNAMIC_ADDR)
     await tb.write_csr_field(dynamic_address_reg_addr, dynamic_address_reg_valid, 1)
+    # set virt dynamic address CSR
+    await tb.write_csr_field(virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value, VIRT_DYNAMIC_ADDR)
+    await tb.write_csr_field(virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_valid, 1)
 
     # check if write was successful
     dynamic_address = await tb.read_csr_field(dynamic_address_reg_addr, dynamic_address_reg_value)
     dynamic_address_valid = await tb.read_csr_field(
         dynamic_address_reg_addr, dynamic_address_reg_valid
     )
+
+    virt_dynamic_address = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value
+    )
+    virt_dynamic_address_valid = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_valid
+    )
+
     assert dynamic_address == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the CSR"
     assert dynamic_address_valid == 1, "New DYNAMIC ADDRESS is not set as valid"
+
+    assert (
+        virt_dynamic_address == VIRT_DYNAMIC_ADDR
+    ), "Unexpected VIRT DYNAMIC ADDRESS read from the CSR"
+    assert virt_dynamic_address_valid == 1, "New VIRT DYNAMIC ADDRESS is not set as valid"
 
     # reset Dynamic Address
     await i3c_controller.i3c_ccc_write(ccc=CCC.BCAST.RSTDAA)
@@ -224,9 +257,18 @@ async def test_ccc_rstdaa(dut):
     dynamic_address_valid = await tb.read_csr_field(
         dynamic_address_reg_addr, dynamic_address_reg_valid
     )
+
+    virt_dynamic_address = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_value
+    )
+    virt_dynamic_address_valid = await tb.read_csr_field(
+        virtual_dynamic_address_reg_addr, virtual_dynamic_address_reg_valid
+    )
+
     assert dynamic_address == 0, "Unexpected DYNAMIC ADDRESS read from the CSR"
     assert dynamic_address_valid == 0, "New DYNAMIC ADDRESS is not set as valid"
-
+    assert virt_dynamic_address == 0, "Unexpected DYNAMIC ADDRESS read from the CSR"
+    assert virt_dynamic_address_valid == 0, "New DYNAMIC ADDRESS is not set as valid"
 
 @cocotb.test()
 async def test_ccc_getbcr(dut):
