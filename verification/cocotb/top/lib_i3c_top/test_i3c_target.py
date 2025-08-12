@@ -278,6 +278,64 @@ async def test_i3c_target_read(dut):
         compare(tx_data, rx_data)
 
 
+
+@cocotb_test()
+async def test_i3c_target_read_empty(dut):
+
+    # Setup
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+    # Generates a randomized transfer and puts it into the TTI TX queue
+    async def make_transfer(min_len=1, max_len=16):
+
+        length = random.randint(min_len, max_len)
+        data = [random.randint(0, 255) for _ in range(length)]
+
+        dut._log.info(f"Enqueueing transfer of length {length}")
+
+        # Write data to TTI TX FIFO
+        for i in range((length + 3) // 4):
+            word = data[4 * i]
+            if 4 * i + 1 < length:
+                word |= data[4 * i + 1] << 8
+            if 4 * i + 2 < length:
+                word |= data[4 * i + 2] << 16
+            if 4 * i + 3 < length:
+                word |= data[4 * i + 3] << 24
+
+            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(word), 4)
+
+        # Write the TX descriptor
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(length), 4)
+
+        return data
+
+    def compare(expected, received, lnt=None):
+        if lnt is None or lnt == len(expected):
+            sfx = ""
+        else:
+            sfx = " ([" + " ".join([f"{d:02X}" for d in expected[lnt:]]) + "] skipped)"
+            expected = expected[:lnt]
+
+        dut._log.info("Expected: [" + " ".join([f"{d:02X}" for d in expected]) + "]" + sfx)
+        dut._log.info("Received: [" + " ".join([f"{d:02X}" for d in received]) + "]")
+        assert expected == received
+
+    # issue 20 random read transactions
+    # randomly choose to inicialize the FIFO or not
+    # if FIFO is not initialized the transation should be NACKed
+    for i in range(20):
+        transfer_data = random.choice([True, False])
+        if transfer_data:
+            tx_data = await make_transfer()
+            response = await i3c_controller.i3c_read(TARGET_ADDRESS, len(tx_data), send_rsvd = random.choice([True, False]))
+            assert not response.nack
+            rx_data = list(response.data)
+            compare(tx_data, rx_data)
+        else:
+            response = await i3c_controller.i3c_read(TARGET_ADDRESS, random.randint(1, 16), send_rsvd = random.choice([True, False]))
+            assert response.nack
+
+
 @cocotb_test()
 async def test_i3c_target_ibi(dut):
     """
