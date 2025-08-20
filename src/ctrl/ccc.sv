@@ -386,6 +386,7 @@ module ccc
       `I3C_BCAST_ENDXFER: have_defining_byte = 1'b1;
       `I3C_BCAST_RSTACT: have_defining_byte = 1'b1;
       `I3C_BCAST_MLANE: have_defining_byte = 1'b1;
+      `I3C_DIRECT_GETCAPS: have_defining_byte = 1'b1;
       `I3C_DIRECT_ENDXFER: have_defining_byte = 1'b1;
       `I3C_DIRECT_RSTACT: have_defining_byte = 1'b1;
       default: have_defining_byte = '0;
@@ -397,6 +398,7 @@ module ccc
     WaitCCC,
     RxTbit,
     RxDefByte,
+    RxDefByteOrBusCond,
     RxDefByteTbit,
     RxByte,
     RxDirectDefByteTbit,
@@ -432,10 +434,17 @@ module ccc
   end
 
   logic [7:0] defining_byte;
+  logic       valid_defining_byte;
   always_ff @(posedge clk_i or negedge rst_ni) begin : register_defining_byte
-    if (~rst_ni) defining_byte <= '0;
-    else if (state_q == RxDefByte && bus_rx_done_i) begin
+    if (~rst_ni) begin
+      defining_byte <= '0;
+      valid_defining_byte <= '0;
+    end else if ((state_q == RxDefByte || state_q == RxDefByteOrBusCond) && bus_rx_done_i) begin
       defining_byte <= bus_rx_data_i;
+      valid_defining_byte <= '1;
+    end else if (state_q == RxDefByteOrBusCond && bus_rstart_det_i) begin
+      defining_byte <= '0;
+      valid_defining_byte <= '0;
     end
   end
 
@@ -507,7 +516,8 @@ module ccc
       RxTbit: begin
         if (bus_rx_done_i) begin
           // have defining byte
-          if (have_defining_byte) state_d = RxDefByte;
+          if (have_defining_byte && command_code == `I3C_DIRECT_GETCAPS) state_d = RxDefByteOrBusCond;
+          else if (have_defining_byte) state_d = RxDefByte;
           else begin
             // ENTDAA is special
             if (command_code == `I3C_BCAST_ENTDAA) begin
@@ -552,6 +562,10 @@ module ccc
       end
       RxDefByte: begin
         if (bus_rx_done_i) state_d = RxDefByteTbit;
+      end
+      RxDefByteOrBusCond: begin
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
+        else if (bus_rx_done_i) state_d = RxDefByteTbit;
       end
       RxDefByteTbit: begin
         if (bus_rx_done_i) begin
@@ -611,7 +625,8 @@ module ccc
         else if (bus_tx_done_i) state_d = TxDataTbit;
       end
       TxDataTbit: begin
-        if (bus_tx_done_i)
+        if (bus_rstart_det_i) state_d = RxDirectAddr;
+        else if (bus_tx_done_i)
           if (tx_data_done) state_d = WaitForBusCond;
           else state_d = TxData;
       end
@@ -655,6 +670,11 @@ module ccc
       RxDefByte: begin
         ccc_rx_req_bit  = '0;
         ccc_rx_req_byte = '1;
+      end
+      RxDefByteOrBusCond: begin
+        ccc_rx_req_bit  = '0;
+        ccc_rx_req_byte = '1;
+        if (bus_rstart_det_i) ccc_rx_req_byte = '0;
       end
       RxDefByteTbit: begin
         ccc_rx_req_bit  = '1;
@@ -763,6 +783,17 @@ module ccc
         if (tx_data_id == 8'h01) tx_data = get_dcr_i;
         else tx_data = '0;
       end
+      `I3C_DIRECT_RSTACT: begin
+        tx_data_id_init = 8'h01;
+        if (defining_byte == 8'h81 || defining_byte == 8'h82) begin
+            if (tx_data_id == 8'h01 && defining_byte == 8'h81) tx_data = 8'hFF; // Use worst case value for now
+            else if (tx_data_id == 8'h01 && defining_byte == 8'h82) tx_data = 8'hFF; // Use worst case value for now
+            else tx_data = '0;
+        end else if (defining_byte == 8'h00 || defining_byte == 8'h01 || defining_byte == 8'h02) begin
+            if (tx_data_id == 8'h01) tx_data = rst_action;
+            else tx_data = '0;
+        end else tx_data = '0;
+      end
       // 2 Bytes
       `I3C_DIRECT_GETSTATUS: begin
         tx_data_id_init = 8'h02;
@@ -794,6 +825,15 @@ module ccc
         else if (tx_data_id == 8'h03) tx_data = get_pid_i[23:16];
         else if (tx_data_id == 8'h02) tx_data = get_pid_i[15:8];
         else if (tx_data_id == 8'h01) tx_data = get_pid_i[7:0];
+        else tx_data = '0;
+      end
+      // n Bytes
+      `I3C_DIRECT_GETCAPS: begin
+        tx_data_id_init = 8'h03;
+        // FIXME: Check that this configuration is correct
+        if (tx_data_id == 8'h03) tx_data = 8'h00; // We don't support HDR Modes
+        else if (tx_data_id == 8'h02) tx_data = 8'h01; // We support I3C Basic v1.1.1
+        else if (tx_data_id == 8'h01) tx_data = 8'h40; // We send IBI MDB
         else tx_data = '0;
       end
       default: begin
@@ -928,7 +968,7 @@ module ccc
         end
         // rstact (direct)
         `I3C_DIRECT_RSTACT: begin
-          if (command_valid && is_byte_our_addr) begin
+          if (command_valid && is_byte_our_addr && ~command_rnw) begin
             rst_action_valid <= 1'b1;
           end else begin
             rst_action_valid <= 1'b0;
