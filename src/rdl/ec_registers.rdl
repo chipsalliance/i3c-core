@@ -12,18 +12,18 @@ regfile ECRegisters #(
     bit tti_rx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_tx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_ibi_fifo_size = 0x5, // 64 DWORDs by default
-    bit pid_hi = 0x0,
-    bit pid_lo = 0x0,
-    bit virtual_pid_hi = 0x0,
-    bit virtual_pid_lo = 0x0
+    bit pid_hi_reset = 0x0,
+    bit pid_lo_reset = 0x0,
+    bit virtual_pid_hi_reset = 0x0,
+    bit virtual_pid_lo_reset = 0x0
 ){
     name = "Extended Capabilities";
     SecureFirmwareRecoveryInterfaceRegisters SecFwRecoveryIf @ 0x0;
     StandbyControllerModeRegisters #(
-        .pid_hi(pid_hi),
-        .pid_lo(pid_lo),
-        .virtual_pid_hi(virtual_pid_hi),
-        .virtual_pid_lo(virtual_pid_lo)
+        .pid_hi_reset(pid_hi_reset),
+        .pid_lo_reset(pid_lo_reset),
+        .virtual_pid_hi_reset(virtual_pid_hi_reset),
+        .virtual_pid_lo_reset(virtual_pid_lo_reset)
     ) StdbyCtrlMode;
     TargetTransactionInterfaceRegisters #(
         .rx_desc_fifo_size(tti_rx_desc_fifo_size),

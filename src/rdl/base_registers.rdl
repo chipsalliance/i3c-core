@@ -8,10 +8,10 @@ regfile BaseRegs #(
     bit Data_endianness = 1'b0,
     boolean AUTOCMD_separated_reporting_dynamic = false,
     bit AUTOCMD_separated_reporting_support = 1'b0,
-    boolean DEV_ctx_SG_support = false,
+    boolean DEV_CTX_SG_support = false,
     boolean DEV_IBI_SG_support = false,
     boolean DEV_CR_SG_support = false,
-    bit CMD_size = 2'b0,
+    bit CMD_size_reset = 2'b0,
     boolean Scheduled_commands_support = false,
     boolean IBI_credit_count_support = false,
     boolean IBI_data_abort_support = false,
@@ -178,7 +178,7 @@ regfile BaseRegs #(
                 1 - controller supports scatter-gather";
             sw = r;
             hw = na;
-            reset = DEV_ctx_SG_support;
+            reset = DEV_CTX_SG_support;
         } SG_CAPABILITY_DC_EN[30:30];
         field {
             name = "SG_CAPABILITY_IBI_EN";
@@ -211,7 +211,7 @@ regfile BaseRegs #(
                 all other reserved.";
             sw = r;
             hw = na;
-            reset = CMD_size;
+            reset = CMD_size_reset;
         } CMD_SIZE[21:20];
         field {
             name = "SCHEDULED_COMMANDS_EN";
@@ -766,16 +766,16 @@ regfile BaseRegs #(
                 0 - continuous physical memory region,
 
                 1 - pointer to SG descriptor list.";
-            sw = DEV_ctx_SG_support ? rw : r;
-            hw = DEV_ctx_SG_support ? r : na;
+            sw = DEV_CTX_SG_support ? rw : r;
+            hw = DEV_CTX_SG_support ? r : na;
             reset = 1'b0;
         } BLP[31:31];
         // We don't support SG, so it always reads 0
         field {
             name = "LIST_SIZE";
             desc = "Number of SG entries.";
-            sw = DEV_ctx_SG_support ? rw : r;
-            hw = DEV_ctx_SG_support ? r : na;
+            sw = DEV_CTX_SG_support ? rw : r;
+            hw = DEV_CTX_SG_support ? r : na;
             reset = 16'h0;
         } LIST_SIZE[15:0];
     } DEV_CTX_SG @ 0x68;
