@@ -25,10 +25,10 @@ addrmap I3CCSR #(
     bit tti_rx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_tx_fifo_size = 0x5, // 64 DWORDs by default
     bit tti_ibi_fifo_size = 0x5, // 64 DWORDs by default
-    bit pid_hi = 0x7FFF, // Vendor-specific values
-    bit pid_lo = 0x005A00A5, // Vendor-specific values, test value
-    bit virtual_pid_hi = 0x7FFF, // Virtual device Vendor-specific values
-    bit virtual_pid_lo = 0x005A10A5 // Virtual device Vendor-specific values, test value
+    bit pid_hi_reset = 0x7FFF, // Vendor-specific values
+    bit pid_lo_reset = 0x005A00A5, // Vendor-specific values, test value
+    bit virtual_pid_hi_reset = 0x7FFF, // Virtual device Vendor-specific values
+    bit virtual_pid_lo_reset = 0x005A10A5 // Virtual device Vendor-specific values, test value
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
 `ifdef CONTROLLER_SUPPORT
@@ -43,7 +43,7 @@ addrmap I3CCSR #(
         // TODO: Update to correct values after implementation is done
         .AUTOCMD_separated_reporting_dynamic(false),
         .AUTOCMD_separated_reporting_support(1'b0),
-        .DEV_ctx_SG_support(false),
+        .DEV_CTX_SG_support(false),
         .DEV_IBI_SG_support(false),
         .DEV_CR_SG_support(false),
         .Scheduled_commands_support(false),
@@ -80,10 +80,10 @@ addrmap I3CCSR #(
         .tti_rx_fifo_size(tti_rx_fifo_size),
         .tti_tx_fifo_size(tti_tx_fifo_size),
         .tti_ibi_fifo_size(tti_ibi_fifo_size),
-        .pid_hi(pid_hi),
-        .pid_lo(pid_lo),
-        .virtual_pid_hi(virtual_pid_hi),
-        .virtual_pid_lo(virtual_pid_lo)
+        .pid_hi_reset(pid_hi_reset),
+        .pid_lo_reset(pid_lo_reset),
+        .virtual_pid_hi_reset(virtual_pid_hi_reset),
+        .virtual_pid_lo_reset(virtual_pid_lo_reset)
     ) I3C_EC @ EC_offset;
 `ifdef CONTROLLER_SUPPORT
     mem {
