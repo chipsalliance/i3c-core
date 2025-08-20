@@ -2,10 +2,10 @@
 
 
 regfile StandbyControllerModeRegisters#(
-    bit pid_hi,
-    bit pid_lo,
-    bit virtual_pid_hi,
-    bit virtual_pid_lo
+    bit pid_hi_reset,
+    bit pid_lo_reset,
+    bit virtual_pid_hi_reset,
+    bit virtual_pid_lo_reset
 ){
     name = "Standby Controller Mode";
     default regwidth = 32;
@@ -325,7 +325,7 @@ regfile StandbyControllerModeRegisters#(
             desc = "High part of the 48-bit Target Device Provisioned ID.";
             hw   = r;
             sw   = rw;
-            reset = virtual_pid_hi;
+            reset = virtual_pid_hi_reset;
         } PID_HI[15:1];
     } STBY_CR_VIRTUAL_DEVICE_CHAR;
     reg {
@@ -397,7 +397,7 @@ regfile StandbyControllerModeRegisters#(
             desc = "High part of the 48-bit Target Device Provisioned ID.";
             hw   = r;
             sw   = rw;
-            reset = pid_hi;
+            reset = pid_hi_reset;
         } PID_HI[15:1];
     } STBY_CR_DEVICE_CHAR;
     reg {
@@ -408,7 +408,7 @@ regfile StandbyControllerModeRegisters#(
             desc = "Low part of the 48-bit Target Device Provisioned ID.";
             hw   = r;
             sw   = rw;
-            reset = pid_lo;
+            reset = pid_lo_reset;
         } PID_LO[31:0];
     } STBY_CR_DEVICE_PID_LO;
     reg {
@@ -505,7 +505,7 @@ regfile StandbyControllerModeRegisters#(
             desc = "Low part of the 48-bit Target Virtual Device Provisioned ID.";
             hw   = r;
             sw   = rw;
-            reset = virtual_pid_lo;
+            reset = virtual_pid_lo_reset;
         } PID_LO[31:0];
     } STBY_CR_VIRTUAL_DEVICE_PID_LO;
     reg {
