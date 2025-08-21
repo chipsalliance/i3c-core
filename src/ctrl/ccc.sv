@@ -473,10 +473,41 @@ module ccc
   assign is_byte_our_virtual_static_addr = ((command_addr == virtual_target_sta_address_i) && virtual_target_sta_address_valid_i);
   assign is_byte_virtual_addr = is_byte_our_virtual_dynamic_addr | is_byte_our_virtual_static_addr;
 
+  logic supported_direct_command_code;
+
+  assign supported_direct_command_code = command_code inside {
+    // Setters
+    `I3C_DIRECT_SETDASA,
+    `I3C_DIRECT_SETNEWDA,
+    `I3C_DIRECT_SETXTIME,
+    `I3C_DIRECT_SETMWL,
+    `I3C_DIRECT_SETMRL,
+    `I3C_DIRECT_ENEC,
+    `I3C_DIRECT_DISEC,
+    // Getters
+    `I3C_DIRECT_GETBCR,
+    `I3C_DIRECT_GETDCR,
+    `I3C_DIRECT_RSTACT,
+    `I3C_DIRECT_GETSTATUS,
+    `I3C_DIRECT_GETMWL,
+    `I3C_DIRECT_GETMRL,
+    `I3C_DIRECT_GETPID,
+    `I3C_DIRECT_GETCAPS
+  };
+
+  logic unsupported_def_byte;
+
+  assign unsupported_def_byte = have_defining_byte & (
+      (command_code == `I3C_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h81, 8'h82}));
+
+  logic supported_direct_command;
+  assign supported_direct_command = supported_direct_command_code & ~unsupported_def_byte;
+
   logic direct_addr_ack;
 
-  assign direct_addr_ack = (command_code == `I3C_DIRECT_SETDASA) ? ((is_byte_our_static_addr && ~target_dyn_address_valid_i) | (is_byte_our_virtual_static_addr && ~virtual_target_dyn_address_valid_i)) :
-                                                                 (is_byte_our_addr | is_byte_rsvd_addr | is_byte_virtual_addr);
+  assign direct_addr_ack = (command_code == `I3C_DIRECT_SETDASA) ?
+      ((is_byte_our_static_addr && ~target_dyn_address_valid_i) | (is_byte_our_virtual_static_addr && ~virtual_target_dyn_address_valid_i)) :
+      ((is_byte_our_addr | is_byte_virtual_addr) & supported_direct_command  | is_byte_rsvd_addr );
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_addr
     if (~rst_ni) begin
@@ -599,8 +630,8 @@ module ccc
           end
           else begin
             if (is_byte_rsvd_addr) state_d = NextCCC;
-            else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw) state_d = TxData;
-            else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw) begin
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw && supported_direct_command) state_d = TxData;
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw && supported_direct_command) begin
               if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
               else state_d = RxData;
             end else state_d = WaitForBusCond;
