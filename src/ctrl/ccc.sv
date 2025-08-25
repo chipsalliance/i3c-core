@@ -1045,10 +1045,10 @@ module ccc
         // be set
         `I3C_BCAST_SETAASA: begin
           if (state_q == RxTbit && bus_rx_done_i) begin
-            if (~target_dyn_address_valid_i) begin
+            if (~target_dyn_address_valid_i && ~(target_sta_address_i inside {[7'h00:7'h07], 7'h3E, 7'h5E, 7'h6E, 7'h76, [7'h78:7'h7F]})) begin
               set_aasa_valid <= 1'b1;
             end
-            if (~virtual_target_dyn_address_valid_i) begin
+            if (~virtual_target_dyn_address_valid_i && ~(virtual_target_sta_address_i inside {[7'h00:7'h07], 7'h3E, 7'h5E, 7'h6E, 7'h76, [7'h78:7'h7F]})) begin
               set_aasa_virt_valid <= 1'b1;
             end
           end else begin
