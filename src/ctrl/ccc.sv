@@ -944,6 +944,12 @@ module ccc
       disec_hj         <= '0;
       rst_action_valid <= 1'b0;
     end else begin
+      enec_ibi         <= '0;
+      enec_crr         <= '0;
+      enec_hj          <= '0;
+      disec_ibi        <= '0;
+      disec_crr        <= '0;
+      disec_hj         <= '0;
       case (command_code)
         // setmwl
         `I3C_DIRECT_SETMWL, `I3C_BCAST_SETMWL: begin
@@ -979,7 +985,7 @@ module ccc
         end
         // enec
         `I3C_DIRECT_ENEC, `I3C_BCAST_ENEC: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+          if (state_q == RxDataTbit && bus_rx_done_i && (~is_byte_rsvd_addr || command_code == `I3C_BCAST_ENEC)) begin
             if (rx_data_count == 8'd0) begin
               enec_ibi <= rx_data[0];
               enec_crr <= rx_data[1];
@@ -989,7 +995,7 @@ module ccc
         end
         // disec
         `I3C_DIRECT_DISEC, `I3C_BCAST_DISEC: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+          if (state_q == RxDataTbit && bus_rx_done_i && (~is_byte_rsvd_addr || command_code == `I3C_BCAST_DISEC)) begin
             if (rx_data_count == 8'd0) begin
               disec_ibi <= rx_data[0];
               disec_crr <= rx_data[1];
