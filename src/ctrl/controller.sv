@@ -270,6 +270,7 @@ module controller
   logic [19:0] t_bus_available;
   logic [15:0] get_mwl;
   logic [15:0] get_mrl;
+  logic [7:0] get_ibil;
   logic [15:0] get_status_fmt1;
   logic [47:0] pid;
   logic [7:0] bcr;
@@ -289,8 +290,9 @@ module controller
   logic target_ibi_addr_valid;
   logic [6:0] target_hot_join_addr;
   logic [63:0] daa_unique_response;
-  logic set_mwl, set_mrl;
+  logic set_mwl, set_mrl, set_ibil;
   logic [15:0] mwl, mrl;
+  logic [7:0] ibil;
 
   logic ibi_enable;
   logic [2:0] ibi_retry_num;
@@ -359,6 +361,7 @@ module controller
       .t_bus_available_o              (t_bus_available),
       .get_mwl_o                      (get_mwl),
       .get_mrl_o                      (get_mrl),
+      .get_ibil_o                     (get_ibil),
       .get_status_fmt1_o              (get_status_fmt1),
       .pid_o                          (pid),
       .bcr_o                          (bcr),
@@ -382,8 +385,10 @@ module controller
       .ibi_retry_num_o                (ibi_retry_num),
       .set_mwl_i                      (set_mwl),
       .set_mrl_i                      (set_mrl),
+      .set_ibil_i                     (set_ibil),
       .mwl_i                          (mwl),
-      .mrl_i                          (mrl)
+      .mrl_i                          (mrl),
+      .ibil_i                         (ibil)
   );
 
   assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
@@ -553,6 +558,7 @@ end
       .t_bus_available_i(t_bus_available),
       .get_mwl_i(get_mwl),
       .get_mrl_i(get_mrl),
+      .get_ibil_i(get_ibil),
       .get_status_fmt1_i(get_status_fmt1),
       .pid_i(pid),
       .bcr_i(bcr),
@@ -599,8 +605,10 @@ end
       .err_o,
       .set_mwl_o(set_mwl),
       .set_mrl_o(set_mrl),
+      .set_ibil_o(set_ibil),
       .mwl_o(mwl),
       .mrl_o(mrl),
+      .ibil_o(ibil),
       .peripheral_reset_o,
       .peripheral_reset_done_i,
       .escalated_reset_o,
