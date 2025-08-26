@@ -30,6 +30,7 @@ module configuration (
 
     output logic [15:0] get_mwl_o,  // Get Max Write Length
     output logic [15:0] get_mrl_o,  // Get Max Read Length
+    output logic [ 7:0] get_ibil_o,  // Get Max IBI Length
     output logic [15:0] get_status_fmt1_o,  // Get Status Format 1
 
     output logic [47:0] pid_o,  // Target ID
@@ -63,8 +64,10 @@ module configuration (
 
     input logic set_mwl_i,
     input logic set_mrl_i,
+    input logic set_ibil_i,
     input logic [15:0] mwl_i,
-    input logic [15:0] mrl_i
+    input logic [15:0] mrl_i,
+    input logic [ 7:0] ibil_i
 );
 
   // Mode of operation
@@ -174,9 +177,11 @@ module configuration (
     if (~rst_ni) begin
       get_mwl_o <= 16'd256;
       get_mrl_o <= 16'd256;
+      get_ibil_o <= 8'd255;
     end else begin
       if (set_mwl_i) get_mwl_o <= mwl_i;
       if (set_mrl_i) get_mrl_o <= mrl_i;
+      if (set_ibil_i) get_ibil_o <= ibil_i;
     end
   end
 
