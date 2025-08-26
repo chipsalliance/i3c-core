@@ -273,7 +273,7 @@ module ibi (
                            (ibi_retry_num_i != ibi_retry_cnt);
 
 
-  assign done_o = (state_q == Done);
+  assign done_o = (state_q == Done || (state_q == DriveAddr && arbitration_lost_i && ~bus_tx_done_i));
 
   assign ibi_status_o    = ibi_status;
   assign ibi_status_we_o = (state_q == Done) | ((state_q == WaitStopOrRstart) & bus_stop_i);

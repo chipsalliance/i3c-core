@@ -167,6 +167,10 @@ module ccc
     output logic set_mrl_o,
     output logic [15:0] mrl_o,
 
+    // Set Max Read Length
+    output logic set_ibil_o,
+    output logic [7:0] ibil_o,
+
     // Enter Test Mode
     output logic ent_tm_o,
     output logic [7:0] tm_o,
@@ -229,6 +233,10 @@ module ccc
     // Get Max Read Length
     // I3C_DIRECT_GETMRL
     input logic [15:0] get_mrl_i,
+
+    // Get Max IBI Length
+    // I3C_DIRECT_GETMRL
+    input logic [7:0] get_ibil_i,
 
     // Get Provisioned ID
     // I3C_DIRECT_GETPID
@@ -497,8 +505,9 @@ module ccc
 
   logic unsupported_def_byte;
 
-  assign unsupported_def_byte = have_defining_byte & (
-      (command_code == `I3C_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h81, 8'h82}));
+  assign unsupported_def_byte = have_defining_byte & valid_defining_byte & (
+        (command_code == `I3C_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h81, 8'h82})
+      | (command_code == `I3C_DIRECT_GETCAPS));
 
   logic supported_direct_command;
   assign supported_direct_command = supported_direct_command_code & ~unsupported_def_byte;
@@ -843,9 +852,7 @@ module ccc
         tx_data_id_init = 8'h03;
         if (tx_data_id == 8'h03) tx_data = get_mrl_i[15:8];
         else if (tx_data_id == 8'h02) tx_data = get_mrl_i[7:0];
-        else if (tx_data_id == 8'h01)
-          // Maximum IBI payload size is 256 Bytes
-          tx_data = '1;
+        else if (tx_data_id == 8'h01) tx_data = get_ibil_i;
         else tx_data = '0;
       end
       `I3C_DIRECT_GETPID: begin
@@ -934,6 +941,8 @@ module ccc
     if (~rst_ni) begin
       set_mrl_o        <= 1'b0;
       mrl_o            <= '0;
+      set_ibil_o       <= 1'b0;
+      ibil_o           <= '1;
       set_mwl_o        <= 1'b0;
       mwl_o            <= '0;
       enec_ibi         <= '0;
@@ -953,7 +962,7 @@ module ccc
       case (command_code)
         // setmwl
         `I3C_DIRECT_SETMWL, `I3C_BCAST_SETMWL: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+          if (state_q == RxDataTbit && bus_rx_done_i && (~is_byte_rsvd_addr || command_code == `I3C_BCAST_SETMWL)) begin
             if (rx_data_count == 8'd0) begin
               mwl_o[15:8] <= rx_data;
               set_mwl_o   <= 1'b0;
@@ -969,17 +978,25 @@ module ccc
         end
         // setmrl
         `I3C_DIRECT_SETMRL, `I3C_BCAST_SETMRL: begin
-          if (state_q == RxDataTbit && bus_rx_done_i && ~is_byte_rsvd_addr) begin
+          if (state_q == RxDataTbit && bus_rx_done_i && (~is_byte_rsvd_addr || command_code == `I3C_BCAST_SETMRL)) begin
             if (rx_data_count == 8'd0) begin
               mrl_o[15:8] <= rx_data;
+              set_ibil_o   <= 1'b0;
               set_mrl_o   <= 1'b0;
             end else if (rx_data_count == 8'd1) begin
               mrl_o[7:0] <= rx_data;
+              set_ibil_o  <= 1'b0;
               set_mrl_o  <= 1'b1;
+            end else if (rx_data_count == 8'd2) begin
+              ibil_o[7:0] <= rx_data;
+              set_ibil_o  <= 1'b1;
+              set_mrl_o  <= 1'b0;
             end else begin
+              set_ibil_o  <= 1'b0;
               set_mrl_o <= 1'b0;
             end
           end else begin
+            set_ibil_o  <= 1'b0;
             set_mrl_o <= 1'b0;
           end
         end
