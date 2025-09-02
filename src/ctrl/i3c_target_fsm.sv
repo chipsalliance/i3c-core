@@ -660,4 +660,27 @@ module i3c_target_fsm #(
   // Record each transaction that gets NACK'd.
   assign event_target_nack_o = !nack_transaction_q && nack_transaction_d;
 
+  property cover_known_addr_ack;
+    realtime t;
+    @(posedge clk_i)
+    (
+      $rose(bus_addr_valid) |=>
+      ##2 ((is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) && ~bus_tx_req_value_o[0])
+      ##[10:48] (scl_negedge_i & ack_done)
+    );
+  endproperty
+  covprop_known_our_addr_ack: cover property (cover_known_addr_ack);
+
+  property cover_unknown_addr_nack;
+    @(posedge clk_i)
+    (
+      $rose(bus_addr_valid) |=>
+      ##2 (~(is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) && bus_tx_req_value_o[0])
+      ##[10:48] (scl_negedge_i & ~ack_done)
+    );
+  endproperty
+  covprop_unknown_our_addr_nack: cover property (cover_unknown_addr_nack);
+
+  covprop_valid_addr: cover property (@(posedge clk_i) ($rose(bus_addr_valid)));
+
 endmodule : i3c_target_fsm
