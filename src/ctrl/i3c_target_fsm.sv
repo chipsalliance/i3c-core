@@ -661,6 +661,7 @@ module i3c_target_fsm #(
   assign event_target_nack_o = !nack_transaction_q && nack_transaction_d;
 
 `ifndef SYNTHESIS
+`ifndef VERILATOR
   property cover_known_addr_ack;
     @(posedge clk_i)
     (
@@ -684,5 +685,32 @@ module i3c_target_fsm #(
   covprop_unknown_addr_nack: cover property (cover_unknown_addr_nack);
 
   covprop_valid_addr: cover property (@(posedge clk_i) ($rose(bus_addr_valid)));
+
+  covergroup cg_bus_event_fsm_transitions @(posedge clk_i);
+    FsmState: coverpoint state_q {
+      bins valid_start_trans =
+        (Idle => RxFByte);
+      bins valid_rstart_trans =
+        (RxPWriteData, TxPReadData, TxPReadTbit, Wait => RxFByte),
+        (RxSByte => RxSByteRepeated);
+      bins valid_stop_trans =
+        (RxFByte, CheckFByte, TxAckFByte, RxSByte, RxSByteRepeated, CheckSByte, TxAckSByte,
+         RxPWriteData, RxPWriteTbit, TxPReadData, TxPReadTbit, Wait, DoIBI, DoneIBI, DoCCC,
+         DoneCCC, DoHotJoin, DoRstAction, DoHdrExit => Idle);
+    }
+    BusStartEvent: coverpoint bus_start_det_i {
+      bins start_detected = {1'b1};
+    }
+    BusRStartEvent: coverpoint bus_rstart_det_i {
+      bins rstart_detected = {1'b1};
+    }
+    BusStopEvent: coverpoint bus_stop_det_i {
+      bins stop_detected = {1'b1};
+    }
+
+  endgroup : cg_bus_event_fsm_transitions
+
+  cg_bus_event_fsm_transitions cg_bus_event_fsm_trans = new();
+`endif
 `endif
 endmodule : i3c_target_fsm
