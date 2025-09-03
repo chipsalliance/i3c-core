@@ -64,7 +64,7 @@ ifeq ($(SIM), vcs)
     EXTRA_ARGS += +vcs+vcdpluson +vpdfile+dump.vpd +vcs+lic+wait
 
     ifneq ($(COVERAGE_TYPE),)
-        EXTRA_ARGS += -cm line+cond+fsm+tgl+branch
+        EXTRA_ARGS += -cm line+cond+fsm+tgl+branch -lca
     endif
 endif
 
