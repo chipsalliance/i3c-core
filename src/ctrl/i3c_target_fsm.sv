@@ -660,27 +660,29 @@ module i3c_target_fsm #(
   // Record each transaction that gets NACK'd.
   assign event_target_nack_o = !nack_transaction_q && nack_transaction_d;
 
+`ifndef SYNTHESIS
   property cover_known_addr_ack;
-    realtime t;
     @(posedge clk_i)
     (
       $rose(bus_addr_valid) |=>
       ##2 ((is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) && ~bus_tx_req_value_o[0])
-      ##[10:48] (scl_negedge_i & ack_done)
+      ##1 @(posedge scl_negedge_i) ##1
+      ##1 @(posedge clk_i) ##1 $fell(bus_tx_req_bit_o)
     );
-  endproperty
-  covprop_known_our_addr_ack: cover property (cover_known_addr_ack);
+  endproperty : cover_known_addr_ack
+  covprop_known_addr_ack: cover property (cover_known_addr_ack);
 
   property cover_unknown_addr_nack;
     @(posedge clk_i)
     (
       $rose(bus_addr_valid) |=>
       ##2 (~(is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) && bus_tx_req_value_o[0])
-      ##[10:48] (scl_negedge_i & ~ack_done)
+      ##1 @(posedge scl_negedge_i) ##1
+      ##1 @(posedge clk_i) ##1 ($stable(bus_tx_req_bit_o) && ~bus_tx_req_bit_o)
     );
-  endproperty
-  covprop_unknown_our_addr_nack: cover property (cover_unknown_addr_nack);
+  endproperty : cover_unknown_addr_nack
+  covprop_unknown_addr_nack: cover property (cover_unknown_addr_nack);
 
   covprop_valid_addr: cover property (@(posedge clk_i) ($rose(bus_addr_valid)));
-
+`endif
 endmodule : i3c_target_fsm
