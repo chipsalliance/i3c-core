@@ -11,6 +11,7 @@ from interface import I3CTopTestInterface
 
 import cocotb
 from cocotb.triggers import ClockCycles
+from cocotb.regression import TestFactory
 
 TGT_ADR = 0x5A
 
@@ -645,21 +646,32 @@ async def test_ccc_setmrl_bcast(dut):
     assert mrl == int(sig)
 
 
-@cocotb.test()
-async def test_ccc_rstact_direct(dut):
-    command = CCC.DIRECT.RSTACT
-
+SUPPORTED_RESET_ACTIONS = [
+    I3cTargetResetAction.NO_RESET,
+    I3cTargetResetAction.RESET_PERIPHERAL_ONLY,
+    I3cTargetResetAction.RESET_WHOLE_TARGET,
+]
+async def test_ccc_rstact(dut, type, rstact):
     i3c_controller, _, tb = await test_setup(dut)
     await ClockCycles(tb.clk, 50)
+
+    if type == "broadcast":
+        command = CCC.BCAST.RSTACT
+        directed_data = None
+        reset_actions = rstact
+    elif type == "direct":
+        command = CCC.DIRECT.RSTACT
+        directed_data = [(TGT_ADR, [])]
+        reset_actions = [(TGT_ADR, rstact)]
+    else:
+        assert False, "Unsupported RSTACT type, must be 'broadcast' or 'direct'"
 
     # Send directed RSTACT
     rst_action = 0xAA
     await i3c_controller.i3c_ccc_write(
         ccc=command,
         defining_byte=rst_action,
-        directed_data=[
-            (TGT_ADR, []),
-        ],
+        directed_data=directed_data,
         stop=False,
     )
 
@@ -671,35 +683,24 @@ async def test_ccc_rstact_direct(dut):
     await i3c_controller.send_stop()
 
     # Start new frame and reset target with reset action set to peripheral reset
-    await i3c_controller.target_reset(I3cTargetResetAction.RESET_PERIPHERAL_ONLY)
-    assert dut.peripheral_reset_o == 1
-    assert dut.escalated_reset_o == 0
+    await i3c_controller.target_reset(reset_actions)
+    if rstact == I3cTargetResetAction.NO_RESET:
+        assert dut.peripheral_reset_o == 0
+        assert dut.escalated_reset_o == 0
+    elif rstact == I3cTargetResetAction.RESET_PERIPHERAL_ONLY:
+        assert dut.peripheral_reset_o == 1
+        assert dut.escalated_reset_o == 0
+    elif rstact == I3cTargetResetAction.RESET_WHOLE_TARGET:
+        assert dut.peripheral_reset_o == 0
+        assert dut.escalated_reset_o == 1
+    else:
+        assert False, f"Unsupported reset action ({rstact}), must be one of {SUPPORTED_RESET_ACTIONS}"
     await ClockCycles(tb.clk, 50)
 
-
-@cocotb.test()
-async def test_ccc_rstact_bcast(dut):
-    command = CCC.BCAST.RSTACT
-
-    i3c_controller, _, tb = await test_setup(dut)
-    await ClockCycles(tb.clk, 50)
-
-    # Send broadcast RSTACT
-    rst_action = 0xAA
-    await i3c_controller.i3c_ccc_write(ccc=command, defining_byte=rst_action, stop=False)
-
-    # Check if reset action got stored correctly in the logic after Target Reset Pattern
-    sig = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.rst_action_o
-    assert int(sig) == 0
-    await i3c_controller.send_target_reset_pattern()
-    assert rst_action == int(sig)
-    await i3c_controller.send_stop()
-
-    # Start new frame and reset target with reset action set to peripheral reset
-    await i3c_controller.target_reset(I3cTargetResetAction.RESET_WHOLE_TARGET)
-    assert dut.peripheral_reset_o == 0
-    assert dut.escalated_reset_o == 1
-    await ClockCycles(tb.clk, 50)
+rstact_tf = TestFactory(test_function=test_ccc_rstact)
+rstact_tf.add_option(name="rstact", optionlist=SUPPORTED_RESET_ACTIONS)
+rstact_tf.add_option(name="type", optionlist=["broadcast", "direct"])
+rstact_tf.generate_tests()
 
 
 @cocotb.test()
