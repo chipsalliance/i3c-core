@@ -868,7 +868,6 @@ module ccc
       // n Bytes
       `I3C_DIRECT_GETCAPS: begin
         tx_data_id_init = 8'h03;
-        // FIXME: Check that this configuration is correct
         if (tx_data_id == 8'h03) tx_data = 8'h00; // We don't support HDR Modes
         else if (tx_data_id == 8'h02) tx_data = 8'h01; // We support I3C Basic v1.1.1
         else if (tx_data_id == 8'h01) tx_data = 8'h40; // We send IBI MDB
