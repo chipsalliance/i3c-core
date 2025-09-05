@@ -1193,4 +1193,80 @@ module ccc
     .address_o(entdaa_address),
     .address_valid_o(entdaa_addres_valid)
   );
+
+`ifndef SYNTHESIS
+`ifndef VERILATOR
+  // Detect each SETDASA CCC targeted to us while we don't have dynamic address set
+  property cover_first_both_dyn_setdasa;
+    @(posedge clk_i) ($rose(direct_addr_ack) && (command_code == `I3C_DIRECT_SETDASA)) |=>
+    ##1 @(posedge bus_rx_done_i) ##1
+    ##1 @(posedge clk_i) ##2
+    (
+      ($rose(virtual_target_dyn_address_valid_i) ##0 $changed(virtual_target_dyn_address_i)) or
+      ($rose(target_dyn_address_valid_i) ##0 $changed(target_dyn_address_i))
+    );
+  endproperty : cover_first_both_dyn_setdasa
+  covprop_first_both_dyn_setdasa: cover property (cover_first_both_dyn_setdasa);
+
+  // Detect each SETDASA CCC targeted to us while we have dynamic address set
+  property cover_not_first_both_dyn_setdasa;
+    @(posedge clk_i)
+    (
+      $rose(bus_rx_done_i) && (command_code == `I3C_DIRECT_SETDASA) && ccc_valid_i &&
+      $stable(bus_rx_req_byte_o) && bus_rx_req_byte_o ##1
+      $rose(is_byte_our_static_addr) || $rose(is_byte_our_virtual_static_addr)
+    ) |=>
+    @(posedge bus_rx_done_i) ##1
+    ##1 @(posedge clk_i) ##2
+    (
+      ($stable(direct_addr_ack) && ~direct_addr_ack) and
+      (
+        ($stable(virtual_target_dyn_address_valid_i) && virtual_target_dyn_address_valid_i ##0 $stable(virtual_target_dyn_address_i) && virtual_target_dyn_address_i) or
+        ($stable(target_dyn_address_valid_i) && target_dyn_address_valid_i ##0 $stable(target_dyn_address_i) && target_dyn_address_i)
+      )
+    );
+  endproperty : cover_not_first_both_dyn_setdasa
+  covprop_not_first_both_dyn_setdasa: cover property (cover_not_first_both_dyn_setdasa);
+
+  // Detect each SETAASA CCC while we don't have dynamic address set
+  property cover_first_both_dyn_setaasa;
+    @(posedge clk_i) $rose(ccc_valid_i) ##1 (command_code == `I3C_BCAST_SETAASA) && ~(virtual_target_dyn_address_valid_i & target_dyn_address_valid_i)|=>
+    ##1 @(posedge bus_rx_done_i)
+    ##1 @(posedge clk_i) ##2
+    (
+      ($rose(virtual_target_dyn_address_valid_i) ##0 $changed(virtual_target_dyn_address_i)) or
+      ($rose(target_dyn_address_valid_i) ##0 $changed(target_dyn_address_i))
+    );
+  endproperty : cover_first_both_dyn_setaasa
+  covprop_first_both_dyn_setaasa: cover property (cover_first_both_dyn_setaasa);
+
+  // Detect each SETAASA CCC while we have dynamic address set
+  property cover_not_first_both_dyn_setaasa;
+    @(posedge clk_i) $rose(ccc_valid_i) ##1 (command_code == `I3C_BCAST_SETAASA) && (virtual_target_dyn_address_valid_i & target_dyn_address_valid_i)|=>
+    ##1 @(posedge bus_rx_done_i)
+    ##1 @(posedge clk_i) ##2
+    (
+      ($stable(virtual_target_dyn_address_valid_i) ##0 $stable(virtual_target_dyn_address_i)) and
+      ($stable(target_dyn_address_valid_i) ##0 $stable(target_dyn_address_i))
+    );
+  endproperty : cover_not_first_both_dyn_setaasa
+  covprop_not_first_both_dyn_setaasa: cover property (cover_not_first_both_dyn_setaasa);
+
+  // Detect each SETDASA CCC targeted to us
+  property cover_recv_setdasa;
+    @(posedge clk_i)
+    (
+      ccc_valid_i && (command_code == `I3C_DIRECT_SETDASA) &&
+      ($rose(is_byte_our_addr) || $rose(is_byte_virtual_addr))
+    );
+  endproperty : cover_recv_setdasa
+  covprop_recv_setdasa: cover property (cover_recv_setdasa);
+
+  // Detect each SETAASA CCC
+  property cover_recv_setaasa;
+    @(posedge clk_i) ($rose(ccc_valid_i) ##1 (command_code == `I3C_BCAST_SETAASA));
+  endproperty : cover_recv_setaasa
+  covprop_recv_setaasa: cover property (cover_recv_setaasa);
+`endif
+`endif
 endmodule
