@@ -20,6 +20,5 @@
   `define AXI_ID_FILTERING 1
   `define NUM_PRIV_IDS     4
   `define DISABLE_INPUT_FF 1
-  `define DISABLE_LOOPBACK 1
 
 `endif  // I3C_CONFIG
