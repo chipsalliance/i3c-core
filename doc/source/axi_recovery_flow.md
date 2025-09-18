@@ -14,7 +14,7 @@ The transactions to the core may be filtered using the AXI ID field (see {doc}`a
 
 The logic is implemented so that the recovery firmware in the Caliptra RoT ROM can operate without any changes.
 
-In order to enable setting W1C recovery registers, AXI recovery mode introduces additional register - `REC_INTF_REG_W1C_ACCESS`.
+In order to enable setting W1C fields in recovery registers over AXI, the AXI recovery mode introduces additional register - `REC_INTF_REG_W1C_ACCESS`.
 
 ### AXI-based recovery procedure
 
@@ -23,20 +23,25 @@ The ROM running on the MCU core monitors the recovery block registers and perfor
 During the boot procedure the ROM will have to follow the following procedure:
 
 1. Set the I3C block to the "direct AXI" mode
-2. Poll the `DEVICE_STATUS` register and wait for the recovery to be enabled by the Caliptra core
+   1. Set the `REC_INTF_BYPASS` bit in the `REC_INTF_CFG` register
+2. Poll the `DEVICE_STATUS_0` register and wait for the recovery to be enabled by the Caliptra core
+   1. Poll `DEVICE_STATUS_0.DEV_STATUS` until it becomes `0x03` (Recovery mode - ready to accept recovery image)
 3. Read the `RECOVERY_STATUS` register and check if the recovery flow started
-4. Write to the `RECOVERY_CONTROL` register to set the recovery image configuration
-5. Write to the `INDIRECT_FIFO_CTRL` register to set the recovery image size
-6. Push the recovery image to the recovery interface FIFOs:
-
-   a. Read the `INDIRECT_FIFO_STATUS` register to determine remaining space in the indirect FIFO
-
-   b. If the indirect FIFO is not full, write a chunk of data to the `TX_DATA_PORT` register
-
-   c. The above steps should be repeated until the whole recovery image is written to the FIFO
-
-7. Activate the new image setting `RECOVERY_CTRL` register by writing `0xf00` to the `REC_INTF_REG_W1C_ACCESS` register
-8. Read the `RECOVERY_STATUS` register to ensure the image has been activated
+   1. Check whether `RECOVERY_STATUS.DEV_REC_STATUS` is `0x1` (Awaiting recovery image)
+4. Write to the `RECOVERY_CTRL` register to set the recovery image configuration
+5. Write to the `INDIRECT_FIFO_CTRL_0` register to reset the FIFO
+6. Write to the `INDIRECT_FIFO_CTRL_1` register to set the recovery image size
+7. Push the recovery image to the recovery interface FIFOs:
+   1. Read the `INDIRECT_FIFO_STATUS` register to determine remaining space in the indirect FIFO
+      1. If the indirect FIFO is not full, write a chunk of data to the `TX_DATA_PORT` register
+      2. If the indirect FIFO is full, wait for the `INDIRECT_FIFO_STATUS_0.FULL` bit to clear
+   2. The above steps should be repeated until the whole recovery image is written to the FIFO
+8. Notify the recovery handler that the final chunk has been sent
+   1. Set the `REC_PAYLOAD_DONE` bit in the `REC_INTF_CFG` register to raise the `payload_available` signal for the final time
+9. Activate the new image
+   1. Write `0xf00` to the `REC_INTF_REG_W1C_ACCESS` register to update the `RECOVERY_CTRL` field
+10. Read the `RECOVERY_STATUS` register to ensure the image has been activated
+    1. Poll `RECOVERY_STATUS.DEV_REC_STATUS` until it becomes `0x3` (Recovery successful); before the image is activated, this field will be `0x2` (Booting recovery image)
 
 The recovery image will be written in chunks with length equal to or less than `Max transfer size` defined in the `INDIRECT_FIFO_STATUS` register.
 Once the last data chunk is written to the FIFO, the Caliptra MCU ROM will write a CSR in the Secure Firmware Recovery register file indicating the transfer is complete.
