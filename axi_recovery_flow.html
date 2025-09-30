@@ -430,24 +430,56 @@ This feature allows driving the recovery data from within the SoC integrating th
 <p>Recovery CSRs are accessible from the internal AXI bus.
 The transactions to the core may be filtered using the AXI ID field (see <a class="reference internal" href="axi_id_filtering.html"><span class="doc">AXI Transaction ID Filtering</span></a>)</p>
 <p>The logic is implemented so that the recovery firmware in the Caliptra RoT ROM can operate without any changes.</p>
-<p>In order to enable setting W1C recovery registers, AXI recovery mode introduces additional register - <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code>.</p>
+<p>In order to enable setting W1C fields in recovery registers over AXI, the AXI recovery mode introduces additional register - <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code>.</p>
 <h3 id="axi-based-recovery-procedure">AXI-based recovery procedure<a class="headerlink" href="#axi-based-recovery-procedure" title="Link to this heading">¶</a></h3>
 <p>The Caliptra MCU RISC-V core is responsible for driving the data copied from an external memory (e.g. QSPI interface) to the recovery FIFOs.
 The ROM running on the MCU core monitors the recovery block registers and performs the recovery flow.
 During the boot procedure the ROM will have to follow the following procedure:</p>
-<ol class="arabic">
-<li><p>Set the I3C block to the “direct AXI” mode</p></li>
-<li><p>Poll the <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS</span></code> register and wait for the recovery to be enabled by the Caliptra core</p></li>
-<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register and check if the recovery flow started</p></li>
-<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CONTROL</span></code> register to set the recovery image configuration</p></li>
-<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> register to set the recovery image size</p></li>
-<li><p>Push the recovery image to the recovery interface FIFOs:</p>
-<p>a. Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO</p>
-<p>b. If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">TX_DATA_PORT</span></code> register</p>
-<p>c. The above steps should be repeated until the whole recovery image is written to the FIFO</p>
+<ol class="arabic simple">
+<li><p>Set the I3C block to the “direct AXI” mode</p>
+<ol class="arabic simple">
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">REC_INTF_BYPASS</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG</span></code> register</p></li>
+</ol>
 </li>
-<li><p>Activate the new image setting <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register by writing <code class="docutils literal notranslate"><span class="pre">0xf00</span></code> to the <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> register</p></li>
-<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p></li>
+<li><p>Poll the <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS_0</span></code> register and wait for the recovery to be enabled by the Caliptra core</p>
+<ol class="arabic simple">
+<li><p>Poll <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS_0.DEV_STATUS</span></code> until it becomes <code class="docutils literal notranslate"><span class="pre">0x03</span></code> (Recovery mode - ready to accept recovery image)</p></li>
+</ol>
+</li>
+<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register and check if the recovery flow started</p>
+<ol class="arabic simple">
+<li><p>Check whether <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS.DEV_REC_STATUS</span></code> is <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (Awaiting recovery image)</p></li>
+</ol>
+</li>
+<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register to set the recovery image configuration</p></li>
+<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_0</span></code> register to reset the FIFO</p></li>
+<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_1</span></code> register to set the recovery image size</p></li>
+<li><p>Push the recovery image to the recovery interface FIFOs:</p>
+<ol class="arabic simple">
+<li><p>Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO</p>
+<ol class="arabic simple">
+<li><p>If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">TX_DATA_PORT</span></code> register</p></li>
+<li><p>If the indirect FIFO is full, wait for the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS_0.FULL</span></code> bit to clear</p></li>
+</ol>
+</li>
+<li><p>The above steps should be repeated until the whole recovery image is written to the FIFO</p></li>
+</ol>
+</li>
+<li><p>Notify the recovery handler that the final chunk has been sent</p>
+<ol class="arabic simple">
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG</span></code> register to raise the <code class="docutils literal notranslate"><span class="pre">payload_available</span></code> signal for the final time</p></li>
+</ol>
+</li>
+<li><p>Activate the new image</p>
+<ol class="arabic simple">
+<li><p>Write <code class="docutils literal notranslate"><span class="pre">0xf00</span></code> to the <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> register to update the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> field</p></li>
+</ol>
+</li>
+<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p>
+<ol class="arabic simple">
+<li><p>Poll <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS.DEV_REC_STATUS</span></code> until it becomes <code class="docutils literal notranslate"><span class="pre">0x3</span></code> (Recovery successful); before the image is activated, this field will be <code class="docutils literal notranslate"><span class="pre">0x2</span></code> (Booting recovery image)</p></li>
+</ol>
+</li>
 </ol>
 <p>The recovery image will be written in chunks with length equal to or less than <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">transfer</span> <span class="pre">size</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register.
 Once the last data chunk is written to the FIFO, the Caliptra MCU ROM will write a CSR in the Secure Firmware Recovery register file indicating the transfer is complete.</p>
