@@ -21,6 +21,8 @@
         The test sets dynamic address and virtual dynamic address by
         sending SETDASA CCC. Then it verifies that correct addresses have
         been set by reading STBY_CR_DEVICE_ADDR CSR.
+        The test also sends a random number of CCCs targeting devices other
+        than DUT, and checks if the dynamic address was not accepted.
         '''
       tests: ["ccc_setdasa"]
       tags: ["top"]
