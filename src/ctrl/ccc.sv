@@ -635,7 +635,8 @@ module ccc
           if (command_code == `I3C_DIRECT_SETDASA) begin
             if (is_byte_our_static_addr && target_dyn_address_valid_i) state_d = WaitForBusCond;
             else if (is_byte_our_virtual_static_addr && virtual_target_dyn_address_valid_i) state_d = WaitForBusCond;
-            else state_d = RxData;
+            else if (is_byte_our_virtual_static_addr || is_byte_our_static_addr) state_d = RxData;
+            else state_d = WaitForBusCond;
           end
           else begin
             if (is_byte_rsvd_addr) state_d = NextCCC;
