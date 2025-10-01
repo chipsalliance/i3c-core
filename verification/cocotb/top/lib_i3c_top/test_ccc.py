@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import random
 
 from boot import boot_init
 from bus2csr import bytes2int
@@ -15,6 +16,14 @@ from cocotb.regression import TestFactory
 
 TGT_ADR = 0x5A
 
+VALID_I3C_ADDRESSES = (
+    [i for i in range(0x03, 0x3E)]
+    + [i for i in range(0x3F, 0x5E)]
+    + [i for i in range(0x5F, 0x6E)]
+    + [i for i in range(0x6F, 0x76)]
+    + [i for i in range(0x77, 0x7A)]
+    + [0x7B, 0x7D]
+)
 
 async def test_setup(dut):
     """
@@ -85,15 +94,47 @@ async def test_ccc_setdasa(dut):
     DYNAMIC_ADDR = 0x52
     VIRT_DYNAMIC_ADDR = 0x53
 
+    # remove our addresses from list of allowed addresses
+    VALID_I3C_ADDRESSES.remove(STATIC_ADDR)
+    VALID_I3C_ADDRESSES.remove(VIRT_STATIC_ADDR)
+    VALID_I3C_ADDRESSES.remove(DYNAMIC_ADDR)
+    VALID_I3C_ADDRESSES.remove(VIRT_DYNAMIC_ADDR)
+
     i3c_controller, i3c_target, tb = await test_setup(dut)
-    # set regular device dynamic address
-    await i3c_controller.i3c_ccc_write(
-        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
-    )
-    # set virtual device dynamic address
-    await i3c_controller.i3c_ccc_write(
-        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
-    )
+    # send number of transaction to address other than our
+    for _ in range(random.randint(1, 3)):
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+        )
+    if random.choice([True, False]):
+        # send regular device dynamic address along with addresses for other random devices (those should be ignored)
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+        )
+    else:
+        # send regular device dynamic address
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
+        )
+    # send number of transaction to address other than our
+    for _ in range(random.randint(1, 3)):
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+        )
+    if random.choice([True, False]):
+        # send virtual device dynamic address along with addresses for other random devices (those should be ignored)
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+        )
+    else:
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+        )
+    # send number of transaction to address other than our
+    for _ in range(random.randint(1, 3)):
+        await i3c_controller.i3c_ccc_write(
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+        )
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
     virtual_dynamic_address_reg_addr = (
