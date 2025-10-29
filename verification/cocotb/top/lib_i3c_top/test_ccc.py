@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import random
+from random import randint, choice
 
 from boot import boot_init
 from bus2csr import bytes2int
@@ -102,14 +102,14 @@ async def test_ccc_setdasa(dut):
 
     i3c_controller, i3c_target, tb = await test_setup(dut)
     # send number of transaction to address other than our
-    for _ in range(random.randint(1, 3)):
+    for _ in range(randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
-    if random.choice([True, False]):
+    if choice([True, False]):
         # send regular device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     else:
         # send regular device dynamic address
@@ -117,23 +117,23 @@ async def test_ccc_setdasa(dut):
             ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
         )
     # send number of transaction to address other than our
-    for _ in range(random.randint(1, 3)):
+    for _ in range(randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
-    if random.choice([True, False]):
+    if choice([True, False]):
         # send virtual device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     else:
         await i3c_controller.i3c_ccc_write(
             ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
         )
     # send number of transaction to address other than our
-    for _ in range(random.randint(1, 3)):
+    for _ in range(randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
@@ -346,33 +346,59 @@ async def test_ccc_rstdaa(dut):
 @cocotb.test()
 async def test_ccc_getbcr(dut):
 
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
     _BCR_FIXED = 0b001  # CSR reset value
-    _BCR_VAR = 0b00110  # CSR reset value
-    _BCR_VALUE = (_BCR_FIXED << 5) | _BCR_VAR
+    _BCR_VARs = [0x6, 0x16]
 
     command = CCC.DIRECT.GETBCR
 
     i3c_controller, _, tb = await test_setup(dut)
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR,
+        _BCR_VARs[0],
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR,
+        _BCR_VARs[1],
+    )
 
-    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
-    bcr = responses[0][1]
-    bcr_value = int.from_bytes(bcr, byteorder="big", signed=False)
-    assert _BCR_VALUE == bcr_value
+    for _tgt_adr, _bcr_var in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _BCR_VARs):
+        responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=1)
+        bcr = responses[0][1]
+        bcr_value = int.from_bytes(bcr, byteorder="big", signed=False)
+        _BCR_VALUE = (_BCR_FIXED << 5) | _bcr_var
+        assert _BCR_VALUE == bcr_value
 
 
 @cocotb.test()
 async def test_ccc_getdcr(dut):
 
-    _DCR_VALUE = 0xBD  # OCP Recovery Device
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
+    _DCR_VARs = [randint(0, 255), randint(0, 255)]
 
     command = CCC.DIRECT.GETDCR
 
     i3c_controller, _, tb = await test_setup(dut)
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR,
+        _DCR_VARs[0],
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.DCR,
+        _DCR_VARs[1],
+    )
 
-    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=1)
-    dcr = responses[0][1]
-    dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
-    assert _DCR_VALUE == dcr_value
+    for _tgt_adr, _dcr_value in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _DCR_VARs):
+        responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=1)
+        dcr = responses[0][1]
+        dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
+        assert _dcr_value == dcr_value
 
 
 @cocotb.test()
@@ -506,19 +532,44 @@ async def test_ccc_setaasa_ignore(dut):
 @cocotb.test()
 async def test_ccc_getpid(dut):
 
-    _PID_HI = 0xFFFE
-    _PID_LO = 0x005A00A5
+    STATIC_ADDR = 0x5A
+    VIRT_STATIC_ADDR = 0x5B
+    _PID_HIs = [randint(0, 32767), randint(0, 32767)]
+    _PID_LOs = [randint(0, (2**32)-1), randint(0, (2**32)-1)]
     command = CCC.DIRECT.GETPID
 
     i3c_controller, _, tb = await test_setup(dut)
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
+        _PID_HIs[0],
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO,
+        _PID_LOs[0],
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.PID_HI,
+        _PID_HIs[1],
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_PID_LO.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO,
+        _PID_LOs[1],
+    )
 
-    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=TGT_ADR, count=6)
-    pid = responses[0][1]
-    pid_hi = int.from_bytes(pid[0:2], byteorder="big", signed=False)
-    pid_lo = int.from_bytes(pid[2:6], byteorder="big", signed=False)
+    for _tgt_adr, _pid_lo, _pid_hi in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _PID_LOs, _PID_HIs):
+        responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=6)
+        pid = responses[0][1]
+        pid_hi = int.from_bytes(pid[0:2], byteorder="big", signed=False)
+        pid_lo = int.from_bytes(pid[2:6], byteorder="big", signed=False)
 
-    assert pid_hi == _PID_HI
-    assert pid_lo == _PID_LO
+        # PID_HI has bit 0 always stuck at 0
+        # Test can only setup 15 upper bits
+        assert pid_hi == _pid_hi * 2
+        assert pid_lo == _pid_lo
 
 
 async def read_target_events(tb):
