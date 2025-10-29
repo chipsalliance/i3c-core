@@ -816,13 +816,17 @@ module ccc
       // 1 Byte
       `I3C_DIRECT_GETBCR: begin
         tx_data_id_init = 8'h01;
-        if (tx_data_id == 8'h01) tx_data = get_bcr_i;
-        else tx_data = '0;
+        if (tx_data_id == 8'h01) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_bcr_i;
+          else tx_data = get_bcr_i;
+        end else tx_data = '0;
       end
       `I3C_DIRECT_GETDCR: begin
         tx_data_id_init = 8'h01;
-        if (tx_data_id == 8'h01) tx_data = get_dcr_i;
-        else tx_data = '0;
+        if (tx_data_id == 8'h01) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_dcr_i;
+          else tx_data = get_dcr_i;
+        end else tx_data = '0;
       end
       `I3C_DIRECT_RSTACT: begin
         tx_data_id_init = 8'h01;
@@ -858,13 +862,25 @@ module ccc
       end
       `I3C_DIRECT_GETPID: begin
         tx_data_id_init = 8'h06;
-        if (tx_data_id == 8'h06) tx_data = get_pid_i[47:40];
-        else if (tx_data_id == 8'h05) tx_data = get_pid_i[39:32];
-        else if (tx_data_id == 8'h04) tx_data = get_pid_i[31:24];
-        else if (tx_data_id == 8'h03) tx_data = get_pid_i[23:16];
-        else if (tx_data_id == 8'h02) tx_data = get_pid_i[15:8];
-        else if (tx_data_id == 8'h01) tx_data = get_pid_i[7:0];
-        else tx_data = '0;
+        if (tx_data_id == 8'h06) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[47:40];
+          else tx_data = get_pid_i[47:40];
+        end else if (tx_data_id == 8'h05) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[39:32];
+          else tx_data = get_pid_i[39:32];
+        end else if (tx_data_id == 8'h04) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[31:24];
+          else tx_data = get_pid_i[31:24];
+        end else if (tx_data_id == 8'h03) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[23:16];
+          else tx_data = get_pid_i[23:16];
+        end else if (tx_data_id == 8'h02) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[15:8];
+          else tx_data = get_pid_i[15:8];
+        end else if (tx_data_id == 8'h01) begin
+          if (is_byte_virtual_addr) tx_data = virtual_get_pid_i[7:0];
+          else tx_data = get_pid_i[7:0];
+        end else tx_data = '0;
       end
       // n Bytes
       `I3C_DIRECT_GETCAPS: begin
