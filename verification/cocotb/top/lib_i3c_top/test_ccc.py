@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from random import randint, choice
+import random
 
 from boot import boot_init
 from bus2csr import bytes2int
@@ -25,7 +25,7 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 
-async def test_setup(dut):
+async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -50,7 +50,7 @@ async def test_setup(dut):
     tb = I3CTopTestInterface(dut)
     await tb.setup()
     await ClockCycles(tb.clk, 50)
-    await boot_init(tb)
+    await boot_init(tb, static_addr=static_addr, virtual_static_addr=virtual_static_addr)
     return i3c_controller, i3c_target, tb
 
 
@@ -91,28 +91,27 @@ async def test_ccc_getstatus(dut):
 @cocotb.test()
 async def test_ccc_setdasa(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    DYNAMIC_ADDR = 0x52
-    VIRT_DYNAMIC_ADDR = 0x53
+    list_of_values = VALID_I3C_ADDRESSES.copy()
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(list_of_values, 4)
 
     # remove our addresses from list of allowed addresses
-    VALID_I3C_ADDRESSES.remove(STATIC_ADDR)
-    VALID_I3C_ADDRESSES.remove(VIRT_STATIC_ADDR)
-    VALID_I3C_ADDRESSES.remove(DYNAMIC_ADDR)
-    VALID_I3C_ADDRESSES.remove(VIRT_DYNAMIC_ADDR)
+    list_of_values.remove(STATIC_ADDR)
+    list_of_values.remove(VIRT_STATIC_ADDR)
+    list_of_values.remove(DYNAMIC_ADDR)
+    list_of_values.remove(VIRT_DYNAMIC_ADDR)
 
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     await ClockCycles(tb.clk, 50)
     # send number of transaction to address other than our
-    for _ in range(randint(1, 3)):
+    for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
-    if choice([True, False]):
+    if random.choice([True, False]):
         # send regular device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     else:
         # send regular device dynamic address
@@ -120,23 +119,23 @@ async def test_ccc_setdasa(dut):
             ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
         )
     # send number of transaction to address other than our
-    for _ in range(randint(1, 3)):
+    for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
-    if choice([True, False]):
+    if random.choice([True, False]):
         # send virtual device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     else:
         await i3c_controller.i3c_ccc_write(
             ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
         )
     # send number of transaction to address other than our
-    for _ in range(randint(1, 3)):
+    for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(choice(VALID_I3C_ADDRESSES), [choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
         )
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
@@ -174,12 +173,17 @@ async def test_ccc_setdasa(dut):
 @cocotb.test()
 async def test_ccc_setdasa_nack(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    DYNAMIC_ADDR = 0x52
-    VIRT_DYNAMIC_ADDR = 0x53
+    list_of_values = VALID_I3C_ADDRESSES.copy()
 
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(list_of_values, 4)
+
+    # remove our addresses from list of allowed addresses
+    list_of_values.remove(STATIC_ADDR)
+    list_of_values.remove(VIRT_STATIC_ADDR)
+    list_of_values.remove(DYNAMIC_ADDR)
+    list_of_values.remove(VIRT_DYNAMIC_ADDR)
+
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     # set regular device dynamic address
     ack = await i3c_controller.i3c_ccc_write(
         ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])], stop=False
@@ -210,14 +214,20 @@ async def test_ccc_setdasa_nack(dut):
 @cocotb.test()
 async def test_ccc_setnewda(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    DYNAMIC_ADDR = 0x52
-    VIRT_DYNAMIC_ADDR = 0x53
-    NEW_DYNAMIC_ADDR = 0x0C
-    NEW_VIRT_DYNAMIC_ADDR = 0x21
 
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    list_of_values = VALID_I3C_ADDRESSES.copy()
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR, NEW_DYNAMIC_ADDR, NEW_VIRT_DYNAMIC_ADDR) = random.sample(list_of_values, 6)
+
+    # remove our addresses from list of allowed addresses
+    list_of_values.remove(STATIC_ADDR)
+    list_of_values.remove(VIRT_STATIC_ADDR)
+    list_of_values.remove(DYNAMIC_ADDR)
+    list_of_values.remove(VIRT_DYNAMIC_ADDR)
+    list_of_values.remove(NEW_DYNAMIC_ADDR)
+    list_of_values.remove(NEW_VIRT_DYNAMIC_ADDR)
+
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     await ClockCycles(tb.clk, 50)
 
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
@@ -351,14 +361,15 @@ async def test_ccc_rstdaa(dut):
 @cocotb.test()
 async def test_ccc_getbcr(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
     _BCR_FIXED = 0b001  # CSR reset value
-    _BCR_VARs = [0x6, 0x16]
-
+    _BCR_VARs = [random.randint(0, 31), random.randint(0, 31)]
     command = CCC.DIRECT.GETBCR
 
-    i3c_controller, _, tb = await test_setup(dut)
+    list_of_values = VALID_I3C_ADDRESSES.copy()
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
+
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR,
@@ -382,13 +393,12 @@ async def test_ccc_getbcr(dut):
 @cocotb.test()
 async def test_ccc_getdcr(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    _DCR_VARs = [randint(0, 255), randint(0, 255)]
-
+    _DCR_VARs = [random.randint(0, 255), random.randint(0, 255)]
     command = CCC.DIRECT.GETDCR
 
-    i3c_controller, _, tb = await test_setup(dut)
+    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
+
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR,
@@ -543,13 +553,13 @@ async def test_ccc_setaasa_ignore(dut):
 @cocotb.test()
 async def test_ccc_getpid(dut):
 
-    STATIC_ADDR = 0x5A
-    VIRT_STATIC_ADDR = 0x5B
-    _PID_HIs = [randint(0, 32767), randint(0, 32767)]
-    _PID_LOs = [randint(0, (2**32)-1), randint(0, (2**32)-1)]
+    _PID_HIs = [random.randint(0, 32767), random.randint(0, 32767)]
+    _PID_LOs = [random.randint(0, (2**32)-1), random.randint(0, (2**32)-1)]
     command = CCC.DIRECT.GETPID
 
-    i3c_controller, _, tb = await test_setup(dut)
+    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
+
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
