@@ -52,7 +52,15 @@ async def common_procedure(tb: I3CTopTestInterface):
     return core_config
 
 
-async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False, static_addr=0x5A, virtual_static_addr=0x5B):
+async def boot_init(
+    tb: I3CTopTestInterface,
+    timings=None,
+    verify=False,
+    static_addr=0x5A,
+    virtual_static_addr=0x5B,
+    dynamic_addr=None,
+    virtual_dynamic_addr=None,
+):
     """
     Boot sequence model should match the description in "Boot and Initialization" chapter of the documentation.
 
@@ -79,7 +87,9 @@ async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False, static_
     await setup_hci_thresholds(tb)
 
     # Start the device
-    await umbrella_stby_init(tb, verify, static_addr, virtual_static_addr)
+    await umbrella_stby_init(
+        tb, verify, static_addr, virtual_static_addr, dynamic_addr, virtual_dynamic_addr
+    )
 
 
 async def check_version(tb):
@@ -193,7 +203,14 @@ async def define_supported_ccc(tb):
     pass
 
 
-async def umbrella_stby_init(tb, verify=False, static_addr=0x5A, virtual_static_addr=0x5B):
+async def umbrella_stby_init(
+    tb,
+    verify=False,
+    static_addr=0x5A,
+    virtual_static_addr=0x5B,
+    dynamic_addr=None,
+    virtual_dynamic_addr=None,
+):
     """
     Set the BCR bits and the DCR value in register STBY_CR_DEVICE_CHAR.
 
@@ -238,6 +255,30 @@ async def umbrella_stby_init(tb, verify=False, static_addr=0x5A, virtual_static_
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
         0x1,
     )
+    # Set dynamic address and valid
+    if dynamic_addr is not None:
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+            dynamic_addr
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+            1
+        )
+    # Set dynamic address and valid for virtual device
+    if virtual_dynamic_addr is not None:
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+            virtual_dynamic_addr
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+            1
+        )
 
     # Enable Target Interface
     await tb.write_csr_field(
