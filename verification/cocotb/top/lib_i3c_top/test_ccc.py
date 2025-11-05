@@ -25,7 +25,7 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 
-async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B):
+async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B, dynamic_addr=None, virtual_dynamic_addr=None):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -50,7 +50,8 @@ async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B):
     tb = I3CTopTestInterface(dut)
     await tb.setup()
     await ClockCycles(tb.clk, 50)
-    await boot_init(tb, static_addr=static_addr, virtual_static_addr=virtual_static_addr)
+    await boot_init(tb, static_addr=static_addr, virtual_static_addr=virtual_static_addr,
+                    dynamic_addr=dynamic_addr, virtual_dynamic_addr=virtual_dynamic_addr)
     return i3c_controller, i3c_target, tb
 
 
@@ -106,12 +107,12 @@ async def test_ccc_setdasa(dut):
     # send number of transaction to address other than our
     for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(list_of_values), [random.choice(list_of_values) << 1])], stop=False
         )
     if random.choice([True, False]):
         # send regular device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(list_of_values), [random.choice(list_of_values) << 1]), (STATIC_ADDR, [DYNAMIC_ADDR << 1]), (random.choice(list_of_values), [random.choice(list_of_values) << 1])], stop=False
         )
     else:
         # send regular device dynamic address
@@ -121,12 +122,12 @@ async def test_ccc_setdasa(dut):
     # send number of transaction to address other than our
     for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(list_of_values), [random.choice(list_of_values) << 1])], stop=False
         )
     if random.choice([True, False]):
         # send virtual device dynamic address along with addresses for other random devices (those should be ignored)
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(list_of_values), [random.choice(list_of_values) << 1]), (VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1]), (random.choice(list_of_values), [random.choice(list_of_values) << 1])], stop=False
         )
     else:
         await i3c_controller.i3c_ccc_write(
@@ -135,7 +136,7 @@ async def test_ccc_setdasa(dut):
     # send number of transaction to address other than our
     for _ in range(random.randint(1, 3)):
         await i3c_controller.i3c_ccc_write(
-            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(VALID_I3C_ADDRESSES), [random.choice(VALID_I3C_ADDRESSES) << 1])], stop=False
+            ccc=CCC.DIRECT.SETDASA, directed_data=[(random.choice(list_of_values), [random.choice(list_of_values) << 1])], stop=False
         )
     dynamic_address_reg_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr
     dynamic_address_reg_value = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR
@@ -365,11 +366,12 @@ async def test_ccc_getbcr(dut):
     _BCR_VARs = [random.randint(0, 31), random.randint(0, 31)]
     command = CCC.DIRECT.GETBCR
 
-    list_of_values = VALID_I3C_ADDRESSES.copy()
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
 
-    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
-
-    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=ADDRs[0] if ADDRs[0] == DYNAMIC_ADDR else None,
+        virtual_dynamic_addr=ADDRs[1] if ADDRs[1] == VIRT_DYNAMIC_ADDR else None)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR,
@@ -382,7 +384,7 @@ async def test_ccc_getbcr(dut):
     )
     await ClockCycles(tb.clk, 50)
 
-    for _tgt_adr, _bcr_var in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _BCR_VARs):
+    for _tgt_adr, _bcr_var in zip(ADDRs, _BCR_VARs):
         responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=1)
         bcr = responses[0][1]
         bcr_value = int.from_bytes(bcr, byteorder="big", signed=False)
@@ -396,9 +398,12 @@ async def test_ccc_getdcr(dut):
     _DCR_VARs = [random.randint(0, 255), random.randint(0, 255)]
     command = CCC.DIRECT.GETDCR
 
-    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
 
-    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=ADDRs[0] if ADDRs[0] == DYNAMIC_ADDR else None,
+        virtual_dynamic_addr=ADDRs[1] if ADDRs[1] == VIRT_DYNAMIC_ADDR else None)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR,
@@ -411,7 +416,7 @@ async def test_ccc_getdcr(dut):
     )
     await ClockCycles(tb.clk, 50)
 
-    for _tgt_adr, _dcr_value in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _DCR_VARs):
+    for _tgt_adr, _dcr_value in zip(ADDRs, _DCR_VARs):
         responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=1)
         dcr = responses[0][1]
         dcr_value = int.from_bytes(dcr, byteorder="big", signed=False)
@@ -557,9 +562,12 @@ async def test_ccc_getpid(dut):
     _PID_LOs = [random.randint(0, (2**32)-1), random.randint(0, (2**32)-1)]
     command = CCC.DIRECT.GETPID
 
-    (STATIC_ADDR, VIRT_STATIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 2)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
 
-    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR)
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=ADDRs[0] if ADDRs[0] == DYNAMIC_ADDR else None,
+        virtual_dynamic_addr=ADDRs[1] if ADDRs[1] == VIRT_DYNAMIC_ADDR else None)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
@@ -582,7 +590,7 @@ async def test_ccc_getpid(dut):
     )
     await ClockCycles(tb.clk, 50)
 
-    for _tgt_adr, _pid_lo, _pid_hi in zip([STATIC_ADDR, VIRT_STATIC_ADDR], _PID_LOs, _PID_HIs):
+    for _tgt_adr, _pid_lo, _pid_hi in zip(ADDRs, _PID_LOs, _PID_HIs):
         responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=_tgt_adr, count=6)
         pid = responses[0][1]
         pid_hi = int.from_bytes(pid[0:2], byteorder="big", signed=False)
