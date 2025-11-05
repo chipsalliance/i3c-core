@@ -52,7 +52,7 @@ async def common_procedure(tb: I3CTopTestInterface):
     return core_config
 
 
-async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False):
+async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False, static_addr=0x5A, virtual_static_addr=0x5B):
     """
     Boot sequence model should match the description in "Boot and Initialization" chapter of the documentation.
 
@@ -79,7 +79,7 @@ async def boot_init(tb: I3CTopTestInterface, timings=None, verify=False):
     await setup_hci_thresholds(tb)
 
     # Start the device
-    await umbrella_stby_init(tb, verify)
+    await umbrella_stby_init(tb, verify, static_addr, virtual_static_addr)
 
 
 async def check_version(tb):
@@ -193,7 +193,7 @@ async def define_supported_ccc(tb):
     pass
 
 
-async def umbrella_stby_init(tb, verify=False):
+async def umbrella_stby_init(tb, verify=False, static_addr=0x5A, virtual_static_addr=0x5B):
     """
     Set the BCR bits and the DCR value in register STBY_CR_DEVICE_CHAR.
 
@@ -219,7 +219,7 @@ async def umbrella_stby_init(tb, verify=False):
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
-        0x5A,
+        static_addr,
     )
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
@@ -231,7 +231,7 @@ async def umbrella_stby_init(tb, verify=False):
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
-        0x5B,
+        virtual_static_addr,
     )
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
