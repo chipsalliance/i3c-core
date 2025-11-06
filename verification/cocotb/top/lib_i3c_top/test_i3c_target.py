@@ -751,7 +751,7 @@ async def test_i3c_target_pwrite_err_detection(dut):
     I3C_DIRECT_GETSTATUS = 0x90
     TRANSFER_LENGTH = 4
     LOOPS = 2
-    PROTOCOL_ERR_LOW = 4
+    PROTOCOL_ERR_LOW = 5
 
     # Setup
     i3c_controller, _, tb = await test_setup(dut)
