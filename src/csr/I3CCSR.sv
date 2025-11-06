@@ -8374,8 +8374,8 @@ module I3CCSR (
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write 1 clear
-            next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~(decoded_wr_data[18:15] & decoded_wr_biten[18:15]);
+        if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~decoded_wr_biten[18:15]) | (decoded_wr_data[18:15] & decoded_wr_biten[18:15]);
             load_next_c = '1;
         end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;

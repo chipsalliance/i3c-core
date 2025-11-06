@@ -173,6 +173,7 @@ module configuration (
     8'h00,  // Vendor-specific meaning
     2'b11,  // Unable to do Handoff
     hwif_out_i.I3C_EC.TTI.STATUS.PROTOCOL_ERROR,
+    1'b0,   // Reserved
     hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
   };
 

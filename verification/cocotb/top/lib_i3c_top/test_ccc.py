@@ -57,36 +57,39 @@ async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B, dynamic_ad
 
 @cocotb.test()
 async def test_ccc_getstatus(dut):
-    PENDING_INTERRUPT = 0
-    PENDING_INTERRUPT_MASK = 0b1111
 
-    i3c_controller, i3c_target, tb = await test_setup(dut)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
+
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
     await ClockCycles(tb.clk, 50)
-    interrupt_status_reg_addr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr
-    pending_interrupt_field = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
-    interrupt_status = bytes2int(await tb.read_csr(interrupt_status_reg_addr, 4))
-    dut._log.info(f"Interrupt status from CSR: {interrupt_status}")
 
-    # NOTE: The field INTERRUPT_STATUS.PENDING_INTERRUPT is not writable by
-    # software and cocotb does not allow to set the underlying register directly.
-    # So the only value that can be read back is 0.
+    for _ in range(random.randint(10, 30)):
+        PENDING_INTERRUPT = random.randint(0, 15)
+        PENDING_INTERRUPT_MASK = 0b1111
 
-    pending_interrupt = await tb.read_csr_field(interrupt_status_reg_addr, pending_interrupt_field)
-    assert (
-        pending_interrupt == PENDING_INTERRUPT
-    ), "Unexpected pending interrupt value read from CSR"
+        interrupt_status_reg_addr = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr
+        pending_interrupt_field = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
 
-    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=TGT_ADR, count=2)
-    status = responses[0][1]
-    print("status", status)
-    pending_interrupt = (
-        int.from_bytes(status, byteorder="big", signed=False) & PENDING_INTERRUPT_MASK
-    )
-    assert (
-        pending_interrupt == PENDING_INTERRUPT
-    ), "Unexpected pending interrupt value received from GETSTATUS CCC"
+        await tb.write_csr_field(interrupt_status_reg_addr, pending_interrupt_field, PENDING_INTERRUPT)
+        pending_interrupt = await tb.read_csr_field(interrupt_status_reg_addr, pending_interrupt_field)
+        assert (
+            pending_interrupt == PENDING_INTERRUPT
+        ), "Unexpected pending interrupt value read from CSR"
 
-    cocotb.log.info(f"GET STATUS = {status}")
+        addr = random.choice([STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR])
+        responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=addr, count=2)
+        status = int.from_bytes(responses[0][1], byteorder="big", signed=False)
+        print("status", status)
+        if addr in [STATIC_ADDR, DYNAMIC_ADDR]:
+            pending_interrupt = status & PENDING_INTERRUPT_MASK
+            assert (
+                pending_interrupt == PENDING_INTERRUPT
+            ), f"Unexpected pending interrupt value received from GETSTATUS CCC, expected: {PENDING_INTERRUPT} got: {pending_interrupt}"
+        else:
+            assert (status == 0x00C0), f"Unexpected value received from GETSTATUS CCC, expected: 0xC0 got: {status}"
+        cocotb.log.info(f"GET STATUS = {status}")
 
 
 @cocotb.test()

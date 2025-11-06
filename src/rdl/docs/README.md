@@ -2827,7 +2827,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 |  11 | RX_DESC_THLD_STAT |rw, woclr| 0x0 | RX_DESC_THLD_STAT |
 |  12 |   IBI_THLD_STAT   |rw, woclr| 0x0 |   IBI_THLD_STAT   |
 |  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
-|18:15| PENDING_INTERRUPT |rw, woclr| 0x0 | PENDING_INTERRUPT |
+|18:15| PENDING_INTERRUPT |    rw   | 0x0 | PENDING_INTERRUPT |
 |  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
 |  26 |  TX_DESC_COMPLETE |rw, woclr| 0x0 |  TX_DESC_COMPLETE |
 |  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |

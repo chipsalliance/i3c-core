@@ -843,7 +843,7 @@ module ccc
       `I3C_DIRECT_GETSTATUS: begin
         tx_data_id_init = 8'h02;
         if (tx_data_id == 8'h02) tx_data = get_status_fmt1_i[15:8];
-        else if (tx_data_id == 8'h01) tx_data = get_status_fmt1_i[7:0];
+        else if (tx_data_id == 8'h01) tx_data = is_byte_virtual_addr ? 8'hC0 : get_status_fmt1_i[7:0];
         else tx_data = '0;
       end
       `I3C_DIRECT_GETMWL: begin
