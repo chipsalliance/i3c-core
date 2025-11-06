@@ -2273,7 +2273,7 @@ package I3CCSR_uvm;
             this.IBI_DONE = new("IBI_DONE");
             this.IBI_DONE.configure(this, 1, 13, "W1C", 1, 'h0, 1, 1, 0);
             this.PENDING_INTERRUPT = new("PENDING_INTERRUPT");
-            this.PENDING_INTERRUPT.configure(this, 4, 15, "W1C", 1, 'h0, 1, 1, 0);
+            this.PENDING_INTERRUPT.configure(this, 4, 15, "RW", 1, 'h0, 1, 1, 0);
             this.TRANSFER_ABORT_STAT = new("TRANSFER_ABORT_STAT");
             this.TRANSFER_ABORT_STAT.configure(this, 1, 25, "W1C", 1, 'h0, 1, 1, 0);
             this.TX_DESC_COMPLETE = new("TX_DESC_COMPLETE");
