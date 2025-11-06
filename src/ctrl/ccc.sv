@@ -507,7 +507,7 @@ module ccc
 
   assign unsupported_def_byte = have_defining_byte & valid_defining_byte & (
         (command_code == `I3C_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h81, 8'h82})
-      | (command_code == `I3C_DIRECT_GETCAPS));
+      | (command_code == `I3C_DIRECT_GETCAPS) & ~(defining_byte inside {8'h00, 8'h93}));
 
   logic supported_direct_command;
   assign supported_direct_command = supported_direct_command_code & ~unsupported_def_byte;
@@ -884,11 +884,20 @@ module ccc
       end
       // n Bytes
       `I3C_DIRECT_GETCAPS: begin
-        tx_data_id_init = 8'h03;
-        if (tx_data_id == 8'h03) tx_data = 8'h00; // We don't support HDR Modes
-        else if (tx_data_id == 8'h02) tx_data = 8'h01; // We support I3C Basic v1.1.1
-        else if (tx_data_id == 8'h01) tx_data = 8'h40; // We send IBI MDB
-        else tx_data = '0;
+        if( !valid_defining_byte || defining_byte == 8'h00) begin
+          tx_data_id_init = 8'h03;
+          if (tx_data_id == 8'h03) tx_data = 8'h00; // We don't support HDR Modes
+          else if (tx_data_id == 8'h02) tx_data = 8'h01; // We support I3C Basic v1.1.1
+          else if (tx_data_id == 8'h01) tx_data = 8'h48; // We send IBI MDB and support some GETCAPS defining bytes
+          else tx_data = '0;
+        end else if (valid_defining_byte && defining_byte == 8'h93) begin
+          tx_data_id_init = 8'h01;
+          if (tx_data_id == 8'h01) tx_data = 8'h35; // We share peripheral logic with side effects
+          else tx_data = '0;
+        end else begin
+          tx_data_id_init = '0;
+          tx_data = '0;
+        end
       end
       default: begin
         tx_data_id_init = 8'h00;
