@@ -219,7 +219,6 @@ regfile TargetTransactionInterfaceRegisters #(
             desc = "Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.";
             sw = rw;
             hw = rw;
-            woclr = true;
             we = true;
             reset = 4'd0;
         } PENDING_INTERRUPT[18:15];
