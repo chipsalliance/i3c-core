@@ -150,11 +150,7 @@ module bus_tx_flow (
       end
       NextTaskDecision: begin
         drive_bit_en = req;
-        // FIXME: Observed glitch on SDA
-        // drive_bit_value = req_byte_i ? req_value[7] : req_bit_i ? req_value[0] : 1'b1;
-        // This partially solves the problem
         drive_bit_value = req_value_i[0];
-        // req_value_i[0]
       end
       default: ;
     endcase

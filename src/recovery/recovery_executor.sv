@@ -4,8 +4,6 @@
     Recovery command execution module. Responds to commands decoded from I3C
     transactions by recovery_receiver and controls data frow to/from CSRs and
     TTI data queues.
-
-    FIXME: Check if cmd_len_i is valid w.r.t. cmd_cmd_i
 */
 module recovery_executor
   import i3c_pkg::*;
@@ -268,7 +266,7 @@ module recovery_executor
       CsrReadLen: state_d = CsrReadData;
 
       CsrReadData: begin
-        if (host_abort_i) state_d = Error;  // FIXME: Should we make this an error ?
+        if (host_abort_i) state_d = Error;  // Jump to error to force FIFOs flush
         else if (res_dvalid_o & res_dready_i & (dcnt == 1)) state_d = Done;
       end
 
