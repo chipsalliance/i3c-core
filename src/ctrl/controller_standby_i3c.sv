@@ -8,7 +8,7 @@ module controller_standby_i3c
     parameter int unsigned TtiTxDescDataWidth = 32,
     parameter int unsigned TtiRxDataWidth = 8,
     parameter int unsigned TtiTxDataWidth = 8,
-    parameter int unsigned TtiTxFifoDepth = 16,  // FIXME
+    parameter int unsigned TtiTxFifoDepth = 16,
     localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
     parameter int unsigned TtiIbiFifoDepth = 16,
     localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
