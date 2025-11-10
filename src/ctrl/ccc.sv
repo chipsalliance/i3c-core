@@ -1161,7 +1161,12 @@ module ccc
   assign disec_crr_o = disec_crr;
   assign disec_hj_o = disec_hj;
 
-  // FIXME: Implement outputs
+  // TODO: use those outputs once the following optional CCCs are added:
+  //
+  // * ENTTM
+  // * SETBRGTGT
+  // * ENTAS[0-3]
+  // * ENTHDR[0-7]
   assign set_brgtgt_o = '0;
   assign entas0_o = '0;
   assign entas1_o = '0;

@@ -39,7 +39,7 @@ module recovery_pec (
   // Output register
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni)
-      crc_o <= 8'h00;  // FIXME: The recovery spec doesn't define CRC init value, assuming 0
+      crc_o <= 8'h00;
     else begin
       if (!soft_reset_ni) crc_o <= 8'h00;
       else if (valid_i) crc_o <= crc_x;

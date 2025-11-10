@@ -69,7 +69,6 @@ module i3c_target_fsm #(
     output logic                   tx_fifo_rready_o,  // pop entry from tx_fifo
     input  logic [TxDataWidth-1:0] tx_fifo_rdata_i,   // byte in tx_fifo to be sent to host
     output logic                   tx_host_nack_o,    // NACK has been received during transmission
-    // FIXME: use me! to simplify the valid/ready/tbit generation
     input  logic                   tx_last_byte_i,
 
     // RX FIFO used for Target Write
@@ -321,8 +320,9 @@ module i3c_target_fsm #(
   assign rx_last_byte_o = (state_q == RxPWriteData) & (state_d inside {RxFByte, Idle});
 
   // TX FIFO ready when we start writing byte (enter TxPReadData)
-  // FIXME: If we enter state TXPReadData, then asserting rready will cause a byte to be
+  // Enterng the TXPReadData state, then asserting rready will cause a byte to be
   // consumed from the FIFO, but we might cancel TxPReadData if Rstart occurs.
+  // On TX cancel, we flush the FIFO, aborting transaction.
   assign tx_fifo_rready_o = (state_q != TxPReadData) & (state_d == TxPReadData);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : set_last_byte_in_xfer
