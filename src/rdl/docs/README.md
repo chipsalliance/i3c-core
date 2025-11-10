@@ -1113,7 +1113,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 |-----|----------|------|------|---------|
 | 15:1|  PID_HI  |  rw  |0x7FFF|  PID_HI |
 |23:16|    DCR   |  rw  | 0xBD |   DCR   |
-|28:24|  BCR_VAR |  rw  |  0x6 | BCR_VAR |
+|28:24|  BCR_VAR |  rw  | 0x16 | BCR_VAR |
 |31:29| BCR_FIXED|  rw  |  0x1 |BCR_FIXED|
 
 #### PID_HI field
@@ -1127,10 +1127,10 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 #### BCR_VAR field
 
 <p>Bus Characteristics, Variable Part.</p>
-<p>Reset value is set to 5'b00110, because this device:</p>
+<p>Reset value is set to 5'b10110, because this device:</p>
 <ul>
 <li>
-<p>[bit4] is not a Virtual Target</p>
+<p>[bit4] is a Virtual Target</p>
 </li>
 <li>
 <p>[bit3] is not Offline Capable</p>
