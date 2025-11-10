@@ -1364,7 +1364,7 @@ package I3CCSR_uvm;
             this.DCR = new("DCR");
             this.DCR.configure(this, 8, 16, "RW", 0, 'hbd, 1, 1, 0);
             this.BCR_VAR = new("BCR_VAR");
-            this.BCR_VAR.configure(this, 5, 24, "RW", 0, 'h6, 1, 1, 0);
+            this.BCR_VAR.configure(this, 5, 24, "RW", 0, 'h16, 1, 1, 0);
             this.BCR_FIXED = new("BCR_FIXED");
             this.BCR_FIXED.configure(this, 3, 29, "RW", 0, 'h1, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin

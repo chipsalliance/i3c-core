@@ -296,10 +296,10 @@ regfile StandbyControllerModeRegisters#(
             name = "BCR_VAR";
             desc = "Bus Characteristics, Variable Part.
 
-            Reset value is set to 5'b00110, because this device:
+            Reset value is set to 5'b10110, because this device:
 
 
-            - [bit4] is not a Virtual Target
+            - [bit4] is a Virtual Target
 
             - [bit3] is not Offline Capable
 
@@ -311,7 +311,7 @@ regfile StandbyControllerModeRegisters#(
             ";
             hw   = r;
             sw   = rw;
-            reset = 5'b00110;
+            reset = 5'b10110;
         } BCR_VAR[28:24];
         field {
             name = "DCR";
