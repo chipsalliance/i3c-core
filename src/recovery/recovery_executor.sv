@@ -150,6 +150,7 @@ module recovery_executor
   logic [ 1:0] bcnt;
 
   csr_e        csr_sel;
+  csr_e        csr_end;
   logic [31:0] csr_data;
   logic [15:0] csr_length;
   logic        csr_writeable;
@@ -305,25 +306,65 @@ module recovery_executor
       Idle:
       if (cmd_valid_i)
         unique case (cmd_cmd_i)
-          CMD_PROT_CAP:             csr_sel <= CSR_PROT_CAP_0;
-          CMD_DEVICE_ID:            csr_sel <= CSR_DEVICE_ID_0;
-          CMD_DEVICE_STATUS:        csr_sel <= CSR_DEVICE_STATUS_0;
-          CMD_DEVICE_RESET:         csr_sel <= CSR_DEVICE_RESET;
-          CMD_RECOVERY_CTRL:        csr_sel <= CSR_RECOVERY_CTRL;
-          CMD_RECOVERY_STATUS:      csr_sel <= CSR_RECOVERY_STATUS;
-          CMD_HW_STATUS:            csr_sel <= CSR_HW_STATUS;
-          CMD_INDIRECT_FIFO_CTRL:   csr_sel <= CSR_INDIRECT_FIFO_CTRL_0;
-          CMD_INDIRECT_FIFO_STATUS: csr_sel <= CSR_INDIRECT_FIFO_STATUS_0;
-          CMD_INDIRECT_FIFO_DATA:   csr_sel <= CSR_INDIRECT_FIFO_DATA;
+          CMD_PROT_CAP: begin
+            csr_sel <= CSR_PROT_CAP_0;
+            csr_end <= CSR_PROT_CAP_3;
+          end
+          CMD_DEVICE_ID: begin
+            csr_sel <= CSR_DEVICE_ID_0;
+            csr_end <= CSR_DEVICE_ID_5;
+          end
+          CMD_DEVICE_STATUS: begin
+            csr_sel <= CSR_DEVICE_STATUS_0;
+            csr_end <= CSR_DEVICE_STATUS_1;
+          end
+          CMD_DEVICE_RESET: begin
+            csr_sel <= CSR_DEVICE_RESET;
+            csr_end <= CSR_DEVICE_RESET;
+          end
+          CMD_RECOVERY_CTRL: begin
+            csr_sel <= CSR_RECOVERY_CTRL;
+            csr_end <= CSR_RECOVERY_CTRL;
+          end
+          CMD_RECOVERY_STATUS: begin
+            csr_sel <= CSR_RECOVERY_STATUS;
+            csr_end <= CSR_RECOVERY_STATUS;
+          end
+          CMD_HW_STATUS: begin
+            csr_sel <= CSR_HW_STATUS;
+            csr_end <= CSR_HW_STATUS;
+          end
+          CMD_INDIRECT_FIFO_CTRL: begin
+            csr_sel <= CSR_INDIRECT_FIFO_CTRL_0;
+            csr_end <= CSR_INDIRECT_FIFO_CTRL_1;
+          end
+          CMD_INDIRECT_FIFO_STATUS: begin
+            csr_sel <= CSR_INDIRECT_FIFO_STATUS_0;
+            csr_end <= CSR_INDIRECT_FIFO_STATUS_4;
+          end
+          CMD_INDIRECT_FIFO_DATA: begin
+            csr_sel <= CSR_INDIRECT_FIFO_DATA;
+            csr_end <= CSR_INDIRECT_FIFO_DATA;
+          end
 
-          default: csr_sel <= CSR_INVALID;
+          default: begin
+            csr_sel <= CSR_INVALID;
+            csr_end <= CSR_INVALID;
+          end
         endcase
 
-      // FIXME: This will overflow resulting on overwriting unwanted CSRs if
-      // a malicious packet with length > CSR length is received
-      CsrWrite: if (tti_rx_rack_i) csr_sel <= csr_e'(csr_sel + 8'd1);
-      CsrReadData: if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_e'(csr_sel + 8'd1);
-      default: csr_sel <= csr_sel;
+      // If the requested len is higher than CSR len, write last byte multiple times
+      CsrWrite: begin
+        if (tti_rx_rack_i) csr_sel <= csr_sel < csr_end ? csr_e'(csr_sel + 8'd1) : csr_e'(csr_sel);
+      end
+      // If the requested len is higher than CSR len, return last byte multiple times
+      CsrReadData: begin
+        if (res_dvalid_o & res_dready_i & (bcnt == 3)) csr_sel <= csr_sel < csr_end ? csr_e'(csr_sel + 8'd1) : csr_e'(csr_sel);
+      end
+      default: begin
+        csr_sel <= csr_sel;
+        csr_end <= CSR_INVALID;
+      end
     endcase
 
   // CSR writeable flag
