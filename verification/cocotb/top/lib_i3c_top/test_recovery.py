@@ -19,6 +19,15 @@ VIRT_STATIC_ADDR = 0x5B
 DYNAMIC_ADDR = 0x52
 VIRT_DYNAMIC_ADDR = 0x53
 
+VALID_I3C_ADDRESSES = (
+    [i for i in range(0x03, 0x3E)]
+    + [i for i in range(0x3F, 0x5E)]
+    + [i for i in range(0x5F, 0x6E)]
+    + [i for i in range(0x6F, 0x76)]
+    + [i for i in range(0x77, 0x7A)]
+    + [0x7B, 0x7D]
+)
+
 ocp_magic_string_as_bytes = [
     0x4F,  # 'O'
     0x43,  # 'C'
@@ -36,7 +45,9 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
+async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50,
+                     static_addr=0x5A, virtual_static_addr=0x5B,
+                     dynamic_addr=None, virtual_dynamic_addr=None):
     """
     Common test initialization routine
     """
@@ -83,7 +94,9 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
         dut._log.info(f"{k} = {v}")
 
     # Configure the top level
-    await boot_init(tb, timings)
+    await boot_init(tb, timings,
+                    static_addr=static_addr, virtual_static_addr=virtual_static_addr,
+                    dynamic_addr=dynamic_addr, virtual_dynamic_addr=virtual_dynamic_addr)
 
     # Set recovery indirect FIFO size and max transfer size (in 4B units)
     # Set low values to easy trigger pointer wrap in tests.
@@ -103,6 +116,79 @@ async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50):
     )
 
     return i3c_controller, i3c_target, tb, recovery
+
+
+@cocotb.test()
+async def test_virtual_overwrite(dut):
+    """
+    Tests CSR write(s) with lengths over CSR size
+    to the virtual address using recovery protocol
+    """
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut,
+        timeout=1000,
+        static_addr=STATIC_ADDR, virtual_static_addr=VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+
+    await ClockCycles(tb.clk, 50)
+
+    # Command and ceiling(cmd_length/4)
+    COMMAND_LENGTH_BYTES = [
+        (I3cRecoveryInterface.Command.DEVICE_RESET, 1, 3),
+        (I3cRecoveryInterface.Command.RECOVERY_CTRL, 1, 3),
+        (I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL, 2, 2),
+    ]
+
+    for _ in range(random.randint(5, 10)):
+        command, length, bytes_in_last_dword = random.choice(COMMAND_LENGTH_BYTES)
+        data = [random.randint(0, 0xff) for _ in range(4*random.randint(length+1, length+3))]
+        await recovery.command_write(
+            VIRT_DYNAMIC_ADDR, command, data
+        )
+
+        # Wait & read the CSR from the AHB/AXI side
+        await Timer(1, "us")
+
+        status = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+        )
+        dut._log.info(f"DEVICE_STATUS = 0x{status:08X}")
+        if command == I3cRecoveryInterface.Command.DEVICE_RESET:
+            expected_data = []
+            for i in range(0, bytes_in_last_dword):
+                expected_data.append(data[-4+i])
+            reg_data = dword2int(await tb.read_csr(
+                tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_RESET.base_addr, 4))
+        elif command == I3cRecoveryInterface.Command.RECOVERY_CTRL:
+            expected_data = []
+            for i in range(0, bytes_in_last_dword):
+                expected_data.append(data[-4+i])
+            reg_data = dword2int(await tb.read_csr(
+                tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_CTRL.base_addr, 4))
+        elif command == I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL:
+            expected_data = [data[0], 0]
+            for i in range(0, 4):
+                expected_data.append(data[-6+i])
+            reg_data = dword2int(await tb.read_csr(
+                tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_0.base_addr, 4))
+            reg_data |= (dword2int(await tb.read_csr(
+                tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_CTRL_1.base_addr, 4))) << 16
+
+        dut._log.info(f"CSR_VALUE = 0x{reg_data:08X}")
+
+        # read back device reset
+        i3c_data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, command
+        )
+
+        # Check
+        assert pec_ok
+        protocol_status = (status >> 8) & 0xFF
+        assert protocol_status == 0
+        assert reg_data == bytes2int(expected_data, byte_width=len(expected_data))
+        assert bytes2int(i3c_data) == bytes2int(expected_data)
 
 
 @cocotb.test()
