@@ -230,7 +230,6 @@ module controller_standby_i3c
   logic ibi_fifo_rready;
   logic [7:0] ibi_fifo_rdata;
   logic ibi_last_byte;
-  logic ibi_byte_err;
 
   // Bus events notifications
   logic event_target_nack;
@@ -582,7 +581,6 @@ module controller_standby_i3c
       .ibi_byte_ready_o(ibi_fifo_rready),
       .ibi_byte_i      (ibi_fifo_rdata),
       .ibi_byte_last_i (ibi_last_byte),
-      .ibi_byte_err_o  (ibi_byte_err),
 
       .scl_negedge_i  (ctrl_bus_i.scl.neg_edge),
       .scl_posedge_i  (ctrl_bus_i.scl.pos_edge),
@@ -730,8 +728,7 @@ module controller_standby_i3c
       .ibi_byte_valid_o  (ibi_fifo_rvalid),
       .ibi_byte_ready_i  (ibi_fifo_rready),
       .ibi_byte_o        (ibi_fifo_rdata),
-      .ibi_byte_last_o   (ibi_last_byte),
-      .ibi_byte_err_i    (ibi_byte_err)
+      .ibi_byte_last_o   (ibi_last_byte)
   );
 
   assign tx_host_nack_o = tx_host_nack;
