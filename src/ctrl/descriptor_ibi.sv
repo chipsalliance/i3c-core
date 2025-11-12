@@ -35,8 +35,7 @@ module descriptor_ibi #(
     output logic ibi_byte_valid_o,
     input logic ibi_byte_ready_i,
     output logic [IbiFifoWidth-1:0] ibi_byte_o,
-    output logic ibi_byte_last_o,
-    input logic ibi_byte_err_i
+    output logic ibi_byte_last_o
 );
 
   logic [7:0] data_mdb;
