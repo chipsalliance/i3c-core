@@ -37,7 +37,6 @@ module ibi (
     output logic       ibi_byte_ready_o,
     input  logic [7:0] ibi_byte_i,
     input  logic       ibi_byte_last_i,
-    output logic       ibi_byte_err_o,
 
     // Bus Monitor interface
     input logic scl_negedge_i,
@@ -82,11 +81,6 @@ module ibi (
   // NACK
   logic              bus_rx_req_nack;
   assign bus_rx_req_nack = bus_rx_req_value_i[0];
-
-  // Unconnected
-  always_comb begin
-    ibi_byte_err_o = '0;
-  end
 
   // FSM
   typedef enum logic [7:0] {
