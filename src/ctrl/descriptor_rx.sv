@@ -57,7 +57,7 @@ module descriptor_rx #(
   logic transfer_ended;
   logic transfer_ended_q;
 
-  assign transfer_ended = rx_byte_last_i | rx_byte_err_i;
+  assign transfer_ended = rx_byte_last_i;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_byte_counter
     if (!rst_ni) begin
@@ -83,10 +83,10 @@ module descriptor_rx #(
       if (transfer_ended) begin
         byte_counter_q <= byte_counter;
       end
-      if (transfer_ended) begin
-        if (rx_byte_err_i) rx_error <= 4'b0001;
-        else rx_error <= 4'b0000;
-      end
+      if (rx_byte_err_i)
+          rx_error <= 4'b0001;
+      else if (transfer_ended_q)
+          rx_error <= 4'b0000;
     end
   end
 

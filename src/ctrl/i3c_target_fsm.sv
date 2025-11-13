@@ -61,7 +61,6 @@ module i3c_target_fsm #(
     input logic bus_rx_done_i,
     input logic bus_rx_idle_i,
     input logic [RxDataWidth-1:0] bus_rx_data_i,
-    input logic bus_rx_error_i,
 
     // TX FIFO used for Target Read
     input  logic                   tx_desc_avail_i,
@@ -292,7 +291,7 @@ module i3c_target_fsm #(
       rx_overflow_err_q <= 1'b0;
     end else begin
       rx_overflow_err_q <= rx_overflow_err_r;
-      if (state_d == RxPWriteData & ~rx_fifo_wready_i) rx_overflow_err_r <= 1'b1;
+      if (state_d == RxPWriteData & ~rx_fifo_wready_i & rx_fifo_wvalid_o) rx_overflow_err_r <= 1'b1;
       else if (target_idle_o | state_d inside {RxFByte, Idle}) rx_overflow_err_r <= 1'b0;
     end
   end

@@ -15,8 +15,7 @@ module bus_rx_flow (
     input logic rx_req_byte_i,
     output logic [7:0] rx_data_o,
     output logic rx_done_o,
-    output logic rx_idle_o,
-    output logic error_o
+    output logic rx_idle_o
 );
   logic [3:0] bit_counter;
   logic bit_counter_en;
@@ -28,7 +27,6 @@ module bus_rx_flow (
   logic rx_req_bit;
 
   assign req = rx_req_bit_i | rx_req_byte_i;
-  assign error_o = rx_req_bit_i & rx_req_byte_i;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : ff_bit_request
     if (~rst_ni) begin
@@ -161,8 +159,11 @@ module bus_rx_flow (
     endcase
 
     // Allow to abort and go back to Idle if needed
-    if (~req | error_o) begin
+    if (~req) begin
       state_d = Idle;
     end
   end
+
+  // Make sure we never attempt to receive byte and bit at the same time
+  `I3C_ASSERT(RxBitAndByte_A, ~rx_req_bit_i | ~rx_req_byte_i)
 endmodule
