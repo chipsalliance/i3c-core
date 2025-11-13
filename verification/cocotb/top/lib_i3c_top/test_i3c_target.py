@@ -807,3 +807,68 @@ async def test_i3c_target_pwrite_err_detection(dut):
             tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
         )
         assert err_status == 0, "Unexpected error detected"
+
+
+@cocotb_test()
+async def test_i3c_target_pwrite_overflow_detection(dut):
+    I3C_DIRECT_GETSTATUS = 0x90
+    PROTOCOL_ERR_LOW = 5
+
+    # Setup
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    # Initialize
+    i3c_controller, _, tb = await test_setup(dut,
+        static_addr=STATIC_ADDR, virtual_static_addr=VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+
+    for _ in range(random.randint(5, 10)):
+        target_addr = DYNAMIC_ADDR
+        # Check error status
+        err_status = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+        )
+        assert err_status == 0, "Unexpected error detected"
+
+        # Read target status to ensure there's no error
+        result = await i3c_controller.i3c_ccc_read(
+            ccc=I3C_DIRECT_GETSTATUS, addr=target_addr, count=2
+        )
+        status = result[0][1]
+        status = int.from_bytes(status, byteorder="big", signed=False)
+        assert (
+            (status >> PROTOCOL_ERR_LOW) & 1
+        ) == 0, "GETSTATUS reported unexpected Protocol Error"
+        # FIFO size is 256 bytes + 4 bytes in the width conversion stage
+        TRANSFER_LENGTH = random.randint(261, 512)
+
+        # Send Private Write on I3C
+        test_data = [random.randint(0, 255) for _ in range(TRANSFER_LENGTH)]
+        await i3c_controller.i3c_write(target_addr, test_data)
+        await ClockCycles(tb.clk, 10)
+
+        # Check error status
+        err_status = await tb.read_csr_field(
+            tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
+        )
+        assert err_status == 0, "Overflow is not a Protocol Error"
+        # Read RX descriptor
+        data = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
+        )
+        err_stat = data >> 28
+        assert err_stat == 1, "Expected error detection"
+
+        desc_len = data & 0xFFFF
+        assert desc_len == 260
+
+        # Clear RX data FIFO
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST,
+            1,
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST,
+            0,
+        )
