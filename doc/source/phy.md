@@ -70,27 +70,15 @@ reg_val = $floor(3 / system_clock_period) - 1
 T_SU_DAT_REG = reg_val > 0 ? reg_val : 0
 ```
 
-For system clock frequencies below 320MHz, the core should be configured with the `DisableInputFF` parameter set to `True` (see [example configuration](https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49))
-This parameter removes one flipflop on the input lines, shortening the response latency.
+The core supports system clock frequencies above 333MHz, and SCL frequencies up to 12.5MHz.
+Below 333MHz `Tsco` I3C timing requirement of 12ns is not met. I3C specification defines `Tsco` as "Clock to Data Turnaround Time: The time duration between reception of an SCL edge and the start of driving an SDA change".
+With 333MHz clock the maximum response time from the core is 12ns. This timing is not affected by the chip pads delays as per MIPI CSI I3C 1.1.1 specification.
 
-The core provides 2 configurations with the `DisableInputFF` parameter set to `True`.
-In order to generate a configuration with the parameter set, run the following command from the top level of the I3C repository:
+The I3C core needs 3 system clock cycles between an event on a SCL line and driving the SDA.
+Since SCL and core clock are asynchronous, SCL can drop just after rising edge of the system clock.
+Such situation adds an additional clock cycle latency resulting in 4 cycles in total.
 
-```
-  make generate CFG_NAME=ahb CFG_FILE=i3c_core_configs.yaml
-```
+Maximal I3C core `Tsco` can be calculated with the `Tsco = 4 * Tsys_clk` formula , where `Tsys_clk` is a system clock period.
 
-or
+Future core releases will enable the `GETMXDS` CCC support allowing the core to advertise longer `Tsco` times for lower system clock frequencies.
 
-```
-  make generate CFG_NAME=axi CFG_FILE=i3c_core_configs.yaml
-```
-
-Depending on the chosen bus interface.
-More Information about the configuration tool can be found in the relevant [README](https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md)
-
-Example configurations:
-
-* 160MHz system clock (minimal operting clock) - `DisableInputFF=True`, `T_SU_DAT_REG=0`
-* 400MHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=0`
-* 1GHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=2`
