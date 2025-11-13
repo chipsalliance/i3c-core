@@ -19,8 +19,7 @@ module bus_rx_flow_test_wrapper (
     input logic rx_req_byte_i,
     output logic [7:0] rx_data_o,
     output logic rx_done_o,
-    output logic rx_idle_o,
-    output logic error_o
+    output logic rx_idle_o
 );
   bus_rx_flow xbus_rx_flow (.*);
 endmodule
