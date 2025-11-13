@@ -190,21 +190,18 @@ module controller_standby_i3c
   logic bus_rx_done;
   logic bus_rx_idle;
   logic [7:0] bus_rx_data;
-  logic bus_rx_error;
 
   logic fsm_bus_rx_req_bit;
   logic fsm_bus_rx_req_byte;
   logic fsm_bus_rx_done;
   logic fsm_bus_rx_idle;
   logic [7:0] fsm_bus_rx_data;
-  logic fsm_bus_rx_error;
 
   logic ccc_bus_rx_req_bit;
   logic ccc_bus_rx_req_byte;
   logic ccc_bus_rx_done;
   logic ccc_bus_rx_idle;
   logic [7:0] ccc_bus_rx_data;
-  logic ccc_bus_rx_error;
 
   logic ibi_bus_rx_req_bit;
   logic ibi_bus_rx_req_byte;
@@ -329,11 +326,9 @@ module controller_standby_i3c
     fsm_bus_rx_done    = '0;
     fsm_bus_rx_idle    = '0;
     fsm_bus_rx_data    = '0;
-    fsm_bus_rx_error   = '0;
     ccc_bus_rx_done    = '0;
     ccc_bus_rx_idle    = '0;
     ccc_bus_rx_data    = '0;
-    ccc_bus_rx_error   = '0;
     ibi_bus_tx_req_err = '0;
     ibi_bus_tx_done    = '0;
     ibi_bus_tx_idle    = '0;
@@ -355,7 +350,6 @@ module controller_standby_i3c
         fsm_bus_rx_done    = bus_rx_done;
         fsm_bus_rx_idle    = bus_rx_idle;
         fsm_bus_rx_data    = bus_rx_data;
-        fsm_bus_rx_error   = bus_rx_error;
       end
       Ccc: begin
         ccc_bus_tx_req_err = bus_tx_req_err;
@@ -371,7 +365,6 @@ module controller_standby_i3c
         ccc_bus_rx_done    = bus_rx_done;
         ccc_bus_rx_idle    = bus_rx_idle;
         ccc_bus_rx_data    = bus_rx_data;
-        ccc_bus_rx_error   = bus_rx_error;
       end
       Ibi: begin
         //ibi_bus_tx_req_err = bus_tx_req_err;
@@ -423,7 +416,6 @@ module controller_standby_i3c
       .bus_rx_done_i        (fsm_bus_rx_done),
       .bus_rx_idle_i        (fsm_bus_rx_idle),
       .bus_rx_data_i        (fsm_bus_rx_data),
-      .bus_rx_error_i       (fsm_bus_rx_error),
 
       .tx_pr_start_o              (tx_pr_start_o),
       .tx_pr_abort_o              (tx_pr_abort),
@@ -639,8 +631,7 @@ module controller_standby_i3c
       .rx_req_byte_i    (bus_rx_req_byte),
       .rx_data_o        (bus_rx_data),
       .rx_done_o        (bus_rx_done),
-      .rx_idle_o        (bus_rx_idle),
-      .error_o          (bus_rx_error)
+      .rx_idle_o        (bus_rx_idle)
   );
 
   i3c_bus_monitor xbus_monitor (
@@ -667,6 +658,9 @@ module controller_standby_i3c
       .bus_available_o  (bus_available)
   );
 
+  logic rx_error;
+
+  assign rx_error = parity_err_o | rx_overflow_err;
   descriptor_rx #(
       .TtiRxDescDataWidth(TtiRxDescDataWidth),
       .TtiRxDataWidth    (TtiRxDataWidth)
@@ -683,7 +677,7 @@ module controller_standby_i3c
       .rx_byte_last_i            (rx_last_byte),
       .rx_byte_valid_i           (rx_fifo_wvalid),
       .rx_byte_ready_o           (rx_fifo_wready),
-      .rx_byte_err_i             (fsm_bus_rx_error)
+      .rx_byte_err_i             (rx_error)
   );
 
   descriptor_tx #(

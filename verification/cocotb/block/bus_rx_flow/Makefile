@@ -15,6 +15,7 @@ TOPLEVEL     = bus_rx_flow_test_wrapper
 EXTRA_ARGS +=
 
 VERILOG_SOURCES  = \
+	$(SRC_DIR)/libs/i3c_sva.svh \
 	$(SRC_DIR)/ctrl/bus_rx_flow.sv \
 	$(TEST_DIR)/bus_rx_flow_test_wrapper.sv
 

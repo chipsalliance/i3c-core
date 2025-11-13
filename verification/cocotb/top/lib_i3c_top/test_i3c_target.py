@@ -46,7 +46,9 @@ def cocotb_test(timeout=200, unit="us", expect_fail=False, expect_error=(), skip
     return wrapper
 
 
-async def test_setup(dut, fclk=100.0, fbus=12.5, verify_boot=True):
+async def test_setup(dut, fclk=100.0, fbus=12.5, verify_boot=True,
+                     static_addr=0x5A, virtual_static_addr=0x5B,
+                     dynamic_addr=None, virtual_dynamic_addr=None):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -90,7 +92,9 @@ async def test_setup(dut, fclk=100.0, fbus=12.5, verify_boot=True):
     for k, v in timings.items():
         dut._log.info(f"{k} = {v}")
 
-    await boot_init(tb, timings, verify_boot)
+    await boot_init(tb, timings, verify_boot,
+                    static_addr=static_addr, virtual_static_addr=virtual_static_addr,
+                    dynamic_addr=dynamic_addr, virtual_dynamic_addr=virtual_dynamic_addr)
 
     # Set TTI queues thresholds
     await tb.write_csr_field(
@@ -730,14 +734,17 @@ async def test_i3c_target_writes_and_reads(dut):
 @cocotb_test()
 async def test_i3c_target_pwrite_err_detection(dut):
     I3C_DIRECT_GETSTATUS = 0x90
-    TRANSFER_LENGTH = 4
-    LOOPS = 2
     PROTOCOL_ERR_LOW = 5
 
     # Setup
-    i3c_controller, _, tb = await test_setup(dut)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    # Initialize
+    i3c_controller, _, tb = await test_setup(dut,
+        static_addr=STATIC_ADDR, virtual_static_addr=VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
 
-    for _ in range(LOOPS):
+    for _ in range(random.randint(5, 10)):
+        target_addr = DYNAMIC_ADDR
         # Check error status
         err_status = await tb.read_csr_field(
             tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
@@ -746,17 +753,18 @@ async def test_i3c_target_pwrite_err_detection(dut):
 
         # Read target status to ensure there's no error
         result = await i3c_controller.i3c_ccc_read(
-            ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
+            ccc=I3C_DIRECT_GETSTATUS, addr=target_addr, count=2
         )
         status = result[0][1]
         status = int.from_bytes(status, byteorder="big", signed=False)
         assert (
             (status >> PROTOCOL_ERR_LOW) & 1
         ) == 0, "GETSTATUS reported unexpected Protocol Error"
+        TRANSFER_LENGTH = random.randint(1, 256)
 
         # Send Private Write on I3C
         test_data = [random.randint(0, 255) for _ in range(TRANSFER_LENGTH)]
-        await i3c_controller.i3c_write(TARGET_ADDRESS, test_data, inject_tbit_err=True)
+        await i3c_controller.i3c_write(target_addr, test_data, inject_tbit_err=True)
         await ClockCycles(tb.clk, 10)
 
         # Check error status
@@ -764,10 +772,31 @@ async def test_i3c_target_pwrite_err_detection(dut):
             tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR
         )
         assert err_status == 1, "Expected error was not detected"
+        # Read RX descriptor
+        data = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4)
+        )
+        err_stat = data >> 28
+        assert err_stat == 1, "Expected error detection"
+
+        desc_len = data & 0xFFFF
+        assert desc_len < TRANSFER_LENGTH
+
+        # Clear RX data FIFO
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST,
+            1,
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+            tb.reg_map.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST,
+            0,
+        )
 
         # Read target status to clear error
         result = await i3c_controller.i3c_ccc_read(
-            ccc=I3C_DIRECT_GETSTATUS, addr=TARGET_ADDRESS, count=2
+            ccc=I3C_DIRECT_GETSTATUS, addr=target_addr, count=2
         )
         status = result[0][1]
         status = int.from_bytes(status, byteorder="big", signed=False)
