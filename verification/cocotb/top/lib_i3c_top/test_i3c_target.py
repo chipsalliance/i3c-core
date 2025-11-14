@@ -743,7 +743,7 @@ async def test_i3c_target_pwrite_err_detection(dut):
         static_addr=STATIC_ADDR, virtual_static_addr=VIRT_STATIC_ADDR,
         dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
 
-    for _ in range(random.randint(5, 10)):
+    for i in range(random.randint(5, 10)):
         target_addr = DYNAMIC_ADDR
         # Check error status
         err_status = await tb.read_csr_field(
@@ -760,7 +760,9 @@ async def test_i3c_target_pwrite_err_detection(dut):
         assert (
             (status >> PROTOCOL_ERR_LOW) & 1
         ) == 0, "GETSTATUS reported unexpected Protocol Error"
-        TRANSFER_LENGTH = random.randint(1, 256)
+
+        # Test corner case with data length 1
+        TRANSFER_LENGTH = random.randint(1, 256) if i != 0 else 1
 
         # Send Private Write on I3C
         test_data = [random.randint(0, 255) for _ in range(TRANSFER_LENGTH)]
@@ -780,7 +782,7 @@ async def test_i3c_target_pwrite_err_detection(dut):
         assert err_stat == 1, "Expected error detection"
 
         desc_len = data & 0xFFFF
-        assert desc_len < TRANSFER_LENGTH
+        assert desc_len == 1
 
         # Clear RX data FIFO
         await tb.write_csr_field(
