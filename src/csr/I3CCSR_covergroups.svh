@@ -1923,8 +1923,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_3 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_SPEED_CTRL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1935,11 +1935,11 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_fld_cg with function sample(
-    input bit [32-1:0] __rsvd
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_fld_cg with function sample(
+    input bit [24-1:0] READ_TURNAROUND_TIME
     );
         option.per_instance = 1;
-        __rsvd_cp : coverpoint __rsvd;
+        READ_TURNAROUND_TIME_cp : coverpoint READ_TURNAROUND_TIME;
 
     endgroup
 

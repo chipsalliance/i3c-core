@@ -262,6 +262,9 @@ module ccc
     // I3C_DIRECT_GETDCR
     input logic [7:0] virtual_get_dcr_i,
 
+
+    // Get Device Max data speed
+    input logic [23:0] read_turnaround_time_i,
     // Get Device Status
     // [15:8] Reserved for vendor-specific meaning, expected to be unused.
     // TODO: Bits 7:6 are tied to '11 until the Handoff procedure is fully implemented.
@@ -500,7 +503,8 @@ module ccc
     `I3C_DIRECT_GETMWL,
     `I3C_DIRECT_GETMRL,
     `I3C_DIRECT_GETPID,
-    `I3C_DIRECT_GETCAPS
+    `I3C_DIRECT_GETCAPS,
+    `I3C_DIRECT_GETMXDS
   };
 
   logic unsupported_def_byte;
@@ -860,6 +864,22 @@ module ccc
         else if (tx_data_id == 8'h01) tx_data = get_ibil_i;
         else tx_data = '0;
       end
+      // 5 Bytes
+      `I3C_DIRECT_GETMXDS: begin // Both devices have the same limitations
+        tx_data_id_init = 8'h05;
+        if (tx_data_id == 8'h05) begin
+          tx_data = 8'h00; // We support full speed during write operations, as we don't need to respond
+        end else if (tx_data_id == 8'h04) begin
+          tx_data = {1'b0, 1'b1, 3'b111, 3'b0};
+        end else if (tx_data_id == 8'h03) begin
+          tx_data = read_turnaround_time_i[7:0];
+        end else if (tx_data_id == 8'h02) begin
+          tx_data = read_turnaround_time_i[15:8];
+        end else if (tx_data_id == 8'h01) begin
+          tx_data = read_turnaround_time_i[23:16];
+        end else tx_data = '0;
+      end
+      // 6 Bytes
       `I3C_DIRECT_GETPID: begin
         tx_data_id_init = 8'h06;
         if (tx_data_id == 8'h06) begin
