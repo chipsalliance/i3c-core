@@ -172,7 +172,7 @@ module I3CCSR (
                 logic STBY_CR_CCC_CONFIG_GETCAPS;
                 logic STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
                 logic STBY_CR_VIRT_DEVICE_ADDR;
-                logic __rsvd_3;
+                logic STBY_CR_SPEED_CTRL;
             } StdbyCtrlMode;
             struct packed{
                 logic EXTCAP_HEADER;
@@ -322,7 +322,7 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS = cpuif_req_masked & (cpuif_addr == 12'h1b0);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS = cpuif_req_masked & (cpuif_addr == 12'h1b4);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h1b8);
-        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 = cpuif_req_masked & (cpuif_addr == 12'h1bc);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL = cpuif_req_masked & (cpuif_addr == 12'h1bc);
         decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h1c0);
         decoded_reg_strb.I3C_EC.TTI.CONTROL = cpuif_req_masked & (cpuif_addr == 12'h1c4);
         decoded_reg_strb.I3C_EC.TTI.STATUS = cpuif_req_masked & (cpuif_addr == 12'h1c8);
@@ -1322,10 +1322,10 @@ module I3CCSR (
                 } STBY_CR_VIRT_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic [23:0] next;
                         logic load_next;
-                    } __rsvd;
-                } __rsvd_3;
+                    } READ_TURNAROUND_TIME;
+                } STBY_CR_SPEED_CTRL;
             } StdbyCtrlMode;
             struct packed{
                 struct packed{
@@ -2504,9 +2504,9 @@ module I3CCSR (
                 } STBY_CR_VIRT_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } __rsvd;
-                } __rsvd_3;
+                        logic [23:0] value;
+                    } READ_TURNAROUND_TIME;
+                } STBY_CR_SPEED_CTRL;
             } StdbyCtrlMode;
             struct packed{
                 struct packed{
@@ -6518,7 +6518,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR.value <= 5'h16;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR.value <= 5'h17;
         end else begin
             if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR.load_next) begin
                 field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR.next;
@@ -6676,7 +6676,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= 5'h6;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= 5'h7;
         end else begin
             if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.load_next) begin
                 field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_VAR.next;
@@ -7780,28 +7780,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [23:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value & ~decoded_wr_biten[23:0]) | (decoded_wr_data[23:0] & decoded_wr_biten[23:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.load_next = load_next_c;
     end
-    always_ff @(posedge clk) begin
-        if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next) begin
-            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value <= 24'h1;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.next;
+            end
         end
     end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
     // Field: I3CCSR.I3C_EC.TTI.CONTROL.HJ_EN
@@ -10483,7 +10484,8 @@ module I3CCSR (
     assign readback_array[72][22:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value : '0;
     assign readback_array[72][30:23] = '0;
     assign readback_array[72][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value : '0;
-    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value : '0;
+    assign readback_array[73][23:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value : '0;
+    assign readback_array[73][31:24] = '0;
     assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
     assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
     assign readback_array[74][31:24] = '0;

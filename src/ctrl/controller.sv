@@ -273,6 +273,7 @@ module controller
   logic [47:0] virtual_pid;
   logic [7:0] virtual_bcr;
   logic [7:0] virtual_dcr;
+  logic [23:0] read_turnaround_time;
   logic [6:0] target_sta_addr;
   logic target_sta_addr_valid;
   logic [6:0] target_dyn_addr;
@@ -366,6 +367,7 @@ module controller
       .virtual_pid_o                   (virtual_pid),
       .virtual_bcr_o                   (virtual_bcr),
       .virtual_dcr_o                   (virtual_dcr),
+      .read_turnaround_time_o          (read_turnaround_time),
       .target_sta_addr_o               (target_sta_addr),
       .target_sta_addr_valid_o         (target_sta_addr_valid),
       .target_dyn_addr_o               (target_dyn_addr),
@@ -550,6 +552,7 @@ module controller
       .virtual_pid_i(virtual_pid),
       .virtual_bcr_i(virtual_bcr),
       .virtual_dcr_i(virtual_dcr),
+      .read_turnaround_time_i(read_turnaround_time),
       .target_sta_addr_i(target_sta_addr),
       .target_sta_addr_valid_i(target_sta_addr_valid),
       .target_dyn_addr_i(target_dyn_addr),

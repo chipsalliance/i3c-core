@@ -40,6 +40,8 @@ module configuration (
     output logic [ 7:0] virtual_bcr_o,  // Bus Characteristics Register
     output logic [ 7:0] virtual_dcr_o,  // Device Characteristics Register
 
+    output logic [23:0] read_turnaround_time_o,
+
     // Output effective target address (static or dynamic or recovery)
     output logic [6:0] target_sta_addr_o,
     output logic target_sta_addr_valid_o,
@@ -201,6 +203,7 @@ module configuration (
   };
 
   assign virtual_dcr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.DCR.value;
+  assign read_turnaround_time_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value;
   assign daa_unique_response_o = {pid_o, bcr_o, dcr_o};
 
   assign target_ibi_addr_o = target_dyn_addr_valid_o ? target_dyn_addr_o : target_sta_addr_o;

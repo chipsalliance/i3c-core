@@ -1958,7 +1958,7 @@ Component Memory Space (CMS):</p>
 | 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |   Standby Controller CCC Configuration GETCAPS  |
 | 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS|   Standby Controller CCC Configuration RSTACT   |
 | 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |    Standby Virtual Controller Device Address    |
-| 0x3C |            __rsvd_3            |                    Reserved 3                   |
+| 0x3C |       STBY_CR_SPEED_CTRL       |             GETMXDS control register            |
 
 ### EXTCAP_HEADER register
 
@@ -2171,7 +2171,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 |-----|----------|------|------|---------|
 | 15:1|  PID_HI  |  rw  |0x7FFF|  PID_HI |
 |23:16|    DCR   |  rw  | 0xBD |   DCR   |
-|28:24|  BCR_VAR |  rw  | 0x16 | BCR_VAR |
+|28:24|  BCR_VAR |  rw  | 0x17 | BCR_VAR |
 |31:29| BCR_FIXED|  rw  |  0x1 |BCR_FIXED|
 
 #### PID_HI field
@@ -2200,7 +2200,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>[bit1] is capable of IBI requests</p>
 </li>
 <li>
-<p>[bit0] has no speed limitation</p>
+<p>[bit0] has speed limitation</p>
 </li>
 </ul>
 
@@ -2248,7 +2248,7 @@ which supports extended capabilities</p>
 |-----|----------|------|------|---------|
 | 15:1|  PID_HI  |  rw  |0x7FFF|  PID_HI |
 |23:16|    DCR   |  rw  | 0xBD |   DCR   |
-|28:24|  BCR_VAR |  rw  |  0x6 | BCR_VAR |
+|28:24|  BCR_VAR |  rw  |  0x7 | BCR_VAR |
 |31:29| BCR_FIXED|  rw  |  0x1 |BCR_FIXED|
 
 #### PID_HI field
@@ -2277,7 +2277,7 @@ which supports extended capabilities</p>
 <p>[bit1] is capable of IBI requests</p>
 </li>
 <li>
-<p>[bit0] has no speed limitation</p>
+<p>[bit0] has speed limitation</p>
 </li>
 </ul>
 
@@ -2628,21 +2628,21 @@ shall be revoked) with this Target Reset Pattern.</p>
 1'b0: VIRT_DYNAMIC_ADDR field is not valid
 1'b1: VIRT_DYNAMIC_ADDR field is valid</p>
 
-### __rsvd_3 register
+### STBY_CR_SPEED_CTRL register
 
 - Absolute Address: 0x1BC
 - Base Offset: 0x3C
 - Size: 0x4
 
+<p>Controls values returned by the GETMXDS CCC command</p>
 
+|Bits|     Identifier     |Access|Reset|           Name           |
+|----|--------------------|------|-----|--------------------------|
+|23:0|READ_TURNAROUND_TIME|  rw  | 0x1 |Read turnaround time in uS|
 
-|Bits|Identifier|Access|Reset|  Name  |
-|----|----------|------|-----|--------|
-|31:0|  __rsvd  |  rw  |  —  |Reserved|
+#### READ_TURNAROUND_TIME field
 
-#### __rsvd field
-
-
+<p>This register controls value returned in the byte 3,4, and 5 of the GETMXDS CCC. It represents minimal time between read request and data readout.</p>
 
 ## TTI register file
 
