@@ -765,7 +765,6 @@ regfile StandbyControllerModeRegisters#(
             desc = "This register controls value returned in the byte 3,4, and 5 of the GETMXDS CCC. It represents minimal time between read request and data readout.";
             hw   = r;
             sw   = rw;
-            reset = 24'h1;
         } READ_TURNAROUND_TIME[23:0];
     } STBY_CR_SPEED_CTRL;
 };

@@ -37,6 +37,8 @@ module hci
     input clk_i,  // clock
     input rst_ni, // active low reset
 
+    input logic [23:0] read_turnaround_reset_value_i,
+
     // I3C SW CSR access interface
     input  logic                    s_cpuif_req,
     input  logic                    s_cpuif_req_is_wr,
@@ -157,6 +159,9 @@ module hci
 
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
+
+  // Propagate read turnaround reset value
+  assign hwif_in.read_turnaround_reset_value = read_turnaround_reset_value_i;
 
   // DAT CSR interface
   I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;

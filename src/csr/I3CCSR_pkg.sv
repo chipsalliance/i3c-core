@@ -1263,6 +1263,7 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic rst_ni;
+        logic [23:0] read_turnaround_reset_value;
         I3CCSR__I3CBase__in_t I3CBase;
         I3CCSR__PIOControl__in_t PIOControl;
         I3CCSR__I3C_EC__in_t I3C_EC;

@@ -2892,7 +2892,7 @@ reg_map = Munch.fromDict({
                 "READ_TURNAROUND_TIME": {
                     "low": 0,
                     "mask": 16777215,
-                    "reset": 1,
+                    "reset": 0,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,

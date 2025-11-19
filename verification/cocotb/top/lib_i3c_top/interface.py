@@ -38,6 +38,9 @@ class I3CTopTestInterface:
         if hasattr(self.dut, "disable_id_filtering_i"):
             self.dut.disable_id_filtering_i.value = 1
 
+        self.dut.read_turnaround_reset_value_i.value = 1
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["READ_TURNAROUND_TIME"]["reset"] = 1;
+
         await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)
         await reset_n(self.clk, self.rst_n, cycles=5)

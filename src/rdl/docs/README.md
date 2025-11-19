@@ -2636,9 +2636,9 @@ shall be revoked) with this Target Reset Pattern.</p>
 
 <p>Controls values returned by the GETMXDS CCC command</p>
 
-|Bits|     Identifier     |Access|Reset|           Name           |
-|----|--------------------|------|-----|--------------------------|
-|23:0|READ_TURNAROUND_TIME|  rw  | 0x1 |Read turnaround time in uS|
+|Bits|     Identifier     |Access|               Reset               |           Name           |
+|----|--------------------|------|-----------------------------------|--------------------------|
+|23:0|READ_TURNAROUND_TIME|  rw  |hwif_in.read_turnaround_reset_value|Read turnaround time in uS|
 
 #### READ_TURNAROUND_TIME field
 

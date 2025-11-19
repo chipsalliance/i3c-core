@@ -7,7 +7,7 @@ from bus2csr import compare_values, int2dword
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import Timer
+from cocotb.triggers import ClockCycles, Timer
 
 
 async def timeout_task(timeout):
@@ -166,6 +166,15 @@ async def test_ec_stdby_ctrl_mode_csr_access(dut):
         await tb.write_csr(addr, int2dword(rand_reg_val(reg)[0]), 4)
         rd_data = await tb.read_csr(addr)
         compare_values(int2dword(exp_rd), rd_data, addr)
+
+    reset_value = random.randint(0, 1<<24-1)
+    dut.read_turnaround_reset_value_i.value = reset_value
+    tb.rst_n.value = 0
+    await ClockCycles(tb.clk, 10)
+    tb.rst_n.value = 1
+    addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.base_addr
+    rd_data = await tb.read_csr(addr)
+    compare_values(int2dword(reset_value), rd_data, addr)
 
 
 @cocotb.test()
