@@ -199,6 +199,7 @@ module controller
     output logic bus_start_o,
     output logic bus_rstart_o,
     output logic bus_stop_o,
+    output logic bus_scl_posedge_o,
 
     // I2C/I3C received address (with RnW# bit) for the recovery handler
     output logic [7:0] bus_addr_o,
@@ -309,6 +310,8 @@ module controller
 
     .state_o    (bus)
   );
+
+  assign bus_scl_posedge_o = bus.scl.pos_edge;
 
   // 4:1 multiplexer for signals between PHY and controllers.
   // Needed, because there are 4 controllers in the design (i2c/i3c + active/standby).

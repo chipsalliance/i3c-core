@@ -127,15 +127,16 @@ module ccc_entdaa
         end
       end
       SendIDBit: begin
-        if (bus_tx_done_i) begin
-          // our Id was overwritten by some other device
-          if (arbitration_lost_i) begin
-            state_d = LostArbitration;
-          end
-          if (id_bit_count == '0) begin
-            state_d = ReceiveAddr;
-          end else begin
-            state_d = PrepareIDBit;
+        // our Id was overwritten by some other device
+        if (arbitration_lost_i) begin
+          state_d = LostArbitration;
+        end else begin
+          if (bus_tx_done_i) begin
+            if (id_bit_count == '0) begin
+              state_d = ReceiveAddr;
+            end else begin
+              state_d = PrepareIDBit;
+            end
           end
         end
       end
