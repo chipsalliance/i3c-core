@@ -36,7 +36,7 @@ async def timeout_task(timeout_us=5):
     raise TimeoutError("Timeout!")
 
 
-async def test_setup(dut, fclk=100.0, fbus=12.5,
+async def test_setup(dut, fclk=333.0, fbus=12.5,
                      static_addr=0x5A, virtual_static_addr=0x5B,
                      dynamic_addr=None, virtual_dynamic_addr=None):
     """
