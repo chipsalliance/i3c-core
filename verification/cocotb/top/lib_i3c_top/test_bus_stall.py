@@ -16,7 +16,7 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, fclk=100.0, timeout=50):
+async def initialize(dut, fclk=333.0, timeout=50):
     """
     Common test initialization routine
     """

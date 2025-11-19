@@ -45,7 +45,7 @@ async def timeout_task(timeout):
     raise RuntimeError("Test timeout!")
 
 
-async def initialize(dut, fclk=100.0, fbus=12.5, timeout=50,
+async def initialize(dut, fclk=333.0, fbus=12.5, timeout=50,
                      static_addr=0x5A, virtual_static_addr=0x5B,
                      dynamic_addr=None, virtual_dynamic_addr=None):
     """
