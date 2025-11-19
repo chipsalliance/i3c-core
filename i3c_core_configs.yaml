@@ -16,20 +16,6 @@ ahb:
   FrontendBusInterface: "AHB"
   FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
-  DisableInputFF: True
-
-ahb_ff:
-  CmdFifoDepth: 64
-  RxFifoDepth: 64
-  TxFifoDepth: 64
-  RespFifoDepth: 64
-  IbiFifoDepth: 64
-  IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
-  FrontendBusInterface: "AHB"
-  FrontendBusAddrWidth: 18
-  FrontendBusDataWidth: 64
   DisableInputFF: False
 
 axi:
@@ -48,7 +34,7 @@ axi:
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: True
   NumPrivIds: 4
-  DisableInputFF: True
+  DisableInputFF: False
   DisableLoopback: True
 
 axi_bypass:
@@ -67,22 +53,5 @@ axi_bypass:
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: True
   NumPrivIds: 4
-  DisableInputFF: True
-
-axi_ff:
-  CmdFifoDepth: 64
-  RxFifoDepth: 64
-  TxFifoDepth: 64
-  RespFifoDepth: 64
-  IbiFifoDepth: 64
-  IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
-  FrontendBusInterface: "AXI"
-  FrontendBusAddrWidth: 12
-  FrontendBusDataWidth: 32
-  FrontendBusUserWidth: 32
-  FrontendBusIdWidth: 8
-  FrontendBusIdFiltering: True
-  NumPrivIds: 4
   DisableInputFF: False
+

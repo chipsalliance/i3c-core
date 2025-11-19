@@ -103,17 +103,9 @@ tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration 
 	$(MAKE) config CFG_NAME=axi
 	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor
 
-tests-axi-ff: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage (input FF enabled)
-	$(MAKE) config CFG_NAME=axi_ff
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
-
 tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
 	$(MAKE) config CFG_NAME=ahb
 	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor
-
-tests-ahb-ff: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage (input FF enabled)
-	$(MAKE) config CFG_NAME=ahb_ff
-	cd $(COCOTB_VERIF_DIR) && $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
