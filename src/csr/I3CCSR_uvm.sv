@@ -3663,7 +3663,7 @@ package I3CCSR_uvm;
 
         virtual function void build();
             this.READ_TURNAROUND_TIME = new("READ_TURNAROUND_TIME");
-            this.READ_TURNAROUND_TIME.configure(this, 24, 0, "RW", 0, 'h1, 1, 1, 0);
+            this.READ_TURNAROUND_TIME.configure(this, 24, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(READ_TURNAROUND_TIME_bit_cg[bt]) READ_TURNAROUND_TIME_bit_cg[bt] = new();
             end

@@ -99,6 +99,7 @@ module i3c
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
+    input logic [23:0] read_turnaround_reset_value_i,
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -776,6 +777,7 @@ module i3c
   ) xhci (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .read_turnaround_reset_value_i(read_turnaround_reset_value_i),
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
       .s_cpuif_addr(s_cpuif_addr),

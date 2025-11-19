@@ -7795,7 +7795,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value <= 24'h1;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value <= hwif_in.read_turnaround_reset_value;
         end else begin
             if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.load_next) begin
                 field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.next;

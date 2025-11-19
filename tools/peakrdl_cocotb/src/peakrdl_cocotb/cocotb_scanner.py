@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import systemrdl
 from systemrdl import RDLListener
 from systemrdl.node import MemNode, RegfileNode
 
@@ -98,7 +99,10 @@ class CocotbScanner(RDLListener):
         # Collect on-reset value if specified
         on_reset = node.get_property("reset")
         if on_reset is not None:
-            field.update({"reset": on_reset})
+            if not isinstance(on_reset, systemrdl.node.SignalNode):
+                field.update({"reset": on_reset})
+            else:
+                field.update({"reset": 0})
 
         # Collect access permissions
         sw = ""
