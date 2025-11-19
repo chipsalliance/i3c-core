@@ -11,18 +11,20 @@ permissions:
   contents: write
 
 jobs:
-  build-and-test:
-    name: Build and test
+  axi_verification:
+    name: Axi Verification
     runs-on: ubuntu-latest
     env:
       DEBIAN_FRONTEND: "noninteractive"
+      TEST_COVERAGE_ENABLE: 0
     steps:
       - name: Install dependencies
         run: |
           sudo apt -qqy update
           sudo apt -qqy --no-install-recommends install help2man libfl-dev make g++ git bison flex gperf \
                                                         libreadline-dev libbz2-dev autoconf python3-sphinx \
-                                                        python3-docopt
+                                                        python3-docopt python3-pip python3-venv
+          sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 0
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -48,7 +50,7 @@ jobs:
 
       - name: Build Verilator
         run: |
-          git clone https://github.com/verilator/verilator -b v5.024
+          git clone https://github.com/antmicro/verilator -b cond-coverage
           cd verilator
           autoconf
           ./configure
@@ -59,8 +61,47 @@ jobs:
       - name: Run Tests
         run: |
           make install-uvm
+
+          export I3C_ROOT_DIR="`pwd`"
+          export CALIPTRA_ROOT="${I3C_ROOT_DIR}/third_party/caliptra-rtl"
           source activate.sh
           make tests-axi
+
+      - name: Process coverage
+        if: ${{ env.TEST_COVERAGE_ENABLE == 1 }}
+        run: |
+         export I3C_ROOT_DIR="`pwd`"
+         python3 -m venv .venv/
+         source .venv/bin/activate
+         pip3 install -r requirements.txt
+         pip3 install -r doc/requirements.txt
+         pip3 install git+https://github.com/antmicro/info-process.git
+
+         COVERAGE_DIR="${I3C_ROOT_DIR}/artifacts/coverage"
+         mkdir -p "${COVERAGE_DIR}"
+         COVERAGE_DIR="$(realpath "${COVERAGE_DIR}")"
+         (cd verification/cocotb && find -name \*.dat -not -name Vtop\*.dat | xargs cp -Lrv --parents -t "${COVERAGE_DIR}")
+ 
+         for cov in $(find "${COVERAGE_DIR}" -type f -name \*.dat); do
+           out_file="$(dirname "${cov}")/$(basename "${cov}" .dat)_verilator.info"
+           verilator_coverage --skip-toggle --write-info "${out_file}" "${cov}"
+           verilator_coverage --toggle-only --write-info "${out_file%%_all_verilator.info}_toggle_verilator.info" "${cov}"
+           rm "${cov}"
+ 
+           info-process extract --coverage-type line --output "${out_file%%_all_verilator.info}_line_verilator.info" "${out_file}"
+           info-process extract --coverage-type cond --output "${out_file%%_all_verilator.info}_cond_verilator.info" "${out_file}"
+           info-process extract --coverage-type branch --output "${out_file%%_all_verilator.info}_branch_verilator.info" "${out_file}"
+           rm "${out_file}"
+         done
+
+         find ./artifacts/coverage -name '*.info' -exec info-process transform --strip-file-prefix '(^/root/.*i3c-core/|^/root/|^/ci/)' --filter '^src/' '{}' \;
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ env.TEST_COVERAGE_ENABLE == 1 }}
+        with:
+          name: axi-verification-coverage
+          path: artifacts
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -68,10 +109,66 @@ jobs:
           name: tests-results
           path: verification/cocotb
 
+  custom_axi_verification:
+    name: Custom Axi Verification
+    runs-on: [ self-hosted, Linux, X64, gcp-custom-runners ]
+    container: antmicro/centos-dev-tools:slim
+    env:
+      GHA_EXTERNAL_DISK: additional-tools-all
+      GHA_SA: gh-sa-i3c-core-chips-uploader
+    steps:
+      - name: Get repository
+        run: _secret_custom_checkout:6
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_SUBMODULES: RECURSIVE
+      - name: Prepare platform
+        run: _secret_i3c_platform_prepare:4
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Custom Axi Verification
+        run: _secret_i3c_custom_axi_test:17
+        env:
+          SIM_RETRY_CONDITION: "Check your license file|Cannot connect to the license server|Failed to obtain license|License check .* failed"
+          TEST_COVERAGE_ENABLE: 1
+          CI_PARALLEL_INDEX: 1
+          CI_PARALLEL_TOTAL: 1
+          TEST_ITERATIONS: 5
+          MAKE_TARGET: "tests-axi"
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  coverage:
+    name: Process Coverage
+    runs-on: [ self-hosted, Linux, X64, gcp-custom-runners ]
+    needs: [ custom_axi_verification ]
+    container: antmicro/centos-dev-tools:slim
+    env:
+      GHA_EXTERNAL_DISK: additional-tools-all
+      GHA_SA: gh-sa-i3c-core-chips-uploader
+    steps:
+      - name: Get repository
+        run: _secret_custom_checkout:6
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_SUBMODULES: RECURSIVE
+      - name: Prepare platform
+        run: _secret_i3c_platform_prepare:4
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Process Coverage
+        run: _secret_i3c_process_coverage:2
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        run: _secret_custom_upload_artifact:8
+        env:
+          INPUT_NAME: "custom-axi-coverage"
+          INPUT_PATH: "build/html/"
+
   docs-build:
     name: Documentation build
     runs-on: ubuntu-latest
-    needs: [build-and-test]
+    needs: [coverage, axi_verification]
     env:
       DEBIAN_FRONTEND: "noninteractive"
     steps:
@@ -103,6 +200,12 @@ jobs:
           cp -r tests-results/* verification/cocotb/
           REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" make verification-docs-with-sim
 
+      - name: Get Coverage Results
+        uses: actions/download-artifact@v4
+        with:
+          name: custom-axi-coverage
+          path: i3c-core-coverage-results/
+
       - name: Build Docs
         run: |
           pushd doc
@@ -110,7 +213,6 @@ jobs:
             TZ=UTC make html
           popd
           ls -lah doc/build
-          git clone https://github.com/antmicro/i3c-core-coverage-results || exit 0
           cp i3c-core-coverage-results/*html doc/build/html
 
       - name: Pack artifacts
@@ -126,3 +228,4 @@ jobs:
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./doc/build/html
+
