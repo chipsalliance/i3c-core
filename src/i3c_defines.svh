@@ -19,6 +19,5 @@
   `define AXI_ID_WIDTH     8
   `define AXI_ID_FILTERING 1
   `define NUM_PRIV_IDS     4
-  `define DISABLE_INPUT_FF 1
 
 `endif  // I3C_CONFIG
