@@ -103,14 +103,8 @@ test: ## Run single module test (use `TEST=<test_name>` flag)
 tests-axi: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage
 	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor
 
-tests-axi-ff: ## Run all verification/cocotb/* RTL tests for AXI bus configuration without coverage (input FF enabled)
-	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ff $(PYTHON) -m nox -R -t "axi" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
-
 tests-ahb: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage
 	cd $(COCOTB_VERIF_DIR) && CFG_NAME=ahb $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor
-
-tests-ahb-ff: ## Run all verification/cocotb/* RTL tests for AHB bus configuration without coverage (input FF enabled)
-	cd $(COCOTB_VERIF_DIR) && CFG_NAME=ahb_ff $(PYTHON) -m nox -R -t "ahb" --no-venv --forcecolor -- +MinSystemClockFrequency=200.0
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 
