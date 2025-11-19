@@ -540,9 +540,11 @@ module i3c
   logic virtual_device_sel;
   logic xfer_in_progress;
 
-  logic arbitration_lost;
+  logic arbitration_lost, arbitration_lost_q;
+  logic bus_scl_posedge;
 
-  assign arbitration_lost = i3c_sda_i != i3c_sda_o;
+  assign arbitration_lost = phy2ctrl_sda != i3c_sda_o;
+  assign arbitration_lost_q = arbitration_lost & bus_scl_posedge;
 
   // HCI
   I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t             hwif_tti_out;
@@ -573,7 +575,7 @@ module i3c
       .scl_o(ctrl2phy_scl),
       .sda_o(ctrl2phy_sda),
       .sel_od_pp_o(ctrl_sel_od_pp),
-      .arbitration_lost_i(arbitration_lost),
+      .arbitration_lost_i(arbitration_lost_q),
 
       // HCI Response queue
       .hci_resp_queue_empty_i(hci_resp_empty),
@@ -692,6 +694,7 @@ module i3c
       .bus_start_o (bus_start),
       .bus_rstart_o(bus_rstart),
       .bus_stop_o  (bus_stop),
+      .bus_scl_posedge_o(bus_scl_posedge),
 
       // I2C/I3C received address (with RnW# bit) for the recovery handler
       .bus_addr_o(rx_bus_addr),
