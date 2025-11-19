@@ -46,7 +46,7 @@ def cocotb_test(timeout=200, unit="us", expect_fail=False, expect_error=(), skip
     return wrapper
 
 
-async def test_setup(dut, fclk=100.0, fbus=12.5, verify_boot=True,
+async def test_setup(dut, fclk=333.0, fbus=12.5, verify_boot=True,
                      static_addr=0x5A, virtual_static_addr=0x5B,
                      dynamic_addr=None, virtual_dynamic_addr=None):
     """

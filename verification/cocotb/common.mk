@@ -97,7 +97,8 @@ ifeq ($(SIM), vcs)
 endif
 
 COCOTB_HDL_TIMEUNIT         = 1ns
-COCOTB_HDL_TIMEPRECISION    = 10ps
+# we need 1fs resolution to handle 333MHz clocks
+COCOTB_HDL_TIMEPRECISION    = 1fs
 
 # Build directory
 comma := ,
