@@ -479,25 +479,14 @@ Additionally, there is an RTL testbench run in Verilator and Icarus simulators t
 T_SU_DAT_REG = reg_val &gt; 0 ? reg_val : 0
 </code></pre></div>
 </div>
-<p>For system clock frequencies below 320MHz, the core should be configured with the <code class="docutils literal notranslate"><span class="pre">DisableInputFF</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code> (see <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49">example configuration</a>)
-This parameter removes one flipflop on the input lines, shortening the response latency.</p>
-<p>The core provides 2 configurations with the <code class="docutils literal notranslate"><span class="pre">DisableInputFF</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.
-In order to generate a configuration with the parameter set, run the following command from the top level of the I3C repository:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  <span class="n">make</span> <span class="n">generate</span> <span class="n">CFG_NAME</span><span class="o">=</span><span class="n">ahb</span> <span class="n">CFG_FILE</span><span class="o">=</span><span class="n">i3c_core_configs</span><span class="o">.</span><span class="n">yaml</span>
-</code></pre></div>
-</div>
-<p>or</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  <span class="n">make</span> <span class="n">generate</span> <span class="n">CFG_NAME</span><span class="o">=</span><span class="n">axi</span> <span class="n">CFG_FILE</span><span class="o">=</span><span class="n">i3c_core_configs</span><span class="o">.</span><span class="n">yaml</span>
-</code></pre></div>
-</div>
-<p>Depending on the chosen bus interface.
-More Information about the configuration tool can be found in the relevant <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">README</a></p>
-<p>Example configurations:</p>
-<ul class="simple">
-<li><p>160MHz system clock (minimal operting clock) - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=True</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=0</span></code></p></li>
-<li><p>400MHz system clock - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=False</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=0</span></code></p></li>
-<li><p>1GHz system clock - <code class="docutils literal notranslate"><span class="pre">DisableInputFF=False</span></code>, <code class="docutils literal notranslate"><span class="pre">T_SU_DAT_REG=2</span></code></p></li>
-</ul>
+<p>The core supports system clock frequencies above 333MHz, and SCL frequencies up to 12.5MHz.
+Below 333MHz <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> I3C timing requirement of 12ns is not met. I3C specification defines <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> as “Clock to Data Turnaround Time: The time duration between reception of an SCL edge and the start of driving an SDA change”.
+With 333MHz clock the maximum response time from the core is 12ns. This timing is not affected by the chip pads delays as per MIPI CSI I3C 1.1.1 specification.</p>
+<p>The I3C core needs 3 system clock cycles between an event on a SCL line and driving the SDA.
+Since SCL and core clock are asynchronous, SCL can drop just after rising edge of the system clock.
+Such situation adds an additional clock cycle latency resulting in 4 cycles in total.</p>
+<p>Maximal I3C core <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> can be calculated with the <code class="docutils literal notranslate"><span class="pre">Tsco</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">Tsys_clk</span></code> formula , where <code class="docutils literal notranslate"><span class="pre">Tsys_clk</span></code> is a system clock period.</p>
+<p>Future core releases will enable the <code class="docutils literal notranslate"><span class="pre">GETMXDS</span></code> CCC support allowing the core to advertise longer <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> times for lower system clock frequencies.</p>
 
 
   <hr>
