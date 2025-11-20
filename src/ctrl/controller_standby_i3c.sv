@@ -294,7 +294,7 @@ module controller_standby_i3c
   // 2 - IBI
   xfer_mux_sel_e xfer_mux_sel;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) xfer_mux_sel <= Fsm;
     else if (xfer_mux_sel == Fsm)
       unique case ({
@@ -730,7 +730,7 @@ module controller_standby_i3c
   logic peripheral_reset;
   logic escalated_reset;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_peripheral_reset
+  always_ff @(posedge clk_i) begin : register_peripheral_reset
     if (~rst_ni) begin
       peripheral_reset_o <= '0;
     end else begin
@@ -739,7 +739,7 @@ module controller_standby_i3c
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_escalated_reset
+  always_ff @(posedge clk_i) begin : register_escalated_reset
     if (~rst_ni) begin
       escalated_reset_o <= '0;
     end else begin

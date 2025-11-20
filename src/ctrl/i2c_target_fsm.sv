@@ -125,7 +125,7 @@ module i2c_target_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_counter
+  always_ff @(posedge clk_i) begin : clk_counter
     if (!rst_ni) begin
       tcount_q <= '1;
     end else begin
@@ -138,7 +138,7 @@ module i2c_target_fsm
   // has stretched the clock.
   // When in target mode, this is an idle count for how long an external host
   // has kept the clock idle after a START indication.
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_stretch
+  always_ff @(posedge clk_i) begin : clk_stretch
     if (!rst_ni) begin
       stretch_idle_cnt <= '0;
     end else if (!target_idle_o && event_host_timeout_o) begin
@@ -153,7 +153,7 @@ module i2c_target_fsm
 
   // Keep track of how long the target has been stretching. This is used to
   // timeout and send a NACK instead.
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_nack_after_stretch
+  always_ff @(posedge clk_i) begin : clk_nack_after_stretch
     if (!rst_ni) begin
       stretch_active_cnt <= '0;
     end else if (actively_stretching) begin
@@ -166,7 +166,7 @@ module i2c_target_fsm
   // Latch the nack next byte value when we receive an address to write to but
   // there is no space in the ACQ FIFO. The address is still ack'ed to be
   // compatible with the
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_nack_next_byte
+  always_ff @(posedge clk_i) begin : clk_nack_next_byte
     if (!rst_ni) begin
       nack_next_byte_q <= 1'b0;
     end else if (set_nack_next_byte) begin
@@ -177,7 +177,7 @@ module i2c_target_fsm
   end
 
   // SDA and SCL at the previous clock edge
-  always_ff @(posedge clk_i or negedge rst_ni) begin : bus_prev
+  always_ff @(posedge clk_i) begin : bus_prev
     if (!rst_ni) begin
       scl_i_q <= 1'b1;
       sda_i_q <= 1'b1;
@@ -199,7 +199,7 @@ module i2c_target_fsm
   // counter. A controller-only reset scenario could end up with a Stop
   // following shortly after a Start, with the requisite setup time not
   // observed.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       ctrl_det_count <= '0;
     end else if (start_det_trigger || stop_det_trigger) begin
@@ -209,7 +209,7 @@ module i2c_target_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       start_det_pending <= 1'b0;
     end else if (start_det_trigger) begin
@@ -219,7 +219,7 @@ module i2c_target_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       stop_det_pending <= 1'b0;
     end else if (stop_det_trigger) begin
@@ -241,7 +241,7 @@ module i2c_target_fsm
   assign bit_ack = (bit_idx == 4'd8);  // ack
 
   // Increment counter on negative SCL edge
-  always_ff @(posedge clk_i or negedge rst_ni) begin : tgt_bit_counter
+  always_ff @(posedge clk_i) begin : tgt_bit_counter
     if (!rst_ni) begin
       bit_idx <= 4'd0;
     end else if (start_det) begin
@@ -262,7 +262,7 @@ module i2c_target_fsm
   assign address_match  = (address0_match || address1_match);
 
   // Shift data in on positive SCL edge
-  always_ff @(posedge clk_i or negedge rst_ni) begin : tgt_input_register
+  always_ff @(posedge clk_i) begin : tgt_input_register
     if (!rst_ni) begin
       input_byte <= 8'h00;
     end else if (input_byte_clr) begin
@@ -273,7 +273,7 @@ module i2c_target_fsm
   end
 
   // Detection by the target of ACK bit sent by the host
-  always_ff @(posedge clk_i or negedge rst_ni) begin : host_ack_register
+  always_ff @(posedge clk_i) begin : host_ack_register
     if (!rst_ni) begin
       host_ack <= 1'b0;
     end else if (!scl_i_q && scl_i) begin
@@ -344,7 +344,7 @@ module i2c_target_fsm
 
   logic rw_bit_q;
   assign target_rnw_o = rw_bit_q;
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       rw_bit_q <= '0;
     end else if (bit_ack && address_match) begin
@@ -920,7 +920,7 @@ module i2c_target_fsm
   assign target_sr_p_cond_o = target_enable_i && !target_idle && (stop_det | start_det);
 
   // Synchronous state transition
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
     end else begin
@@ -929,7 +929,7 @@ module i2c_target_fsm
   end
 
   // Saved sda output used in certain states.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       sda_q <= 1'b1;
     end else begin

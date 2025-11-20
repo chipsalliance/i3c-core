@@ -32,7 +32,7 @@ module edge_detector
   assign detect_line = line ^ DETECT_NEGEDGE;
   assign detect = (delay_count == 0) ? trigger : detect_internal;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       count <= '0;
       check_in_progress <= 1'b0;

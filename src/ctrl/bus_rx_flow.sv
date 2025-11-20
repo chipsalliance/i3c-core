@@ -30,7 +30,7 @@ module bus_rx_flow (
   assign req = rx_req_bit_i | rx_req_byte_i;
   assign error_o = rx_req_bit_i & rx_req_byte_i;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : ff_bit_request
+  always_ff @(posedge clk_i) begin : ff_bit_request
     if (~rst_ni) begin
       rx_req_bit <= '0;
     end else begin
@@ -38,7 +38,7 @@ module bus_rx_flow (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : read_bit_from_bus
+  always_ff @(posedge clk_i) begin : read_bit_from_bus
     if (~rst_ni) begin
       rx_done <= '0;
       rx_bit  <= '0;
@@ -53,7 +53,7 @@ module bus_rx_flow (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : read_byte_from_bus
+  always_ff @(posedge clk_i) begin : read_byte_from_bus
     if (~rst_ni) begin
       rx_data <= '0;
     end else begin
@@ -65,7 +65,7 @@ module bus_rx_flow (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_bit_counter
+  always_ff @(posedge clk_i) begin : update_bit_counter
     if (~rst_ni) begin
       bit_counter <= 4'h7;
     end else begin
@@ -95,7 +95,7 @@ module bus_rx_flow (
 
   rx_state_e state_d, state_q;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_fsm_state
+  always_ff @(posedge clk_i) begin : update_fsm_state
     if (~rst_ni) begin
       state_q <= Idle;
     end else begin

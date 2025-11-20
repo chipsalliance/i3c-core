@@ -18,7 +18,7 @@ module counter_template
 
   logic [DATA_W-1:0] counter;
 
-  always_ff @(posedge clk or negedge rst_n) begin : proc_fsm
+  always_ff @(posedge clk) begin : proc_fsm
     if (!rst_n) begin
       counter <= '0;
     end else begin

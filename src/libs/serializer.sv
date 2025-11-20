@@ -15,7 +15,7 @@ module serializer
 
   logic [DATA_W-1:0] sr;
 
-  always_ff @(posedge clk or negedge rst_n) begin : proc_fsm
+  always_ff @(posedge clk) begin : proc_fsm
     if (!rst_n) begin
       sr <= '0;
     end else begin

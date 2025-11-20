@@ -135,7 +135,7 @@ module i3c_axi_sub_rd import axi_pkg::*; #(
 
     assign s_axi_if.arready = axi_out_of_rst && (!txn_active || txn_final_beat);
 
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             axi_out_of_rst <= 1'b0;
         end
@@ -147,7 +147,7 @@ module i3c_axi_sub_rd import axi_pkg::*; #(
     // Indicates there are still reqs to be issued towards component.
     // This active signal deasserts after final dv to component, meaning data is
     // still in flight from component->AXI for C_LAT clocks after deassertion
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             txn_active <= 1'b0;
         end
@@ -162,7 +162,7 @@ module i3c_axi_sub_rd import axi_pkg::*; #(
         end
     end
 
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             txn_ctx <= '{default:0, burst:AXI_BURST_FIXED};
             txn_cnt <= '0;
@@ -245,7 +245,7 @@ module i3c_axi_sub_rd import axi_pkg::*; #(
         // Context is maintained alongside request while waiting for
         // component response to arrive
         for (cp = 1; cp <= C_LAT; cp++) begin: CTX_PIPELINE
-            always_ff@(posedge clk or negedge rst_n) begin
+            always_ff@(posedge clk) begin
                 if (!rst_n) begin
                     txn_rvalid[cp] <= 1'b0;
                 end
@@ -285,7 +285,7 @@ module i3c_axi_sub_rd import axi_pkg::*; #(
             endcase
         end
 
-        always_ff@(posedge clk or negedge rst_n) begin
+        always_ff@(posedge clk) begin
             if (!rst_n) begin
                 ex_active <= '0;
             end

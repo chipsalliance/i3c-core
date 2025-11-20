@@ -145,7 +145,7 @@ module i2c_controller_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_counter
+  always_ff @(posedge clk_i) begin : clk_counter
     if (!rst_ni) begin
       tcount_q <= '1;
     end else begin
@@ -158,7 +158,7 @@ module i2c_controller_fsm
   // has stretched the clock.
   // When in target mode, this is an idle count for how long an external host
   // has kept the clock idle after a START indication.
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_stretch
+  always_ff @(posedge clk_i) begin : clk_stretch
     if (!rst_ni) begin
       stretch_idle_cnt <= '0;
     end else if (stretch_en && !scl_i) begin
@@ -185,7 +185,7 @@ module i2c_controller_fsm
   assign stretch_cnt_threshold = 32'd2 + 32'(t_r_i);
 
   logic stretch_predict_cnt_expired;
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       stretch_predict_cnt_expired <= 1'b0;
     end else begin
@@ -201,7 +201,7 @@ module i2c_controller_fsm
   // be used to trigger a timeout which disables Host-Mode and creates a STOP condition to
   // end the transaction.
   logic unhandled_nak_cnt_expired;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : unhandled_nak_cnt_b
+  always_ff @(posedge clk_i) begin : unhandled_nak_cnt_b
     if (!rst_ni) begin
       unhandled_nak_cnt <= '0;
       unhandled_nak_cnt_expired <= 1'b0;
@@ -220,7 +220,7 @@ module i2c_controller_fsm
   assign event_unhandled_nak_timeout_o = unhandled_nak_cnt_expired;
 
   // Bit index implementation
-  always_ff @(posedge clk_i or negedge rst_ni) begin : bit_counter
+  always_ff @(posedge clk_i) begin : bit_counter
     if (!rst_ni) begin
       bit_index <= 3'd7;
     end else if (bit_clr) begin
@@ -233,7 +233,7 @@ module i2c_controller_fsm
   end
 
   // Deserializer for a byte read from the bus
-  always_ff @(posedge clk_i or negedge rst_ni) begin : read_register
+  always_ff @(posedge clk_i) begin : read_register
     if (!rst_ni) begin
       read_byte <= 8'h00;
     end else if (read_byte_clr) begin
@@ -251,7 +251,7 @@ module i2c_controller_fsm
   end
 
   // Byte index implementation
-  always_ff @(posedge clk_i or negedge rst_ni) begin : byte_counter
+  always_ff @(posedge clk_i) begin : byte_counter
     if (!rst_ni) begin
       byte_index <= '0;
     end else if (byte_clr) begin
@@ -264,7 +264,7 @@ module i2c_controller_fsm
   end
 
   // SDA and SCL at the previous clock edge
-  always_ff @(posedge clk_i or negedge rst_ni) begin : bus_prev
+  always_ff @(posedge clk_i) begin : bus_prev
     if (!rst_ni) begin
       scl_i_q <= 1'b1;
       sda_i_q <= 1'b1;
@@ -278,7 +278,7 @@ module i2c_controller_fsm
   // A transaction start does not include a "restart", but rather
   // the first start after enabling i2c, or a start observed after a
   // stop.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       trans_started <= '0;
     end else if (trans_started && !host_enable_i) begin
@@ -290,7 +290,7 @@ module i2c_controller_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       pend_restart <= '0;
     end else if (pend_restart && !host_enable_i) begin
@@ -302,7 +302,7 @@ module i2c_controller_fsm
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       auto_stop_q <= 1'b0;
     end else begin
@@ -362,7 +362,7 @@ module i2c_controller_fsm
 
   // When detection is enabled, count through the rise time.
   // Once rise time count is reached, hold in place until disabled.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       sda_rise_cnt <= '0;
     end else if (!en_sda_interf_det && |sda_rise_cnt) begin
@@ -924,7 +924,7 @@ module i2c_controller_fsm
   end
 
   // Synchronous state transition
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
     end else begin
@@ -944,7 +944,7 @@ module i2c_controller_fsm
 
   // TODO: Handle the assertion below
   //  // I2C bus outputs
-  //  always_ff @(posedge clk_i or negedge rst_ni) begin
+  //  always_ff @(posedge clk_i) begin
   //    if (!rst_ni) begin
   //      scl_q <= 1'b1;
   //      sda_q <= 1'b1;

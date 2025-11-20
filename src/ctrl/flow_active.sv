@@ -212,7 +212,7 @@ module flow_active
   assign fmt_fifo_depth_o = 8'd1;
 
   // Capture data from DAT/DCT tables
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       dat_read_valid_d <= 1'b0;
       dct_read_valid_d <= 1'b0;
@@ -241,7 +241,7 @@ module flow_active
   end
 
   // Capture command FIFO control signals
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       cmd_queue_rvalid <= '0;
       cmd_queue_rdata  <= '0;
@@ -294,7 +294,7 @@ module flow_active
   // Control internal transfer counter
   // TODO: Consider using decremental counter with different load values
   // See i2c_controller_fsm.sv for reference
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       transfer_cnt <= '0;
     end else begin
@@ -309,7 +309,7 @@ module flow_active
   end
 
   // Fetch Command Descriptor from the Command Queue
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       cmd_desc <= '0;
     end else begin
@@ -322,7 +322,7 @@ module flow_active
   end
 
   // Capture data from TX Queue
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       tx_dword <= '0;
     end else begin
@@ -335,7 +335,7 @@ module flow_active
   end
 
   // Catch every error detected during the Controller operation
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       resp_err_status_d <= Success;
     end else begin
@@ -349,7 +349,7 @@ module flow_active
   end
 
   // Catch every data_length update during the Controller operation
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       resp_data_length_d <= '0;
     end else begin
@@ -565,7 +565,7 @@ module flow_active
   end
 
   // Sequential state update
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_test
+  always_ff @(posedge clk_i) begin : proc_test
     if (~rst_ni) begin
       state <= Idle;
     end else begin

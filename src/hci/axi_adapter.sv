@@ -104,7 +104,7 @@ module axi_adapter
   logic [NumPrivIds-1:0] rsel;
   logic [NumPrivIds-1:0] wsel;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : axi_id_filter
+  always_ff @(posedge clk_i) begin : axi_id_filter
     if (!rst_ni) begin
       rlegal <= '0;
       wlegal <= '0;
@@ -273,7 +273,7 @@ module axi_adapter
     end
   endgenerate
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       wr_hld_ext <= 0;
       rd_hld_ext <= 0;

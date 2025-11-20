@@ -45,7 +45,7 @@ module target_reset_detector
                                   sda_transition_count_q;
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : target_reset_sda_transition_counter
+  always_ff @(posedge clk_i) begin : target_reset_sda_transition_counter
     if (!rst_ni) begin
       sda_transition_count_q <= 4'h0;
     end else begin
@@ -53,7 +53,7 @@ module target_reset_detector
     end
   end : target_reset_sda_transition_counter
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : target_reset_detection_state
+  always_ff @(posedge clk_i) begin : target_reset_detection_state
     if (!rst_ni) begin
       state_q <= AwaitPattern;
     end else begin

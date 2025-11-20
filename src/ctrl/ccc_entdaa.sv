@@ -74,7 +74,7 @@ module ccc_entdaa
   assign parity_ok = (calculated_parity == bus_rx_data_i[0]);
   assign done_daa_o = (state_q == Done);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin: id_bit_counter
+  always_ff @(posedge clk_i) begin: id_bit_counter
     if (!rst_ni) begin
       id_bit_count <= '0;
     end else begin
@@ -225,7 +225,7 @@ module ccc_entdaa
    endcase
   end
   // Synchronous state transition
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
     end else begin

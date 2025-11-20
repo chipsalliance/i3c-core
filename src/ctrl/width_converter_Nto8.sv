@@ -31,7 +31,7 @@ module width_converter_Nto8 #(
   // Byte counter
   logic [$clog2(Bytes):0] bcnt;
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) bcnt <= '0;
     else begin
       if (!soft_reset_ni) begin
@@ -50,7 +50,7 @@ module width_converter_Nto8 #(
   // Data register
   logic [Width-1:0] sreg;
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) sreg <= '0;
     else begin
       if (!soft_reset_ni) begin

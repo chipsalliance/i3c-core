@@ -62,7 +62,7 @@ module descriptor_tx #(
 
   assign tx_desc_avail_o = tti_tx_desc_queue_rvalid_i;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_
+  always_ff @(posedge clk_i) begin : proc_
     if (!rst_ni) begin
       descriptor_valid <= '0;
       tx_descriptor <= '0;
@@ -79,7 +79,7 @@ module descriptor_tx #(
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       flush <= '0;
     end else begin
@@ -107,7 +107,7 @@ module descriptor_tx #(
   assign tx_start = ~tx_pending && descriptor_valid &&
                     (TtiTxDescDataWidth'(tti_tx_queue_depth_i+1'b1) >= data_len_words);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_pending
+  always_ff @(posedge clk_i) begin : proc_tx_pending
     if (!rst_ni) begin
       tx_pending <= '0;
     end else begin
@@ -119,7 +119,7 @@ module descriptor_tx #(
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_byte_counter
+  always_ff @(posedge clk_i) begin : proc_byte_counter
     if (!rst_ni) begin
       byte_counter   <= '0;
     end else begin

@@ -140,7 +140,7 @@ module i3c_target_fsm #(
   logic nack_transaction_q, nack_transaction_d;
 
   // Latch whether this transaction is to be NACK'd.
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_nack_transaction
+  always_ff @(posedge clk_i) begin : clk_nack_transaction
     if (!rst_ni) begin
       nack_transaction_q <= 1'b0;
     end else begin
@@ -213,7 +213,7 @@ module i3c_target_fsm #(
 
   // Register last input byte
   logic [7:0] last_byte, last_addr;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_last_byte
+  always_ff @(posedge clk_i) begin : proc_last_byte
     if (~rst_ni) begin
       last_byte <= '0;
     end else begin
@@ -247,7 +247,7 @@ module i3c_target_fsm #(
 
   assign is_rsvd_byte_match = ({bus_addr_q, bus_rnw_q} == 8'hFC);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_bus_addr_matcher
+  always_ff @(posedge clk_i) begin : update_bus_addr_matcher
     if (~rst_ni) begin
       bus_rnw_q  <= '0;
       bus_addr_q <= '0;
@@ -264,7 +264,7 @@ module i3c_target_fsm #(
 
   assign last_addr_o = {bus_addr_q, bus_rnw_q};
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (~rst_ni) begin
       last_addr_valid_o <= '0;
     end else if (bus_start_det) begin
@@ -274,7 +274,7 @@ module i3c_target_fsm #(
     end
 
   logic parity_err;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_parity_error
+  always_ff @(posedge clk_i) begin : latch_parity_error
     if (~rst_ni) begin
       parity_err <= 1'b0;
     end else begin
@@ -287,7 +287,7 @@ module i3c_target_fsm #(
   end
 
   logic rx_overflow_err_q, rx_overflow_err_r;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_rx_overflow_error
+  always_ff @(posedge clk_i) begin : latch_rx_overflow_error
     if (~rst_ni) begin
       rx_overflow_err_r <= 1'b0;
       rx_overflow_err_q <= 1'b0;
@@ -305,7 +305,7 @@ module i3c_target_fsm #(
                             (state_d != RxPWriteTbit) &
                             ~(parity_err | rx_overflow_err_o);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_rx_fifo_wvalid
+  always_ff @(posedge clk_i) begin : latch_rx_fifo_wvalid
     if (~rst_ni) begin
       rx_fifo_wvalid_o <= 1'b0;
     end else begin
@@ -325,7 +325,7 @@ module i3c_target_fsm #(
   // consumed from the FIFO, but we might cancel TxPReadData if Rstart occurs.
   assign tx_fifo_rready_o = (state_q != TxPReadData) & (state_d == TxPReadData);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : set_last_byte_in_xfer
+  always_ff @(posedge clk_i) begin : set_last_byte_in_xfer
     if (~rst_ni) begin
       tx_end_xfer <= '0;
     end else begin
@@ -333,7 +333,7 @@ module i3c_target_fsm #(
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : capture_tx_data_from_queue
+  always_ff @(posedge clk_i) begin : capture_tx_data_from_queue
     if (~rst_ni) begin
       tx_data_byte <= '0;
     end else begin
@@ -344,7 +344,7 @@ module i3c_target_fsm #(
   // Logic for latching CCC code
   logic [7:0] ccc_code;
   logic ccc_code_valid;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : latch_CCC_code
+  always_ff @(posedge clk_i) begin : latch_CCC_code
     if (~rst_ni) begin
       ccc_o <= '0;
     end else begin
@@ -589,7 +589,7 @@ module i3c_target_fsm #(
   end
 
   // Synchronous state transition
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
     end else begin
@@ -599,7 +599,7 @@ module i3c_target_fsm #(
 
   assign target_idle_o = (state_q == Idle);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : virtual_device_sel_latch
+  always_ff @(posedge clk_i) begin : virtual_device_sel_latch
     if (!rst_ni) begin
       virtual_device_sel_o <= '0;
     end else unique case(state_q)
@@ -614,7 +614,7 @@ module i3c_target_fsm #(
     endcase
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       xfer_in_progress_o <= '0;
     end else unique case(state_q)

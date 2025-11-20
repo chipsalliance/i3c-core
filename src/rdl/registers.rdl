@@ -30,7 +30,7 @@ addrmap I3CCSR #(
     bit virtual_pid_hi = 0x7FFF, // Virtual device Vendor-specific values
     bit virtual_pid_lo = 0x005A10A5 // Virtual device Vendor-specific values, test value
 ){
-    signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
+    signal {activelow; cpuif_reset; field_reset;} rst_ni;
 `ifdef CONTROLLER_SUPPORT
     BaseRegs #(
         .PIO_offset(PIO_offset),

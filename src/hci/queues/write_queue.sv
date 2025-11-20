@@ -76,7 +76,7 @@ module write_queue #(
     end
   end : trigger_threshold
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : populate_thld
+  always_ff @(posedge clk_i) begin : populate_thld
     if (!rst_ni) begin
       ready_thld_o <= '0;
     end else begin
@@ -108,7 +108,7 @@ module write_queue #(
     end
   end : populate_thld
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : csr_rst_control
+  always_ff @(posedge clk_i) begin : csr_rst_control
     if (~rst_ni) begin : rst_control_rst
       reg_rst_we_o <= '0;
     end else begin
@@ -121,7 +121,7 @@ module write_queue #(
     logic start_valid;  // Start of FIFO valid signal assertion
     assign start_valid = req_i & dword_index;
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin : port_to_fifo
+    always_ff @(posedge clk_i) begin : port_to_fifo
       if (!rst_ni) begin : port_to_fifo_rst
         dword_index <= '0;
         ack_o <= '0;
@@ -152,7 +152,7 @@ module write_queue #(
       end : push_cmds_to_fifo
     end : port_to_fifo
   end else if (DataWidth == 32) begin : gen_dword_to_fifo
-    always_ff @(posedge clk_i or negedge rst_ni) begin : port_to_fifo
+    always_ff @(posedge clk_i) begin : port_to_fifo
       if (!rst_ni) begin : port_to_fifo_rst
         fifo_wvalid <= '0;
         ack_o <= '0;

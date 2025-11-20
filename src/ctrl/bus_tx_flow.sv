@@ -76,7 +76,7 @@ module bus_tx_flow (
   assign bus_error = '0;
   assign error = req_error | bus_error;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_bit_counter
+  always_ff @(posedge clk_i) begin : update_bit_counter
     if (~rst_ni) begin
       bit_counter <= '0;
     end else begin
@@ -91,7 +91,7 @@ module bus_tx_flow (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_req_value
+  always_ff @(posedge clk_i) begin : update_req_value
     if (~rst_ni) begin
       req_value <= '0;
     end else begin
@@ -114,7 +114,7 @@ module bus_tx_flow (
 
   tx_state_e state_d, state_q;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_fsm_state
+  always_ff @(posedge clk_i) begin : update_fsm_state
     if (~rst_ni) begin
       state_q <= Idle;
     end else begin

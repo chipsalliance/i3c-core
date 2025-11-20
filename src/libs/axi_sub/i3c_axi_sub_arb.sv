@@ -91,7 +91,7 @@ module i3c_axi_sub_arb import axi_pkg::*; #(
     //   b) it was granted at start of multi-beat burst
     // Otherwise, always give priority to other channel at end of a burst
     // to arbitrate fairly
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n)
             r_pri <= 1'b0;
         // Toggle priority at end of burst

@@ -121,7 +121,7 @@ module ahb_if
     i3c_req_rdata = s_cpuif_rd_data;
   end
 
-  always_ff @(posedge hclk_i or negedge hreset_n_i) begin
+  always_ff @(posedge hclk_i) begin
     if (~hreset_n_i) begin
       i3c_req_hld_ext <= '0;
     end else begin

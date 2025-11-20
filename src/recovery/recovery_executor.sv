@@ -177,7 +177,7 @@ module recovery_executor
   end
 
   // swmod must be delayed by one cycle due to delayed propagation of value
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       sw_device_reset_ctrl_swmod <= '0;
       sw_recovery_ctrl_activate_rec_img_swmod <= '0;
@@ -229,7 +229,7 @@ module recovery_executor
   end
 
   // State transition
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) state_q <= Idle;
     else begin
       if (soft_reset) state_q <= Idle;
@@ -531,7 +531,7 @@ module recovery_executor
   logic fifo_full_r;
   logic fifo_empty_r;
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (~rst_ni) begin
       fifo_full_r  <= '0;
       fifo_empty_r <= '1;
@@ -642,7 +642,7 @@ module recovery_executor
   end
 
   logic [TtiRxDataDataWidth-1:0] prev_tti_rx_rdata;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : collect_prev_tti_rx_data
+  always_ff @(posedge clk_i) begin : collect_prev_tti_rx_data
     if (~rst_ni) begin
       prev_tti_rx_rdata <= '0;
     end else begin
@@ -726,7 +726,7 @@ module recovery_executor
 
   assign hwif_rec_o.INDIRECT_FIFO_CTRL_0.RESET.hwclr = fifo_reg_reset_clear;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : fifo_reg_reset_on_write
+  always_ff @(posedge clk_i) begin : fifo_reg_reset_on_write
     if (~rst_ni) begin
       fifo_reg_reset_clear <= '0;
     end else if (soft_reset) begin
@@ -844,7 +844,7 @@ module recovery_executor
                             fifo_xfer_done;
   assign bypass_xfer_done = (state_q == FifoWrite) & (state_d == Done);
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) payload_available_q <= 1'b0;
     else if (soft_reset) begin
       payload_available_q <= 1'b0;

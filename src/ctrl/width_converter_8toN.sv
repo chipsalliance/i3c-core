@@ -37,7 +37,7 @@ module width_converter_8toN #(
 
   assign s_bytes = (BytesW+1)'(Bytes);
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) bcnt <= '0;
     else begin
       if (!soft_reset_ni) begin
@@ -56,7 +56,7 @@ module width_converter_8toN #(
   // Data register
   logic [Width-1:0] sreg;
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) sreg <= '0;
     else begin
       if (!soft_reset_ni) begin

@@ -61,7 +61,7 @@ module recovery_transmitter
   state_e state_d, state_q;
 
   // State transition
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) state_q <= Idle;
     else begin
       if (!soft_reset_ni) state_q <= Idle;

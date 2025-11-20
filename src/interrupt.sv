@@ -31,7 +31,7 @@ module interrupt # (
     // Trigger on edge
     generate if (Edge == 1'b1) begin
         logic irq_r;
-        always_ff @(posedge clk_i or negedge rst_ni) begin
+        always_ff @(posedge clk_i) begin
             if (!rst_ni) begin
                 irq_r <= '0;
                 trg   <= '0;

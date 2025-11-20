@@ -242,7 +242,7 @@ module controller_standby
   logic parity_err;
   logic get_status_done;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       err_o <= '0;
     end else begin

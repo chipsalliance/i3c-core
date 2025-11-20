@@ -28,7 +28,7 @@ module i3c_bus_monitor
   logic hdr_exit_det;
 
   // exit HDR detection
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       hdr_exit_det_count   <= 5'b10000;
       hdr_exit_det_pending <= 1'b0;

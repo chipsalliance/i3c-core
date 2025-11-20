@@ -116,7 +116,7 @@ module ibi (
 
   state_e state_q;
 
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) state_q <= Idle;
     else
       case (state_q)
@@ -174,7 +174,7 @@ module ibi (
   assign sda_o = !(state_q == DriveStart);
 
   // SCL fall time counter
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni)
       tcount <= 20'(-1);
     else begin
@@ -234,7 +234,7 @@ module ibi (
   end
 
   // IBI status
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (~rst_ni) ibi_status <= IbiSuccess;
     else
       case (state_q)
@@ -262,7 +262,7 @@ module ibi (
       endcase
 
   // Retry counter
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (~rst_ni) ibi_retry_cnt <= 3'd7;
     else if (state_q == Done)
       if (ibi_status == IbiFailureNack) ibi_retry_cnt <= ibi_retry_cnt + 1'b1;

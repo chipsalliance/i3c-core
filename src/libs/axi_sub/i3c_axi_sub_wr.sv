@@ -135,7 +135,7 @@ module i3c_axi_sub_wr import axi_pkg::*; #(
     // Address Request I/F                     //
     // --------------------------------------- //
 
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             axi_out_of_rst <= 1'b0;
         end
@@ -184,7 +184,7 @@ module i3c_axi_sub_wr import axi_pkg::*; #(
 
     // Indicates there are still reqs to be issued towards component.
     // This active signal deasserts after final dv to component
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             txn_active <= 1'b0;
         end
@@ -206,7 +206,7 @@ module i3c_axi_sub_wr import axi_pkg::*; #(
         always_comb txn_allow = 1'b1;
     `endif
 
-    always_ff@(posedge clk or negedge rst_n) begin
+    always_ff@(posedge clk) begin
         if (!rst_n) begin
             txn_ctx   <= '{default:0, burst:AXI_BURST_FIXED};
             `ifdef CALIPTRA_AXI_SUB_EX_EN
@@ -292,7 +292,7 @@ module i3c_axi_sub_wr import axi_pkg::*; #(
         endgenerate
 
         // Only clear the context when a write goes through to dest - meaining dv, not dv_pre
-        always_ff@(posedge clk or negedge rst_n) begin
+        always_ff@(posedge clk) begin
             if (!rst_n)
                 ex_clr <= ID_NUM'(0);
             else if (dv && !hld)

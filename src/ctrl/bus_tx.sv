@@ -77,7 +77,7 @@ module bus_tx (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : clk_counter
+  always_ff @(posedge clk_i) begin : clk_counter
     if (~rst_ni) begin
       tcount_q <= '0;
     end else begin
@@ -95,7 +95,7 @@ module bus_tx (
 
   tx_state_e state_d, state_q;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_fsm_state
+  always_ff @(posedge clk_i) begin : update_fsm_state
     if (~rst_ni) begin
       state_q <= Idle;
     end else begin

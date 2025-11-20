@@ -331,7 +331,7 @@ module ccc
 
   logic       get_status_in_progress;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : report_get_status_done
+  always_ff @(posedge clk_i) begin : report_get_status_done
     if (~rst_ni) begin
       get_status_in_progress <= '0;
       get_status_done_o <= '0;
@@ -345,7 +345,7 @@ module ccc
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_ccc
+  always_ff @(posedge clk_i) begin : register_ccc
     if (~rst_ni) begin
       command_code <= '0;
     end else begin
@@ -419,7 +419,7 @@ module ccc
   assign entdaa_o = (state_q == HandleENTDAA || state_q == HandleTargetENTDAA || state_q == HandleVirtualTargetENTDAA);
   assign entdaa_process_virtual = (state_q == HandleVirtualTargetENTDAA);
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_tbit
+  always_ff @(posedge clk_i) begin : register_tbit
     if (~rst_ni) begin
       last_tbit <= '0;
     end else begin
@@ -430,7 +430,7 @@ module ccc
   end
 
   logic [7:0] defining_byte;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : register_defining_byte
+  always_ff @(posedge clk_i) begin : register_defining_byte
     if (~rst_ni) defining_byte <= '0;
     else if (state_q == RxDefByte && bus_rx_done_i) begin
       defining_byte <= bus_rx_data_i;
@@ -462,7 +462,7 @@ module ccc
   assign is_byte_our_virtual_static_addr = ((command_addr == virtual_target_sta_address_i) && virtual_target_sta_address_valid_i);
   assign is_byte_virtual_addr = is_byte_our_virtual_dynamic_addr | is_byte_our_virtual_static_addr;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_addr
+  always_ff @(posedge clk_i) begin : proc_addr
     if (~rst_ni) begin
       command_addr  <= '0;
       command_rnw   <= '0;
@@ -478,7 +478,7 @@ module ccc
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_rx_data
+  always_ff @(posedge clk_i) begin : proc_rx_data
     if (~rst_ni) begin
       rx_data <= '0;
     end else begin
@@ -698,7 +698,7 @@ module ccc
     endcase
   end
   // Synchronous state transition
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
     end else begin
@@ -708,7 +708,7 @@ module ccc
   end
 
   // GET interface handler
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_data_id
+  always_ff @(posedge clk_i) begin : proc_tx_data_id
     if (~rst_ni) begin
       tx_data_id <= '0;
     end else begin
@@ -720,7 +720,7 @@ module ccc
   end
 
   // GET data counter
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       rx_data_count <= '0;
     end else if (state_q == WaitCCC && ccc_valid_i) begin
@@ -804,7 +804,7 @@ module ccc
   end
 
   // Handle DIRECT SET CCCs
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct
+  always_ff @(posedge clk_i) begin : proc_set_direct
     if (~rst_ni) begin
       set_dasa_valid <= 1'b0;
       set_dasa_addr  <= '0;
@@ -846,7 +846,7 @@ module ccc
   logic disec_hj;
 
   // Handle Broadcast/Direct SET CCCs
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_set_direct_bcast
+  always_ff @(posedge clk_i) begin : proc_set_direct_bcast
     if (~rst_ni) begin
       set_mrl_o        <= 1'b0;
       mrl_o            <= '0;
@@ -936,7 +936,7 @@ module ccc
   end
 
   // Handle Broadcast CCCs without data
-  always_ff @(posedge clk_i or negedge rst_ni) begin : bcast_ccc
+  always_ff @(posedge clk_i) begin : bcast_ccc
     if (~rst_ni) begin
       rstdaa_o <= '0;
       set_aasa_addr <= '0;
@@ -968,7 +968,7 @@ module ccc
   end
 
   logic rstact_armed;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : rst_action_internal
+  always_ff @(posedge clk_i) begin : rst_action_internal
     if (~rst_ni) begin
       rstact_armed <= '0;
       rst_action   <= '0;
@@ -986,7 +986,7 @@ module ccc
   end
 
   assign rstact_armed_o = rstact_armed;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : rst_action_outputs
+  always_ff @(posedge clk_i) begin : rst_action_outputs
     if (~rst_ni) begin
       rst_action_valid_o <= '0;
       rst_action_o <= '0;
@@ -1003,7 +1003,7 @@ module ccc
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : choose_reset_type
+  always_ff @(posedge clk_i) begin : choose_reset_type
     if (~rst_ni) begin
       escalate_reset_o <= '0;
     end else begin

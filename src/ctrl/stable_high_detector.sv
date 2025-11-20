@@ -21,7 +21,7 @@ module stable_high_detector
   logic stable_internal;
 
   assign stable_o = (delay_count_i == 0) ? line_i : stable_internal;
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       line <= '0;
     end else begin
@@ -29,7 +29,7 @@ module stable_high_detector
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       count <= '0;
     end else if (line && do_count) begin

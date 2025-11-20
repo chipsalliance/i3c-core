@@ -101,7 +101,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
     .cfg_i
   );
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       rvalid_sram_q <= 1'b0;
     end else begin
@@ -222,7 +222,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
 
   if (EnableInputPipeline) begin : gen_regslice_input
     // Put the register slices between ECC encoding to SRAM port
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
       if (!rst_ni) begin
         req_q   <= '0;
         write_q <= '0;
@@ -247,7 +247,7 @@ module prim_ram_1p_adv import prim_ram_1p_pkg::*; #(
 
   if (EnableOutputPipeline) begin : gen_regslice_output
     // Put the register slices between ECC decoding to output
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
       if (!rst_ni) begin
         rvalid_q <= '0;
         rdata_q  <= '0;

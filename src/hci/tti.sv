@@ -127,7 +127,7 @@ module tti
   logic tx_desc_ready_thld_swmod_q, tx_desc_ready_thld_we;
   logic rx_desc_ready_thld_swmod_q, rx_desc_ready_thld_we;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
+  always_ff @(posedge clk_i) begin : blockName
     if (!rst_ni) begin
       tx_desc_ready_thld_swmod_q <= '0;
       tx_desc_ready_thld_we <= '0;
@@ -268,7 +268,7 @@ module tti
   logic rx_desc_queue_write_r;
   logic rx_data_queue_write_r;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       rx_desc_queue_write_r <= '0;
       rx_data_queue_write_r <= '0;

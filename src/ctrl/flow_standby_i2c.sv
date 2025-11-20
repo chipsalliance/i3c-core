@@ -100,7 +100,7 @@ module flow_standby_i2c
   assign byte_count = transaction_byte_count[1:0];
 
   assign acq_fifo_wdata_byte_id = i2c_acq_byte_id_e'(acq_fifo_wdata_i[AcqFifoWidth-1:8]);
-  always_ff @(posedge clk_i or negedge rst_ni) begin: control_ff
+  always_ff @(posedge clk_i) begin: control_ff
     if (!rst_ni) begin
       start_detected <= '0;
       stop_detected <= '0;
@@ -123,7 +123,7 @@ module flow_standby_i2c
   end
 
   // store data to send
-  always_ff @(posedge clk_i or negedge rst_ni) begin: latch_tx_data
+  always_ff @(posedge clk_i) begin: latch_tx_data
     if (!rst_ni) begin
       tx_fifo_rdata_d <= '0;
     end else begin
@@ -151,12 +151,12 @@ module flow_standby_i2c
                                              state_q == PushDWordToTTIQueue,
                                              transaction_byte_count[1:0]};
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
+  always_ff @(posedge clk_i) begin : state_transition
     if (!rst_ni) state_q <= AwaitStart;
     else state_q <= state_d;
   end : state_transition
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : accumulate_bytes_in_dword
+  always_ff @(posedge clk_i) begin : accumulate_bytes_in_dword
     if (!rst_ni) begin
       for (integer i = 0; i < 4; i = i + 1) begin : gen_clear_buf
         fifo_buf[i] <= 0;
@@ -171,7 +171,7 @@ module flow_standby_i2c
     end
   end : accumulate_bytes_in_dword
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : change_byte_count
+  always_ff @(posedge clk_i) begin : change_byte_count
     if (!rst_ni) begin
       transaction_byte_count <= 0;
     end else if (reset_byte_count) begin
@@ -183,7 +183,7 @@ module flow_standby_i2c
     end
   end : change_byte_count
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_transfer_active
+  always_ff @(posedge clk_i) begin : update_transfer_active
     if (!rst_ni) begin
       transfer_active <= 0;
     end else begin
@@ -193,7 +193,7 @@ module flow_standby_i2c
   end : update_transfer_active
 
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : undriven_update_resp_data_length
+  always_ff @(posedge clk_i) begin : undriven_update_resp_data_length
     if (!rst_ni) begin
       response_fifo_wdata_o.__rsvd23_16 <= '0;
       response_fifo_wdata_o.err_status <= i3c_resp_err_status_e'(0);
@@ -206,14 +206,14 @@ module flow_standby_i2c
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : update_resp_data_length
+  always_ff @(posedge clk_i) begin : update_resp_data_length
     if (!rst_ni) begin
       response_fifo_wdata_o.data_length <= 0;
     end
     else if (deactivate_transfer) response_fifo_wdata_o.data_length <= transaction_byte_count;
   end : update_resp_data_length
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : get_command_from_tti
+  always_ff @(posedge clk_i) begin : get_command_from_tti
     if (!rst_ni) begin
       read_transaction_length <= 0;
     end else begin

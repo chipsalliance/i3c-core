@@ -95,7 +95,7 @@ module dxt
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       csr_dat_hwif_o.rd_data <= '0;
     end else begin
@@ -107,7 +107,7 @@ module dxt
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       dat_rd_ack <= 1'b0;
       dat_wr_ack <= 1'b0;
@@ -161,7 +161,7 @@ module dxt
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       csr_dct_hwif_o.rd_data <= '0;
     end else begin
@@ -175,7 +175,7 @@ module dxt
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       dct_rd_ack <= 1'b0;
       dct_wr_ack <= 1'b0;

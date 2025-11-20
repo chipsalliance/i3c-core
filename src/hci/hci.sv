@@ -184,7 +184,7 @@ module hci
   logic cmd_ready_thld_swmod_q, cmd_ready_thld_we;
   logic resp_ready_thld_swmod_q, resp_ready_thld_we;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : blockName
+  always_ff @(posedge clk_i) begin : blockName
     if (!rst_ni) begin
       cmd_ready_thld_we <= '0;
       resp_ready_thld_we <= '0;

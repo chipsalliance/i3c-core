@@ -63,7 +63,7 @@ module descriptor_ibi #(
         (state_q == WriteData && ibi_byte_ready_i && data_pop);
 
   // FSM
-  always_ff @(posedge clk_i or negedge rst_ni)
+  always_ff @(posedge clk_i)
     if (!rst_ni) state_q <= Idle;
     else
       unique case (state_q)

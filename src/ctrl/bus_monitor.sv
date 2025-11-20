@@ -50,7 +50,7 @@ module bus_monitor
 
   // SDA and SCL at the previous clock edge
   logic scl_i_q, sda_i_q;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : bus_prev
+  always_ff @(posedge clk_i) begin : bus_prev
     if (!rst_ni) begin
       scl_i_q <= 1'b1;
       sda_i_q <= 1'b1;
@@ -140,7 +140,7 @@ module bus_monitor
   logic sda_r;
   logic scl_r;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       sda_r <= '1;
     end else begin
@@ -152,7 +152,7 @@ module bus_monitor
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       scl_r <= '1;
     end else begin
@@ -168,7 +168,7 @@ module bus_monitor
   assign scl = scl_r | scl_posedge;
 
   // Start and Stop detection
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       start_det_pending <= 1'b0;
     end else if (start_det_trigger) begin
@@ -178,7 +178,7 @@ module bus_monitor
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       stop_det_pending <= 1'b0;
     end else if (stop_det_trigger) begin
@@ -189,7 +189,7 @@ module bus_monitor
   end
 
   // START/Repeated START distinction
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (~rst_ni) begin
       rstart_detection_en <= '0;
     end else begin

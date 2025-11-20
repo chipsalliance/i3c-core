@@ -73,7 +73,7 @@ module read_queue #(
     end
   end : trigger_threshold
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : populate_thld
+  always_ff @(posedge clk_i) begin : populate_thld
     if (!rst_ni) begin
       ready_thld_o <= '0;
     end else begin
@@ -105,7 +105,7 @@ module read_queue #(
     end
   end : populate_thld
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : csr_rst_control
+  always_ff @(posedge clk_i) begin : csr_rst_control
     if (~rst_ni) begin : rst_control_rst
       reg_rst_we_o <= '0;
     end else begin
@@ -113,7 +113,7 @@ module read_queue #(
     end
   end : csr_rst_control
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : fifo_to_port
+  always_ff @(posedge clk_i) begin : fifo_to_port
     if (!rst_ni) begin : fifo_to_port_rst
       fifo_rready <= '0;
       data_o <= '0;

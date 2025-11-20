@@ -170,7 +170,7 @@ module configuration (
   assign mwl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value + 1'b1);
   assign mrl_dword = 1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value + 1'b1);
 
-  always @(posedge clk_i or negedge rst_ni) begin : mrl_mwl
+  always @(posedge clk_i) begin : mrl_mwl
     if (~rst_ni) begin
       get_mwl_o <= 16'd256;
       get_mrl_o <= 16'd256;

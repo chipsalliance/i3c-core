@@ -209,7 +209,7 @@ module recovery_handler
 
   // poke cec module to inlude addr data when we trigger recovery logic from virtual device interface
   logic [1:0] virtual_device_cec_shreg;
-  always @(posedge clk_i or negedge rst_ni)
+  always @(posedge clk_i)
     if (~rst_ni) begin
       virtual_device_cec_shreg <= 2'b10;
     end else if (recovery_enable) begin
@@ -220,7 +220,7 @@ module recovery_handler
 
   // generate recovery enter pulse
   assign recovery_mode_enter_o = recovery_mode_enter_shreg[0];
-  always @(posedge clk_i or negedge rst_ni)
+  always @(posedge clk_i)
     if (~rst_ni) begin
       recovery_mode_enter_shreg <= 2'b10;
     end else if (recovery_enable) begin
@@ -236,7 +236,7 @@ module recovery_handler
   logic recv_cmd_valid;
   logic cmd_done;
 
-  always @(posedge clk_i or negedge rst_ni)
+  always @(posedge clk_i)
     if (~rst_ni) begin
       recovery_exec_pending <= '0;
     end else if (recv_cmd_valid) begin
@@ -806,7 +806,7 @@ module recovery_handler
   logic bus_addr_valid;
   logic pec_init;
 
-  always @(posedge clk_i or negedge rst_ni)
+  always @(posedge clk_i)
     if (~rst_ni) begin
       bus_addr_valid <= '0;
     end else if (ctl_bus_start_i) begin
@@ -1022,7 +1022,7 @@ module recovery_handler
       .depth_o          (unused_depth_o)
   );
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : indirect_fifo_access_permissions
+  always_ff @(posedge clk_i) begin : indirect_fifo_access_permissions
     if (~rst_ni) begin
       allow_indirect_write <= '0;
       allow_indirect_read <= '0;
@@ -1052,7 +1052,7 @@ module recovery_handler
   logic [15:0] exec_cmd_len;
   logic exec_cmd_error;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : convert_req_to_ready
+  always_ff @(posedge clk_i) begin : convert_req_to_ready
     if (~rst_ni) begin
       exec_tti_rx_data_ready <= '0;
     end else if (exec_tti_rx_data_req) begin
@@ -1084,7 +1084,7 @@ module recovery_handler
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : reg_cmd_for_bypass
+  always_ff @(posedge clk_i) begin : reg_cmd_for_bypass
     if (~rst_ni) begin
       exec_cmd_valid <= '0;
       exec_cmd_is_rd <= '0;

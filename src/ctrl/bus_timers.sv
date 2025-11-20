@@ -38,7 +38,7 @@ module bus_timers
   logic [31:0] bus_state_counter;
 
   logic enable;
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_enable
+  always_ff @(posedge clk_i) begin : proc_enable
     if (!rst_ni) begin
       enable <= '0;
     end else begin
@@ -46,7 +46,7 @@ module bus_timers
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_counter
+  always_ff @(posedge clk_i) begin : proc_counter
     if (!rst_ni) begin
       bus_state_counter <= '0;
     end else begin
