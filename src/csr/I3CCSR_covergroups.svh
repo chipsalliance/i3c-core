@@ -1936,10 +1936,14 @@
 
     endgroup
     covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_fld_cg with function sample(
-    input bit [24-1:0] READ_TURNAROUND_TIME
+    input bit [24-1:0] READ_TURNAROUND_TIME,
+    input bit [3-1:0] MAX_SUSTAINED_WR,
+    input bit [3-1:0] MAX_SUSTAINED_RD
     );
         option.per_instance = 1;
         READ_TURNAROUND_TIME_cp : coverpoint READ_TURNAROUND_TIME;
+        MAX_SUSTAINED_WR_cp : coverpoint MAX_SUSTAINED_WR;
+        MAX_SUSTAINED_RD_cp : coverpoint MAX_SUSTAINED_RD;
 
     endgroup
 

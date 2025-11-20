@@ -38,6 +38,8 @@ module hci
     input rst_ni, // active low reset
 
     input logic [23:0] read_turnaround_reset_value_i,
+    input logic [2:0] write_rate_reset_value_i,
+    input logic [2:0] read_rate_reset_value_i,
 
     // I3C SW CSR access interface
     input  logic                    s_cpuif_req,
@@ -160,8 +162,10 @@ module hci
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
 
-  // Propagate read turnaround reset value
+  // Propagate GETMXDS reset value
   assign hwif_in.read_turnaround_reset_value = read_turnaround_reset_value_i;
+  assign hwif_in.write_rate_reset_value = write_rate_reset_value_i;
+  assign hwif_in.read_rate_reset_value = read_rate_reset_value_i;
 
   // DAT CSR interface
   I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;

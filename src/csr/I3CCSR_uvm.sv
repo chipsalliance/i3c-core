@@ -3649,8 +3649,12 @@ package I3CCSR_uvm;
         protected bit            m_is_read;
 
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_bit_cg READ_TURNAROUND_TIME_bit_cg[24];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_bit_cg MAX_SUSTAINED_WR_bit_cg[3];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_bit_cg MAX_SUSTAINED_RD_bit_cg[3];
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL_fld_cg fld_cg;
         rand uvm_reg_field READ_TURNAROUND_TIME;
+        rand uvm_reg_field MAX_SUSTAINED_WR;
+        rand uvm_reg_field MAX_SUSTAINED_RD;
 
         function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3664,8 +3668,14 @@ package I3CCSR_uvm;
         virtual function void build();
             this.READ_TURNAROUND_TIME = new("READ_TURNAROUND_TIME");
             this.READ_TURNAROUND_TIME.configure(this, 24, 0, "RW", 0, 'h0, 1, 1, 0);
+            this.MAX_SUSTAINED_WR = new("MAX_SUSTAINED_WR");
+            this.MAX_SUSTAINED_WR.configure(this, 3, 24, "RW", 0, 'h0, 1, 1, 0);
+            this.MAX_SUSTAINED_RD = new("MAX_SUSTAINED_RD");
+            this.MAX_SUSTAINED_RD.configure(this, 3, 28, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(READ_TURNAROUND_TIME_bit_cg[bt]) READ_TURNAROUND_TIME_bit_cg[bt] = new();
+                foreach(MAX_SUSTAINED_WR_bit_cg[bt]) MAX_SUSTAINED_WR_bit_cg[bt] = new();
+                foreach(MAX_SUSTAINED_RD_bit_cg[bt]) MAX_SUSTAINED_RD_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
