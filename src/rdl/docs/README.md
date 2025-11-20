@@ -2636,13 +2636,23 @@ shall be revoked) with this Target Reset Pattern.</p>
 
 <p>Controls values returned by the GETMXDS CCC command</p>
 
-|Bits|     Identifier     |Access|               Reset               |           Name           |
-|----|--------------------|------|-----------------------------------|--------------------------|
-|23:0|READ_TURNAROUND_TIME|  rw  |hwif_in.read_turnaround_reset_value|Read turnaround time in uS|
+| Bits|     Identifier     |Access|               Reset               |           Name           |
+|-----|--------------------|------|-----------------------------------|--------------------------|
+| 23:0|READ_TURNAROUND_TIME|  rw  |hwif_in.read_turnaround_reset_value|Read turnaround time in uS|
+|26:24|  MAX_SUSTAINED_WR  |  rw  |   hwif_in.write_rate_reset_value  |      Max write rate      |
+|30:28|  MAX_SUSTAINED_RD  |  rw  |   hwif_in.read_rate_reset_value   |       Max read rate      |
 
 #### READ_TURNAROUND_TIME field
 
 <p>This register controls value returned in the byte 3,4, and 5 of the GETMXDS CCC. It represents minimal time between read request and data readout.</p>
+
+#### MAX_SUSTAINED_WR field
+
+<p>Maximum sustained data rate for private write as defined by the I3C 1.1.1</p>
+
+#### MAX_SUSTAINED_RD field
+
+<p>Maximum sustained data rate for private read as defined by the I3C 1.1.1</p>
 
 ## TTI register file
 

@@ -1325,6 +1325,14 @@ module I3CCSR (
                         logic [23:0] next;
                         logic load_next;
                     } READ_TURNAROUND_TIME;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } MAX_SUSTAINED_WR;
+                    struct packed{
+                        logic [2:0] next;
+                        logic load_next;
+                    } MAX_SUSTAINED_RD;
                 } STBY_CR_SPEED_CTRL;
             } StdbyCtrlMode;
             struct packed{
@@ -2506,6 +2514,12 @@ module I3CCSR (
                     struct packed{
                         logic [23:0] value;
                     } READ_TURNAROUND_TIME;
+                    struct packed{
+                        logic [2:0] value;
+                    } MAX_SUSTAINED_WR;
+                    struct packed{
+                        logic [2:0] value;
+                    } MAX_SUSTAINED_RD;
                 } STBY_CR_SPEED_CTRL;
             } StdbyCtrlMode;
             struct packed{
@@ -7803,6 +7817,52 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value & ~decoded_wr_biten[26:24]) | (decoded_wr_data[26:24] & decoded_wr_biten[26:24]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value <= hwif_in.write_rate_reset_value;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD
+    always_comb begin
+        automatic logic [2:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value & ~decoded_wr_biten[30:28]) | (decoded_wr_data[30:28] & decoded_wr_biten[30:28]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value <= hwif_in.read_rate_reset_value;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value = 16'h10;
     // Field: I3CCSR.I3C_EC.TTI.CONTROL.HJ_EN
@@ -10485,7 +10545,10 @@ module I3CCSR (
     assign readback_array[72][30:23] = '0;
     assign readback_array[72][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value : '0;
     assign readback_array[73][23:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME.value : '0;
-    assign readback_array[73][31:24] = '0;
+    assign readback_array[73][26:24] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR.value : '0;
+    assign readback_array[73][27:27] = '0;
+    assign readback_array[73][30:28] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD.value : '0;
+    assign readback_array[73][31:31] = '0;
     assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
     assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h10 : '0;
     assign readback_array[74][31:24] = '0;

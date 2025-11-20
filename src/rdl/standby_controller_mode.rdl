@@ -766,5 +766,17 @@ regfile StandbyControllerModeRegisters#(
             hw   = r;
             sw   = rw;
         } READ_TURNAROUND_TIME[23:0];
+        field {
+            name = "Max write rate";
+            desc = "Maximum sustained data rate for private write as defined by the I3C 1.1.1";
+            hw   = r;
+            sw   = rw;
+        } MAX_SUSTAINED_WR [26:24];
+        field {
+            name = "Max read rate";
+            desc = "Maximum sustained data rate for private read as defined by the I3C 1.1.1";
+            hw   = r;
+            sw   = rw;
+        } MAX_SUSTAINED_RD [30:28];
     } STBY_CR_SPEED_CTRL;
 };

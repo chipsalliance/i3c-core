@@ -40,6 +40,10 @@ class I3CTopTestInterface:
 
         self.dut.read_turnaround_reset_value_i.value = 1
         self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["READ_TURNAROUND_TIME"]["reset"] = 1;
+        self.dut.write_rate_reset_value_i.value = 0
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["MAX_SUSTAINED_WR"]["reset"] = 1;
+        self.dut.read_rate_reset_value_i.value = 0
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["MAX_SUSTAINED_RD"]["reset"] = 1;
 
         await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)

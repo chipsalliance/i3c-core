@@ -2898,6 +2898,26 @@ reg_map = Munch.fromDict({
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0
+                },
+                "MAX_SUSTAINED_WR": {
+                    "low": 24,
+                    "mask": 117440512,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "MAX_SUSTAINED_RD": {
+                    "low": 28,
+                    "mask": 1879048192,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             }
         },

@@ -1264,6 +1264,8 @@ package I3CCSR_pkg;
     typedef struct packed{
         logic rst_ni;
         logic [23:0] read_turnaround_reset_value;
+        logic [2:0] write_rate_reset_value;
+        logic [2:0] read_rate_reset_value;
         I3CCSR__I3CBase__in_t I3CBase;
         I3CCSR__PIOControl__in_t PIOControl;
         I3CCSR__I3C_EC__in_t I3C_EC;
@@ -2512,7 +2514,17 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__READ_TURNAROUND_TIME__out_t;
 
     typedef struct packed{
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__MAX_SUSTAINED_WR__out_t;
+
+    typedef struct packed{
+        logic [2:0] value;
+    } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__MAX_SUSTAINED_RD__out_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__READ_TURNAROUND_TIME__out_t READ_TURNAROUND_TIME;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__MAX_SUSTAINED_WR__out_t MAX_SUSTAINED_WR;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__MAX_SUSTAINED_RD__out_t MAX_SUSTAINED_RD;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL__out_t;
 
     typedef struct packed{

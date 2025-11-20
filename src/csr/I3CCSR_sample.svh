@@ -2318,18 +2318,22 @@
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(READ_TURNAROUND_TIME_bit_cg[bt]) this.READ_TURNAROUND_TIME_bit_cg[bt].sample(data[0 + bt]);
+            foreach(MAX_SUSTAINED_WR_bit_cg[bt]) this.MAX_SUSTAINED_WR_bit_cg[bt].sample(data[24 + bt]);
+            foreach(MAX_SUSTAINED_RD_bit_cg[bt]) this.MAX_SUSTAINED_RD_bit_cg[bt].sample(data[28 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[23:0]/*READ_TURNAROUND_TIME*/   );
+            this.fld_cg.sample( data[23:0]/*READ_TURNAROUND_TIME*/  ,  data[26:24]/*MAX_SUSTAINED_WR*/  ,  data[30:28]/*MAX_SUSTAINED_RD*/   );
         end
     endfunction
 
     function void I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_SPEED_CTRL::sample_values();
         if (get_coverage(UVM_CVR_REG_BITS)) begin
             foreach(READ_TURNAROUND_TIME_bit_cg[bt]) this.READ_TURNAROUND_TIME_bit_cg[bt].sample(READ_TURNAROUND_TIME.get_mirrored_value() >> bt);
+            foreach(MAX_SUSTAINED_WR_bit_cg[bt]) this.MAX_SUSTAINED_WR_bit_cg[bt].sample(MAX_SUSTAINED_WR.get_mirrored_value() >> bt);
+            foreach(MAX_SUSTAINED_RD_bit_cg[bt]) this.MAX_SUSTAINED_RD_bit_cg[bt].sample(MAX_SUSTAINED_RD.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( READ_TURNAROUND_TIME.get_mirrored_value()   );
+            this.fld_cg.sample( READ_TURNAROUND_TIME.get_mirrored_value()  ,  MAX_SUSTAINED_WR.get_mirrored_value()  ,  MAX_SUSTAINED_RD.get_mirrored_value()   );
         end
     endfunction
 
