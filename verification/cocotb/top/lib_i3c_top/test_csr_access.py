@@ -167,21 +167,6 @@ async def test_ec_stdby_ctrl_mode_csr_access(dut):
         rd_data = await tb.read_csr(addr)
         compare_values(int2dword(exp_rd), rd_data, addr)
 
-    turnaround_reset_value = random.randint(0, 1<<24-1)
-    write_rate_reset_value = random.randint(0, 1<<3-1)
-    read_rate_reset_value = random.randint(0, 1<<3-1)
-    dut.read_turnaround_reset_value_i.value = turnaround_reset_value
-    dut.write_rate_reset_value_i.value = write_rate_reset_value
-    dut.read_rate_reset_value_i.value = read_rate_reset_value
-    tb.rst_n.value = 0
-    await ClockCycles(tb.clk, 10)
-    tb.rst_n.value = 1
-    addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.base_addr
-    rd_data = await tb.read_csr(addr)
-    compare_values(int2dword(
-        read_rate_reset_value << 28 | write_rate_reset_value << 24 | turnaround_reset_value
-        ), rd_data, addr)
-
 
 @cocotb.test()
 async def test_ec_tti_csr_access(dut):

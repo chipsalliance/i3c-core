@@ -2,6 +2,8 @@
 `include "i3c_defines.svh"
 
 module i3c_wrapper #(
+    parameter int unsigned I3CSustainedRate = 0,
+    parameter int unsigned MaxSystemClockPeriodInPs = 10000, // 100 MHz
 `ifdef I3C_USE_AHB
     parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
     parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
@@ -18,13 +20,12 @@ module i3c_wrapper #(
     parameter int unsigned DctAw = i3c_pkg::DctAw,
 
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
-    parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
+    parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH,
+
+    parameter int unsigned ReadProcessingTime = 1000 // Number of system clock cycles to process read request
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
-    input logic [23:0] read_turnaround_reset_value_i,
-    input logic [ 2:0] write_rate_reset_value_i,
-    input logic [ 2:0] read_rate_reset_value_i,
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -127,6 +128,27 @@ module i3c_wrapper #(
     output irq_o
 );
 
+  logic [23:0] read_turnaround_reset_value;
+  assign read_turnaround_reset_value =
+    24'((ReadProcessingTime * MaxSystemClockPeriodInPs + 999_999) / 1000_000);
+  logic [ 2:0] write_rate_reset_value;
+  assign write_rate_reset_value = 3'(I3CSustainedRate);
+  logic [ 2:0] read_rate_reset_value;
+  assign read_rate_reset_value = 3'(I3CSustainedRate);
+  logic [ 2:0] tsco_value;
+  if ( MaxSystemClockPeriodInPs * 4 <= 8000 )
+    assign tsco_value = 3'b0;
+  else if (MaxSystemClockPeriodInPs * 4 <= 9000 )
+    assign tsco_value = 3'b1;
+  else if (MaxSystemClockPeriodInPs * 4 <= 10000 )
+    assign tsco_value = 3'b10;
+  else if (MaxSystemClockPeriodInPs * 4 <= 11000 )
+    assign tsco_value = 3'b11;
+  else if (MaxSystemClockPeriodInPs * 4 <= 12000 )
+    assign tsco_value = 3'b100;
+  else if (MaxSystemClockPeriodInPs * 4 > 12000 )
+    assign tsco_value = 3'b111;
+
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
@@ -155,9 +177,10 @@ module i3c_wrapper #(
   ) i3c (
       .clk_i,
       .rst_ni,
-      .read_turnaround_reset_value_i(read_turnaround_reset_value_i),
-      .write_rate_reset_value_i(write_rate_reset_value_i),
-      .read_rate_reset_value_i(read_rate_reset_value_i),
+      .read_turnaround_reset_value_i(read_turnaround_reset_value),
+      .tsco_i(tsco_value),
+      .write_rate_reset_value_i(write_rate_reset_value),
+      .read_rate_reset_value_i(read_rate_reset_value),
 
 `ifdef I3C_USE_AHB
       .haddr_i,

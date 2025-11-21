@@ -215,6 +215,7 @@ module controller
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
     input I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
+    input logic [2:0] tsco_i,
 
     // Status update signals
     output logic [1:0] ibi_status_o,
@@ -557,6 +558,7 @@ module controller
       .virtual_bcr_i(virtual_bcr),
       .virtual_dcr_i(virtual_dcr),
       .read_turnaround_time_i(read_turnaround_time),
+      .tsco_i(tsco_i),
       .read_max_rate_i(read_max_rate),
       .write_max_rate_i(write_max_rate),
       .target_sta_addr_i(target_sta_addr),

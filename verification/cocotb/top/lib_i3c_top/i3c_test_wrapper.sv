@@ -92,9 +92,6 @@ module i3c_test_wrapper #(
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
 `endif
 `endif
-    input logic [23:0] read_turnaround_reset_value_i,
-    input logic [2:0] write_rate_reset_value_i,
-    input logic [2:0] read_rate_reset_value_i,
     // I3C Target Simulation model
     input logic sda_sim_target_i,
     input logic scl_sim_target_i,
@@ -150,9 +147,6 @@ logic sel_od_pp;
 i3c_wrapper xi3c_wrapper (
     .clk_i,
     .rst_ni,
-    .read_turnaround_reset_value_i(read_turnaround_reset_value_i),
-    .write_rate_reset_value_i(write_rate_reset_value_i),
-    .read_rate_reset_value_i(read_rate_reset_value_i),
 
 `ifdef I3C_USE_AHB
     .haddr_i(haddr),

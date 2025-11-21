@@ -639,8 +639,23 @@ async def test_ccc_getmxds(dut):
     data = responses[0][1]
     turnaround_time = int.from_bytes(data[2:5], byteorder="little", signed=False)
 
+    tsco = tb.dut.xi3c_wrapper.MaxSystemClockPeriodInPs.value * 4
+
+    if tsco <= 8000:
+        expected_tsco = 0
+    elif tsco <= 9000:
+        expected_tsco = 1
+    elif tsco <= 10000:
+        expected_tsco = 2
+    elif tsco <= 11000:
+        expected_tsco = 3
+    elif tsco <= 12000:
+        expected_tsco = 4
+    else:
+        expected_tsco = 7
+
     assert data[0] == _WRITE_MAX_RATE << 0;
-    assert data[1] == (1 << 6) | (7 << 3) | _READ_MAX_RATE << 0
+    assert data[1] == (1 << 6) | (expected_tsco << 3) | _READ_MAX_RATE << 0
     assert turnaround_time == _READ_TURNAROUND_TIME
 
 
