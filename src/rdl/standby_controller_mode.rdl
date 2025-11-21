@@ -307,11 +307,11 @@ regfile StandbyControllerModeRegisters#(
 
             - [bit1] is capable of IBI requests
 
-            - [bit0] has no speed limitation
+            - [bit0] has speed limitation
             ";
             hw   = r;
             sw   = rw;
-            reset = 5'b10110;
+            reset = 5'b10111;
         } BCR_VAR[28:24];
         field {
             name = "DCR";
@@ -379,11 +379,11 @@ regfile StandbyControllerModeRegisters#(
 
             - [bit1] is capable of IBI requests
 
-            - [bit0] has no speed limitation
+            - [bit0] has speed limitation
             ";
             hw   = r;
             sw   = rw;
-            reset = 5'b00110;
+            reset = 5'b00111;
         } BCR_VAR[28:24];
         field {
             name = "DCR";
@@ -758,13 +758,25 @@ regfile StandbyControllerModeRegisters#(
         } VIRT_STATIC_ADDR[6:0];
     } STBY_CR_VIRT_DEVICE_ADDR;
     reg {
-        name = "Reserved 3";
-        desc = "";
+        name = "GETMXDS control register";
+        desc = "Controls values returned by the GETMXDS CCC command";
         field {
-            name = "Reserved";
-            desc = "";
-            hw   = rw;
+            name = "Read turnaround time in uS";
+            desc = "This register controls value returned in the byte 3,4, and 5 of the GETMXDS CCC. It represents minimal time between read request and data readout.";
+            hw   = r;
             sw   = rw;
-        } __rsvd[31:0];
-    } __rsvd_3;
+        } READ_TURNAROUND_TIME[23:0];
+        field {
+            name = "Max write rate";
+            desc = "Maximum sustained data rate for private write as defined by the I3C 1.1.1";
+            hw   = r;
+            sw   = rw;
+        } MAX_SUSTAINED_WR [26:24];
+        field {
+            name = "Max read rate";
+            desc = "Maximum sustained data rate for private read as defined by the I3C 1.1.1";
+            hw   = r;
+            sw   = rw;
+        } MAX_SUSTAINED_RD [30:28];
+    } STBY_CR_SPEED_CTRL;
 };

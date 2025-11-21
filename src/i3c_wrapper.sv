@@ -22,6 +22,9 @@ module i3c_wrapper #(
 ) (
     input clk_i,  // clock
     input rst_ni, // active low reset
+    input logic [23:0] read_turnaround_reset_value_i,
+    input logic [ 2:0] write_rate_reset_value_i,
+    input logic [ 2:0] read_rate_reset_value_i,
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -152,6 +155,9 @@ module i3c_wrapper #(
   ) i3c (
       .clk_i,
       .rst_ni,
+      .read_turnaround_reset_value_i(read_turnaround_reset_value_i),
+      .write_rate_reset_value_i(write_rate_reset_value_i),
+      .read_rate_reset_value_i(read_rate_reset_value_i),
 
 `ifdef I3C_USE_AHB
       .haddr_i,

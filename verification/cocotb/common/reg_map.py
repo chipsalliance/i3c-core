@@ -2326,7 +2326,7 @@ reg_map = Munch.fromDict({
                 "BCR_VAR": {
                     "low": 24,
                     "mask": 520093696,
-                    "reset": 22,
+                    "reset": 23,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
@@ -2401,7 +2401,7 @@ reg_map = Munch.fromDict({
                 "BCR_VAR": {
                     "low": 24,
                     "mask": 520093696,
-                    "reset": 6,
+                    "reset": 7,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
@@ -2886,14 +2886,35 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "__RSVD_3": {
+            "STBY_CR_SPEED_CTRL": {
                 "base_addr": 444,
                 "offset": 444,
-                "__rsvd": {
+                "READ_TURNAROUND_TIME": {
                     "low": 0,
-                    "mask": 4294967295,
+                    "mask": 16777215,
+                    "reset": 0,
                     "sw": "rw",
-                    "hw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "MAX_SUSTAINED_WR": {
+                    "low": 24,
+                    "mask": 117440512,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "MAX_SUSTAINED_RD": {
+                    "low": 28,
+                    "mask": 1879048192,
+                    "reset": 0,
+                    "sw": "rw",
+                    "hw": "r",
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0

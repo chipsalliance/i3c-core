@@ -31,6 +31,9 @@ addrmap I3CCSR #(
     bit virtual_pid_lo_reset = 0x005A10A5 // Virtual device Vendor-specific values, test value
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
+    signal { signalwidth = 24; } read_turnaround_reset_value;
+    signal { signalwidth = 3; } write_rate_reset_value;
+    signal { signalwidth = 3; } read_rate_reset_value;
     BaseRegs #(
         .PIO_offset(PIO_offset),
         .DMA_support(false),
@@ -95,4 +98,7 @@ addrmap I3CCSR #(
         sw = rw;
         DCT_structure DCT_MEMORY [128];
     } external DCT @ DCT_offset;
+    I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME->reset = read_turnaround_reset_value;
+    I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR->reset = write_rate_reset_value;
+    I3C_EC.StdbyCtrlMode.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD->reset = read_rate_reset_value;
 };
