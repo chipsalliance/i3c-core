@@ -95,7 +95,7 @@ module i3c_target_fsm #(
 
     input  logic target_reset_detect_i,
     input  logic hdr_exit_detect_i,
-    output logic is_in_hdr_mode_o,
+    input  logic is_in_hdr_mode_i,
     input  logic ibi_enable_i,           // TTI.CONTROL.IBI_EN
 
     // Interfacing with IBI subFSMs
@@ -164,7 +164,7 @@ module i3c_target_fsm #(
     // - pending IBI
     // - hot-join
     // - reset pattern
-    Idle,
+    Idle = 8'h00,
     // Read first incoming byte of the transaction
     RxFByte,
     // Check if we should participate in the xfer
@@ -204,6 +204,9 @@ module i3c_target_fsm #(
     // Reset pattern causes reset of the core
     // so "Done" return state is not needed.
     DoRstAction,
+    // state to park in while the bus is in HDR mode
+    // in this state we ignore all the traffic
+    HDRMode = 8'ha0,
     DoHdrExit
   } primary_state_e;
 
@@ -364,7 +367,6 @@ module i3c_target_fsm #(
     bus_addr_d = '0;
     bus_addr_valid = '0;
     bus_rnw_d = '0;
-    is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;
     ibi_begin_o = '0;
@@ -455,6 +457,25 @@ module i3c_target_fsm #(
       end
 
       DoRstAction: begin
+      end
+      HDRMode: begin
+        bus_rx_req_bit_o = '0;
+        bus_rx_req_byte_o = '0;
+        bus_tx_req_byte_o = '0;
+        bus_tx_req_bit_o = '0;
+        bus_tx_req_value_o = 8'h1;
+        tx_pr_start_o = '0;
+        tx_pr_abort_o = '0;
+        tx_host_nack_o = '0;
+        bus_addr_d = '0;
+        bus_addr_valid = '0;
+        bus_rnw_d = '0;
+        nack_transaction_d = '0;
+        parity_err_o = '0;
+        ibi_begin_o = '0;
+        ccc_valid_o = 1'b0;
+        ccc_code = '0;
+        ccc_code_valid = 1'b0;
       end
       DoHdrExit: begin
       end
@@ -583,6 +604,9 @@ module i3c_target_fsm #(
         // The transition should be explicit to avoid undefined behavior
         state_d = Idle;
       end
+      HDRMode: begin
+        if (~is_in_hdr_mode_i) state_d = Idle;
+      end
       DoHdrExit: begin
         state_d = Idle;
       end
@@ -595,9 +619,11 @@ module i3c_target_fsm #(
     endcase
 
     // Bypass state transition for HDR Exit Pattern
-    if (hdr_exit_detect_i) state_d = DoHdrExit;
+    //if (hdr_exit_detect_i) state_d = DoHdrExit;
+    // park in HDR state if we're in HDR mode
+    if (is_in_hdr_mode_i) state_d = HDRMode;
     // Bypass any state transition when a stop is received
-    if (bus_stop_det_i) state_d = Idle;
+    if (bus_stop_det_i && ~is_in_hdr_mode_i) state_d = Idle;
   end
 
   // Synchronous state transition

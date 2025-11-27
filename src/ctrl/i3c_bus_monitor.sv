@@ -32,13 +32,15 @@ module i3c_bus_monitor
     if (!rst_ni) begin
       hdr_exit_det_count   <= 5'b10000;
       hdr_exit_det_pending <= 1'b0;
+    end else if (enable_i && hdr_exit_det_pending && bus_i.sda.neg_edge) begin
+      hdr_exit_det_count <= {1'b0, hdr_exit_det_count[4:1]};
+    end else if (enable_i && hdr_exit_det_pending && bus_i.scl.pos_edge && ~hdr_exit_det_count[0]) begin
+      hdr_exit_det_count   <= 5'b10000;
     end else if (hdr_exit_det_trigger) begin
       hdr_exit_det_pending <= 1'b1;
     end else if (!enable_i || bus_i.stop_det) begin
       hdr_exit_det_count   <= 5'b10000;
       hdr_exit_det_pending <= 1'b0;
-    end else if (enable_i && hdr_exit_det_pending && bus_i.sda.neg_edge) begin
-      hdr_exit_det_count <= {1'b0, hdr_exit_det_count[4:1]};
     end
   end
 
