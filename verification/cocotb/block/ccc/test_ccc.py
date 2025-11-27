@@ -40,7 +40,8 @@ def initialize_inputs(dut):
     dut.get_mxds_i.value = 0
     dut.target_reset_detect_i.value = 0
     dut.peripheral_reset_done_i.value = 0
-
+    dut.exit_hdr_i.value = 0
+    dut.is_in_hdr_mode_i = 0
 
 async def setup(dut):
     """
