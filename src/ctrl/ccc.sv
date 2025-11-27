@@ -191,6 +191,9 @@ module ccc
     output logic ent_hdr_6_o,
     output logic ent_hdr_7_o,
 
+    input  logic exit_hdr_i,
+    input  logic is_in_hdr_mode_i,
+
     // Exchange Timing Information
     // I3C_BCAST_SETXTIME
 
@@ -361,6 +364,8 @@ module ccc
     end else begin
       if (ccc_valid_i) begin
         command_code <= ccc_i;
+      end else if (exit_hdr_i) begin
+        command_code <= '0;
       end
     end
   end
@@ -544,14 +549,59 @@ module ccc
     end
   end
 
+  always_ff @(posedge clk_i or negedge rst_ni) begin: detect_hdr_enter
+    if (~rst_ni) begin
+      ent_hdr_0_o <= '0;
+      ent_hdr_1_o <= '0;
+      ent_hdr_2_o <= '0;
+      ent_hdr_3_o <= '0;
+      ent_hdr_4_o <= '0;
+      ent_hdr_5_o <= '0;
+      ent_hdr_6_o <= '0;
+      ent_hdr_7_o <= '0;
+    end else begin
+      unique case(command_code)
+        `I3C_BCAST_ENTHDR0:
+          ent_hdr_0_o <= '1;
+        `I3C_BCAST_ENTHDR1:
+          ent_hdr_1_o <= '1;
+        `I3C_BCAST_ENTHDR2:
+          ent_hdr_2_o <= '1;
+        `I3C_BCAST_ENTHDR3:
+          ent_hdr_3_o <= '1;
+        `I3C_BCAST_ENTHDR4:
+          ent_hdr_4_o <= '1;
+        `I3C_BCAST_ENTHDR5:
+          ent_hdr_5_o <= '1;
+        `I3C_BCAST_ENTHDR6:
+          ent_hdr_6_o <= '1;
+        `I3C_BCAST_ENTHDR7:
+          ent_hdr_7_o <= '1;
+        default: begin
+          ent_hdr_0_o <= '0;
+          ent_hdr_1_o <= '0;
+          ent_hdr_2_o <= '0;
+          ent_hdr_3_o <= '0;
+          ent_hdr_4_o <= '0;
+          ent_hdr_5_o <= '0;
+          ent_hdr_6_o <= '0;
+          ent_hdr_7_o <= '0;
+        end
+      endcase
+    end
+  end
+
   always_comb begin : state_functions
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        state_d = WaitCCC;
+        if (is_in_hdr_mode_i) state_d = Idle;
+        else state_d = WaitCCC;
       end
       WaitCCC: begin
-        if (ccc_valid_i) state_d = RxTbit;
+        // stay in Idle if the bus is in hdr_mode (we ignore the HDR traffic)
+        if (is_in_hdr_mode_i) state_d = Idle;
+        else if (ccc_valid_i) state_d = RxTbit;
       end
       RxTbit: begin
         if (bus_rx_done_i) begin
@@ -1166,7 +1216,6 @@ module ccc
   // * ENTTM
   // * SETBRGTGT
   // * ENTAS[0-3]
-  // * ENTHDR[0-7]
   assign set_brgtgt_o = '0;
   assign entas0_o = '0;
   assign entas1_o = '0;
@@ -1174,14 +1223,6 @@ module ccc
   assign entas3_o = '0;
   assign ent_tm_o = '0;
   assign tm_o = '0;
-  assign ent_hdr_0_o = '0;
-  assign ent_hdr_1_o = '0;
-  assign ent_hdr_2_o = '0;
-  assign ent_hdr_3_o = '0;
-  assign ent_hdr_4_o = '0;
-  assign ent_hdr_5_o = '0;
-  assign ent_hdr_6_o = '0;
-  assign ent_hdr_7_o = '0;
 
 
   ccc_entdaa xccc_entdaa (
