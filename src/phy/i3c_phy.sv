@@ -56,8 +56,18 @@ module i3c_phy (
 
 `endif
 
-  assign sda_o = ctrl_sda_i;
-  assign scl_o = ctrl_scl_i;
-  assign sel_od_pp_o = sel_od_pp_i;
+  always_ff @(posedge clk_i or negedge rst_ni)
+  begin
+    if (~rst_ni) begin
+      sda_o <= 1'b1;
+      scl_o <= 1'b1;
+      sel_od_pp_o <= 1'b0;
+    end
+    else begin
+      sda_o <= ctrl_sda_i;
+      scl_o <= ctrl_scl_i;
+      sel_od_pp_o <= sel_od_pp_i;
+    end
+  end
 
 endmodule
