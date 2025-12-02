@@ -3,6 +3,7 @@ name: Run Tests
 on:
   push:
   workflow_dispatch:
+  pull_request:
   schedule:
     - cron:  '30 3 * * *' # Run everyday at 3:30AM
 
