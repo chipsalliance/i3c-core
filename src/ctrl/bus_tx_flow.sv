@@ -150,7 +150,7 @@ module bus_tx_flow (
       end
       NextTaskDecision: begin
         drive_bit_en = req;
-        drive_bit_value = req_value_i[0];
+        drive_bit_value = req_byte_i ? req_value_i[7] : req_value_i[0];
       end
       default: ;
     endcase
