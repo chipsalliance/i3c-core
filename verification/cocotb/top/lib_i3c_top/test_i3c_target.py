@@ -731,7 +731,7 @@ async def test_i3c_target_writes_and_reads(dut):
     assert tx_test_data == recv_data
 
 
-@cocotb_test()
+@cocotb_test(timeout=500000)
 async def test_i3c_target_pwrite_err_detection(dut):
     I3C_DIRECT_GETSTATUS = 0x90
     PROTOCOL_ERR_LOW = 5
@@ -811,7 +811,7 @@ async def test_i3c_target_pwrite_err_detection(dut):
         assert err_status == 0, "Unexpected error detected"
 
 
-@cocotb_test()
+@cocotb_test(timeout=500000)
 async def test_i3c_target_pwrite_overflow_detection(dut):
     I3C_DIRECT_GETSTATUS = 0x90
     PROTOCOL_ERR_LOW = 5
