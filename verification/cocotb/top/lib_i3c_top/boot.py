@@ -303,11 +303,11 @@ async def umbrella_stby_init(
         assert mode == 2
 
         # Set static address and valid
-        static_addr = await tb.read_csr_field(
+        static_addr_rd = await tb.read_csr_field(
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
         )
-        assert static_addr == 0x5A
+        assert static_addr_rd == static_addr
 
         static_addr_valid = await tb.read_csr_field(
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
@@ -316,18 +316,18 @@ async def umbrella_stby_init(
         assert static_addr_valid == 0x1
 
         # Set static address and valid for virtual device
-        virt_static_addr = await tb.read_csr_field(
+        virtual_static_addr_rd = await tb.read_csr_field(
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
         )
-        assert virt_static_addr == 0x5B
+        assert virtual_static_addr_rd == virtual_static_addr
 
-        virt_static_addr_valid = await tb.read_csr_field(
+        virtual_static_addr_valid = await tb.read_csr_field(
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
             tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
             0x1,
         )
-        assert virt_static_addr_valid == 0x1
+        assert virtual_static_addr_valid == 0x1
 
         # Enable Target Interface
         tgt_en = await tb.read_csr_field(
