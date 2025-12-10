@@ -67,7 +67,6 @@ async def test_enter_exit_hdr_mode_write(dut):
     remaining_addrs.remove(VIRT_DYNAMIC_ADDR)
     # Send HDR-DDR write transaction
     for _ in range(random.randint(10, 15)):
-        i3c_target.set_hdr_mode(True)
         await i3c_controller.i3c_ccc_write(ENTHDR0, broadcast_data=[], stop=False, pull_scl_low=True)
 
         assert (
@@ -78,12 +77,19 @@ async def test_enter_exit_hdr_mode_write(dut):
 
         data_len = random.randint(1, 8) # HDR-DDR requires 16-bit words
         test_data = [random.randint(0, 0xFFFF) for _ in range(data_len)]
+        accept_data = random.randint(0,1)
+        i3c_target.address = test_addr if accept_data == 1 else 0
         cocotb.log.info(f"Sending HDR-DDR write to {hex(test_addr)} with data: {test_data}")
-        await i3c_controller.send_hdr_ddr_write(addr=test_addr, data=test_data)
+        test_data = await i3c_controller.send_hdr_ddr_write(
+                addr=test_addr, data=test_data)
+        assert (
+            (test_data.nack == True and accept_data == 0) or
+            (test_data.nack == False and accept_data == 1)
+        )
 
         # Exit HDR mode
         await i3c_controller.send_hdr_exit()
-        i3c_target.set_hdr_mode(False)
+        i3c_target.address = 0
 
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -118,7 +124,6 @@ async def test_enter_restart_exit_hdr_mode_write(dut):
     # Send HDR-DDR write transaction
     for _ in range(random.randint(10, 15)):
         await i3c_controller.i3c_ccc_write(ENTHDR0, broadcast_data=[], stop=False, pull_scl_low=True)
-        i3c_target.set_hdr_mode(True)
 
         assert (
         int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -129,15 +134,22 @@ async def test_enter_restart_exit_hdr_mode_write(dut):
             test_addr = random.choice(remaining_addrs)
             data_len = random.randint(1, 8) # HDR-DDR requires 16-bit words
             test_data = [random.randint(0, 0xFFFF) for _ in range(data_len)]
+            accept_data = random.randint(0,1)
+            i3c_target.address = test_addr if accept_data == 1 else 0
             cocotb.log.info(f"Sending HDR-DDR write to {hex(test_addr)} with data: {test_data}")
-            await i3c_controller.send_hdr_ddr_write(addr=test_addr, data=test_data)
+            test_data = await i3c_controller.send_hdr_ddr_write(
+                    addr=test_addr, data=test_data)
+            assert (
+                (test_data.nack == True and accept_data == 0) or
+                (test_data.nack == False and accept_data == 1)
+            )
 
             if i != transactions-1:
                 await i3c_controller.send_hdr_rstart()
             else:
                 # Exit HDR mode
                 await i3c_controller.send_hdr_exit()
-        i3c_target.set_hdr_mode(False)
+            i3c_target.address = 0
 
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -172,7 +184,6 @@ async def test_enter_exit_hdr_mode_read(dut):
     # Send HDR-DDR write transaction
     for _ in range(random.randint(10, 15)):
         await i3c_controller.i3c_ccc_write(ENTHDR0, broadcast_data=[], stop=False, pull_scl_low=True)
-        i3c_target.set_hdr_mode(True)
 
         assert (
         int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -182,12 +193,23 @@ async def test_enter_exit_hdr_mode_read(dut):
 
         data_len = random.randint(1, 8) # HDR-DDR requires 16-bit words
         exp_data = [random.randint(0, 0xFFFF) for _ in range(data_len)]
+        accept_data = random.randint(0,1)
+        i3c_target.address = test_addr if accept_data == 1 else 0
+        i3c_target._mem.clear()
+        i3c_target._mem.write(
+            [byte for word in exp_data for byte in word.to_bytes(2, "big")],
+            2 * data_len
+        )
         cocotb.log.info(f"Sending HDR-DDR write to {hex(test_addr)} with length: {data_len}")
-        test_data = await i3c_controller.send_hdr_ddr_read(addr=test_addr, count=data_len)
+        test_data = await i3c_controller.send_hdr_ddr_read(addr=test_addr)
+        assert (
+            (test_data.nack == True and accept_data == 0) or
+            (test_data.nack == False and accept_data == 1)
+        )
 
         # Exit HDR mode
         await i3c_controller.send_hdr_exit()
-        i3c_target.set_hdr_mode(False)
+        i3c_target.address = 0
 
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -222,7 +244,6 @@ async def test_enter_restart_exit_hdr_mode_read(dut):
     # Send HDR-DDR write transaction
     for _ in range(random.randint(10, 15)):
         await i3c_controller.i3c_ccc_write(ENTHDR0, broadcast_data=[], stop=False, pull_scl_low=True)
-        i3c_target.set_hdr_mode(True)
 
         assert (
         int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
@@ -233,15 +254,26 @@ async def test_enter_restart_exit_hdr_mode_read(dut):
             test_addr = random.choice(remaining_addrs)
             data_len = random.randint(1, 8) # HDR-DDR requires 16-bit words
             exp_data = [random.randint(0, 0xFFFF) for _ in range(data_len)]
+            accept_data = random.randint(0,1)
+            i3c_target.address = test_addr if accept_data == 1 else 0
+            i3c_target._mem.clear()
+            i3c_target._mem.write(
+                [byte for word in exp_data for byte in word.to_bytes(2, "big")],
+                2 * data_len
+            )
             cocotb.log.info(f"Sending HDR-DDR read to {hex(test_addr)} with length: {data_len}")
-            test_data = await i3c_controller.send_hdr_ddr_read(addr=test_addr, count=data_len)
+            test_data = await i3c_controller.send_hdr_ddr_read(addr=test_addr)
+            assert (
+                (test_data.nack == True and accept_data == 0) or
+                (test_data.nack == False and accept_data == 1)
+            )
 
             if i != transactions-1:
                 await i3c_controller.send_hdr_rstart()
             else:
                 # Exit HDR mode
                 await i3c_controller.send_hdr_exit()
-        i3c_target.set_hdr_mode(False)
+            i3c_target.address = 0
 
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
