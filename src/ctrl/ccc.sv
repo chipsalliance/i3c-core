@@ -426,12 +426,13 @@ module ccc
     RxDataTbit,
     TxData,
     TxDataTbit,
-    WaitForBusCond,
+    WaitForBusCond, // 0x0F
     NextCCC,
     DoneCCC,
     HandleENTDAA,
     HandleTargetENTDAA,
     HandleVirtualTargetENTDAA,
+    HandleDoneENTDAA,
     CCCError
   } state_e;
 
@@ -683,7 +684,7 @@ module ccc
         end else if (~virtual_target_dyn_address_valid_i) begin
           state_d = HandleVirtualTargetENTDAA;
         end else begin
-          state_d = Idle;
+          state_d = HandleDoneENTDAA;
         end
       end
       HandleTargetENTDAA: begin
@@ -691,14 +692,16 @@ module ccc
           if (~virtual_target_dyn_address_valid_i) begin
             state_d = HandleVirtualTargetENTDAA;
           end else begin
-            state_d = Idle;
+            state_d = HandleDoneENTDAA;
           end
         end
       end
       HandleVirtualTargetENTDAA: begin
         if (entdaa_done) begin
-          state_d = Idle;
+          state_d = HandleDoneENTDAA;
         end
+      end
+      HandleDoneENTDAA: begin
       end
       RxDefByte: begin
         if (bus_rx_done_i) state_d = RxDefByteTbit;
