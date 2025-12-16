@@ -26,7 +26,7 @@ module bus_timers
     input  logic        clk_i,
     input  logic        rst_ni,
     input  logic        enable_i,
-    input  logic        restart_counter_i,
+    input  logic        reset_counter_ni,
     input  logic [19:0] t_bus_free_i,       // CSR: Time to free
     input  logic [19:0] t_bus_idle_i,       // CSR: Time to idle
     input  logic [19:0] t_bus_available_i,  // CSR: Time to available
@@ -40,7 +40,7 @@ module bus_timers
   logic enable;
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_enable
     if (!rst_ni) begin
-      enable <= '0;
+      enable <= '1;
     end else begin
       enable <= enable_i & ~bus_idle_o;
     end
@@ -50,7 +50,7 @@ module bus_timers
     if (!rst_ni) begin
       bus_state_counter <= '0;
     end else begin
-      if (restart_counter_i) begin
+      if (!reset_counter_ni) begin
         bus_state_counter <= '0;
       end else begin
         if (enable) begin

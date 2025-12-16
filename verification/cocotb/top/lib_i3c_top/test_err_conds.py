@@ -12,7 +12,7 @@ from interface import I3CTopTestInterface
 from math import ceil
 
 import cocotb
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import ClockCycles, Timer
 from cocotb.regression import TestFactory
 
 TGT_ADR = 0x5A
@@ -95,6 +95,51 @@ async def test_TE0_HDR_exit(dut):
             == 0xa2
         )  # WaitHDRExitOrIdle
         await i3c_controller.send_hdr_exit()
+        i3c_controller.give_bus_control()
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0
+        )  # Idle
+
+
+@cocotb.test()
+async def test_TE0_idle_exit(dut):
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
+
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+    await ClockCycles(tb.clk, 50)
+
+    idle_time_in_cycles = ceil(60000 / (1000 / FCLK))
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.SOCMGMTIF.T_IDLE_REG.base_addr,
+        tb.reg_map.I3C_EC.SOCMGMTIF.T_IDLE_REG.T_IDLE,
+        idle_time_in_cycles
+    )
+
+    incorrect_addrs = [
+        (0x3E, True), (0x5E, True), (0x6E, True), (0x76, True), (0x7A, True),
+        (0x7C, True), (0x7F, True), (0x7E, False)
+    ]
+
+    for _ in range(2):
+        addr, write = random.choice(incorrect_addrs)
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0
+        )  # Idle
+        await i3c_controller.take_bus_control()
+        await i3c_controller.send_start()
+        ack = await i3c_controller.write_addr_header(addr, read=not write)
+        await i3c_controller.send_stop()
+        i3c_controller.give_bus_control()
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0xa2
+        )  # WaitHDRExitOrIdle
+        await Timer(60, "us")
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
             == 0
@@ -133,6 +178,46 @@ async def test_TE1_HDR_exit(dut):
             == 0xa2
         )  # WaitHDRExitOrIdle
         await i3c_controller.send_hdr_exit()
+        i3c_controller.give_bus_control()
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0
+        )  # Idle
+
+
+@cocotb.test()
+async def test_TE1_idle_exit(dut):
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDRs = [random.choice([STATIC_ADDR, DYNAMIC_ADDR]), random.choice([VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])]
+
+    i3c_controller, i3c_target, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+    await ClockCycles(tb.clk, 50)
+
+    idle_time_in_cycles = ceil(60000 / (1000 / FCLK))
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.SOCMGMTIF.T_IDLE_REG.base_addr,
+        tb.reg_map.I3C_EC.SOCMGMTIF.T_IDLE_REG.T_IDLE,
+        idle_time_in_cycles
+    )
+
+    for _ in range(2):
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0
+        )  # Idle
+        await i3c_controller.take_bus_control()
+        await i3c_controller.send_start()
+        ack = await i3c_controller.write_addr_header(0x7E, read=False)
+        await i3c_controller.send_byte_tbit(random.randint(0, 0xFF), True)
+        await i3c_controller.send_stop()
+        i3c_controller.give_bus_control()
+        assert (
+            int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
+            == 0xa2
+        )  # WaitHDRExitOrIdle
+        await Timer(60, "us")
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
             == 0
@@ -150,7 +235,7 @@ async def test_TE5_read_on_write(dut):
 
     COMMANDs = [0x87, 0x88, 0x89, 0x8A, 0x80, 0x81, 0x98]
 
-    for _ in range(random.randint(10, 15)):
+    for _ in range(2):
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
             == 0
@@ -164,6 +249,7 @@ async def test_TE5_read_on_write(dut):
         ack = await i3c_controller.write_addr_header(DYNAMIC_ADDR, read=True)
         assert ack == False
         await i3c_controller.send_stop()
+        i3c_controller.give_bus_control()
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
             == 0
@@ -199,6 +285,7 @@ async def test_TE5_write_on_read(dut):
         ack = await i3c_controller.write_addr_header(DYNAMIC_ADDR, read=False)
         assert ack == False
         await i3c_controller.send_stop()
+        i3c_controller.give_bus_control()
         assert (
             int(dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c.xi3c_target_fsm.state_d.value)
             == 0

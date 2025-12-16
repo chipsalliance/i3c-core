@@ -660,7 +660,7 @@ module controller_standby_i3c
       .clk_i,
       .rst_ni,
       .enable_i         (i3c_standby_en),
-      .restart_counter_i(ctrl_bus_i.stop_det),
+      .reset_counter_ni (ctrl_bus_i.scl.value & ctrl_bus_i.sda.value),
       .t_bus_free_i     (t_bus_free_i),
       .t_bus_idle_i     (t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
