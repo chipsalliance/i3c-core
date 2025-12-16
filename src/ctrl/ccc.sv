@@ -96,6 +96,7 @@ module ccc
     input logic ccc_valid_i,
 
     output logic done_fsm_o,
+    output logic invalid_ccc_o,
     output logic next_ccc_o,
 
     // Bus Monitor interface
@@ -344,6 +345,9 @@ module ccc
 
   logic       get_status_in_progress;
 
+  logic       ccc_expected_parity;
+  assign ccc_expected_parity = ^{ccc_i, 1'b1};
+
   always_ff @(posedge clk_i or negedge rst_ni) begin : report_get_status_done
     if (~rst_ni) begin
       get_status_in_progress <= '0;
@@ -427,7 +431,8 @@ module ccc
     DoneCCC,
     HandleENTDAA,
     HandleTargetENTDAA,
-    HandleVirtualTargetENTDAA
+    HandleVirtualTargetENTDAA,
+    CCCError
   } state_e;
 
   state_e state_q, state_d;
@@ -467,6 +472,13 @@ module ccc
   logic is_byte_rsvd_addr;
   assign is_byte_rsvd_addr = (rx_data == {7'h7E, 1'b0}) | (command_addr == 7'h7E);
 
+  logic is_incorrect_byte_match;
+  assign is_incorrect_byte_match = (rx_data inside {
+        8'h7C, 8'hBC, 8'hDC, 8'hEC, 8'hF4, 8'hF8, 8'hFE, 8'hFD
+      }) | (command_addr inside {
+        8'h7C, 8'hBC, 8'hDC, 8'hEC, 8'hF4, 8'hF8, 8'hFE, 8'hFD
+      });
+
   logic is_byte_our_dynamic_addr;
   logic is_byte_our_virtual_dynamic_addr;
   logic is_byte_our_static_addr;
@@ -487,7 +499,6 @@ module ccc
   assign is_byte_virtual_addr = is_byte_our_virtual_dynamic_addr | is_byte_our_virtual_static_addr;
 
   logic supported_direct_command_code;
-
   assign supported_direct_command_code = command_code inside {
     // Setters
     `I3C_DIRECT_SETDASA,
@@ -508,8 +519,32 @@ module ccc
     `I3C_DIRECT_GETCAPS
   };
 
-  logic unsupported_def_byte;
+  logic read_only_command;
+  assign read_only_command = command_code inside {
+    `I3C_DIRECT_GETSTATUS,
+    `I3C_DIRECT_GETCAPS,
+    `I3C_DIRECT_GETBCR,
+    `I3C_DIRECT_GETDCR,
+    `I3C_DIRECT_GETMWL,
+    `I3C_DIRECT_GETMRL,
+    `I3C_DIRECT_GETPID
+  };
 
+  logic write_only_command;
+  assign write_only_command =  command_code inside {
+    `I3C_DIRECT_SETDASA,
+    `I3C_DIRECT_SETNEWDA,
+    `I3C_DIRECT_SETXTIME,
+    `I3C_DIRECT_SETMWL,
+    `I3C_DIRECT_SETMRL,
+    `I3C_DIRECT_ENEC,
+    `I3C_DIRECT_DISEC
+  };
+
+  logic direction_error;
+  assign direction_error = (read_only_command & ~command_rnw) | (write_only_command & command_rnw);
+
+  logic unsupported_def_byte;
   assign unsupported_def_byte = have_defining_byte & valid_defining_byte & (
         (command_code == `I3C_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h81, 8'h82})
       | (command_code == `I3C_DIRECT_GETCAPS) & ~(defining_byte inside {8'h00, 8'h93}));
@@ -518,10 +553,11 @@ module ccc
   assign supported_direct_command = supported_direct_command_code & ~unsupported_def_byte;
 
   logic direct_addr_ack;
-
-  assign direct_addr_ack = (command_code == `I3C_DIRECT_SETDASA) ?
-      ((is_byte_our_static_addr && ~target_dyn_address_valid_i) | (is_byte_our_virtual_static_addr && ~virtual_target_dyn_address_valid_i)) :
-      ((is_byte_our_addr | is_byte_virtual_addr) & supported_direct_command  | is_byte_rsvd_addr );
+  assign direct_addr_ack = ~direction_error & ((command_code == `I3C_DIRECT_SETDASA) ?
+      ((is_byte_our_static_addr && ~target_dyn_address_valid_i) |
+        (is_byte_our_virtual_static_addr && ~virtual_target_dyn_address_valid_i)) :
+      ((is_byte_our_addr | is_byte_virtual_addr) & supported_direct_command |
+        is_byte_rsvd_addr ));
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_addr
     if (~rst_ni) begin
@@ -560,34 +596,45 @@ module ccc
       ent_hdr_6_o <= '0;
       ent_hdr_7_o <= '0;
     end else begin
-      unique case(command_code)
-        `I3C_BCAST_ENTHDR0:
-          ent_hdr_0_o <= '1;
-        `I3C_BCAST_ENTHDR1:
-          ent_hdr_1_o <= '1;
-        `I3C_BCAST_ENTHDR2:
-          ent_hdr_2_o <= '1;
-        `I3C_BCAST_ENTHDR3:
-          ent_hdr_3_o <= '1;
-        `I3C_BCAST_ENTHDR4:
-          ent_hdr_4_o <= '1;
-        `I3C_BCAST_ENTHDR5:
-          ent_hdr_5_o <= '1;
-        `I3C_BCAST_ENTHDR6:
-          ent_hdr_6_o <= '1;
-        `I3C_BCAST_ENTHDR7:
-          ent_hdr_7_o <= '1;
-        default: begin
-          ent_hdr_0_o <= '0;
-          ent_hdr_1_o <= '0;
-          ent_hdr_2_o <= '0;
-          ent_hdr_3_o <= '0;
-          ent_hdr_4_o <= '0;
-          ent_hdr_5_o <= '0;
-          ent_hdr_6_o <= '0;
-          ent_hdr_7_o <= '0;
-        end
-      endcase
+      if (bus_rx_done_i & (state_q == RxTbit) & (ccc_expected_parity == bus_rx_data_i[0])) begin
+        unique case(command_code)
+          `I3C_BCAST_ENTHDR0:
+            ent_hdr_0_o <= '1;
+          `I3C_BCAST_ENTHDR1:
+            ent_hdr_1_o <= '1;
+          `I3C_BCAST_ENTHDR2:
+            ent_hdr_2_o <= '1;
+          `I3C_BCAST_ENTHDR3:
+            ent_hdr_3_o <= '1;
+          `I3C_BCAST_ENTHDR4:
+            ent_hdr_4_o <= '1;
+          `I3C_BCAST_ENTHDR5:
+            ent_hdr_5_o <= '1;
+          `I3C_BCAST_ENTHDR6:
+            ent_hdr_6_o <= '1;
+          `I3C_BCAST_ENTHDR7:
+            ent_hdr_7_o <= '1;
+          default: begin
+            ent_hdr_0_o <= '0;
+            ent_hdr_1_o <= '0;
+            ent_hdr_2_o <= '0;
+            ent_hdr_3_o <= '0;
+            ent_hdr_4_o <= '0;
+            ent_hdr_5_o <= '0;
+            ent_hdr_6_o <= '0;
+            ent_hdr_7_o <= '0;
+          end
+        endcase
+      end else if (exit_hdr_i) begin
+        ent_hdr_0_o <= '0;
+        ent_hdr_1_o <= '0;
+        ent_hdr_2_o <= '0;
+        ent_hdr_3_o <= '0;
+        ent_hdr_4_o <= '0;
+        ent_hdr_5_o <= '0;
+        ent_hdr_6_o <= '0;
+        ent_hdr_7_o <= '0;
+      end
     end
   end
 
@@ -605,8 +652,11 @@ module ccc
       end
       RxTbit: begin
         if (bus_rx_done_i) begin
+          // Check T-bit
+          if (ccc_expected_parity != bus_rx_data_i[0]) begin
+            state_d = CCCError;
           // have defining byte
-          if (have_defining_byte && command_code == `I3C_DIRECT_GETCAPS) state_d = RxDefByteOrBusCond;
+          end else if (have_defining_byte && command_code == `I3C_DIRECT_GETCAPS) state_d = RxDefByteOrBusCond;
           else if (have_defining_byte) state_d = RxDefByte;
           else begin
             // ENTDAA is special
@@ -689,9 +739,10 @@ module ccc
             else state_d = WaitForBusCond;
           end
           else begin
-            if (is_byte_rsvd_addr) state_d = NextCCC;
-            else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw && supported_direct_command) state_d = TxData;
-            else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw && supported_direct_command) begin
+            if (is_incorrect_byte_match) state_d = CCCError;
+            else if (is_byte_rsvd_addr) state_d = NextCCC;
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && command_rnw && supported_direct_command && ~direction_error) state_d = TxData;
+            else if ((is_byte_our_addr || is_byte_virtual_addr) && ~command_rnw && supported_direct_command && ~direction_error) begin
               if (command_code == `I3C_DIRECT_SETXTIME) state_d = RxSubCmdByte;
               else state_d = RxData;
             end else state_d = WaitForBusCond;
@@ -730,6 +781,9 @@ module ccc
       DoneCCC: begin
         state_d = Idle;
       end
+      CCCError: begin
+        state_d = Idle;
+      end
       default: begin
       end
     endcase
@@ -747,6 +801,7 @@ module ccc
 
     done_fsm_o = '0;
     next_ccc_o = '0;
+    invalid_ccc_o = '0;
     unique case (state_q)
       Idle: begin
 
@@ -816,6 +871,10 @@ module ccc
         next_ccc_o = '1;
       end
       DoneCCC: begin
+        done_fsm_o = '1;
+      end
+      CCCError: begin
+        invalid_ccc_o = '1;
         done_fsm_o = '1;
       end
       default: begin
