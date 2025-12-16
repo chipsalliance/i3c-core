@@ -103,7 +103,7 @@ async def get_status(dut):
     await cycle(dut.clk_i, dut.ccc_valid_i)
 
     # T-bit
-    await rx_bit(dut, 0)
+    await rx_bit(dut, 1)
 
     # RS
     await ClockCycles(dut.clk_i, 5)
