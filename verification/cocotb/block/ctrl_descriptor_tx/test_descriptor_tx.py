@@ -11,6 +11,13 @@ from cocotb.triggers import ClockCycles
 async def setup(dut):
     """ """
     await ClockCycles(dut.clk_i, 10)
+    dut.tti_tx_desc_queue_rvalid_i.value = 0
+    dut.recovery_mode_enter_i.value = 0
+    dut.tti_tx_queue_rvalid_i.value = 0
+    dut.tti_tx_queue_empty_i.value = 1
+    dut.tx_abort_i.value = 0
+    dut.tx_start_i.value = 1
+    dut.tx_byte_ready_i.value = 0
 
 
 @cocotb.test()
@@ -35,7 +42,8 @@ async def test_descriptor_tx(dut: SimHandleBase):
     dut.tti_tx_queue_rvalid_i.value = 1
 
     dut.tti_tx_queue_depth_i.value = 5
-    data = [i for i in range(6)]
+    dut.tti_tx_queue_empty_i.value = 0
+    data = [i for i in range(5)]
     data_id = 0
     dut.tti_tx_queue_rdata_i.value = data[data_id]
 
@@ -43,7 +51,8 @@ async def test_descriptor_tx(dut: SimHandleBase):
         await cycle(dut.clk_i, dut.tx_byte_ready_i)
         await ClockCycles(dut.clk_i, 3)
         data_id += 1
-        dut.tti_tx_queue_rdata_i.value = data[data_id]
+        dut.tti_tx_queue_rdata_i.value = data[data_id] if data_id < len(data) else 0
+    await ClockCycles(dut.clk_i, 3)
 
     print(dut.tx_byte_o.value)
     print(dut.tx_byte_last_o.value)

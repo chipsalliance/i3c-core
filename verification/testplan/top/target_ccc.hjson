@@ -28,6 +28,28 @@
       tags: ["top"]
     }
     {
+      name: ccc_setdasa_nack
+      desc:
+        '''
+        The test sets dynamic address and virtual dynamic address by
+        sending SETDASA CCC. Then it sends second SETDASA command and checks
+        that targets NACKed them.
+        '''
+      tests: ["ccc_setdasa_nack"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_setnewda
+      desc:
+        '''
+        The test sets dynamic address and virtual dynamic address directly
+        using CSR accesses. Then it sends SETNEWDA commands to both targets
+        and checks their dynamic addresses got updated.
+        '''
+      tests: ["ccc_setnewda"]
+      tags: ["top"]
+    }
+    {
       name: ccc_rstdaa
       desc:
         '''
@@ -86,6 +108,17 @@
         CSR.
         '''
       tests: ["ccc_setaasa"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_setaasa_ignore
+      desc:
+        '''
+        Assigns dynamic address different to static address using CSR.
+        Issues the broadcast SETAASA CCC and checks if the target ignores
+        this command by examining STBY_CR_DEVICE_ADDR CSR.
+        '''
+      tests: ["ccc_setaasa_ignore"]
       tags: ["top"]
     }
     {
@@ -163,27 +196,15 @@
       tags: ["top"]
     }
     {
-      name: ccc_rstact_direct
+      name: ccc_rstact
       desc:
         '''
-        Sends directed RSTACT CCC to the target followed by reset pattern
+        Sends directed/broadcast RSTACT CCC to the target followed by reset pattern
         and checks if reset action was stored correctly. The check is
         done by examining DUT wires. Then, triggers target reset and
         verifies that the peripheral_reset_o signal gets asserted.
         '''
-      tests: ["ccc_rstact_direct"]
-      tags: ["top"]
-    }
-    {
-      name: ccc_rstact_bcast
-      desc:
-        '''
-        Sends directed RSTACT CCC to the target followed by reset pattern
-        and checks if reset action was stored correctly. The check is
-        done by examining DUT wires. Then, triggers target reset and
-        verifies that the escalated_reset_o signal gets asserted.
-        '''
-      tests: ["ccc_rstact_bcast"]
+      tests: ["ccc_rstact"]
       tags: ["top"]
     }
     {
