@@ -10,7 +10,10 @@ from cocotb.triggers import ClockCycles
 
 async def setup(dut):
     """ """
-    dut.tti_rx_queue_full_i.value = 0
+    dut.tti_rx_queue_wready_i.value = 1
+    dut.rx_byte_last_i.value = 0
+    dut.rx_byte_err_i.value = 0
+    dut.rx_byte_valid_i.value = 0
     await ClockCycles(dut.clk_i, 10)
 
 

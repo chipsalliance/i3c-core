@@ -1,0 +1,27 @@
+{
+  name: CSR access check
+  testpoints:
+  [
+    {
+      name: Test CSR accesses
+      desc:
+        '''
+        Walks over all CSRs, write random value using AHB/AXI, reads it back,
+        and compares with expected output.
+        '''
+      tests: [
+        "dat_csr_access",
+        "dct_csr_access",
+        "base_csr_access",
+        "pio_csr_access",
+        "ec_sec_fw_rec_csr_access",
+        "ec_stdby_ctrl_mode_csr_access",
+        "ec_tti_csr_access",
+        "ec_soc_mgmt_csr_access",
+        "ec_contrl_config_csr_access",
+        "ec_csr_access"
+      ]
+      tags: ["top"]
+    }
+  ]
+}

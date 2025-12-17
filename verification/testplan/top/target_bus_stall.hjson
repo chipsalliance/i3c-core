@@ -1,0 +1,66 @@
+{
+  name: Data over-/underflow handling
+  testpoints:
+  [
+    {
+      name: Reading from empty RX descriptor FIFO
+      desc:
+        '''
+        Perform read bus access to the empty RX descriptor queue,
+        verify that response comes back and it holds value of 0.
+        '''
+      tests: ["empty_rx_desc_read"]
+      tags: ["top"]
+    }
+    {
+      name: Reading from empty RX data FIFO
+      desc:
+        '''
+        Perform read bus access to the empty RX descriptor queue,
+        verify that response comes back and it holds value of 0.
+        '''
+      tests: ["empty_rx_data_read"]
+      tags: ["top"]
+    }
+    {
+      name: Reading from empty indirect FIFO
+      desc:
+        '''
+        Perform read bus access to the empty RX descriptor queue,
+        verify that response comes back and it holds value of 0.
+        '''
+      tests: ["empty_indirect_fifo_read"]
+      tags: ["top"]
+    }
+    {
+      name: Writing to full TX descriptor FIFO
+      desc:
+        '''
+        Perform multiple write bus accesses to the TX descriptor queue,
+        verify that all transactions has finished.
+        '''
+      tests: ["full_tx_desc_write"]
+      tags: ["top"]
+    }
+    {
+      name: Writing to full TX data FIFO
+      desc:
+        '''
+        Perform multiple write bus accesses to the TX data queue,
+        verify that all transactions has finished.
+        '''
+      tests: ["full_tx_data_write"]
+      tags: ["top"]
+    }
+    {
+      name: Writing to full IBI FIFO
+      desc:
+        '''
+        Perform multiple write bus accesses to the IBI queue,
+        verify that all transactions has finished.
+        '''
+      tests: ["full_ibi_write"]
+      tags: ["top"]
+    }
+  ]
+}
