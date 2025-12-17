@@ -43,6 +43,35 @@
       tags: ["top"]
     }
     {
+      name: i3c_target_read_empty
+      desc:
+        '''
+        Issues multiple read transactions to the target and randomly selects,
+        which if transaction has data.
+
+        If transaction is selected to contain data, writes a data chunk and
+        its descriptor to TTI TX queues, and verifies that the data matches.
+
+        If transaction doesn't contain data, checks that request is NACKed.
+        '''
+      tests: ["i3c_target_read_empty"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_read_to_multiple_targets
+      desc:
+        '''
+        Sends multiple I3C frame, each containing multiple read transactions
+        with randomly selected addresses.
+        If transaction addresses I3C target, randomly selects if transaction
+        returns data or is NACked. Compares returned data if available.
+
+        If transaction doesn't address I3C target, expects NACK to be returned.
+        '''
+      tests: ["i3c_target_read_to_multiple_targets"]
+      tags: ["top"]
+    }
+    {
       name: i3c_target_ibi
       desc:
         '''
@@ -123,6 +152,32 @@
         The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["i3c_target_writes_and_reads"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_pwrite_err_detection
+      desc:
+        '''
+        Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+        Sends I3C private write with incorrect T-bit value.
+        Checks that the CSR reports protocol error condition and checks
+        that RX descriptor has error condition flag set.
+        Sends GETSTATUS CCC and checks that it also reports protocol error.
+        '''
+      tests: ["i3c_target_pwrite_err_detection"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_pwrite_overflow_detection
+      desc:
+        '''
+        Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+        Sends I3C private write with more data than target can receive.
+        Checks that the CSR doesn't report protocol error condition and checks
+        that RX descriptor has error condition flag set.
+        Sends GETSTATUS CCC and checks that it also doesn't report protocol error.
+        '''
+      tests: ["i3c_target_pwrite_overflow_detection"]
       tags: ["top"]
     }
   ]
