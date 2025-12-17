@@ -1,0 +1,51 @@
+{
+  name: Target error detection
+  testpoints:
+  [
+    {
+      name: Detect target error condition 0
+      desc:
+        '''
+        Issues I3C transaction with address set to broadcast address with single
+        bit error.
+        Checks target FSM transitioned to WaitHDRExitOrIdle.
+        Either sends HDR exit pattern or waits 60us and checks that target
+        is back to Idle state.
+        '''
+      tests: [
+        "TE0_HDR_exit",
+        "TE0_idle_exit",
+      ]
+      tags: ["top"]
+    }
+    {
+      name: Detect target error condition 1
+      desc:
+        '''
+        Issues I3C CCC transaction with invalid T-bit.
+        Checks target FSM transitioned to WaitHDRExitOrIdle.
+        Either sends HDR exit pattern or waits 60us and checks that target
+        is back to Idle state.
+        '''
+      tests: [
+        "TE1_HDR_exit",
+        "TE1_idle_exit",
+      ]
+      tags: ["top"]
+    }
+    {
+      name: Detect target error condition 5
+      desc:
+        '''
+        Issues one of the CCC that is either read-only, or write-only.
+        Issues target address with incorrect direction bit.
+        Checks that target NACKed transaction.
+        '''
+      tests: [
+        "TE5_read_on_write",
+        "TE5_write_on_read",
+      ]
+      tags: ["top"]
+    }
+  ]
+}
