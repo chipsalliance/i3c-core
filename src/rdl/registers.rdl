@@ -13,8 +13,8 @@ addrmap I3CCSR #(
     bit DAT_offset = 0x400,
     bit DCT_offset = 0x800,
     bit cmd_fifo_size = 0x40, // 64 commands by default
-    bit resp_fifo_size = 0xff, // 255 responses by default
-    bit ibi_fifo_size = 0xff, // 255 responses by default
+    bit resp_fifo_size = 0x40, // 64 responses by default
+    bit ibi_fifo_size = 0x40, // 64 responses by default
     bit tx_fifo_size = 0x5, // 64 DWORDs by default
     bit rx_fifo_size = 0x5, // 64 DWORDs by default
     bit ext_ibi_size = 1'b0, // Extend the size of IBI queue (8*ibi_fifo_size if set)
