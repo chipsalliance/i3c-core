@@ -5048,7 +5048,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <tr class="row-even"><td><p>28:24</p></td>
 <td><p>BCR_VAR</p></td>
 <td><p>rw</p></td>
-<td><p>0x6</p></td>
+<td><p>0x16</p></td>
 <td><p>BCR_VAR</p></td>
 </tr>
 <tr class="row-odd"><td><p>31:29</p></td>
@@ -5065,10 +5065,10 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
 <h4 id="bcr-var-field">BCR_VAR field<a class="headerlink" href="#bcr-var-field" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Variable Part.</p>
-<p>Reset value is set to 5'b00110, because this device:</p>
+<p>Reset value is set to 5'b10110, because this device:</p>
 <ul>
 <li>
-<p>[bit4] is not a Virtual Target</p>
+<p>[bit4] is a Virtual Target</p>
 </li>
 <li>
 <p>[bit3] is not Offline Capable</p>
@@ -6097,7 +6097,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 <tr class="row-even"><td><p>18:15</p></td>
 <td><p>PENDING_INTERRUPT</p></td>
-<td><p>rw, woclr</p></td>
+<td><p>rw</p></td>
 <td><p>0x0</p></td>
 <td><p>PENDING_INTERRUPT</p></td>
 </tr>

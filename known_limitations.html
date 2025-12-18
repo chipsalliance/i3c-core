@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C Common Command Codes (CCC) - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>Known limitations - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C Common Command Codes (CCC)
+              Known limitations
             
           </span>
         </div>
@@ -356,59 +356,12 @@
                   
 
 
-<h1 id="i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)<a class="headerlink" href="#i3c-common-command-codes-ccc" title="Link to this heading">¶</a></h1>
-<p>The I3C core supports all CCCs required by the I3C Basic spec, please see “Table 16 I3C Common Command Codes” for a full reference.</p>
-<p>All CCCs are exercised with Cocotb tests.</p>
-<h2 id="broadcast-cccs">Broadcast CCCs<a class="headerlink" href="#broadcast-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):</p>
+<h1 id="known-limitations">Known limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">¶</a></h1>
+<h2 id="release-v1p1">Release v1p1<a class="headerlink" href="#release-v1p1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>SETAASA (O) - Set All Addresses to Static Adresses</p></li>
-<li><p>ENTDAA (R) - Enter Dynamic Address Assignment</p></li>
-<li><p>RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p>
-<ul>
-<li><p>Broadcast (Format 1) supports defining bytes 0x0, 0x1 and 0x2</p></li>
-</ul>
-</li>
-</ul>
-<h2 id="direct-cccs">Direct CCCs<a class="headerlink" href="#direct-cccs" title="Link to this heading">¶</a></h2>
-<p>The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>SETDASA (O) - Set Dynamic Address from Static Address</p>
-<ul>
-<li><p>Primary (Format 1)</p></li>
-</ul>
-</li>
-<li><p>SETNEWDA (C) - Set New Dynamic Address</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETMWL (R) - Get Max Write Length</p></li>
-<li><p>GETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETPID (C) - Get Provisioned ID</p></li>
-<li><p>GETBCR (C) - Get Bus Characteristics Register</p></li>
-<li><p>GETDCR (C) - Get Device Characteristics Register</p></li>
-<li><p>GETSTATUS (R) - Get Device Status</p>
-<ul>
-<li><p>The two-byte format (Format 1)</p></li>
-</ul>
-</li>
-<li><p>GETCAPS (R) - Get Optional Feature Capabilities</p>
-<ul>
-<li><p>Without defining byte ( Format 1)</p></li>
-</ul>
-</li>
-<li><p>RSTACT (R) - Target Reset Action</p>
-<ul>
-<li><p>Direct Write (Format 2) supports defining bytes 0x0, 0x1 and 0x2</p></li>
-<li><p>Direct Read (Format 3) supports defining bytes 0x81 and 0x82 and returns the 0xFF as recovery timing</p></li>
-</ul>
-</li>
+<li><p>I3C 1.1.1 Basic specification Errata 16 and 17 are not supported - the core will accept <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> and <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> CCCs even if dynamic address is set</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> sets only dynamic address for the main device (recovery device dynamic address is not set)</p></li>
+<li><p>Inferred latch on the <code class="docutils literal notranslate"><span class="pre">resp_desc</span></code> signal in <code class="docutils literal notranslate"><span class="pre">flow_active.sv</span></code>. This piece of code is not used in the Caliptra configuration</p></li>
 </ul>
 
 

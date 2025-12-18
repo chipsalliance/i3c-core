@@ -2630,93 +2630,95 @@ The I3C bus clock is set to 12.5 MHz.</p>
 <p><a class="external reference" href="./sim-results/target_ccc.html">Test results</a></p>
 <h4 id="id35">Testpoints<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
 <h5 id="ccc-getstatus"><code class="docutils literal notranslate"><span class="pre">ccc_getstatus</span></code><a class="headerlink" href="#ccc-getstatus" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L45">ccc_getstatus</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L57">ccc_getstatus</a></p>
 <p>The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
 status CSR. Next, it issues the GETSTATUS directed CCC to the
 target. Finally it compares the interrupt status returned by the
 CCC with the one read from the register.</p>
 <h5 id="ccc-setdasa"><code class="docutils literal notranslate"><span class="pre">ccc_setdasa</span></code><a class="headerlink" href="#ccc-setdasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L78">ccc_setdasa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L93">ccc_setdasa</a></p>
 <p>The test sets dynamic address and virtual dynamic address by
 sending SETDASA CCC. Then it verifies that correct addresses have
-been set by reading STBY_CR_DEVICE_ADDR CSR.</p>
+been set by reading STBY_CR_DEVICE_ADDR CSR.
+The test also sends a random number of CCCs targeting devices other
+than DUT, and checks if the dynamic address was not accepted.</p>
 <h5 id="ccc-rstdaa"><code class="docutils literal notranslate"><span class="pre">ccc_rstdaa</span></code><a class="headerlink" href="#ccc-rstdaa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L190">ccc_rstdaa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L283">ccc_rstdaa</a></p>
 <p>Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
 RSTDAA CCC and verifies that the address got cleared.</p>
 <h5 id="ccc-getbcr"><code class="docutils literal notranslate"><span class="pre">ccc_getbcr</span></code><a class="headerlink" href="#ccc-getbcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L225">ccc_getbcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L360">ccc_getbcr</a></p>
 <p>Reads BCR register content by sending GETBCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getdcr"><code class="docutils literal notranslate"><span class="pre">ccc_getdcr</span></code><a class="headerlink" href="#ccc-getdcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L242">ccc_getdcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L392">ccc_getdcr</a></p>
 <p>Reads DCR register content by sending GETDCR CCC and examining
 returned data.</p>
 <h5 id="ccc-getmwl"><code class="docutils literal notranslate"><span class="pre">ccc_getmwl</span></code><a class="headerlink" href="#ccc-getmwl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L257">ccc_getmwl</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L422">ccc_getmwl</a></p>
 <p>Reads MWL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-getmrl"><code class="docutils literal notranslate"><span class="pre">ccc_getmrl</span></code><a class="headerlink" href="#ccc-getmrl" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L274">ccc_getmrl</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L439">ccc_getmrl</a></p>
 <p>Reads MRL register content by sending GETMWL CCC and examining
 returned data.</p>
 <h5 id="ccc-setaasa"><code class="docutils literal notranslate"><span class="pre">ccc_setaasa</span></code><a class="headerlink" href="#ccc-setaasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L292">ccc_setaasa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L457">ccc_setaasa</a></p>
 <p>Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
 CSR.</p>
 <h5 id="ccc-getpid"><code class="docutils literal notranslate"><span class="pre">ccc_getpid</span></code><a class="headerlink" href="#ccc-getpid" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L314">ccc_getpid</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L550">ccc_getpid</a></p>
 <p>Sends the CCC to the target and examines if the returned PID
 matches the expected.</p>
 <h5 id="ccc-enec-disec-direct"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_direct</span></code><a class="headerlink" href="#ccc-enec-disec-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L346">ccc_enec_disec_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L610">ccc_enec_disec_direct</a></p>
 <p>Sends DISEC CCC to the target and verifies that events are disabled.
 Then, sends ENEC CCC to the target and checks that events are enabled.</p>
 <h5 id="ccc-enec-disec-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_enec_disec_bcast</span></code><a class="headerlink" href="#ccc-enec-disec-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L379">ccc_enec_disec_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L643">ccc_enec_disec_bcast</a></p>
 <p>Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.</p>
 <h5 id="ccc-setmwl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_direct</span></code><a class="headerlink" href="#ccc-setmwl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L408">ccc_setmwl_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L672">ccc_setmwl_direct</a></p>
 <p>Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-direct"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_direct</span></code><a class="headerlink" href="#ccc-setmrl-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L426">ccc_setmrl_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L690">ccc_setmrl_direct</a></p>
 <p>Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmwl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmwl_bcast</span></code><a class="headerlink" href="#ccc-setmwl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L444">ccc_setmwl_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L708">ccc_setmwl_bcast</a></p>
 <p>Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-setmrl-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_setmrl_bcast</span></code><a class="headerlink" href="#ccc-setmrl-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L462">ccc_setmrl_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L726">ccc_setmrl_bcast</a></p>
 <p>Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.</p>
 <h5 id="ccc-rstact-direct"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_direct</span></code><a class="headerlink" href="#ccc-rstact-direct" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L480">ccc_rstact_direct</a></p>
+<p>Test: ccc_rstact_direct</p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the peripheral_reset_o signal gets asserted.</p>
 <h5 id="ccc-rstact-bcast"><code class="docutils literal notranslate"><span class="pre">ccc_rstact_bcast</span></code><a class="headerlink" href="#ccc-rstact-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L510">ccc_rstact_bcast</a></p>
+<p>Test: ccc_rstact_bcast</p>
 <p>Sends directed RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the escalated_reset_o signal gets asserted.</p>
 <h5 id="ccc-direct-multiple-wr"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_wr</span></code><a class="headerlink" href="#ccc-direct-multiple-wr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L533">ccc_direct_multiple_wr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L800">ccc_direct_multiple_wr</a></p>
 <p>Sends a sequence of multiple directed SETMWL CCCs. The first and
 the last have non-matching address. The two middle ones set MWL
 to different values. Verify that the target responded to correct
 addresses and executed both CCCs.</p>
 <h5 id="ccc-direct-multiple-rd"><code class="docutils literal notranslate"><span class="pre">ccc_direct_multiple_rd</span></code><a class="headerlink" href="#ccc-direct-multiple-rd" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L572">ccc_direct_multiple_rd</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L839">ccc_direct_multiple_rd</a></p>
 <p>Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
 thee different addresses. Only the one for the target should
 be ACK-ed with the correct MWL content.</p>
@@ -2782,7 +2784,7 @@ the status bit cleared.</p>
 <p><a class="external reference" href="./sim-results/target_recovery.html">Test results</a></p>
 <h4 id="id39">Testpoints<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <h5 id="virtual-write"><code class="docutils literal notranslate"><span class="pre">virtual_write</span></code><a class="headerlink" href="#virtual-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L108">virtual_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L194">virtual_write</a></p>
 <p>Tests CSR write(s) through recovery protocol using the virtual
 target address. In the beginning sets the TTI and recovery
 addresses via two SETDASA CCCs.</p>
@@ -2801,7 +2803,7 @@ content matches.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-write-alternating"><code class="docutils literal notranslate"><span class="pre">virtual_write_alternating</span></code><a class="headerlink" href="#virtual-write-alternating" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L218">virtual_write_alternating</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L304">virtual_write_alternating</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes to DEVICE_RESET via recovery protocol targeting the virtual
 device address. Reads the register content through AHB/AXI and
@@ -2814,7 +2816,7 @@ responds both to TTI and virtual addresses.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="write"><code class="docutils literal notranslate"><span class="pre">write</span></code><a class="headerlink" href="#write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L286">write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L372">write</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Performs a write to DEVICE_RESET register via the recovery
 protocol targeting the virtual address. Reads the CSR content
@@ -2842,7 +2844,7 @@ match the expected behavior.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="write-pec"><code class="docutils literal notranslate"><span class="pre">write_pec</span></code><a class="headerlink" href="#write-pec" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L549">write_pec</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L635">write_pec</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes some data to DEVICE_RESET register using the recovery
 interface. Then, repeats the write with different data but
@@ -2863,7 +2865,7 @@ written in the beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="read-short"><code class="docutils literal notranslate"><span class="pre">read_short</span></code><a class="headerlink" href="#read-short" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L692">read_short</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L778">read_short</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2875,7 +2877,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="read-long"><code class="docutils literal notranslate"><span class="pre">read_long</span></code><a class="headerlink" href="#read-long" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L758">read_long</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L844">read_long</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
 Disables the recovery mode, writes some data to TTI TX queues
@@ -2887,7 +2889,7 @@ beginning of the test.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-read"><code class="docutils literal notranslate"><span class="pre">virtual_read</span></code><a class="headerlink" href="#virtual-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L883">virtual_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L969">virtual_read</a></p>
 <p>Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
 the recovery mode.</p>
 <p>Issues a series of recovery read commands to all CSRs mentioned in the
@@ -2900,7 +2902,7 @@ only in the recovery mode.</p>
 <p>The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.</p>
 <h5 id="virtual-read-alternating"><code class="docutils literal notranslate"><span class="pre">virtual_read_alternating</span></code><a class="headerlink" href="#virtual-read-alternating" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L969">virtual_read_alternating</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1055">virtual_read_alternating</a></p>
 <p>Alternates between recovery mode reads and TTI reads. Initially
 sets the TTI and recovery addresses via two SETDASA CCCs.</p>
 <p>Writes random data to the PROT_CAP register over AHB/AXI, reads
