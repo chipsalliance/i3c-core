@@ -95,7 +95,8 @@ module i3c_target_fsm #(
 
     input  logic target_reset_detect_i,
     input  logic hdr_exit_detect_i,
-    output logic is_in_hdr_mode_o,
+    input  logic is_in_hdr_mode_i,
+    output logic te0_detected_o,
     input  logic ibi_enable_i,           // TTI.CONTROL.IBI_EN
 
     // Interfacing with IBI subFSMs
@@ -107,6 +108,7 @@ module i3c_target_fsm #(
     output logic [7:0] ccc_o,
     output logic ccc_valid_o,
     input logic is_ccc_done_i,
+    input logic invalid_ccc_i,
     input logic is_next_ccc_i,
 
     input logic is_hotjoin_done_i,
@@ -119,6 +121,7 @@ module i3c_target_fsm #(
     input logic sda_negedge_i,
     input logic sda_posedge_i,
     input logic bus_free_i,
+    input logic bus_idle_i,
 
     output logic parity_err_o,
     output logic rx_overflow_err_o,
@@ -164,7 +167,7 @@ module i3c_target_fsm #(
     // - pending IBI
     // - hot-join
     // - reset pattern
-    Idle,
+    Idle = 8'h00,
     // Read first incoming byte of the transaction
     RxFByte,
     // Check if we should participate in the xfer
@@ -204,7 +207,11 @@ module i3c_target_fsm #(
     // Reset pattern causes reset of the core
     // so "Done" return state is not needed.
     DoRstAction,
-    DoHdrExit
+    // state to park in while the bus is in HDR mode
+    // in this state we ignore all the traffic
+    HDRMode = 8'ha0,
+    DoHdrExit,
+    WaitHDRExitOrIdle
   } primary_state_e;
 
   primary_state_e state_q, state_d;
@@ -233,7 +240,7 @@ module i3c_target_fsm #(
   logic bus_addr_valid;
   logic bus_rnw_d, bus_rnw_q;
   logic [6:0] bus_addr_d, bus_addr_q;
-  logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match;
+  logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match, is_incorrect_byte_match;
 
   assign is_our_addr_match = target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
                              target_sta_address_valid_i ? (target_sta_address_i == bus_addr_q) :
@@ -244,6 +251,9 @@ module i3c_target_fsm #(
                                  1'b0;
 
   assign is_rsvd_byte_match = ({bus_addr_q, bus_rnw_q} == 8'hFC);
+
+  assign is_incorrect_addr_match = ({bus_addr_q, bus_rnw_q} inside {
+      8'h7C, 8'hBC, 8'hDC, 8'hEC, 8'hF4, 8'hF8, 8'hFE, 8'hFD});
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : update_bus_addr_matcher
     if (~rst_ni) begin
@@ -364,13 +374,13 @@ module i3c_target_fsm #(
     bus_addr_d = '0;
     bus_addr_valid = '0;
     bus_rnw_d = '0;
-    is_in_hdr_mode_o = '0;
     nack_transaction_d = '0;
     parity_err_o = '0;
     ibi_begin_o = '0;
     ccc_valid_o = 1'b0;
     ccc_code = '0;
     ccc_code_valid = 1'b0;
+    te0_detected_o = 1'b0;
 
     case (state_q)
       Idle:
@@ -384,8 +394,10 @@ module i3c_target_fsm #(
         end
       end
       CheckFByte: begin
+        if (is_incorrect_addr_match) begin
+          te0_detected_o = 1'b1;
         // Signal begin of a private read
-        if (!is_rsvd_byte_match)
+        end else if (!is_rsvd_byte_match)
             tx_pr_start_o = (is_our_addr_match || is_virtual_addr_match) && bus_rnw_q;
       end
       TxAckFByte: begin
@@ -456,9 +468,31 @@ module i3c_target_fsm #(
 
       DoRstAction: begin
       end
+      HDRMode: begin
+        bus_rx_req_bit_o = '0;
+        bus_rx_req_byte_o = '0;
+        bus_tx_req_byte_o = '0;
+        bus_tx_req_bit_o = '0;
+        bus_tx_req_value_o = 8'h1;
+        tx_pr_start_o = '0;
+        tx_pr_abort_o = '0;
+        tx_host_nack_o = '0;
+        bus_addr_d = '0;
+        bus_addr_valid = '0;
+        bus_rnw_d = '0;
+        nack_transaction_d = '0;
+        parity_err_o = '0;
+        ibi_begin_o = '0;
+        ccc_valid_o = 1'b0;
+        ccc_code = '0;
+        ccc_code_valid = 1'b0;
+      end
       DoHdrExit: begin
       end
       DoHotJoin: begin
+      end
+      WaitHDRExitOrIdle: begin
+        te0_detected_o = 1'b1;
       end
       default: ;
     endcase
@@ -481,7 +515,9 @@ module i3c_target_fsm #(
         end
       end
       CheckFByte: begin
-        if (is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) begin
+        if (is_incorrect_addr_match) begin
+          state_d = WaitHDRExitOrIdle;
+        end else if (is_rsvd_byte_match || is_our_addr_match || is_virtual_addr_match) begin
            // do not ACK transaction if it is read and we don't have data to send
            if (~tx_desc_avail_i & bus_rnw_q) begin
              state_d = Wait;
@@ -570,7 +606,8 @@ module i3c_target_fsm #(
       end
 
       DoCCC: begin
-        if (is_ccc_done_i) state_d = DoneCCC;
+        if (is_ccc_done_i & invalid_ccc_i) state_d = WaitHDRExitOrIdle;
+        else if (is_ccc_done_i) state_d = DoneCCC;
         else if (is_next_ccc_i) state_d = RxSByte;
       end
       DoneCCC: begin
@@ -583,11 +620,17 @@ module i3c_target_fsm #(
         // The transition should be explicit to avoid undefined behavior
         state_d = Idle;
       end
+      HDRMode: begin
+        if (~is_in_hdr_mode_i) state_d = Idle;
+      end
       DoHdrExit: begin
         state_d = Idle;
       end
       DoHotJoin: begin
         if (is_hotjoin_done_i) state_d = Idle;
+      end
+      WaitHDRExitOrIdle: begin
+        if (hdr_exit_detect_i | bus_idle_i) state_d = Idle;
       end
       default: begin
         state_d = state_q;
@@ -595,9 +638,12 @@ module i3c_target_fsm #(
     endcase
 
     // Bypass state transition for HDR Exit Pattern
-    if (hdr_exit_detect_i) state_d = DoHdrExit;
+    //if (hdr_exit_detect_i) state_d = DoHdrExit;
+    // park in HDR state if we're in HDR mode
+    if (is_in_hdr_mode_i) state_d = HDRMode;
     // Bypass any state transition when a stop is received
-    if (bus_stop_det_i) state_d = Idle;
+    // Unless in HDR or TE0/TE1 modes
+    if (bus_stop_det_i && ~is_in_hdr_mode_i && state_q != WaitHDRExitOrIdle) state_d = Idle;
   end
 
   // Synchronous state transition

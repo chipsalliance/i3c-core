@@ -240,6 +240,7 @@ module controller_standby_i3c
   logic target_reset_detect;
   logic hdr_exit_detect;
   logic is_in_hdr_mode;
+  logic te0_detected;
 
   // SubFSMs status
   logic ibi_pending;
@@ -249,6 +250,7 @@ module controller_standby_i3c
   logic [7:0] ccc;
   logic ccc_valid;
   logic is_ccc_done;
+  logic invalid_ccc;
   logic is_next_ccc;
   logic is_hotjoin_done;
 
@@ -290,6 +292,7 @@ module controller_standby_i3c
     Ibi
   } xfer_mux_sel_e;
 
+  assign is_in_hdr_mode = ent_hdr_0 | ent_hdr_1 | ent_hdr_2 | ent_hdr_3 | ent_hdr_4 | ent_hdr_5 | ent_hdr_6 | ent_hdr_7;
   // Mux Rx/Tx between
   // 0 - Target FSM
   // 1 - CCC
@@ -445,7 +448,8 @@ module controller_standby_i3c
       .event_read_cmd_received_o  (event_read_cmd_received),
       .target_reset_detect_i      (target_reset_detect),
       .hdr_exit_detect_i          (hdr_exit_detect),
-      .is_in_hdr_mode_o           (is_in_hdr_mode),
+      .is_in_hdr_mode_i           (is_in_hdr_mode),
+      .te0_detected_o             (te0_detected),
       .ibi_enable_i               (ibi_enable_i),
       .ibi_pending_i              (ibi_pending),
       .ibi_begin_o                (ibi_begin),
@@ -453,6 +457,7 @@ module controller_standby_i3c
       .ccc_o                      (ccc),
       .ccc_valid_o                (ccc_valid),
       .is_ccc_done_i              (is_ccc_done),
+      .invalid_ccc_i             (invalid_ccc),
       .is_next_ccc_i              (is_next_ccc),
       .is_hotjoin_done_i          (is_hotjoin_done),
       .last_addr_o                (bus_addr_o),
@@ -462,6 +467,7 @@ module controller_standby_i3c
       .sda_negedge_i              (ctrl_bus_i.sda.neg_edge),
       .sda_posedge_i              (ctrl_bus_i.sda.pos_edge),
       .bus_free_i                 (bus_free),
+      .bus_idle_i                 (bus_idle),
       .parity_err_o,
       .rx_overflow_err_o          (rx_overflow_err),
       .virtual_device_sel_o       (virtual_device_sel_o),
@@ -475,6 +481,7 @@ module controller_standby_i3c
       .ccc_i                     (ccc),
       .ccc_valid_i               (ccc_valid),
       .done_fsm_o                (is_ccc_done),
+      .invalid_ccc_o             (invalid_ccc),
       .next_ccc_o                (is_next_ccc),
       .bus_start_det_i           (ctrl_bus_i.start_det),
       .bus_rstart_det_i          (ctrl_bus_i.rstart_det),
@@ -516,6 +523,7 @@ module controller_standby_i3c
       .ibil_o                    (ibil_o),
       .ent_tm_o                  (ent_tm),
       .tm_o                      (tm),
+      .is_in_hdr_mode_i          (is_in_hdr_mode),
       .ent_hdr_0_o               (ent_hdr_0),
       .ent_hdr_1_o               (ent_hdr_1),
       .ent_hdr_2_o               (ent_hdr_2),
@@ -524,6 +532,7 @@ module controller_standby_i3c
       .ent_hdr_5_o               (ent_hdr_5),
       .ent_hdr_6_o               (ent_hdr_6),
       .ent_hdr_7_o               (ent_hdr_7),
+      .exit_hdr_i                (hdr_exit_detect),
       .set_dasa_o                (set_dasa_o),
       .set_dasa_valid_o          (set_dasa_valid_o),
       .set_dasa_virtual_device_o (set_dasa_virtual_device_o),
@@ -634,12 +643,15 @@ module controller_standby_i3c
       .rx_idle_o        (bus_rx_idle)
   );
 
+  logic hdr_exit_trigger;
+  assign hdr_exit_trigger = is_in_hdr_mode | te0_detected;
+
   i3c_bus_monitor xbus_monitor (
       .clk_i,
       .rst_ni,
       .enable_i             (i3c_standby_en),
       .bus_i                (ctrl_bus_i),
-      .is_in_hdr_mode_i     (is_in_hdr_mode),
+      .is_in_hdr_mode_i     (hdr_exit_trigger),
       .hdr_exit_detect_o    (hdr_exit_detect),
       .target_reset_detect_o(target_reset_detect)
   );
@@ -648,7 +660,7 @@ module controller_standby_i3c
       .clk_i,
       .rst_ni,
       .enable_i         (i3c_standby_en),
-      .restart_counter_i(ctrl_bus_i.stop_det),
+      .reset_counter_ni (ctrl_bus_i.scl.value & ctrl_bus_i.sda.value),
       .t_bus_free_i     (t_bus_free_i),
       .t_bus_idle_i     (t_bus_idle_i),
       .t_bus_available_i(t_bus_available_i),
