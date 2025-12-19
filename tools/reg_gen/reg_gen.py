@@ -79,7 +79,7 @@ def main():
 
     # Parse Parameters
     parameters = {}
-    for p in args.P:
+    for p in args.P or []:
         # Expect: string=number
         try:
             p_split = p.split("=")

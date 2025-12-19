@@ -812,6 +812,10 @@ module ccc
 
   // Handle all DIRECT GET CCCs
   always_comb begin : proc_get
+    // Put a safe default RIGHT at the beginning, avoids having to repeat it everywhere
+    // Avoids infered flops in case it gets forgotten even once
+    tx_data = '0; 
+    // TODO clean up the code below
     case (command_code)
       // 1 Byte
       `I3C_DIRECT_GETBCR: begin
@@ -884,12 +888,27 @@ module ccc
       end
       // n Bytes
       `I3C_DIRECT_GETCAPS: begin
-        if( !valid_defining_byte || defining_byte == 8'h00) begin
+        if(!valid_defining_byte || defining_byte == 8'h00) begin
           tx_data_id_init = 8'h03;
-          if (tx_data_id == 8'h03) tx_data = 8'h00; // We don't support HDR Modes
-          else if (tx_data_id == 8'h02) tx_data = 8'h01; // We support I3C Basic v1.1.1
-          else if (tx_data_id == 8'h01) tx_data = 8'h48; // We send IBI MDB and support some GETCAPS defining bytes
-          else tx_data = '0;
+
+          // tx_data_id counts down from 3, so the x in GETCAPx as per the spec is calculated as
+          // x = 3-tx_data_id+1
+          unique case (tx_data_id)
+            8'd3: begin
+              // GETCAP1 - We don't support any HDR Modes
+              tx_data = 8'h00;
+            end
+            8'd2: begin
+              // GETCAP2
+              tx_data[3:0] = 4'h1; // We support I3C Basic v1.1.1
+            end
+            8'd1: begin
+              // GETCAP3
+              tx_data[6] = 1'b1; // We support IBI MDB Support (see Sect. 5.1.6.2.2)
+              tx_data[3] = 1'b1; // We support an optional defining byte for GETCAPS
+            end
+            default: ; // Already covered outside of this case tree
+          endcase
         end else if (valid_defining_byte && defining_byte == 8'h93) begin
           tx_data_id_init = 8'h01;
           if (tx_data_id == 8'h01) tx_data = 8'h35; // We share peripheral logic with side effects
