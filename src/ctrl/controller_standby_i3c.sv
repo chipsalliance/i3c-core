@@ -290,6 +290,7 @@ module controller_standby_i3c
     Ibi
   } xfer_mux_sel_e;
 
+  assign is_in_hdr_mode = ent_hdr_0 | ent_hdr_1 | ent_hdr_2 | ent_hdr_3 | ent_hdr_4 | ent_hdr_5 | ent_hdr_6 | ent_hdr_7;
   // Mux Rx/Tx between
   // 0 - Target FSM
   // 1 - CCC
@@ -445,7 +446,7 @@ module controller_standby_i3c
       .event_read_cmd_received_o  (event_read_cmd_received),
       .target_reset_detect_i      (target_reset_detect),
       .hdr_exit_detect_i          (hdr_exit_detect),
-      .is_in_hdr_mode_o           (is_in_hdr_mode),
+      .is_in_hdr_mode_i           (is_in_hdr_mode),
       .ibi_enable_i               (ibi_enable_i),
       .ibi_pending_i              (ibi_pending),
       .ibi_begin_o                (ibi_begin),
@@ -516,6 +517,7 @@ module controller_standby_i3c
       .ibil_o                    (ibil_o),
       .ent_tm_o                  (ent_tm),
       .tm_o                      (tm),
+      .is_in_hdr_mode_i          (is_in_hdr_mode),
       .ent_hdr_0_o               (ent_hdr_0),
       .ent_hdr_1_o               (ent_hdr_1),
       .ent_hdr_2_o               (ent_hdr_2),
@@ -524,6 +526,7 @@ module controller_standby_i3c
       .ent_hdr_5_o               (ent_hdr_5),
       .ent_hdr_6_o               (ent_hdr_6),
       .ent_hdr_7_o               (ent_hdr_7),
+      .exit_hdr_i                (hdr_exit_detect),
       .set_dasa_o                (set_dasa_o),
       .set_dasa_valid_o          (set_dasa_valid_o),
       .set_dasa_virtual_device_o (set_dasa_virtual_device_o),

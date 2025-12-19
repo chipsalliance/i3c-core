@@ -1,24 +1,61 @@
 testplans:
-  - Recovery mode tests:
-    - verification/cocotb/top/lib_i3c_top/test_recovery.py
-  - Enter and exit HDR mode:
-    - verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py
-  - target_interrupts:
-    - verification/cocotb/top/lib_i3c_top/test_interrupts.py
-  - target_peripheral_reset:
-    - verification/cocotb/top/lib_i3c_top/test_target_reset.py
-  - pec:
-    - verification/cocotb/block/recovery_pec/test_pec.py
-  - CCC handling:
-    - verification/cocotb/top/lib_i3c_top/test_ccc.py
-  - width_converter_[N8]to[N8]:
-    - verification/cocotb/block/{name}/test_converter.py
-  - Target:
-    - verification/cocotb/top/lib_i3c_top/test_i3c_target.py
-  - Recovery bypass:
-    - verification/cocotb/top/lib_i3c_top/test_bypass.py
-  - .*:
-    - verification/cocotb/block/ctrl_{name}/test_{name}.py
-    - verification/cocotb/block/{name}/test_{name}.py
-    - verification/cocotb/block/lib_adapter/test_{name}.py
-    - verification/cocotb/block/lib_hci_queues/{name}.py
+  - name: 'Data over-/underflow handling'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_bus_stall.py"
+  - name: 'Recovery bypass'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_bypass.py"
+  - name: 'CCC handling'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_ccc.py"
+  - name: 'CSR access check'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_csr_access.py"
+  - name: 'Enter and exit HDR mode'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py"
+  - name: 'Target'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_i3c_target.py"
+  - name: 'Target interrupts'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_interrupts.py"
+  - name: 'Recovery mode tests'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_recovery.py"
+  - name: 'target_peripheral_reset'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/lib_i3c_top/test_target_reset.py"
+  - name: 'pec'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/block/recovery_pec/test_pec.py"
+  - name: 'width_converter_[N8]to[N8]'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/block/{{testplan}}/test_converter.py"
+  - name: 'axi_filtering'
+    testpoints:
+    - name: "^(.*)$"
+      tests:
+      - name: "^.*(hci|pio|csr|device_addr).*$"
+        source: "verification/cocotb/block/axi_adapter_id_filter/test_seq_csr_access.py"
+      - name: "^.*(swap|toggle).*$"
+        source: "verification/cocotb/block/axi_adapter_id_filter/test_runtime_id_change.py"
+      - name: "^(.*)$"
+        source: "verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py"
+  - name: "^(bus_.x.*|ccc)$"
+    source: "verification/cocotb/block/{{testplan}}/test_{{testplan}}.py"
+  - name: "^(bus_.*)$"
+    source: "verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}.py"
+  - name: "^csr_sw_access$"
+    source: "verification/cocotb/block/lib_adapter/test_{{testplan}}.py"

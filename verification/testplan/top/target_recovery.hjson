@@ -32,6 +32,22 @@
       tags: ["top"]
     }
     {
+      name: virtual_overwrite
+      desc:
+        '''
+        Tests CSR write(s) with lengths over CSR size to the virtual
+        address using recovery protocl.
+
+        Performs a write to on of DEVICE_RESET/RECOVERY_CTRL/INDIRECT_FIFO_CTRL
+        registers via the recovery protocol targeting the virtual address.
+        Reads the CSR content back through AHB/AXI. Then reads again
+        the selected register, this time via the recovery protocol.
+        Check if the content matches value stored in the register.
+        '''
+      tests: ["virtual_overwrite"]
+      tags: ["top"]
+    }
+    {
       name: virtual_write_alternating
       desc:
         '''
@@ -52,6 +68,25 @@
         The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["virtual_write_alternating"]
+      tags: ["top"]
+    }
+    {
+      name: read_fifo_ctrl
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes to DEVICE_RESET via recovery protocol targeting the virtual
+        device address. Reads the register content through AHB/AXI and
+        check if it matches with what has been written.
+
+        Writes to INDIRECT_FIFO_CTRL via recovery protocol targeting the virtual
+        device address. Reads the register content via recovery protocol targeting
+        the virtual device address and check if it matches with what has been written.
+        Reads the register content through AHB/AXI and check if it matches with
+        what has been written.
+        '''
+      tests: ["read_fifo_ctrl"]
       tags: ["top"]
     }
     {
@@ -261,6 +296,21 @@
       tags: ["top"]
     }
     {
+      name: indirect_fifo_reset_access
+      desc:
+        '''
+        Sets the recovery address via SETDASA CCC.
+
+        Writes data to indirect FIFO and waits for the values to propagate
+        through the core.
+
+        Resets indirect FIFO and writes new data to the indirect FIFO.
+        Reads indirect FIFO and compares received data with one written after reset.
+        '''
+      tests: ["indirect_fifo_reset_access"]
+      tags: ["top"]
+    }
+    {
       name: recovery_flow
       desc:
         '''
@@ -278,6 +328,22 @@
         The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["recovery_flow"]
+      tags: ["top"]
+    }
+    {
+      name: ocp_csr_access
+      desc:
+        '''
+        Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+        Writes to DEVICE_RESET via recovery protocol targeting the virtual
+        device address. Reads the register content through AHB/AXI and
+        check if it matches with what has been written.
+
+        Writes to all remaining recovery CSRs using AHB/AXI, reads back
+        thier values and compares them.
+        '''
+      tests: ["ocp_csr_access"]
       tags: ["top"]
     }
   ]

@@ -275,7 +275,8 @@ def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
         "test_i3c_target",
         "test_recovery",
         "test_interrupts",
-        # "test_enter_exit_hdr_mode",
+        "test_enter_exit_hdr_mode",
+        "test_bus_stall",
         "test_target_reset",
         "test_ccc",
         "test_csr_access",
@@ -294,7 +295,9 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
     [
         "test_i3c_target",
         "test_recovery",
-        # "test_enter_exit_hdr_mode",
+        "test_interrupts",
+        "test_enter_exit_hdr_mode",
+        "test_bus_stall",
         "test_target_reset",
         "test_ccc",
         "test_csr_access",
@@ -374,6 +377,34 @@ def ctrl_i3c_bus_monitor_verify(session, test_group, test_name, coverage, simula
 @nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)
 def ctrl_edge_detector_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["ctrl_descriptor_tx"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_descriptor_tx",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def ctrl_descriptor_tx_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
+
+@nox.session(tags=["tests", "ahb", "axi"])
+@nox.parametrize("test_group", ["ctrl_descriptor_rx"])
+@nox.parametrize(
+    "test_name",
+    [
+        "test_descriptor_rx",
+    ],
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def ctrl_descriptor_rx_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
 

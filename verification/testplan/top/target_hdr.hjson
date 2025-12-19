@@ -3,14 +3,20 @@
   testpoints:
   [
     {
-      name: Enter and exit HDR mode
+      name: Enter and exit HDR-DDR mode
       desc:
         '''
         Issues ENTHDR0 CCC to the target, verifies that the target FSM
-        is in IdleHDR state. Issues HDR exit pattern, verifies that
+        is in IdleHDR state. Issues at least 1 read/write HDR-DDR command(s)
+        followed by HDR exit pattern, verifies that
         the target FSM is back in Idle state.
         '''
-      tests: ["enter_exit_hdr_mode"]
+      tests: [
+        "enter_exit_hdr_mode_write",
+        "enter_restart_exit_hdr_mode_write",
+        "enter_exit_hdr_mode_read",
+        "enter_restart_exit_hdr_mode_read"
+      ]
       tags: ["top"]
     }
   ]
