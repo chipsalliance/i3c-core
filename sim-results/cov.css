@@ -77,13 +77,12 @@ a:active {
 
 center {
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 2000px;
   margin: 0 auto;
 }
 
 /* Responsive table wrapper */
 .table-wrapper {
-  overflow-x: auto;
   margin-bottom: 1rem;
   border-radius: 8px;
 }
@@ -101,6 +100,8 @@ th {
   font-weight: 500;
   text-transform: uppercase;
   padding: 0.75rem 1rem;
+  z-index: 500;
+  position: sticky;
 }
 
 td {
@@ -112,8 +113,26 @@ td {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.table-wrapper > table tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 td > b {
   font-weight: bold;
+}
+
+tr:has(b) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+td span.comment {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+p.comment {
+  text-align: left;
+  padding-bottom: 20px;
 }
 
 /* Enable border on all centered tables aside from the info table */
@@ -134,7 +153,6 @@ table {
   background-color: transparent;
   border: 1px solid var(--border-primary);
   border-radius: 8px;
-  overflow: hidden;
   margin-bottom: 0;
 }
 
@@ -737,6 +755,7 @@ span.missBins {
   }
 
   th {
+    position: sticky;
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
   }
@@ -799,6 +818,7 @@ span.missBins {
   }
 
   th {
+    position: sticky;
     padding: 0.375rem 0.5rem;
     font-size: 0.75rem;
   }

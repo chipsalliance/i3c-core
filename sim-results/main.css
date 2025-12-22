@@ -6,23 +6,23 @@
     --md-hue: 218;
     --md-default-bg-color: hsla(var(--md-hue), 22%, 7%, 1);
   }
-  
+
   [data-md-color-primary="teal"] {
     --md-primary-fg-color: #25292e;
   }
-  
+
   [data-md-color-scheme="slate"][data-md-color-primary="teal"] {
     --md-typeset-a-color: #00d0c9;
   }
-  
+
   .md-social {
     display: none;
   }
-  
+
   .md-header__option {
     display: none;
   }
-  
+
   header {
     background-color: var(--bg-primary);
     color: var(--text-primary);
@@ -35,15 +35,20 @@
       BlinkMacSystemFont,
       "Segoe UI",
       sans-serif;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    position: fixed;
   }
-  
+
   .container-title > h3 {
     font-size: 1rem;
     font-weight: 400;
     color: var(--text-primary);
     padding: 0;
   }
-  
+
   .navbar {
     display: flex;
     align-items: center;
@@ -51,7 +56,7 @@
     flex-wrap: wrap;
     gap: 1rem;
   }
-  
+
   .nav-left {
     font-size: 1rem;
     display: flex;
@@ -59,28 +64,30 @@
     align-items: center;
     color: var(--text-primary);
     gap: 0.5rem;
+    flex-wrap: wrap;
   }
-  
+
   body > .container-title {
     font-size: 1rem;
     font-weight: 600;
     display: flex;
     color: var(--text-primary);
   }
-  
+
   .container-title {
     padding: 0;
     font-size: 1rem;
     color: var(--text-primary);
     font-weight: 400;
   }
-  
+
   .nav-right {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
   }
-  
+
   .nav-item {
     display: flex;
     align-items: center;
@@ -91,14 +98,14 @@
     font-size: 0.875rem;
     font-weight: 500;
   }
-  
+
   .nav-item img {
     width: 14px;
     height: 14px;
     margin-right: 0.5rem;
     opacity: 0.9;
   }
-  
+
   .nav-urls {
     text-decoration: none;
     display: flex;
@@ -111,28 +118,28 @@
     font-weight: 500;
     gap: 0.25rem;
   }
-  
+
   .nav-urls:hover {
     background-color: var(--border-hover);
     color: var(--text-primary);
   }
-  
+
   .nav-urls img {
     width: 14px;
     height: 14px;
     opacity: 0.8;
   }
-  
+
   .tooltip {
     position: relative;
   }
-  
+
   .tooltip-text {
     color: white;
     visibility: hidden;
     text-align: center;
     position: absolute;
-    z-index: 1;
+    z-index: 100;
     opacity: 0;
     font-size: 0.875rem;
     background: #25292e;
@@ -141,36 +148,55 @@
     transition: opacity 0.2s ease;
     white-space: nowrap;
   }
-  
-  .tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
+
+  .tooltip-text-left {
+    top: 150%;
+    right: 100%;
+  }
+
+  .tooltip-text-right {
     top: 150%;
     left: 100%;
   }
-  
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
     background-color: var(--bg-tetriary);
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background-color: #3f3f46;
     border-radius: 4px;
   }
-  
+
   ::-webkit-scrollbar-track {
     background-color: var(--bg-tetriary);
   }
-  
+
   * {
     scrollbar-width: thin;
     scrollbar-color: #3f3f46 var(--bg-tetriary);
   }
-  
+
   *::selection {
     background-color: var(--accent-background);
     color: var(--accent-primary);
   }
-  
+
+.log-passing {
+    filter: brightness(0) saturate(100%) invert(54%) sepia(82%) saturate(403%) hue-rotate(89deg) brightness(96%) contrast(99%);
+}
+
+.log-failing {
+    filter: brightness(0) saturate(100%) invert(61%) sepia(84%) saturate(3794%) hue-rotate(352deg) brightness(100%) contrast(96%);
+}
+
+.additional-sources {
+    font-size: 0.5rem;
+}

@@ -1,14 +1,12 @@
 # Target
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
-
 [Test results](./sim-results/target.html){.external}
 
 ## Testpoints
 
 ### `i3c_target_write`
 
-Test: i3c_target_write
+Test: [i3c_target_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Spawns a TTI agent that reads from TTI descriptor and data queues
 and stores received data.
@@ -22,7 +20,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_read`
 
-Test: i3c_target_read
+Test: [i3c_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
@@ -40,9 +38,32 @@ Repeats the steps N times.
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
 
+### `i3c_target_read_empty`
+
+Test: [i3c_target_read_empty](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+
+Issues multiple read transactions to the target and randomly selects,
+which if transaction has data.
+
+If transaction is selected to contain data, writes a data chunk and
+its descriptor to TTI TX queues, and verifies that the data matches.
+
+If transaction doesn't contain data, checks that request is NACKed.
+
+### `i3c_target_read_to_multiple_targets`
+
+Test: [i3c_target_read_to_multiple_targets](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+
+Sends multiple I3C frame, each containing multiple read transactions
+with randomly selected addresses.
+If transaction addresses I3C target, randomly selects if transaction
+returns data or is NACked. Compares returned data if available.
+
+If transaction doesn't address I3C target, expects NACK to be returned.
+
 ### `i3c_target_ibi`
 
-Test: i3c_target_ibi
+Test: [i3c_target_ibi](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
@@ -62,7 +83,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_retry`
 
-Test: i3c_target_ibi_retry
+Test: [i3c_target_ibi_retry](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
@@ -80,7 +101,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_ibi_data`
 
-Test: i3c_target_ibi_data
+Test: [i3c_target_ibi_data](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
@@ -95,7 +116,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `i3c_target_writes_and_reads`
 
-Test: i3c_target_writes_and_reads
+Test: [i3c_target_writes_and_reads](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.
@@ -111,10 +132,77 @@ the data written to TTI TX queue in the beginning of the test.
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
 
+### `i3c_target_pwrite_err_detection`
+
+Test: [i3c_target_pwrite_err_detection](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+
+Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+Sends I3C private write with incorrect T-bit value.
+Checks that the CSR reports protocol error condition and checks
+that RX descriptor has error condition flag set.
+Sends GETSTATUS CCC and checks that it also reports protocol error.
+
+### `i3c_target_pwrite_overflow_detection`
+
+Test: [i3c_target_pwrite_overflow_detection](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+
+Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+Sends I3C private write with more data than target can receive.
+Checks that the CSR doesn't report protocol error condition and checks
+that RX descriptor has error condition flag set.
+Sends GETSTATUS CCC and checks that it also doesn't report protocol error.
+
+
+# Data over-/underflow handling
+
+[Test results](./sim-results/target_bus_stall.html){.external}
+
+## Testpoints
+
+### `Reading from empty RX descriptor FIFO`
+
+Test: [empty_rx_desc_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform read bus access to the empty RX descriptor queue,
+verify that response comes back and it holds value of 0.
+
+### `Reading from empty RX data FIFO`
+
+Test: [empty_rx_data_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform read bus access to the empty RX descriptor queue,
+verify that response comes back and it holds value of 0.
+
+### `Reading from empty indirect FIFO`
+
+Test: [empty_indirect_fifo_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform read bus access to the empty RX descriptor queue,
+verify that response comes back and it holds value of 0.
+
+### `Writing to full TX descriptor FIFO`
+
+Test: [full_tx_desc_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform multiple write bus accesses to the TX descriptor queue,
+verify that all transactions has finished.
+
+### `Writing to full TX data FIFO`
+
+Test: [full_tx_data_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform multiple write bus accesses to the TX data queue,
+verify that all transactions has finished.
+
+### `Writing to full IBI FIFO`
+
+Test: [full_ibi_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+
+Perform multiple write bus accesses to the IBI queue,
+verify that all transactions has finished.
+
 
 # CCC handling
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py)
 
 [Test results](./sim-results/target_ccc.html){.external}
 
@@ -138,6 +226,22 @@ sending SETDASA CCC. Then it verifies that correct addresses have
 been set by reading STBY_CR_DEVICE_ADDR CSR.
 The test also sends a random number of CCCs targeting devices other
 than DUT, and checks if the dynamic address was not accepted.
+
+### `ccc_setdasa_nack`
+
+Test: [ccc_setdasa_nack](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L174)
+
+The test sets dynamic address and virtual dynamic address by
+sending SETDASA CCC. Then it sends second SETDASA command and checks
+that targets NACKed them.
+
+### `ccc_setnewda`
+
+Test: [ccc_setnewda](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L215)
+
+The test sets dynamic address and virtual dynamic address directly
+using CSR accesses. Then it sends SETNEWDA commands to both targets
+and checks their dynamic addresses got updated.
 
 ### `ccc_rstdaa`
 
@@ -181,6 +285,14 @@ Test: [ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verific
 Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
 CSR.
+
+### `ccc_setaasa_ignore`
+
+Test: [ccc_setaasa_ignore](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L500)
+
+Assigns dynamic address different to static address using CSR.
+Issues the broadcast SETAASA CCC and checks if the target ignores
+this command by examining STBY_CR_DEVICE_ADDR CSR.
 
 ### `ccc_getpid`
 
@@ -235,23 +347,14 @@ Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
 relevant wires in the target DUT.
 
-### `ccc_rstact_direct`
+### `ccc_rstact`
 
-Test: ccc_rstact_direct
+Test: [ccc_rstact](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py)
 
-Sends directed RSTACT CCC to the target followed by reset pattern
+Sends directed/broadcast RSTACT CCC to the target followed by reset pattern
 and checks if reset action was stored correctly. The check is
 done by examining DUT wires. Then, triggers target reset and
 verifies that the peripheral_reset_o signal gets asserted.
-
-### `ccc_rstact_bcast`
-
-Test: ccc_rstact_bcast
-
-Sends directed RSTACT CCC to the target followed by reset pattern
-and checks if reset action was stored correctly. The check is
-done by examining DUT wires. Then, triggers target reset and
-verifies that the escalated_reset_o signal gets asserted.
 
 ### `ccc_direct_multiple_wr`
 
@@ -271,26 +374,53 @@ thee different addresses. Only the one for the target should
 be ACK-ed with the correct MWL content.
 
 
-# Enter and exit HDR mode
+# CSR access check
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py)
+[Test results](./sim-results/target_csr_access.html){.external}
+
+## Testpoints
+
+### `Test CSR accesses`
+
+Tests:
+- [dat_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L120)
+- [dct_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L126)
+- [base_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L135)
+- [pio_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L156)
+- [ec_sec_fw_rec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L169)
+- [ec_stdby_ctrl_mode_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L179)
+- [ec_tti_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L270)
+- [ec_soc_mgmt_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L320)
+- [ec_contrl_config_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L327)
+- [ec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L333)
+
+
+Walks over all CSRs, write random value using AHB/AXI, reads it back,
+and compares with expected output.
+
+
+# Enter and exit HDR mode
 
 [Test results](./sim-results/target_hdr.html){.external}
 
 ## Testpoints
 
-### `Enter and exit HDR mode`
+### `Enter and exit HDR-DDR mode`
 
-Test: enter_exit_hdr_mode
+Tests:
+- [enter_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L56)
+- [enter_restart_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L112)
+- [enter_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L172)
+- [enter_restart_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L232)
+
 
 Issues ENTHDR0 CCC to the target, verifies that the target FSM
-is in IdleHDR state. Issues HDR exit pattern, verifies that
+is in IdleHDR state. Issues at least 1 read/write HDR-DDR command(s)
+followed by HDR exit pattern, verifies that
 the target FSM is back in Idle state.
 
 
-# target_interrupts
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py)
+# Target interrupts
 
 [Test results](./sim-results/target_interrupts.html){.external}
 
@@ -298,7 +428,7 @@ the target FSM is back in Idle state.
 
 ### `rx_desc_stat`
 
-Test: rx_desc_stat
+Test: [rx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, sends a private write over I3C to the target and
@@ -308,7 +438,7 @@ irq_o gets deasserted after the read.
 
 ### `tx_desc_stat`
 
-Test: tx_desc_stat
+Test: [tx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
@@ -319,7 +449,7 @@ INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
 
 ### `ibi_done`
 
-Test: ibi_done
+Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
@@ -331,7 +461,7 @@ cleared afterwards.
 
 ### `interrupt_force`
 
-Test: interrupt_force
+Test: [interrupt_force](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
 
 The test is run for each TTI interrupt:
  - TX_DESC_STAT_EN
@@ -355,8 +485,6 @@ the status bit cleared.
 
 
 # Recovery mode tests
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py)
 
 [Test results](./sim-results/target_recovery.html){.external}
 
@@ -388,6 +516,19 @@ content matches.
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
 
+### `virtual_overwrite`
+
+Test: [virtual_overwrite](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L121)
+
+Tests CSR write(s) with lengths over CSR size to the virtual
+address using recovery protocl.
+
+Performs a write to on of DEVICE_RESET/RECOVERY_CTRL/INDIRECT_FIFO_CTRL
+registers via the recovery protocol targeting the virtual address.
+Reads the CSR content back through AHB/AXI. Then reads again
+the selected register, this time via the recovery protocol.
+Check if the content matches value stored in the register.
+
 ### `virtual_write_alternating`
 
 Test: [virtual_write_alternating](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L304)
@@ -407,6 +548,22 @@ responds both to TTI and virtual addresses.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
+
+### `read_fifo_ctrl`
+
+Test: [read_fifo_ctrl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L440)
+
+Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes to DEVICE_RESET via recovery protocol targeting the virtual
+device address. Reads the register content through AHB/AXI and
+check if it matches with what has been written.
+
+Writes to INDIRECT_FIFO_CTRL via recovery protocol targeting the virtual
+device address. Reads the register content via recovery protocol targeting
+the virtual device address and check if it matches with what has been written.
+Reads the register content through AHB/AXI and check if it matches with
+what has been written.
 
 ### `write`
 
@@ -584,6 +741,18 @@ gets deasserted.
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
 
+### `indirect_fifo_reset_access`
+
+Test: [indirect_fifo_reset_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1272)
+
+Sets the recovery address via SETDASA CCC.
+
+Writes data to indirect FIFO and waits for the values to propagate
+through the core.
+
+Resets indirect FIFO and writes new data to the indirect FIFO.
+Reads indirect FIFO and compares received data with one written after reset.
+
 ### `recovery_flow`
 
 Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
@@ -601,10 +770,21 @@ a firmware image to the target.
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
 The I3C bus clock is set to 12.5 MHz.
 
+### `ocp_csr_access`
+
+Test: [ocp_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1540)
+
+Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes to DEVICE_RESET via recovery protocol targeting the virtual
+device address. Reads the register content through AHB/AXI and
+check if it matches with what has been written.
+
+Writes to all remaining recovery CSRs using AHB/AXI, reads back
+thier values and compares them.
+
 
 # Recovery bypass
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py)
 
 [Test results](./sim-results/target_recovery_bypass.html){.external}
 
@@ -688,7 +868,7 @@ as specified in the Caliptra Root of Trust specification
 
 ### `cptra_mcu_recovery`
 
-Test: cptra_mcu_recovery
+Test: [cptra_mcu_recovery](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py)
 
 Verify that Caliptra Subsystem can perform full Recovery Sequence with I3C Core with
 bypass feature enabled. This test will run software on both Caliptra core and Caliptra
@@ -702,8 +882,6 @@ MCU to interact with the I3C Core and Caliptra RoT.
 
 
 # target_peripheral_reset
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py)
 
 [Test results](./sim-results/target_reset.html){.external}
 

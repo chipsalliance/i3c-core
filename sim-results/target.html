@@ -16,7 +16,7 @@
                     <div class="nav-urls">
                         <a href="./index-top.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
-                            <span class="tooltip-text">Go Back</span>
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
                     </div>
                     
@@ -26,10 +26,12 @@
                     </span>
 
                     
+
+                    
                     <div class="nav-urls">
-                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#target" class="button tooltip">
-                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
-                            <span class="tooltip-text">Go to documentation</span>
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/target.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
                         </a>
                     </div>
                     
@@ -40,25 +42,25 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/22/25/57/2025 05:57
+                        12/22/25/06/2025 17:06
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -73,16 +75,108 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;">           Name            </th><th>Tests                      </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                               </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">     i3c_target_write      </td><td>i3c_target_write           </td><td style="text-align: center;">      2.536      </td><td style="text-align: center;">   10312.302    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      i3c_target_read      </td><td>i3c_target_read            </td><td style="text-align: center;">     17.303      </td><td style="text-align: center;">   105210.840   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      i3c_target_ibi       </td><td>i3c_target_ibi             </td><td style="text-align: center;">     19.137      </td><td style="text-align: center;">   39342.303    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">   i3c_target_ibi_retry    </td><td>i3c_target_ibi_retry       </td><td style="text-align: center;">     17.504      </td><td style="text-align: center;">   14438.424    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">    i3c_target_ibi_data    </td><td>i3c_target_ibi_data        </td><td style="text-align: center;">      6.189      </td><td style="text-align: center;">   11511.174    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">i3c_target_writes_and_reads</td><td>i3c_target_writes_and_reads</td><td style="text-align: center;">     10.064      </td><td style="text-align: center;">   25648.770    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">                           </td><td><b>TOTAL</b>               </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    6    </td><td style="text-align: center;">   6   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   <span title='Spawns a TTI agent that reads from TTI descriptor and data queues
+and stores received data.
+
+While the agent is running the test issues several private writes
+over I3C. Data sent over I3C is compared with data received by
+the agent.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_write<span>    </td><td>i3c_target_write                    </td><td style="text-align: center;">      2.424      </td><td style="text-align: center;">   10312.302    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Writes a data chunk and its descriptor to TTI TX queues, issues
+an I3C private read transfer. Verifies that the data matches.
+Repeats the two steps N times.
+
+Writes N data chunks and their descriptors to TTI TX queues,
+issues N private read transfers over I3C. For each one verifies
+that data matches.
+
+Writes a data chunk and its descriptor to TTI TX queues, issues
+an I3C private read transfer which is shorter than the length of
+the chunk. Verifies that the received data matches with the chunk.
+Repeats the steps N times.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_read<span>    </td><td>i3c_target_read                     </td><td style="text-align: center;">     13.196      </td><td style="text-align: center;">   82057.029    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Issues multiple read transactions to the target and randomly selects,
+which if transaction has data.
+
+If transaction is selected to contain data, writes a data chunk and
+its descriptor to TTI TX queues, and verifies that the data matches.
+
+If transaction doesn't contain data, checks that request is NACKed.'>i3c_target_read_empty<span>    </td><td>i3c_target_read_empty               </td><td style="text-align: center;">     13.543      </td><td style="text-align: center;">   87889.110    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends multiple I3C frame, each containing multiple read transactions
+with randomly selected addresses.
+If transaction addresses I3C target, randomly selects if transaction
+returns data or is NACked. Compares returned data if available.
+
+If transaction doesn't address I3C target, expects NACK to be returned.'>i3c_target_read_to_multiple_targets<span>    </td><td>i3c_target_read_to_multiple_targets </td><td style="text-align: center;">     377.657     </td><td style="text-align: center;">  1101412.270   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Writes an IBI descriptor to the TTI IBI queue. Waits until the
+controller services the IBI. Checks if the mandatory byte (MDB)
+matches on both sides.
+
+Reads the LAST_IBI_STATUS fields of the TTI STATUS CSR. Ensures
+that it is equal to 0 (no error).
+
+Writes an IBI descriptor followed by N bytes of data to the TTI
+IBI queue. Waits until the controller services the IBI. Checks if
+the mandatory byte (MDB) and data matches on both sides.
+
+Repeats the LAST_IBI_STATUS check.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi<span>    </td><td>i3c_target_ibi                      </td><td style="text-align: center;">     18.094      </td><td style="text-align: center;">   39345.306    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Disables ACK-ing IBIs in the I3C controller model, issues an IBI
+from the target by writing to TTI IBI queue. Waits for a fixed
+time period - sufficiently long for the target to retry sending
+the IBI, reads LAST_IBI_STATUS from the TTI STATUS CSR, check
+if it is set to 3 (IBI retry).
+
+Re-enables ACK-ing of IBIs in the controller model, waits for the
+model to service the IBI, compares the IBI mandatory byte (MDB)
+with the one written to the TTI queue. Reads LAST_IBI_STATUS from
+the TTI STATUS CSR, check if it is set to 0 (no error).
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_retry<span>    </td><td>i3c_target_ibi_retry                </td><td style="text-align: center;">     16.517      </td><td style="text-align: center;">   14438.424    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets a limit on how many IBI data bytes may be accepted in the
+controller model. Issues an IBI with more data bytes by writing
+to the TTI IBI queue, checks if the IBI gets serviced correctly,
+compares data.
+
+Issues another IBI with data payload within the set limit, checks
+if it gets serviced correctly, compares data.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_data<span>    </td><td>i3c_target_ibi_data                 </td><td style="text-align: center;">      5.858      </td><td style="text-align: center;">   11511.174    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Writes a randomized data chunk to the TTI TX data queue, writes
+a corresponding descriptor to the TTI TX descriptor queue.
+
+Issues private write transfers to the target with randomized
+payloads, waits until a TTI interrupt is set by polling TTI
+INTERRUPT_STATUS CSR. Reads received data from TTI RX queues,
+compares it with what has been sent.
+
+Does a private read transfer, compares if the received data equals
+the data written to TTI TX queue in the beginning of the test.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_writes_and_reads<span>    </td><td>i3c_target_writes_and_reads         </td><td style="text-align: center;">      9.562      </td><td style="text-align: center;">   25648.770    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+Sends I3C private write with incorrect T-bit value.
+Checks that the CSR reports protocol error condition and checks
+that RX descriptor has error condition flag set.
+Sends GETSTATUS CCC and checks that it also reports protocol error.'>i3c_target_pwrite_err_detection<span>    </td><td>i3c_target_pwrite_err_detection     </td><td style="text-align: center;">     60.101      </td><td style="text-align: center;">   438459.021   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
+Sends I3C private write with more data than target can receive.
+Checks that the CSR doesn't report protocol error condition and checks
+that RX descriptor has error condition flag set.
+Sends GETSTATUS CCC and checks that it also doesn't report protocol error.'>i3c_target_pwrite_overflow_detection<span>    </td><td>i3c_target_pwrite_overflow_detection</td><td style="text-align: center;">     340.580     </td><td style="text-align: center;">  2510447.940   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                        </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   10    </td><td style="text-align: center;">  10   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -94,10 +188,10 @@
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">   6   </td><td style="text-align: center;">    6    </td><td style="text-align: center;">    6    </td><td style="text-align: center;"> 100.00 % </td></tr>
+<tr><td style="text-align: center;">        10         </td><td style="text-align: center;">      10       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      10      </td><td style="text-align: center;">     10     </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -109,4 +203,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>

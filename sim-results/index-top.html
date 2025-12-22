@@ -22,26 +22,33 @@
 
                     
 
+                    
+
                 </div>
                 
                 <div class="nav-right">
                     
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        22/12/2025 17:06
+                    </div>
+                    
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -54,24 +61,39 @@
                 <div class="table-wrapper">
                     <table>
 <thead>
-<tr><th style="text-align: center;">                           Name                            </th><th style="text-align: right;">  Passing</th><th style="text-align: right;">  Total</th><th style="text-align: right;">  Pass Rate</th></tr>
+<tr><th style="text-align: center;">                               Name                                </th><th style="text-align: right;">  Implemented tests</th><th style="text-align: right;">  Planned tests</th><th style="text-align: right;">                  Implementation progress</th><th style="text-align: right;">  Passing runs</th><th style="text-align: right;">  Total runs</th><th style="text-align: right;">                                Pass Rate</th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">            <a href='./target.html'>Target</a>             </td><td style="text-align: right;">        6</td><td style="text-align: right;">      6</td><td style="text-align: right;">   100.00 %</td></tr>
-<tr><td style="text-align: center;">       <a href='./target_ccc.html'>CCC handling</a>        </td><td style="text-align: right;">       17</td><td style="text-align: right;">     17</td><td style="text-align: right;">   100.00 %</td></tr>
-<tr><td style="text-align: center;">  <a href='./target_hdr.html'>Enter and exit HDR mode</a>  </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
-<tr><td style="text-align: center;"> <a href='./target_interrupts.html'>target_interrupts</a>  </td><td style="text-align: right;">        0</td><td style="text-align: right;">      0</td><td style="text-align: right;">       -- %</td></tr>
-<tr><td style="text-align: center;"> <a href='./target_recovery.html'>Recovery mode tests</a>  </td><td style="text-align: right;">       18</td><td style="text-align: right;">     18</td><td style="text-align: right;">   100.00 %</td></tr>
-<tr><td style="text-align: center;"><a href='./target_recovery_bypass.html'>Recovery bypass</a></td><td style="text-align: right;">       14</td><td style="text-align: right;">     14</td><td style="text-align: right;">   100.00 %</td></tr>
-<tr><td style="text-align: center;"> <a href='./target_reset.html'>target_peripheral_reset</a> </td><td style="text-align: right;">        2</td><td style="text-align: right;">      2</td><td style="text-align: right;">   100.00 %</td></tr>
+<tr><td style="text-align: center;">                <a href='./target.html'>Target</a>                 </td><td style="text-align: right;">                 10</td><td style="text-align: right;">             10</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">            10</td><td style="text-align: right;">          10</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;"><a href='./target_bus_stall.html'>Data over-/underflow handling</a></td><td style="text-align: right;">                  0</td><td style="text-align: right;">              6</td><td style="text-align: right;"> <span style="color: #ef4444">0.0%</span></td><td style="text-align: right;">             0</td><td style="text-align: right;">           0</td><td style="text-align: right;">  <span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">           <a href='./target_ccc.html'>CCC handling</a>            </td><td style="text-align: right;">                 21</td><td style="text-align: right;">             21</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">            26</td><td style="text-align: right;">          26</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      <a href='./target_csr_access.html'>CSR access check</a>      </td><td style="text-align: right;">                 10</td><td style="text-align: right;">             10</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">             6</td><td style="text-align: right;">          10</td><td style="text-align: right;"><span style="color: #eab308">60.0%</span></td></tr>
+<tr><td style="text-align: center;">      <a href='./target_hdr.html'>Enter and exit HDR mode</a>      </td><td style="text-align: right;">                  4</td><td style="text-align: right;">              4</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">             4</td><td style="text-align: right;">           4</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">     <a href='./target_interrupts.html'>Target interrupts</a>      </td><td style="text-align: right;">                  0</td><td style="text-align: right;">              4</td><td style="text-align: right;"> <span style="color: #ef4444">0.0%</span></td><td style="text-align: right;">             0</td><td style="text-align: right;">           0</td><td style="text-align: right;">  <span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">     <a href='./target_recovery.html'>Recovery mode tests</a>      </td><td style="text-align: right;">                 17</td><td style="text-align: right;">             17</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">            22</td><td style="text-align: right;">          22</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">    <a href='./target_recovery_bypass.html'>Recovery bypass</a>    </td><td style="text-align: right;">                 10</td><td style="text-align: right;">             11</td><td style="text-align: right;"><span style="color: #22c55e">90.9%</span></td><td style="text-align: right;">            14</td><td style="text-align: right;">          14</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">     <a href='./target_reset.html'>target_peripheral_reset</a>     </td><td style="text-align: right;">                  2</td><td style="text-align: right;">              2</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td><td style="text-align: right;">             2</td><td style="text-align: right;">           2</td><td style="text-align: right;"> <span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
+
 
                 </div>
             </div>
             <div class="progress-table">
                 <div class="table-wrapper">
-                    
+                    <h3>Progress of stages</h3>
+
+
+<table>
+<thead>
+<tr><th style="text-align: center;"> Stage </th><th style="text-align: right;">  Implemented tests</th><th style="text-align: right;">  Planned tests</th><th style="text-align: right;">                  Implementation progress</th><th style="text-align: right;">  Passing runs</th><th style="text-align: right;">  Total runs</th><th style="text-align: right;">                                Pass Rate</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;"> N.A.  </td><td style="text-align: right;">                 74</td><td style="text-align: right;">             85</td><td style="text-align: right;"><span style="color: #22c55e">87.1%</span></td><td style="text-align: right;">            84</td><td style="text-align: right;">          88</td><td style="text-align: right;"><span style="color: #22c55e">95.5%</span></td></tr>
+</tbody>
+</table>
+
+
                 </div>
             </div>
         </div>
@@ -80,4 +102,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>

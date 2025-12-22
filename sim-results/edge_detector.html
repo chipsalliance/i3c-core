@@ -16,7 +16,7 @@
                     <div class="nav-urls">
                         <a href="./index-blocks.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
-                            <span class="tooltip-text">Go Back</span>
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
                     </div>
                     
@@ -26,10 +26,12 @@
                     </span>
 
                     
+
+                    
                     <div class="nav-urls">
-                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#edge-detector" class="button tooltip">
-                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
-                            <span class="tooltip-text">Go to documentation</span>
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/block/edge_detector.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
                         </a>
                     </div>
                     
@@ -40,25 +42,25 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/22/25/57/2025 05:57
+                        12/22/25/06/2025 17:06
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -73,16 +75,37 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;">         Name         </th><th>Tests                                                                                                                                                     </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                         </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">pretrigger_with_delay </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>pretrigger_with_delay</a> </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">posttrigger_with_delay</td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>posttrigger_with_delay</a></td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">  trigger_with_delay  </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>trigger_with_delay</a>    </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;"> pretrigger_no_delay  </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>pretrigger_no_delay</a>   </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     30.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;"> posttrigger_no_delay </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>posttrigger_no_delay</a>  </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     30.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">   trigger_no_delay   </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py>trigger_no_delay</a>      </td><td style="text-align: center;">      0.001      </td><td style="text-align: center;">     28.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">                      </td><td><b>TOTAL</b>                                                                                                                                              </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    6    </td><td style="text-align: center;">   6   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   <span title='Triggers the edge_detector module before an edge on a bus line,
+emits the edge and counts clock cycles it takes the detector
+to report the presence of the edge. Verifies that the count is
+equal to the programmed delay.'>pretrigger_with_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L49>pretrigger_with_delay</a> </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Emits an edge on the bus, triggers the edge_detector module after
+the edge when the bus line is high. Counts clock cycles it takes
+the detector to report the edge event. The output detect signal
+is asserted only if the bus line signal is stable for the
+programmed delay time since the assertion of the trigger signal.
+Verifies that the number of counted cycles is equal the programmed
+delay.'>posttrigger_with_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L72>posttrigger_with_delay</a></td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Triggers the edge detector and emits a rising edge on a bus line
+simultaneously. Counts clock cycles it takes the detector
+to report the presence of the edge. Verifies that the count is
+equal to the programmed delay.'>trigger_with_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L97>trigger_with_delay</a>    </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     32.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Triggers the edge_detector module before an edge on a bus line,
+emits the edge and counts clock cycles it takes the detector
+to report the presence of the edge. Verifies that the count is
+zero as the configured delay is also set to 0.'>pretrigger_no_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L121>pretrigger_no_delay</a>  </td><td style="text-align: center;">      0.002      </td><td style="text-align: center;">     30.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Triggers the edge_detector module when a bus line is high which
+is after an edge. Counts clock cycles it takes the detector
+to report the presence of the edge. Verifies that the count is
+zero as the configured delay is also set to 0.'>posttrigger_no_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L144>posttrigger_no_delay</a> </td><td style="text-align: center;">      0.001      </td><td style="text-align: center;">     30.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Triggers the edge detector and emits a rising edge on a bus line
+simultaneously. Counts clock cycles it takes the detector
+to report the presence of the edge. Verifies that the count is
+zero as the configured delay is also set to 0.'>trigger_no_delay<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L170>trigger_no_delay</a>     </td><td style="text-align: center;">      0.001      </td><td style="text-align: center;">     28.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                  </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    6    </td><td style="text-align: center;">   6   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -94,10 +117,10 @@
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">   6   </td><td style="text-align: center;">    6    </td><td style="text-align: center;">    6    </td><td style="text-align: center;"> 100.00 % </td></tr>
+<tr><td style="text-align: center;">         6         </td><td style="text-align: center;">       6       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      6       </td><td style="text-align: center;">     6      </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -109,4 +132,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>

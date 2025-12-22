@@ -238,7 +238,7 @@ with what was requested to be sent.
 
 ### `ccc`
 
-Test: [ccc](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ccc/test_ccc.py#L132)
+Test: [ccc](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ccc/test_ccc.py#L133)
 
 Instructs the ccc module to begin servicing GETSTATUS CCC. Feeds
 data bytes and bits to the module via its bus_tx/bus_rx interfaces
@@ -294,15 +294,13 @@ Performs a sequence of CSR writes. Verifies that each one succeeds.
 
 # descriptor_rx
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py)
-
 [Test results](./sim-results/descriptor_rx.html){.external}
 
 ## Testpoints
 
 ### `descriptor_rx`
 
-Test: descriptor_rx
+Test: [descriptor_rx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py#L26)
 
 Tests the descriptor_rx module responsible for generating TTI RX
 descriptors. The test sends N bytes to the module and verifies
@@ -311,15 +309,13 @@ that it emits a valid descriptor with data length set to N.
 
 # descriptor_tx
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py)
-
 [Test results](./sim-results/descriptor_tx.html){.external}
 
 ## Testpoints
 
 ### `descriptor_tx`
 
-Test: descriptor_tx
+Test: [descriptor_tx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py#L23)
 
 Tests the descriptor_tx module responsible for processing TTI TX
 descriptors and controlling TTI data flow during I3C private
@@ -344,8 +340,6 @@ bus state.
 
 
 # edge_detector
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
 
 [Test results](./sim-results/edge_detector.html){.external}
 
@@ -410,8 +404,6 @@ zero as the configured delay is also set to 0.
 
 
 # flow_standby_i3c
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/flow_standby_i3c/test_flow_standby_i3c.py)
 
 [Test results](./sim-results/flow_standby_i3c.html){.external}
 
@@ -603,8 +595,6 @@ the queue fill.
 
 # i3c_bus_monitor
 
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_i3c_bus_monitor/test_i3c_bus_monitor.py)
-
 [Test results](./sim-results/i3c_bus_monitor.html){.external}
 
 ## Testpoints
@@ -629,8 +619,6 @@ i3c_bus_monitor correctly report it detected.
 
 
 # pec
-
-[Source file](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/recovery_pec/test_pec.py)
 
 [Test results](./sim-results/pec.html){.external}
 

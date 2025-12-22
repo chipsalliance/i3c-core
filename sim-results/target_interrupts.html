@@ -16,20 +16,22 @@
                     <div class="nav-urls">
                         <a href="./index-top.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
-                            <span class="tooltip-text">Go Back</span>
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
                     </div>
                     
 
                     <span class="container-title">
-                        target_interrupts
+                        Target interrupts
                     </span>
 
                     
+
+                    
                     <div class="nav-urls">
-                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#target-interrupts" class="button tooltip">
-                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
-                            <span class="tooltip-text">Go to documentation</span>
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/target_interrupts.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
                         </a>
                     </div>
                     
@@ -40,25 +42,25 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/22/25/57/2025 05:57
+                        12/22/25/06/2025 17:06
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -73,14 +75,47 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;">     Name      </th><th>Tests          </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests          </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate               </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;"> rx_desc_stat  </td><td>rx_desc_stat   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;"> tx_desc_stat  </td><td>tx_desc_stat   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;">   ibi_done    </td><td>ibi_done       </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;">interrupt_force</td><td>interrupt_force</td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;">               </td><td><b>TOTAL</b>   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
+<tr><td style="text-align: center;">   <span title='Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
+deasserted, sends a private write over I3C to the target and
+waits for irq_o assertion. Once the interrupt is asserted reads
+a RX descriptor from the TTI RX descriptor queue, ensures that
+irq_o gets deasserted after the read.'>rx_desc_stat<span>    </td><td>rx_desc_stat   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
+deasserted, writes data to TTI TX data queue followed by writing
+a descriptor to TTI TX descriptor queue, sends a private read
+over I3C and waits for irq_o assertion. Once the interrupt is
+asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
+INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.'>tx_desc_stat<span>    </td><td>tx_desc_stat   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
+deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
+Issues and IBI, waits for it to be serviced by the controller.
+Checks if the status bit is set in INTERRUPT_STATUS CSR and the
+irq_o signal asserted. Reads LAST_IBI_STATUS field from the TTI
+STATUS CSR, ensures that irq_o gets deasserted and status bit gets
+cleared afterwards.'>ibi_done<span>    </td><td>ibi_done       </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='The test is run for each TTI interrupt:
+ - TX_DESC_STAT_EN
+ - RX_DESC_STAT_EN
+ - RX_DESC_THLD_STAT_EN
+ - RX_DATA_THLD_STAT_EN
+ - IBI_DONE_EN
+
+Ensures that irq_o is deasserted. Disables the interrupt in TTI
+INTERRUPT_ENABLE CSR, forces the interrupt by writing 1 to the
+corresponding field in TTI INTERRUPT_FORCE CSR, ensures that
+the irq_o does not get asserted.
+
+Enables the interrupt in TTI INTERRUPT_ENABLE CSR, forces the
+interrupt by writing 1 to the corresponding field in
+TTI INTERRUPT_FORCE CSR, ensures that the irq_o does get asserted.
+
+Clears the interrupt by writing 1 to its corresponding field in
+TTI INTERRUPT_STATUS CSR, ensures that irq_o gets deasserted and
+the status bit cleared.'>interrupt_force<span>    </td><td>interrupt_force</td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
 </tbody>
 </table>
 
@@ -92,10 +127,10 @@
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate               </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">   4   </td><td style="text-align: center;">    0    </td><td style="text-align: center;">    0    </td><td style="text-align: center;">  0.00 %  </td></tr>
+<tr><td style="text-align: center;">         0         </td><td style="text-align: center;">       4       </td><td style="text-align: center;"><span style="color: #ef4444">0.0%</span></td><td style="text-align: center;">      0       </td><td style="text-align: center;">     0      </td><td style="text-align: center;"><span style="color: #737373">--%</span></td></tr>
 </tbody>
 </table>
 
@@ -107,4 +142,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>

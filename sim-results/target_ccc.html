@@ -16,7 +16,7 @@
                     <div class="nav-urls">
                         <a href="./index-top.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
-                            <span class="tooltip-text">Go Back</span>
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
                     </div>
                     
@@ -26,10 +26,12 @@
                     </span>
 
                     
+
+                    
                     <div class="nav-urls">
-                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#ccc-handling" class="button tooltip">
-                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
-                            <span class="tooltip-text">Go to documentation</span>
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/target_ccc.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
                         </a>
                     </div>
                     
@@ -40,25 +42,25 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/22/25/57/2025 05:57
+                        12/22/25/06/2025 17:06
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -73,29 +75,70 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;">         Name         </th><th>Tests                                                                                                                                  </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                       </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">    ccc_getstatus     </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getstatus</a>         </td><td style="text-align: center;">     15.004      </td><td style="text-align: center;">   97487.200    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">     ccc_setdasa      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setdasa</a>           </td><td style="text-align: center;">      4.995      </td><td style="text-align: center;">   33960.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_rstdaa      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_rstdaa</a>            </td><td style="text-align: center;">      0.810      </td><td style="text-align: center;">    1862.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_getbcr      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getbcr</a>            </td><td style="text-align: center;">      1.313      </td><td style="text-align: center;">    6493.240    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_getdcr      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getdcr</a>            </td><td style="text-align: center;">      1.244      </td><td style="text-align: center;">    6463.240    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_getmwl      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getmwl</a>            </td><td style="text-align: center;">      0.857      </td><td style="text-align: center;">    4003.200    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_getmrl      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getmrl</a>            </td><td style="text-align: center;">      0.946      </td><td style="text-align: center;">    4723.280    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">     ccc_setaasa      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setaasa</a>           </td><td style="text-align: center;">      0.590      </td><td style="text-align: center;">    1768.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">      ccc_getpid      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_getpid</a>            </td><td style="text-align: center;">      2.396      </td><td style="text-align: center;">   13722.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">ccc_enec_disec_direct </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_enec_disec_direct</a> </td><td style="text-align: center;">      1.304      </td><td style="text-align: center;">    6490.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;"> ccc_enec_disec_bcast </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_enec_disec_bcast</a>  </td><td style="text-align: center;">      1.084      </td><td style="text-align: center;">    4854.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">  ccc_setmwl_direct   </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setmwl_direct</a>     </td><td style="text-align: center;">      0.861      </td><td style="text-align: center;">    4005.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">  ccc_setmrl_direct   </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setmrl_direct</a>     </td><td style="text-align: center;">      0.861      </td><td style="text-align: center;">    4003.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">   ccc_setmwl_bcast   </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setmwl_bcast</a>      </td><td style="text-align: center;">      0.736      </td><td style="text-align: center;">    3185.420    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">   ccc_setmrl_bcast   </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_setmrl_bcast</a>      </td><td style="text-align: center;">      0.731      </td><td style="text-align: center;">    3185.420    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">  ccc_rstact_direct   </td><td>ccc_rstact_direct                                                                                                                      </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;">   ccc_rstact_bcast   </td><td>ccc_rstact_bcast                                                                                                                       </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;">   -- %    </td></tr>
-<tr><td style="text-align: center;">ccc_direct_multiple_wr</td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_direct_multiple_wr</a></td><td style="text-align: center;">      1.769      </td><td style="text-align: center;">   10777.900    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">ccc_direct_multiple_rd</td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py>ccc_direct_multiple_rd</a></td><td style="text-align: center;">      2.294      </td><td style="text-align: center;">   14648.550    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">                      </td><td><b>TOTAL</b>                                                                                                                           </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   17    </td><td style="text-align: center;">  17   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   <span title='The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
+status CSR. Next, it issues the GETSTATUS directed CCC to the
+target. Finally it compares the interrupt status returned by the
+CCC with the one read from the register.'>ccc_getstatus<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L57>ccc_getstatus</a>          </td><td style="text-align: center;">     16.330      </td><td style="text-align: center;">   105271.200   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='The test sets dynamic address and virtual dynamic address by
+sending SETDASA CCC. Then it verifies that correct addresses have
+been set by reading STBY_CR_DEVICE_ADDR CSR.
+The test also sends a random number of CCCs targeting devices other
+than DUT, and checks if the dynamic address was not accepted.'>ccc_setdasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L93>ccc_setdasa</a>            </td><td style="text-align: center;">      4.583      </td><td style="text-align: center;">   30886.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='The test sets dynamic address and virtual dynamic address by
+sending SETDASA CCC. Then it sends second SETDASA command and checks
+that targets NACKed them.'>ccc_setdasa_nack<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L174>ccc_setdasa_nack</a>      </td><td style="text-align: center;">      2.107      </td><td style="text-align: center;">   12587.560    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='The test sets dynamic address and virtual dynamic address directly
+using CSR accesses. Then it sends SETNEWDA commands to both targets
+and checks their dynamic addresses got updated.'>ccc_setnewda<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L215>ccc_setnewda</a>          </td><td style="text-align: center;">      1.600      </td><td style="text-align: center;">    6538.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
+RSTDAA CCC and verifies that the address got cleared.'>ccc_rstdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L283>ccc_rstdaa</a>            </td><td style="text-align: center;">      0.828      </td><td style="text-align: center;">    1862.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Reads BCR register content by sending GETBCR CCC and examining
+returned data.'>ccc_getbcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L360>ccc_getbcr</a>            </td><td style="text-align: center;">      1.335      </td><td style="text-align: center;">    6493.240    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Reads DCR register content by sending GETDCR CCC and examining
+returned data.'>ccc_getdcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L392>ccc_getdcr</a>            </td><td style="text-align: center;">      1.328      </td><td style="text-align: center;">    6491.240    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Reads MWL register content by sending GETMWL CCC and examining
+returned data.'>ccc_getmwl<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L422>ccc_getmwl</a>            </td><td style="text-align: center;">      0.869      </td><td style="text-align: center;">    4003.200    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Reads MRL register content by sending GETMWL CCC and examining
+returned data.'>ccc_getmrl<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L439>ccc_getmrl</a>            </td><td style="text-align: center;">      0.952      </td><td style="text-align: center;">    4723.280    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Issues the broadcast SETAASA CCC and checks if the target uses
+its static address as dynamic by examining STBY_CR_DEVICE_ADDR
+CSR.'>ccc_setaasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L457>ccc_setaasa</a>           </td><td style="text-align: center;">      0.598      </td><td style="text-align: center;">    1768.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Assigns dynamic address different to static address using CSR.
+Issues the broadcast SETAASA CCC and checks if the target ignores
+this command by examining STBY_CR_DEVICE_ADDR CSR.'>ccc_setaasa_ignore<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L500>ccc_setaasa_ignore</a>    </td><td style="text-align: center;">      0.747      </td><td style="text-align: center;">    1826.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends the CCC to the target and examines if the returned PID
+matches the expected.'>ccc_getpid<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L550>ccc_getpid</a>            </td><td style="text-align: center;">      2.359      </td><td style="text-align: center;">   13694.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends DISEC CCC to the target and verifies that events are disabled.
+Then, sends ENEC CCC to the target and checks that events are enabled.'>ccc_enec_disec_direct<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L610>ccc_enec_disec_direct</a> </td><td style="text-align: center;">      1.328      </td><td style="text-align: center;">    6490.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends broadcast DISEC CCC and verifies that events are disabled.
+Then, sends broadcast ENEC CCC and checks that events are enabled.'>ccc_enec_disec_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L643>ccc_enec_disec_bcast</a>  </td><td style="text-align: center;">      1.093      </td><td style="text-align: center;">    4854.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends directed SETMWL CCC to the target and verifies that the
+register got correctly set. The check is performed by examining
+relevant wires in the target DUT.'>ccc_setmwl_direct<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L672>ccc_setmwl_direct</a>     </td><td style="text-align: center;">      0.872      </td><td style="text-align: center;">    4005.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends directed SETMRL CCC to the target and verifies that the
+register got correctly set. The check is performed by examining
+relevant wires in the target DUT.'>ccc_setmrl_direct<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L690>ccc_setmrl_direct</a>     </td><td style="text-align: center;">      0.854      </td><td style="text-align: center;">    4003.040    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends broadcast SETMWL CCC and verifies that the
+register got correctly set. The check is performed by examining
+relevant wires in the target DUT.'>ccc_setmwl_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L708>ccc_setmwl_bcast</a>      </td><td style="text-align: center;">      0.743      </td><td style="text-align: center;">    3185.420    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends SETMRL CCC and verifies that the
+register got correctly set. The check is performed by examining
+relevant wires in the target DUT.'>ccc_setmrl_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L726>ccc_setmrl_bcast</a>      </td><td style="text-align: center;">      0.742      </td><td style="text-align: center;">    3185.420    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends directed/broadcast RSTACT CCC to the target followed by reset pattern
+and checks if reset action was stored correctly. The check is
+done by examining DUT wires. Then, triggers target reset and
+verifies that the peripheral_reset_o signal gets asserted.'>ccc_rstact<span>    </td><td>ccc_rstact                                                                                                                                  </td><td style="text-align: center;">      1.679      </td><td style="text-align: center;">    7797.667    </td><td style="text-align: center;">    6    </td><td style="text-align: center;">   6   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends a sequence of multiple directed SETMWL CCCs. The first and
+the last have non-matching address. The two middle ones set MWL
+to different values. Verify that the target responded to correct
+addresses and executed both CCCs.'>ccc_direct_multiple_wr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L800>ccc_direct_multiple_wr</a></td><td style="text-align: center;">      1.797      </td><td style="text-align: center;">   10777.900    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
+thee different addresses. Only the one for the target should
+be ACK-ed with the correct MWL content.'>ccc_direct_multiple_rd<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L839>ccc_direct_multiple_rd</a></td><td style="text-align: center;">      2.329      </td><td style="text-align: center;">   14648.550    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   26    </td><td style="text-align: center;">  26   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -107,10 +150,10 @@
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">  19   </td><td style="text-align: center;">   17    </td><td style="text-align: center;">   17    </td><td style="text-align: center;"> 89.47 %  </td></tr>
+<tr><td style="text-align: center;">        21         </td><td style="text-align: center;">      21       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      26      </td><td style="text-align: center;">     26     </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -122,4 +165,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>

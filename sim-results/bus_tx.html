@@ -16,7 +16,7 @@
                     <div class="nav-urls">
                         <a href="./index-blocks.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
-                            <span class="tooltip-text">Go Back</span>
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
                     </div>
                     
@@ -26,10 +26,12 @@
                     </span>
 
                     
+
+                    
                     <div class="nav-urls">
-                        <a href="https://chipsalliance.github.io/i3c-core/dv.html#bus-tx" class="button tooltip">
-                            <img src="assets/file.svg" alt="Docs" style="transform: scale(1.25) translatey(1px);"/>
-                            <span class="tooltip-text">Go to documentation</span>
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/block/bus_tx.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
                         </a>
                     </div>
                     
@@ -40,25 +42,25 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/22/25/57/2025 05:57
+                        12/22/25/06/2025 17:06
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/repo.svg" alt="Run on"/>
-                        i3c-core
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/branch.svg" alt="Run on"/>
-                        main
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
                     </div>
                     
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        5a501656
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/5fdb3687">5fdb3687</a>
                     </div>
                     
                 </div>
@@ -73,15 +75,21 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;">       Name       </th><th>Tests                                                                                                                   </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;"> Pass Rate </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                        </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">  bit_tx_negedge  </td><td>bit_tx_negedge                                                                                                          </td><td style="text-align: center;">      0.009      </td><td style="text-align: center;">    101.143     </td><td style="text-align: center;">   14    </td><td style="text-align: center;">  14   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">bit_tx_pre_posedge</td><td>bit_tx_pre_posedge                                                                                                      </td><td style="text-align: center;">      0.013      </td><td style="text-align: center;">    139.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">bit_tx_high_level </td><td>bit_tx_high_level                                                                                                       </td><td style="text-align: center;">      0.016      </td><td style="text-align: center;">    219.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;"> bit_tx_low_level </td><td>bit_tx_low_level                                                                                                        </td><td style="text-align: center;">      0.011      </td><td style="text-align: center;">    139.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">     byte_tx      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py>byte_tx</a></td><td style="text-align: center;">      0.315      </td><td style="text-align: center;">    4378.000    </td><td style="text-align: center;">    2    </td><td style="text-align: center;">   2   </td><td style="text-align: center;"> 100.00 %  </td></tr>
-<tr><td style="text-align: center;">                  </td><td><b>TOTAL</b>                                                                                                            </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   28    </td><td style="text-align: center;">  28   </td><td style="text-align: center;"> 100.00 %  </td></tr>
+<tr><td style="text-align: center;">   <span title='Requests the bus_tx module to drive SDA right after SCL falling
+edge. Checks if the requested bit value is driven correctly.'>bit_tx_negedge<span>    </td><td>bit_tx_negedge                                                                                                               </td><td style="text-align: center;">      0.009      </td><td style="text-align: center;">    101.143     </td><td style="text-align: center;">   14    </td><td style="text-align: center;">  14   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Requests the bus_tx module to drive SDA just before SCL rising
+edge. Checks if the requested bit value is driven correctly.'>bit_tx_pre_posedge<span>    </td><td>bit_tx_pre_posedge                                                                                                           </td><td style="text-align: center;">      0.013      </td><td style="text-align: center;">    139.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Requests the bus_tx module to drive SDA just before SCL falling
+edge. Checks if the requested bit value is driven correctly.'>bit_tx_high_level<span>    </td><td>bit_tx_high_level                                                                                                            </td><td style="text-align: center;">      0.017      </td><td style="text-align: center;">    219.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Requests the bus_tx module to drive SDA when SCL in in stable
+low state. Checks if the requested bit value is driven correctly.'>bit_tx_low_level<span>    </td><td>bit_tx_low_level                                                                                                             </td><td style="text-align: center;">      0.011      </td><td style="text-align: center;">    139.000     </td><td style="text-align: center;">    4    </td><td style="text-align: center;">   4   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Drives controls of the bus_tx module in a sequence which sends
+a data byte plus T bit to the I3C bus. For each bit sent checks
+if SDA is driven correctly and bus timings are met.'>byte_tx<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L214>byte_tx</a></td><td style="text-align: center;">      0.320      </td><td style="text-align: center;">    4378.000    </td><td style="text-align: center;">    2    </td><td style="text-align: center;">   2   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                 </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   28    </td><td style="text-align: center;">  28   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -93,10 +101,10 @@
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Total </th><th style="text-align: center;"> Written </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Progress </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">   5   </td><td style="text-align: center;">    5    </td><td style="text-align: center;">    5    </td><td style="text-align: center;"> 100.00 % </td></tr>
+<tr><td style="text-align: center;">         5         </td><td style="text-align: center;">       5       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      28      </td><td style="text-align: center;">     28     </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -108,4 +116,22 @@
     <footer>
     </footer>
 </body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
 </html>
