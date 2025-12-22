@@ -215,6 +215,7 @@ module controller
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
     input I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__out_t hwif_rec_i,
+    input logic [2:0] tsco_i,
 
     // Status update signals
     output logic [1:0] ibi_status_o,
@@ -273,6 +274,9 @@ module controller
   logic [47:0] virtual_pid;
   logic [7:0] virtual_bcr;
   logic [7:0] virtual_dcr;
+  logic [23:0] read_turnaround_time;
+  logic [ 2:0] read_max_rate;
+  logic [ 2:0] write_max_rate;
   logic [6:0] target_sta_addr;
   logic target_sta_addr_valid;
   logic [6:0] target_dyn_addr;
@@ -366,6 +370,9 @@ module controller
       .virtual_pid_o                   (virtual_pid),
       .virtual_bcr_o                   (virtual_bcr),
       .virtual_dcr_o                   (virtual_dcr),
+      .read_turnaround_time_o          (read_turnaround_time),
+      .read_max_rate_o                 (read_max_rate),
+      .write_max_rate_o                (write_max_rate),
       .target_sta_addr_o               (target_sta_addr),
       .target_sta_addr_valid_o         (target_sta_addr_valid),
       .target_dyn_addr_o               (target_dyn_addr),
@@ -550,6 +557,10 @@ module controller
       .virtual_pid_i(virtual_pid),
       .virtual_bcr_i(virtual_bcr),
       .virtual_dcr_i(virtual_dcr),
+      .read_turnaround_time_i(read_turnaround_time),
+      .tsco_i(tsco_i),
+      .read_max_rate_i(read_max_rate),
+      .write_max_rate_i(write_max_rate),
       .target_sta_addr_i(target_sta_addr),
       .target_sta_addr_valid_i(target_sta_addr_valid),
       .target_dyn_addr_i(target_dyn_addr),

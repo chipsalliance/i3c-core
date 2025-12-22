@@ -605,6 +605,60 @@ async def test_ccc_getpid(dut):
         assert pid_lo == _pid_lo
 
 
+@cocotb.test()
+async def test_ccc_getmxds(dut):
+
+    _READ_TURNAROUND_TIME = random.randint(0, 1<<24 - 1)
+    _READ_MAX_RATE = random.randint(0, 7);
+    _WRITE_MAX_RATE = random.randint(0, 7);
+    command = CCC.DIRECT.GETMXDS
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
+    ADDR = random.choice([STATIC_ADDR, DYNAMIC_ADDR, VIRT_STATIC_ADDR, VIRT_DYNAMIC_ADDR])
+
+    i3c_controller, _, tb = await test_setup(dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.READ_TURNAROUND_TIME,
+        _READ_TURNAROUND_TIME,
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_RD,
+        _READ_MAX_RATE,
+    )
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_SPEED_CTRL.MAX_SUSTAINED_WR,
+        _WRITE_MAX_RATE,
+    )
+    await ClockCycles(tb.clk, 50)
+
+    responses = await i3c_controller.i3c_ccc_read(ccc=command, addr=ADDR, count=5)
+    data = responses[0][1]
+    turnaround_time = int.from_bytes(data[2:5], byteorder="little", signed=False)
+
+    tsco = tb.dut.xi3c_wrapper.MaxSystemClockPeriodInPs.value * 4
+
+    if tsco <= 8000:
+        expected_tsco = 0
+    elif tsco <= 9000:
+        expected_tsco = 1
+    elif tsco <= 10000:
+        expected_tsco = 2
+    elif tsco <= 11000:
+        expected_tsco = 3
+    elif tsco <= 12000:
+        expected_tsco = 4
+    else:
+        expected_tsco = 7
+
+    assert data[0] == _WRITE_MAX_RATE << 0;
+    assert data[1] == (1 << 6) | (expected_tsco << 3) | _READ_MAX_RATE << 0
+    assert turnaround_time == _READ_TURNAROUND_TIME
+
+
 async def read_target_events(tb):
 
     reg = tb.reg_map.I3C_EC.TTI.CONTROL.base_addr

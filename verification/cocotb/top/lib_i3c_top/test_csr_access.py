@@ -7,7 +7,7 @@ from bus2csr import compare_values, int2dword
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import Timer
+from cocotb.triggers import ClockCycles, Timer
 
 
 async def timeout_task(timeout):
@@ -145,7 +145,6 @@ async def test_ec_stdby_ctrl_mode_csr_access(dut):
         "STBY_CR_STATUS",
         "STBY_CR_INTR_FORCE",
         "STBY_CR_CCC_CONFIG_GETCAPS",
-        "__RSVD_3",
     ]
     exceptions = [
         "STBY_CR_CONTROL",

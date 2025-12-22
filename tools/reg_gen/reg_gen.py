@@ -19,6 +19,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
+from collections import OrderedDict
 
 from peakrdl_cheader.exporter import CHeaderExporter
 from peakrdl_cocotb.exporter import CocotbExporter
@@ -29,9 +30,66 @@ from peakrdl_regblock.cpuif.passthrough import PassthroughCpuif
 from peakrdl_regblock.udps import ALL_UDPS
 from peakrdl_uvm import UVMExporter
 from rdl_post_process import postprocess_sv
+import systemrdl
 from systemrdl import RDLCompiler
+from systemrdl.messages import MessageHandler
+from systemrdl.node import (  # type: ignore
+    FieldNode,
+)
 
 REGISTERS_PREFIX = "I3CCSR"
+
+class CustomMarkdownExporter(MarkdownExporter):
+    def _add_field(
+        self,
+        node: FieldNode,
+        msg: MessageHandler,  # pylint: disable=unused-argument
+    ) -> MarkdownExporter.GenStageOutput:
+        """Generate field.
+
+        Arguments:
+            node -- FieldNode.
+            msg -- message handler from top-level.
+
+        Returns:
+            Generated field output.
+        """
+        if node.msb == node.lsb:
+            bits = str(node.msb)
+        else:
+            bits = f"{node.msb}:{node.lsb}"
+
+        identifier = node.inst_name
+
+        access = node.get_property("sw").name
+        if node.get_property("onread") is not None:
+            access += ", " + node.get_property("onread").name
+        if node.get_property("onwrite") is not None:
+            access += ", " + node.get_property("onwrite").name
+
+        reset_value: str = node.get_property("reset", default="—")
+        if isinstance(reset_value, int):
+            reset = f"0x{reset_value:X}"
+        elif isinstance(reset_value, systemrdl.node.SignalNode):
+            reset = f"hwif_in.{reset_value.inst_name}"
+        else:
+            reset = str(reset_value)
+
+        name = self._node_name_sanitized(node)
+
+        table_row: "OrderedDict[str, Union[str, int]]" = OrderedDict()
+        table_row["Bits"] = bits
+        table_row["Identifier"] = identifier
+        table_row["Access"] = access
+        table_row["Reset"] = reset
+        table_row["Name"] = name
+
+        gen = ""
+        desc = node.get_html_desc()
+        if desc is not None:
+            gen = self._heading(4, f"{node.inst_name} field") + desc + "\n"
+
+        return MarkdownExporter.GenStageOutput(node, table_row, gen)
 
 
 def setup_logger(level=logging.INFO, filename="log.log"):
@@ -43,7 +101,7 @@ def setup_logger(level=logging.INFO, filename="log.log"):
 def main():
     setup_logger(level=logging.INFO, filename="reg_gen.log")
 
-    repo_root = Path(os.environ.get("CALIPTRA_ROOT"))
+    repo_root = Path(os.environ.get("I3C_ROOT_DIR"))
     if not repo_root.exists():
         raise ValueError("Caliptra root is not defined as environment variable. Aborting.")
 
@@ -157,7 +215,7 @@ def main():
     logging.info(f"Created: HTML files in {output_file}")
 
     # Export Markdown documentation
-    exporter = MarkdownExporter()
+    exporter = CustomMarkdownExporter()
     output_file = i3c_root_dir / "src" / "rdl" / "docs" / "README.md"
     exporter.export(root, str(output_file), rename=REGISTERS_PREFIX)
     logging.info(f"Created: Markdown file {output_file}")

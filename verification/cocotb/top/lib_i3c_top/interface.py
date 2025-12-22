@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-
+import math
 from bus2csr import get_frontend_bus_if
 from cocotb_helpers import reset_n
 from reg_map import reg_map
@@ -37,6 +37,12 @@ class I3CTopTestInterface:
 
         if hasattr(self.dut, "disable_id_filtering_i"):
             self.dut.disable_id_filtering_i.value = 1
+
+        turnaround_time = math.ceil((1000 * (1000 / fclk)) / 1000)
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["READ_TURNAROUND_TIME"]["reset"] = turnaround_time
+        sustained = self.dut.xi3c_wrapper.I3CSustainedRate.value
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["MAX_SUSTAINED_WR"]["reset"] = sustained
+        self.reg_map["I3C_EC"]["STDBYCTRLMODE"]["STBY_CR_SPEED_CTRL"]["MAX_SUSTAINED_RD"]["reset"] = sustained
 
         await self.busIf.register_test_interfaces(fclk)
         await ClockCycles(self.clk, 20)

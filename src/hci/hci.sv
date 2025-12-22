@@ -37,6 +37,10 @@ module hci
     input clk_i,  // clock
     input rst_ni, // active low reset
 
+    input logic [23:0] read_turnaround_reset_value_i,
+    input logic [2:0] write_rate_reset_value_i,
+    input logic [2:0] read_rate_reset_value_i,
+
     // I3C SW CSR access interface
     input  logic                    s_cpuif_req,
     input  logic                    s_cpuif_req_is_wr,
@@ -157,6 +161,11 @@ module hci
 
   // Propagate reset to CSRs
   assign hwif_in.rst_ni = rst_ni;
+
+  // Propagate GETMXDS reset value
+  assign hwif_in.read_turnaround_reset_value = read_turnaround_reset_value_i;
+  assign hwif_in.write_rate_reset_value = write_rate_reset_value_i;
+  assign hwif_in.read_rate_reset_value = read_rate_reset_value_i;
 
   // DAT CSR interface
   I3CCSR_pkg::I3CCSR__DAT__out_t dat_o;
@@ -558,7 +567,6 @@ module hci
 
   always_comb begin : wire_unconnected_regs
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next = '0;

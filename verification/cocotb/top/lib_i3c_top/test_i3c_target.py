@@ -19,7 +19,6 @@ VALID_I3C_ADDRESSES = (
     + [i for i in range(0x3F, 0x5B)]
     + [i for i in range(0x5C, 0x5E)]
     + [i for i in range(0x5F, 0x6E)]
-    + [i for i in range(0x5F, 0x6E)]
     + [i for i in range(0x6F, 0x76)]
     + [i for i in range(0x77, 0x7A)]
     + [0x7B, 0x7D]
