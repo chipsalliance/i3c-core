@@ -1717,6 +1717,53 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#target-error-detection" class="md-nav__link">
+    <span class="md-ellipsis">Target error detection</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target error detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id38" class="md-nav__link">
+    <span class="md-ellipsis">Testpoints</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#detect-target-error-condition-0" class="md-nav__link">
+    <span class="md-ellipsis">Detect target error condition 0</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detect-target-error-condition-1" class="md-nav__link">
+    <span class="md-ellipsis">Detect target error condition 1</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detect-target-error-condition-5" class="md-nav__link">
+    <span class="md-ellipsis">Detect target error condition 5</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enter-and-exit-hdr-mode" class="md-nav__link">
     <span class="md-ellipsis">Enter and exit HDR mode</span>
   </a>
@@ -1725,7 +1772,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id38" class="md-nav__link">
+  <a href="#id39" class="md-nav__link">
     <span class="md-ellipsis">Testpoints</span>
   </a>
   
@@ -1758,7 +1805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id39" class="md-nav__link">
+  <a href="#id40" class="md-nav__link">
     <span class="md-ellipsis">Testpoints</span>
   </a>
   
@@ -1812,7 +1859,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id40" class="md-nav__link">
+  <a href="#id41" class="md-nav__link">
     <span class="md-ellipsis">Testpoints</span>
   </a>
   
@@ -1957,7 +2004,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id41" class="md-nav__link">
+  <a href="#id42" class="md-nav__link">
     <span class="md-ellipsis">Testpoints</span>
   </a>
   
@@ -2014,7 +2061,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#id42" class="md-nav__link">
+  <a href="#id43" class="md-nav__link">
     <span class="md-ellipsis">recovery_<wbr>flow</span>
   </a>
   
@@ -2046,7 +2093,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id43" class="md-nav__link">
+  <a href="#id44" class="md-nav__link">
     <span class="md-ellipsis">Testpoints</span>
   </a>
   
@@ -2054,7 +2101,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id44" class="md-nav__link">
+  <a href="#id45" class="md-nav__link">
     <span class="md-ellipsis">target_<wbr>peripheral_<wbr>reset</span>
   </a>
   
@@ -2305,7 +2352,7 @@ from the SDA line.</p>
 <p><a class="external reference" href="./sim-results/bus_timers.html">Test results</a></p>
 <h4 id="id4">Testpoints<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <h5 id="get-status"><code class="docutils literal notranslate"><span class="pre">get_status</span></code><a class="headerlink" href="#get-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L24">bus_timers</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L25">bus_timers</a></p>
 <p>Tests the bus_timers module responsible for tracking bus free,
 idle and available states. Triggers the module and verifies if
 the signals corresponding to bus states get asserted after the
@@ -2968,9 +3015,42 @@ be ACK-ed with the correct MWL content.</p>
 </ul>
 <p>Walks over all CSRs, write random value using AHB/AXI, reads it back,
 and compares with expected output.</p>
+<h3 id="target-error-detection">Target error detection<a class="headerlink" href="#target-error-detection" title="Link to this heading">¶</a></h3>
+<p><a class="external reference" href="./sim-results/target_error_detection.html">Test results</a></p>
+<h4 id="id38">Testpoints<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
+<h5 id="detect-target-error-condition-0"><code class="docutils literal notranslate"><span class="pre">Detect</span> <span class="pre">target</span> <span class="pre">error</span> <span class="pre">condition</span> <span class="pre">0</span></code><a class="headerlink" href="#detect-target-error-condition-0" title="Link to this heading">¶</a></h5>
+<p>Tests:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L61">TE0_HDR_exit</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L105">TE0_idle_exit</a></p></li>
+</ul>
+<p>Issues I3C transaction with address set to broadcast address with single
+bit error.
+Checks target FSM transitioned to WaitHDRExitOrIdle.
+Either sends HDR exit pattern or waits 60us and checks that target
+is back to Idle state.</p>
+<h5 id="detect-target-error-condition-1"><code class="docutils literal notranslate"><span class="pre">Detect</span> <span class="pre">target</span> <span class="pre">error</span> <span class="pre">condition</span> <span class="pre">1</span></code><a class="headerlink" href="#detect-target-error-condition-1" title="Link to this heading">¶</a></h5>
+<p>Tests:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L149">TE1_HDR_exit</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L188">TE1_idle_exit</a></p></li>
+</ul>
+<p>Issues I3C CCC transaction with invalid T-bit.
+Checks target FSM transitioned to WaitHDRExitOrIdle.
+Either sends HDR exit pattern or waits 60us and checks that target
+is back to Idle state.</p>
+<h5 id="detect-target-error-condition-5"><code class="docutils literal notranslate"><span class="pre">Detect</span> <span class="pre">target</span> <span class="pre">error</span> <span class="pre">condition</span> <span class="pre">5</span></code><a class="headerlink" href="#detect-target-error-condition-5" title="Link to this heading">¶</a></h5>
+<p>Tests:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L227">TE5_read_on_write</a></p></li>
+<li><p><a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L263">TE5_write_on_read</a></p></li>
+</ul>
+<p>Issues one of the CCC that is either read-only, or write-only.
+Issues target address with incorrect direction bit.
+Checks that target NACKed transaction.</p>
 <h3 id="enter-and-exit-hdr-mode">Enter and exit HDR mode<a class="headerlink" href="#enter-and-exit-hdr-mode" title="Link to this heading">¶</a></h3>
 <p><a class="external reference" href="./sim-results/target_hdr.html">Test results</a></p>
-<h4 id="id38">Testpoints<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
+<h4 id="id39">Testpoints<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <h5 id="enter-and-exit-hdr-ddr-mode"><code class="docutils literal notranslate"><span class="pre">Enter</span> <span class="pre">and</span> <span class="pre">exit</span> <span class="pre">HDR-DDR</span> <span class="pre">mode</span></code><a class="headerlink" href="#enter-and-exit-hdr-ddr-mode" title="Link to this heading">¶</a></h5>
 <p>Tests:</p>
 <ul class="simple">
@@ -2985,7 +3065,7 @@ followed by HDR exit pattern, verifies that
 the target FSM is back in Idle state.</p>
 <h3 id="target-interrupts">Target interrupts<a class="headerlink" href="#target-interrupts" title="Link to this heading">¶</a></h3>
 <p><a class="external reference" href="./sim-results/target_interrupts.html">Test results</a></p>
-<h4 id="id39">Testpoints<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
+<h4 id="id40">Testpoints<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
 <h5 id="rx-desc-stat"><code class="docutils literal notranslate"><span class="pre">rx_desc_stat</span></code><a class="headerlink" href="#rx-desc-stat" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py">rx_desc_stat</a></p>
 <p>Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
@@ -3032,7 +3112,7 @@ TTI INTERRUPT_STATUS CSR, ensures that irq_o gets deasserted and
 the status bit cleared.</p>
 <h3 id="recovery-mode-tests">Recovery mode tests<a class="headerlink" href="#recovery-mode-tests" title="Link to this heading">¶</a></h3>
 <p><a class="external reference" href="./sim-results/target_recovery.html">Test results</a></p>
-<h4 id="id40">Testpoints<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
+<h4 id="id41">Testpoints<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
 <h5 id="virtual-write"><code class="docutils literal notranslate"><span class="pre">virtual_write</span></code><a class="headerlink" href="#virtual-write" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L194">virtual_write</a></p>
 <p>Tests CSR write(s) through recovery protocol using the virtual
@@ -3233,7 +3313,7 @@ check if it matches with what has been written.</p>
 thier values and compares them.</p>
 <h3 id="recovery-bypass">Recovery bypass<a class="headerlink" href="#recovery-bypass" title="Link to this heading">¶</a></h3>
 <p><a class="external reference" href="./sim-results/target_recovery_bypass.html">Test results</a></p>
-<h4 id="id41">Testpoints<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
+<h4 id="id42">Testpoints<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
 <h5 id="simple-write-read"><code class="docutils literal notranslate"><span class="pre">simple_write_read</span></code><a class="headerlink" href="#simple-write-read" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L96">indirect_fifo_write</a></p>
 <p>Verify basic bypass functionality</p>
@@ -3292,7 +3372,7 @@ transaction ID</p></li>
 should be rejected with SLVERR response and register access request should not be
 propagated to the CPUIF</p></li>
 </ul>
-<h5 id="id42"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#id42" title="Link to this heading">¶</a></h5>
+<h5 id="id43"><code class="docutils literal notranslate"><span class="pre">recovery_flow</span></code><a class="headerlink" href="#id43" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562">recovery_flow</a></p>
 <p>Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
 as specified in the Caliptra Root of Trust specification</p>
@@ -3311,8 +3391,8 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
 </ul>
 <h3 id="target-peripheral-reset">target_peripheral_reset<a class="headerlink" href="#target-peripheral-reset" title="Link to this heading">¶</a></h3>
 <p><a class="external reference" href="./sim-results/target_reset.html">Test results</a></p>
-<h4 id="id43">Testpoints<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
-<h5 id="id44"><code class="docutils literal notranslate"><span class="pre">target_peripheral_reset</span></code><a class="headerlink" href="#id44" title="Link to this heading">¶</a></h5>
+<h4 id="id44">Testpoints<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h4>
+<h5 id="id45"><code class="docutils literal notranslate"><span class="pre">target_peripheral_reset</span></code><a class="headerlink" href="#id45" title="Link to this heading">¶</a></h5>
 <p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_target_reset.py#L69">target_peripheral_reset</a></p>
 <p>Issues I3C target reset pattern and verifies successful peripheral reset.</p>
 <h5 id="target-escalated-reset"><code class="docutils literal notranslate"><span class="pre">target_escalated_reset</span></code><a class="headerlink" href="#target-escalated-reset" title="Link to this heading">¶</a></h5>
@@ -3327,7 +3407,7 @@ MCU to interact with the I3C Core and Caliptra RoT.</p>
   <small>
     
       Last update:
-      2025-12-22
+      2025-12-24
     
   </small>
 </div>

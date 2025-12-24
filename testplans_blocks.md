@@ -129,7 +129,7 @@ from the SDA line.
 
 ### `get_status`
 
-Test: [bus_timers](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L24)
+Test: [bus_timers](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L25)
 
 Tests the bus_timers module responsible for tracking bus free,
 idle and available states. Triggers the module and verifies if

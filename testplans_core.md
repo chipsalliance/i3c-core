@@ -399,6 +399,49 @@ Walks over all CSRs, write random value using AHB/AXI, reads it back,
 and compares with expected output.
 
 
+# Target error detection
+
+[Test results](./sim-results/target_error_detection.html){.external}
+
+## Testpoints
+
+### `Detect target error condition 0`
+
+Tests:
+- [TE0_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L61)
+- [TE0_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L105)
+
+
+Issues I3C transaction with address set to broadcast address with single
+bit error.
+Checks target FSM transitioned to WaitHDRExitOrIdle.
+Either sends HDR exit pattern or waits 60us and checks that target
+is back to Idle state.
+
+### `Detect target error condition 1`
+
+Tests:
+- [TE1_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L149)
+- [TE1_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L188)
+
+
+Issues I3C CCC transaction with invalid T-bit.
+Checks target FSM transitioned to WaitHDRExitOrIdle.
+Either sends HDR exit pattern or waits 60us and checks that target
+is back to Idle state.
+
+### `Detect target error condition 5`
+
+Tests:
+- [TE5_read_on_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L227)
+- [TE5_write_on_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L263)
+
+
+Issues one of the CCC that is either read-only, or write-only.
+Issues target address with incorrect direction bit.
+Checks that target NACKed transaction.
+
+
 # Enter and exit HDR mode
 
 [Test results](./sim-results/target_hdr.html){.external}
