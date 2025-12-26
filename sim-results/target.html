@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        12/25/25/40/2025 07:40
+                        12/26/25/35/2025 07:35
                     </div>
                     
                     
@@ -86,7 +86,7 @@ over I3C. Data sent over I3C is compared with data received by
 the agent.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_write<span>    </td><td>i3c_target_write                    </td><td style="text-align: center;">      2.626      </td><td style="text-align: center;">   10312.302    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_write<span>    </td><td>i3c_target_write                    </td><td style="text-align: center;">      2.407      </td><td style="text-align: center;">   10312.302    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
 Repeats the two steps N times.
@@ -101,20 +101,20 @@ the chunk. Verifies that the received data matches with the chunk.
 Repeats the steps N times.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_read<span>    </td><td>i3c_target_read                     </td><td style="text-align: center;">     14.903      </td><td style="text-align: center;">   93578.560    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_read<span>    </td><td>i3c_target_read                     </td><td style="text-align: center;">     12.759      </td><td style="text-align: center;">   81264.200    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Issues multiple read transactions to the target and randomly selects,
 which if transaction has data.
 
 If transaction is selected to contain data, writes a data chunk and
 its descriptor to TTI TX queues, and verifies that the data matches.
 
-If transaction doesn't contain data, checks that request is NACKed.'>i3c_target_read_empty<span>    </td><td>i3c_target_read_empty               </td><td style="text-align: center;">     13.106      </td><td style="text-align: center;">   83661.690    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+If transaction doesn't contain data, checks that request is NACKed.'>i3c_target_read_empty<span>    </td><td>i3c_target_read_empty               </td><td style="text-align: center;">      9.589      </td><td style="text-align: center;">   62692.370    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Sends multiple I3C frame, each containing multiple read transactions
 with randomly selected addresses.
 If transaction addresses I3C target, randomly selects if transaction
 returns data or is NACked. Compares returned data if available.
 
-If transaction doesn't address I3C target, expects NACK to be returned.'>i3c_target_read_to_multiple_targets<span>    </td><td>i3c_target_read_to_multiple_targets </td><td style="text-align: center;">     206.265     </td><td style="text-align: center;">  1127202.550   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+If transaction doesn't address I3C target, expects NACK to be returned.'>i3c_target_read_to_multiple_targets<span>    </td><td>i3c_target_read_to_multiple_targets </td><td style="text-align: center;">     421.606     </td><td style="text-align: center;">  1236207.740   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
 matches on both sides.
@@ -129,7 +129,7 @@ the mandatory byte (MDB) and data matches on both sides.
 Repeats the LAST_IBI_STATUS check.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi<span>    </td><td>i3c_target_ibi                      </td><td style="text-align: center;">     18.622      </td><td style="text-align: center;">   39312.273    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi<span>    </td><td>i3c_target_ibi                      </td><td style="text-align: center;">     17.918      </td><td style="text-align: center;">   39309.270    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
 time period - sufficiently long for the target to retry sending
@@ -142,7 +142,7 @@ with the one written to the TTI queue. Reads LAST_IBI_STATUS from
 the TTI STATUS CSR, check if it is set to 0 (no error).
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_retry<span>    </td><td>i3c_target_ibi_retry                </td><td style="text-align: center;">     16.810      </td><td style="text-align: center;">   14399.385    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_retry<span>    </td><td>i3c_target_ibi_retry                </td><td style="text-align: center;">     16.113      </td><td style="text-align: center;">   14399.385    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
 to the TTI IBI queue, checks if the IBI gets serviced correctly,
@@ -152,7 +152,7 @@ Issues another IBI with data payload within the set limit, checks
 if it gets serviced correctly, compares data.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_data<span>    </td><td>i3c_target_ibi_data                 </td><td style="text-align: center;">      5.999      </td><td style="text-align: center;">   11502.165    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_data<span>    </td><td>i3c_target_ibi_data                 </td><td style="text-align: center;">      5.760      </td><td style="text-align: center;">   11502.165    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.
 
@@ -165,17 +165,17 @@ Does a private read transfer, compares if the received data equals
 the data written to TTI TX queue in the beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_writes_and_reads<span>    </td><td>i3c_target_writes_and_reads         </td><td style="text-align: center;">      9.633      </td><td style="text-align: center;">   25648.770    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_writes_and_reads<span>    </td><td>i3c_target_writes_and_reads         </td><td style="text-align: center;">      9.475      </td><td style="text-align: center;">   25648.770    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
 Sends I3C private write with incorrect T-bit value.
 Checks that the CSR reports protocol error condition and checks
 that RX descriptor has error condition flag set.
-Sends GETSTATUS CCC and checks that it also reports protocol error.'>i3c_target_pwrite_err_detection<span>    </td><td>i3c_target_pwrite_err_detection     </td><td style="text-align: center;">     61.537      </td><td style="text-align: center;">   439386.948   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Sends GETSTATUS CCC and checks that it also reports protocol error.'>i3c_target_pwrite_err_detection<span>    </td><td>i3c_target_pwrite_err_detection     </td><td style="text-align: center;">     96.560      </td><td style="text-align: center;">   707341.635   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
 Sends I3C private write with more data than target can receive.
 Checks that the CSR doesn't report protocol error condition and checks
 that RX descriptor has error condition flag set.
-Sends GETSTATUS CCC and checks that it also doesn't report protocol error.'>i3c_target_pwrite_overflow_detection<span>    </td><td>i3c_target_pwrite_overflow_detection</td><td style="text-align: center;">     292.224     </td><td style="text-align: center;">  2120997.879   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Sends GETSTATUS CCC and checks that it also doesn't report protocol error.'>i3c_target_pwrite_overflow_detection<span>    </td><td>i3c_target_pwrite_overflow_detection</td><td style="text-align: center;">     349.314     </td><td style="text-align: center;">  2572291.722   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                        </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   10    </td><td style="text-align: center;">  10   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
