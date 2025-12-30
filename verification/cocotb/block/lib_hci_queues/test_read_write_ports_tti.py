@@ -14,7 +14,7 @@ QUEUE_SIZE = 64
 
 
 @target_test()
-async def write_read_tti_tx_desc_queue(dut: SimHandleBase):
+async def test_write_read_tti_tx_desc_queue(dut: SimHandleBase):
     """
     Enqueue multiple transfers through TTI_TX_DESC_QUEUE_PORT and verify
     whether the data matches after fetching it from the controller
@@ -27,7 +27,7 @@ async def write_read_tti_tx_desc_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def underflow_tti_tx_desc_queue(dut: SimHandleBase):
+async def test_underflow_tti_tx_desc_queue(dut: SimHandleBase):
     """
     Fetch data from Command Queue to cause underflow and write the data to ensure
     it's correct when available
@@ -44,7 +44,7 @@ async def underflow_tti_tx_desc_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def write_read_tti_tx_queue(dut: SimHandleBase):
+async def test_write_read_tti_tx_queue(dut: SimHandleBase):
     """
     Place TX data through XFER_DATA_PORT & verify it from the other (controller's)
     side of the queue
@@ -57,7 +57,7 @@ async def write_read_tti_tx_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def underflow_tti_tx_queue(dut: SimHandleBase):
+async def test_underflow_tti_tx_queue(dut: SimHandleBase):
     """
     Fetch data from TX Queue to cause underflow and write the data to ensure
     it's correct when available
@@ -74,7 +74,7 @@ async def underflow_tti_tx_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def write_read_tti_rx_queue(dut: SimHandleBase):
+async def test_write_read_tti_rx_queue(dut: SimHandleBase):
     """
     Put read data onto the RX queue & fetch it through XFER_DATA_PORT
     """
@@ -86,7 +86,7 @@ async def write_read_tti_rx_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def overflow_tti_rx_queue(dut: SimHandleBase):
+async def test_overflow_tti_rx_queue(dut: SimHandleBase):
     """
     Put read data onto the RX queue (and overflow it) & fetch it through XFER_DATA_PORT
     """
@@ -105,7 +105,7 @@ async def overflow_tti_rx_queue(dut: SimHandleBase):
 
 
 @target_test()
-async def fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
+async def test_fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
     """
     Put response into the response queue (from controller logic) & fetch it from
     the RESPONSE_PORT
@@ -118,7 +118,7 @@ async def fetch_response_from_tti_rx_desc_port(dut: SimHandleBase):
 
 
 @target_test()
-async def overflow_tti_rx_desc_queue(dut: SimHandleBase):
+async def test_overflow_tti_rx_desc_queue(dut: SimHandleBase):
     """
     Put multiple response data into the response queue (from controller logic)
     to overflow it & fetch it from the RESPONSE_PORT
