@@ -26,7 +26,7 @@ CALIPTRA_ROOT       ?= $(THIRD_PARTY_DIR)/caliptra-rtl## Path: caliptra-rtl repo
 # TODO: Connect to version selection in tools/simulators/
 UVM_DIR             ?= $(VERILATOR_UVM_DIR)/## Select UVM version
 SIMULATOR           ?= verilator## Supported: verilator, dsim, questa, vcs
-REPO_URL            ?= https://github.com/chipsalliance/i3c-core/tree/main/
+REPO_URL            ?= https://github.com/chipsalliance/i3c-core/tree/main
 DOCS_URL            ?= https://chipsalliance.github.io/i3c-core/
 
 # Path to directory with XMLs with tests' results
