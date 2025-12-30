@@ -3,47 +3,47 @@
   testpoints:
   [
     {
-      name: bit_tx_negedge
+      name: bit_tx_negedge_flow
       desc:
         '''
         Requests the bus_tx_flow module to drive SDA right after SCL falling
         edge. Checks if the requested bit value is driven correctly.
         '''
-      tests: ["bit_tx_negedge"]
+      tests: ["bit_tx_negedge_flow"]
       tags: ["bus_tx_flow"]
     }
     {
-      name: bit_tx_pre_posedge
+      name: bit_tx_pre_posedge_flow
       desc:
         '''
         Requests the bus_tx_flow module to drive SDA just before SCL rising
         edge. Checks if the requested bit value is driven correctly.
         '''
-      tests: ["bit_tx_pre_posedge"]
+      tests: ["bit_tx_pre_posedge_flow"]
       tags: ["bus_tx_flow"]
     }
     {
-      name: bit_tx_high_level
+      name: bit_tx_high_level_flow
       desc:
         '''
         Requests the bus_tx_flow module to drive SDA just before SCL falling
         edge. Checks if the requested bit value is driven correctly.
         '''
-      tests: ["bit_tx_high_level"]
+      tests: ["bit_tx_high_level_flow"]
       tags: ["bus_tx_flow"]
     }
     {
-      name: bit_tx_low_level
+      name: bit_tx_low_level_flow
       desc:
         '''
         Requests the bus_tx_flow module to drive SDA when SCL in in stable
         low state. Checks if the requested bit value is driven correctly.
         '''
-      tests: ["bit_tx_low_level"]
+      tests: ["bit_tx_low_level_flow"]
       tags: ["bus_tx_flow"]
     }
     {
-      name: byte_tx
+      name: byte_tx_flow
       desc:
         '''
         Requests the bus_tx_flow module to transmit a data byte along with
@@ -51,7 +51,7 @@
         edges of SCL. Once the transmission finishes compares sampled data
         with what was requested to be sent.
         '''
-      tests: ["byte_tx"]
+      tests: ["byte_tx_flow"]
       tags: ["bus_tx_flow"]
     }
   ]

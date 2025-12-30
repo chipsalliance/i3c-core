@@ -9,7 +9,7 @@
             - Enable I3C Core bypass in the Recovery Handler via CSR
             - Write to the TTI TX Data Queue and read from the Indirect FIFO Queue
             - Compare the data and verify it hasn't changed'''
-      tests: ["indirect_fifo_write"]
+      tests: ["indirect_fifo_write_bypass"]
       tags: ["top"]
     }
     {
@@ -34,7 +34,7 @@
             - Ensuring correct state of the `payload_available` wire
             - Write to the Recovery Control CSR to activate an image
             - Ensure correct state of the `image_activated` wire'''
-      tests: ["payload_available", "image_activated"]
+      tests: ["payload_available_bypass", "image_activated_bypass"]
       tags: ["top"]
     }
     {
@@ -77,7 +77,7 @@
       desc: '''
             Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
             as specified in the Caliptra Root of Trust specification'''
-      tests: ["recovery_flow"]
+      tests: ["recovery_flow_bypass"]
       tags: ["top"]
     }
     {

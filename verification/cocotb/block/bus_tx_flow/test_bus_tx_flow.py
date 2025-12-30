@@ -89,7 +89,7 @@ async def assert_bit_request(dut, sda_value):
     assert dut.sda_o.value == 1
 
 
-async def test_bit_tx_negedge(dut, value):
+async def test_bit_tx_negedge_flow(dut, value):
     await setup_test(dut)
 
     await FallingEdge(dut.scl_i)
@@ -99,12 +99,12 @@ async def test_bit_tx_negedge(dut, value):
     await assert_bit_request(dut, value)
 
 
-tf = TestFactory(test_function=test_bit_tx_negedge)
+tf = TestFactory(test_function=test_bit_tx_negedge_flow)
 tf.add_option(name="value", optionlist=[0, 1])
 tf.generate_tests()
 
 
-async def test_bit_tx_pre_posedge(dut, value):
+async def test_bit_tx_pre_posedge_flow(dut, value):
     await setup_test(dut)
 
     await FallingEdge(dut.scl_i)
@@ -115,12 +115,12 @@ async def test_bit_tx_pre_posedge(dut, value):
     await assert_bit_request(dut, value)
 
 
-tf = TestFactory(test_function=test_bit_tx_pre_posedge)
+tf = TestFactory(test_function=test_bit_tx_pre_posedge_flow)
 tf.add_option(name="value", optionlist=[0, 1])
 tf.generate_tests()
 
 
-async def test_bit_tx_high_level(dut, value):
+async def test_bit_tx_high_level_flow(dut, value):
     await setup_test(dut)
 
     await RisingEdge(dut.scl_i)
@@ -131,12 +131,12 @@ async def test_bit_tx_high_level(dut, value):
     await assert_bit_request(dut, value)
 
 
-tf = TestFactory(test_function=test_bit_tx_high_level)
+tf = TestFactory(test_function=test_bit_tx_high_level_flow)
 tf.add_option(name="value", optionlist=[0, 1])
 tf.generate_tests()
 
 
-async def test_bit_tx_low_level(dut, value):
+async def test_bit_tx_low_level_flow(dut, value):
     await setup_test(dut)
 
     await FallingEdge(dut.scl_i)
@@ -147,7 +147,7 @@ async def test_bit_tx_low_level(dut, value):
     await assert_bit_request(dut, value)
 
 
-tf = TestFactory(test_function=test_bit_tx_low_level)
+tf = TestFactory(test_function=test_bit_tx_low_level_flow)
 tf.add_option(name="value", optionlist=[0, 1])
 tf.generate_tests()
 
@@ -184,7 +184,7 @@ async def send_byte_with_tbit(dut, data, tbit):
 
 
 @cocotb.test()
-async def test_byte_tx(dut):
+async def test_byte_tx_flow(dut):
     data = [randint(0, 0xFF) for x in range(10)]
     await setup_test(dut)
 

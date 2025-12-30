@@ -94,7 +94,7 @@ async def initialize(dut, timeout=50):
 
 
 @cocotb.test()
-async def test_indirect_fifo_write(dut):
+async def test_indirect_fifo_write_bypass(dut):
     """
     Tests indirect FIFO write operation
     """
@@ -228,7 +228,7 @@ async def test_indirect_fifo_underflow(dut):
 
 
 @cocotb.test()
-async def test_read(dut):
+async def test_read_bypass(dut):
     """
     Tests CSR read(s) using the recovery protocol
     """
@@ -360,7 +360,7 @@ async def test_read(dut):
 
 
 @cocotb.test()
-async def test_payload_available(dut):
+async def test_payload_available_bypass(dut):
     """
     Tests if payload_available gets asserted/deasserted correctly when data
     chunks are written to the INDIRECT_FIFO_DATA CSR.
@@ -424,7 +424,7 @@ async def test_payload_available(dut):
 
 
 @cocotb.test()
-async def test_image_activated(dut):
+async def test_image_activated_bypass(dut):
     tb = await initialize(dut)
 
     image_activated = dut.xi3c_wrapper.recovery_image_activated_o
@@ -560,7 +560,7 @@ async def test_i3c_bus_traffic_during_loopback(dut):
 
 
 @cocotb.test()
-async def test_recovery_flow(dut):
+async def test_recovery_flow_bypass(dut):
     """
     Test firmware image transfer
     """

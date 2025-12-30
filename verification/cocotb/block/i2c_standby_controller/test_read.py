@@ -154,7 +154,7 @@ def str_to_dword(s):
 
 
 @cocotb.test()
-async def test_read(dut):
+async def test_read_i2c(dut):
     TARGET_ADDR = 0x18
     CLK_SPEED = 400e3
 
