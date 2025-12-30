@@ -57,6 +57,24 @@ testplans:
         source: "verification/cocotb/block/axi_adapter_id_filter/test_runtime_id_change.py"
       - name: "^(.*)$"
         source: "verification/cocotb/block/axi_adapter_id_filter/test_bus_stress.py"
+  - name: 'tti_queues'
+    testpoints:
+    - name: "^(.*)$"
+      tests:
+      - name: "^tti_.*_capacity_status$"
+        source: "verification/cocotb/block/lib_hci_queues/test_empty_tti.py"
+      - name: "^tti_.*_(setup_threshold|should_raise_thld_trig)$"
+        source: "verification/cocotb/block/lib_hci_queues/test_threshold_tti.py"
+  - name: 'hci_queues'
+    testpoints:
+    - name: "^(.*)$"
+      tests:
+      - name: "^clear_on_nonempty_.*_queue$"
+        source: "verification/cocotb/block/lib_hci_queues/test_clear_hci.py"
+      - name: "^.*_capacity_status$"
+        source: "verification/cocotb/block/lib_hci_queues/test_empty_hci.py"
+      - name: "^.*_(setup_threshold|should_raise_thld_trig)$"
+        source: "verification/cocotb/block/lib_hci_queues/test_threshold_hci.py"
   - name: "^(bus_.x.*|ccc)$"
     source: "verification/cocotb/block/{{testplan}}/test_{{testplan}}.py"
   - name: "^(bus_.*)$"
