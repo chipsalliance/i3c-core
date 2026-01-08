@@ -253,7 +253,7 @@ module ccc_entdaa
       // After NACK: TE4 -> WaitStop (exit), TE3 -> WaitStart (retry)
       // -----------------------------------------------------------------------
       SendNack: begin
-        bus_tx_data = 8'h01;  // NACK = bit[0] high
+        bus_tx_data[7] = 1'b1;  // NACK = bit[7] high
 
         if (bus_tx_rsp_i.done) begin
           // Clear tracking flag after determining next state
@@ -290,7 +290,7 @@ module ccc_entdaa
       // -----------------------------------------------------------------------
       SendIDBit: begin
         // Transmit current ID bit (indexed by counter, MSB first)
-        bus_tx_data = {7'h0, device_id[id_bit_count[5:0]]};
+        bus_tx_data[7] = device_id[id_bit_count[5:0]];
 
         if (bus_tx_rsp_i.done) begin
           if (arbitration_lost_i) begin
@@ -335,7 +335,7 @@ module ccc_entdaa
       // AckAddr: ACK the assigned dynamic address
       // -----------------------------------------------------------------------
       AckAddr: begin
-        bus_tx_data = '0;  // ACK = bit[0] low
+        bus_tx_data[7] = 1'b0;  // ACK = bit[7] low
 
         if (bus_tx_rsp_i.done) begin
           state_d = Done;

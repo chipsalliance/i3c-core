@@ -225,8 +225,8 @@ module ibi import i3c_pkg::*; (
         end
       end
       SendTbit: begin
-        bus_tx_req_value = 8'(!ibi_byte_last_i);
-        ibi_byte_ready_o = bus_tx_rsp_i.done;
+        bus_tx_req_value[7] = ~ibi_byte_last_i;
+        ibi_byte_ready_o    = bus_tx_rsp_i.done;
 
         if (bus_stop_i) begin
           ibi_status_d = (ibi_status_q == IbiSuccess) ? IbiFailurePartialData : IbiFailureRetry;

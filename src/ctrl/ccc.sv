@@ -1042,7 +1042,7 @@ module ccc
       //   - ACKed: Proceed to appropriate data phase (GET → TxData, SET → RxData)
       //   - NACKed: Wait for bus condition (not addressed, unsupported cmd)
       TxTargetAddrAck: begin
-        bus_tx_data[0] = ~addr_ack;  // Send ACK (0) or NACK (1)
+        bus_tx_data[7] = ~addr_ack;  // Send ACK (0) or NACK (1)
 
         if (bus_tx_rsp_i.done) begin
           target_addr_ack_done = 1'b1;
@@ -1127,7 +1127,7 @@ module ccc
       
       TxDataTbit: begin
         // T-bit value: 0 = end of data, 1 = more data available
-        bus_tx_data[0] = ~tx_data_last_byte;
+        bus_tx_data[7] = ~tx_data_last_byte;
 
         if (bus_rstart_det_i) begin
           // Controller abort: Target sent T=1 but Controller issued Sr

@@ -84,12 +84,12 @@ module descriptor_tx #(
       flush <= '0;
     end else begin
       if (!flush) begin
-        if (tx_abort_i || (recovery_mode_enter_i && |byte_counter)) begin
+        if ((byte_counter != 16'h0) && (tx_abort_i || recovery_mode_enter_i)) begin
             flush <= '1;
         end
       end else begin
         // Flush complete
-        if ((byte_counter == 16'd1) && tti_tx_queue_rvalid_i)
+        if ((byte_counter inside {16'd1, 16'd0}) && tti_tx_queue_rvalid_i)
             flush <= '0;
         // No more data in the FIFO to complete the flush
         if (!tti_tx_queue_rvalid_i && tti_tx_queue_empty_i)

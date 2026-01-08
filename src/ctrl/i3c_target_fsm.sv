@@ -355,7 +355,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
   // Enterng the TXPReadData state, then asserting rready will cause a byte to be
   // consumed from the FIFO, but we might cancel TxPReadData if Rstart occurs.
   // On TX cancel, we flush the FIFO, aborting transaction.
-  assign tx_fifo_rready_o = (state_q != TxPReadData) & (state_d == TxPReadData);
+  assign tx_fifo_rready_o = (state_q != TxPReadData) && (state_d == TxPReadData);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : set_last_byte_in_xfer
     if (~rst_ni) begin
@@ -369,7 +369,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
     if (~rst_ni) begin
       tx_data_byte <= '0;
     end else begin
-      if (tx_fifo_rready_o || tx_end_xfer) tx_data_byte <= tx_fifo_rdata_i;
+      if (tx_fifo_rready_o) tx_data_byte <= tx_fifo_rdata_i;
     end
   end
 
@@ -450,7 +450,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
       end
       TxAckFByte: begin
         bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[0] = 1'b0;  // LSB is the only bit used for bit TX transfer
+        bus_tx_req_data[7] = 1'b0; // LSB is the only bit used for bit TX transfer
 
         if (bus_tx_rsp_i.done) begin
           if (is_rsvd_byte_match) begin
@@ -507,7 +507,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
       end
       TxAckSByte: begin
         bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[0] = 1'b0;
+        bus_tx_req_data[7] = 1'b0;
 
         if (bus_tx_rsp_i.done) begin
           if (is_any_addr_match) begin
@@ -553,9 +553,11 @@ module i3c_target_fsm import i3c_pkg::*; #(
       end
       TxPReadTbit: begin
         bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[0] = ~tx_end_xfer;
+        bus_tx_req_data[7] = ~tx_end_xfer;
         tx_pr_abort_o = bus_start_det || bus_stop_det_i;
 
+        // FIXME While waiting for a restart condition when the controller wants to abort the read,
+        // the bus_tx_rsp_i.done below can happen first, leading to erroneous draining of the FIFO.
         if (bus_start_det) begin
           state_d = RxFByte;
         end else if (bus_tx_rsp_i.done) begin
