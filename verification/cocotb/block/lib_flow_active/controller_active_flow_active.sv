@@ -142,6 +142,8 @@ module controller_active_flow_active
   logic unhandled_nak_timeout;
   logic rx_fifo_wvalid;
   logic [RxFifoWidth-1:0] rx_fifo_wdata;
+  logic unused_phy_sel_od_pp, unused_fmt_flag_restart_after, unused_i3c_fsm_idle;
+  logic fmt_bit;
 
   // TODO: Connect I2C Controller SDA/SCL to I3C Flow FSM
 
@@ -201,18 +203,25 @@ module controller_active_flow_active
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
       .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
+      .fmt_bit_o(fmt_bit),
       .fmt_flag_start_before_o(fmt_flag_start_before_o),
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes_o),
+      .fmt_flag_restart_after_o(unused_fmt_flag_restart_after),
       .fmt_flag_read_continue_o(fmt_flag_read_continue_o),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok_o),
       .fmt_receive_nack_i(1'b0),  // we never receive nacks in this test
+      .fmt_byte_i('0),  // unused
+      .fmt_bit_i(1'b0),  // unused
+      .fmt_flag_read_valid_i(1'b0),  // unused
       .unhandled_unexp_nak_o(unhandled_unexp_nak_o),
       .unhandled_nak_timeout_o(unhandled_nak_timeout_o),
       .rx_fifo_wvalid_i(rx_fifo_wvalid),  // unconnected
       .rx_fifo_wdata_i(rx_fifo_wdata),  // unconnected
       .i3c_fsm_en_i(i3c_active_en_i),
-      .i3c_fsm_idle_o,
+      .phy_sel_od_pp_i(1'b0),
+      .phy_sel_od_pp_o(unused_phy_sel_od_pp),
+      .i3c_fsm_idle_o(unused_i3c_fsm_idle),
       .err,
       .irq
   );

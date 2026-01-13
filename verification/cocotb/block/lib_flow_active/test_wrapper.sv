@@ -53,8 +53,8 @@ module test_wrapper #(
 
 `elsif I3C_USE_AXI
     // AXI4 Interface
-    input                           aclk,      // clock
-    input                           areset_n,  // active low reset
+    input  logic                    aclk,      // clock
+    input  logic                    areset_n,  // active low reset
     // AXI Read Channels
     input  logic [AxiAddrWidth-1:0] araddr,
     input  logic [             1:0] arburst,
@@ -137,16 +137,6 @@ module test_wrapper #(
     end
   endgenerate
 
-  always_comb begin : wire_clk
-`ifdef I3C_USE_AHB
-    clk   = hclk;
-    rst_n = hreset_n;
-`elsif I3C_USE_AXI
-    clk   = aclk;
-    rst_n = areset_n;
-`endif
-  end
-
 `ifdef CONTROLLER_SUPPORT
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t  dat_mem_src;
@@ -175,8 +165,8 @@ module test_wrapper #(
       .DatAw(DatAw),
       .DctAw(DctAw)
   ) i3c_flow_active (
-      .clk_i (clk),
-      .rst_ni(rst_n),
+      .clk_i (aclk),
+      .rst_ni(areset_n),
 
 `ifdef I3C_USE_AHB
       .haddr_i,
@@ -278,8 +268,8 @@ module test_wrapper #(
       .Width(64),
       .DataBitsPerMask(32)
   ) dat_memory (
-      .clk_i(clk),
-      .rst_ni(rst_n),
+      .clk_i(aclk),
+      .rst_ni(areset_n),
       .req_i(dat_mem_sink.req),
       .write_i(dat_mem_sink.write),
       .addr_i(dat_mem_sink.addr),
@@ -296,8 +286,8 @@ module test_wrapper #(
       .Width(128),
       .DataBitsPerMask(32)
   ) dct_memory (
-      .clk_i(clk),
-      .rst_ni(rst_n),
+      .clk_i(aclk),
+      .rst_ni(areset_n),
       .req_i(dct_mem_sink.req),
       .write_i(dct_mem_sink.write),
       .addr_i(dct_mem_sink.addr),

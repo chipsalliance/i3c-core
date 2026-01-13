@@ -6,9 +6,109 @@ from cocotb_helpers import reset_n
 from reg_map import reg_map
 
 import cocotb
+import random
 from math import ceil
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import Event, Timer, ClockCycles
+
+
+class I3CAddressHelper:
+    # NOTE: these are the always valid addresses as specified in Table 8 I3C Target Address Restrictions (I3C Basic Spec)
+    VALID_I3C_ADDRESSES = (
+        [i for i in range(0x08, 0x3D)]
+        + [i for i in range(0x3F, 0x5D)]
+        + [i for i in range(0x5F, 0x6D)]
+        + [i for i in range(0x6F, 0x75)]
+        + [0x77]
+    )
+    #TODO: add contitionally available I3C addresses
+
+    def __init__(
+        self,
+        dut,
+        ctrl_static_addr=None,
+        ctrl_dyn_addr=None,
+        trgt_static_addr=None,
+        trgt_dyn_addr=None,
+        trgt_virt_static_addr=None,
+        trgt_virt_dyn_addr=None,
+    ):
+        self.dut = dut
+        # Dictionary to track the requested assignments
+        requested_addresses = {
+            'ctrl_static_addr': ctrl_static_addr,
+            'ctrl_dyn_addr': ctrl_dyn_addr,
+            'trgt_static_addr': trgt_static_addr,
+            'trgt_dyn_addr': trgt_dyn_addr,
+            'trgt_virt_static_addr': trgt_virt_static_addr,
+            'trgt_virt_dyn_addr': trgt_virt_dyn_addr,
+        }
+
+        # Validate manually provided addresses to ensure they are valid and unique
+        provided_addrs = set()
+        for name, addr in requested_addresses.items():
+            if addr is not None:
+                if addr not in self.VALID_I3C_ADDRESSES:
+                    raise ValueError(f"Provided address {hex(addr)} for '{name}' is not a valid I3C address.")
+                if addr in provided_addrs:
+                    raise ValueError(f"Duplicate address {hex(addr)} provided. I3C addresses must be unique.")
+                provided_addrs.add(addr)
+
+        # Determine which addresses need to be randomly generated
+        needs_random = [name for name, addr in requested_addresses.items() if addr is None]
+
+        # Create a pool of available addresses (excluding manually provided ones)
+        available_pool = [addr for addr in self.VALID_I3C_ADDRESSES if addr not in provided_addrs]
+
+        if len(needs_random) > len(available_pool):
+            raise ValueError("Not enough valid I3C addresses available to assign.")
+
+        # Randomly sample unique addresses for the remaining slots
+        random_assignments = random.sample(available_pool, len(needs_random))
+
+        # Combine manual and random assignments
+        for name, addr in zip(needs_random, random_assignments):
+            requested_addresses[name] = addr
+
+        # Set the class attributes
+        self.ctrl_static_addr = requested_addresses['ctrl_static_addr']
+        self.ctrl_dyn_addr = requested_addresses['ctrl_dyn_addr']
+        self.trgt_static_addr = requested_addresses['trgt_static_addr']
+        self.trgt_dyn_addr = requested_addresses['trgt_dyn_addr']
+        self.trgt_virt_static_addr = requested_addresses['trgt_virt_static_addr']
+        self.trgt_virt_dyn_addr = requested_addresses['trgt_virt_dyn_addr']
+
+    def get_unassigned_valid_address(self):
+        """Returns a valid I3C address that is currently NOT assigned to any device."""
+        # Gather all currently assigned addresses
+        assigned_addrs = {
+            self.ctrl_static_addr,
+            self.ctrl_dyn_addr,
+            self.trgt_static_addr,
+            self.trgt_dyn_addr,
+            self.trgt_virt_static_addr,
+            self.trgt_virt_dyn_addr
+        }
+        
+        assigned_addrs = {addr for addr in assigned_addrs if addr is not None}
+
+        available_pool = [addr for addr in self.VALID_I3C_ADDRESSES if addr not in assigned_addrs]
+
+        if not available_pool:
+            raise ValueError("All valid I3C addresses have been assigned!")
+
+        return random.choice(available_pool)
+
+    def print_addresses(self):
+        """Helper method to clearly display the assigned addresses in hex format."""
+        self.dut._log.info("--- I3C Address Assignments ---")
+        self.dut._log.info(f"Controller Static:       {hex(self.ctrl_static_addr)}")
+        self.dut._log.info(f"Controller Dynamic:      {hex(self.ctrl_dyn_addr)}")
+        self.dut._log.info(f"Target Static:           {hex(self.trgt_static_addr)}")
+        self.dut._log.info(f"Target Dynamic:          {hex(self.trgt_dyn_addr)}")
+        self.dut._log.info(f"Target Virtual Static:   {hex(self.trgt_virt_static_addr)}")
+        self.dut._log.info(f"Target Virtual Dynamic:  {hex(self.trgt_virt_dyn_addr)}")
+        self.dut._log.info("-------------------------------")
 
 async def get_interrupt_status(tb, idx):
     """

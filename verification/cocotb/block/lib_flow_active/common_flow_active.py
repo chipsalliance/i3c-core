@@ -7,7 +7,7 @@ from hci import ErrorStatus, HCIBaseTestInterface, ResponseDescriptor
 from utils import expect_with_timeout, mask_bits
 
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import RisingEdge
+from cocotb.triggers import RisingEdge, Timer
 
 class FmtTransaction:
     def __init__(self, byte, start, stop):
@@ -26,10 +26,52 @@ class FmtTransaction:
 
 class FlowActiveTestInterface(HCIBaseTestInterface):
     def __init__(self, dut: SimHandleBase) -> None:
+        dut.areset_n.value = 0
+        dut._log.info("Resetting the dut")
         super().__init__(dut, "hci")
 
     async def setup(self):
-        # Set queue's ready to 0 (hold accepting the data)
+        self.dut.areset_n.value = 0
+        self.dut.aclk.value = 0
+
+        # AXI Read Address Channel (AR)
+        self.dut.araddr.value = 0
+        self.dut.arburst.value = 0
+        self.dut.arsize.value = 0
+        self.dut.arlen.value = 0
+        self.dut.aruser.value = 0
+        self.dut.arid.value = 0
+        self.dut.arlock.value = 0
+        self.dut.arvalid.value = 0
+
+        # AXI Read Data Channel (R)
+        self.dut.rready.value = 0
+
+        # AXI Write Address Channel (AW)
+        self.dut.awaddr.value = 0
+        self.dut.awburst.value = 0
+        self.dut.awsize.value = 0
+        self.dut.awlen.value = 0
+        self.dut.awuser.value = 0
+        self.dut.awid.value = 0
+        self.dut.awlock.value = 0
+        self.dut.awvalid.value = 0
+
+        # AXI Write Data Channel (W)
+        self.dut.wdata.value = 0
+        self.dut.wstrb.value = 0
+        self.dut.wuser.value = 0
+        self.dut.wlast.value = 0
+        self.dut.wvalid.value = 0
+
+        # AXI Write Response Channel (B)
+        self.dut.bready.value = 0
+
+        # Sideband / FMT Interfaces
+        self.dut.fmt_fifo_rready_i.value = 0
+        self.dut.fmt_fifo_rdone_i.value = 0
+        self.dut.peripheral_reset_done_i.value = 0
+        await Timer(1, "ns")
         await super()._setup(get_frontend_bus_if())
 
     async def reset(self):

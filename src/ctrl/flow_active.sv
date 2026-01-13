@@ -124,28 +124,39 @@ module flow_active
     output i3c_irq_t irq
 );
 
+  // Helper function to check if current CCC has payload or not
+  function automatic logic has_payload(logic [7:0] ccc);
+    if((ccc == `I3C_DIRECT_ENEC) || (ccc == `I3C_DIRECT_DISEC) || (ccc == `I3C_BCAST_ENEC) || (ccc == `I3C_BCAST_DISEC)) begin
+      // TODO: add more CCCs with payload
+      return 1'b1;
+    end else begin
+      return 1'b0;
+    end
+  endfunction
+
   assign dct_write_valid_hw_o = '0;
   assign ibi_queue_wvalid_o = '0;
   assign err = '0;
   assign irq = '0;
   assign phy_sel_od_pp_o = phy_sel_od_pp_i;  //  TODO: assign properly
 
-  typedef enum logic [3:0] {
-    Idle = 4'd0,
-    WaitForCmd = 4'd1,
-    FetchAddr = 4'd2,
-    I2CWriteImmediateDAT = 4'd3,
-    I3CWriteImmediateDAT = 4'd4,
-    I2CWriteImmediateDirect = 4'd5,
-    I3CWriteImmediateDirect = 4'd6,
-    I3CWriteRegularDirect = 4'd7,
-    I3CReadDirect = 4'd8,
-    InitI2CWrite = 4'd9,
-    InitI2CRead = 4'd10,
-    StallWrite = 4'd11,
-    StallRead = 4'd12,
-    IssueCmd = 4'd13,
-    WriteResp = 4'd14
+  typedef enum logic [4:0] {
+    Idle = 5'd0,
+    WaitForCmd = 5'd1,
+    FetchAddr = 5'd2,
+    I2CWriteImmediateDAT = 5'd3,
+    I3CWriteImmediateDAT = 5'd4,
+    I2CWriteImmediateDirect = 5'd5,
+    I3CWriteImmediateDirect = 5'd6,
+    I3CWriteRegularDirect = 5'd7,
+    I3CReadDirect = 5'd8,
+    InitI2CWrite = 5'd9,
+    InitI2CRead = 5'd10,
+    StallWrite = 5'd11,
+    StallRead = 5'd12,
+    DirectCCC = 5'd13,
+    BroadcastCCC = 5'd14,
+    WriteResp = 5'd15
   } flow_fsm_state_e;
 
   // TODO: Set BytesBeforeImmData from the HC_CONTROL.IBA_INCLUDE
@@ -163,17 +174,20 @@ module flow_active
 
   // Values extracted from the Command Descriptor
   cmd_transfer_dir_e cmd_dir;
+  logic cmd_is_ccc;
+  logic cmd_is_broadcast_ccc;
   i3c_cmd_attr_e cmd_attr;
   logic [4:0] dev_index;
   logic [3:0] cmd_tid;
   logic [15:0] data_length;
   logic imm_use_def_byte;
   logic is_direct_transfer;
+  logic is_regular_transfer;
 
   // Generic incremental counter
-  logic [31:0] transfer_cnt;
+  logic [31:0] transfer_cnt_q, transfer_cnt_d;
   logic transfer_cnt_en;
-  logic transfer_cnt_rst;
+  logic transfer_cnt_clr;
 
   logic [HciCmdDataWidth-1:0] cmd_queue_rdata;
   logic cmd_queue_rvalid;
@@ -194,7 +208,7 @@ module flow_active
   logic [HciTxDataWidth-1:0] tx_dword;
   logic [(HciTxDataWidth>>3)-1:0][7:0] tx_dword_array;
   logic [$clog2(HciTxDataWidth>>3)-1 : 0] byte_select;
-  assign byte_select = ((transfer_cnt - 1) % (HciTxDataWidth >> 3));
+  assign byte_select = ((transfer_cnt_q - 1) % (HciTxDataWidth >> 3));
   assign tx_dword_array = tx_dword;
   logic pop_tx_fifo;
 
@@ -208,7 +222,14 @@ module flow_active
   i3c_resp_err_status_e resp_err_status_d, resp_err_status_q;
   logic [15:0] resp_data_length_d, resp_data_length_q;
 
-  // FUTUREFIX: Set appropriately
+  // CCC signals
+  logic ccc_done;
+  logic ccc_has_payload;
+  logic [7:0] cmd_ccc, prev_ccc_d, prev_ccc_q;
+  assign cmd_ccc = cmd_desc[14:7];
+  assign ccc_has_payload = has_payload(cmd_ccc);
+
+  // TODO: Set appropriately
   always_comb begin
     fmt_flag_nak_ok_o = 1'b0;
     unhandled_unexp_nak_o = 1'b0;
@@ -229,8 +250,11 @@ module flow_active
   // Assign generic command fields to generic signals
   assign dev_index = cmd_desc[20:16];
   assign cmd_dir = cmd_desc[29] ? Read : Write;
+  assign cmd_is_ccc = cmd_desc[15];
+  assign cmd_is_broadcast_ccc = ~cmd_desc[14]; // the MSB of the CCC indicates if it's direct or a broadcast see Table 16 I3C Basic Spec
   assign cmd_attr = i3c_cmd_attr_e'(cmd_desc[2:0]);
   assign is_direct_transfer = ((cmd_attr == ImmediateDataTransferDirect) || (cmd_attr == RegularTransferDirect) || (cmd_attr == ComboTransferDirect)) && ((cmd_attr != InternalControl) && (cmd_attr != AddressAssignment));
+  assign is_regular_transfer = cmd_attr == RegularTransferDirect || RegularTransferDAT;
   assign cmd_tid = is_direct_transfer ? {1'b0, cmd_desc[5:3]} : cmd_desc[6:3];
   // Assign if target is an I2C device
   assign i2c_cmd = is_direct_transfer ? immediate_direct_cmd_desc.i2c : dat_rdata.device; // TODO: adapt for regular transfer
@@ -343,17 +367,23 @@ module flow_active
   // Control internal transfer counter
   // FUTUREFIX: Consider using decremental counter with different load values
   // See i2c_controller_fsm.sv for reference
+  always_comb begin
+    transfer_cnt_d = transfer_cnt_q;
+    if (transfer_cnt_clr) begin
+      transfer_cnt_d = '0;
+    end else if (transfer_cnt_en) begin
+      transfer_cnt_d = transfer_cnt_q + 1;
+
+    end else if ((transfer_cnt_q == '0) && cmd_is_ccc && ~cmd_is_broadcast_ccc && (prev_ccc_q == cmd_ccc)) begin
+      transfer_cnt_d = 2; // transfer_cnt_q = 0: 7'h7E byte, transfer_cnt_q = 1: CCC byte according to Figure 32 I3C Basic Spec we are allowed to skip these two bytes when the CCC stays the same.
+    end
+  end
+
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      transfer_cnt <= '0;
+      transfer_cnt_q <= '0;
     end else begin
-      if (transfer_cnt_rst) begin
-        transfer_cnt <= '0;
-      end else if (transfer_cnt_en) begin
-        transfer_cnt <= transfer_cnt + 1;
-      end else begin
-        transfer_cnt <= transfer_cnt;
-      end
+      transfer_cnt_q <= transfer_cnt_d;
     end
   end
 
@@ -406,6 +436,16 @@ module flow_active
     end
   end
 
+  // Store previous CCC for direct CCC frame (Table 31 I3C Basic Spec)
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      prev_ccc_q <= 8'hFF;  // 0xFF is not used as a CCC, that's why it's a reset state
+    end else begin
+      prev_ccc_q <= prev_ccc_d;
+    end
+  end
+  assign prev_ccc_d = ccc_done ? cmd_ccc : prev_ccc_q;
+
   // Combinational state output update
   always_comb begin
     i3c_fsm_idle_o = 1'b0;
@@ -416,7 +456,7 @@ module flow_active
     dat_index_hw_o = '0;
     tx_queue_rready_o = 1'b0;
     rx_queue_wvalid_o = 1'b0;
-    transfer_cnt_rst = 1'b1;
+    transfer_cnt_clr = 1'b1;
     fmt_fifo_rvalid_o = 1'b0;
     fmt_flag_start_before_o = 1'b0;
     fmt_flag_restart_after_o = 1'b0;
@@ -436,6 +476,7 @@ module flow_active
     resp_desc.tid = '0;
     resp_desc.data_length = '0;
     rx_dword_array = rx_dword_q;
+    ccc_done = 1'b0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -448,7 +489,6 @@ module flow_active
       // FetchAddr: Fetch DAT entry
       FetchAddr: begin
         // TODO: Optimize DAT read so it takes just 1 cycle
-        tx_queue_rready_o = fmt_fifo_rready_i & is_direct_transfer;
         dat_read_valid_hw_o = 1'b1;
         dat_index_hw_o = $clog2(`DAT_DEPTH)'(dev_index);
       end
@@ -457,14 +497,14 @@ module flow_active
         // TODO: Figure out if the transfer should proceed if its DTT is set to `Defining Byte + 0`
         // since in such scenario it sends only a target device address. It might be better to just
         // report an error.
-        transfer_cnt_rst = 1'b0;
+        transfer_cnt_clr = 1'b0;
         transfer_cnt_en = fmt_fifo_rdone_i;
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
         resp_data_length_d = '0;
-        unique case (transfer_cnt)
-          // FUTUREFIX: Add support for broadcast address control before private transfers. This can
+        unique case (transfer_cnt_q)
+          // TODO: Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
           // 32'd0: fmt_byte_o = {7'h7e, 1'b0};
           // Target address
@@ -485,15 +525,15 @@ module flow_active
         endcase
 
         // Send start condition before first byte
-        if (transfer_cnt == 0) begin
+        if (transfer_cnt_q == 0) begin
           fmt_flag_start_before_o = 1'b1;
         end
         // Send stop condition after last byte if TOC is set to STOP
-        if (transfer_cnt == data_length + (BytesBeforeImmData - 1)) begin
+        if (transfer_cnt_q == data_length + (BytesBeforeImmData - 1)) begin
           fmt_flag_stop_after_o = immediate_dat_cmd_desc.toc;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
-        if (fmt_fifo_rready_i | (transfer_cnt == data_length + BytesBeforeImmData)) begin // TODO: shouldn't this be ~fmt_fifo_rready_i?
+        if (fmt_fifo_rready_i | (transfer_cnt_q == data_length + BytesBeforeImmData)) begin // TODO: shouldn't this be ~fmt_fifo_rready_i?
           fmt_fifo_rvalid_o = 1'b0;
         end
       end
@@ -510,14 +550,14 @@ module flow_active
         // TODO: Figure out if the transfer should proceed if its DTT is set to `Defining Byte + 0`
         // since in such scenario it sends only a target device address. It might be better to just
         // report an error.
-        transfer_cnt_rst = 1'b0;
+        transfer_cnt_clr = 1'b0;
         transfer_cnt_en = fmt_fifo_rdone_i;
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt - 1;
+        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
         fmt_bit_o = 1'b1;
-        unique case (transfer_cnt)
+        unique case (transfer_cnt_q)
           // TODO: Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
           // 32'd0: fmt_byte_o = {7'h7e, 1'b0};
@@ -555,16 +595,16 @@ module flow_active
         endcase
 
         // Send start condition before first byte
-        if (transfer_cnt == 0) begin
+        if (transfer_cnt_q == 0) begin
           fmt_flag_start_before_o = 1'b1;
         end
         // Send stop condition after last byte if TOC is set to STOP
-        if (transfer_cnt == data_length + (BytesBeforeImmData)) begin
+        if (transfer_cnt_q == data_length + (BytesBeforeImmData)) begin
           fmt_flag_stop_after_o = immediate_direct_cmd_desc.toc;
           fmt_flag_restart_after_o = ~immediate_direct_cmd_desc.toc;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
-        if (fmt_fifo_rready_i && (transfer_cnt < data_length + 1 + BytesBeforeImmData)) begin
+        if (fmt_fifo_rready_i && (transfer_cnt_q < data_length + 1 + BytesBeforeImmData)) begin
           fmt_fifo_rvalid_o = 1'b1;
         end
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
@@ -572,26 +612,25 @@ module flow_active
         end
       end
       I3CWriteRegularDirect: begin
-        transfer_cnt_rst = 1'b0;
+        transfer_cnt_clr = 1'b0;
         transfer_cnt_en = fmt_fifo_rdone_i;
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt - 1;
+        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
         fmt_bit_o = 1'b1;
-        tx_queue_rready_o = ((transfer_cnt % (HciTxDataWidth >> 3)) == 0) & transfer_cnt_en; // TODO: not sure about this maybe it should be one cycle before the current condition?
+        tx_queue_rready_o = ((transfer_cnt_q % (HciTxDataWidth >> 3)) == 0) & transfer_cnt_en;
 
-        if (transfer_cnt == 32'd0) begin : addr_assignment
+        if (transfer_cnt_q == 32'd0) begin : addr_assignment
           fmt_byte_o = {regular_direct_cmd_desc.dev_address, 1'b0};
           fmt_flag_start_before_o = 1'b1;
-          tx_queue_rready_o = 1'b0;  // This is needed such that we don't pop the entry prematurely
         end else begin
           fmt_byte_o = tx_dword_array[byte_select];
           fmt_bit_o  = ^{fmt_byte_o, 1'b1};
         end
 
         // Send stop signal
-        if (transfer_cnt == data_length) begin
+        if (transfer_cnt_q >= data_length) begin
           fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
           fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
           tx_queue_rready_o = 1'b0;  // when we're done we don't want to pop new data from the queue
@@ -599,7 +638,7 @@ module flow_active
         end
 
         // Error conditions
-        if (transfer_cnt < data_length && transfer_cnt_en && tx_queue_empty_i) begin
+        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i) begin
           // TODO: implement error handling 
         end
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
@@ -607,11 +646,11 @@ module flow_active
         end
       end
       I3CReadDirect: begin
-        transfer_cnt_rst = 1'b0;
+        transfer_cnt_clr = 1'b0;
         transfer_cnt_en = fmt_fifo_rdone_i | fmt_flag_read_valid_i;
-        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt;
+        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q;
         fmt_flag_read_bytes_o = 1'b1;
-        if (transfer_cnt == 32'd0) begin
+        if (transfer_cnt_q == 32'd0) begin
           fmt_byte_o = {regular_direct_cmd_desc.dev_address, 1'b1};
           fmt_flag_start_before_o = 1'b1;
           fmt_fifo_rvalid_o = 1'b1;
@@ -620,7 +659,8 @@ module flow_active
           if (fmt_flag_read_valid_i) begin
             rx_dword_array[byte_select] = fmt_byte_i;
           end
-          if (((transfer_cnt) % (HciRxDataWidth >> 3)) == 0) begin // TODO: not sure if it should be transfer_cnt-1 instead?
+
+          if (((transfer_cnt_q) % (HciRxDataWidth >> 3)) == 0) begin
             rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
             if (~rx_queue_wready_i) begin
               // TODO: stall SCL until rx_queue can consume data
@@ -628,17 +668,21 @@ module flow_active
           end
         end
 
-        if (transfer_cnt <= data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+        if (transfer_cnt_q <= data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
           fmt_flag_stop_after_o = 1'b1;
           resp_err_status_d = I3cShortReadErr;
           rx_dword_array[byte_select] = fmt_byte_i;
           rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
         end
 
-        if (transfer_cnt >= data_length & fmt_flag_read_valid_i) begin
+        if (transfer_cnt_q >= data_length & fmt_flag_read_valid_i) begin
           fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
           fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
           resp_err_status_d = Success;  // successfull transfer without errors
+        end
+
+        if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          resp_err_status_d = Nack;
         end
 
       end
@@ -654,8 +698,114 @@ module flow_active
       StallRead: begin
         // FUTUREFIX
       end
-      IssueCmd: begin
-        // FUTUREFIX
+      DirectCCC: begin
+        transfer_cnt_clr = 1'b0;
+        transfer_cnt_en = fmt_fifo_rdone_i;
+        fmt_fifo_rvalid_o = 1'b1;
+        fmt_flag_start_before_o = 1'b0;
+        fmt_flag_stop_after_o = 1'b0;
+        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
+        ccc_done = 1'b0;
+        fmt_bit_o = 1'b1;
+        tx_queue_rready_o = 1'b0;
+        unique case (transfer_cnt_q)
+          32'd0: begin  // Broadcast Address
+            fmt_byte_o = {7'h7E, 1'b0};
+            fmt_flag_start_before_o = 1'b1;
+          end
+          32'd1: begin  // Broadcast the CCC
+            fmt_byte_o = cmd_ccc;
+            fmt_bit_o = ^{fmt_byte_o, 1'b1};
+            fmt_flag_restart_after_o = 1'b1;
+            tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i; // Pop payload byte for next cycle
+          end
+          32'd2: begin  // Transmit Target Addr
+            fmt_byte_o = is_regular_transfer ? {regular_direct_cmd_desc.dev_address, cmd_dir == Read} 
+                                             : {immediate_direct_cmd_desc.dev_address, cmd_dir == Read};
+            if (fmt_receive_nack_i) begin
+              resp_err_status_d = Nack;
+            end
+          end
+          32'd3: begin  // Transmit the first Payload byte
+            ccc_done = ((cmd_ccc == `I3C_DIRECT_ENEC) | (cmd_ccc == `I3C_DIRECT_DISEC)) & fmt_fifo_rdone_i; // CCC is done if it only needs one payload byte
+            if (is_regular_transfer) begin
+              fmt_byte_o = tx_dword_array[0];
+              fmt_bit_o = ^{fmt_byte_o, 1'b1};
+              // TODO: when we have more than one payload byte stop/restart should not
+              // be set
+              fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
+              fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
+              resp_err_status_d = Success;  // successfull transfer without errors
+            end else begin
+              fmt_byte_o = immediate_direct_cmd_desc.def_or_data_byte1;
+              fmt_bit_o = ^{fmt_byte_o, 1'b1};
+              // TODO: when we have more than one payload byte this should not
+              // be set
+              fmt_flag_stop_after_o = immediate_direct_cmd_desc.toc;
+              fmt_flag_restart_after_o = ~immediate_direct_cmd_desc.toc;
+              resp_err_status_d = Success;  // successfull transfer without errors
+            end
+          end
+          32'd4: begin
+            // TODO: implement direct CCC with more than one payload byte
+          end
+          default: begin
+            resp_err_status_d = HcAborted;
+          end
+        endcase
+      end
+      BroadcastCCC: begin
+        transfer_cnt_clr = 1'b0;
+        transfer_cnt_en = fmt_fifo_rdone_i;
+        fmt_fifo_rvalid_o = 1'b1;
+        fmt_flag_start_before_o = 1'b0;
+        fmt_flag_stop_after_o = 1'b0;
+        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
+        ccc_done = 1'b0;
+        fmt_bit_o = 1'b1;
+        tx_queue_rready_o = 1'b0;
+        unique case (transfer_cnt_q)
+          32'd0: begin  // Broadcast Address
+            fmt_byte_o = {7'h7E, 1'b0};
+            fmt_flag_start_before_o = 1'b1;
+          end
+          32'd1: begin  // Broadcast the CCC
+            fmt_byte_o = cmd_ccc;
+            fmt_bit_o = ^{fmt_byte_o, 1'b1};
+            fmt_flag_stop_after_o = ~ccc_has_payload & ((is_regular_transfer & regular_direct_cmd_desc.toc) | (~is_regular_transfer & immediate_direct_cmd_desc.toc));
+            fmt_flag_restart_after_o = ~ccc_has_payload & ((is_regular_transfer & ~regular_direct_cmd_desc.toc) | (~is_regular_transfer & ~immediate_direct_cmd_desc.toc));
+            tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i; // Pop payload byte for next cycle
+            ccc_done = ~ccc_has_payload & fmt_fifo_rdone_i;
+          end
+          32'd2: begin  // Transmit the first Payload byte
+            ccc_done = ((cmd_ccc == `I3C_BCAST_ENEC) | (cmd_ccc == `I3C_BCAST_DISEC)) & fmt_fifo_rdone_i;
+            if (is_regular_transfer) begin
+              fmt_byte_o = tx_dword_array[0];
+              fmt_bit_o = ^{fmt_byte_o, 1'b1};
+              // TODO: when we have more than one payload byte this should not
+              // be set
+              fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
+              fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
+            end else begin
+              fmt_byte_o = immediate_direct_cmd_desc.def_or_data_byte1;
+              fmt_bit_o = ^{fmt_byte_o, 1'b1};
+              // TODO: when we have more than one payload byte this should not
+              // be set
+              fmt_flag_stop_after_o = immediate_direct_cmd_desc.toc;
+              fmt_flag_restart_after_o = ~immediate_direct_cmd_desc.toc;
+            end
+          end
+          32'd3: begin
+            // TODO: implement broadcast CCC with more than one payload byte
+          end
+          default: begin
+            resp_err_status_d = HcAborted;
+          end
+        endcase
+        if (ccc_done) begin
+          resp_err_status_d = Success;  // successfull transfer without errors
+        end
+
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
@@ -694,11 +844,13 @@ module flow_active
         if (is_direct_transfer) begin
           unique case (cmd_attr)
             ImmediateDataTransferDirect: begin
-              state_next = i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediateDirect :
-                                    (fmt_fifo_rready_i ? I3CWriteImmediateDirect : state);
+              state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
+                           i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediateDirect :
+                           (fmt_fifo_rready_i ? I3CWriteImmediateDirect : state);
             end
             RegularTransferDirect: begin
-              state_next = (cmd_dir == Read) ? I3CReadDirect : (fmt_fifo_rready_i ? I3CWriteRegularDirect : state);
+              state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
+                          (cmd_dir == Read) ? I3CReadDirect : (fmt_fifo_rready_i ? I3CWriteRegularDirect : state);
             end
             ComboTransferDirect: begin
               // TODO
@@ -722,8 +874,8 @@ module flow_active
       end
       // I3CWriteImmediate: Execute Immediate Transfer to Legacy I2C Device via I2C Controller
       I2CWriteImmediateDAT: begin
-        if (transfer_cnt == data_length + BytesBeforeImmData) begin
-          // FUTUREFIX: Do not generate Response Descriptor if WROC field of the Command Descriptor is set to 0
+        if (transfer_cnt_q == data_length + BytesBeforeImmData) begin
+          // TODO: Do not generate Response Descriptor if WROC field of the Command Descriptor is set to 0
           state_next = WriteResp;
         end
       end
@@ -733,7 +885,7 @@ module flow_active
       end
       // I2CWriteImmediate: Execute Immediate Transfer to Legacy I2C Device via I2C Controller
       I2CWriteImmediateDirect: begin
-        if (transfer_cnt == data_length + BytesBeforeImmData) begin
+        if (transfer_cnt_q == data_length + BytesBeforeImmData) begin
           // TODO: Do not generate Response Descriptor if WROC field of the Command Descriptor is set to 0
           state_next = WriteResp;
         end
@@ -742,26 +894,26 @@ module flow_active
       I3CWriteImmediateDirect: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           state_next = WriteResp;  // TODO: create an error state for such occasions
-        end else if (transfer_cnt > data_length + BytesBeforeImmData) begin
+        end else if (transfer_cnt_q > data_length + BytesBeforeImmData) begin
           state_next = immediate_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
       end
       I3CWriteRegularDirect: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           state_next = WriteResp;  // TODO: create an error state for such occasions
-        end else if (transfer_cnt > data_length) begin
+        end else if (transfer_cnt_q > data_length) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
-        if (transfer_cnt < data_length && transfer_cnt_en && tx_queue_empty_i && tx_queue_rready_o) begin
+        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i && tx_queue_rready_o) begin
           state_next = WriteResp;  // TODO: create an error state for such occasions
         end
       end
       I3CReadDirect: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           state_next = WriteResp;
-        end else if (transfer_cnt >= data_length & fmt_flag_read_valid_i) begin
+        end else if (transfer_cnt_q >= data_length & fmt_flag_read_valid_i) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
-        end else if (transfer_cnt < data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+        end else if (transfer_cnt_q < data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
           state_next = regular_direct_cmd_desc.sre ? WriteResp : Idle;
         end
       end
@@ -777,8 +929,21 @@ module flow_active
       StallRead: begin
         // FUTUREFIX
       end
-      IssueCmd: begin
-        // FUTUREFIX
+      DirectCCC: begin
+        if (ccc_done) begin
+          state_next = (~is_regular_transfer & immediate_direct_cmd_desc.wroc) ? WriteResp : 
+                       (is_regular_transfer & regular_direct_cmd_desc.wroc)    ? WriteResp : Idle;
+        end else if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          state_next = WriteResp;
+        end
+      end
+      BroadcastCCC: begin
+        if (ccc_done) begin
+          state_next = (~is_regular_transfer & immediate_direct_cmd_desc.wroc) ? WriteResp : 
+                       (is_regular_transfer & regular_direct_cmd_desc.wroc)    ? WriteResp : Idle;
+        end else if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          state_next = WriteResp;
+        end
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin

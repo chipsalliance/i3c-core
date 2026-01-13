@@ -75,7 +75,7 @@ module i3c_controller_fsm
   logic scl_enable, scl_stall;
 
   // Start stop generator internal signals
-  logic start_before, stop_after, repeated_start;
+  logic start_before, stop_after_d, stop_after_q, repeated_start;
   logic start_done, stop_done, repeated_start_done;
 
   logic start_stop_scl, start_stop_sda;
@@ -165,7 +165,7 @@ module i3c_controller_fsm
     fmt_flag_read_valid_o = 1'b0;
     received_nack_d = received_nack_q;
     start_before = 1'b0;
-    stop_after = 1'b0;
+    stop_after_d = 1'b0;
     repeated_start = 1'b0;
     ctrl_sda_o = 1'b1;
     ctrl_scl_o = 1'b1;
@@ -260,7 +260,7 @@ module i3c_controller_fsm
       end
       Stop: begin
         if (scl_negedge | scl_stable_low | start_stop_active) begin  // wait for cycle to finish and then stop
-          stop_after = 1'b1;
+          stop_after_d = 1'b1;
           ctrl_sda_o = start_stop_sda;
           ctrl_scl_o = start_stop_scl;
           received_nack_d = 1'b0;
@@ -273,17 +273,19 @@ module i3c_controller_fsm
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      state_q  <= Idle;
+      state_q <= Idle;
       tx_bit_q <= 1'b0;
       received_nack_q <= 1'b0;
       bus_rx_req_bit_q <= 1'b0;
       rx_byte_q <= '0;
+      stop_after_q <= 1'b0;
     end else begin
-      state_q  <= state_d;
+      state_q <= state_d;
       tx_bit_q <= tx_bit_d;
       received_nack_q <= received_nack_d;
       bus_rx_req_bit_q <= bus_rx_req_bit_d;
       rx_byte_q <= rx_byte_d;
+      stop_after_q <= stop_after_d;
     end
   end
 
@@ -369,7 +371,7 @@ module i3c_controller_fsm
       .t_f_i,
 
       .start_before_i(start_before),
-      .stop_after_i(stop_after),
+      .stop_after_i(stop_after_q),
       .repeated_start_i(repeated_start),
 
       .start_done_o(start_done),

@@ -71,8 +71,8 @@ module i3c_flow_active
 `endif  // CONTROLLER_SUPPORT
     parameter int unsigned IndirectFifoDepth = 64
 ) (
-    input clk_i,  // clock
-    input rst_ni, // active low reset
+    input logic clk_i,  // clock
+    input logic rst_ni, // active low reset
 
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
@@ -724,6 +724,14 @@ module i3c_flow_active
       .hci_ibi_wvalid_i(hci_ibi_wvalid),
       .hci_ibi_wready_o(hci_ibi_wready),
       .hci_ibi_wdata_i(hci_ibi_wdata),
+
+      .set_dasa_i(set_dasa),
+      .set_dasa_valid_i(set_dasa_valid),
+      .set_dasa_virtual_device_i(set_dasa_virtual_device),
+      .rstdaa_i(rstdaa),
+      .set_newda_i(set_newda),
+      .set_newda_virtual_device_i(set_newda_virtual_device),
+      .newda_i(newda),
 
       .rst_action_i(rst_action),
       .rst_action_valid_i(rst_action_valid)

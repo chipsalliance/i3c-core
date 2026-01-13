@@ -13,14 +13,18 @@ testplans:
     testpoints:
     - name: "^(.*)$"
       source: "verification/cocotb/top/lib_i3c_top/test_ccc.py"
-  - name: 'CSR access check'
+  - name: 'Controller CCC generation'
     testpoints:
     - name: "^(.*)$"
-      source: "verification/cocotb/top/lib_i3c_top/test_csr_access.py"
-  - name: 'Bus timers top-level'
+      source: "verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py"
+  - name: '(Controller-specific)? ?CSR access check'
     testpoints:
     - name: "^(.*)$"
-      source: "verification/cocotb/top/lib_i3c_top/test_bus_timers.py"
+      tests:
+      - name: "^(.*)$"
+        source: "verification/cocotb/top/lib_i3c_top/test_csr_access.py"
+      - name: "^(.*)$"
+        source: "verification/cocotb/top/i3c_axi_controller/test_configure_i3c_cores.py"
   - name: 'Enter and exit HDR mode'
     testpoints:
     - name: "^(.*)$"
@@ -98,34 +102,24 @@ testplans:
   - name: 'width_converter_[N8]to[N8]'
     testpoints:
     - name: "^(.*)$"
-      source: ".*verification/cocotb/block/{{testplan}}/test_converter.py"
-      cocotb_xml: ".*verification/cocotb/block/{{testplan}}/test_(converter|flush)(_[0-9]+)?.xml"
-  - name: 'csr_sw_access'
+      source: "verification/cocotb/block/{{testplan}}/test_converter.py"
+  - name: 'Controller Private Write'
     testpoints:
     - name: "^(.*)$"
-      source: ".*verification/cocotb/block/axi_adapter/test_csr_sw_access.py"
-      cocotb_xml: ".*verification/cocotb/block/axi_adapter/test_csr_sw_access(_[0-9]+)?.xml"
-  - name: 'descriptor_[rt]x'
+      tests:
+      - name: "^(.*)$"
+        source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py"
+      - name: "*write*"
+        source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py"
+  - name: 'Controller Private Read'
     testpoints:
     - name: "^(.*)$"
-      source: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}.py"
-      cocotb_xml: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}(_[0-9]+)?.xml"
-  - name: 'edge_detector'
-    testpoints:
-    - name: "^(.*)$"
-      source: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}.py"
-      cocotb_xml: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}(_[0-9]+)?.xml"
-  - name: 'i3c_bus_monitor'
-    testpoints:
-    - name: "^(.*)$"
-      source: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}.py"
-      cocotb_xml: ".*verification/cocotb/block/ctrl_{{testplan}}/test_{{testplan}}(_[0-9]+)?.xml"
-  - name: 'hci_queues'
-    testpoints:
-    - name: "^(.*)$"
-      cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_.*(_[0-9]+)?.xml"
-      # TODO update sources
-  - name: 'axi_filtering'
+      tests:
+      - name: "^(.*)$"
+        source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py"
+      - name: "*read*"
+        source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py"
+  - name: '^(controller|target)_axi_filtering$'
     testpoints:
     - name: "^(.*)$"
       tests:

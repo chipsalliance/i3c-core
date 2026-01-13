@@ -17,7 +17,7 @@
         "pio_csr_access",
       ]
       tags: ["top"]
-    }
+    },
     {
       name: Write to configuration register 
       desc:
@@ -28,7 +28,7 @@
         "ec_stdby_cr_enable_init",
       ]
       tags: ["top"]
-    }
+    },
     {
       name: Configure Target and Controller 
       desc:

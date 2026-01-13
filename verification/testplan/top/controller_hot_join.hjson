@@ -4,7 +4,7 @@
   testpoints:
   [
     {
-      name: Handle a Hot-Join Request from the target
+      name: Controller Handle a Hot-Join Request from the target
       desc:
         '''
         Recognize the Hot-Join pattern as specified in 5.1.5 I3C Basic Spec and eventually initiate a ENTDAA CCC to assign a dynamic address to the new target. Perform simple write/read to from target to verify target has joined correctly.

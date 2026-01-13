@@ -10,27 +10,18 @@ from bus2csr import dword2int, int2dword
 from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
 from cocotbext_i3c.i3c_controller import I3cController
 
-from controller_interface import I3CTopControllerTestInterface
+from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
 from controller_interface import get_interrupt_status
 
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge, Timer, Combine, Event
 
-VALID_I3C_ADDRESSES = (
-    [i for i in range(0x03, 0x3E)]
-    + [i for i in range(0x3F, 0x5B)]
-    + [i for i in range(0x5C, 0x5E)]
-    + [i for i in range(0x5F, 0x6E)]
-    + [i for i in range(0x6F, 0x76)]
-    + [i for i in range(0x77, 0x7A)]
-    + [0x7B, 0x7D]
-)
 ACT_TARGET_IDX = 2 # Port idx of actual target
 ACT_CONTROLLER_IDX = 1 # Port idx of actual controller
 RX_READY_THLD = 0x1 # RX ready threshold
 RX_STAT_THLD = 0x1 # RX start threshold
 
-async def test_setup(dut, fclk=333.0, fbus=12.5):
+async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     """
     Sets up controller, target models and top-level core interface
     according to the 'Expected Bus' architecture.
@@ -41,23 +32,12 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     dut._log.info(f"fclk = {fclk:.3f} MHz")
     dut._log.info(f"fbus = {fbus:.3f} MHz")
 
-    # 1. Controller Sim (cocotbext) connected to Expected Bus
-    #    Sim Controller drives 'exp_bus_sda/scl'
-    #    DUT outputs 'sda/scl_sim_ctrl_i' (inputs to RTL)
-    i3c_controller = I3cController(
-        sda_i=dut.exp_bus_sda,
-        sda_o=dut.sda_sim_ctrl_i,
-        scl_i=dut.exp_bus_scl,
-        scl_o=dut.scl_sim_ctrl_i,
-        debug_state_o=None,
-        speed=fbus * 1e6,
-    )
-
-    # 2. Instantiate the Multi-Port Test Interface
     tb = I3CTopControllerTestInterface(dut, num_busses=3)
+
+    addr_helper = I3CAddressHelper(dut)
+    dut._log.info("Generated random I3C addresses: ")
+    addr_helper.print_addresses()
     
-    # 3. Setup the DUT (Clock, Reset)
-    #    Note: Uses the start_soon/join fix for resets
     await tb.setup(fclk)
 
     dut._log.info("Booting I3C Cores...")
@@ -66,13 +46,13 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     # Port 0: Expected Target
     # Port 1: Actual Controller
     # Port 2: Actual Target
-    core_configs = [
-        {"idx": 0, "mode": 2, "addr": 0x50}, # Mode 2 = Target
-        {"idx": 1, "mode": 3, "addr": 0x5B}, # Mode 3 = Controller
-        {"idx": 2, "mode": 2, "addr": 0x50}, # Mode 2 = Target
-    ]
+    if core_configs is None:
+        core_configs = [
+            {"idx": 0, "mode": 2, "static_addr": 0x0, "dyn_addr": 0x0, "virt_static_addr": 0x0, "virt_dyn_addr": 0x0}, # Mode 2 = EXP Target (UNUSED)
+            {"idx": 1, "mode": 3, "static_addr": addr_helper.ctrl_static_addr, "dyn_addr": addr_helper.ctrl_dyn_addr, "virt_static_addr": 0x0, "virt_dyn_addr": 0x0}, # Mode 3 = ACT Controller
+            {"idx": 2, "mode": 2, "static_addr": addr_helper.trgt_static_addr, "dyn_addr": addr_helper.trgt_dyn_addr, "virt_static_addr": addr_helper.trgt_virt_static_addr, "virt_dyn_addr": addr_helper.trgt_virt_dyn_addr}, # Mode 2 = ACT Target
+        ]
 
-    # 1. Schedule all boots
     tasks = []
     for cfg in core_configs:
         t = cocotb.start_soon(
@@ -80,18 +60,19 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
                 tb, 
                 bus_idx=cfg["idx"], 
                 mode=cfg["mode"], 
-                static_addr=cfg["addr"],
+                static_addr=cfg["static_addr"],
+                virtual_static_addr=cfg["virt_static_addr"],
+                dynamic_addr=cfg["dyn_addr"],
+                virtual_dynamic_addr=cfg["virt_dyn_addr"],
                 verify=True
             )
         )
         tasks.append(t)
 
-    # 2. Wait for all to complete
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-
-    return i3c_controller, tb    
+    return tb, addr_helper 
 
 @cocotb.test(timeout_time=20000, timeout_unit='us')
 async def test_i3c_private_read_no_edge_case(dut):
@@ -101,7 +82,7 @@ async def test_i3c_private_read_no_edge_case(dut):
     """
 
     # Setup
-    i3c_controller, tb = await test_setup(dut)
+    tb, addr_helper = await test_setup(dut)
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -114,7 +95,7 @@ async def test_i3c_private_read_no_edge_case(dut):
         i2c=0x0,
         cmd=0x0,
         cp=0x0,
-        device_address=0x50,
+        device_address=addr_helper.trgt_dyn_addr,
         short_read_err=0x0,
         defining_byte_present=0x0,
         mode=0x0,
@@ -175,7 +156,7 @@ async def test_i3c_private_read_short_read(dut):
     """
 
     # Setup
-    i3c_controller, tb = await test_setup(dut)
+    tb, addr_helper = await test_setup(dut)
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -188,7 +169,7 @@ async def test_i3c_private_read_short_read(dut):
         i2c=0x0,
         cmd=0x0,
         cp=0x0,
-        device_address=0x50,
+        device_address=addr_helper.trgt_dyn_addr,
         short_read_err=0x1,
         defining_byte_present=0x0,
         mode=0x0,

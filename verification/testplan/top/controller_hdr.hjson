@@ -4,7 +4,7 @@
   testpoints:
   [
     {
-      name: Generate HDR exit pattern
+      name: Controller Generate HDR exit pattern
       desc:
         '''
         Generate HDR exit pattern, as per 5.2.1.1.1 I3C Basic Spec

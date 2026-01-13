@@ -66,7 +66,6 @@
         - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
-        Verify that:
           - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
         '''
       tests: ["i3c_private_write_target_read"]

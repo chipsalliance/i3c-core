@@ -121,11 +121,6 @@ module controller_flow_active
 
 `endif  // CONTROLLER_SUPPORT
 
-    // I2C/I3C Bus condition detection
-    output logic bus_start_o,
-    output logic bus_rstart_o,
-    output logic bus_stop_o,
-    output logic bus_scl_posedge_o,
 
     // I2C/I3C received address (with RnW# bit) for the recovery handler
     output logic [7:0] bus_addr_o,
@@ -217,8 +212,6 @@ module controller_flow_active
   logic ibi_enable;
   logic [2:0] ibi_retry_num;
 
-  assign bus_scl_posedge_o = 0;  // TODO: change
-
   localparam int unsigned RecoveryMode = 'h3;
 
   configuration xconfiguration (
@@ -272,6 +265,14 @@ module controller_flow_active
 
 `ifdef CONTROLLER_SUPPORT
   // Active controller
+  logic
+      unused_i3c_fsm_idle,
+      unused_bus_start,
+      unused_bus_rstart,
+      unused_bus_stop,
+      unused_bus_scl_posedge;
+  i3c_err_t unused_err;
+  i3c_irq_t unused_irq;
   controller_active_flow_active xcontroller_active_flow_active (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
@@ -342,13 +343,17 @@ module controller_flow_active
       .i2c_active_en_i(i2c_active_en),
       .i2c_standby_en_i(i2c_standby_en),
       .i3c_active_en_i(1'b1),
+      .i3c_fsm_en_i(1'b0),
+      .i3c_fsm_idle_o(unused_i3c_fsm_idle),
       .i3c_standby_en_i(i3c_standby_en),
       .t_hd_dat_i(t_hd_dat),
       .t_r_i(t_r),
       .t_f_i(t_f),
       .t_bus_free_i(t_bus_free),
       .t_bus_idle_i(t_bus_idle),
-      .t_bus_available_i(t_bus_available)
+      .t_bus_available_i(t_bus_available),
+      .err(unused_err),
+      .irq(unused_irq)
   );
 `else
   always_comb begin

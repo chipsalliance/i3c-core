@@ -4,21 +4,21 @@
   testpoints:
   [
     {
-      name: Handle a target Interrupt Request
+      name: Controller Handle a target Interrupt Request
       desc:
         '''
         Recognize the IBI pattern as specified in 5.1.6.2 I3C Basic Spec, refuse or accept the interrupt. Write to the IBI queue
         '''
-      tests: ["contoller_target_interrupt_request"]
+      tests: ["controller_target_interrupt_request"]
       tags: ["top"]
     }
     {
-      name: Active Controller Initiating a Transaction
+      name: Controller Active Controller Initiating a Transaction
       desc:
         '''
         As per 5.1.6.4 I3C Basic Spec issue the I3C broadcast address and wait for incoming IBI from targets. 
         '''
-      tests: ["controller_initiate_interrupt_request"]
+      tests: ["controller_controller_initiate_interrupt_request"]
       tags: ["top"]
     }
   ]

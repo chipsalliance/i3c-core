@@ -36,6 +36,11 @@ module bus_scl_flow (
   } state_e;
 
   state_e state_d, state_q;
+  logic scl_negedge_d, scl_negedge_q;
+  logic scl_posedge_d, scl_posedge_q;
+
+  assign scl_negedge_o = scl_negedge_q;
+  assign scl_posedge_o = scl_posedge_q;
 
   // Timer counter
   logic [i3c_pkg::TimingWidth:0] timer_d, timer_q;  // one bit longer than the input timing
@@ -47,8 +52,8 @@ module bus_scl_flow (
   always_comb begin
     state_d = state_q;
     timer_d = timer_q;
-    scl_negedge_o = 1'b0;
-    scl_posedge_o = 1'b0;
+    scl_negedge_d = 1'b0;
+    scl_posedge_d = 1'b0;
     scl_stable_low_o = 1'b0;
     scl_stable_high_o = 1'b0;
     scl_o = 1'b1;
@@ -58,7 +63,7 @@ module bus_scl_flow (
           state_d = Low;
           timer_d = '0;
           scl_o = 1'b0;
-          scl_negedge_o = 1'b1;
+          scl_negedge_d = 1'b1;
         end
       end
       Low: begin
@@ -76,7 +81,7 @@ module bus_scl_flow (
             state_d = High;
             timer_d = '0;
             scl_stable_low_o = 1'b0;
-            scl_posedge_o = 1'b1;
+            scl_posedge_d = 1'b1;
           end
         end
       end
@@ -90,7 +95,7 @@ module bus_scl_flow (
         end else begin
           state_d = scl_enable_i ? Low : Idle;
           timer_d = '0;
-          scl_negedge_o = scl_enable_i ? 1'b1 : 1'b0;
+          scl_negedge_d = scl_enable_i ? 1'b1 : 1'b0;
         end
       end
       default: begin
@@ -104,9 +109,13 @@ module bus_scl_flow (
     if (~rst_ni) begin
       state_q <= Idle;
       timer_q <= '0;
+      scl_posedge_q <= 1'b0;
+      scl_negedge_q <= 1'b0;
     end else begin
       state_q <= state_d;
       timer_q <= timer_d;
+      scl_posedge_q <= scl_posedge_d;
+      scl_negedge_q <= scl_negedge_d;
     end
   end
 endmodule

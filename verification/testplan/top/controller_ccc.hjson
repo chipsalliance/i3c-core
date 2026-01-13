@@ -7,11 +7,105 @@
       name: controller_ccc_enec_disec_bcast
       desc:
         '''
-        The test issues ENEC broadcast
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Broadcast mode.
+        The test first disables events from the target with the DISEC CCC and then enables them again with ENEC.
+
+        Stimulus:
+        - randomly create a regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x1 / 0x0 // DISEC / ENEC BCAST
+            - CP = 0x1 // CMD field is valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - DTT/DATA_LENGTH = 1 // One byte of Payload
+            - RNW = 0x0 // Write transfer
+            - WROC = random // randomly generate response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+        - send CMD descriptor
+        - generate a second CMD descriptor with CMD = 0x0 (ENEC).
+
+        Check:
+          - Initially the I3C_EC.TTI.CONTROL.IBI_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should be set to 1 and I3C_EC.TTI.CONTROL.CRR_EN should be set to 0.
+          - After sending the first CCC (DISEC) all CSRs should be set to 0.
+          - After sending the second CCC (ENEC) all CSRs should be set to 1.
+
         '''
       tests: ["controller_ccc_enec_disec_bcast"]
       tags: ["top"]
-    }
+    },
+    {
+      name: controller_ccc_enec_disec_direct_one_target
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Direct mode.
+        The test first disables events from the target with the DISEC CCC and then enables them again with ENEC.
+
+        Stimulus:
+        - randomly create a regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x81 / 0x80 // DISEC / ENEC DIRECT
+            - CP = 0x1 // CMD field is valid
+            - DEV_ADDRESS = Target Address
+            - DTT/DATA_LENGTH = 1 // One byte of Payload
+            - RNW = 0x0 // Write transfer
+            - WROC = random // randomly generate response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+        - send CMD descriptor
+        - generate a second CMD descriptor with CMD = 0x80 (ENEC).
+
+        Check:
+          - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
+          - After sending the first CCC (DISEC) the CSRs should be set to 0.
+          - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
+
+        '''
+      tests: ["controller_ccc_enec_disec_direct_one_target"]
+      tags: ["top"]
+    },
+    {
+      name: controller_ccc_enec_disec_direct_multiple_targets
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Direct mode.
+        The test first disables events from the targets with the DISEC CCC and then enables them again with ENEC.
+        The goal is to see if the Direct Frame is correctly generated for multiple cmd descriptors where the CCC stays the same. (Figure 31 I3C Basic Spec)
+
+        Stimulus:
+        - randomly create num_targets regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x81 / 0x80 // DISEC / ENEC DIRECT
+            - CP = 0x1 // CMD field is valid
+            - DEV_ADDRESS = Target Address (For now the target address is kept constant since we only have one target to test on the I3C Bus)
+            - DTT/DATA_LENGTH = 1 // One byte of Payload
+            - RNW = 0x0 // Write transfer
+            - WROC = random // randomly generate response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+        - send CMD descriptor
+        - generate a second CMD descriptor with CMD = 0x80 (ENEC).
+
+        Check:
+          - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
+          - After sending the first CCC (DISEC) the CSRs should be set to 0.
+          - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
+
+        '''
+      tests: ["controller_ccc_enec_disec_direct_multiple_targets"]
+      tags: ["top"]
+    },
     {
       name: controller_ccc_disec
       desc:
@@ -20,7 +114,7 @@
         '''
       tests: ["controller_ccc_disec"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_rstdaa
       desc:
@@ -29,7 +123,7 @@
         '''
       tests: ["controller_ccc_rstdaa"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_entdaa
       desc:
@@ -38,16 +132,40 @@
         '''
       tests: ["controller_ccc_entdaa"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_setaasa
       desc:
         '''
-        The test issues SETAASA broadcast
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.23 Set All Addresses to Static Address (SETAASA) from I3C Basic Spec. Using Broadcast mode.
+        The test sets the dynamic address of the i3c target to the static target address.
+
+        Stimulus:
+        - randomly create a regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x29 // SETAASA BCAST
+            - CP = 0x1 // CMD field is valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - DTT/DATA_LENGTH = 0 // No Payload
+            - RNW = 0x0 // Write transfer
+            - WROC = random // randomly generate response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTE1 = 0x0 // is ignored
+        - send CMD descriptor
+
+        Check:
+          - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
+          - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+          - After sending the SETAASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the target's static address.
+
         '''
       tests: ["controller_ccc_setaasa"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_enec_dir
       desc:
@@ -56,7 +174,7 @@
         '''
       tests: ["controller_ccc_enec_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_disec_dir
       desc:
@@ -65,7 +183,7 @@
         '''
       tests: ["controller_ccc_disec_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_setdasa
       desc:
@@ -74,7 +192,7 @@
         '''
       tests: ["controller_ccc_setdasa_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_setnewda
       desc:
@@ -83,7 +201,7 @@
         '''
       tests: ["controller_ccc_setnewda_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_getpid
       desc:
@@ -92,7 +210,7 @@
         '''
       tests: ["controller_ccc_getpid_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_getbcr
       desc:
@@ -101,7 +219,7 @@
         '''
       tests: ["controller_ccc_getbcr_dir"]
       tags: ["top"]
-    }
+    },
     {
       name: controller_ccc_getdcr
       desc:
