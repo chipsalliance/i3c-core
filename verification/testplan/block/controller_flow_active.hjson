@@ -3,7 +3,7 @@
   testpoints:
   [
     {
-      name: test_private_write_with_immediate_data
+      name: immediate_write
       desc:
         '''
         Testbench:

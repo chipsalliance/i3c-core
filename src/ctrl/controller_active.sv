@@ -129,12 +129,13 @@ module controller_active
   logic fmt_fifo_rready_i2c;
   logic fmt_fifo_rready;
   logic fmt_fifo_rdone;
-  logic [7:0] fmt_byte;
-  logic fmt_bit;
+  logic [7:0] fmt_byte, fmt_rx_byte;
+  logic fmt_bit, fmt_rx_bit;
   logic fmt_receive_nack;
   logic fmt_flag_start_before;
   logic fmt_flag_stop_after;
   logic fmt_flag_restart_after;
+  logic fmt_flag_read_valid;
   logic fmt_flag_read_bytes;
   logic fmt_flag_read_continue;
   logic fmt_flag_nak_ok;
@@ -204,6 +205,10 @@ module controller_active
       .fmt_flag_start_before_o(fmt_flag_start_before),
       .fmt_flag_stop_after_o(fmt_flag_stop_after),
       .fmt_flag_restart_after_o(fmt_flag_restart_after),
+      // fmt RX signals
+      .fmt_byte_i(fmt_rx_byte),
+      .fmt_bit_i(fmt_rx_bit),
+      .fmt_flag_read_valid_i(fmt_flag_read_valid),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
       .fmt_flag_read_continue_o(fmt_flag_read_continue),
       .fmt_receive_nack_i(fmt_receive_nack),
@@ -303,9 +308,9 @@ module controller_active
       .t_r_i(20'd1),
       .t_f_i(20'd1),
       .thd_sta_i(20'd4),
-      .thd_rsta_i(20'd3),
-      .tsu_rsta_i(20'd3),  // NOTE: this register is named T_SU_STA for some reason...
-      .tsu_sta_i(20'd3),
+      .thd_rsta_i(20'd9),
+      .tsu_rsta_i(20'd9),  // NOTE: this register is named T_SU_STA for some reason...
+      .tsu_sta_i(20'd6),
       .tsu_sto_i(20'd5),
       .t_ds_od_i(20'd8),
       .tsu_dat_i(20'd3),
@@ -320,6 +325,10 @@ module controller_active
       .fmt_bit_i(fmt_bit),  // T bit
       .fmt_receive_nack_o(fmt_receive_nack),
       .fmt_flag_start_before_i(fmt_flag_start_before),
+      // fmt RX signals
+      .fmt_byte_o(fmt_rx_byte),
+      .fmt_bit_o(fmt_rx_bit),
+      .fmt_flag_read_valid_o(fmt_flag_read_valid),
       .fmt_flag_restart_after_i(fmt_flag_restart_after),
       .fmt_flag_read_continue_i(fmt_flag_read_continue),
       .fmt_flag_stop_after_i(fmt_flag_stop_after),

@@ -3,7 +3,7 @@
   testpoints:
   [
     {
-      name: private_write_correct_bus_condition
+      name: i3c_private_write_correct_bus_condition
       desc:
         '''
         Testbench:
@@ -36,11 +36,11 @@
             - following DTT bytes is DATA_BYTES
             - correct stop condition is generated
         '''
-      tests: ["test_i3c_controller"]
+      tests: ["i3c_private_write_correct_bus_condition"]
       tags: ["top"]
-    }
+    },
     {
-      name: write_immediate_data_transfer_target_read_from_rx_queue
+      name: i3c_private_write_target_read
       desc:
         '''
         Testbench:
@@ -69,15 +69,81 @@
         Verify that:
           - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
         '''
-      tests: ["test_i3c_private_write_target_read"]
+      tests: ["i3c_private_write_target_read"]
       tags: ["top"]
     },
     {
-      name: regular_write_target_read_from_rx_queue
+      name: i3c_private_write_target_read_resp_desc
       desc:
         '''
         Testbench:
-        I3C wrapper (DUT) -> cocotbext controller
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) to an individual I3C Target Device with known static address
+
+        Stimulus:
+         - create a CMD 64b descriptor as per Table 16 7.2.2.1 TCRI Spec. With:
+            - CMD_ATTR = 0x5 // ImmediateDataTransfer in Direct Format
+            - TID: random transaction ID
+            - I2C = 0x0 // I3C device
+            - CMD: random this field is disregarded
+            - CP = 0x0 // CMD field is not valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - DTT: number of bytes to be transferred
+            - MODE = 0x0 // standard I3C SDR Speed
+            - RNW = 0x0 // Write transfer
+            - WROC = 0x1 // write response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTES: random data to be sent
+        - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+        Check:
+          - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
+          - Read Response Descriptor to verify TID and Data Length match the CMD Descriptor and Error Status is Success.
+        '''
+      tests: ["i3c_private_write_target_read_resp_desc"]
+      tags: ["top"]
+    },
+    {
+      name: i3c_private_write_wrong_target_addr
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify that Private Write to a non existing target address generates a NACK Response Descriptor.
+
+        Stimulus:
+         - create a CMD 64b descriptor as per Table 16 7.2.2.1 TCRI Spec. With:
+            - CMD_ATTR = 0x5 // ImmediateDataTransfer in Direct Format
+            - TID: random transaction ID
+            - I2C = 0x0 // I3C device
+            - CMD: random this field is disregarded
+            - CP = 0x0 // CMD field is not valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - DTT: number of bytes to be transferred
+            - MODE = 0x0 // standard I3C SDR Speed
+            - RNW = 0x0 // Write transfer
+            - WROC = 0x1 // write response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTES: random data to be sent
+        - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+        Check:
+          - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
+          - Read Response Descriptor to verify TID matches the CMD Descriptor and Data Length is 0 and Error Status is NACK.
+        '''
+      tests: ["i3c_private_write_wrong_target_addr"]
+      tags: ["top"]
+    },
+    {
+      name: i3c_private_write_tx_queue_target_read
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
 
         Intent:
         Verify Private Write with Regular Data Transfer Command (7.2.2.2 TCRI Spec) to an individual I3C Target Device with known static address
@@ -104,7 +170,77 @@
         Verify that:
           - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
         '''
-      tests: ["test_i3c_controller_write_target_read"]
+      tests: ["i3c_private_write_tx_queue_target_read"]
+      tags: ["top"]
+    },
+    {
+      name: i3c_private_write_tx_queue_target_read_fifo_full
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify Private Write with Regular Data Transfer Command (7.2.2.2 TCRI Spec) to an individual I3C Target Device with known static address
+
+        Stimulus:
+        - create a 64b descriptor as per Table 18 7.2.2.2 TCRI Spec. With:
+            - CMD_ATTR = 0x4 // RegularDataTransfer in Direct Format
+            - TID: random transaction ID
+            - I2C = 0x0 // I3C device
+            - CMD: random this field is disregarded
+            - CP = 0x0 // CMD field is not valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - SHORT_READ_ERR = 0 // no read
+            - DBP = 0 // no def byte
+            - MODE = 0x0 // standard I3C SDR Speed
+            - RNW = 0x0 // Write transfer
+            - WROC: random // randomly generate response descriptor 
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DEF_BYTE: random // this is disregarded
+            - DATA_LENGTH: length of data transfer (TX_QUEUE_DEPTH*4 < DATA_LENGTH < TX_QUEUE_DEPTH*4*3) // Indicates the number of bytes to be transferred
+        - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+        Check:
+        Verify that:
+          - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
+        '''
+      tests: ["i3c_private_write_tx_queue_target_read_fifo_full"]
+      tags: ["top"]
+    },
+    {
+      name: i3c_private_write_repeated_start
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify Chaining Private Writes with Regular Data Transfer Command (7.2.2.2 TCRI Spec) to an individual I3C Target Device with known static address using Sr condition.
+
+        Stimulus:
+        - create 5 64b CMD descriptors as per Table 18 7.2.2.2 TCRI Spec. With:
+            - CMD_ATTR = 0x4 // RegularDataTransfer in Direct Format
+            - TID: random transaction ID
+            - I2C = 0x0 // I3C device
+            - CMD: random this field is disregarded
+            - CP = 0x0 // CMD field is not valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - SHORT_READ_ERR = 0 // no read
+            - DBP = 0 // no def byte
+            - MODE = 0x0 // standard I3C SDR Speed
+            - RNW = 0x0 // Write transfer
+            - WROC: random // randomly generate response descriptor 
+            - TOC = 0x0 // we want to test repeated start
+            - DEF_BYTE: random // this is disregarded
+            - DATA_LENGTH: length of data transfer (1 < DATA_LENGTH < TX_QUEUE_DEPTH*4*3) // Indicates the number of bytes to be transferred
+        - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+        Check:
+        Verify that:
+          - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
+        '''
+      tests: ["i3c_private_write_repeated_start"]
       tags: ["top"]
     },
     // FIXME: add detailed descriptions for theses testpoints  once DAT is implemented

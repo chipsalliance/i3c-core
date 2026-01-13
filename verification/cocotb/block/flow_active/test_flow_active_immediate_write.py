@@ -51,7 +51,7 @@ async def fmt_monitor(dut, captured_trans_queue):
     Monitors the fmt interface and pushes observed transactions to a queue.
     """
     while True:
-        await RisingEdge(dut.aclk)
+        await RisingEdge(dut.fmt_fifo_rdone_i)
         # Only capture if Valid AND Ready (handshake complete)
         if dut.fmt_fifo_rvalid_o.value == 1 and dut.fmt_fifo_rready_i.value == 1:
             trans = FmtTransaction(
@@ -62,6 +62,18 @@ async def fmt_monitor(dut, captured_trans_queue):
             captured_trans_queue.append(trans)
             dut._log.info(f"[Monitor] Captured: {trans}")
 
+# Stimulate fmt_fifo_rdone_i
+async def fifo_done(tb):
+    tb.dut.fmt_fifo_rdone_i.value = 0
+    while True:
+        # 5 cycles per bit translates to 10ns -> we are able to handle I3C speeds 
+        await ClockCycles(tb.clk, 5)
+        tb.dut.fmt_fifo_rdone_i.value = 1
+        tb.dut._log.info(f"fmt_fifo_rdone_i was pulsed to {tb.dut.fmt_fifo_rdone_i.value}")
+        await ClockCycles(tb.clk, 1)
+        tb.dut.fmt_fifo_rdone_i.value = 0
+        tb.dut._log.info(f"fmt_fifo_rdone_i is back at {tb.dut.fmt_fifo_rdone_i.value}")
+
 @cocotb.test()
 async def test_immediate_write(dut: SimHandleBase):
     """
@@ -71,7 +83,8 @@ async def test_immediate_write(dut: SimHandleBase):
     tb = FlowActiveTestInterface(dut)
     await tb.setup()
 
-    await ClockCycles(dut.aclk, 10) 
+    dut.fmt_fifo_rdone_i.value = 0
+    await ClockCycles(dut.aclk, 100) 
 
     # Create Command Descriptor
     commands = [
@@ -109,17 +122,21 @@ async def test_immediate_write(dut: SimHandleBase):
     for cmd_desc in commands:
         expected_queue.extend(reference_model_predictor(cmd_desc))
 
+    # write cmd descriptor to CSR
+    for cmd_desc in commands:
+        await tb.put_command_desc(cmd_desc.to_int())
+
+    dut._log.info("Successfully sent command descriptors")
+
     # Get DUT queue
+    cocotb.start_soon(fifo_done(tb))
     cocotb.start_soon(fmt_monitor(dut, actual_queue))
 
     # set fmt_fifo_rready_i signal
     # TODO make this random
     dut.fmt_fifo_rready_i.value = 1
 
-    # write cmd descriptor to CSR
-    for cmd_desc in commands:
-        await tb.put_command_desc(cmd_desc.to_int())
-        
+    # Wait for fmt transactions to finish
     await ClockCycles(dut.aclk, 50)
 
     # Scoreboard

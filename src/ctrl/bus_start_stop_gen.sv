@@ -40,7 +40,8 @@ module bus_start_stop_gen (
   state_e state_d, state_q;
 
   // Timer signals
-  logic [i3c_pkg::TimingWidth+2:0] timer_d, timer_q;
+  logic [i3c_pkg::TimingWidth+3:0] timer_d, timer_q;
+  logic [i3c_pkg::TimingWidth+3:0] total_repeated_start_time;
   logic [i3c_pkg::TimingWidth+2:0] total_hold_repeated_start;
   logic [i3c_pkg::TimingWidth+1:0] total_sda_low, total_sda_stop_low;
   logic [i3c_pkg::TimingWidth:0] total_hold_start, total_setup_stop;
@@ -48,8 +49,9 @@ module bus_start_stop_gen (
 
   assign total_hold_start = t_f_i + thd_sta_i;  // See Fig 144 I3C Basic Spec
   assign total_setup_stop = tsu_sto_i + t_r_i;
-  assign total_setup_repeated_start = tsu_rsta_i; // according to Fig 153 I3C Basic Spec t_r_i is not taken into account for the setup time
+  assign total_setup_repeated_start = tsu_rsta_i + tlow_i; // according to Fig 153 I3C Basic Spec t_r_i is not taken into account for the setup time
   assign total_hold_repeated_start = t_f_i + thd_rsta_i + total_setup_repeated_start; // add with total setup time so we can use only one timer for repeated start
+  assign total_repeated_start_time = total_hold_repeated_start + tlow_i;
   assign total_sda_low = total_hold_start + t_ds_od_i;
   assign t_scl_zero = tlow_i;  // TODO: change this
   assign total_sda_stop_low = total_setup_stop + t_scl_zero;
@@ -98,17 +100,23 @@ module bus_start_stop_gen (
       end
       RepeatedStart: begin
         active_o = 1'b1;
-        if (timer_q < total_setup_repeated_start) begin : setup_condition
+        if (timer_q < tlow_i) begin
+          scl_o   = 1'b0;
+          timer_d = timer_q + 1;
+        end else if (timer_q < total_setup_repeated_start) begin : setup_condition
           timer_d = timer_q + 1;
         end else begin : hold_condition
           sda_o = 1'b0;
           if (timer_q < total_hold_repeated_start) begin
             timer_d = timer_q + 1;
           end else begin
-            state_d = Idle;
-            timer_d = '0;
-            scl_o = 1'b0;
-            repeated_start_done_o = 1'b1;
+            scl_o   = 1'b0;
+            timer_d = timer_q + 1;
+            if (timer_q >= total_repeated_start_time) begin
+              state_d = Idle;
+              timer_d = '0;
+              repeated_start_done_o = 1'b1;
+            end
           end
         end
       end

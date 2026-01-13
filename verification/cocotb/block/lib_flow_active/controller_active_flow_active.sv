@@ -31,10 +31,11 @@ module controller_active_flow_active
     input logic clk_i,
     input logic rst_ni,
 
-     // FMT interface
+    // FMT interface
     output logic fmt_fifo_rvalid_o,
     output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
+    input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
     output logic fmt_flag_start_before_o,
     output logic fmt_flag_stop_after_o,
@@ -194,20 +195,22 @@ module controller_active_flow_active
       .dct_index_hw_o,
       .dct_wdata_hw_o,
       .dct_rdata_hw_i,
-      .host_enable_o(host_enable), // unconnected
+      .host_enable_o(host_enable),  // unconnected
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
       .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
       .fmt_flag_start_before_o(fmt_flag_start_before_o),
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes_o),
       .fmt_flag_read_continue_o(fmt_flag_read_continue_o),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok_o),
+      .fmt_receive_nack_i(1'b0),  // we never receive nacks in this test
       .unhandled_unexp_nak_o(unhandled_unexp_nak_o),
       .unhandled_nak_timeout_o(unhandled_nak_timeout_o),
-      .rx_fifo_wvalid_i(rx_fifo_wvalid), // unconnected
-      .rx_fifo_wdata_i(rx_fifo_wdata), // unconnected
+      .rx_fifo_wvalid_i(rx_fifo_wvalid),  // unconnected
+      .rx_fifo_wdata_i(rx_fifo_wdata),  // unconnected
       .i3c_fsm_en_i(i3c_active_en_i),
       .i3c_fsm_idle_o,
       .err,

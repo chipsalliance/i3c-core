@@ -31,11 +31,25 @@
             "minimum": 2,
             "maximum": 255
         },
+        "TtiTxDescFifoDepth": {
+            "description": "Size of the TTI TX Descriptor Queue in entries.\nEach TX descriptor is a size of a DWORD.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255,
+            "default": 64
+        },
         "RespFifoDepth": {
             "description": "Size of the HCI Response Queue in entries.\nEach response descriptor is a size of a DWORDs.",
             "type": "integer",
             "minimum": 2,
             "maximum": 255
+        },
+        "TtiRxDescFifoDepth": {
+            "description": "Size of the TTI RX Descriptor Queue in entries.\nEach RX descriptor is a size of a DWORD.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255,
+            "default": 64
         },
         "RxFifoDepth": {
             "description": "Size of the HCI RX Queue (buffer) in DWORDs.",
@@ -43,11 +57,25 @@
             "minimum": 2,
             "maximum": 256
         },
+        "TtiRxFifoDepth": {
+            "description": "Size of the TTI RX Queue in entries DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255,
+            "default": 64
+        },
         "TxFifoDepth": {
             "description": "Size of the HCI TX Queue (buffer) in DWORDs.",
             "type": "integer",
             "minimum": 2,
             "maximum": 256
+        },
+        "TtiTxFifoDepth": {
+            "description": "Size of the TTI TX Queue in entries DWORDs.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 255,
+            "default": 64
         },
         "IbiFifoDepth": {
             "description": "Size of the HCI IBI Status Queue.\nIf `IbiFifoExtSize` is specified size is defined as `IbiFifoDepth` * 8 DWORDs.\nOtherwise `IbiFifoDepth`.",

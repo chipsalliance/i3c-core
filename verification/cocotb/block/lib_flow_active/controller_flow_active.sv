@@ -31,10 +31,10 @@ module controller_flow_active
     parameter int unsigned HciIbiDataWidth  = 32,
 
     parameter int unsigned HciRespThldWidth = 8,
-    parameter int unsigned HciCmdThldWidth = 8,
-    parameter int unsigned HciRxThldWidth = 3,
-    parameter int unsigned HciTxThldWidth = 3,
-    parameter int unsigned HciIbiThldWidth = 8
+    parameter int unsigned HciCmdThldWidth  = 8,
+    parameter int unsigned HciRxThldWidth   = 3,
+    parameter int unsigned HciTxThldWidth   = 3,
+    parameter int unsigned HciIbiThldWidth  = 8
 `endif  // CONTROLLER_SUPPORT
 ) (
     input logic clk_i,
@@ -44,6 +44,7 @@ module controller_flow_active
     output logic fmt_fifo_rvalid_o,
     output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
+    input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
     output logic fmt_flag_start_before_o,
     output logic fmt_flag_stop_after_o,
@@ -216,7 +217,7 @@ module controller_flow_active
   logic ibi_enable;
   logic [2:0] ibi_retry_num;
 
-  assign bus_scl_posedge_o = 0; // TODO: change
+  assign bus_scl_posedge_o = 0;  // TODO: change
 
   localparam int unsigned RecoveryMode = 'h3;
 
@@ -267,7 +268,7 @@ module controller_flow_active
       .mwl_i                          (mwl),
       .mrl_i                          (mrl),
       .ibil_i                         (ibil)
-  );//
+  );  //
 
 `ifdef CONTROLLER_SUPPORT
   // Active controller
@@ -277,6 +278,7 @@ module controller_flow_active
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
       .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
       .fmt_flag_start_before_o(fmt_flag_start_before_o),
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
@@ -349,9 +351,9 @@ module controller_flow_active
       .t_bus_available_i(t_bus_available)
   );
 `else
-always_comb begin
-  err = '0;
-  irq = '0;
-end
+  always_comb begin
+    err = '0;
+    irq = '0;
+  end
 `endif  // CONTROLLER_SUPPORT
 endmodule

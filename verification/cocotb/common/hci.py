@@ -222,6 +222,7 @@ class ErrorStatus(IntEnum):
     I2C_DATA_NACK_OR_I3C_BUS_ABORTED = 9
     # Command not supported by the Host Controller implementation
     NOT_SUPPORTED = 10
+    ABORTED_WITH_CRC = 11
     # Transfer Type Specific Errors
     C = 12
     D = 13

@@ -114,3 +114,65 @@ The MVP includes support for the following subset of CCCs required for basic bus
 * **GETDCR:** Get Device Characteristics Register (Direct).
 * **GETSTATUS:** Get Device Status (Direct).
 
+### Error Conditions
+
+The MVP supports the following ERROR_STATUS conditions from Table 1 Error Status Codes in Response Descriptor I3C TCRI Spec.
+
+:::{list-table} Error Status Codes
+:name: error-status-codes
+:widths: 15 10 10 20
+:header-rows: 1
+
+* - **Error Code**
+  - **ERR_STATUS Value**
+  - **I3C TCRI Spec Section**
+  - **Notes**
+* - CRC
+  - 0x1
+  - 6.4.1.1
+  - 
+* - PARITY
+  - 0x2
+  - 6.4.1.2
+  - 
+* - FRAME
+  - 0x3
+  - 6.4.1.3
+  - 
+* - ADDR_HEADER
+  - 0x4
+  - 6.4.1.4
+  - 
+* - NACK
+  - 0x5
+  - 6.4.1.5
+  - 
+* - OVL
+  - 0x6
+  - 6.4.1.6
+  - 
+* - I3C_SHORT_READ_ERR
+  - 0x7
+  - 6.4.1.7
+  - 
+* - HC_ABORTED
+  - 0x8
+  - 6.4.1.8
+  - 
+* - I2C_WR_DATA_NACK or BUS_ABORTED
+  - 0x9
+  - 6.4.1.9
+  - 
+* - NOT_SUPPORTED
+  - 0xA
+  - 6.4.1.10
+  - 
+* - ABORTED_WITH_CRC
+  - 0xB
+  - 6.4.1.11
+  - This is used as an internal default state for errors. This means that internal hardware bugs can mistakenly produce the AbortedWithCRC error status.
+* - Transfer Type Specific
+  - 0xC – 0xF
+  - 6.4.1.12
+  - 
+:::

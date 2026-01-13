@@ -34,18 +34,23 @@ module i3c_controller_fsm
     input [i3c_pkg::TimingWidth-1:0] t_buf_i,  // bus free time between STOP and START in clock units
 
     //FMT Interface
-    input logic fmt_fifo_rvalid_i,
-    input logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_i,
-    output logic fmt_fifo_rready_o,
-    output logic fmt_fifo_rdone_o,
-    input logic [7:0] fmt_byte_i,
-    input logic fmt_bit_i,  // T bit
-    input logic fmt_flag_start_before_i,
-    input logic fmt_flag_stop_after_i,
-    input logic fmt_flag_restart_after_i,
-    input logic fmt_flag_read_bytes_i,
-    input logic fmt_flag_read_continue_i,
-    output logic fmt_receive_nack_o
+    input  logic                         fmt_fifo_rvalid_i,
+    input  logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_i,
+    output logic                         fmt_fifo_rready_o,
+    output logic                         fmt_fifo_rdone_o,
+    input  logic [                  7:0] fmt_byte_i,
+    input  logic                         fmt_bit_i,                 // T bit
+    input  logic                         fmt_flag_start_before_i,
+    input  logic                         fmt_flag_stop_after_i,
+    input  logic                         fmt_flag_restart_after_i,
+    output logic                         fmt_receive_nack_o,
+    // fmt RX signals
+    output logic [                  7:0] fmt_byte_o,
+    output logic                         fmt_bit_o,                 // T bit
+    input  logic                         fmt_flag_read_bytes_i,
+    input  logic                         fmt_flag_read_continue_i,
+    output logic                         fmt_flag_read_valid_o
+
 
 );
   // State definition
@@ -64,9 +69,6 @@ module i3c_controller_fsm
 
   logic tx_bit_q, tx_bit_d;
 
-  logic is_restart;
-  logic rnw;
-
   // Bus SCL flow internal signals
   logic scl_negedge, scl_posedge, scl_stable_low, scl_stable_high;
 
@@ -81,6 +83,9 @@ module i3c_controller_fsm
 
   logic start_stop_active;
 
+  logic received_nack_d, received_nack_q;
+  assign fmt_receive_nack_o = received_nack_q | received_nack_d;  // instantly update fmt flag
+
   // TX signals
   logic [7:0] bus_tx_req_value;
   logic
@@ -93,12 +98,10 @@ module i3c_controller_fsm
       bus_tx_sel_od_pp;
 
   // RX signals
-  logic [7:0] bus_rx_data;
-  logic bus_rx_req_bit, bus_rx_req_byte, bus_rx_done, bus_rx_idle;
+  logic [7:0] bus_rx_data, rx_byte_d, rx_byte_q;
+  logic
+      bus_rx_req_bit, bus_rx_req_bit_d, bus_rx_req_bit_q, bus_rx_req_byte, bus_rx_done, bus_rx_idle;
 
-  // Signal Assignments
-  assign rnw = 1'b0;  // TODO: add read featrue
-  assign is_restart = 1'b0;  // TODO: add restart feature
   // State Transition
   always_comb begin
     state_d = state_q;
@@ -106,10 +109,6 @@ module i3c_controller_fsm
       Idle: begin
         if (fmt_fifo_rvalid_i & fmt_flag_start_before_i) begin
           state_d = Start;
-        end else begin  // normally we shouldn't enter this case
-          if (fmt_fifo_rvalid_i) begin
-            state_d = rnw ? BusRX : BusTX;
-          end
         end
       end
       Start: begin
@@ -119,10 +118,10 @@ module i3c_controller_fsm
       end
       Address: begin
         if (bus_rx_done & tx_bit_q) begin
-          if (fmt_receive_nack_o) begin
+          if (fmt_receive_nack_o) begin  // wait for SCL to finish cycle before switching state
             state_d = Stop;
           end else begin
-            state_d = rnw ? BusRX : BusTX;
+            state_d = fmt_flag_read_bytes_i ? BusRX : BusTX;
           end
         end
       end
@@ -132,10 +131,14 @@ module i3c_controller_fsm
         end
       end
       BusRX: begin
-        // TODO: implement
+        if (bus_rx_done & fmt_flag_read_bytes_i) begin
+          state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : BusRX);
+        end
       end
       ReStart: begin
-        // TODO: implement
+        if (repeated_start_done) begin
+          state_d = Address;
+        end
       end
       IBI: begin
         // TODO: implement
@@ -154,9 +157,13 @@ module i3c_controller_fsm
 
   // Output Logic
   always_comb begin
+    fmt_bit_o = 1'b0;
+    fmt_byte_o = rx_byte_q;
+    rx_byte_d = rx_byte_q;
     fmt_fifo_rready_o = 1'b0;
     fmt_fifo_rdone_o = 1'b0;
-    fmt_receive_nack_o = 1'b0;
+    fmt_flag_read_valid_o = 1'b0;
+    received_nack_d = received_nack_q;
     start_before = 1'b0;
     stop_after = 1'b0;
     repeated_start = 1'b0;
@@ -168,12 +175,14 @@ module i3c_controller_fsm
     bus_tx_req_value = '0;
     bus_rx_req_byte = 1'b0;
     bus_rx_req_bit = 1'b0;
-    scl_enable = 1'b1;
+    bus_rx_req_bit_d = bus_rx_req_bit_q;
+    scl_enable = ~start_stop_active;
     scl_stall = 1'b0;
     unique case (state_q)
       Idle: begin
         fmt_fifo_rready_o = 1'b1;
         scl_enable = 1'b0;
+        received_nack_d = 1'b0;
       end
       Start: begin
         start_before = 1'b1;
@@ -192,7 +201,7 @@ module i3c_controller_fsm
           //bus_tx_req_value = {7'b0, 1'b1};
           // Read bus to check for NACK
           bus_rx_req_bit = 1'b1;
-          fmt_receive_nack_o = bus_rx_data[0] & bus_rx_done;
+          received_nack_d = bus_rx_data[0] & bus_rx_done;
 
           if (bus_rx_done) begin
             tx_bit_d = 1'b0;
@@ -226,18 +235,36 @@ module i3c_controller_fsm
         end
       end
       BusRX: begin
-        // TODO: implement
+        ctrl_scl_o = scl_flow_scl;
+        bus_rx_req_byte = fmt_flag_read_bytes_i & ~bus_rx_req_bit_q;
+        bus_rx_req_bit = bus_rx_req_bit_q;
+        if (bus_rx_done & bus_rx_req_bit_q) begin
+          bus_rx_req_bit_d = 1'b0;
+          bus_rx_req_byte = 1'b1;
+          fmt_flag_read_valid_o = 1'b1;  // Signals that fmt_byte_o and fmt_bit_o are valid
+          fmt_bit_o = bus_rx_data[0];
+        end else if (bus_rx_done & ~bus_rx_req_bit_q) begin
+          bus_rx_req_bit_d = 1'b1;
+          bus_rx_req_byte = 1'b0;
+          rx_byte_d = bus_rx_data;
+        end
       end
       ReStart: begin
-        // TODO: implement
+        repeated_start = 1'b1;
+        ctrl_sda_o = start_stop_sda;
+        ctrl_scl_o = start_stop_scl;
+        fmt_fifo_rready_o = 1'b1;
       end
       IBI: begin
         // TODO: implement
       end
       Stop: begin
-        stop_after = 1'b1;
-        ctrl_sda_o = start_stop_sda;
-        ctrl_scl_o = start_stop_scl;
+        if (scl_negedge | scl_stable_low | start_stop_active) begin  // wait for cycle to finish and then stop
+          stop_after = 1'b1;
+          ctrl_sda_o = start_stop_sda;
+          ctrl_scl_o = start_stop_scl;
+          received_nack_d = 1'b0;
+        end
       end
       default: begin
       end
@@ -248,9 +275,15 @@ module i3c_controller_fsm
     if (~rst_ni) begin
       state_q  <= Idle;
       tx_bit_q <= 1'b0;
+      received_nack_q <= 1'b0;
+      bus_rx_req_bit_q <= 1'b0;
+      rx_byte_q <= '0;
     end else begin
       state_q  <= state_d;
       tx_bit_q <= tx_bit_d;
+      received_nack_q <= received_nack_d;
+      bus_rx_req_bit_q <= bus_rx_req_bit_d;
+      rx_byte_q <= rx_byte_d;
     end
   end
 

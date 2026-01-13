@@ -90,18 +90,22 @@ module flow_active
     input  logic phy_sel_od_pp_i,
     output logic phy_sel_od_pp_o,
 
-    output logic fmt_fifo_rvalid_o,
+    output logic                         fmt_fifo_rvalid_o,
     output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
-    input logic fmt_fifo_rready_i,
-    input logic fmt_fifo_rdone_i,
-    output logic [7:0] fmt_byte_o,
-    output logic fmt_bit_o,  // T bit
-    output logic fmt_flag_start_before_o,
-    output logic fmt_flag_restart_after_o,
-    output logic fmt_flag_stop_after_o,
-    output logic fmt_flag_read_bytes_o,
-    output logic fmt_flag_read_continue_o,
-    input logic fmt_receive_nack_i,
+    input  logic                         fmt_fifo_rready_i,
+    input  logic                         fmt_fifo_rdone_i,
+    output logic [                  7:0] fmt_byte_o,
+    output logic                         fmt_bit_o,                 // T bit
+    output logic                         fmt_flag_start_before_o,
+    output logic                         fmt_flag_restart_after_o,
+    output logic                         fmt_flag_stop_after_o,
+    output logic                         fmt_flag_read_continue_o,
+    input  logic                         fmt_receive_nack_i,
+    // fmt RX signals
+    input  logic [                  7:0] fmt_byte_i,
+    input  logic                         fmt_bit_i,
+    output logic                         fmt_flag_read_bytes_o,
+    input  logic                         fmt_flag_read_valid_i,
 
     output logic fmt_flag_nak_ok_o,
     output logic unhandled_unexp_nak_o,
@@ -121,7 +125,6 @@ module flow_active
 );
 
   assign dct_write_valid_hw_o = '0;
-  assign rx_queue_wvalid_o = '0;
   assign ibi_queue_wvalid_o = '0;
   assign err = '0;
   assign irq = '0;
@@ -136,7 +139,7 @@ module flow_active
     I2CWriteImmediateDirect = 4'd5,
     I3CWriteImmediateDirect = 4'd6,
     I3CWriteRegularDirect = 4'd7,
-    FetchRxData = 4'd8,
+    I3CReadDirect = 4'd8,
     InitI2CWrite = 4'd9,
     InitI2CRead = 4'd10,
     StallWrite = 4'd11,
@@ -195,16 +198,18 @@ module flow_active
   assign tx_dword_array = tx_dword;
   logic pop_tx_fifo;
 
+  // RX Queue
+  logic [HciRxDataWidth-1:0] rx_dword_d, rx_dword_q;
+  logic [(HciRxDataWidth>>3)-1:0][7:0] rx_dword_array;
+  assign rx_dword_d = rx_dword_array;
+
   // Response Queue
   i3c_response_desc_t resp_desc;
-  i3c_resp_err_status_e resp_err_status_q, resp_err_status_d;
-  logic [15:0] resp_data_length_q, resp_data_length_d;
+  i3c_resp_err_status_e resp_err_status_d, resp_err_status_q;
+  logic [15:0] resp_data_length_d, resp_data_length_q;
 
   // FUTUREFIX: Set appropriately
   always_comb begin
-    resp_err_status_q = Success;  // TODO: this should be resp_err_status_d
-    fmt_flag_read_bytes_o = 1'b0;
-    fmt_flag_read_continue_o = 1'b0;
     fmt_flag_nak_ok_o = 1'b0;
     unhandled_unexp_nak_o = 1'b0;
     unhandled_nak_timeout_o = 1'b0;
@@ -223,16 +228,18 @@ module flow_active
 
   // Assign generic command fields to generic signals
   assign dev_index = cmd_desc[20:16];
-  assign cmd_tid = cmd_desc[6:3];
   assign cmd_dir = cmd_desc[29] ? Read : Write;
   assign cmd_attr = i3c_cmd_attr_e'(cmd_desc[2:0]);
   assign is_direct_transfer = ((cmd_attr == ImmediateDataTransferDirect) || (cmd_attr == RegularTransferDirect) || (cmd_attr == ComboTransferDirect)) && ((cmd_attr != InternalControl) && (cmd_attr != AddressAssignment));
-
+  assign cmd_tid = is_direct_transfer ? {1'b0, cmd_desc[5:3]} : cmd_desc[6:3];
   // Assign if target is an I2C device
   assign i2c_cmd = is_direct_transfer ? immediate_direct_cmd_desc.i2c : dat_rdata.device; // TODO: adapt for regular transfer
 
   // Assign TX fifo signals
   assign pop_tx_fifo = tx_queue_rready_o;
+
+  // Assign RX Queue signals
+  assign rx_queue_wdata_o = rx_dword_d; // when transaction is finished early we update rx_word_d at the same time as setting rx_queue_wvalid_o
 
   // Assign constants
   // FUTUREFIX: Add control logic to constant signals
@@ -377,32 +384,25 @@ module flow_active
   end
 
   // Catch every error detected during the Controller operation
-  // TODO: resp_err_status_q should be assigned not resp_err_status_d
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      resp_err_status_d <= Success;
+      // NOTE: We use the AbortedWithCRC error status as a default. This means
+      // that internal hardware bugs can mistakenly produce the AbortedWithCRC error
+      // status.
+      resp_err_status_q <= AbortedWithCRC;
+      rx_dword_q <= '0;
     end else begin
-      // FUTUREFIX: Add proper error catching
-      if (i3c_fsm_idle_o) begin
-        resp_err_status_d <= Success;
-      end else begin
-        resp_err_status_d <= resp_err_status_d;
-      end
+      resp_err_status_q <= resp_err_status_d;
+      rx_dword_q <= rx_dword_d;
     end
   end
 
   // Catch every data_length update during the Controller operation
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      resp_data_length_d <= '0;
+      resp_data_length_q <= '0;
     end else begin
-      if (i3c_fsm_idle_o) begin
-        resp_data_length_d <= '0;
-      end else if (|resp_data_length_q) begin
-        resp_data_length_d <= resp_data_length_q;
-      end else begin
-        resp_data_length_d <= resp_data_length_d;
-      end
+      resp_data_length_q <= resp_data_length_d;
     end
   end
 
@@ -415,23 +415,27 @@ module flow_active
     dct_read_valid_hw_o = 1'b0;
     dat_index_hw_o = '0;
     tx_queue_rready_o = 1'b0;
+    rx_queue_wvalid_o = 1'b0;
     transfer_cnt_rst = 1'b1;
     fmt_fifo_rvalid_o = 1'b0;
     fmt_flag_start_before_o = 1'b0;
     fmt_flag_restart_after_o = 1'b0;
     resp_queue_wvalid_o = 1'b0;
     fmt_flag_stop_after_o = 1'b0;
+    fmt_flag_read_bytes_o = 1'b0;
+    fmt_flag_read_continue_o = 1'b0;
     fmt_byte_o = '0;
     fmt_bit_o = '0;
-    rx_queue_wdata_o = '0;
     dct_wdata_hw_o = '0;
     ibi_queue_wdata_o = '0;
     dct_index_hw_o = '0;
-    resp_data_length_q = '0;
+    resp_data_length_d = '0;
     resp_queue_wdata_o = '0;
+    resp_err_status_d = resp_err_status_q;
     resp_desc.err_status = i3c_resp_err_status_e'(0);
     resp_desc.tid = '0;
     resp_desc.data_length = '0;
+    rx_dword_array = rx_dword_q;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -458,7 +462,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_q = '0;
+        resp_data_length_d = '0;
         unique case (transfer_cnt)
           // FUTUREFIX: Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
@@ -511,7 +515,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_q = '0;
+        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt - 1;
         fmt_bit_o = 1'b1;
         unique case (transfer_cnt)
           // TODO: Add support for broadcast address control before private transfers. This can
@@ -557,10 +561,14 @@ module flow_active
         // Send stop condition after last byte if TOC is set to STOP
         if (transfer_cnt == data_length + (BytesBeforeImmData)) begin
           fmt_flag_stop_after_o = immediate_direct_cmd_desc.toc;
+          fmt_flag_restart_after_o = ~immediate_direct_cmd_desc.toc;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
         if (fmt_fifo_rready_i && (transfer_cnt < data_length + 1 + BytesBeforeImmData)) begin
           fmt_fifo_rvalid_o = 1'b1;
+        end
+        if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          resp_err_status_d = Nack;
         end
       end
       I3CWriteRegularDirect: begin
@@ -569,7 +577,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_q = '0;
+        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt - 1;
         fmt_bit_o = 1'b1;
         tx_queue_rready_o = ((transfer_cnt % (HciTxDataWidth >> 3)) == 0) & transfer_cnt_en; // TODO: not sure about this maybe it should be one cycle before the current condition?
 
@@ -585,16 +593,54 @@ module flow_active
         // Send stop signal
         if (transfer_cnt == data_length) begin
           fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
+          fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
           tx_queue_rready_o = 1'b0;  // when we're done we don't want to pop new data from the queue
+          resp_err_status_d = Success;  // successfull transfer without errors
         end
 
-        // Error condition
+        // Error conditions
         if (transfer_cnt < data_length && transfer_cnt_en && tx_queue_empty_i) begin
           // TODO: implement error handling 
         end
+        if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          resp_err_status_d = Nack;
+        end
       end
-      FetchRxData: begin
-        // FUTUREFIX
+      I3CReadDirect: begin
+        transfer_cnt_rst = 1'b0;
+        transfer_cnt_en = fmt_fifo_rdone_i | fmt_flag_read_valid_i;
+        resp_data_length_d = (transfer_cnt == 0) ? '0 : transfer_cnt;
+        fmt_flag_read_bytes_o = 1'b1;
+        if (transfer_cnt == 32'd0) begin
+          fmt_byte_o = {regular_direct_cmd_desc.dev_address, 1'b1};
+          fmt_flag_start_before_o = 1'b1;
+          fmt_fifo_rvalid_o = 1'b1;
+        end else begin
+          rx_dword_array = (byte_select == '0) & fmt_flag_read_valid_i ? '0 : rx_dword_q;  // reset each new word to 0
+          if (fmt_flag_read_valid_i) begin
+            rx_dword_array[byte_select] = fmt_byte_i;
+          end
+          if (((transfer_cnt) % (HciRxDataWidth >> 3)) == 0) begin // TODO: not sure if it should be transfer_cnt-1 instead?
+            rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
+            if (~rx_queue_wready_i) begin
+              // TODO: stall SCL until rx_queue can consume data
+            end
+          end
+        end
+
+        if (transfer_cnt <= data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = I3cShortReadErr;
+          rx_dword_array[byte_select] = fmt_byte_i;
+          rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
+        end
+
+        if (transfer_cnt >= data_length & fmt_flag_read_valid_i) begin
+          fmt_flag_stop_after_o = regular_direct_cmd_desc.toc;
+          fmt_flag_restart_after_o = ~regular_direct_cmd_desc.toc;
+          resp_err_status_d = Success;  // successfull transfer without errors
+        end
+
       end
       InitI2CWrite: begin
         // FUTUREFIX
@@ -613,18 +659,14 @@ module flow_active
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
-        resp_queue_wvalid_o = 1'b0;
-        resp_desc.err_status = resp_err_status_d;
+        resp_desc.err_status = resp_err_status_q;
         resp_desc.tid = cmd_tid;
-        resp_desc.data_length = resp_data_length_d;
-
-        if (resp_queue_wready_i) begin
-          resp_queue_wvalid_o = 1'b1;
-          resp_queue_wdata_o  = resp_desc;
-        end
+        resp_desc.data_length = resp_data_length_q;
+        resp_queue_wvalid_o = 1'b1;
+        resp_queue_wdata_o = resp_desc;
       end
       default: begin
-        resp_desc.err_status = i3c_resp_err_status_e'(0);
+        resp_desc.err_status = AbortedWithCRC;  // TODO: change default state?
         resp_desc.tid = '0;
         resp_desc.data_length = '0;
       end
@@ -652,11 +694,11 @@ module flow_active
         if (is_direct_transfer) begin
           unique case (cmd_attr)
             ImmediateDataTransferDirect: begin
-              state_next = i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediateDirect : 
+              state_next = i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediateDirect :
                                     (fmt_fifo_rready_i ? I3CWriteImmediateDirect : state);
             end
             RegularTransferDirect: begin
-              state_next = fmt_fifo_rready_i ? I3CWriteRegularDirect : state;
+              state_next = (cmd_dir == Read) ? I3CReadDirect : (fmt_fifo_rready_i ? I3CWriteRegularDirect : state);
             end
             ComboTransferDirect: begin
               // TODO
@@ -670,9 +712,9 @@ module flow_active
               state_next = i2c_cmd ? I2CWriteImmediateDAT : I3CWriteImmediateDAT;
             end else begin
               if (cmd_dir == Write) begin
-                state_next = I3CWriteRegularDirect;
+                state_next = Idle;
               end else if (cmd_dir == Read) begin
-                state_next = FetchRxData;
+                state_next = I3CReadDirect;
               end
             end
           end
@@ -699,24 +741,29 @@ module flow_active
       // I3CWriteImmediate: Execute Immediate Transfer to I3C Device
       I3CWriteImmediateDirect: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          state_next = Idle;  // TODO: create an error state for such occasions
+          state_next = WriteResp;  // TODO: create an error state for such occasions
         end else if (transfer_cnt > data_length + BytesBeforeImmData) begin
-          // TODO: Do not generate Response Descriptor if WROC field of the Command Descriptor is set to 0
           state_next = immediate_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
       end
       I3CWriteRegularDirect: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          state_next = Idle;  // TODO: create an error state for such occasions
+          state_next = WriteResp;  // TODO: create an error state for such occasions
         end else if (transfer_cnt > data_length) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
         if (transfer_cnt < data_length && transfer_cnt_en && tx_queue_empty_i && tx_queue_rready_o) begin
-          state_next = Idle;  // TODO: create an error state for such occasions
+          state_next = WriteResp;  // TODO: create an error state for such occasions
         end
       end
-      FetchRxData: begin
-        // FUTUREFIX
+      I3CReadDirect: begin
+        if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          state_next = WriteResp;
+        end else if (transfer_cnt >= data_length & fmt_flag_read_valid_i) begin
+          state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
+        end else if (transfer_cnt < data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+          state_next = regular_direct_cmd_desc.sre ? WriteResp : Idle;
+        end
       end
       InitI2CWrite: begin
         // FUTUREFIX

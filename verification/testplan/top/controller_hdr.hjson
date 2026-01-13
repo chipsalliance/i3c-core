@@ -1,6 +1,6 @@
 // FIXME: add detailed description of tests using testbench/stimulus/check template
 {
-  name: Enter and exit HDR mode
+  name: Controller Enter and exit HDR mode
   testpoints:
   [
     {
@@ -9,7 +9,7 @@
         '''
         Generate HDR exit pattern, as per 5.2.1.1.1 I3C Basic Spec
         '''
-      tests: ["exit_hdr_mode"]
+      tests: ["controller_exit_hdr_mode"]
       tags: ["top"]
     }
   ]

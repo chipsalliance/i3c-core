@@ -1,6 +1,6 @@
 // FIXME: add detailed description of tests using testbench/stimulus/check template
 {
-  name: Handle IBI
+  name: Controller Handle IBI
   testpoints:
   [
     {
@@ -9,7 +9,7 @@
         '''
         Recognize the IBI pattern as specified in 5.1.6.2 I3C Basic Spec, refuse or accept the interrupt. Write to the IBI queue
         '''
-      tests: ["target_interrupt_request"]
+      tests: ["contoller_target_interrupt_request"]
       tags: ["top"]
     }
     {

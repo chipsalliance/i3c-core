@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from bus2csr import get_frontend_bus_if, int2dword, dword2int
-from hci import immediate_transfer_descriptor
+from hci import immediate_transfer_descriptor, ResponseDescriptor
 from cocotb_helpers import reset_n
 from reg_map import reg_map
 
@@ -98,11 +98,11 @@ class I3CTopControllerTestInterface:
 
     def read_csr(self, addr, bus_idx=0):
         """Read CSR via the specified bus index."""
-        return self.busses[bus_idx].read_csr(addr)
+        return self.busses[bus_idx].read_csr(addr, timeout=100, units="us")
 
     def write_csr(self, addr, data, bus_idx=0):
         """Write CSR via the specified bus index."""
-        return self.busses[bus_idx].write_csr(addr, data)
+        return self.busses[bus_idx].write_csr(addr, data, timeout=10, units="us")
 
     def read_csr_field(self, addr, field_name, bus_idx=0):
         return self.busses[bus_idx].read_csr_field(addr, field_name)
@@ -235,13 +235,14 @@ class I3CTopControllerTestInterface:
             words_written += burst_size
         self.dut._log.info("[TX] All data written successfully.")
 
-    async def read_rx_queue(self, num_words, bus_idx):
+    async def read_rx_queue(self, num_words, bus_idx, rx_port_addr=None ):
         """
         Reads the RX_DATA_PORT csr 'num_words' times.
         Returns a list of 32-bit integers.
         """
         rx_data_list = []
-        rx_port_addr = self.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr
+        if rx_port_addr is None:
+            rx_port_addr = self.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr
         
         for _ in range(num_words):
             # Read the CSR
@@ -250,3 +251,31 @@ class I3CTopControllerTestInterface:
             rx_data_list.append(val_int)
             
         return rx_data_list
+
+
+    async def read_resp_desc(self, bus_idx):
+        """
+        Reads the RX_DATA_PORT csr.
+        Returns a ResponseDescriptor.
+        """
+        
+        # Read the CSR
+        resp_desc = ResponseDescriptor(0, 0, 0)
+        resp_port_addr = self.reg_map.PIOCONTROL.RESPONSE_PORT.base_addr
+        resp_desc_obj = await self.read_csr(resp_port_addr, bus_idx=bus_idx)
+        resp_desc_int = dword2int(resp_desc_obj)
+        resp_desc.from_int(resp_desc_int)
+        return resp_desc
+
+    async def put_tx_tti_data(self, data, data_length, bus_idx):
+        """
+        Writes an array of DWORD size data to the target TTI TX_DATA_PORT
+        data_length specifies the lenght of the data in bytes
+        """
+        num_words = len(data)
+
+        for i in range(num_words):
+            await self.write_csr(self.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, int2dword(data[i]), bus_idx=bus_idx)
+        # Write the TX descriptor
+        await self.write_csr(self.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_length), bus_idx=bus_idx)
+

@@ -57,6 +57,7 @@ module bus_scl_flow (
         if (scl_enable_i) begin
           state_d = Low;
           timer_d = '0;
+          scl_o = 1'b0;
           scl_negedge_o = 1'b1;
         end
       end

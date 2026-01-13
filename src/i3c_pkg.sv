@@ -241,34 +241,38 @@ package i3c_pkg;
     logic [1:0]   rerror;
   } dct_mem_src_t;
 
-  // Response error status (See TCRI 7.1.3 Table 11 field ERR_STATUS)
+  // Response error status (See TCRI 6.4.1 Table 1)
   typedef enum logic [RespErrIdWidth-1:0] {
-    Success = 4'b0000,
-    Crc = 4'b0001,
-    Parity = 4'b0010,
-    Frame = 4'b0011,
-    AddrHeader = 4'b0100,
+    Success = 4'h0,
+    Crc = 4'h1,
+    Parity = 4'h2,
+    Frame = 4'h3,
+    AddrHeader = 4'h4,
     // Address was NACK'ed or Dynamic Address Assignment was NACK'ed
-    Nack = 4'b0101,
+    Nack = 4'h5,
     // Receive overflow or transfer underflow error
-    Ovl = 4'b0110,
+    Ovl = 4'h6,
     // Target returned fewer bytes than requested in DATA_LENGTH field
     // of a transfer command where short read was not permitted
-    I3cShortReadErr = 4'b0111,
+    I3cShortReadErr = 4'h7,
     // Terminated by host controller due to internal error or Abort operation
-    HcAborted = 4'b1000,
+    HcAborted = 4'h8,
     // Transfer terminated by due to bus action
     // * for I2C transfers: I2C_WR_DATA_NACK
     // * for I3C transfers: BUS_ABORTED
-    I2cDataNackOrI3cBusAborted = 4'b1001,
+    I2cDataNackOrI3cBusAborted = 4'h9,
     // Command not supported by the Host Controller implementation
-    NotSupported = 4'b1010,
-    Reserved = 4'b1011,
+    NotSupported = 4'hA,
+    // In HDR-BT Mode
+    // NOTE: This error status is used as a default error status. I.e. some
+    // internal bugs can also produce this error status (when no proper error
+    // status can be assigned due to a bug)
+    AbortedWithCRC = 4'hB,
     // Transfer Type Specific Errors
-    ErrorC = 4'b1100,
-    ErrorD = 4'b1101,
-    ErrorE = 4'b1110,
-    ErrorF = 4'b1111
+    ErrorC = 4'hC,
+    ErrorD = 4'hD,
+    ErrorE = 4'hE,
+    ErrorF = 4'hF
   } i3c_resp_err_status_e;
 
   // Response descriptor (See TCRI 7.1.3 Table 11)

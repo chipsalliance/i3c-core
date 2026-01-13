@@ -26,25 +26,6 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 
-# Wraps cocotb.test with a default timeout
-def cocotb_test(timeout=200, unit="us", expect_fail=False, expect_error=(), skip=False, stage=0):
-    def wrapper(func):
-        @cocotb.test(
-            timeout_time=timeout,
-            timeout_unit=unit,
-            expect_fail=expect_fail,
-            expect_error=expect_error,
-            skip=skip,
-            stage=stage,
-        )
-        @functools.wraps(func)
-        async def runCocotb(*args, **kwargs):
-            await func(*args, **kwargs)
-
-        return runCocotb
-    return wrapper
-
-
 async def test_setup(dut, fclk=333.0, fbus=12.5):
     """
     Sets up controller, target models and top-level core interface

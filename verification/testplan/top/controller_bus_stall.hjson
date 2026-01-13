@@ -1,56 +1,56 @@
 // FIXME: add detailed description of tests using testbench/stimulus/check template
 {
-  name: Data over-/underflow handling
+  name: Controller Data over-/underflow handling
   testpoints:
   [
     {
-      name: Reading from empty IBI FIFO
+      name: Controller Reading from empty IBI FIFO
       desc:
         '''
         Perform read bus access to the empty IBI queue,
         verify that response comes back and it holds value of ?.
         '''
-      tests: ["empty_rx_desc_read"]
+      tests: ["controller_empty_rx_desc_read"]
       tags: ["top"]
     }
     {
-      name: Reading from empty RX data FIFO
+      name: Controller Reading from empty RX data FIFO
       desc:
         '''
         Perform read bus access to the empty RX data queue,
         verify that response comes back and it holds value of ).
         '''
-      tests: ["empty_rx_data_read"]
+      tests: ["controller_empty_rx_data_read"]
       tags: ["top"]
     }
     {
-      name: Reading from empty resp FIFO
+      name: Controller Reading from empty resp FIFO
       desc:
         '''
         Perform read bus access to the empty resp queue,
         verify that response comes back and it holds value of ?.
         '''
-      tests: ["empty_indirect_fifo_read"]
+      tests: ["controller_empty_indirect_fifo_read"]
       tags: ["top"]
     }
     {
-      name: Writing to full cmd FIFO
+      name: Controller Writing to full cmd FIFO
       desc:
         '''
         Perform multiple write bus accesses to the cmd queue,
         verify that all transactions have finished.
         '''
-      tests: ["full_tx_desc_write"]
+      tests: ["controller_full_tx_desc_write"]
       tags: ["top"]
     }
     {
-      name: Writing to full TX data FIFO
+      name: Controller Writing to full TX data FIFO
       desc:
         '''
         Perform multiple write bus accesses to the TX data queue,
         verify that all transactions have finished.
         '''
-      tests: ["full_tx_data_write"]
+      tests: ["controller_full_tx_data_write"]
       tags: ["top"]
     }
   ]

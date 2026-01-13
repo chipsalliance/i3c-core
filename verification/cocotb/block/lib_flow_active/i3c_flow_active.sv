@@ -42,13 +42,13 @@ module i3c_flow_active
 
 `ifdef CONTROLLER_SUPPORT
     parameter int unsigned HciRespFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned HciCmdFifoDepth = `CMD_FIFO_DEPTH,
-    parameter int unsigned HciRxFifoDepth = `RX_FIFO_DEPTH,
-    parameter int unsigned HciTxFifoDepth = `TX_FIFO_DEPTH,
+    parameter int unsigned HciCmdFifoDepth  = `CMD_FIFO_DEPTH,
+    parameter int unsigned HciRxFifoDepth   = `RX_FIFO_DEPTH,
+    parameter int unsigned HciTxFifoDepth   = `TX_FIFO_DEPTH,
 `ifdef IBI_FIFO_EXT_SIZE
-    parameter int unsigned HciIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
+    parameter int unsigned HciIbiFifoDepth  = 8 * `IBI_FIFO_DEPTH,
 `else
-    parameter int unsigned HciIbiFifoDepth = `IBI_FIFO_DEPTH,
+    parameter int unsigned HciIbiFifoDepth  = `IBI_FIFO_DEPTH,
 `endif
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
@@ -64,11 +64,11 @@ module i3c_flow_active
     parameter int unsigned HciIbiDataWidth  = 32,
 
     parameter int unsigned HciRespThldWidth = 8,
-    parameter int unsigned HciCmdThldWidth  = 8,
-    parameter int unsigned HciRxThldWidth   = 3,
-    parameter int unsigned HciTxThldWidth   = 3,
-    parameter int unsigned HciIbiThldWidth  = 8,
-`endif // CONTROLLER_SUPPORT
+    parameter int unsigned HciCmdThldWidth = 8,
+    parameter int unsigned HciRxThldWidth = 3,
+    parameter int unsigned HciTxThldWidth = 3,
+    parameter int unsigned HciIbiThldWidth = 8,
+`endif  // CONTROLLER_SUPPORT
     parameter int unsigned IndirectFifoDepth = 64
 ) (
     input clk_i,  // clock
@@ -149,15 +149,16 @@ module i3c_flow_active
     input  logic                    bready_i,
 `ifdef AXI_ID_FILTERING
     // ID Filtering
-    input logic disable_id_filtering_i,
-    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
+    input  logic                    disable_id_filtering_i,
+    input  logic [AxiUserWidth-1:0] priv_ids_i            [NumPrivIds],
 `endif
 `endif
 
-     // FMT interface
+    // FMT interface
     output logic fmt_fifo_rvalid_o,
     output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
+    input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
     output logic fmt_flag_start_before_o,
     output logic fmt_flag_stop_after_o,
@@ -175,7 +176,7 @@ module i3c_flow_active
     // DCT memory export interface
     input  dct_mem_src_t  dct_mem_src_i,
     output dct_mem_sink_t dct_mem_sink_o,
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
@@ -260,17 +261,17 @@ module i3c_flow_active
 
 `ifdef CONTROLLER_SUPPORT
   // DAT <-> Controller interface
-  logic                             dat_read_valid_hw;
-  logic [   $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
-  logic [                     63:0] dat_rdata_hw;
+  logic                          dat_read_valid_hw;
+  logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw;
+  logic [                  63:0] dat_rdata_hw;
 
   // DCT <-> Controller interface
-  logic                             dct_write_valid_hw;
-  logic                             dct_read_valid_hw;
-  logic [   $clog2(`DCT_DEPTH)-1:0] dct_index_hw;
-  logic [                    127:0] dct_wdata_hw;
-  logic [                    127:0] dct_rdata_hw;
-`endif // CONTROLLER_SUPPORT
+  logic                          dct_write_valid_hw;
+  logic                          dct_read_valid_hw;
+  logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw;
+  logic [                 127:0] dct_wdata_hw;
+  logic [                 127:0] dct_rdata_hw;
+`endif  // CONTROLLER_SUPPORT
 
 `endif  // CONTROLLER_SUPPORT
 
@@ -498,6 +499,7 @@ module i3c_flow_active
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
       .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
       .fmt_flag_start_before_o(fmt_flag_start_before_o),
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
@@ -580,7 +582,7 @@ module i3c_flow_active
       .dct_rdata_hw_i(dct_rdata_hw),
 `endif
       //TODO: Rename
-      .i3c_fsm_en_i  (i3c_fsm_en_i),
+      .i3c_fsm_en_i(i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
       .err(unused_err),  // TODO: Handle errors

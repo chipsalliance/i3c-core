@@ -17,6 +17,30 @@
         '''
       tests: ["controller_typical_operation"]
       tags: ["top"]
+    },
+    {
+      name: multiple_interleaved_transaction_sequences
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify Chaining Private Writes and Private Reads with Immediate and Regular Data Transfer Command (7.2.2.1 / 7.2.2.2 TCRI Spec) to an individual I3C Target Device with known static address using Sr condition.
+
+        Stimulus:
+        - create random amount of 64b CMD descriptors as per Table 16/18 7.2.2.1 / 7.2.2.2 TCRI Spec. With:
+            - TOC: random we want to test repeated start
+        - split the 64b descriptors into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+        - we want to test a random sequence of reads / writes chained together by either Sr or P.
+        - For example: S->W->Sr->W->...->R->P->S->R->Sr->...->W->P
+
+        Check:
+        Verify that:
+          - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
+        '''
+      tests: ["multiple_interleaved_transaction_sequences"]
+      tags: ["top"]
     }
   ]
 }

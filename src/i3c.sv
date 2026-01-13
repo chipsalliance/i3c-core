@@ -70,10 +70,10 @@ module i3c
     parameter int unsigned HciIbiThldWidth = 8,
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
-    parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned TtiTxDescFifoDepth = `CMD_FIFO_DEPTH,
-    parameter int unsigned TtiRxFifoDepth = `RX_FIFO_DEPTH,
-    parameter int unsigned TtiTxFifoDepth = `TX_FIFO_DEPTH,
+    parameter int unsigned TtiRxDescFifoDepth = `TTI_RX_DESC_FIFO_DEPTH,
+    parameter int unsigned TtiTxDescFifoDepth = `TTI_TX_DESC_FIFO_DEPTH,
+    parameter int unsigned TtiRxFifoDepth = `TTI_RX_FIFO_DEPTH,
+    parameter int unsigned TtiTxFifoDepth = `TTI_TX_FIFO_DEPTH,
 `ifdef IBI_FIFO_EXT_SIZE
     parameter int unsigned TtiIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
 `else

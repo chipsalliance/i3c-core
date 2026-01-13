@@ -246,6 +246,15 @@ def bus_tx_flow_verify(session, test_group, test_name, coverage, simulator):
 def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
+@test(
+    TestParams(
+        ["tests", "axi_hc", "controller"],
+        ["flow_active"],
+        ["test_flow_active_immediate_write"],
+    )
+)
+def flow_active_immediate_write_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
 
 @test(
     TestParams(

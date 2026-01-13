@@ -25,7 +25,7 @@
         Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches.  
         '''
       tests: [
-        "test_ec_stdby_cr_enable_init",
+        "ec_stdby_cr_enable_init",
       ]
       tags: ["top"]
     }
@@ -36,7 +36,7 @@
         Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches. Write 0'b10 to Port 0 and Port 2. Write 0'b11 to Port 1. 
         '''
       tests: [
-        "test_configure_target_and_controller",
+        "configure_target_and_controller",
       ]
       tags: ["top"]
     }

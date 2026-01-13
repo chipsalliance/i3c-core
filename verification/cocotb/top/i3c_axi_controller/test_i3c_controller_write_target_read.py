@@ -7,7 +7,7 @@ from math import ceil
 from boot_controller import boot_init
 from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
-from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct
+from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
 from cocotbext_i3c.i3c_controller import I3cController
 
 from controller_interface import I3CTopControllerTestInterface
@@ -26,27 +26,9 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 ACT_TARGET_IDX = 2 # Port idx of actual target
+ACT_CONTROLLER_IDX = 1 # Port idx of actual controller
 TX_READY_THLD = 0x1 # TX ready threshold
 TX_START_THLD = 0x1 # TX start threshold
-
-# Wraps cocotb.test with a default timeout
-def cocotb_test(timeout=10000, unit="us", expect_fail=False, expect_error=(), skip=False, stage=0):
-    def wrapper(func):
-        @cocotb.test(
-            timeout_time=timeout,
-            timeout_unit=unit,
-            expect_fail=expect_fail,
-            expect_error=expect_error,
-            skip=skip,
-            stage=stage,
-        )
-        @functools.wraps(func)
-        async def runCocotb(*args, **kwargs):
-            await func(*args, **kwargs)
-
-        return runCocotb
-    return wrapper
-
 
 async def test_setup(dut, fclk=333.0, fbus=12.5):
     """
@@ -110,7 +92,7 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     dut._log.info("All cores booted successfully.")
     return i3c_controller, tb    
 
-@cocotb_test()
+@cocotb.test()
 async def test_i3c_private_write_target_read(dut):
 
     cmd_desc = immediate_transfer_descriptor_direct(
@@ -129,12 +111,9 @@ async def test_i3c_private_write_target_read(dut):
 
     # Setup
     i3c_controller, tb = await test_setup(dut)
+    dut.areset_n[0].value = 0
+    dut._log.info("Reset unused i3c core.")
 
-    #Heartbeat
-    async def heartbeat():
-        while True:
-            await Timer(1000, units='ns')
-            dut._log.debug("Heartbeat: Still alive at %s" % cocotb.utils.get_sim_time(units='ns'))
 
     # Monitor
     """
@@ -205,10 +184,6 @@ async def test_i3c_private_write_target_read(dut):
             recv_data.append(rx_data)
 
     """
-    hb = cocotb.start_soon(heartbeat())
-    # Start the device firmware agent
-    #rx = cocotb.start_soon(rx_agent())
-    
 
     actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
 
@@ -224,13 +199,110 @@ async def test_i3c_private_write_target_read(dut):
     actual_val = recv_data & data_mask
     expected_val = cmd_desc.data & data_mask
     # Compare
+
+    # Read Resp descriptor
+    if cmd_desc.wroc:
+        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        dut._log.info(
+            f"Received Response Descriptor with TID: {resp_desc.tid}, Data length: {resp_desc.data_length}, Error Status: {resp_desc.err_status}"
+        )
+        assert resp_desc.data_length == cmd_desc.dtt
+        assert resp_desc.tid == cmd_desc.tid
+
     dut._log.info(
         f"Received data {actual_val:x}"
     )
     assert expected_val == actual_val
 
 
-@cocotb_test()
+@cocotb.test()
+async def test_i3c_private_write_target_read_resp_desc(dut):
+
+    cmd_desc = immediate_transfer_descriptor_direct(
+            tid=0x1,
+            i2c=False,
+            cmd=0,
+            cp=False,
+            device_address=0x50,
+            dtt=4,      
+            mode=0,
+            rnw=False,
+            wroc=True,
+            toc=True,  
+            data=random.getrandbits(32)
+        )
+
+    # Setup
+    i3c_controller, tb = await test_setup(dut)
+    dut.areset_n[0].value = 0
+    dut._log.info("Reset unused i3c core.")
+
+
+    actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
+
+    await actual_write
+
+    await ClockCycles(tb.clk, 4000)
+    # Read RX descriptor
+    recv_data = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, bus_idx=ACT_TARGET_IDX)
+    )
+    data_mask = (1 << (cmd_desc.dtt * 8)) - 1
+
+    # Read Resp descriptor
+    resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+    dut._log.info(
+        f"Received Response Descriptor with TID: {resp_desc.tid}, Data length: {resp_desc.data_length}, Error Status: {resp_desc.err_status}"
+    )
+    assert resp_desc.data_length == cmd_desc.dtt
+    assert resp_desc.tid == cmd_desc.tid
+    actual_val = recv_data & data_mask
+    expected_val = cmd_desc.data & data_mask
+    # Compare
+    dut._log.info(
+        f"Received data {actual_val:x}"
+    )
+    assert expected_val == actual_val
+
+@cocotb.test()
+async def test_i3c_private_write_wrong_target_addr(dut):
+
+    cmd_desc = immediate_transfer_descriptor_direct(
+            tid=0x1,
+            i2c=False,
+            cmd=0,
+            cp=False,
+            device_address=0x44,
+            dtt=4,      
+            mode=0,
+            rnw=False,
+            wroc=True,
+            toc=True,  
+            data=random.getrandbits(32)
+        )
+
+    # Setup
+    i3c_controller, tb = await test_setup(dut)
+    dut.areset_n[0].value = 0
+    dut._log.info("Reset unused i3c core.")
+
+
+    actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
+
+    await actual_write
+
+    await ClockCycles(tb.clk, 4000)
+   
+    # Read Resp descriptor
+    resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+    dut._log.info(
+        f"Received Response Descriptor with TID: {resp_desc.tid}, Data length: {resp_desc.data_length}, Error Status: {resp_desc.err_status}"
+    )
+    assert resp_desc.data_length == 0
+    assert resp_desc.tid == cmd_desc.tid
+    assert resp_desc.err_status == ErrorStatus(5) # NACK
+
+@cocotb.test()
 async def test_i3c_private_write_tx_queue_target_read(dut):
     """
     Tests I3C Private Write transfers with randomized payload lengths (1 byte to FIFO depth) and randomized data.
@@ -240,6 +312,9 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
 
     # Setup
     i3c_controller, tb = await test_setup(dut)
+    dut.areset_n[0].value = 0
+    dut._log.info("Reset unused i3c core.")
+
     TX_QUEUE_DEPTH = tb.tx_queue_depth
     dut._log.info(f"TX_QUEUE_DEPTH is {TX_QUEUE_DEPTH}")
 
@@ -255,7 +330,7 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
         defining_byte_present=0x0,
         mode=0x0,
         rnw=0x0,
-        wroc=0x0,
+        wroc=random.getrandbits(1),
         toc=True,
         def_byte=0x0,
         data_length=target_len,
@@ -271,12 +346,6 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
         mask = (1 << (remainder * 8)) - 1
         data[-1] = data[-1] & mask
 
-    async def heartbeat():
-        while True:
-            await Timer(1000, units='ns')
-            dut._log.debug("Heartbeat: Still alive at %s" % cocotb.utils.get_sim_time(units='ns'))
-    hb = cocotb.start_soon(heartbeat())
-
     data_write = cocotb.start_soon(tb.put_tx_data(data, bus_idx=1))
     await data_write
 
@@ -290,13 +359,23 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
 
     actual_val = recv_data
     expected_val = data
+
+    # Read Resp descriptor
+    if cmd_desc.wroc:
+        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        dut._log.info(
+            f"Received Response Descriptor with TID: {resp_desc.tid}, Data length: {resp_desc.data_length}, Error Status: {resp_desc.err_status}"
+        )
+        assert resp_desc.data_length == cmd_desc.data_length
+        assert resp_desc.tid == cmd_desc.tid
+
     # Compare
     for i, (expected, actual) in enumerate(zip(expected_val, actual_val)):
         if expected != actual:
             dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
     assert expected_val == actual_val
 
-@cocotb_test()
+@cocotb.test()
 async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
     """
     Tests I3C Private Write transfers with randomized payload lengths (FIFO depth to 3x FIFO depth) and randomized data.
@@ -320,7 +399,7 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
         defining_byte_present=0x0,
         mode=0x0,
         rnw=0x0,
-        wroc=0x0,
+        wroc=random.getrandbits(1),
         toc=True,
         def_byte=0x0,
         data_length=target_len,
@@ -336,12 +415,6 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
     if remainder != 0:
         mask = (1 << (remainder * 8)) - 1
         data[-1] = data[-1] & mask
-
-    async def heartbeat():
-        while True:
-            await Timer(1000, units='ns')
-            dut._log.debug("Heartbeat: Still alive at %s" % cocotb.utils.get_sim_time(units='ns'))
-    hb = cocotb.start_soon(heartbeat())
 
     queue_filled_event = Event()
 
@@ -363,6 +436,16 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
     actual_val = recv_data
     expected_val = data
     # Compare
+ 
+    # Read Resp descriptor
+    if cmd_desc.wroc:
+        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        dut._log.info(
+            f"Received Response Descriptor with TID: {resp_desc.tid}, Data length: {resp_desc.data_length}, Error Status: {resp_desc.err_status}"
+        )
+        assert resp_desc.data_length == cmd_desc.data_length
+        assert resp_desc.tid == cmd_desc.tid
+
     for i, (expected, actual) in enumerate(zip(expected_val, actual_val)):
         if expected != actual:
             dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")

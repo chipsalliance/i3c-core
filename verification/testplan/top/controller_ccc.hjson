@@ -4,12 +4,12 @@
   testpoints:
   [
     {
-      name: controller_ccc_enec
+      name: controller_ccc_enec_disec_bcast
       desc:
         '''
         The test issues ENEC broadcast
         '''
-      tests: ["controller_ccc_enec"]
+      tests: ["controller_ccc_enec_disec_bcast"]
       tags: ["top"]
     }
     {

@@ -92,22 +92,23 @@ module test_wrapper #(
     input  logic                      wvalid,
     output logic                      wready,
 
-    output logic [           1:0]   bresp,
-    output logic [AxiIdWidth-1:0]   bid,
+    output logic [             1:0] bresp,
+    output logic [  AxiIdWidth-1:0] bid,
     output logic [AxiUserWidth-1:0] buser,
     output logic                    bvalid,
     input  logic                    bready,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
-    input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
+    input logic [AxiUserWidth-1:0] priv_ids_i[NumPrivIds],
 `endif
 `endif
 
-     // FMT interface
+    // FMT interface
     output logic fmt_fifo_rvalid_o,
     output logic [controller_pkg::I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
+    input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
     output logic fmt_flag_start_before_o,
     output logic fmt_flag_stop_after_o,
@@ -127,27 +128,34 @@ module test_wrapper #(
 
     output irq_o
 );
-logic clk, rst_n;
+  logic clk, rst_n;
+  logic [AxiUserWidth-1:0] priv_ids[NumPrivIds];
+  genvar i;
+  generate
+    for (i = 0; i < NumPrivIds; i++) begin
+      assign priv_ids[i] = '0;
+    end
+  endgenerate
 
-always_comb begin : wire_clk
+  always_comb begin : wire_clk
 `ifdef I3C_USE_AHB
-    clk  = hclk;
+    clk   = hclk;
     rst_n = hreset_n;
 `elsif I3C_USE_AXI
-    clk  = aclk;
+    clk   = aclk;
     rst_n = areset_n;
 `endif
   end
 
 `ifdef CONTROLLER_SUPPORT
   // DAT memory export interface
-  i3c_pkg::dat_mem_src_t dat_mem_src;
+  i3c_pkg::dat_mem_src_t  dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
 
   // DCT memory export interface
-  i3c_pkg::dct_mem_src_t dct_mem_src;
+  i3c_pkg::dct_mem_src_t  dct_mem_src;
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
   i3c_flow_active #(
 `ifdef I3C_USE_AHB
@@ -167,7 +175,7 @@ always_comb begin : wire_clk
       .DatAw(DatAw),
       .DctAw(DctAw)
   ) i3c_flow_active (
-      .clk_i(clk),
+      .clk_i (clk),
       .rst_ni(rst_n),
 
 `ifdef I3C_USE_AHB
@@ -230,13 +238,14 @@ always_comb begin : wire_clk
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
-      .priv_ids_i(priv_ids_i),
+      .priv_ids_i(priv_ids), // Set this to zero such that we can have legal writes (the awuserid is always 0 for this test)
 `endif
 `endif
 
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
       .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
       .fmt_flag_start_before_o(fmt_flag_start_before_o),
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
@@ -252,7 +261,7 @@ always_comb begin : wire_clk
 
       .dct_mem_src_i (dct_mem_src),
       .dct_mem_sink_o(dct_mem_sink),
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
       .recovery_payload_available_o(recovery_payload_available_o),
       .recovery_image_activated_o  (recovery_image_activated_o),
@@ -299,9 +308,9 @@ always_comb begin : wire_clk
       .rerror_o(dct_mem_src.rerror),  // Unused
       .cfg_i('0)  // Unused
   );
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
-/*
+  /*
   Truth table.
 
   sel_od_pp_o | sda_o  || sda_oe | IO state
