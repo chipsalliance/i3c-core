@@ -1,6 +1,8 @@
 // I3C controller register map based on MIPI HCI 1.2
 
-regfile SoCManagementInterfaceRegisters{
+regfile SoCManagementInterfaceRegisters #(
+    bit T_WIDTH = 20
+) {
     name = "SoC Management Interface";
     default regwidth = 32;
     reg {
@@ -275,7 +277,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_R[19:0];
+        } T_R[T_WIDTH-1:0];
     } T_R_REG;
     reg {
         name = "";
@@ -285,7 +287,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_F[19:0];
+        } T_F[T_WIDTH-1:0];
     } T_F_REG;
     reg {
         name = "";
@@ -295,7 +297,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_SU_DAT[19:0];
+        } T_SU_DAT[T_WIDTH-1:0];
     } T_SU_DAT_REG;
     reg {
         name = "";
@@ -305,7 +307,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_HD_DAT[19:0];
+        } T_HD_DAT[T_WIDTH-1:0];
     } T_HD_DAT_REG;
     reg {
         name = "";
@@ -315,7 +317,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_HIGH[19:0];
+        } T_HIGH[T_WIDTH-1:0];
     } T_HIGH_REG;
     reg {
         name = "";
@@ -325,18 +327,28 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_LOW[19:0];
+        } T_LOW[T_WIDTH-1:0];
     } T_LOW_REG;
     reg {
         name = "";
         field {
             name = "";
-            desc = "Hold time for (repeated) START in clock units";
+            desc = "Hold time for START in clock units";
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_HD_STA[19:0];
+        } T_HD_STA[T_WIDTH-1:0];
     } T_HD_STA_REG;
+     reg {
+        name = "";
+        field {
+            name = "";
+            desc = "Hold time for repeated START in clock units";
+            sw = rw;
+            hw = r;
+            reset = 20'h00000;
+        } T_HD_STA[T_WIDTH-1:0];
+    } T_HD_RSTA_REG;
     reg {
         name = "";
         field {
@@ -345,7 +357,7 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_SU_STA[19:0];
+        } T_SU_STA[T_WIDTH-1:0];
     } T_SU_STA_REG;
     reg {
         name = "";
@@ -355,13 +367,23 @@ regfile SoCManagementInterfaceRegisters{
             sw = rw;
             hw = r;
             reset = 20'h00000;
-        } T_SU_STO[19:0];
+        } T_SU_STO[T_WIDTH-1:0];
     } T_SU_STO_REG;
     reg {
         name = "";
         field {
             name = "";
-            desc = "Time in clock cycles from STOP detection until Bus Free Condition (tBUF/tCAS). Configure based on System Clock.";
+            desc = "Setup time for SDA during START in clock units";
+            sw = rw;
+            hw = r;
+            reset = 20'h00000;
+        } T_DS_OD[T_WIDTH-1:0];
+    } T_DS_OD_REG;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "";
             sw = rw;
             hw = r;
             reset = 32'h0000000C;

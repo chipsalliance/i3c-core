@@ -23,19 +23,17 @@
 module bus_timers
   import controller_pkg::*;
 (
-    input  logic        clk_i,
-    input  logic        rst_ni,
-    input  logic        enable_i,           // Module enable (i3c_standby_en)
-    input  logic        bus_start_i,        // Bus START/RSTART detected
-    input  logic        bus_stop_i,         // Bus STOP detected
-    input  logic        in_hdr_mode_i,      // Currently in HDR mode
-    input  logic [19:0] t_bus_free_i,       // CSR: Time to free
-    input  logic [19:0] t_bus_idle_i,       // CSR: Time to idle
-    input  logic [19:0] t_bus_available_i,  // CSR: Time to available
-    output logic        bus_busy_o,         // Bus is busy
-    output logic        bus_free_o,         // Bus is free
-    output logic        bus_idle_o,         // Bus is idle
-    output logic        bus_available_o     // Bus is available
+    input  logic                            clk_i,
+    input  logic                            rst_ni,
+    input  logic                            enable_i,
+    input  logic                            reset_counter_ni,
+    input  logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i,       // CSR: Time to free
+    input  logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_i,       // CSR: Time to idle
+    input  logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i,  // CSR: Time to available
+    output logic                            bus_busy_o,         // Bus is busy
+    output logic                            bus_free_o,         // Bus is free
+    output logic                            bus_idle_o,         // Bus is idle
+    output logic                            bus_available_o     // Bus is available
 );
   logic [31:0] bus_state_counter;
   logic count_enable;

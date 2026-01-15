@@ -1,0 +1,22 @@
+// FIXME: add detailed description of tests using testbench/stimulus/check template
+{
+  name: Controller I3C flow
+  testpoints:
+  [
+    {
+      name: Typical I3C operation
+      desc:
+        '''
+        - Configure the bus using CCC to assign dynamic addresses
+        - perform writes to multiple targets
+        - read from multiple targets
+        - service IBI
+        - issue restart of a target
+        - hot join a new target 
+        - service errors
+        '''
+      tests: ["controller_typical_operation"]
+      tags: ["top"]
+    }
+  ]
+}

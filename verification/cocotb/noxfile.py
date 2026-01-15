@@ -101,6 +101,12 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             if controller_support and target_support:
                 filelist = f"{i3c_root}/src/i3c.f"
 
+            if filelist is None:
+                raise ValueError(
+                    "Invalid Configuration: Both TARGET_SUPPORT and CONTROLLER_SUPPORT are disabled. "
+                    "At least one must be set to '1'."
+                )
+
             args = [
                 sim_repeater_path(),
                 "make",
@@ -241,16 +247,17 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
 
-@nox.session(tags=["tests", "axi", "axi_block"])
-@nox.parametrize("test_group", ["hci_queues_axi"])
-@nox.parametrize(
-    "test_name",
-    [
-        "test_clear",
-        "test_empty",
-        "test_read_write_ports",
-        "test_threshold",
-    ],
+@test(
+    TestParams(
+        ["tests", "axi_hc", "controller"],
+        ["hci_queues_axi"],
+        [
+            "test_clear_hci",
+            "test_empty_hci",
+            "test_read_write_ports_hci",
+            "test_threshold_hci",
+        ],
+    )
 )
 @nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)
@@ -409,6 +416,8 @@ def ctrl_bus_timers_verify(session, test_group, test_name, coverage, simulator):
 @nox.parametrize("simulator", simulators)
 def ctrl_bus_monitor_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
+    
+
 
 
 @nox.session(tags=["tests", "ahb", "axi", "axi_block"])

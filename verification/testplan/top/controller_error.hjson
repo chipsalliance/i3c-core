@@ -1,0 +1,17 @@
+// FIXME: add detailed description of tests using testbench/stimulus/check template
+{
+  name: Controller error generation
+  testpoints:
+  [
+    {
+      name: Generate Error response
+      desc:
+        '''
+        Handle Error as per 6.13 HCI Spec for each type of error as specified in the ERR_STATUS field of the resp desc (Table 146 HCI Spec). I.e. halt execution until error is resolved by driver.
+        '''
+      tests: ["test_errors"]
+      tags: ["top"]
+    }
+  
+  ]
+}

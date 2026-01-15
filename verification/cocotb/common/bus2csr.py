@@ -316,6 +316,7 @@ def get_frontend_bus_if():
     cls_name = frontend_bus_name + "TestInterface"
     try:
         cls = getattr(import_module("bus2csr"), cls_name)
+
     except ModuleNotFoundError:
         raise ModuleNotFoundError(
             f"Frontend bus '{frontend_bus_name}' is supported but its interface '{cls_name}' can not be found"

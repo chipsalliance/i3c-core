@@ -14,9 +14,9 @@ module bus_monitor
     input logic scl_i,  // Bus SCL
     input logic sda_i,  // Bus SDA
 
-    input logic [19:0] t_hd_dat_i,  // Data hold time
-    input logic [19:0] t_r_i,       // Rise time
-    input logic [19:0] t_f_i,       // Fall time
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_dat_i,  // Data hold time
+    input logic [i3c_pkg::TimingWidth-1:0] t_r_i,       // Rise time
+    input logic [i3c_pkg::TimingWidth-1:0] t_f_i,       // Fall time
 
     // HDR mode gating: when high, state_o signals are gated
     input logic in_hdr_mode_i,
@@ -169,7 +169,7 @@ module bus_monitor
     end else begin
       if (sda_posedge) begin
         sda_r <= '1;
-      end else if(sda_negedge) begin
+      end else if (sda_negedge) begin
         sda_r <= '0;
       end
     end
@@ -181,7 +181,7 @@ module bus_monitor
     end else begin
       if (scl_posedge) begin
         scl_r <= '1;
-      end else if(scl_negedge) begin
+      end else if (scl_negedge) begin
         scl_r <= '0;
       end
     end

@@ -114,22 +114,27 @@ module controller_active
     input logic i2c_standby_en_i,
     input logic i3c_active_en_i,
     input logic i3c_standby_en_i,
-    input logic [19:0] t_hd_dat_i,
-    input logic [19:0] t_r_i,
-    input logic [19:0] t_f_i,
-    input logic [19:0] t_bus_free_i,
-    input logic [19:0] t_bus_idle_i,
-    input logic [19:0] t_bus_available_i
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_dat_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_r_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_f_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i
 
 );
 
   logic host_enable;
   logic fmt_fifo_rvalid;
   logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth;
+  logic fmt_fifo_rready_i2c;
   logic fmt_fifo_rready;
+  logic fmt_fifo_rdone;
   logic [7:0] fmt_byte;
+  logic fmt_bit;
+  logic fmt_receive_nack;
   logic fmt_flag_start_before;
   logic fmt_flag_stop_after;
+  logic fmt_flag_restart_after;
   logic fmt_flag_read_bytes;
   logic fmt_flag_read_continue;
   logic fmt_flag_nak_ok;
@@ -138,8 +143,7 @@ module controller_active
   logic rx_fifo_wvalid;
   logic [RxFifoWidth-1:0] rx_fifo_wdata;
 
-  // FUTUREFIX: Connect I2C Controller SDA/SCL to I3C Flow FSM
-
+  logic unassigned_sel_od_pp_o;
   flow_active flow_fsm (
       .clk_i,
       .rst_ni,
@@ -194,12 +198,18 @@ module controller_active
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid),
       .fmt_fifo_depth_o(fmt_fifo_depth),
       .fmt_fifo_rready_i(fmt_fifo_rready),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone),
       .fmt_byte_o(fmt_byte),
+      .fmt_bit_o(fmt_bit),
       .fmt_flag_start_before_o(fmt_flag_start_before),
       .fmt_flag_stop_after_o(fmt_flag_stop_after),
+      .fmt_flag_restart_after_o(fmt_flag_restart_after),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
       .fmt_flag_read_continue_o(fmt_flag_read_continue),
+      .fmt_receive_nack_i(fmt_receive_nack),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok),
+      .phy_sel_od_pp_i(1'b1),  // TODO: assign these signals
+      .phy_sel_od_pp_o(unassigned_sel_od_pp_o),
       .unhandled_unexp_nak_o(unhandled_unexp_nak),
       .unhandled_nak_timeout_o(unhandled_nak_timeout),
       .rx_fifo_wvalid_i(rx_fifo_wvalid),
@@ -232,7 +242,7 @@ module controller_active
       .host_enable_i('0),
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),
-      .fmt_fifo_rready_o(fmt_fifo_rready),
+      .fmt_fifo_rready_o(fmt_fifo_rready_i2c),
       .fmt_byte_i(fmt_byte),
       .fmt_flag_start_before_i(fmt_flag_start_before),
       .fmt_flag_stop_after_i(fmt_flag_stop_after),
@@ -245,18 +255,18 @@ module controller_active
       .rx_fifo_wdata_o(rx_fifo_wdata),
       .host_idle_o(unused_host_idle_o),
 
-      // FUTUREFIX: Use calculated timing values
-      // FUTUREFIX: Expose as programmable feature
-      .thigh_i(16'd10),
-      .tlow_i(16'd10),
-      .t_r_i(16'd1),
-      .t_f_i(16'd1),
-      .thd_sta_i(16'd1),
-      .tsu_sta_i(16'd1),
-      .tsu_sto_i(16'd1),
-      .tsu_dat_i(16'd1),
-      .thd_dat_i(16'd1),
-      .t_buf_i(16'd1),
+      // TODO: Use calculated timing values
+      // TODO: Expose as programmable feature
+      .thigh_i(20'd10),
+      .tlow_i(20'd10),
+      .t_r_i(20'd1),
+      .t_f_i(20'd1),
+      .thd_sta_i(20'd1),
+      .tsu_sta_i(20'd1),
+      .tsu_sto_i(20'd1),
+      .tsu_dat_i(20'd1),
+      .thd_dat_i(20'd1),
+      .t_buf_i(20'd1),
 
       // Clock stretch is not supported by I3C bus
       .stretch_timeout_i('0),
@@ -278,12 +288,42 @@ module controller_active
 
   // FUTUREFIX: Handle i3c waveform
   i3c_controller_fsm xi3c_controller_fsm (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
+      .clk_i,
+      .rst_ni,
+
       .ctrl_scl_i(ctrl_bus_i[1].scl.value),
       .ctrl_sda_i(ctrl_bus_i[1].sda.value),
+      .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
-      .ctrl_sda_o(ctrl_sda_o[1])
+      .ctrl_sda_o(ctrl_sda_o[1]),
+
+      // TODO: use values form CSRs
+      .thigh_i(20'd15),
+      .tlow_i(20'd15),
+      .t_r_i(20'd1),
+      .t_f_i(20'd1),
+      .thd_sta_i(20'd4),
+      .thd_rsta_i(20'd3),
+      .tsu_rsta_i(20'd3),  // NOTE: this register is named T_SU_STA for some reason...
+      .tsu_sta_i(20'd3),
+      .tsu_sto_i(20'd5),
+      .t_ds_od_i(20'd8),
+      .tsu_dat_i(20'd3),
+      .thd_dat_i(20'd3),
+      .t_buf_i(20'd3),
+
+      .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
+      .fmt_fifo_depth_i(fmt_fifo_depth),
+      .fmt_fifo_rready_o(fmt_fifo_rready),
+      .fmt_fifo_rdone_o(fmt_fifo_rdone),
+      .fmt_byte_i(fmt_byte),
+      .fmt_bit_i(fmt_bit),  // T bit
+      .fmt_receive_nack_o(fmt_receive_nack),
+      .fmt_flag_start_before_i(fmt_flag_start_before),
+      .fmt_flag_restart_after_i(fmt_flag_restart_after),
+      .fmt_flag_read_continue_i(fmt_flag_read_continue),
+      .fmt_flag_stop_after_i(fmt_flag_stop_after),
+      .fmt_flag_read_bytes_i(fmt_flag_read_bytes)
   );
 
   // FUTUREFIX: Handle driver switching in the active controller mode

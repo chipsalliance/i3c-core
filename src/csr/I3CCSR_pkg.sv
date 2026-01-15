@@ -3265,6 +3265,14 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_STA__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_STA__out_t T_HD_STA;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__T_SU_STA__out_t;
 
     typedef struct packed{
@@ -3278,6 +3286,14 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t T_SU_STO;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG__T_DS_OD__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG__T_DS_OD__out_t T_DS_OD;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG__out_t;
 
     typedef struct packed{
         logic [31:0] value;
@@ -3338,8 +3354,10 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__out_t T_HIGH_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__out_t T_LOW_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__out_t T_HD_STA_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__out_t T_HD_RSTA_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__out_t T_SU_STA_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t T_SU_STO_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG__out_t T_DS_OD_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t T_FREE_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__out_t T_AVAL_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__out_t T_IDLE_REG;

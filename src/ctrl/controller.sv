@@ -63,8 +63,8 @@ module controller
     parameter int unsigned TtiIbiThldWidth = 8
 `endif  // TARGET_SUPPORT
 ) (
-    input logic clk_i,
-    input logic rst_ni,
+    input  logic clk_i,
+    input  logic rst_ni,
     // Interface to SDA/SCL
     input  logic scl_i,
     input  logic sda_i,
@@ -72,7 +72,7 @@ module controller
     output logic sda_o,
     output logic sda_oe_o,
     output logic sel_od_pp_o,
-    input logic arbitration_lost_i,
+    input  logic arbitration_lost_i,
 
 `ifdef CONTROLLER_SUPPORT
     // HCI queues
@@ -470,93 +470,92 @@ module controller
 `ifdef CONTROLLER_SUPPORT
   // Active controller
   controller_active xcontroller_active (
-    .clk_i(clk_i),
-    .rst_ni(rst_ni),
-    .ctrl_bus_i(ctrl_bus_i[0:1]),
-    .ctrl_scl_o(ctrl_scl_o[0:1]),
-    .ctrl_sda_o(ctrl_sda_o[0:1]),
-    .phy_sel_od_pp_o(ctrl_sel_od_pp_i[0:1]),
-    .cmd_queue_full_i(hci_cmd_queue_full_i),
-    .cmd_queue_depth_i(hci_cmd_queue_depth_i),
-    .cmd_queue_ready_thld_i(hci_cmd_queue_ready_thld_i),
-    .cmd_queue_ready_thld_trig_i(hci_cmd_queue_ready_thld_trig_i),
-    .cmd_queue_empty_i(hci_cmd_queue_empty_i),
-    .cmd_queue_rvalid_i(hci_cmd_queue_rvalid_i),
-    .cmd_queue_rready_o(hci_cmd_queue_rready_o),
-    .cmd_queue_rdata_i(hci_cmd_queue_rdata_i),
-    .rx_queue_full_i(hci_rx_queue_full_i),
-    .rx_queue_depth_i(hci_rx_queue_depth_i),
-    .rx_queue_start_thld_i(hci_rx_queue_start_thld_i),
-    .rx_queue_start_thld_trig_i(hci_rx_queue_start_thld_trig_i),
-    .rx_queue_ready_thld_i(hci_rx_queue_ready_thld_i),
-    .rx_queue_ready_thld_trig_i(hci_rx_queue_ready_thld_trig_i),
-    .rx_queue_empty_i(hci_rx_queue_empty_i),
-    .rx_queue_wvalid_o(hci_rx_queue_wvalid_o),
-    .rx_queue_wready_i(hci_rx_queue_wready_i),
-    .rx_queue_wdata_o(hci_rx_queue_wdata_o),
-    .tx_queue_full_i(hci_tx_queue_full_i),
-    .tx_queue_depth_i(hci_tx_queue_depth_i),
-    .tx_queue_start_thld_i(hci_tx_queue_start_thld_i),
-    .tx_queue_start_thld_trig_i(hci_tx_queue_start_thld_trig_i),
-    .tx_queue_ready_thld_i(hci_tx_queue_ready_thld_i),
-    .tx_queue_ready_thld_trig_i(hci_tx_queue_ready_thld_trig_i),
-    .tx_queue_empty_i(hci_tx_queue_empty_i),
-    .tx_queue_rvalid_i(hci_tx_queue_rvalid_i),
-    .tx_queue_rready_o(hci_tx_queue_rready_o),
-    .tx_queue_rdata_i(hci_tx_queue_rdata_i),
-    .resp_queue_full_i(hci_resp_queue_full_i),
-    .resp_queue_depth_i(hci_resp_queue_depth_i),
-    .resp_queue_ready_thld_i(hci_resp_queue_ready_thld_i),
-    .resp_queue_ready_thld_trig_i(hci_resp_queue_ready_thld_trig_i),
-    .resp_queue_empty_i(hci_resp_queue_empty_i),
-    .resp_queue_wvalid_o(hci_resp_queue_wvalid_o),
-    .resp_queue_wready_i(hci_resp_queue_wready_i),
-    .resp_queue_wdata_o(hci_resp_queue_wdata_o),
-    .ibi_queue_full_i(hci_ibi_queue_full_i),
-    .ibi_queue_depth_i(hci_ibi_queue_depth_i),
-    .ibi_queue_ready_thld_i(hci_ibi_queue_ready_thld_i),
-    .ibi_queue_ready_thld_trig_i(hci_ibi_queue_ready_thld_trig_i),
-    .ibi_queue_empty_i(hci_ibi_queue_empty_i),
-    .ibi_queue_wvalid_o(hci_ibi_queue_wvalid_o),
-    .ibi_queue_wready_i(hci_ibi_queue_wready_i),
-    .ibi_queue_wdata_o(hci_ibi_queue_wdata_o),
-    .dat_read_valid_hw_o(dat_read_valid_hw_o),
-    .dat_index_hw_o(dat_index_hw_o),
-    .dat_rdata_hw_i(dat_rdata_hw_i),
-    .dct_write_valid_hw_o(dct_write_valid_hw_o),
-    .dct_read_valid_hw_o(dct_read_valid_hw_o),
-    .dct_index_hw_o(dct_index_hw_o),
-    .dct_wdata_hw_o(dct_wdata_hw_o),
-    .dct_rdata_hw_i(dct_rdata_hw_i),
-    .i3c_fsm_en_i(i3c_fsm_en_i),
-    .i3c_fsm_idle_o(i3c_fsm_idle_o),
-    .err(err),
-    .irq(irq),
-    .phy_en_i(phy_en),
-    .phy_mux_select_i(phy_mux_select),
-    .i2c_active_en_i(i2c_active_en),
-    .i2c_standby_en_i(i2c_standby_en),
-    .i3c_active_en_i(i3c_active_en),
-    .i3c_standby_en_i(i3c_standby_en),
-    .t_hd_dat_i(t_hd_dat),
-    .t_r_i(t_r),
-    .t_f_i(t_f),
-    .t_bus_free_i(t_bus_free),
-    .t_bus_idle_i(t_bus_idle),
-    .t_bus_available_i(t_bus_available)
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .ctrl_bus_i(ctrl_bus_i[0:1]),
+      .ctrl_scl_o(ctrl_scl_o[0:1]),
+      .ctrl_sda_o(ctrl_sda_o[0:1]),
+      .phy_sel_od_pp_o(ctrl_sel_od_pp_i[0:1]),
+      .cmd_queue_full_i(hci_cmd_queue_full_i),
+      .cmd_queue_depth_i(hci_cmd_queue_depth_i),
+      .cmd_queue_ready_thld_i(hci_cmd_queue_ready_thld_i),
+      .cmd_queue_ready_thld_trig_i(hci_cmd_queue_ready_thld_trig_i),
+      .cmd_queue_empty_i(hci_cmd_queue_empty_i),
+      .cmd_queue_rvalid_i(hci_cmd_queue_rvalid_i),
+      .cmd_queue_rready_o(hci_cmd_queue_rready_o),
+      .cmd_queue_rdata_i(hci_cmd_queue_rdata_i),
+      .rx_queue_full_i(hci_rx_queue_full_i),
+      .rx_queue_depth_i(hci_rx_queue_depth_i),
+      .rx_queue_start_thld_i(hci_rx_queue_start_thld_i),
+      .rx_queue_start_thld_trig_i(hci_rx_queue_start_thld_trig_i),
+      .rx_queue_ready_thld_i(hci_rx_queue_ready_thld_i),
+      .rx_queue_ready_thld_trig_i(hci_rx_queue_ready_thld_trig_i),
+      .rx_queue_empty_i(hci_rx_queue_empty_i),
+      .rx_queue_wvalid_o(hci_rx_queue_wvalid_o),
+      .rx_queue_wready_i(hci_rx_queue_wready_i),
+      .rx_queue_wdata_o(hci_rx_queue_wdata_o),
+      .tx_queue_full_i(hci_tx_queue_full_i),
+      .tx_queue_depth_i(hci_tx_queue_depth_i),
+      .tx_queue_start_thld_i(hci_tx_queue_start_thld_i),
+      .tx_queue_start_thld_trig_i(hci_tx_queue_start_thld_trig_i),
+      .tx_queue_ready_thld_i(hci_tx_queue_ready_thld_i),
+      .tx_queue_ready_thld_trig_i(hci_tx_queue_ready_thld_trig_i),
+      .tx_queue_empty_i(hci_tx_queue_empty_i),
+      .tx_queue_rvalid_i(hci_tx_queue_rvalid_i),
+      .tx_queue_rready_o(hci_tx_queue_rready_o),
+      .tx_queue_rdata_i(hci_tx_queue_rdata_i),
+      .resp_queue_full_i(hci_resp_queue_full_i),
+      .resp_queue_depth_i(hci_resp_queue_depth_i),
+      .resp_queue_ready_thld_i(hci_resp_queue_ready_thld_i),
+      .resp_queue_ready_thld_trig_i(hci_resp_queue_ready_thld_trig_i),
+      .resp_queue_empty_i(hci_resp_queue_empty_i),
+      .resp_queue_wvalid_o(hci_resp_queue_wvalid_o),
+      .resp_queue_wready_i(hci_resp_queue_wready_i),
+      .resp_queue_wdata_o(hci_resp_queue_wdata_o),
+      .ibi_queue_full_i(hci_ibi_queue_full_i),
+      .ibi_queue_depth_i(hci_ibi_queue_depth_i),
+      .ibi_queue_ready_thld_i(hci_ibi_queue_ready_thld_i),
+      .ibi_queue_ready_thld_trig_i(hci_ibi_queue_ready_thld_trig_i),
+      .ibi_queue_empty_i(hci_ibi_queue_empty_i),
+      .ibi_queue_wvalid_o(hci_ibi_queue_wvalid_o),
+      .ibi_queue_wready_i(hci_ibi_queue_wready_i),
+      .ibi_queue_wdata_o(hci_ibi_queue_wdata_o),
+      .dat_read_valid_hw_o(dat_read_valid_hw_o),
+      .dat_index_hw_o(dat_index_hw_o),
+      .dat_rdata_hw_i(dat_rdata_hw_i),
+      .dct_write_valid_hw_o(dct_write_valid_hw_o),
+      .dct_read_valid_hw_o(dct_read_valid_hw_o),
+      .dct_index_hw_o(dct_index_hw_o),
+      .dct_wdata_hw_o(dct_wdata_hw_o),
+      .dct_rdata_hw_i(dct_rdata_hw_i),
+      .i3c_fsm_en_i(i3c_active_en),
+      .i3c_fsm_idle_o(i3c_fsm_idle_o),
+      .err(err),
+      .irq(irq),
+      .phy_en_i(phy_en),
+      .phy_mux_select_i(phy_mux_select),
+      .i2c_active_en_i(i2c_active_en),
+      .i2c_standby_en_i(i2c_standby_en),
+      .i3c_active_en_i(i3c_active_en),
+      .i3c_standby_en_i(i3c_standby_en),
+      .t_hd_dat_i(t_hd_dat),
+      .t_r_i(t_r),
+      .t_f_i(t_f),
+      .t_bus_free_i(t_bus_free),
+      .t_bus_idle_i(t_bus_idle),
+      .t_bus_available_i(t_bus_available)
   );
 `else
-always_comb begin
-  err = '0;
-  irq = '0;
-  ctrl_scl_o[0] = 1'b1;
-  ctrl_scl_o[1] = 1'b1;
-  ctrl_sda_o[0] = 1'b1;
-  ctrl_sda_o[1] = 1'b1;
-  ctrl_sel_od_pp_i[0] = 1'b0;
-  ctrl_sel_od_pp_i[1] = 1'b0;
-  i3c_fsm_idle_o = 1'b1;
-end
+  always_comb begin
+    err = '0;
+    irq = '0;
+    ctrl_scl_o[0] = 1'b1;
+    ctrl_scl_o[1] = 1'b1;
+    ctrl_sda_o[0] = 1'b1;
+    ctrl_sda_o[1] = 1'b1;
+    ctrl_sel_od_pp_i[0] = 1'b0;
+    ctrl_sel_od_pp_i[1] = 1'b0;
+  end
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
   // Standby (Secondary) Controller
@@ -712,14 +711,14 @@ end
     .in_hdr_mode_o
   );
 `else
-always_comb begin
-  ctrl_scl_o[2] = 1'b1;
-  ctrl_scl_o[3] = 1'b1;
-  ctrl_sda_o[2] = 1'b1;
-  ctrl_sda_o[3] = 1'b1;
-  ctrl_sel_od_pp_i[2] = 1'b0;
-  ctrl_sel_od_pp_i[3] = 1'b0;
-end
+  always_comb begin
+    ctrl_scl_o[2] = 1'b1;
+    ctrl_scl_o[3] = 1'b1;
+    ctrl_sda_o[2] = 1'b1;
+    ctrl_sda_o[3] = 1'b1;
+    ctrl_sel_od_pp_i[2] = 1'b0;
+    ctrl_sel_od_pp_i[3] = 1'b0;
+  end
 `endif  // TARGET_SUPPORT
 
 endmodule

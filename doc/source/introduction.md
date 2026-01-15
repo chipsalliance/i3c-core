@@ -8,7 +8,8 @@ The implementation follows the Errata 01 for MIPI I3C Basic Specification Versio
 
 This documentation comprises the following chapters:
 
-* {doc}`overview` - summarizes the main notions of the project
+* {doc}`target_overview` - summarizes the main notions of the target side of the project
+* {doc}`controller_overview` - summarizes the main notions of the controller side of the project
 * {doc}`ccc` - provides an overview of the CCCs implemented by the core
 * {doc}`phy` - provides a description of the I3C PHY Layer logic
 * {doc}`error_handling` - describes error detection, interrupt reporting, and recovery mechanisms

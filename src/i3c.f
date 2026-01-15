@@ -49,6 +49,8 @@ ${I3C_ROOT_DIR}/src/recovery/recovery_handler.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_monitor.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_tx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_rx_flow.sv
+${I3C_ROOT_DIR}/src/ctrl/bus_scl_flow.sv
+${I3C_ROOT_DIR}/src/ctrl/bus_start_stop_gen.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_timers.sv
 ${I3C_ROOT_DIR}/src/ctrl/target_reset_detector.sv
 ${I3C_ROOT_DIR}/src/ctrl/i3c_bus_monitor.sv

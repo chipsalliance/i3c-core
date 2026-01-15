@@ -1,4 +1,4 @@
 include:
   - project: chipsalliance-ci-scripts
     file: i3c-core.yaml
-    ref: v1p5-nightly
+    ref: main

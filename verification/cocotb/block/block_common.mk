@@ -1,5 +1,5 @@
 BLOCK_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-export PYTHONPATH := $(PYTHONPATH):$(BLOCK_DIR)/lib_hci_queues:$(BLOCK_DIR)/lib_adapter
+export PYTHONPATH := $(PYTHONPATH):$(BLOCK_DIR)/lib_hci_queues:$(BLOCK_DIR)/lib_adapter:$(BLOCK_DIR)/lib_flow_active
 
 VERILOG_INCLUDE_DIRS= \
     $(CALIPTRA_ROOT)/src/libs/rtl \

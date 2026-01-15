@@ -427,7 +427,7 @@ module hci
       .reg_rst_data_o(hci_ibi_rst_next)
   );
 
-  always_comb begin : wire_unconnected_regs
+  always_comb begin : wire_unconnected_regs  //TODO: check all of this
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
@@ -436,8 +436,7 @@ module hci
     hwif_base_o.HC_CONTROL.RESUME.next = '0;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.we = '0;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.next = '0;
-    hwif_base_o.RESET_CONTROL.SOFT_RST.we = '0;
-    hwif_base_o.RESET_CONTROL.SOFT_RST.next = '0;
+    hwif_base_o.RESET_CONTROL.SOFT_RST = '0;  //TODO: change
     hwif_base_o.PRESENT_STATE.AC_CURRENT_OWN.next = '0;
     hwif_base_o.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = '0;
     hwif_base_o.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = '0;
@@ -449,7 +448,7 @@ module hci
     hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = '0;
     hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;
 
-    hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = hci_tx_ready_thld_trig_o;
     hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = '0;
     hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = '0;
     hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = '0;
@@ -459,4 +458,4 @@ module hci
   end
 
 endmodule : hci
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT

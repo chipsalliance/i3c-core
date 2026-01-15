@@ -13,6 +13,7 @@ MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i2c_controller_fsm
 
 VERILOG_SOURCES  = \
+		$(SRC_DIR)/i3c_pkg.sv \
     ${CALIPTRA_ROOT}/src/libs/rtl/caliptra_sva.svh \
     ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_assert.sv \
     $(SRC_DIR)/ctrl/controller_pkg.sv \

@@ -66,6 +66,7 @@ package i3c_pkg;
   localparam int unsigned RespErrIdWidth = 4;
   localparam int unsigned DatAw = $clog2(`DAT_DEPTH);
   localparam int unsigned DctAw = $clog2(`DCT_DEPTH);
+  localparam int unsigned TimingWidth = 20;
 
   localparam int unsigned I3cDataWidth = 8;
   localparam int unsigned I3cAddrWidth = 7;
@@ -289,13 +290,16 @@ package i3c_pkg;
     logic [14:0] __rsvd14_0;
   } i3c_tti_command_desc_t;
 
-  // Defined command types (See TCRI 7.1.2 Table 6)
+  // Defined command types (See TCRI Appendix A.2 Table 21)
   typedef enum logic [2:0] {
-    RegularTransfer = 3'b000,
-    ImmediateDataTransfer = 3'b001,
-    AddressAssignment = 3'b010,
-    ComboTransfer = 3'b011,
-    InternalControl = 3'b111
+    ImmediateDataTransferDAT = 3'h1,
+    ImmediateDataTransferDirect = 3'h5,
+    RegularTransferDAT = 3'h0,
+    RegularTransferDirect = 3'h4,
+    ComboTransferDAT = 3'h3,
+    ComboTransferDirect = 3'h6,
+    InternalControl = 3'h7,
+    AddressAssignment = 3'h2
   } i3c_cmd_attr_e;
 
   // Data transfer speed and mode (See TCRI 7.1.1.1)
@@ -336,9 +340,33 @@ package i3c_pkg;
     logic [7:0] cmd;  // CCC / HDR command code
     logic [3:0] tid;  // Transaction ID
     i3c_cmd_attr_e attr;
-  } immediate_data_trans_desc_t;
+  } immediate_data_trans_dat_desc_t;
 
-  // Regular transfer command descriptor (See TCRI 7.1.2.2)
+  // Immediate transfer command descriptor (See TCRI 7.2.2.1)
+  // Provides a short type of transfer, contains the data to be send in the descriptor
+  // itself (as opposed to via TX channel)
+  typedef struct packed {
+    // DWORD 1
+    logic [7:0] data_byte4;
+    logic [7:0] data_byte3;
+    logic [7:0] data_byte2;
+    logic [7:0] def_or_data_byte1;  // Direct argument or defining byte
+
+    // DWORD 0
+    logic toc;  // Terminate on completion
+    logic wroc;  // Response on completion
+    logic rnw;  // Direction; Immediate transfer is write-only
+    i3c_trans_mode_e mode;  // Mode and Speed
+    logic [2:0] dtt;  // Type and Byte Count
+    logic [6:0] dev_address;  // Device Address
+    logic cp;  // Command present
+    logic [7:0] cmd;  // CCC / HDR command code
+    logic i2c;  // Device Type
+    logic [2:0] tid;  // Transaction ID
+    i3c_cmd_attr_e attr;
+  } immediate_data_trans_direct_desc_t;
+
+  // Regular transfer command descriptor DAT (See TCRI 7.1.2.2)
   typedef struct packed {
     // DWORD 1
     logic [15:0] data_length;
@@ -358,8 +386,30 @@ package i3c_pkg;
     logic [7:0] cmd;  // CCC / HDR command code
     logic [3:0] tid;  // Transaction ID
     i3c_cmd_attr_e attr;
-  } regular_trans_desc_t;
+  } regular_trans_dat_desc_t;
 
+  // Regular transfer command descriptor direct (See TCRI 7.2.2.2)
+  typedef struct packed {
+    // DWORD 1
+    logic [15:0] data_length;
+    logic [7:0] __rsvd47_40;
+    logic [7:0] def_byte;  // Defining byte for present CCC; valid if dbp == 1'b1
+
+    // DWORD 0
+    logic toc;  // Terminate on completion
+    logic wroc;  // Response on completion
+    logic rnw;  // Direction transfer; Read if 1b'1 else write
+    i3c_trans_mode_e mode;
+    logic dbp;  // Defining byte for CCC present
+    logic sre;  // iff 0'b0 permits short reads
+    logic __rsvd23;
+    logic [6:0] dev_address;
+    logic cp;  // Command present
+    logic [7:0] cmd;  // CCC / HDR command code
+    logic i2c;  // Data Transfer Device Type
+    logic [2:0] tid;  // Transaction ID
+    i3c_cmd_attr_e attr;
+  } regular_trans_direct_desc_t;
   // Combo transfer command descriptor (See TCRI 7.1.2.3)
   typedef struct packed {
     // DWORD 1

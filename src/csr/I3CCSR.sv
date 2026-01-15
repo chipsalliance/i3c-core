@@ -194,8 +194,10 @@ module I3CCSR (
                 logic T_HIGH_REG;
                 logic T_LOW_REG;
                 logic T_HD_STA_REG;
+                logic T_HD_RSTA_REG;
                 logic T_SU_STA_REG;
                 logic T_SU_STO_REG;
+                logic T_DS_OD_REG;
                 logic T_FREE_REG;
                 logic T_AVAL_REG;
                 logic T_IDLE_REG;
@@ -1629,6 +1631,12 @@ module I3CCSR (
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
+                    } T_HD_STA;
+                } T_HD_RSTA_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
                     } T_SU_STA;
                 } T_SU_STA_REG;
                 struct packed{
@@ -1637,6 +1645,12 @@ module I3CCSR (
                         logic load_next;
                     } T_SU_STO;
                 } T_SU_STO_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
+                    } T_DS_OD;
+                } T_DS_OD_REG;
                 struct packed{
                     struct packed{
                         logic [31:0] next;
@@ -2682,6 +2696,11 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [19:0] value;
+                    } T_HD_STA;
+                } T_HD_RSTA_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
                     } T_SU_STA;
                 } T_SU_STA_REG;
                 struct packed{
@@ -2689,6 +2708,11 @@ module I3CCSR (
                         logic [19:0] value;
                     } T_SU_STO;
                 } T_SU_STO_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
+                    } T_DS_OD;
+                } T_DS_OD_REG;
                 struct packed{
                     struct packed{
                         logic [31:0] value;
@@ -9650,6 +9674,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9696,6 +9743,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_DS_OD_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value <= field_combo.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value = field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE
     always_comb begin
         automatic logic [31:0] next_c;

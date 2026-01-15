@@ -15,6 +15,7 @@ TOPLEVEL     = i2c_target_fsm_harness
 EXTRA_ARGS += -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND
 
 VERILOG_SOURCES  = \
+		$(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/ctrl/controller_pkg.sv \
     $(SRC_DIR)/ctrl/i2c_target_fsm.sv \
     $(TEST_DIR)/i2c_target_fsm_harness.sv

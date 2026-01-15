@@ -1,0 +1,116 @@
+// FIXME: add detailed description of tests using testbench/stimulus/check template
+{
+  name: Controller CCC generation
+  testpoints:
+  [
+    {
+      name: controller_ccc_enec
+      desc:
+        '''
+        The test issues ENEC broadcast
+        '''
+      tests: ["controller_ccc_enec"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_disec
+      desc:
+        '''
+        The test issues DISEC broadcast
+        '''
+      tests: ["controller_ccc_disec"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_rstdaa
+      desc:
+        '''
+        The test issues RSTDAA broadcast
+        '''
+      tests: ["controller_ccc_rstdaa"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_entdaa
+      desc:
+        '''
+        The test issues ENTDAA broadcast
+        '''
+      tests: ["controller_ccc_entdaa"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_setaasa
+      desc:
+        '''
+        The test issues SETAASA broadcast
+        '''
+      tests: ["controller_ccc_setaasa"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_enec_dir
+      desc:
+        '''
+        The test issues ENEC direct
+        '''
+      tests: ["controller_ccc_enec_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_disec_dir
+      desc:
+        '''
+        The test issues DISEC direct
+        '''
+      tests: ["controller_ccc_disec_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_setdasa
+      desc:
+        '''
+        The test issues SETDASA direct
+        '''
+      tests: ["controller_ccc_setdasa_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_setnewda
+      desc:
+        '''
+        The test issues SETNEWDA direct
+        '''
+      tests: ["controller_ccc_setnewda_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_getpid
+      desc:
+        '''
+        The test issues GETPID direct
+        '''
+      tests: ["controller_ccc_getpid_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_getbcr
+      desc:
+        '''
+        The test issues GETBCR direct
+        '''
+      tests: ["controller_ccc_getbcr_dir"]
+      tags: ["top"]
+    }
+    {
+      name: controller_ccc_getdcr
+      desc:
+        '''
+        The test issues GETDCR direct
+        '''
+      tests: ["controller_ccc_getdcr_dir"]
+      tags: ["top"]
+    }
+  
+  ]
+}

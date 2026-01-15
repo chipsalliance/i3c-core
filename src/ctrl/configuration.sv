@@ -21,15 +21,15 @@ module configuration (
     output logic i3c_standby_en_o,
 
     // Bus monitor
-    output logic [19:0] t_su_dat_o,
-    output logic [19:0] t_hd_dat_o,
-    output logic [19:0] t_r_o,
-    output logic [19:0] t_f_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_dat_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_hd_dat_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_r_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_f_o,
 
     // Bus timers
-    output logic [19:0] t_bus_free_o,
-    output logic [19:0] t_bus_idle_o,
-    output logic [19:0] t_bus_available_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_bus_free_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_bus_available_o,
 
     // HDR error recovery timer (I3C spec §5.1.10.1.9)
     output logic        hdr_timeout_en_o,
@@ -37,15 +37,15 @@ module configuration (
 
     output logic [15:0] get_mwl_o,  // Get Max Write Length
     output logic [15:0] get_mrl_o,  // Get Max Read Length
-    output logic [ 7:0] get_ibil_o,  // Get Max IBI Length
+    output logic [7:0] get_ibil_o,  // Get Max IBI Length
     output logic [15:0] get_status_fmt1_o,  // Get Status Format 1
 
     output logic [47:0] pid_o,  // Target ID
-    output logic [ 7:0] bcr_o,  // Bus Characteristics Register
-    output logic [ 7:0] dcr_o,  // Device Characteristics Register
+    output logic [7:0] bcr_o,  // Bus Characteristics Register
+    output logic [7:0] dcr_o,  // Device Characteristics Register
     output logic [47:0] virtual_pid_o,  // Target ID
-    output logic [ 7:0] virtual_bcr_o,  // Bus Characteristics Register
-    output logic [ 7:0] virtual_dcr_o,  // Device Characteristics Register
+    output logic [7:0] virtual_bcr_o,  // Bus Characteristics Register
+    output logic [7:0] virtual_dcr_o,  // Device Characteristics Register
 
     // Output effective target address (static or dynamic or recovery)
     output logic [6:0] target_sta_addr_o,
@@ -69,7 +69,7 @@ module configuration (
     input logic set_ibil_i,
     input logic [15:0] mwl_i,
     input logic [15:0] mrl_i,
-    input logic [ 7:0] ibil_i
+    input logic [7:0] ibil_i
 );
 
   // Mode of operation
@@ -90,7 +90,7 @@ module configuration (
   assign i2c_dev_present = hwif_out_i.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
 `else
   assign i2c_dev_present = '0;
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
   // Disables the TTI
   logic target_xact_enable;
@@ -109,7 +109,7 @@ module configuration (
   assign bus_enable = hwif_out_i.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
   assign resume = '0;
   assign abort = '0;
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
   // These affect queue ctrl logic
   logic pio_enable;
@@ -123,7 +123,7 @@ module configuration (
   assign pio_enable = '0;
   assign pio_abort = '0;
   assign pio_rs = '0;
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT
 
   assign i2c_active_en_o = 1'b0;
   assign i2c_standby_en_o = 1'b0;
@@ -140,17 +140,17 @@ module configuration (
   assign phy_mux_select_o[1] = i2c_standby_en_o | i3c_standby_en_o;
 
   // Configuration: bus_monitor
-  assign t_su_dat_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value);
-  assign t_hd_dat_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value);
-  assign t_r_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
-  assign t_f_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value);
+  assign t_su_dat_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value);
+  assign t_hd_dat_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value);
+  assign t_r_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
+  assign t_f_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value);
 
   // Configuration: bus_timers
   // 20 bits is enough to measure 1ms for clock speed 1GHz.
   // See width_timing_csr function in tools/timing.py
-  assign t_bus_free_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value);
-  assign t_bus_idle_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value);
-  assign t_bus_available_o = 20'(hwif_out_i.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value);
+  assign t_bus_free_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value);
+  assign t_bus_idle_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value);
+  assign t_bus_available_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value);
 
   // Configuration: HDR error recovery timer
   assign hdr_timeout_en_o = hwif_out_i.I3C_EC.SoCMgmtIf.HDR_TIMEOUT_EN_REG.HDR_TIMEOUT_EN.value;

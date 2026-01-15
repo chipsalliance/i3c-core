@@ -1,4 +1,4 @@
-# I3C core overview
+# I3C target overview
 
 This chapter provides a high level overview of the I3C target functionalities implemented in the core.
 

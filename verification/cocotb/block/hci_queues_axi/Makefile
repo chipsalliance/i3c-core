@@ -9,6 +9,8 @@ SRC_DIR := $(abspath $(TEST_DIR)../../../../../src)
 
 TEST_FILES   = $(sort $(wildcard test_*.py))
 
+.PHONY: $(TEST_DIR)/sim_build/i3c_config.vh
+
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = hci_queues_wrapper
 

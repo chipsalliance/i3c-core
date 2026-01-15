@@ -115,18 +115,16 @@ module controller_standby
     input logic i2c_standby_en_i,
     input logic i3c_active_en_i,
     input logic i3c_standby_en_i,
-    input logic [19:0] t_hd_dat_i,
-    input logic [19:0] t_su_dat_i,
-    input logic [19:0] t_r_i,
-    input logic [19:0] t_f_i,
-    input logic [19:0] t_bus_free_i,
-    input logic [19:0] t_bus_idle_i,
-    input logic [19:0] t_bus_available_i,
-    input logic        hdr_timeout_en_i,
-    input logic [19:0] t_hdr_timeout_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_dat_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_dat_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_r_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_f_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i,
     input logic [15:0] get_mwl_i,
     input logic [15:0] get_mrl_i,
-    input logic [ 7:0] get_ibil_i,
+    input logic [7:0] get_ibil_i,
     input logic [15:0] get_status_fmt1_i,
     input logic [47:0] pid_i,
     input logic [7:0] bcr_i,
@@ -296,20 +294,19 @@ module controller_standby
   logic [31:0] i2c_rx_queue_wdata_int;
 
   // 32 -> 8 on rx_queue
-  width_converter_Nto8 xconv_i2c_rx_queue
-  (
-    .clk_i(clk_i),
-    .rst_ni(rst_ni),
-    .soft_reset_ni(1'b1),
+  width_converter_Nto8 xconv_i2c_rx_queue (
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(1'b1),
 
-    .sink_valid_i(i2c_rx_queue_wvalid_int),
-    .sink_ready_o(rx_queue_wready_int),
-    .sink_data_i (i2c_rx_queue_wdata_int),
+      .sink_valid_i(i2c_rx_queue_wvalid_int),
+      .sink_ready_o(rx_queue_wready_int),
+      .sink_data_i (i2c_rx_queue_wdata_int),
 
-    .source_valid_o(i2c_rx_queue_wvalid_o),
-    .source_ready_i(rx_queue_wready_i),
-    .source_data_o(i2c_rx_queue_wdata_o),
-    .source_flush_i(i2c_rx_queue_flush_o)
+      .source_valid_o(i2c_rx_queue_wvalid_o),
+      .source_ready_i(rx_queue_wready_i),
+      .source_data_o (i2c_rx_queue_wdata_o),
+      .source_flush_i(i2c_rx_queue_flush_o)
   );
 
 
@@ -317,21 +314,20 @@ module controller_standby
   logic i2c_tx_queue_rready_int;
   logic [31:0] tx_queue_rdata_int;
   // 8 -> 32 on tx_queue
-  width_converter_8toN xconv_i2c_tx_queue
-  (
+  width_converter_8toN xconv_i2c_tx_queue (
 
-    .clk_i(clk_i),
-    .rst_ni(rst_ni),
-    .soft_reset_ni(1'b1),
+      .clk_i(clk_i),
+      .rst_ni(rst_ni),
+      .soft_reset_ni(1'b1),
 
-    .sink_valid_i(tx_queue_rvalid_i),
-    .sink_ready_o(i2c_tx_queue_rready_o),
-    .sink_data_i(tx_queue_rdata_i),
-    .sink_flush_i(1'b0),
+      .sink_valid_i(tx_queue_rvalid_i),
+      .sink_ready_o(i2c_tx_queue_rready_o),
+      .sink_data_i (tx_queue_rdata_i),
+      .sink_flush_i(1'b0),
 
-    .source_valid_o(tx_queue_rvalid_int),
-    .source_ready_i(i2c_tx_queue_rready_int),
-    .source_data_o(tx_queue_rdata_int)
+      .source_valid_o(tx_queue_rvalid_int),
+      .source_ready_i(i2c_tx_queue_rready_int),
+      .source_data_o (tx_queue_rdata_int)
   );
 
   assign ctrl_sda_oe_o[0] = 1'b0;
@@ -544,9 +540,9 @@ module controller_standby
   );
 
   always_comb begin
-    i3c_bus_start_o   = ctrl_bus_i[1].start_det;
-    i3c_bus_rstart_o  = ctrl_bus_i[1].rstart_det;
-    i3c_bus_stop_o    = ctrl_bus_i[1].stop_det;
+    i3c_bus_start_o  = ctrl_bus_i[1].start_det;
+    i3c_bus_rstart_o = ctrl_bus_i[1].rstart_det;
+    i3c_bus_stop_o   = ctrl_bus_i[1].stop_det;
   end
 
 endmodule

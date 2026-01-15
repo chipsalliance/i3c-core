@@ -60,3 +60,4 @@ work/
 ucli.key
 verification/testplan/generated
 .svlint.toml
+*.surf.ron

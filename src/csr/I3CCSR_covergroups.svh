@@ -2439,6 +2439,26 @@
 
     endgroup
 
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_HD_RSTA_REG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG_fld_cg with function sample(
+    input bit [20-1:0] T_HD_STA
+    );
+        option.per_instance = 1;
+        T_HD_STA_cp : coverpoint T_HD_STA;
+
+    endgroup
+
     /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_SU_STA_REG COVERGROUPS -----------------------*/
     covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
@@ -2476,6 +2496,26 @@
     );
         option.per_instance = 1;
         T_SU_STO_cp : coverpoint T_SU_STO;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_DS_OD_REG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG_fld_cg with function sample(
+    input bit [20-1:0] T_DS_OD
+    );
+        option.per_instance = 1;
+        T_DS_OD_cp : coverpoint T_DS_OD;
 
     endgroup
 

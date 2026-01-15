@@ -39,16 +39,16 @@ module i2c_controller_fsm
 
     output logic host_idle_o,  // indicates the host is idle
 
-    input [15:0] thigh_i,  // high period of the SCL in clock units
-    input [15:0] tlow_i,  // low period of the SCL in clock units
-    input [15:0] t_r_i,  // rise time of both SDA and SCL in clock units
-    input [15:0] t_f_i,  // fall time of both SDA and SCL in clock units
-    input [15:0] thd_sta_i,  // hold time for (repeated) START in clock units
-    input [15:0] tsu_sta_i,  // setup time for repeated START in clock units
-    input [15:0] tsu_sto_i,  // setup time for STOP in clock units
-    input [15:0] tsu_dat_i,  // data setup time in clock units
-    input [15:0] thd_dat_i,  // data hold time in clock units
-    input [15:0] t_buf_i,  // bus free time between STOP and START in clock units
+    input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] t_r_i,  // rise time of both SDA and SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] t_f_i,  // fall time of both SDA and SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] thd_sta_i,  // hold time for (repeated) START in clock units
+    input [i3c_pkg::TimingWidth-1:0] tsu_sta_i,  // setup time for repeated START in clock units
+    input [i3c_pkg::TimingWidth-1:0] tsu_sto_i,  // setup time for STOP in clock units
+    input [i3c_pkg::TimingWidth-1:0] tsu_dat_i,  // data setup time in clock units
+    input [i3c_pkg::TimingWidth-1:0] thd_dat_i,  // data hold time in clock units
+    input [i3c_pkg::TimingWidth-1:0] t_buf_i,  // bus free time between STOP and START in clock units
     input [30:0] stretch_timeout_i,  // max time target connected to this host may stretch the clock
     input timeout_enable_i,  // assert if target stretches clock past max
     input [30:0] host_nack_handler_timeout_i, // Timeout threshold for unhandled Host-Mode 'nak' irq.

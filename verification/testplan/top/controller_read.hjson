@@ -1,0 +1,65 @@
+// FIXME: add detailed description of tests using testbench/stimulus/check template
+{
+  name: Controller read
+  testpoints:
+  [
+    {
+      name: Test I3C controller SDR direct private reads with data to RX Queue and AXI bus
+      desc:
+        '''
+        Testbench:
+        I3C wrapper (DUT) -> cocotbext controller
+
+        Intent:
+        Verify Private Write as per 7.2.2.2 TCRI Spec to an individual I3C Target Device with known static address
+
+        Stimulus:
+        - create a CMD 64bit descriptor as per Table 18 7.2.2.2 TCRI Spec. 
+        - split the 64bit descriptor into 2 32bit words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+        - stimulate I3C bus with DATA from target. -> maybe use target RTL in an SoC level test?
+
+        Check:
+        Verify that:
+            - correct start/restart condition is generated 
+            - check that following data bytes are correctly serialized (from MSB to LSB)
+            - first byte is DEV_ADDRESS
+            - following bytes are DATA_BYTES from target
+            - correct stop condition is generated
+            - RX Queue Contains DATA being sent
+        '''
+      tests: ["i3c_controller_read_Direct_txqueue"]
+      tags: ["top"]
+    }
+    {
+      name: Test I3C controller SDR DAT private reads with data to RX Queue and AXI bus
+      desc:
+        '''
+        Testbench:
+        I3C wrapper (DUT) -> cocotbext controller
+
+        Intent:
+        Verify Private Write as per 7.1.2.2 TCRI Spec to an individual I3C Target Device with known static address
+
+        Stimulus:
+        - Start with sendinng ENTDAA CCC to assign dynamic addresses
+        - Assign dynamic address of device to DAT index 
+        - create a CMD 64bit descriptor as per Table 9 7.1.2.2 TCRI Spec. 
+        - split the 64bit descriptor into 2 32bit words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+        - stimulate I3C bus with DATA from target. -> maybe use target RTL in an SoC level test?
+
+        Check:
+        Verify that:
+            - correct start/restart condition is generated 
+            - check that following data bytes are correctly serialized (from MSB to LSB)
+            - first byte is DEV_ADDRESS
+            - following bytes are DATA_BYTES from target
+            - correct stop condition is generated
+            - RX Queue Contains DATA being sent
+        '''
+      tests: ["i3c_controller_read_Direct_txqueue"]
+      tags: ["top"]
+    }
+
+ 
+  ]
+}

@@ -85,6 +85,7 @@ config-rtl: config-print ## Generate top I3C definitions .svh file
 RDL_REGS    := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/
 RDL_ARGS    := $(shell $(PYTHON) $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) reg_gen_opts)
+EXTRA_REG_GEN_ARGS = -P timing_width=20
 
 config-rdl: config-print
 	$(PYTHON) $(TOOL_DIR)/reg_gen/reg_gen.py --input-file=$(RDL_REGS) --output-dir=$(RDL_GEN_DIR) $(RDL_ARGS) $(EXTRA_REG_GEN_ARGS)
@@ -162,6 +163,21 @@ test: config ## Run all testpoints for a single test (use `TEST=<test_name>` fla
 test-s: config
 	$(MAKE) config CFG_NAME=$(CFG_NAME)
 	$(NOX) -f $(COCOTB_NOXFILE) -s $(TEST)
+
+tests-axi-hc: ## Run all verification/cocotb/* RTL tests for AXI bus HC configuration without coverage
+	export CONTROLLER_SUPPORT=1 && \
+	export TARGET_SUPPORT=0 && \
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_hc $(PYTHON) -m nox -R -t "axi_hc" --no-venv --forcecolor
+
+tests-axi-controller-short: ## Run all verification/cocotb/* RTL tests for the controller without coverage
+	export CONTROLLER_SUPPORT=1 && \
+	export TARGET_SUPPORT=1 && \
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ctrl_and_target_short $(PYTHON) -m nox -R -t "controller-axi" --no-venv --forcecolor
+	
+tests-axi-controller: ## Run all verification/cocotb/* RTL tests for the controller without coverage
+	export CONTROLLER_SUPPORT=1 && \
+	export TARGET_SUPPORT=1 && \
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ctrl_and_target $(PYTHON) -m nox -R -t "controller-axi" --no-venv --forcecolor
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 

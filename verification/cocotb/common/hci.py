@@ -68,6 +68,42 @@ class regular_transfer_descriptor:
             | (cmd_attr & 0x7)
         )
 
+@dataclass
+class regular_transfer_descriptor_direct:
+    tid: int
+    i2c: bool
+    cmd: int
+    cp: bool
+    device_address: int
+    short_read_err: int
+    defining_byte_present: int
+    mode: int
+    rnw: bool
+    wroc: bool
+    toc: bool
+    def_byte: int
+    data_length: int
+
+    def to_int(self):
+        cmd_attr = 0x4  # Regular transfer identifier (direct)
+        return (
+            (self.data_length & 0xFFFF) << 48
+            | (self.def_byte & 0xFF) << 32
+            | (int(self.toc) & 0x1) << 31
+            | (int(self.wroc) & 0x1) << 30
+            | (int(self.rnw) & 0x1) << 29
+            | (self.mode & 0x7) << 26
+            | (self.defining_byte_present & 0x1) << 25
+            | (self.short_read_err & 0x1) << 24
+            | (self.device_address & 0x7F) << 16
+            | (int(self.cp) & 0x1) << 15
+            | (self.cmd & 0xFF) << 7
+            | (int(self.i2c) & 0x1) << 6
+            | (self.tid & 0x7) << 3
+            | (cmd_attr & 0x7)
+        )
+
+
 
 @dataclass
 class immediate_transfer_descriptor:
@@ -95,6 +131,38 @@ class immediate_transfer_descriptor:
             | (int(self.cp) & 0x1) << 15
             | (self.cmd & 0xFF) << 7
             | (self.tid & 0xF) << 3
+            | (cmd_attr & 0x7)
+        )
+
+# for direct addressed format the command descriptor differs see Table 16 7.2.2.1 I3C TCRI Spec
+@dataclass
+class immediate_transfer_descriptor_direct:
+    tid: int
+    i2c: bool
+    cmd: int
+    cp: bool
+    device_address: int
+    dtt: int
+    mode: int
+    rnw: bool
+    wroc: bool
+    toc: bool
+    data: int
+
+    def to_int(self):
+        cmd_attr = 0x5  # Immediate transfer identifier (direct mode)
+        return (
+            (self.data & 0xFFFFFFFF) << 32
+            | (int(self.toc) & 0x1) << 31
+            | (int(self.wroc) & 0x1) << 30
+            | (int(self.rnw) & 0x1) << 29
+            | (self.mode & 0x7) << 26
+            | (self.dtt & 0x7) << 23
+            | (self.device_address & 0x7F) << 16
+            | (int(self.cp) & 0x1) << 15
+            | (self.cmd & 0xFF) << 7
+            | (int(self.i2c) & 0x1) << 6
+            | (self.tid & 0x7) << 3
             | (cmd_attr & 0x7)
         )
 

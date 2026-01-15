@@ -3235,12 +3235,26 @@ permitted by the retry counter.</p>
 
 #### T_HD_STA field
 
-<p>Hold time for (repeated) START in clock units</p>
+<p>Hold time for START in clock units</p>
 
-### T_SU_STA_REG register
+### T_HD_RSTA_REG register
 
 - Absolute Address: 0x348
 - Base Offset: 0x48
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_HD_STA |  rw  | 0x0 |    |
+
+#### T_HD_STA field
+
+<p>Hold time for repeated START in clock units</p>
+
+### T_SU_STA_REG register
+
+- Absolute Address: 0x24C
+- Base Offset: 0x4C
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3264,6 +3278,20 @@ permitted by the retry counter.</p>
 #### T_SU_STO field
 
 <p>Setup time for STOP in clock units</p>
+
+### T_DS_OD_REG register
+
+- Absolute Address: 0x254
+- Base Offset: 0x54
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0|  T_DS_OD |  rw  | 0x0 |    |
+
+#### T_DS_OD field
+
+<p>Setup time for SDA during START in clock units</p>
 
 ### T_FREE_REG register
 

@@ -16,7 +16,8 @@ regfile ECRegisters #(
     bit pid_hi_reset = 0x0,
     bit pid_lo_reset = 0x0,
     bit virtual_pid_hi_reset = 0x0,
-    bit virtual_pid_lo_reset = 0x0
+    bit virtual_pid_lo_reset = 0x0,
+    bit timing_width = 20
 ){
     name = "Extended Capabilities";
 `ifdef TARGET_SUPPORT
@@ -40,7 +41,9 @@ regfile ECRegisters #(
         .ibi_fifo_size(tti_ibi_fifo_size)
     ) TTI;
 `endif
-    SoCManagementInterfaceRegisters SoCMgmtIf;
+    SoCManagementInterfaceRegisters #(
+    .T_WIDTH(timing_width)
+    ) SoCMgmtIf;
     ControllerConfigRegisters CtrlCfg;
     reg {
         desc = "Register after the last EC must advertise ID == 0.

@@ -1,0 +1,16 @@
+// FIXME: add detailed description of tests using testbench/stimulus/check template
+{
+  name: Controller resets target
+  testpoints:
+  [
+    {
+      name: Reset target
+      desc:
+        '''
+        Reset a target according to 5.1.11 I3C Basic Spec. (using RSTACT CCC)
+        '''
+      tests: ["controller_resets_target"]
+      tags: ["top"]
+    }
+  ]
+}

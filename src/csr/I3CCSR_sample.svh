@@ -2934,6 +2934,31 @@
         end
     endfunction
 
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_HD_RSTA_REG SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG::sample(uvm_reg_data_t  data,
+                                                   uvm_reg_data_t  byte_en,
+                                                   bit             is_read,
+                                                   uvm_reg_map     map);
+        m_current = get();
+        m_data    = data;
+        m_is_read = is_read;
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(T_HD_STA_bit_cg[bt]) this.T_HD_STA_bit_cg[bt].sample(data[0 + bt]);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( data[19:0]/*T_HD_STA*/   );
+        end
+    endfunction
+
+    function void I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG::sample_values();
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(T_HD_STA_bit_cg[bt]) this.T_HD_STA_bit_cg[bt].sample(T_HD_STA.get_mirrored_value() >> bt);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( T_HD_STA.get_mirrored_value()   );
+        end
+    endfunction
+
     /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_SU_STA_REG SAMPLE FUNCTIONS -----------------------*/
     function void I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG::sample(uvm_reg_data_t  data,
                                                    uvm_reg_data_t  byte_en,
@@ -2981,6 +3006,31 @@
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
             this.fld_cg.sample( T_SU_STO.get_mirrored_value()   );
+        end
+    endfunction
+
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_DS_OD_REG SAMPLE FUNCTIONS -----------------------*/
+    function void I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG::sample(uvm_reg_data_t  data,
+                                                   uvm_reg_data_t  byte_en,
+                                                   bit             is_read,
+                                                   uvm_reg_map     map);
+        m_current = get();
+        m_data    = data;
+        m_is_read = is_read;
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(T_DS_OD_bit_cg[bt]) this.T_DS_OD_bit_cg[bt].sample(data[0 + bt]);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( data[19:0]/*T_DS_OD*/   );
+        end
+    endfunction
+
+    function void I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG::sample_values();
+        if (get_coverage(UVM_CVR_REG_BITS)) begin
+            foreach(T_DS_OD_bit_cg[bt]) this.T_DS_OD_bit_cg[bt].sample(T_DS_OD.get_mirrored_value() >> bt);
+        end
+        if (get_coverage(UVM_CVR_FIELD_VALS)) begin
+            this.fld_cg.sample( T_DS_OD.get_mirrored_value()   );
         end
     endfunction
 

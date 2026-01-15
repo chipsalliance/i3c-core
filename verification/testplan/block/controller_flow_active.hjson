@@ -1,0 +1,41 @@
+{
+  name: flow_active
+  testpoints:
+  [
+    {
+      name: test_private_write_with_immediate_data
+      desc:
+        '''
+        Testbench:
+        flow_active_wrapper (DUT) -> flow_active golden model
+
+        Intent:
+        Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) to an individual I3C Target Device with known static address
+
+        Stimulus:
+         - create a 64b CMD descriptor as per Table 16 7.2.2.1 TCRI Spec. With:
+            - CMD_ATTR = 0x5 // ImmediateDataTransfer in Direct Format
+            - TID: random transaction ID
+            - I2C = 0x0 // I3C device
+            - CMD: random this field is disregarded
+            - CP = 0x0 // CMD field is not valid
+            - DEV_ADDRESS: random allowed I3C address 
+            - DTT: number of bytes to be transferred
+            - MODE = 0x0 // standard I3C SDR Speed
+            - RNW = 0x0 // Write transfer
+            - WROC: random 
+            - TOC: random
+            - DATA_BYTES: random data to be sent
+        - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+        Check:
+            - correct start/restart fmt_flag is generated 
+            - first fmt_byte is DEV_ADDRESS
+            - following DTT fmt_bytes are DATA_BYTES
+            - correct stop fmt_flag is generated
+        '''
+      tests: ["immediate_write"]
+      tags: ["flow_active"]
+    }
+  ]
+}

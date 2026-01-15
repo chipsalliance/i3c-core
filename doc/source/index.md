@@ -4,7 +4,8 @@
 :maxdepth: 2
 
 introduction
-overview
+target_overview
+controller_overview
 phy
 ccc
 error_handling

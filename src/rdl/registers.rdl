@@ -29,7 +29,8 @@ addrmap I3CCSR #(
     bit pid_hi_reset = 0x7FFF, // Vendor-specific values
     bit pid_lo_reset = 0x005A00A5, // Vendor-specific values, test value
     bit virtual_pid_hi_reset = 0x7FFF, // Virtual device Vendor-specific values
-    bit virtual_pid_lo_reset = 0x005A10A5 // Virtual device Vendor-specific values, test value
+    bit virtual_pid_lo_reset = 0x005A10A5, // Virtual device Vendor-specific values, test value
+    bit timing_width = 20 // Width of the registers holding timing constants for I3C
 ){
     signal {activelow; async; cpuif_reset; field_reset;} rst_ni;
 `ifdef CONTROLLER_SUPPORT
@@ -80,7 +81,8 @@ addrmap I3CCSR #(
         .pid_hi_reset(pid_hi_reset),
         .pid_lo_reset(pid_lo_reset),
         .virtual_pid_hi_reset(virtual_pid_hi_reset),
-        .virtual_pid_lo_reset(virtual_pid_lo_reset)
+        .virtual_pid_lo_reset(virtual_pid_lo_reset),
+        .timing_width(timing_width)
     ) I3C_EC @ EC_offset;
 `ifdef CONTROLLER_SUPPORT
     mem {
