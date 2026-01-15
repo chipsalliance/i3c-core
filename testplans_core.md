@@ -630,7 +630,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `indirect_fifo_write`
 
-Test: [indirect_fifo_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L96)
+Test: [indirect_fifo_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L536)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -666,7 +666,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `read`
 
-Test: [read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L230)
+Test: [read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L690)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -755,7 +755,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `payload_available`
 
-Test: [payload_available](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362)
+Test: [payload_available](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1136)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -771,7 +771,7 @@ The I3C bus clock is set to 12.5 MHz.
 
 ### `image_activated`
 
-Test: [image_activated](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426)
+Test: [image_activated](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1228)
 
 Sets the TTI and recovery addresses via two SETDASA CCCs.
 
@@ -798,7 +798,7 @@ Reads indirect FIFO and compares received data with one written after reset.
 
 ### `recovery_flow`
 
-Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
+Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py#L1327)
 
 The test exercises firmware image transfer flow using the recovery
 protocol. It consists of two agents running concurrently.
@@ -835,7 +835,7 @@ thier values and compares them.
 
 ### `simple_write_read`
 
-Test: [indirect_fifo_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L96)
+Test: [indirect_fifo_write_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L96)
 
 Verify basic bypass functionality
 - Enable I3C Core bypass in the Recovery Handler via CSR
@@ -861,8 +861,8 @@ specification with additional bypass features
 ### `recovery_status_wires`
 
 Tests:
-- [payload_available](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362)
-- [image_activated](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426)
+- [payload_available_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362)
+- [image_activated_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426)
 
 
 Verify recovery status wires as specified in the Caliptra SS Hardware Specification
@@ -904,7 +904,7 @@ Verify that AXI access to Secure Firmware Recovery registers is filtered
 
 ### `recovery_flow`
 
-Test: [recovery_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
+Test: [recovery_flow_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L562)
 
 Verify that Recovery Handler with bypass enabled can perform full Recovery Sequence
 as specified in the Caliptra Root of Trust specification

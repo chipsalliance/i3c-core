@@ -190,37 +190,37 @@ if SDA is driven correctly and bus timings are met.
 
 ## Testpoints
 
-### `bit_tx_negedge`
+### `bit_tx_negedge_flow`
 
-Test: bit_tx_negedge
+Test: bit_tx_negedge_flow
 
 Requests the bus_tx_flow module to drive SDA right after SCL falling
 edge. Checks if the requested bit value is driven correctly.
 
-### `bit_tx_pre_posedge`
+### `bit_tx_pre_posedge_flow`
 
-Test: bit_tx_pre_posedge
+Test: bit_tx_pre_posedge_flow
 
 Requests the bus_tx_flow module to drive SDA just before SCL rising
 edge. Checks if the requested bit value is driven correctly.
 
-### `bit_tx_high_level`
+### `bit_tx_high_level_flow`
 
-Test: bit_tx_high_level
+Test: bit_tx_high_level_flow
 
 Requests the bus_tx_flow module to drive SDA just before SCL falling
 edge. Checks if the requested bit value is driven correctly.
 
-### `bit_tx_low_level`
+### `bit_tx_low_level_flow`
 
-Test: bit_tx_low_level
+Test: bit_tx_low_level_flow
 
 Requests the bus_tx_flow module to drive SDA when SCL in in stable
 low state. Checks if the requested bit value is driven correctly.
 
-### `byte_tx`
+### `byte_tx_flow`
 
-Test: [byte_tx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx/test_bus_tx.py#L214)
+Test: [byte_tx_flow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/bus_tx_flow/test_bus_tx_flow.py#L186)
 
 Requests the bus_tx_flow module to transmit a data byte along with
 T-bit. While the transmission is in progress samples SDA on rising
@@ -427,7 +427,7 @@ ended by bus stop condition.
 
 ### `clear_on_nonempty_resp_queue`
 
-Test: clear_on_nonempty_resp_queue
+Test: [clear_on_nonempty_resp_queue](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear_hci.py)
 
 Writes to the HCI queue RESET_CONTROL CSR bit which causes HCI
 command response queue to be cleared. Then, polls the CSR until the
@@ -437,7 +437,7 @@ should be the same descriptor.
 
 ### `clear_on_nonempty_cmd_queue`
 
-Test: clear_on_nonempty_cmd_queue
+Test: [clear_on_nonempty_cmd_queue](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear_hci.py)
 
 Puts a command descriptor to the HCI command queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
@@ -447,7 +447,7 @@ from the queue.
 
 ### `clear_on_nonempty_rx_queue`
 
-Test: clear_on_nonempty_rx_queue
+Test: [clear_on_nonempty_rx_queue](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear_hci.py)
 
 Puts 10 data words to the HCI RX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
@@ -456,7 +456,7 @@ gets another data word from the queue to check if it was cleared.
 
 ### `clear_on_nonempty_tx_queue`
 
-Test: clear_on_nonempty_tx_queue
+Test: [clear_on_nonempty_tx_queue](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear_hci.py)
 
 Puts 10 data words to the HCI TX data queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
@@ -465,7 +465,7 @@ gets another data word from the queue to check if it was cleared.
 
 ### `clear_on_nonempty_ibi_queue`
 
-Test: clear_on_nonempty_ibi_queue
+Test: [clear_on_nonempty_ibi_queue](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_clear_hci.py)
 
 Puts 10 data words to the HCI IBI queue. Writes to the
 RESET_CONTROL CSR to the bit responsible for clearing the queue,
@@ -474,42 +474,42 @@ gets another data word from the queue to check if it was cleared.
 
 ### `cmd_capacity_status`
 
-Test: cmd_capacity_status
+Test: [cmd_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_hci.py)
 
 Resets the HCI command queue and verifies that it is empty
 afterwards.
 
 ### `resp_capacity_status`
 
-Test: resp_capacity_status
+Test: [resp_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_hci.py)
 
 Resets the HCI response queue and verifies that it is empty
 afterwards.
 
 ### `rx_capacity_status`
 
-Test: rx_capacity_status
+Test: [rx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_hci.py)
 
 Resets the HCI RX queue and verifies that it is empty
 afterwards.
 
 ### `tx_capacity_status`
 
-Test: tx_capacity_status
+Test: [tx_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_hci.py)
 
 Resets the HCI TX queue and verifies that it is empty
 afterwards.
 
 ### `ibi_capacity_status`
 
-Test: ibi_capacity_status
+Test: [ibi_capacity_status](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_empty_hci.py)
 
 Resets the HCI IBI queue and verifies that it is empty
 afterwards.
 
 ### `cmd_setup_threshold`
 
-Test: cmd_setup_threshold
+Test: [cmd_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Writes the threshold to appropriate register for the HCI command
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -518,7 +518,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `resp_setup_threshold`
 
-Test: resp_setup_threshold
+Test: [resp_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Writes the threshold to appropriate register for the HCI response
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -527,7 +527,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `rx_setup_threshold`
 
-Test: rx_setup_threshold
+Test: [rx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Writes the threshold to appropriate register for the HCI data RX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -536,7 +536,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `tx_setup_threshold`
 
-Test: tx_setup_threshold
+Test: [tx_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Writes the threshold to appropriate register for the HCI data TX
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -545,7 +545,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `ibi_setup_threshold`
 
-Test: ibi_setup_threshold
+Test: [ibi_setup_threshold](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Writes the threshold to appropriate register for the HCI IBI
 queue (QUEUE_THLD_CTRL or DATA_BUFFER_THLD_CTRL).
@@ -554,7 +554,7 @@ Verifies the threshold signal assumes the correct value.
 
 ### `resp_should_raise_thld_trig`
 
-Test: resp_should_raise_thld_trig
+Test: [resp_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
@@ -562,7 +562,7 @@ queue fill.
 
 ### `rx_should_raise_thld_trig`
 
-Test: rx_should_raise_thld_trig
+Test: [rx_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Sets up a ready and start thresholds of the read queue and checks
 whether the trigger signals are properly asserted at different
@@ -570,7 +570,7 @@ levels of the queue fill.
 
 ### `ibi_should_raise_thld_trig`
 
-Test: ibi_should_raise_thld_trig
+Test: [ibi_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
@@ -578,7 +578,7 @@ queue fill.
 
 ### `cmd_should_raise_thld_trig`
 
-Test: cmd_should_raise_thld_trig
+Test: [cmd_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Sets up a ready threshold of the write queue and checks whether
 the trigger is properly asserted at different levels of the queue
@@ -586,7 +586,7 @@ fill.
 
 ### `tx_should_raise_thld_trig`
 
-Test: tx_should_raise_thld_trig
+Test: [tx_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_hci.py)
 
 Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
@@ -727,33 +727,9 @@ Sets up a ready threshold of the read queue and checks whether the
 trigger signal is properly asserted at different levels of the
 queue fill.
 
-### `rx_should_raise_thld_trig`
-
-Test: rx_should_raise_thld_trig
-
-Sets up a ready and start thresholds of the read queue and checks
-whether the trigger signals are properly asserted at different
-levels of the queue fill.
-
-### `tx_desc_should_raise_thld_trig`
+### `tti_tx_desc_should_raise_thld_trig`
 
 Test: [tti_tx_desc_should_raise_thld_trig](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/lib_hci_queues/test_threshold_tti.py#L69)
-
-Sets up a ready and start threshold of the write queue and checks
-whether the trigger is properly asserted at different levels of
-the queue fill.
-
-### `tx_should_raise_thld_trig`
-
-Test: tx_should_raise_thld_trig
-
-Sets up a ready and start threshold of the write queue and checks
-whether the trigger is properly asserted at different levels of
-the queue fill.
-
-### `ibi_should_raise_thld_trig`
-
-Test: ibi_should_raise_thld_trig
 
 Sets up a ready and start threshold of the write queue and checks
 whether the trigger is properly asserted at different levels of
