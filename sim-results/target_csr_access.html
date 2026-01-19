@@ -14,7 +14,7 @@
                 <div class="nav-left">
                     
                     <div class="nav-urls">
-                        <a href="./index-top.html" class="button tooltip">
+                        <a href="./index-top-with-controller.html" class="button tooltip">
                             <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
                             <span class="tooltip-text tooltip-text-right">Go Back</span>
                         </a>
@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        19/01/2026 07:48
+                        19/01/2026 14:22
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/681fdbf3">681fdbf3</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/704a4d8b">704a4d8b</a>
                     </div>
                     
                 </div>
@@ -75,21 +75,17 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                     </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">                Pass Rate                </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                     </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
 <tr><td style="text-align: center;">   <span title='Walks over all CSRs, write random value using AHB/AXI, reads it back,
-and compares with expected output.'>Test CSR accesses<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L120>dat_csr_access</a>               </td><td style="text-align: center;">        0        </td><td style="text-align: center;">       0        </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #ef4444">0.0%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L126>dct_csr_access</a>               </td><td style="text-align: center;">        0        </td><td style="text-align: center;">       0        </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #ef4444">0.0%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L135>base_csr_access</a>              </td><td style="text-align: center;">        0        </td><td style="text-align: center;">       0        </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #ef4444">0.0%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L156>pio_csr_access</a>               </td><td style="text-align: center;">        0        </td><td style="text-align: center;">       0        </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #ef4444">0.0%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L169>ec_sec_fw_rec_csr_access</a>     </td><td style="text-align: center;">      1.449      </td><td style="text-align: center;">    6779.273    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L179>ec_stdby_ctrl_mode_csr_access</a></td><td style="text-align: center;">      0.499      </td><td style="text-align: center;">    2351.349    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L270>ec_tti_csr_access</a>            </td><td style="text-align: center;">      0.732      </td><td style="text-align: center;">    3561.558    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L320>ec_soc_mgmt_csr_access</a>       </td><td style="text-align: center;">      1.238      </td><td style="text-align: center;">    5971.466    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L327>ec_contrl_config_csr_access</a>  </td><td style="text-align: center;">      0.122      </td><td style="text-align: center;">    563.063     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L333>ec_csr_access</a>                </td><td style="text-align: center;">      0.066      </td><td style="text-align: center;">    292.793     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span> </td></tr>
-<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                              </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    6    </td><td style="text-align: center;">  10   </td><td style="text-align: center;"><span style="color: #eab308">60.0%</span></td></tr>
+and compares with expected output.'>Test CSR accesses<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L169>ec_sec_fw_rec_csr_access</a>     </td><td style="text-align: center;">      1.498      </td><td style="text-align: center;">    6779.273    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L179>ec_stdby_ctrl_mode_csr_access</a></td><td style="text-align: center;">      0.513      </td><td style="text-align: center;">    2351.349    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L270>ec_tti_csr_access</a>            </td><td style="text-align: center;">      0.729      </td><td style="text-align: center;">    3561.558    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L320>ec_soc_mgmt_csr_access</a>       </td><td style="text-align: center;">      1.271      </td><td style="text-align: center;">    5971.466    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L327>ec_contrl_config_csr_access</a>  </td><td style="text-align: center;">      0.127      </td><td style="text-align: center;">    563.063     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L333>ec_csr_access</a>                </td><td style="text-align: center;">      0.065      </td><td style="text-align: center;">    292.793     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                              </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    6    </td><td style="text-align: center;">   6   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
@@ -101,10 +97,10 @@ and compares with expected output.'>Test CSR accesses<span>    </td><td><a href=
 <h3> Testplan Progress
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">                Pass rate                </th></tr>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: center;">        10         </td><td style="text-align: center;">      10       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      6       </td><td style="text-align: center;">     10     </td><td style="text-align: center;"><span style="color: #eab308">60.0%</span></td></tr>
+<tr><td style="text-align: center;">         6         </td><td style="text-align: center;">       6       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      6       </td><td style="text-align: center;">     6      </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 

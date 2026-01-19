@@ -1,3 +1,22 @@
+# Controller-specific CSR access check
+
+[Test results](./sim-results/controller_csr_access.html){.external}
+
+## Testpoints
+
+### `Test controller-specific CSR accesses`
+
+Tests:
+- [dat_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L120)
+- [dct_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L126)
+- [base_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L135)
+- [pio_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L156)
+
+
+Walks over all CSRs, write random value using AHB/AXI, reads it back,
+and compares with expected output.
+
+
 # Target
 
 [Test results](./sim-results/target.html){.external}
