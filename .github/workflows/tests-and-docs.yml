@@ -141,7 +141,7 @@ jobs:
         id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} -v
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} --no-venv -v
 
       - name: Show test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
@@ -227,7 +227,7 @@ jobs:
         id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} -v
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} --no-venv -v
 
       - name: Show test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
