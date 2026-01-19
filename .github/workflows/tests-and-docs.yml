@@ -97,6 +97,13 @@ jobs:
             help2man libfl-dev make g++ git bison flex gperf \
             libreadline-dev libbz2-dev autoconf
 
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Get Submodules
+        run: |
+          git submodule update --init --recursive
+
       - name: Cache Verilator build
         id: cache-verilator
         uses: actions/cache@v4
@@ -114,22 +121,12 @@ jobs:
           make -j$(nproc)
           make install
 
-      - name: Add Verilator to PATH
+      - name: Setup environment
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
-
-      - name: Verify Verilator
-        run: |
-          verilator --version
-          echo "VERILATOR_ROOT=$VERILATOR_ROOT"
-
-      - name: Setup repository
-        uses: actions/checkout@v4
-
-      - name: Get Submodules
-        run: |
-          git submodule update --init --recursive
+          echo "I3C_ROOT_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+          echo "CALIPTRA_ROOT=$GITHUB_WORKSPACE/third_party/caliptra-rtl" >> $GITHUB_ENV
 
       - name: Install Python environment
         run: |
@@ -143,13 +140,6 @@ jobs:
       - name: Run test
         run: |
           source activate.sh
-          export PATH="$HOME/verilator-install/bin:$PATH"
-          export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
-          export I3C_ROOT_DIR="$(pwd)"
-          export CALIPTRA_ROOT="${I3C_ROOT_DIR}/third_party/caliptra-rtl"
-          echo "I3C_ROOT_DIR=$I3C_ROOT_DIR"
-          echo "CALIPTRA_ROOT=$CALIPTRA_ROOT"
-          ls -la "$CALIPTRA_ROOT/src/libs/rtl/" | head -5
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
@@ -157,9 +147,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-ahb-${{ matrix.test }}
-          path: |
-            verification/cocotb/**/results*.xml
-            verification/cocotb/**/*.log
+          path: verification/cocotb/**/results*.xml
 
   # =============================================================================
   # Run AXI tests in parallel
@@ -180,6 +168,13 @@ jobs:
             help2man libfl-dev make g++ git bison flex gperf \
             libreadline-dev libbz2-dev autoconf
 
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Get Submodules
+        run: |
+          git submodule update --init --recursive
+
       - name: Cache Verilator build
         id: cache-verilator
         uses: actions/cache@v4
@@ -197,22 +192,12 @@ jobs:
           make -j$(nproc)
           make install
 
-      - name: Add Verilator to PATH
+      - name: Setup environment
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
-
-      - name: Verify Verilator
-        run: |
-          verilator --version
-          echo "VERILATOR_ROOT=$VERILATOR_ROOT"
-
-      - name: Setup repository
-        uses: actions/checkout@v4
-
-      - name: Get Submodules
-        run: |
-          git submodule update --init --recursive
+          echo "I3C_ROOT_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+          echo "CALIPTRA_ROOT=$GITHUB_WORKSPACE/third_party/caliptra-rtl" >> $GITHUB_ENV
 
       - name: Install Python environment
         run: |
@@ -226,13 +211,6 @@ jobs:
       - name: Run test
         run: |
           source activate.sh
-          export PATH="$HOME/verilator-install/bin:$PATH"
-          export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
-          export I3C_ROOT_DIR="$(pwd)"
-          export CALIPTRA_ROOT="${I3C_ROOT_DIR}/third_party/caliptra-rtl"
-          echo "I3C_ROOT_DIR=$I3C_ROOT_DIR"
-          echo "CALIPTRA_ROOT=$CALIPTRA_ROOT"
-          ls -la "$CALIPTRA_ROOT/src/libs/rtl/" | head -5
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
@@ -240,9 +218,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-axi-${{ matrix.test }}
-          path: |
-            verification/cocotb/**/results*.xml
-            verification/cocotb/**/*.log
+          path: verification/cocotb/**/results*.xml
 
   # =============================================================================
   # Aggregate test results
