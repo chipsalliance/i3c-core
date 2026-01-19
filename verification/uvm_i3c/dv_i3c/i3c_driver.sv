@@ -16,7 +16,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
   bit host_scl_force_high = 0;
   bit host_scl_force_low = 0;
   i3c_drv_phase_e bus_state;
-  bit stop, rstart;
+  bit stop_b, rstart;
 
   virtual task reset_signals();
     forever begin
@@ -45,7 +45,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
     forever begin
       if (cfg.if_mode == Device) release_bus();
       // driver drives bus per mode
-      stop = 0;
+      stop_b = 0;
       rstart = 0;
       rsp = null;
       fork
@@ -60,8 +60,8 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
               // Device must always react to Stop/RStart conditions
               if (cfg.if_mode == Device) begin
                 wait(req != null);
-                if (req.i3c) cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc, rstart, stop);
-                else cfg.vif.wait_for_i2c_host_stop_or_rstart(cfg.tc.i2c_tc, rstart, stop);
+                if (req.i3c) cfg.vif.wait_for_i3c_host_stop_or_rstart(cfg.tc.i3c_tc, rstart, stop_b);
+                else cfg.vif.wait_for_i2c_host_stop_or_rstart(cfg.tc.i2c_tc, rstart, stop_b);
               end
               else wait(0);
             end
@@ -81,7 +81,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
           disable fork;
         end: iso_fork
       join
-      if (cfg.if_mode == Device && stop) begin
+      if (cfg.if_mode == Device && stop_b) begin
         `uvm_info(get_full_name(), "Device got Stop", UVM_HIGH)
         bus_state = DrvIdle;
         rsp.end_with_rstart = 0;
@@ -622,8 +622,7 @@ class i3c_driver extends uvm_driver#(.REQ(i3c_seq_item), .RSP(i3c_seq_item));
             `uvm_info(get_full_name(), $sformatf("Device sampled data[%0d]=%d, T_bit=%b",
                 i, rsp.data[i], rsp.T_bit[i]), UVM_MEDIUM)
             if((^data)^t_bit == 0) begin
-              `uvm_warning(get_full_name(), $sformatf("Device sampled data is incorrect!",
-                  i, rsp.data[i], rsp.T_bit[i]))
+              `uvm_warning(get_full_name(), "Device sampled data is incorrect!")
               break;
             end
           end
