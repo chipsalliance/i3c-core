@@ -109,12 +109,16 @@ class VerificationTest:
         defaultNameCoverage = "coverage.dat"
         defaultTestNameLog = f"{self.testName}{pfx}.log"
         defaultNameVDB = f"{self.sim_build}/simv.vdb"
+        defaultNameFSDB = "dump.fsdb"
+        defaultNameFST = "dump.fst"
 
         testNameVCD = f"{self.testName}{pfx}.vcd"
         testNameXML = f"{self.testName}{pfx}.xml"
         testCoverageName = f"{self.testName}{pfx}_{coverage}.dat"
         testNameLog = f"{self.testName}{pfx}_{coverage}.log"
         testNameVDB = f"{self.testName}{pfx}.vdb"
+        testNameFSDB = f"{self.testName}{pfx}.fsdb"
+        testNameFST = f"{self.testName}{pfx}.fst"
 
         self.filenames = {
             "vcd_default": defaultNameVCD,
@@ -126,6 +130,10 @@ class VerificationTest:
             "cov": testCoverageName,
             "vdb_default": defaultNameVDB,
             "vdb": testNameVDB,
+            "fsdb_default": defaultNameFSDB,
+            "fsdb": testNameFSDB,
+            "fst_default": defaultNameFST,
+            "fst": testNameFST,
         }
 
         def get_path(name):
@@ -141,12 +149,16 @@ class VerificationTest:
             "cov": get_path(testCoverageName),
             "vdb_default": get_path(defaultNameVDB),
             "vdb": get_path(testNameVDB),
+            "fsdb_default": get_path(defaultNameFSDB),
+            "fsdb": get_path(testNameFSDB),
+            "fst_default": get_path(defaultNameFST),
+            "fst": get_path(testNameFST),
         }
 
     def rename_default(self, dest: str):
         source = self.paths[f"{dest}_default"]
         if (not os.path.isfile(source)) and (not os.path.isdir(source)):
-            print(f"Warning!  Can't find file to rename: {source}")
+            logging.info(f"Can't find file to rename: {source}")
             return
         os.rename(source, self.paths[dest])
 
@@ -158,6 +170,8 @@ class VerificationTest:
             else:
                 self.rename_default("cov")
         self.rename_default("vcd")
+        self.rename_default("fsdb")
+        self.rename_default("fst")
 
 
 def create_test_id(session_name: str, args: list[str]):

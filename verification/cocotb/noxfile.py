@@ -60,6 +60,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                     [
                         "+verilator+rand+reset+2",
                         f"+verilator+seed+{seed}",
+                        "--trace",
                     ]
                 )
             if coverage:

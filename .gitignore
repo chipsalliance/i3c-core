@@ -15,6 +15,10 @@ __pycache__
 *.sym
 *.vcd
 *.vpd
+*.fst
+*.fsdb
+novas.*
+verdiLog
 *.xml
 build/
 configs/
@@ -29,6 +33,7 @@ program.hex
 questa_work/
 results.xml
 sim_build/
+**sim_build**
 sim/
 src/csr/html/
 src/csr/md/
