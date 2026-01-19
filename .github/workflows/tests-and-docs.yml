@@ -40,8 +40,8 @@ jobs:
           axi_tests = []
 
           # Pattern to match @nox.session with tags followed by def xxx_verify
-          # We need to find the tags and function name
-          pattern = r'@nox\.session\(tags=\[([^\]]+)\]\)[^@]*?def (\w+_verify)\('
+          # Use .*? to allow @nox.parametrize decorators between @nox.session and def
+          pattern = r'@nox\.session\(tags=\[([^\]]+)\]\).*?def (\w+_verify)\('
           
           for match in re.finditer(pattern, content, re.DOTALL):
               tags_str, func_name = match.groups()
