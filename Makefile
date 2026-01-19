@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Antmicro <www.antmicro.com>
 # SPDX-License-Identifier: Apache-2.0
 
-SHELL = /bin/bash
+SHELL   = bash
 
 # Directory structure
 I3C_ROOT_DIR        := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
