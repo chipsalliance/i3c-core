@@ -115,18 +115,18 @@ jobs:
 
               # For long-running tests, use full session string to run each variant separately
               # For others, use just the name to run all variants together
-              if name in SPLIT_TESTS:
-                  # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
-                  session_id = session["session"]
-              else:
+              #if name in SPLIT_TESTS:
+              #    # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
+              #    session_id = session["session"]
+              if name not in SPLIT_TESTS:
                   # Use just the name (e.g., "ccc_verify")
                   session_id = name
 
-              # Categorize tests by bus configuration
-              if has_ahb:
-                  ahb_tests.add(session_id)
-              if has_axi:
-                  axi_tests.add(session_id)
+                  # Categorize tests by bus configuration
+                  if has_ahb:
+                      ahb_tests.add(session_id)
+                  if has_axi:
+                      axi_tests.add(session_id)
 
           # Sort for consistent ordering
           ahb_tests = sorted(ahb_tests)
@@ -414,7 +414,18 @@ jobs:
       - name: Generate verification documentation
         run: |
           source .venv/bin/activate
-          cp -r tests-results/* verification/cocotb/
+          # Debug: show what was downloaded
+          echo "=== Downloaded test results structure ==="
+          find tests-results -name "*.xml" | head -10
+          # Copy XML files to the expected location, handling nested structure
+          # The artifact contains paths like verification/cocotb/block/*/results*.xml
+          if [ -d "tests-results/verification/cocotb" ]; then
+            cp -r tests-results/verification/cocotb/* verification/cocotb/
+          else
+            cp -r tests-results/* verification/cocotb/
+          fi
+          echo "=== XML files in verification/cocotb ==="
+          find verification/cocotb -name "*.xml" | head -10
           REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" \
             make verification-docs-with-sim
 
