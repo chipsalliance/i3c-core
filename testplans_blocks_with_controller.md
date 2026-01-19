@@ -549,22 +549,6 @@ to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.
 
 
-# flow_standby_i3c
-
-[Test results](./sim-results/flow_standby_i3c.html){.external}
-
-## Testpoints
-
-### `rx`
-
-Test: rx
-
-Tests basic operation of the flow_standby_i3c module. The test
-instantiates two tasks serving as BFMs for RX and TX queues.
-Then it simulates bus start condition followed by data reception
-ended by bus stop condition.
-
-
 # i3c_bus_monitor
 
 [Test results](./sim-results/i3c_bus_monitor.html){.external}
