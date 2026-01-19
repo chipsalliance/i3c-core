@@ -138,16 +138,31 @@ jobs:
           make config CFG_NAME=ahb
 
       - name: Run test
+        id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} -v
+
+      - name: Show test logs on failure
+        if: failure() && steps.run-test.outcome == 'failure'
+        run: |
+          echo "=== Test failed, showing log files ==="
+          for log in $(find verification/cocotb -name "*.log" -type f 2>/dev/null); do
+            echo ""
+            echo "========================================"
+            echo "=== $log ==="
+            echo "========================================"
+            cat "$log"
+          done
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-ahb-${{ matrix.test }}
-          path: verification/cocotb/**/results*.xml
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
 
   # =============================================================================
   # Run AXI tests in parallel
@@ -209,16 +224,31 @@ jobs:
           make config CFG_NAME=axi
 
       - name: Run test
+        id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} -v
+
+      - name: Show test logs on failure
+        if: failure() && steps.run-test.outcome == 'failure'
+        run: |
+          echo "=== Test failed, showing log files ==="
+          for log in $(find verification/cocotb -name "*.log" -type f 2>/dev/null); do
+            echo ""
+            echo "========================================"
+            echo "=== $log ==="
+            echo "========================================"
+            cat "$log"
+          done
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-axi-${{ matrix.test }}
-          path: verification/cocotb/**/results*.xml
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
 
   # =============================================================================
   # Aggregate test results
