@@ -31,8 +31,8 @@ jobs:
   # ===========================================================================
   # Job: Generate Test Matrix
   # ===========================================================================
-  # Dynamically discovers test sessions from noxfile.py by parsing @nox.session
-  # decorators. Tests are categorized by their tags (ahb, axi, or both).
+  # Dynamically discovers test sessions using nox's native JSON output.
+  # Tests are categorized by their tags (ahb, axi, or both).
   # This allows adding new tests without modifying the workflow.
   # ===========================================================================
   generate-matrix:
@@ -45,48 +45,66 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Parse noxfile.py for test sessions
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install nox
+        run: pip install nox
+
+      - name: Query nox for test sessions
         id: gen
         run: |
+          cd verification/cocotb
           python3 << 'EOF'
           import json
-          import re
+          import subprocess
           import os
 
-          with open('verification/cocotb/noxfile.py') as f:
-              content = f.read()
+          # Long-running tests that should be split into individual parametrized runs
+          # These tests have multiple test_name parameters and take the most time
+          SPLIT_TESTS = {"i3c_ahb_verify", "i3c_axi_verify"}
 
-          ahb_tests = []
-          axi_tests = []
+          # Use nox's native JSON output to list all sessions
+          result = subprocess.run(
+              ["nox", "-l", "--json", "-f", "noxfile.py"],
+              capture_output=True, text=True
+          )
+          sessions = json.loads(result.stdout)
 
-          # Pattern matches @nox.session(tags=[...]) followed by def xxx_verify(
-          # The .*? allows @nox.parametrize decorators between @nox.session and def
-          pattern = r'@nox\.session\(tags=\[([^\]]+)\]\).*?def (\w+_verify)\('
+          ahb_tests = set()
+          axi_tests = set()
 
-          for match in re.finditer(pattern, content, re.DOTALL):
-              tags_str, func_name = match.groups()
-              tags = [t.strip().strip('"\'') for t in tags_str.split(',')]
+          for session in sessions:
+              tags = session.get("tags", [])
 
               # Only process test sessions (tagged with 'tests')
-              if 'tests' not in tags:
+              if "tests" not in tags:
                   continue
 
-              has_ahb = 'ahb' in tags
-              has_axi = 'axi' in tags
+              name = session["name"]
+              has_ahb = "ahb" in tags
+              has_axi = "axi" in tags
+
+              # For long-running tests, use full session string to run each variant separately
+              # For others, use just the name to run all variants together
+              if name in SPLIT_TESTS:
+                  # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
+                  session_id = session["session"]
+              else:
+                  # Use just the name (e.g., "ccc_verify")
+                  session_id = name
 
               # Categorize tests by bus configuration
-              if has_ahb and not has_axi:
-                  ahb_tests.append(func_name)
-              elif has_axi and not has_ahb:
-                  axi_tests.append(func_name)
-              elif has_ahb and has_axi:
-                  # Tests tagged with both run in both configurations
-                  ahb_tests.append(func_name)
-                  axi_tests.append(func_name)
+              if has_ahb:
+                  ahb_tests.add(session_id)
+              if has_axi:
+                  axi_tests.add(session_id)
 
-          # Deduplicate and sort for consistent ordering
-          ahb_tests = sorted(set(ahb_tests))
-          axi_tests = sorted(set(axi_tests))
+          # Sort for consistent ordering
+          ahb_tests = sorted(ahb_tests)
+          axi_tests = sorted(axi_tests)
 
           print(f"Discovered {len(ahb_tests)} AHB tests and {len(axi_tests)} AXI tests")
 
@@ -164,7 +182,7 @@ jobs:
         run: |
           source activate.sh
           make config CFG_NAME=ahb
-          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
+          cd verification/cocotb && python -m nox -R -s '${{ matrix.test }}' --no-venv --forcecolor
 
       # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
@@ -175,11 +193,20 @@ jobs:
             'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
 
       # --- Upload Results ---
+      # Sanitize artifact name: replace special chars for parametrized test names
+      - name: Sanitize artifact name
+        id: sanitize
+        run: |
+          NAME='${{ matrix.test }}'
+          # Replace problematic characters with underscores/remove them
+          SANITIZED=$(echo "$NAME" | sed "s/[()='\" ,]/_/g" | sed 's/__*/_/g' | sed 's/_$//')
+          echo "name=$SANITIZED" >> $GITHUB_OUTPUT
+
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-ahb-${{ matrix.test }}
+          name: test-results-ahb-${{ steps.sanitize.outputs.name }}
           path: |
             verification/cocotb/**/results*.xml
             verification/cocotb/**/*.log
@@ -246,7 +273,7 @@ jobs:
         run: |
           source activate.sh
           make config CFG_NAME=axi
-          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
+          cd verification/cocotb && python -m nox -R -s '${{ matrix.test }}' --no-venv --forcecolor
 
       # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
@@ -257,11 +284,20 @@ jobs:
             'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
 
       # --- Upload Results ---
+      # Sanitize artifact name: replace special chars for parametrized test names
+      - name: Sanitize artifact name
+        id: sanitize
+        run: |
+          NAME='${{ matrix.test }}'
+          # Replace problematic characters with underscores/remove them
+          SANITIZED=$(echo "$NAME" | sed "s/[()='\" ,]/_/g" | sed 's/__*/_/g' | sed 's/_$//')
+          echo "name=$SANITIZED" >> $GITHUB_OUTPUT
+
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-axi-${{ matrix.test }}
+          name: test-results-axi-${{ steps.sanitize.outputs.name }}
           path: |
             verification/cocotb/**/results*.xml
             verification/cocotb/**/*.log
