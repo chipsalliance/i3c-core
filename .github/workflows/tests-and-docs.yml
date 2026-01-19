@@ -55,7 +55,7 @@ jobs:
 
       - name: Install nox and dependencies
         run: |
-          pip install nox pyyaml
+          pip install nox==2023.4.22 pyyaml
           pip install -e tools/nox_utils
 
       - name: Query nox for test sessions
