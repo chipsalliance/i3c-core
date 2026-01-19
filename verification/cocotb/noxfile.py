@@ -1,4 +1,40 @@
 # SPDX-License-Identifier: Apache-2.0
+"""i3c_core cocotb test suite.
+
+# tags
+# - "tests"
+# - "ahb"
+# - "axi"
+#
+# sessions
+#
+# > All sessions are named after items in the testplan, with "_verify" suffixed to their names.
+# - ahb_if*
+# - axi_adapter*
+# - axi_adapter_id_filter*
+# - bus_rx_flow*
+# - bus_tx*
+# - bus_tx_flow*
+# - hci_queues_ahb*
+# - hci_queues_axi*
+# - i2c*
+# - i2c_controller_fsm*
+# - i2c_standby_controller*
+# - flow_standby_i2c*
+# - i2c_target_fsm*
+# - i3c_ahb*
+# - i3c_axi*
+# - ccc*
+# - ctrl_bus_timers*
+# - ctrl_bus_monitor*
+# - ctrl_i3c_bus_monitor*
+# - ctrl_edge_detector*
+# - width_converter_Nto8*
+# - width_converter_8toN*
+# - recovery_pec*
+
+"""
+
 import os
 import random
 import time

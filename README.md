@@ -31,7 +31,8 @@ This repository is currently tested on Debian 12 and Ubuntu 22.04. In order to u
 
 ### Submodules
 
-Make sure submodules are checked out. Use the `--recursive` flag when cloning, or run
+Make sure submodules are checked out.
+Use the `--recursive` flag when cloning, or run the following:
 
 ```{bash}
 git submodule update --init --recursive
@@ -41,23 +42,26 @@ if you already cloned the repository.
 
 ### Python
 
-Python 3.11.0 is recommended for this project. A bootstrap script is provided:
+A bootstrap script is provided, runnable as `./install.sh` which will install `pyenv`.
+Then, you can install and activate a python environment with `. activate.sh`.
 
-```{bash}
-bash install.sh
-```
-
-This script installs `pyenv`. Then, you can activate the environment:
-
-```{bash}
-. activate.sh
-```
-
-Activate script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt`.
+The activation script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt` file.
+Python 3.11.0 is recommended and installed for this project.
 
 ## Verification
 
-Tools used for the core verification
+More details can be found in [`verification README`](./verification/README.md).
+Coverage data is available in [GitHub pages](https://chipsalliance.github.io/i3c-core/coverview.html?path=release-v2.0.zip).
+
+This core is verified with the following set of tests:
+
+* A set of rapid tests written in cocotb
+* Avery I3C VIP based tests
+* [Selected tests](doc/cts-list.md) from the Avery I3C Compliance Test Suite
+
+Running all the cocotb tests with `make tests` will check if the environment is properly configured.
+
+Tools used for the core verification are:
 
 * Simulation:
 
@@ -73,26 +77,13 @@ Tools used for the core verification
   * Spyglass VC Static U-2023.03-SP2-4
   * MeridianRDC 2022.A.P10.2.RDC for RHEL7.0-64, Rev 189206
 
-This core is verified with the following set of tests:
-* rapid tests written in cocotb
-* Avery I3C VIP based tests
-* [Selected tests](doc/cts-list.md) from the Avery I3C Compliance Test Suite
-
-To check if the environment is properly configured, run the cocotb tests:
-
-```{bash}
-make tests
-```
-
-More details can be found in [`verification README`](./verification/README.md).
-
-Coverage data is available in [GitHub pages](https://chipsalliance.github.io/i3c-core/coverview.html?path=release-v2.0.zip).
-
 ## Tools
 
-Tools developed for this project are located in `tools` directory. You can find more detailed information in README of each tool:
+Tools developed for this project are located in `tools` directory.
+You can find more detailed information in README of each tool:
 - [`i3c_config`](./tools/i3c_config/README.md) - manage configuration and produce header files
-- [`pyenv`](./tools/pyenv/README.md) - enable usage of pyenv in BASH
 - [`reg_gen`](./tools/reg_gen/README.md) - scripts to generate SystemVerilog description from the SystemRDL files
 - [`timing`](./tools/timing/README.md) - helper script to estimate timings on the bus
 - [`verible-scripts`](./tools/verible-scripts/README.md) - scripts to manage configuration and runs of Verible formatter and linter
+
+In the[`tools`](./verification/tools/) verification directory, a noxfile is provided to test [the I3C Core Configuration Tool](./tools/i3c_config/i3c_core_config.py).

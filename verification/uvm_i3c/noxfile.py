@@ -1,4 +1,22 @@
 # SPDX-License-Identifier: Apache-2.0
+"""i3c_core and I3C Agent Unit Test Suites.
+
+# TODO i3c_core - currently unimplemented.
+# TODO Coverage Collection
+
+# tags
+# - i3c_vip_uvm_tests
+# - i3c_vip_uvm_debug_tests
+# - i3c_core_uvm_tests
+# - i3c_core_uvm_debug_tests
+#
+# sessions
+# - i3c_verify_uvm*
+# - i3c_monitor*
+# - i3c_driver*
+# - i3c_core_verify_uvm*
+
+"""
 
 import logging
 import os
@@ -66,7 +84,18 @@ def verify_uvm(
     if isUVMSimFailure(resultsFile=log_file):
         raise Exception("SimFailure: UVM failed. See test logs for more information.")
 
+################################################################################
+#
+# I3C_Agent
+#
 
+"""I3C Agent unit test suite.
+
+This suite of tests are used to check the operation of the I3C Agent in dv_i3c/.
+
+UVM_TESTNAME=i3c_sequence_test
+UVM_VSEQ_TEST=<param>
+"""
 @nox.session(tags=["i3c_vip_uvm_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
@@ -97,6 +126,13 @@ def i3c_verify_uvm(session, simulator, uvm_vseq_test, coverage):
     )
 
 
+"""I3C Agent unit test suite which takes bus stimulus from input .csv files.
+
+This suite of tests are used to check the operation of the I3C Agent in dv_i3c/.
+
+UVM_TESTNAME=i3c_sequence_test
+UVM_VSEQ_TEST=direct_vseq
+"""
 @nox.session(tags=["i3c_vip_uvm_debug_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
@@ -125,6 +161,13 @@ def i3c_monitor(session, simulator, extra_make_args, coverage):
     )
 
 
+"""I3C Agent unit test suite in tb_driver.sv
+
+This suite of tests are used to check the operation of the I3C Agent in dv_i3c/.
+
+UVM_TESTNAME=i3c_sequence_test
+UVM_VSEQ_TEST=direct_vseq
+"""
 @nox.session(tags=["i3c_vip_uvm_debug_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize("coverage", coverageTypes)
@@ -141,6 +184,18 @@ def i3c_driver(session, simulator, coverage):
         coverage=coverage,
     )
 
+################################################################################
+#
+# I3C_core
+#
+
+"""I3C_core test suite.
+
+# TODO INCOMPLETE.
+
+UVM_TESTNAME=i3c_core_test
+UVM_VSEQ_TEST=<param> (currently fixed to direct_vseq?)
+"""
 @nox.session(tags=["i3c_core_uvm_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize(
@@ -164,6 +219,13 @@ def i3c_core_verify_uvm(session, simulator, uvm_i3c_core_vseq_test, coverage):
     )
 
 
+"""I3C_core test suite.
+
+# TODO INCOMPLETE.
+
+UVM_TESTNAME=i3c_sequence_test
+UVM_VSEQ_TEST=direct_vseq
+"""
 @nox.session(tags=["i3c_core_uvm_debug_tests"])
 @nox.parametrize("simulator", [SIMULATOR])
 @nox.parametrize("coverage", coverageTypes)
