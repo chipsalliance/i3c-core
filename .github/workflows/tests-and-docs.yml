@@ -125,23 +125,17 @@ jobs:
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
-          echo "I3C_ROOT_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "CALIPTRA_ROOT=$GITHUB_WORKSPACE/third_party/caliptra-rtl" >> $GITHUB_ENV
 
       - name: Install Python environment
         run: |
           ./install.sh
 
-      - name: Configure for AHB
-        run: |
-          source activate.sh
-          make config CFG_NAME=ahb
-
-      - name: Run test
+      - name: Configure and run test
         id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} --no-venv -v
+          make config CFG_NAME=ahb
+          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
 
       - name: Show test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
@@ -211,23 +205,17 @@ jobs:
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
-          echo "I3C_ROOT_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "CALIPTRA_ROOT=$GITHUB_WORKSPACE/third_party/caliptra-rtl" >> $GITHUB_ENV
 
       - name: Install Python environment
         run: |
           ./install.sh
 
-      - name: Configure for AXI
-        run: |
-          source activate.sh
-          make config CFG_NAME=axi
-
-      - name: Run test
+      - name: Configure and run test
         id: run-test
         run: |
           source activate.sh
-          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }} --no-venv -v
+          make config CFG_NAME=axi
+          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
 
       - name: Show test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
