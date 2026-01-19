@@ -7,19 +7,147 @@ on:
 permissions:
   contents: write
 
+env:
+  DEBIAN_FRONTEND: "noninteractive"
+  VERILATOR_VERSION: "v5.024"
+  IVERILOG_COMMIT: "06077ed026b4d8498d9129a6acfb0b44d0b51f18"
+
 jobs:
-  build-and-test:
-    name: Build and test
+  # =============================================================================
+  # Generate test matrix dynamically from noxfile.py
+  # =============================================================================
+  generate-matrix:
+    name: Generate test matrix
     runs-on: ubuntu-latest
-    env:
-      DEBIAN_FRONTEND: "noninteractive"
+    outputs:
+      ahb-matrix: ${{ steps.gen.outputs.ahb_matrix }}
+      axi-matrix: ${{ steps.gen.outputs.axi_matrix }}
+    steps:
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Generate test matrices
+        id: gen
+        run: |
+          python3 << 'EOF'
+          import json
+          import re
+          import os
+
+          with open('verification/cocotb/noxfile.py') as f:
+              content = f.read()
+
+          ahb_tests = []
+          axi_tests = []
+
+          # Pattern to match @nox.session with tags followed by def xxx_verify
+          # We need to find the tags and function name
+          pattern = r'@nox\.session\(tags=\[([^\]]+)\]\)[^@]*?def (\w+_verify)\('
+          
+          for match in re.finditer(pattern, content, re.DOTALL):
+              tags_str, func_name = match.groups()
+              tags = [t.strip().strip('"\'') for t in tags_str.split(',')]
+              
+              # Skip if not a test session
+              if 'tests' not in tags:
+                  continue
+              
+              has_ahb = 'ahb' in tags
+              has_axi = 'axi' in tags
+              
+              if has_ahb and not has_axi:
+                  # AHB-only test
+                  ahb_tests.append(func_name)
+              elif has_axi and not has_ahb:
+                  # AXI-only test
+                  axi_tests.append(func_name)
+              elif has_ahb and has_axi:
+                  # Shared test - run with both configs
+                  ahb_tests.append(func_name)
+                  axi_tests.append(func_name)
+
+          # Remove duplicates and sort
+          ahb_tests = sorted(set(ahb_tests))
+          axi_tests = sorted(set(axi_tests))
+
+          print(f"Found {len(ahb_tests)} AHB tests: {ahb_tests}")
+          print(f"Found {len(axi_tests)} AXI tests: {axi_tests}")
+
+          # Write to GITHUB_OUTPUT
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"ahb_matrix={json.dumps(ahb_tests)}\n")
+              f.write(f"axi_matrix={json.dumps(axi_tests)}\n")
+          EOF
+
+  # =============================================================================
+  # Build simulators and cache them
+  # =============================================================================
+  build-simulators:
+    name: Build simulators
+    runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
         run: |
           sudo apt -qqy update
-          sudo apt -qqy --no-install-recommends install help2man libfl-dev make g++ git bison flex gperf \
-                                                        libreadline-dev libbz2-dev autoconf python3-sphinx \
-                                                        python3-docopt
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      - name: Cache Verilator
+        id: cache-verilator
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/verilator*
+          key: verilator-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Cache Verilator share
+        id: cache-verilator-share
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/share/verilator
+          key: verilator-share-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Build Verilator
+        if: steps.cache-verilator.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/verilator/verilator -b ${{ env.VERILATOR_VERSION }}
+          cd verilator
+          autoconf
+          ./configure
+          make -j$(nproc)
+          sudo make install
+          verilator --version
+
+  # =============================================================================
+  # Run AHB tests in parallel
+  # =============================================================================
+  tests-ahb:
+    name: "AHB: ${{ matrix.test }}"
+    needs: [generate-matrix, build-simulators]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.generate-matrix.outputs.ahb-matrix) }}
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      - name: Restore Verilator from cache
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/verilator*
+          key: verilator-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Restore Verilator share from cache
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/share/verilator
+          key: verilator-share-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -28,49 +156,123 @@ jobs:
         run: |
           git submodule update --init --recursive
 
-      - name: Install Pyenv
+      - name: Install Python environment
         run: |
           ./install.sh
 
-      - name: Build Icarus
+      - name: Configure for AHB
         run: |
-          git clone https://github.com/steveicarus/iverilog.git
-          cd iverilog
-          git checkout 06077ed026b4d8498d9129a6acfb0b44d0b51f18
-          sh autoconf.sh
-          ./configure
-          make -j$(nproc)
-          sudo make install
-          iverilog -V
-
-      - name: Build Verilator
-        run: |
-          git clone https://github.com/verilator/verilator -b v5.024
-          cd verilator
-          autoconf
-          ./configure
-          make -j$(nproc)
-          sudo make install
-          verilator --version
-
-      - name: Run Tests
-        run: |
-          make install-uvm
           source activate.sh
-          make tests
+          make config CFG_NAME=ahb
 
-      - name: Upload artifacts
+      - name: Run test
+        run: |
+          source activate.sh
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-ahb-${{ matrix.test }}
+          path: verification/cocotb/**/results*.xml
+
+  # =============================================================================
+  # Run AXI tests in parallel
+  # =============================================================================
+  tests-axi:
+    name: "AXI: ${{ matrix.test }}"
+    needs: [generate-matrix, build-simulators]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.generate-matrix.outputs.axi-matrix) }}
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      - name: Restore Verilator from cache
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/verilator*
+          key: verilator-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Restore Verilator share from cache
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/share/verilator
+          key: verilator-share-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Setup repository
+        uses: actions/checkout@v4
+
+      - name: Get Submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Install Python environment
+        run: |
+          ./install.sh
+
+      - name: Configure for AXI
+        run: |
+          source activate.sh
+          make config CFG_NAME=axi
+
+      - name: Run test
+        run: |
+          source activate.sh
+          nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-axi-${{ matrix.test }}
+          path: verification/cocotb/**/results*.xml
+
+  # =============================================================================
+  # Aggregate test results
+  # =============================================================================
+  test-results:
+    name: Aggregate test results
+    needs: [tests-ahb, tests-axi]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: test-results
+          merge-multiple: true
+
+      - name: Upload combined results
         uses: actions/upload-artifact@v4
         with:
           name: tests-results
-          path: verification/cocotb
+          path: test-results
 
+      - name: Check test status
+        run: |
+          if [ "${{ needs.tests-ahb.result }}" != "success" ] || [ "${{ needs.tests-axi.result }}" != "success" ]; then
+            echo "Some tests failed!"
+            exit 1
+          fi
+          echo "All tests passed!"
+
+  # =============================================================================
+  # Build documentation
+  # =============================================================================
   docs-build:
     name: Documentation build
     runs-on: ubuntu-latest
-    needs: [build-and-test]
-    env:
-      DEBIAN_FRONTEND: "noninteractive"
+    needs: [test-results]
     steps:
       - name: Install dependencies
         run: |
@@ -85,6 +287,9 @@ jobs:
           git submodule update --init --recursive
 
       - uses: actions/download-artifact@v4
+        with:
+          name: tests-results
+          path: tests-results
 
       - name: Install dependencies
         run: |
