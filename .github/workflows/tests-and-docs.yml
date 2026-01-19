@@ -6,13 +6,16 @@
 # bus configurations, then builds and deploys documentation.
 #
 # Architecture:
-#   1. generate-matrix: Parses noxfile.py to discover test sessions
+#   1. generate-matrix: Uses nox's JSON output to discover test sessions
 #   2. tests-ahb: Runs all AHB-tagged tests in parallel (one job per test)
 #   3. tests-axi: Runs all AXI-tagged tests in parallel (one job per test)
 #   4. test-results: Aggregates results from all test jobs
 #   5. docs-build: Builds and deploys documentation (only after tests pass)
 #
-# The parallel execution reduces total CI time from ~80 minutes to ~25 minutes.
+# Long-running tests (i3c_ahb_verify, i3c_axi_verify) are split into individual
+# parametrized runs for additional parallelism.
+#
+# The parallel execution reduces total CI time from ~80 minutes to ~15 minutes.
 
 name: Run Tests
 
@@ -50,8 +53,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install nox
-        run: pip install nox
+      - name: Install nox and dependencies
+        run: |
+          pip install nox pyyaml
+          pip install -e tools/nox_utils
 
       - name: Query nox for test sessions
         id: gen
@@ -61,17 +66,38 @@ jobs:
           import json
           import subprocess
           import os
+          import sys
 
           # Long-running tests that should be split into individual parametrized runs
           # These tests have multiple test_name parameters and take the most time
           SPLIT_TESTS = {"i3c_ahb_verify", "i3c_axi_verify"}
 
           # Use nox's native JSON output to list all sessions
+          # Note: nox -l doesn't execute sessions, just lists them, so no --no-venv needed
           result = subprocess.run(
               ["nox", "-l", "--json", "-f", "noxfile.py"],
-              capture_output=True, text=True
+              capture_output=True, text=True,
+              env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
           )
-          sessions = json.loads(result.stdout)
+
+          # Debug: show any errors from nox
+          if result.returncode != 0:
+              print(f"nox failed with return code {result.returncode}", file=sys.stderr)
+              print(f"stderr: {result.stderr}", file=sys.stderr)
+              sys.exit(1)
+
+          if not result.stdout.strip():
+              print("nox returned empty output", file=sys.stderr)
+              print(f"stderr: {result.stderr}", file=sys.stderr)
+              sys.exit(1)
+
+          try:
+              sessions = json.loads(result.stdout)
+          except json.JSONDecodeError as e:
+              print(f"Failed to parse JSON: {e}", file=sys.stderr)
+              print(f"stdout was: {result.stdout[:500]}", file=sys.stderr)
+              print(f"stderr was: {result.stderr[:500]}", file=sys.stderr)
+              sys.exit(1)
 
           ahb_tests = set()
           axi_tests = set()
@@ -195,6 +221,7 @@ jobs:
       # --- Upload Results ---
       # Sanitize artifact name: replace special chars for parametrized test names
       - name: Sanitize artifact name
+        if: always()
         id: sanitize
         run: |
           NAME='${{ matrix.test }}'
@@ -286,6 +313,7 @@ jobs:
       # --- Upload Results ---
       # Sanitize artifact name: replace special chars for parametrized test names
       - name: Sanitize artifact name
+        if: always()
         id: sanitize
         run: |
           NAME='${{ matrix.test }}'
