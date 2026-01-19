@@ -117,9 +117,12 @@ jobs:
       - name: Add Verilator to PATH
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
+          echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
 
       - name: Verify Verilator
-        run: verilator --version
+        run: |
+          verilator --version
+          echo "VERILATOR_ROOT=$VERILATOR_ROOT"
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -140,6 +143,8 @@ jobs:
       - name: Run test
         run: |
           source activate.sh
+          export PATH="$HOME/verilator-install/bin:$PATH"
+          export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
@@ -188,9 +193,12 @@ jobs:
       - name: Add Verilator to PATH
         run: |
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
+          echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
 
       - name: Verify Verilator
-        run: verilator --version
+        run: |
+          verilator --version
+          echo "VERILATOR_ROOT=$VERILATOR_ROOT"
 
       - name: Setup repository
         uses: actions/checkout@v4
@@ -211,6 +219,8 @@ jobs:
       - name: Run test
         run: |
           source activate.sh
+          export PATH="$HOME/verilator-install/bin:$PATH"
+          export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
