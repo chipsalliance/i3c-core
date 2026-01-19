@@ -145,6 +145,11 @@ jobs:
           source activate.sh
           export PATH="$HOME/verilator-install/bin:$PATH"
           export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
+          export I3C_ROOT_DIR="$(pwd)"
+          export CALIPTRA_ROOT="${I3C_ROOT_DIR}/third_party/caliptra-rtl"
+          echo "I3C_ROOT_DIR=$I3C_ROOT_DIR"
+          echo "CALIPTRA_ROOT=$CALIPTRA_ROOT"
+          ls -la "$CALIPTRA_ROOT/src/libs/rtl/" | head -5
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
@@ -152,7 +157,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-ahb-${{ matrix.test }}
-          path: verification/cocotb/**/results*.xml
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
 
   # =============================================================================
   # Run AXI tests in parallel
@@ -221,6 +228,11 @@ jobs:
           source activate.sh
           export PATH="$HOME/verilator-install/bin:$PATH"
           export VERILATOR_ROOT="$HOME/verilator-install/share/verilator"
+          export I3C_ROOT_DIR="$(pwd)"
+          export CALIPTRA_ROOT="${I3C_ROOT_DIR}/third_party/caliptra-rtl"
+          echo "I3C_ROOT_DIR=$I3C_ROOT_DIR"
+          echo "CALIPTRA_ROOT=$CALIPTRA_ROOT"
+          ls -la "$CALIPTRA_ROOT/src/libs/rtl/" | head -5
           nox -f verification/cocotb/noxfile.py -s ${{ matrix.test }}
 
       - name: Upload test results
@@ -228,7 +240,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-axi-${{ matrix.test }}
-          path: verification/cocotb/**/results*.xml
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
 
   # =============================================================================
   # Aggregate test results
