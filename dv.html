@@ -2405,27 +2405,27 @@ Sends GETSTATUS CCC and checks that it also doesn’t report protocol error.</p>
 <p><a class="external reference" href="./sim-results/target_bus_stall.html">Test results</a></p>
 <h4 id="id24">Testpoints<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
 <h5 id="reading-from-empty-rx-descriptor-fifo"><code class="docutils literal notranslate"><span class="pre">Reading</span> <span class="pre">from</span> <span class="pre">empty</span> <span class="pre">RX</span> <span class="pre">descriptor</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#reading-from-empty-rx-descriptor-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">empty_rx_desc_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L44">empty_rx_desc_read</a></p>
 <p>Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.</p>
 <h5 id="reading-from-empty-rx-data-fifo"><code class="docutils literal notranslate"><span class="pre">Reading</span> <span class="pre">from</span> <span class="pre">empty</span> <span class="pre">RX</span> <span class="pre">data</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#reading-from-empty-rx-data-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">empty_rx_data_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L50">empty_rx_data_read</a></p>
 <p>Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.</p>
 <h5 id="reading-from-empty-indirect-fifo"><code class="docutils literal notranslate"><span class="pre">Reading</span> <span class="pre">from</span> <span class="pre">empty</span> <span class="pre">indirect</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#reading-from-empty-indirect-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">empty_indirect_fifo_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L56">empty_indirect_fifo_read</a></p>
 <p>Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.</p>
 <h5 id="writing-to-full-tx-descriptor-fifo"><code class="docutils literal notranslate"><span class="pre">Writing</span> <span class="pre">to</span> <span class="pre">full</span> <span class="pre">TX</span> <span class="pre">descriptor</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#writing-to-full-tx-descriptor-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">full_tx_desc_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L61">full_tx_desc_write</a></p>
 <p>Perform multiple write bus accesses to the TX descriptor queue,
 verify that all transactions has finished.</p>
 <h5 id="writing-to-full-tx-data-fifo"><code class="docutils literal notranslate"><span class="pre">Writing</span> <span class="pre">to</span> <span class="pre">full</span> <span class="pre">TX</span> <span class="pre">data</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#writing-to-full-tx-data-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">full_tx_data_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L67">full_tx_data_write</a></p>
 <p>Perform multiple write bus accesses to the TX data queue,
 verify that all transactions has finished.</p>
 <h5 id="writing-to-full-ibi-fifo"><code class="docutils literal notranslate"><span class="pre">Writing</span> <span class="pre">to</span> <span class="pre">full</span> <span class="pre">IBI</span> <span class="pre">FIFO</span></code><a class="headerlink" href="#writing-to-full-ibi-fifo" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py">full_ibi_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L73">full_ibi_write</a></p>
 <p>Perform multiple write bus accesses to the IBI queue,
 verify that all transactions has finished.</p>
 <h3 id="ccc-handling">CCC handling<a class="headerlink" href="#ccc-handling" title="Link to this heading">¶</a></h3>
@@ -2600,14 +2600,14 @@ the target FSM is back in Idle state.</p>
 <p><a class="external reference" href="./sim-results/target_interrupts.html">Test results</a></p>
 <h4 id="id29">Testpoints<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
 <h5 id="rx-desc-stat"><code class="docutils literal notranslate"><span class="pre">rx_desc_stat</span></code><a class="headerlink" href="#rx-desc-stat" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py">rx_desc_stat</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L77">rx_desc_stat</a></p>
 <p>Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, sends a private write over I3C to the target and
 waits for irq_o assertion. Once the interrupt is asserted reads
 a RX descriptor from the TTI RX descriptor queue, ensures that
 irq_o gets deasserted after the read.</p>
 <h5 id="tx-desc-stat"><code class="docutils literal notranslate"><span class="pre">tx_desc_stat</span></code><a class="headerlink" href="#tx-desc-stat" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py">tx_desc_stat</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L111">tx_desc_stat</a></p>
 <p>Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
 a descriptor to TTI TX descriptor queue, sends a private read
@@ -2615,7 +2615,7 @@ over I3C and waits for irq_o assertion. Once the interrupt is
 asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
 INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.</p>
 <h5 id="ibi-done"><code class="docutils literal notranslate"><span class="pre">ibi_done</span></code><a class="headerlink" href="#ibi-done" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py">ibi_done</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L164">ibi_done</a></p>
 <p>Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
 Issues and IBI, waits for it to be serviced by the controller.

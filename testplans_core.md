@@ -161,42 +161,42 @@ Sends GETSTATUS CCC and checks that it also doesn't report protocol error.
 
 ### `Reading from empty RX descriptor FIFO`
 
-Test: [empty_rx_desc_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [empty_rx_desc_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L44)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Reading from empty RX data FIFO`
 
-Test: [empty_rx_data_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [empty_rx_data_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L50)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Reading from empty indirect FIFO`
 
-Test: [empty_indirect_fifo_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [empty_indirect_fifo_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L56)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Writing to full TX descriptor FIFO`
 
-Test: [full_tx_desc_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [full_tx_desc_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L61)
 
 Perform multiple write bus accesses to the TX descriptor queue,
 verify that all transactions has finished.
 
 ### `Writing to full TX data FIFO`
 
-Test: [full_tx_data_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [full_tx_data_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L67)
 
 Perform multiple write bus accesses to the TX data queue,
 verify that all transactions has finished.
 
 ### `Writing to full IBI FIFO`
 
-Test: [full_ibi_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py)
+Test: [full_ibi_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L73)
 
 Perform multiple write bus accesses to the IBI queue,
 verify that all transactions has finished.
@@ -467,7 +467,7 @@ the target FSM is back in Idle state.
 
 ### `rx_desc_stat`
 
-Test: [rx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+Test: [rx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L77)
 
 Enables RX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, sends a private write over I3C to the target and
@@ -477,7 +477,7 @@ irq_o gets deasserted after the read.
 
 ### `tx_desc_stat`
 
-Test: [tx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+Test: [tx_desc_stat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L111)
 
 Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
@@ -488,7 +488,7 @@ INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.
 
 ### `ibi_done`
 
-Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py)
+Test: [ibi_done](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py#L164)
 
 Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
