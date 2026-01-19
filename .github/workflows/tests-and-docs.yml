@@ -12,10 +12,10 @@
 #   4. test-results: Aggregates results from all test jobs
 #   5. docs-build: Builds and deploys documentation (only after tests pass)
 #
-# Long-running tests (i3c_ahb_verify, i3c_axi_verify) are split into individual
-# parametrized runs for additional parallelism.
+# Optional: Long-running tests (i3c_ahb_verify, i3c_axi_verify) can be split
+# into individual parametrized runs by enabling SPLIT_TESTS in generate-matrix.
 #
-# The parallel execution reduces total CI time from ~80 minutes to ~15 minutes.
+# The parallel execution reduces total CI time from ~80 minutes to ~25 minutes.
 
 name: Run Tests
 
@@ -115,18 +115,18 @@ jobs:
 
               # For long-running tests, use full session string to run each variant separately
               # For others, use just the name to run all variants together
-              #if name in SPLIT_TESTS:
-              #    # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
-              #    session_id = session["session"]
-              if name not in SPLIT_TESTS:
+              if name in SPLIT_TESTS:
+                  # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
+                  session_id = session["session"]
+              else:
                   # Use just the name (e.g., "ccc_verify")
                   session_id = name
 
-                  # Categorize tests by bus configuration
-                  if has_ahb:
-                      ahb_tests.add(session_id)
-                  if has_axi:
-                      axi_tests.add(session_id)
+              # Categorize tests by bus configuration
+              if has_ahb:
+                  ahb_tests.add(session_id)
+              if has_axi:
+                  axi_tests.add(session_id)
 
           # Sort for consistent ordering
           ahb_tests = sorted(ahb_tests)
@@ -203,7 +203,7 @@ jobs:
 
       # --- Run Test ---
       # Combined step ensures environment variables from activate.sh persist
-      # Note: Using double quotes and escaping inner single quotes for parametrized session names
+      # Note: Using env var to preserve quotes in parametrized session names
       - name: Configure RTL and run test
         id: run-test
         env:
