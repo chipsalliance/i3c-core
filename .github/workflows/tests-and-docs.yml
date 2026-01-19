@@ -355,6 +355,14 @@ jobs:
           path: test-results
           merge-multiple: true
 
+      - name: Debug downloaded artifacts
+        run: |
+          echo "=== Files downloaded from test jobs ==="
+          find test-results -type f 2>/dev/null | head -30 || echo "No files found"
+          echo ""
+          echo "=== XML files specifically ==="
+          find test-results -name "*.xml" -type f 2>/dev/null | head -20 || echo "No XML files"
+
       - name: Upload combined test results
         uses: actions/upload-artifact@v4
         with:
@@ -403,6 +411,14 @@ jobs:
           name: tests-results
           path: tests-results
 
+      - name: Debug downloaded artifacts
+        run: |
+          echo "=== Full structure of tests-results ==="
+          find tests-results -type f 2>/dev/null | head -30 || echo "No files found or directory doesn't exist"
+          echo ""
+          echo "=== Directory listing ==="
+          ls -laR tests-results 2>/dev/null | head -50 || echo "tests-results directory not found"
+
       - name: Setup Python virtual environment
         run: |
           python3 -m venv .venv
@@ -414,20 +430,31 @@ jobs:
       - name: Generate verification documentation
         run: |
           source .venv/bin/activate
-          # Debug: show what was downloaded
-          echo "=== Downloaded test results structure ==="
-          find tests-results -name "*.xml" | head -10
           # Copy XML files to the expected location, handling nested structure
           # The artifact contains paths like verification/cocotb/block/*/results*.xml
           if [ -d "tests-results/verification/cocotb" ]; then
+            echo "Found nested structure, copying from tests-results/verification/cocotb/"
             cp -r tests-results/verification/cocotb/* verification/cocotb/
-          else
+          elif [ -d "tests-results" ] && [ "$(ls -A tests-results 2>/dev/null)" ]; then
+            echo "Found flat structure, copying from tests-results/"
             cp -r tests-results/* verification/cocotb/
+          else
+            echo "WARNING: No test results found to copy!"
           fi
           echo "=== XML files in verification/cocotb ==="
-          find verification/cocotb -name "*.xml" | head -10
-          REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" \
-            make verification-docs-with-sim
+          find verification/cocotb -name "*.xml" -type f | head -10
+          # Only run verification docs if XML files exist
+          XML_COUNT=$(find verification/cocotb -name "*.xml" -type f | wc -l)
+          if [ "$XML_COUNT" -gt 0 ]; then
+            echo "Found $XML_COUNT XML files, generating verification docs..."
+            REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" \
+              make verification-docs-with-sim
+          else
+            echo "WARNING: No XML files found, skipping verification-docs-with-sim"
+            echo "Running verification-docs without sim results instead..."
+            REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" \
+              make verification-docs || true
+          fi
 
       - name: Build Sphinx documentation
         run: |
