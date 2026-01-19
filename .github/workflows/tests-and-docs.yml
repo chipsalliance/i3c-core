@@ -203,12 +203,15 @@ jobs:
 
       # --- Run Test ---
       # Combined step ensures environment variables from activate.sh persist
+      # Note: Using double quotes and escaping inner single quotes for parametrized session names
       - name: Configure RTL and run test
         id: run-test
+        env:
+          TEST_SESSION: ${{ matrix.test }}
         run: |
           source activate.sh
           make config CFG_NAME=ahb
-          cd verification/cocotb && python -m nox -R -s '${{ matrix.test }}' --no-venv --forcecolor
+          cd verification/cocotb && python -m nox -R -s "$TEST_SESSION" --no-venv --forcecolor
 
       # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
@@ -295,12 +298,15 @@ jobs:
         run: ./install.sh
 
       # --- Run Test ---
+      # Note: Using env var to preserve quotes in parametrized session names
       - name: Configure RTL and run test
         id: run-test
+        env:
+          TEST_SESSION: ${{ matrix.test }}
         run: |
           source activate.sh
           make config CFG_NAME=axi
-          cd verification/cocotb && python -m nox -R -s '${{ matrix.test }}' --no-venv --forcecolor
+          cd verification/cocotb && python -m nox -R -s "$TEST_SESSION" --no-venv --forcecolor
 
       # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
