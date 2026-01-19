@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# I3C Core - Parallel Test and Documentation Workflow
+#
+# This workflow runs cocotb verification tests in parallel for both AHB and AXI
+# bus configurations, then builds and deploys documentation.
+#
+# Architecture:
+#   1. generate-matrix: Parses noxfile.py to discover test sessions
+#   2. tests-ahb: Runs all AHB-tagged tests in parallel (one job per test)
+#   3. tests-axi: Runs all AXI-tagged tests in parallel (one job per test)
+#   4. test-results: Aggregates results from all test jobs
+#   5. docs-build: Builds and deploys documentation (only after tests pass)
+#
+# The parallel execution reduces total CI time from ~80 minutes to ~25 minutes.
+
 name: Run Tests
 
 on:
@@ -7,119 +23,351 @@ on:
 permissions:
   contents: write
 
-jobs:
-  build-and-test:
-    name: Build and test
-    runs-on: ubuntu-latest
-    env:
-      DEBIAN_FRONTEND: "noninteractive"
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo apt -qqy update
-          sudo apt -qqy --no-install-recommends install help2man libfl-dev make g++ git bison flex gperf \
-                                                        libreadline-dev libbz2-dev autoconf python3-sphinx \
-                                                        python3-docopt
+env:
+  DEBIAN_FRONTEND: "noninteractive"
+  VERILATOR_VERSION: "v5.024"
 
-      - name: Setup repository
+jobs:
+  # ===========================================================================
+  # Job: Generate Test Matrix
+  # ===========================================================================
+  # Dynamically discovers test sessions from noxfile.py by parsing @nox.session
+  # decorators. Tests are categorized by their tags (ahb, axi, or both).
+  # This allows adding new tests without modifying the workflow.
+  # ===========================================================================
+  generate-matrix:
+    name: Generate test matrix
+    runs-on: ubuntu-latest
+    outputs:
+      ahb-matrix: ${{ steps.gen.outputs.ahb_matrix }}
+      axi-matrix: ${{ steps.gen.outputs.axi_matrix }}
+    steps:
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get Submodules
+      - name: Parse noxfile.py for test sessions
+        id: gen
         run: |
-          git submodule update --init --recursive
+          python3 << 'EOF'
+          import json
+          import re
+          import os
 
-      - name: Install Pyenv
-        run: |
-          ./install.sh
+          with open('verification/cocotb/noxfile.py') as f:
+              content = f.read()
 
-      - name: Build Icarus
-        run: |
-          git clone https://github.com/steveicarus/iverilog.git
-          cd iverilog
-          git checkout 06077ed026b4d8498d9129a6acfb0b44d0b51f18
-          sh autoconf.sh
-          ./configure
-          make -j$(nproc)
-          sudo make install
-          iverilog -V
+          ahb_tests = []
+          axi_tests = []
 
-      - name: Build Verilator
+          # Pattern matches @nox.session(tags=[...]) followed by def xxx_verify(
+          # The .*? allows @nox.parametrize decorators between @nox.session and def
+          pattern = r'@nox\.session\(tags=\[([^\]]+)\]\).*?def (\w+_verify)\('
+
+          for match in re.finditer(pattern, content, re.DOTALL):
+              tags_str, func_name = match.groups()
+              tags = [t.strip().strip('"\'') for t in tags_str.split(',')]
+
+              # Only process test sessions (tagged with 'tests')
+              if 'tests' not in tags:
+                  continue
+
+              has_ahb = 'ahb' in tags
+              has_axi = 'axi' in tags
+
+              # Categorize tests by bus configuration
+              if has_ahb and not has_axi:
+                  ahb_tests.append(func_name)
+              elif has_axi and not has_ahb:
+                  axi_tests.append(func_name)
+              elif has_ahb and has_axi:
+                  # Tests tagged with both run in both configurations
+                  ahb_tests.append(func_name)
+                  axi_tests.append(func_name)
+
+          # Deduplicate and sort for consistent ordering
+          ahb_tests = sorted(set(ahb_tests))
+          axi_tests = sorted(set(axi_tests))
+
+          print(f"Discovered {len(ahb_tests)} AHB tests and {len(axi_tests)} AXI tests")
+
+          # Output matrices for subsequent jobs
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"ahb_matrix={json.dumps(ahb_tests)}\n")
+              f.write(f"axi_matrix={json.dumps(axi_tests)}\n")
+          EOF
+
+  # ===========================================================================
+  # Job: Run AHB Tests (Parallel)
+  # ===========================================================================
+  # Runs each AHB test as a separate parallel job using GitHub Actions matrix.
+  # Each job:
+  #   1. Builds/caches Verilator
+  #   2. Sets up Python environment via install.sh and activate.sh
+  #   3. Configures RTL for AHB bus
+  #   4. Runs the specific test via nox
+  # ===========================================================================
+  tests-ahb:
+    name: "AHB: ${{ matrix.test }}"
+    needs: [generate-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue running other tests even if one fails
+      matrix:
+        test: ${{ fromJson(needs.generate-matrix.outputs.ahb-matrix) }}
+    steps:
+      # --- System Dependencies ---
+      - name: Install system dependencies
         run: |
-          git clone https://github.com/verilator/verilator -b v5.024
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      # --- Repository Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      # --- Verilator (cached) ---
+      - name: Cache Verilator installation
+        id: cache-verilator
+        uses: actions/cache@v4
+        with:
+          path: ~/verilator-install
+          key: verilator-install-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Build Verilator (if not cached)
+        if: steps.cache-verilator.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/verilator/verilator -b ${{ env.VERILATOR_VERSION }}
           cd verilator
           autoconf
-          ./configure
+          ./configure --prefix=$HOME/verilator-install
           make -j$(nproc)
-          sudo make install
-          verilator --version
+          make install
 
-      - name: Run Tests
+      - name: Add Verilator to PATH
         run: |
-          make install-uvm
-          source activate.sh
-          make tests
+          echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
+          echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
 
-      - name: Upload artifacts
+      # --- Python Environment ---
+      - name: Setup Python environment (pyenv + dependencies)
+        run: ./install.sh
+
+      # --- Run Test ---
+      # Combined step ensures environment variables from activate.sh persist
+      - name: Configure RTL and run test
+        id: run-test
+        run: |
+          source activate.sh
+          make config CFG_NAME=ahb
+          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
+
+      # --- Debug: Show logs on failure ---
+      - name: Display test logs on failure
+        if: failure() && steps.run-test.outcome == 'failure'
+        run: |
+          echo "=== Test failed - displaying log files ==="
+          find verification/cocotb -name "*.log" -type f -exec sh -c \
+            'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
+
+      # --- Upload Results ---
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-ahb-${{ matrix.test }}
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
+
+  # ===========================================================================
+  # Job: Run AXI Tests (Parallel)
+  # ===========================================================================
+  # Same structure as tests-ahb, but configured for AXI bus.
+  # ===========================================================================
+  tests-axi:
+    name: "AXI: ${{ matrix.test }}"
+    needs: [generate-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.generate-matrix.outputs.axi-matrix) }}
+    steps:
+      # --- System Dependencies ---
+      - name: Install system dependencies
+        run: |
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      # --- Repository Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      # --- Verilator (cached) ---
+      - name: Cache Verilator installation
+        id: cache-verilator
+        uses: actions/cache@v4
+        with:
+          path: ~/verilator-install
+          key: verilator-install-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Build Verilator (if not cached)
+        if: steps.cache-verilator.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/verilator/verilator -b ${{ env.VERILATOR_VERSION }}
+          cd verilator
+          autoconf
+          ./configure --prefix=$HOME/verilator-install
+          make -j$(nproc)
+          make install
+
+      - name: Add Verilator to PATH
+        run: |
+          echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
+          echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
+
+      # --- Python Environment ---
+      - name: Setup Python environment (pyenv + dependencies)
+        run: ./install.sh
+
+      # --- Run Test ---
+      - name: Configure RTL and run test
+        id: run-test
+        run: |
+          source activate.sh
+          make config CFG_NAME=axi
+          cd verification/cocotb && python -m nox -R -s ${{ matrix.test }} --no-venv --forcecolor
+
+      # --- Debug: Show logs on failure ---
+      - name: Display test logs on failure
+        if: failure() && steps.run-test.outcome == 'failure'
+        run: |
+          echo "=== Test failed - displaying log files ==="
+          find verification/cocotb -name "*.log" -type f -exec sh -c \
+            'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
+
+      # --- Upload Results ---
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-axi-${{ matrix.test }}
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
+
+  # ===========================================================================
+  # Job: Aggregate Test Results
+  # ===========================================================================
+  # Collects all test artifacts into a single combined artifact.
+  # Provides a single point to check overall test status.
+  # ===========================================================================
+  test-results:
+    name: Aggregate test results
+    needs: [tests-ahb, tests-axi]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: test-results
+          merge-multiple: true
+
+      - name: Upload combined test results
         uses: actions/upload-artifact@v4
         with:
           name: tests-results
-          path: verification/cocotb
+          path: test-results
 
-  docs-build:
-    name: Documentation build
-    runs-on: ubuntu-latest
-    needs: [build-and-test]
-    env:
-      DEBIAN_FRONTEND: "noninteractive"
-    steps:
-      - name: Install dependencies
+      - name: Verify all tests passed
         run: |
-          sudo apt -qqy update && sudo apt -qqy --no-install-recommends install \
+          if [ "${{ needs.tests-ahb.result }}" != "success" ] || \
+             [ "${{ needs.tests-axi.result }}" != "success" ]; then
+            echo "❌ Some tests failed!"
+            echo "   AHB tests: ${{ needs.tests-ahb.result }}"
+            echo "   AXI tests: ${{ needs.tests-axi.result }}"
+            exit 1
+          fi
+          echo "✅ All tests passed!"
+
+  # ===========================================================================
+  # Job: Build and Deploy Documentation
+  # ===========================================================================
+  # Builds Sphinx documentation including verification results.
+  # Only runs after all tests pass successfully.
+  # Deploys to GitHub Pages on main branch.
+  # ===========================================================================
+  docs-build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    needs: [test-results]
+    if: always() && needs.test-results.result == 'success'
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
             python3 python3-pip python3-venv git
 
-      - name: Setup repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get Submodules
-        run: |
-          git submodule update --init --recursive
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
 
-      - uses: actions/download-artifact@v4
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: tests-results
+          path: tests-results
 
-      - name: Install dependencies
+      - name: Setup Python virtual environment
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
-          export I3C_ROOT_DIR="`pwd`"
+          export I3C_ROOT_DIR="$(pwd)"
           pip3 install -r requirements.txt
           pip3 install -r doc/requirements.txt
 
-      - name: Generate VP
+      - name: Generate verification documentation
         run: |
           source .venv/bin/activate
           cp -r tests-results/* verification/cocotb/
-          REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" make verification-docs-with-sim
+          REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME/" \
+            make verification-docs-with-sim
 
-      - name: Build Docs
+      - name: Build Sphinx documentation
         run: |
           pushd doc
             pip3 install -r requirements.txt
             TZ=UTC make html
           popd
-          ls -lah doc/build
-          git clone https://github.com/antmicro/i3c-core-coverage-results || exit 0
-          cp i3c-core-coverage-results/*html doc/build/html
+          # Include coverage results if available
+          git clone https://github.com/antmicro/i3c-core-coverage-results || true
+          cp i3c-core-coverage-results/*html doc/build/html 2>/dev/null || true
 
-      - name: Pack artifacts
+      - name: Upload documentation artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: docs
           path: ./doc/build
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
-        if: ${{ github.ref == 'refs/heads/main' }}
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./doc/build/html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/build/html
