@@ -417,8 +417,8 @@ is back to Idle state.
 ### `Detect target error condition 1`
 
 Tests:
-- [TE1_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L149)
-- [TE1_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L188)
+- [TE1_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L148)
+- [TE1_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L187)
 
 
 Issues I3C CCC transaction with invalid T-bit.
@@ -429,8 +429,8 @@ is back to Idle state.
 ### `Detect target error condition 5`
 
 Tests:
-- [TE5_read_on_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L227)
-- [TE5_write_on_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L263)
+- [TE5_read_on_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L225)
+- [TE5_write_on_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L261)
 
 
 Issues one of the CCC that is either read-only, or write-only.
