@@ -46,6 +46,7 @@ async def setup_test(dut):
     dut.t_hd_dat_i.value = 5
     dut.req_byte_i.value = 0
     dut.req_bit_i.value = 0
+    dut.req_ibi_i.value = 0
     dut.req_value_i.value = 0
     dut.scl_negedge_i.value = 0
     dut.scl_posedge_i.value = 0
@@ -96,7 +97,7 @@ async def test_bit_tx_negedge(dut, value):
 
     await FallingEdge(dut.scl_i)
     dut.req_bit_i.value = 1
-    dut.req_value_i.value = value
+    dut.req_value_i.value = (value << 7)
 
     await assert_bit_request(dut, value)
     await ClockCycles(dut.clk_i, 10)
@@ -113,7 +114,7 @@ async def test_bit_tx_pre_posedge(dut, value):
     await FallingEdge(dut.scl_i)
     await ClockCycles(dut.clk_i, int((SCL_CLK_RATIO / 2) - dut.t_su_dat_i.value))
     dut.req_bit_i.value = 1
-    dut.req_value_i.value = value
+    dut.req_value_i.value = (value << 7)
 
     await assert_bit_request(dut, value)
     await ClockCycles(dut.clk_i, 10)
@@ -130,7 +131,7 @@ async def test_bit_tx_high_level(dut, value):
     await RisingEdge(dut.scl_i)
     await ClockCycles(dut.clk_i, int((SCL_CLK_RATIO / 2) - dut.t_su_dat_i.value))
     dut.req_bit_i.value = 1
-    dut.req_value_i.value = value
+    dut.req_value_i.value = (value << 7)
 
     await assert_bit_request(dut, value)
     await ClockCycles(dut.clk_i, 10)
@@ -147,7 +148,7 @@ async def test_bit_tx_low_level(dut, value):
     await FallingEdge(dut.scl_i)
     await ClockCycles(dut.clk_i, 10)
     dut.req_bit_i.value = 1
-    dut.req_value_i.value = value
+    dut.req_value_i.value = (value << 7)
 
     await assert_bit_request(dut, value)
     await ClockCycles(dut.clk_i, 10)

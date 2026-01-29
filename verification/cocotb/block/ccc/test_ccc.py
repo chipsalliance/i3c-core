@@ -54,7 +54,7 @@ def get_rx_req_byte(dut):
         return int(dut.bus_rx_req_o.req_byte.value)
 
 
-# bus_tx_req_t = {drive_type[10], req_byte[9], req_bit[8], data[7:0]}
+# bus_tx_req_t = {drive_type[11], req_ibi[10], req_byte[9], req_bit[8], data[7:0]}
 def get_tx_req_bit(dut):
     if is_verilator():
         return (int(dut.bus_tx_req_o.value) >> 8) & 0x1

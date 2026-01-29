@@ -188,20 +188,6 @@ def bus_rx_flow_verify(session, test_group, test_name, coverage, simulator):
 
 
 @nox.session(tags=["tests", "ahb", "axi"])
-@nox.parametrize("test_group", ["bus_tx"])
-@nox.parametrize(
-    "test_name",
-    [
-        "test_bus_tx",
-    ],
-)
-@nox.parametrize("coverage", coverage_types)
-@nox.parametrize("simulator", simulators)
-def bus_tx_verify(session, test_group, test_name, coverage, simulator):
-    verify_block(session, test_group, test_name, coverage, simulator)
-
-
-@nox.session(tags=["tests", "ahb", "axi"])
 @nox.parametrize("test_group", ["bus_tx_flow"])
 @nox.parametrize(
     "test_name",
