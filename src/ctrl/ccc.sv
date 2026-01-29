@@ -828,6 +828,7 @@ module ccc
     drive_type: (state_q inside {TxData, TxDataTbit}) ? PushPull : OpenDrain,
     req_byte:   (state_q == TxData),
     req_bit:    (state_q inside {TxTargetAddrAck, TxDataTbit}),
+    req_ibi:    1'b0,
     data:       bus_tx_data
   };
 

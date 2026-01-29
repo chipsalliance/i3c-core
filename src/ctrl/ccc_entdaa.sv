@@ -385,6 +385,7 @@ module ccc_entdaa
     drive_type: OpenDrain,
     req_byte:   1'b0,
     req_bit:    (state_q inside {AckRsvdByte, SendNack, SendIDBit, AckAddr}),
+    req_ibi:    1'b0,
     data:       bus_tx_data
   };
 

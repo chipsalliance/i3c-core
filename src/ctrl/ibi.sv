@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /*
-    The module begins IBI sequence upon assertion of begin_i and asserts
-    done_o for one cycle when it is complete.
+  The module begins IBI sequence upon assertion of begin_i and asserts
+  done_o for one cycle when it is complete.
 
-    This module handles target IBIs. IBI data (MDB + optional data) comes
-    through the ibi_byte_* interface. Data to be sent over I3C comes out
-    through bus_tx_* interface whereas ACK/NACK response comes in through
-    bus_rx_* interface.
+  This module handles target IBIs. IBI data (MDB + optional data) comes
+  through the ibi_byte_* interface. Data to be sent over I3C comes out
+  through bus_tx_* interface whereas ACK/NACK response comes in through
+  bus_rx_* interface.
 
-    IBI address is set via target_ibi_addr_i. When the address isnt valid
-    (target_ibi_addr_valid_i == 0) then the module does not respond to
-    begin_i.
+  IBI address is set via target_ibi_addr_i.
 */
+
 module ibi import i3c_pkg::*; (
   input  logic clk_i,
   input  logic rst_ni,
@@ -29,7 +28,6 @@ module ibi import i3c_pkg::*; (
 
   // IBI address
   input  logic [6:0] target_ibi_addr_i,
-  input  logic       target_ibi_addr_valid_i,
 
   // IBI data interface
   input  logic      ibi_byte_valid_i,
@@ -51,13 +49,7 @@ module ibi import i3c_pkg::*; (
 
   // Bus Rx interface
   output bus_rx_req_t bus_rx_req_o,
-  input  bus_rx_rsp_t bus_rx_rsp_i,
-
-  // Bus drive interface
-  input  i3c_timeparam_t t_hd_dat_i,
-
-  // SDA out for initial zero-pulse
-  output logic sda_o
+  input  bus_rx_rsp_t bus_rx_rsp_i
 );
 
   // IBI status codes
@@ -77,26 +69,19 @@ module ibi import i3c_pkg::*; (
 
   logic bus_rx_req_nack;
 
-  // TODO can probably be removed
-  i3c_timeparam_t t_hd_cnt_q, t_hd_cnt_d;
-
   // FSM
   typedef enum logic [7:0] {
     // Wait state
     Idle,
-    // Wait for the bus to become available
-    WaitAvail,
-    // Force start by pulling SDA low
-    DriveStart,
-    // Transmitt target address
-    DriveAddr,
+    // Request to drive SDA low and transmit target address
+    DriveIbiAddr,
     // Receive ACK/NACK
     ReadAck,
     // Wait for falling SCL (do not change sel_od_pp_o when SCL is high)
     WaitForSclNegedgeAfterAck,
-    // Transmitt data byte
+    // Transmit data byte
     SendData,
-    // Transmitt T bit
+    // Transmit T bit
     SendTbit,
     // Wait for stop condition
     WaitStopOrRstart,
@@ -107,17 +92,6 @@ module ibi import i3c_pkg::*; (
   } state_e;
 
   state_e state_q, state_d;
-
-  // SCL fall time counter
-  always_comb begin
-    t_hd_cnt_d = t_hd_cnt_q;
-
-    if ((state_q == DriveStart) && scl_negedge_i) begin
-      t_hd_cnt_d = t_hd_dat_i - 1;
-    end else if (t_hd_cnt_q != '1) begin
-      t_hd_cnt_d = t_hd_cnt_q - 1;
-    end
-  end
 
   // Retry counter
   always_comb begin
@@ -138,8 +112,9 @@ module ibi import i3c_pkg::*; (
 
   assign bus_tx_req_o = '{
     drive_type: (state_q inside {SendData, SendTbit}) ? PushPull : OpenDrain,
-    req_byte:   (state_q inside {DriveAddr, SendData}),
+    req_byte:   (state_q inside {SendData}),
     req_bit:    (state_q == SendTbit),
+    req_ibi:    (state_q == DriveIbiAddr),
     data:       bus_tx_req_value
   };
 
@@ -152,39 +127,21 @@ module ibi import i3c_pkg::*; (
     bus_tx_req_value = '0;
     ibi_byte_ready_o = 1'b0;
     ibi_status_we_o  = 1'b0;
-
     done_o = 1'b0;
-    sda_o  = 1'b1;
 
     state_d      = state_q;
     ibi_status_d = ibi_status_q;
     case (state_q)
       Idle: begin
-        if (begin_i && target_ibi_addr_valid_i) begin
-          state_d = ibi_can_retry ? WaitAvail : Flush;
-        end
-      end
-      WaitAvail: begin
         if (bus_stop_i) begin
           state_d = Done;
-        end else if (bus_available_i) begin
-          state_d = DriveStart;
+        end else if (begin_i) begin
+          state_d = ibi_can_retry ? DriveIbiAddr : Flush;
         end
       end
-      DriveStart: begin
-        sda_o = 1'b0;
-
-        if (bus_stop_i) begin
-          state_d = Done;
-        end else begin
-          // Proceed if counter elapsed or t_hold is zero and we see a negedge on scl
-          // TODO Any "hold" time here probably makes no sense
-          if ((t_hd_cnt_q == '0) || ((t_hd_dat_i == '0) && scl_negedge_i)) begin
-            state_d = DriveAddr;
-          end
-        end
-      end
-      DriveAddr: begin
+      DriveIbiAddr: begin
+        // In this state, we send an IBI request to bus_tx_flow, which then first pulls SDA low and
+        // subsequently transmits our IBI address, starting at the following negedge of SCL.
         bus_tx_req_value = {target_ibi_addr_i, 1'b1};
 
         if (bus_stop_i) begin
@@ -259,12 +216,10 @@ module ibi import i3c_pkg::*; (
       state_q         <= Idle;
       ibi_status_q    <= IbiSuccess;
       ibi_retry_cnt_q <= '1; // TODO
-      t_hd_cnt_q      <= '0;
     end else begin
       state_q         <= state_d;
       ibi_status_q    <= ibi_status_d;
       ibi_retry_cnt_q <= ibi_retry_cnt_d;
-      t_hd_cnt_q      <= t_hd_cnt_d;
     end
   end
 

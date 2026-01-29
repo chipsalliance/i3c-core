@@ -165,6 +165,7 @@ package i3c_pkg;
   // Tx descriptor
   typedef struct packed {
     i3c_drive_e drive_type;
+    logic       req_ibi;
     logic       req_byte;
     logic       req_bit;
     i3c_byte_t  data;
