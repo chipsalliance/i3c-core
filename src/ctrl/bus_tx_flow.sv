@@ -23,6 +23,7 @@ module bus_tx_flow import i3c_pkg::*; (
   input  logic scl_negedge_i,
   input  logic scl_posedge_i,
   input  logic scl_stable_low_i,
+  input  logic sda_value_i,
 
   // Tx request in
   input  bus_tx_req_t tx_req_i,
@@ -81,6 +82,12 @@ module bus_tx_flow import i3c_pkg::*; (
         drive_mode_d   = bus_tx_req.drive_type;
         bit_counter_en = 1'b0;
         // Only one bit to send; wait for posedge
+        return WaitPosEdge;
+      end
+      AckIbi: begin
+        req_value_d    = '1;
+        drive_mode_d   = OpenDrain;
+        bit_counter_en = 1'b0;
         return WaitPosEdge;
       end
       InitIbi: begin
@@ -183,6 +190,11 @@ module bus_tx_flow import i3c_pkg::*; (
         // Wait for posedge to avoid following rx requests sampling this bit as well
         if (scl_posedge_i) begin
           bus_tx_done = 1'b1;
+          // Drive SDA low in PP in case of an IBI Ack by the controller
+          if ((tx_req_i.req_type == AckIbi) && (sda_value_i == 1'b0)) begin
+            req_value_d[7] = 1'b0;
+            drive_mode_d = PushPull;
+          end
           state_d = NextTaskDecision;
         end
       end

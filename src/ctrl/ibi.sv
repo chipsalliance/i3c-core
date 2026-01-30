@@ -73,10 +73,8 @@ module ibi import i3c_pkg::*; (
     Idle,
     // Request to drive SDA low and transmit target address
     DriveIbiAddr,
-    // Receive ACK/NACK
+    // Receive ACK/NACK, handle SDA handoff
     ReadAck,
-    // Wait for falling SCL (do not change sel_od_pp_o when SCL is high)
-    WaitForSclNegedgeAfterAck,
     // Transmit data byte
     SendData,
     // Transmit T bit
@@ -155,17 +153,22 @@ module ibi import i3c_pkg::*; (
       ReadAck: begin
         if (bus_stop_i) begin
           state_d = Done;
-        end else if (bus_rx_rsp_i.done) begin
-          if (bus_rx_req_nack) begin
-            ibi_status_d = (ibi_status_q == IbiSuccess) ? IbiFailureNack : IbiFailureRetry;
-            state_d = WaitStopOrRstart;
-          end else begin
-            state_d = WaitForSclNegedgeAfterAck;
+        end else begin
+          // TODO only do the special ACK in case we have an MDB
+          bus_tx_req_o.req_valid = 1'b1;
+          bus_tx_req_o.req_type  = AckIbi;
+
+          // Note: Tx and Rx simultaneously! This relies on the 'done' being asserted for both at
+          // the rising edge of SCL!
+          if (bus_rx_rsp_i.done) begin
+            if (bus_rx_req_nack) begin
+              ibi_status_d = (ibi_status_q == IbiSuccess) ? IbiFailureNack : IbiFailureRetry;
+              state_d = WaitStopOrRstart;
+            end else begin
+              state_d = SendData;
+            end
           end
         end
-      end
-      WaitForSclNegedgeAfterAck: begin
-        if (scl_negedge_i) state_d = SendData;
       end
       SendData: begin
         bus_tx_req_o.drive_type = PushPull;

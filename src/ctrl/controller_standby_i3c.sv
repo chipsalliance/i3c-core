@@ -607,6 +607,7 @@ module controller_standby_i3c
     .scl_negedge_i   (ctrl_bus_i.scl.neg_edge),
     .scl_posedge_i   (ctrl_bus_i.scl.pos_edge),
     .scl_stable_low_i(ctrl_bus_i.scl.stable_low),
+    .sda_value_i     (ctrl_bus_i.sda.value),
 
     .sel_od_pp_o(phy_sel_od_pp_o),
     .sda_o      (ctrl_sda_o)
