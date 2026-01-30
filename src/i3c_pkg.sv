@@ -162,13 +162,24 @@ package i3c_pkg;
     logic stop_det;
   } bus_state_t;
 
+  // Tx transfer types
+  typedef enum logic [2:0] {
+    RawByte,
+    RawBit,
+    InitIbi,
+    AckRegular,
+    AckWrite,
+    AckIbi,
+    TReadCont,
+    TReadEnd
+  } i3c_tx_req_e;
+
   // Tx descriptor
   typedef struct packed {
-    i3c_drive_e drive_type;
-    logic       req_ibi;
-    logic       req_byte;
-    logic       req_bit;
-    i3c_byte_t  data;
+    logic        req_valid;
+    i3c_tx_req_e req_type;
+    i3c_drive_e  drive_type;
+    i3c_byte_t   data;
   } bus_tx_req_t;
 
   typedef struct packed {

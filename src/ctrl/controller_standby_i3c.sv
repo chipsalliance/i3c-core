@@ -314,7 +314,7 @@ module controller_standby_i3c
   end
 
   always_comb begin
-    bus_tx_req = '{drive_type: OpenDrain, default: '0};
+    bus_tx_req = '{drive_type: OpenDrain, req_type: RawBit, default: '0};
     bus_rx_req = '{default: '0};
 
     bus_tx_rsp_fsm = '{default: '0};

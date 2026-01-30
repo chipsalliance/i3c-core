@@ -142,9 +142,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
 
   i3c_byte_t last_byte;
 
-  i3c_byte_t bus_tx_req_data;
-
-  logic bus_tx_req_bit, bus_tx_req_byte;
+  logic bus_tx_req_bit;
   logic bus_rx_req_bit, bus_rx_req_byte;
 
   logic parity_bit;
@@ -225,13 +223,8 @@ module i3c_target_fsm import i3c_pkg::*; #(
   // TODO
   assign tx_host_nack_o = 1'b0;
 
-  assign bus_tx_req_o = '{
-    drive_type: OpenDrain, // TODO Set OD/PP in correct states
-    req_byte:   bus_tx_req_byte,
-    req_bit:    bus_tx_req_bit,
-    req_ibi:    1'b0,
-    data:       bus_tx_req_data
-  };
+  // Shorthand helper signal
+  assign bus_tx_req_bit = bus_tx_req_o.req_valid && (bus_tx_req_o.req_type == RawBit);
 
   assign bus_rx_req_o = '{
     req_byte: bus_rx_req_byte,
@@ -361,7 +354,9 @@ module i3c_target_fsm import i3c_pkg::*; #(
     if (~rst_ni) begin
       tx_end_xfer <= '0;
     end else begin
-      if (bus_tx_rsp_i.done && bus_tx_req_bit) tx_end_xfer <= tx_last_byte_i;
+      if (bus_tx_rsp_i.done && bus_tx_req_bit) begin
+        tx_end_xfer <= tx_last_byte_i;
+      end
     end
   end
 
@@ -400,9 +395,12 @@ module i3c_target_fsm import i3c_pkg::*; #(
 
     bus_rnw_d = 1'b0;
 
-    bus_tx_req_bit  = 1'b0;
-    bus_tx_req_byte = 1'b0;
-    bus_tx_req_data = '0;
+    bus_tx_req_o = '{
+      req_valid:  1'b0,
+      req_type:   RawBit,
+      drive_type: OpenDrain,
+      data:       '1
+    };
 
     bus_rx_req_bit  = 1'b0;
     bus_rx_req_byte = 1'b0;
@@ -449,8 +447,9 @@ module i3c_target_fsm import i3c_pkg::*; #(
         end
       end
       TxAckFByte: begin
-        bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[7] = 1'b0; // LSB is the only bit used for bit TX transfer
+        bus_tx_req_o.req_valid = 1'b1;
+        bus_tx_req_o.req_type  = RawBit;
+        bus_tx_req_o.data[7]   = 1'b0;
 
         if (bus_tx_rsp_i.done) begin
           if (is_rsvd_byte_match) begin
@@ -506,8 +505,9 @@ module i3c_target_fsm import i3c_pkg::*; #(
         end
       end
       TxAckSByte: begin
-        bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[7] = 1'b0;
+        bus_tx_req_o.req_valid = 1'b1;
+        bus_tx_req_o.req_type  = RawBit;
+        bus_tx_req_o.data[7]   = 1'b0;
 
         if (bus_tx_rsp_i.done) begin
           if (is_any_addr_match) begin
@@ -541,8 +541,11 @@ module i3c_target_fsm import i3c_pkg::*; #(
 
       // Private Read data loop
       TxPReadData: begin
-        bus_tx_req_byte = 1'b1;
-        bus_tx_req_data = tx_data_byte;
+        bus_tx_req_o.drive_type = PushPull;
+        bus_tx_req_o.req_valid  = 1'b1;
+        bus_tx_req_o.req_type   = RawByte;
+        bus_tx_req_o.data       = tx_data_byte;
+
         tx_pr_abort_o = bus_start_det || bus_stop_det_i;
 
         if (bus_start_det) begin
@@ -552,8 +555,11 @@ module i3c_target_fsm import i3c_pkg::*; #(
         end
       end
       TxPReadTbit: begin
-        bus_tx_req_bit     = 1'b1;
-        bus_tx_req_data[7] = ~tx_end_xfer;
+        bus_tx_req_o.drive_type = PushPull;
+        bus_tx_req_o.req_valid  = 1'b1;
+        bus_tx_req_o.req_type   = RawBit;
+        bus_tx_req_o.data[7]    = ~tx_end_xfer;
+
         tx_pr_abort_o = bus_start_det || bus_stop_det_i;
 
         // FIXME While waiting for a restart condition when the controller wants to abort the read,
@@ -700,7 +706,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
     @(posedge clk_i)
     (
       $rose(bus_addr_valid) |=>
-      ##2 ((is_rsvd_byte_match || is_any_addr_match) && ~bus_tx_req_data[0])
+      ##2 ((is_rsvd_byte_match || is_any_addr_match) && ~bus_tx_req_o.data[7])
       ##1 @(posedge scl_negedge_i) ##1
       ##1 @(posedge clk_i) ##1 $fell(bus_tx_req_bit)
     );
@@ -711,7 +717,7 @@ module i3c_target_fsm import i3c_pkg::*; #(
     @(posedge clk_i)
     (
       $rose(bus_addr_valid) |=>
-      ##2 (~(is_rsvd_byte_match || is_any_addr_match) && bus_tx_req_data[0])
+      ##2 (~(is_rsvd_byte_match || is_any_addr_match) && bus_tx_req_o.data[7])
       ##1 @(posedge scl_negedge_i) ##1
       ##1 @(posedge clk_i) ##1 ($stable(bus_tx_req_bit) && ~bus_tx_req_bit)
     );

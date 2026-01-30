@@ -41,13 +41,15 @@ module bus_tx_flow import i3c_pkg::*; (
   logic       bit_counter_en;
   logic [3:0] bit_counter_q, bit_counter_d;
 
-  logic [2:0] reqs;
-  logic       req_any;
   i3c_byte_t  req_value_q, req_value_d;
+  i3c_drive_e drive_mode_q, drive_mode_d;
 
   logic tx_done;     // Indicates finished bit write
   logic bus_tx_done; // Feedback to requester that transfer is done
   logic req_error;
+
+  // TODO
+  assign req_error = 1'b0;
 
   typedef enum logic [2:0] {
     Idle,
@@ -63,28 +65,42 @@ module bus_tx_flow import i3c_pkg::*; (
   function automatic tx_state_e start_transfer(
     input  bus_tx_req_t bus_tx_req,
     output i3c_byte_t   req_value_d,
+    output i3c_drive_e  drive_mode_d,
     output logic        bit_counter_en
   );
-    req_value_d[7]   = tx_req_i.data[7];
-    req_value_d[6:0] = tx_req_i.req_bit ? '1 : tx_req_i.data[6:0];
-    if (bus_tx_req.req_bit) begin
-      // Only one bit to send; wait for posedge
-      bit_counter_en = 1'b0;
-      return WaitPosEdge;
-    end else begin
-      // Enable bit counter and work on full byte in DriveByte
-      bit_counter_en = 1'b1;
-      return DriveByte;
-    end
+    case (bus_tx_req.req_type)
+      RawByte: begin
+        req_value_d    = bus_tx_req.data;
+        drive_mode_d   = bus_tx_req.drive_type;
+        // Enable bit counter and work on full byte in DriveByte
+        bit_counter_en = 1'b1;
+        return DriveByte;
+      end
+      RawBit: begin
+        req_value_d    = {bus_tx_req.data[7], {7{1'b1}}};
+        drive_mode_d   = bus_tx_req.drive_type;
+        bit_counter_en = 1'b0;
+        // Only one bit to send; wait for posedge
+        return WaitPosEdge;
+      end
+      InitIbi: begin
+        req_value_d    = bus_tx_req.data; // Data is IBI address
+        drive_mode_d   = OpenDrain;
+        bit_counter_en = 1'b1;
+        return DriveByte;
+      end
+      default: begin
+        // TODO
+        req_value_d    = '0;
+        drive_mode_d   = OpenDrain;
+        bit_counter_en = 1'b0;
+        return WaitPosEdge;
+      end
+
+    endcase
 
   endfunction : start_transfer
 
-  assign reqs    = {tx_req_i.req_byte, tx_req_i.req_bit, tx_req_i.req_ibi};
-  assign req_any = |reqs;
-  // Clever way to ensure that only one bit is HIGH
-  // Source: https://stackoverflow.com/a/11235598
-  // It might be optimized if we're sure there are only 2 requests at most
-  assign req_error = |(reqs & (reqs - 1));
 
   // Bit counter used for byte transfers
   always_comb begin
@@ -101,6 +117,7 @@ module bus_tx_flow import i3c_pkg::*; (
 
   // SDA is simply the MSB of the data shift register. No further logic or muxing.
   assign sda_o = req_value_q[7];
+  assign sel_od_pp_o = drive_mode_q;
 
   always_comb begin : tx_fsm
     bit_counter_en = 1'b0;
@@ -108,17 +125,19 @@ module bus_tx_flow import i3c_pkg::*; (
     tx_done     = 1'b0;
     bus_tx_done = 1'b0;
 
-    req_value_d = req_value_q;
-    state_d     = state_q;
+    req_value_d  = req_value_q;
+    drive_mode_d = drive_mode_q;
+    state_d      = state_q;
     unique case (state_q)
       Idle: begin
-        if (req_any) begin
-          if (tx_req_i.req_ibi) begin
+        if (tx_req_i.req_valid) begin
+          if (tx_req_i.req_type == InitIbi) begin
             // Drive 0 in OD on SDA and wait until the controller gives us a negedge on SCL
             // Note: The controller also could've started to drive SDA below and it will take the
             // delay through the SDA synchronizer for us to detect this, however, this does not
             // present any timing or driving conflict issue.
             req_value_d[7] = 1'b0;
+            drive_mode_d   = OpenDrain;
           end
           // For IBI, this state is 2-in-1: First, SDA is driven low above to initiate the IBI by
           // generating a "target-side start condition". Next, on the SCL negedge that follows,
@@ -128,7 +147,7 @@ module bus_tx_flow import i3c_pkg::*; (
           // Since no clocking event happens between these two phases, we cannot make any state
           // transition and have to handle both in the same state.
           if (scl_negedge_i || scl_stable_low_i) begin
-            state_d = start_transfer(tx_req_i, req_value_d, bit_counter_en);
+            state_d = start_transfer(tx_req_i, req_value_d, drive_mode_d, bit_counter_en);
           end else begin
             state_d = WaitNegEdge;
           end
@@ -136,11 +155,11 @@ module bus_tx_flow import i3c_pkg::*; (
       end
       WaitNegEdge: begin
         if (scl_negedge_i) begin
-          state_d = start_transfer(tx_req_i, req_value_d, bit_counter_en);
+          state_d = start_transfer(tx_req_i, req_value_d, drive_mode_d, bit_counter_en);
         end
       end
       DriveByte: begin
-        if (tx_req_i.req_byte || tx_req_i.req_ibi) begin
+        if (tx_req_i.req_valid) begin
           bit_counter_en = 1'b1;
           // Simply wait for next edge
           if (scl_negedge_i) begin
@@ -155,7 +174,8 @@ module bus_tx_flow import i3c_pkg::*; (
         end else begin
           // Requester cancelled the transaction, e.g., a bus stop condition has occurred or
           // arbitration was lost during the address phase.
-          req_value_d = '1;
+          drive_mode_d = OpenDrain;
+          req_value_d  = '1;
           state_d = Idle;
         end
       end
@@ -168,12 +188,13 @@ module bus_tx_flow import i3c_pkg::*; (
       end
       NextTaskDecision: begin
         if (scl_negedge_i) begin
-          if (req_any) begin
+          if (tx_req_i.req_valid) begin
             // Back-to-back transfer pending, immediately service it
-            state_d = start_transfer(tx_req_i, req_value_d, bit_counter_en);
+            state_d = start_transfer(tx_req_i, req_value_d, drive_mode_d, bit_counter_en);
           end else begin
-            // Reset sda_o to OpenDrain-high & back to Idle
-            req_value_d = '1;
+            // Reset sda_o to High-Z & back to Idle
+            drive_mode_d = OpenDrain;
+            req_value_d  = '1;
             state_d = Idle;
           end
         end
@@ -193,17 +214,17 @@ module bus_tx_flow import i3c_pkg::*; (
     done:  bus_tx_done
   };
 
-  assign sel_od_pp_o = tx_req_i.drive_type; // TODO FIXME - Feedthrough for now
-
   // Sequential process for all flops
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       bit_counter_q <= '0;
       req_value_q   <= '1;
+      drive_mode_q  <= OpenDrain;
       state_q       <= Idle;
     end else begin
       bit_counter_q <= bit_counter_d;
       req_value_q   <= req_value_d;
+      drive_mode_q  <= drive_mode_d;
       state_q       <= state_d;
     end
   end
