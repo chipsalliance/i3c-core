@@ -24,6 +24,7 @@ module bus_tx_flow import i3c_pkg::*; (
   input  logic scl_posedge_i,
   input  logic scl_stable_low_i,
   input  logic sda_value_i,
+  input  logic sda_negedge_i,
 
   // Tx request in
   input  bus_tx_req_t tx_req_i,
@@ -57,7 +58,8 @@ module bus_tx_flow import i3c_pkg::*; (
     DriveByte,
     NextTaskDecision,
     WaitNegEdge,
-    WaitPosEdge
+    WaitPosEdge,
+    Bubu
   } tx_state_e;
 
   tx_state_e state_d, state_q;
@@ -73,38 +75,48 @@ module bus_tx_flow import i3c_pkg::*; (
       RawByte: begin
         req_value_d    = bus_tx_req.data;
         drive_mode_d   = bus_tx_req.drive_type;
-        // Enable bit counter and work on full byte in DriveByte
-        bit_counter_en = 1'b1;
-        return DriveByte;
       end
       RawBit: begin
         req_value_d    = {bus_tx_req.data[7], {7{1'b1}}};
         drive_mode_d   = bus_tx_req.drive_type;
-        bit_counter_en = 1'b0;
-        // Only one bit to send; wait for posedge
-        return WaitPosEdge;
       end
       AckIbi: begin
         req_value_d    = '1;
         drive_mode_d   = OpenDrain;
-        bit_counter_en = 1'b0;
-        return WaitPosEdge;
+      end
+      AckRegular, AckWrite: begin
+        req_value_d[7] = 1'b0;
+        drive_mode_d   = OpenDrain;
+      end
+      TReadCont: begin
+        req_value_d[7] = 1'b1;
+        drive_mode_d   = PushPull;
+      end
+      TReadEnd: begin
+        req_value_d[7] = 1'b0;
+        drive_mode_d   = PushPull;
       end
       InitIbi: begin
         req_value_d    = bus_tx_req.data; // Data is IBI address
         drive_mode_d   = OpenDrain;
-        bit_counter_en = 1'b1;
-        return DriveByte;
       end
       default: begin
         // TODO
-        req_value_d    = '0;
+        req_value_d    = '1;
         drive_mode_d   = OpenDrain;
-        bit_counter_en = 1'b0;
-        return WaitPosEdge;
       end
-
     endcase
+
+    // Most request types are only a single bit in length; completion can be signalled at the next
+    // SCL rising edge.
+    if (bus_tx_req.req_type inside {RawByte, InitIbi}) begin
+      // Enable bit counter and work on full byte in DriveByte
+      bit_counter_en = 1'b1;
+      return DriveByte;
+    end else begin
+      bit_counter_en = 1'b0;
+      return WaitPosEdge;
+    end
 
   endfunction : start_transfer
 
@@ -189,13 +201,44 @@ module bus_tx_flow import i3c_pkg::*; (
       WaitPosEdge: begin
         // Wait for posedge to avoid following rx requests sampling this bit as well
         if (scl_posedge_i) begin
-          bus_tx_done = 1'b1;
-          // Drive SDA low in PP in case of an IBI Ack by the controller
-          if ((tx_req_i.req_type == AckIbi) && (sda_value_i == 1'b0)) begin
-            req_value_d[7] = 1'b0;
-            drive_mode_d = PushPull;
-          end
+          bus_tx_done = (tx_req_i.req_type != TReadCont);
           state_d = NextTaskDecision;
+          case (tx_req_i.req_type)
+            AckIbi: begin
+              // Drive SDA low in PP in case of an IBI Ack by the controller
+              if (sda_value_i == 1'b0) begin
+                req_value_d[7] = 1'b0;
+                drive_mode_d = PushPull;
+              end
+            end
+            AckWrite: begin
+              // Release SDA in the middle of ACK to high-Z; Controller takes over driving
+              // TODO tb problem
+              // req_value_d[7] = 1'b1;
+            end
+            TReadEnd: begin
+              req_value_d[7] = 1'b1;
+              drive_mode_d = OpenDrain;
+            end
+            TReadCont: begin
+              req_value_d[7] = 1'b1;
+              drive_mode_d = OpenDrain;
+              state_d = Bubu;
+            end
+            default: ;
+          endcase
+        end
+      end
+      Bubu: begin
+        if (sda_negedge_i) begin
+          state_d = Idle;
+        end
+        if (scl_negedge_i) begin
+          bus_tx_done    = 1'b1;
+          bit_counter_en = 1'b1;
+          drive_mode_d = PushPull;
+          req_value_d  = tx_req_i.data;
+          state_d      = DriveByte;
         end
       end
       NextTaskDecision: begin
