@@ -11,117 +11,115 @@
   * Target FSM may respond with a bus error, which means that the current transaction
   should be aborted.
 */
-module descriptor_tx #(
-    parameter int unsigned TtiTxDescDataWidth = 32,
-    parameter int unsigned TtiTxDataWidth = 8,
-    parameter int unsigned TtiTxFifoDepthWidth = 16
+module descriptor_tx import i3c_pkg::*; #(
+  parameter int unsigned TtiTxDescDataWidth = 32,
+  parameter int unsigned TtiTxDataWidth = 8,
+  parameter int unsigned TtiTxFifoDepthWidth = 16
 ) (
-    input logic clk_i,
-    input logic rst_ni,
+  input  logic clk_i,
+  input  logic rst_ni,
 
-    // TTI: TX Descriptor
-    input logic tti_tx_desc_queue_rvalid_i,
-    output logic tti_tx_desc_queue_rready_o,
-    input logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata_i,
+  // TTI: TX Descriptor
+  input  logic                          tti_tx_desc_queue_rvalid_i,
+  output logic                          tti_tx_desc_queue_rready_o,
+  input  logic [TtiTxDescDataWidth-1:0] tti_tx_desc_queue_rdata_i,
 
-    // TTI: TX Data
-    input logic tti_tx_queue_rvalid_i,
-    input logic [TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth_i,
-    output logic tti_tx_queue_rready_o,
-    input logic [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
-    input  logic tti_tx_queue_empty_i,
-    output logic tx_queue_flush_o,
+  // TTI: TX Data
+  input  logic                           tti_tx_queue_rvalid_i,
+  output logic                           tti_tx_queue_rready_o,
+  input  logic      [TtiTxDataWidth-1:0] tti_tx_queue_rdata_i,
+  input  logic [TtiTxFifoDepthWidth-1:0] tti_tx_queue_depth_i,
+  input  logic                           tti_tx_queue_empty_i,
+  output logic                           tx_queue_flush_o,
 
-    // Interface to the target FSM
-    input logic tx_start_i,
-    input logic tx_abort_i,
-    output logic tx_desc_avail_o,
-    output logic [7:0] tx_byte_o,
-    output logic tx_byte_last_o,
-    output logic tx_byte_valid_o,
-    input logic tx_byte_ready_i,
-    output logic tx_end_o,
+  // Interface to the target FSM
+  output logic      tx_byte_valid_o,
+  input  logic      tx_byte_ready_i,
+  output i3c_byte_t tx_byte_o,
+  output logic      tx_byte_last_o,
+  input  logic      tx_start_i,
+  output logic      tx_end_o,
+  input  logic      tx_abort_i,
+  output logic      tx_desc_avail_o,
 
-    // recovery mode
-    input recovery_mode_enter_i
+  // recovery mode
+  input  logic recovery_mode_enter_i
 );
 
-  logic [31:0] tx_descriptor;
+  logic [TtiTxDescDataWidth-1:0] tx_descriptor;
+  logic [TtiTxDescDataWidth-1:0] data_len_words;
+
   logic [15:0] byte_counter;
   logic [15:0] data_len;
-  logic [TtiTxDescDataWidth-1:0] data_len_words;
+
   logic descriptor_valid;
   logic tx_start;
   logic tx_pending;
   logic tx_end;
   logic flush;
 
-  assign tti_tx_desc_queue_rready_o = ~descriptor_valid && tx_start_i &&
-                                      tti_tx_desc_queue_rvalid_i && !flush &&
-                                      !(tx_abort_i || recovery_mode_enter_i);
+  assign tti_tx_desc_queue_rready_o = tti_tx_desc_queue_rvalid_i && !descriptor_valid && tx_start_i
+                                      && !(flush || tx_abort_i || recovery_mode_enter_i);
 
   assign tx_desc_avail_o = tti_tx_desc_queue_rvalid_i;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_
     if (!rst_ni) begin
+      tx_descriptor    <= '0;
       descriptor_valid <= '0;
-      tx_descriptor <= '0;
     end else begin
-      if (tx_end) descriptor_valid <= '0;
-      else if (tti_tx_desc_queue_rready_o) begin
-        tx_descriptor <= tti_tx_desc_queue_rdata_i;
-        descriptor_valid <= '1;
-      end
-      else if (tx_abort_i || recovery_mode_enter_i) begin
+      if (tx_end) begin
+        tx_descriptor    <= '0;
         descriptor_valid <= '0;
-        tx_descriptor <= '0;
+      end else if (tti_tx_desc_queue_rready_o) begin
+        tx_descriptor    <= tti_tx_desc_queue_rdata_i;
+        descriptor_valid <= 1'b1;
+      end else if (tx_abort_i || recovery_mode_enter_i) begin
+        tx_descriptor    <= '0;
+        descriptor_valid <= '0;
       end
     end
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      flush <= '0;
+      flush <= 1'b0;
     end else begin
       if (!flush) begin
         if ((byte_counter != 16'h0) && (tx_abort_i || recovery_mode_enter_i)) begin
-            flush <= '1;
+          flush <= 1'b1;
         end
       end else begin
-        // Flush complete
-        if ((byte_counter inside {16'd1, 16'd0}) && tti_tx_queue_rvalid_i)
-            flush <= '0;
-        // No more data in the FIFO to complete the flush
-        if (!tti_tx_queue_rvalid_i && tti_tx_queue_empty_i)
-            flush <= '0;
-        // Last word from the FIFO is flushed
-        if (tx_queue_flush_o)
-            flush <= '0;
+        if (((byte_counter inside {16'd1, 16'd0}) && tti_tx_queue_rvalid_i) || // Flush complete
+            (!tti_tx_queue_rvalid_i && tti_tx_queue_empty_i) || // No more data in the FIFO to complete the flush
+            (tx_queue_flush_o)) begin                           // Last word from the FIFO is flushed
+          flush <= 1'b0;
+        end
       end
     end
   end
 
-  assign data_len = tx_descriptor[15:0];
+  assign data_len       = tx_descriptor[15:0];
   assign data_len_words = TtiTxDescDataWidth'(data_len >> 2);
   // Add 1 to depth, because there is one word in the Nto8 converter
-  assign tx_start = ~tx_pending && descriptor_valid &&
-                    (TtiTxDescDataWidth'(tti_tx_queue_depth_i+1'b1) >= data_len_words);
+  assign tx_start = !tx_pending && descriptor_valid &&
+                    (TtiTxDescDataWidth'(tti_tx_queue_depth_i + 1) >= data_len_words);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_pending
     if (!rst_ni) begin
-      tx_pending <= '0;
+      tx_pending <= 1'b0;
     end else begin
       if (tx_start) begin
-        tx_pending <= '1;
-      end else if (tx_end | tx_abort_i) begin
-        tx_pending <= '0;
+        tx_pending <= 1'b1;
+      end else if (tx_end || tx_abort_i) begin
+        tx_pending <= 1'b0;
       end
     end
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_byte_counter
     if (!rst_ni) begin
-      byte_counter   <= '0;
+      byte_counter <= '0;
     end else begin
       if (tx_start) begin
         byte_counter <= data_len;
@@ -133,13 +131,17 @@ module descriptor_tx #(
     end
   end
 
-  assign tx_end = (byte_counter == 16'h1 && tx_byte_ready_i | flush);
   assign tx_byte_valid_o = tx_pending && tti_tx_queue_rvalid_i;
-  assign tx_byte_last_o = byte_counter == 16'd1;
-  assign tx_byte_o = tti_tx_queue_rdata_i;
-  assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) | (flush && tti_tx_queue_rvalid_i);
+  assign tx_byte_last_o  = (byte_counter == 16'd1);
+  assign tx_byte_o       = tti_tx_queue_rdata_i;
 
-  assign tx_queue_flush_o = (|data_len[1:0] & tx_end) | (|byte_counter[1:0] & tx_end);
+  assign tti_tx_queue_rready_o = (tx_byte_valid_o && tx_byte_ready_i) ||
+                                 (flush && tti_tx_queue_rvalid_i);
+
+  assign tx_end = ((byte_counter == 16'h1 && tx_byte_ready_i) || flush);
+  // TODO check these conditions. This probably checks if any of the four bytes per tx_queue word
+  // hasn't been read, in which case a word-flush is required?
+  assign tx_queue_flush_o = (|data_len[1:0] && tx_end) || (|byte_counter[1:0] && tx_end);
 
   assign tx_end_o = tx_end;
 endmodule
