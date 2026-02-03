@@ -204,7 +204,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: custom-axi-coverage
-          path: i3c-core-coverage-results/
+          path: custom-axi-coverage/
 
       - name: Build Docs
         run: |
@@ -213,6 +213,9 @@ jobs:
             TZ=UTC make html
           popd
           ls -lah doc/build
+
+          cp custom-axi-coverage/coverview.html doc/build/html/coverview-custom-axi.html
+          git clone https://github.com/antmicro/i3c-core-coverage-results
           cp i3c-core-coverage-results/*html doc/build/html
 
       - name: Pack artifacts
