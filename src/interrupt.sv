@@ -2,7 +2,7 @@
 Single interrupt request handling logic
 */
 module interrupt # (
-    parameter bit Edge = 1      // 1 - trigger on rising edge, 0 - trigger on high level
+    parameter bit TriggerOnEdge = 1      // 1 - trigger on rising edge, 0 - trigger on high level
 ) (
     input  logic clk_i,
     input  logic rst_ni,
@@ -29,7 +29,7 @@ module interrupt # (
     assign irq = (irq_i | irq_force_i);
 
     // Trigger on edge
-    generate if (Edge == 1'b1) begin
+    generate if (TriggerOnEdge == 1'b1) begin : gen_edge_trigger
         logic irq_r;
         always_ff @(posedge clk_i or negedge rst_ni) begin
             if (!rst_ni) begin
@@ -42,7 +42,7 @@ module interrupt # (
         end
 
     // Trigger on level
-    end else begin
+    end else begin : gen_level_trigger
         assign trg = irq;
 
     end endgenerate

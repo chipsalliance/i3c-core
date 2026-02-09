@@ -129,7 +129,7 @@ module bus_tx_flow import i3c_pkg::*; (
         req_value    = bus_tx_req.data; // Data is IBI address
         drive_mode   = OpenDrain;
       end
-      default: ;
+      default: begin end
     endcase
 
     // Most request types are only a single bit in length; completion can be signalled at the next
@@ -245,7 +245,7 @@ module bus_tx_flow import i3c_pkg::*; (
               req_value_d[7] = 1'b1;
               drive_mode_d = OpenDrain;
             end
-            default: ;
+            default: begin end
           endcase
           // In most cases the transaction is completed; flag this to the requester. For TReadCont,
           // we however must wait until the next SCL negedge, as the Controller may sent an Rs
@@ -287,7 +287,7 @@ module bus_tx_flow import i3c_pkg::*; (
           end
         end
       end
-      default: ;
+      default: begin end
     endcase
 
     // Allow to abort and go back to Idle if needed

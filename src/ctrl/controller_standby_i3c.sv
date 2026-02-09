@@ -352,7 +352,7 @@ module controller_standby_i3c
         bus_tx_rsp_ibi = bus_tx_rsp;
         bus_rx_rsp_ibi = bus_rx_rsp;
       end
-      default: ;
+      default: begin end
     endcase
   end
 

@@ -105,7 +105,7 @@ module bus_rx_flow (
     bit_counter_en = '0;
 
     unique case (state_q)
-      Idle: ;
+      Idle: begin end
       ReadByte: begin
         bit_counter_en = 1'b1;
         rx_bit_en = ~rx_done;
@@ -120,7 +120,7 @@ module bus_rx_flow (
       NextTaskDecision: begin
         rx_bit_en = req;
       end
-      default: ;
+      default: begin end
     endcase
   end
 

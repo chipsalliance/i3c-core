@@ -214,7 +214,7 @@ module ibi import i3c_pkg::*; (
         done_o = 1'b1;
         state_d = Idle;
       end
-      default: ;
+      default: begin end
     endcase
   end
 

@@ -212,7 +212,7 @@ module tti
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.we = rx_data_queue_reg_rst_we_i;
     hwif_tti_o.RESET_CONTROL.RX_DATA_RST.next = rx_data_queue_reg_rst_data_i;
     if (rx_data_queue_empty_i && hwif_tti_i.RX_DATA_PORT.req) begin
-      hwif_tti_o.RX_DATA_PORT.rd_ack = hwif_tti_i.RX_DATA_PORT.req & ~hwif_tti_i.RX_DATA_PORT.req_is_wr;;
+      hwif_tti_o.RX_DATA_PORT.rd_ack = hwif_tti_i.RX_DATA_PORT.req & ~hwif_tti_i.RX_DATA_PORT.req_is_wr;
       hwif_tti_o.RX_DATA_PORT.rd_data = '0;
       rx_data_queue_req_o = '0;
     end else begin
