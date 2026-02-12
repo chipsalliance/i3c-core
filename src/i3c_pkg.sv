@@ -185,6 +185,7 @@ package i3c_pkg;
   typedef struct packed {
     logic error;
     logic idle;
+    logic abort;
     logic done;
   } bus_tx_rsp_t;
 

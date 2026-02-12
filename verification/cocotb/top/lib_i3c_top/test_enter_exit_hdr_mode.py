@@ -39,7 +39,7 @@ GETSTATUS = 0x90
 
 # DUT FSM state values (from i3c_target_fsm.sv primary_state_e)
 FSM_STATE_IDLE = 0
-FSM_STATE_IN_HDR_MODE = 20
+FSM_STATE_IN_HDR_MODE = 18
 
 # DUT hierarchy path to FSM state register
 FSM_STATE_PATH = (
@@ -59,6 +59,7 @@ async def test_setup(dut, static_addr=0x5A, virtual_static_addr=0x5B,
                      dynamic_addr=None, virtual_dynamic_addr=None,
                      hdr_timeout_en=False, hdr_timeout_cycles=None):
     """Sets up controller, target models and top-level core interface."""
+
     cocotb.log.setLevel(logging.DEBUG)
 
     i3c_controller = I3cController(

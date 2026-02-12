@@ -52,6 +52,7 @@ module bus_tx_flow import i3c_pkg::*; (
 
   logic tx_done;     // Indicates finished bit write
   logic bus_tx_done; // Feedback to requester that transfer is done
+  logic bus_tx_abort;
 
   typedef enum logic [2:0] {
     Idle,
@@ -158,8 +159,9 @@ module bus_tx_flow import i3c_pkg::*; (
   always_comb begin : tx_fsm
     bit_counter_en = 1'b0;
 
-    tx_done     = 1'b0;
-    bus_tx_done = 1'b0;
+    tx_done      = 1'b0;
+    bus_tx_done  = 1'b0;
+    bus_tx_abort = 1'b0;
 
     req_value_d  = req_value_q;
     drive_mode_d = drive_mode_q;
@@ -257,6 +259,7 @@ module bus_tx_flow import i3c_pkg::*; (
       TReadContSpecial: begin
         // If we see an SDA negedge before the next SCL negedge, the Controller aborted the read
         if (bus_i.sda.neg_edge) begin
+          bus_tx_abort = 1'b1;
           state_d = Idle;
         end
         // Controller has accepted to continue and the requester has provided the respective data
@@ -291,7 +294,8 @@ module bus_tx_flow import i3c_pkg::*; (
     // FUTUREFIX: error is unused; available for future bus error reporting
     error: 1'b0,
     idle:  (state_q == Idle),
-    done:  bus_tx_done
+    done:  bus_tx_done,
+    abort: bus_tx_abort
   };
 
   // Sequential process for all flops

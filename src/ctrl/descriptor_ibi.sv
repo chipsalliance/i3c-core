@@ -15,10 +15,9 @@
   This is because the module relies on absolute count of data words stored in
   it, not the distance between two consecutive descriptors.
 */
-module descriptor_ibi #(
+module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
   parameter int unsigned TtiIbiDataWidth = 32,
-  parameter int unsigned TtiIbiDataDepth = 32,
-  parameter int unsigned IbiFifoWidth = 8
+  parameter int unsigned TtiIbiDataDepth = 32
 ) (
   input  logic clk_i,
   input  logic rst_ni,
@@ -30,21 +29,21 @@ module descriptor_ibi #(
   input  logic [TtiIbiDataDepth-1:0] ibi_queue_depth_i,
 
   // Interface to/from target FSM
-  output logic                    ibi_byte_valid_o,
-  input  logic                    ibi_byte_ready_i,
-  output logic [IbiFifoWidth-1:0] ibi_byte_o,
-  output logic                    ibi_byte_last_o,
-  input  logic                    ibi_byte_flush_i
+  output logic      ibi_byte_valid_o,
+  input  logic      ibi_byte_ready_i,
+  output i3c_byte_t ibi_byte_o,
+  output logic      ibi_byte_last_o,
+  input  logic      ibi_byte_flush_i
 );
 
-  logic [7:0] data_mdb;
+  i3c_byte_t data_mdb;
+  i3c_byte_t data_byte;
+
   logic [7:0] data_len;
   logic [7:0] data_words;
-  logic [7:0] data_cnt;
-  logic [7:0] data_cnt_q, data_cnt_d;
-  logic [7:0] data_byte;
-  logic       queue_data_pop;
   logic       latch_descriptor;
+
+  logic [7:0] data_cnt_q, data_cnt_d;
 
   typedef enum logic [2:0] {
     Idle,
@@ -57,44 +56,10 @@ module descriptor_ibi #(
 
   state_e state_q, state_d;
 
-  // FSM
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      state_q <= Idle;
-      data_cnt_q <= '0;
-    end else begin
-      state_q <= state_d;
-      data_cnt_q <= data_cnt_d;
-    end
-  end
+  // 32-bit to 8-bit data conversion
+  assign data_byte = ibi_queue_rdata_i[data_cnt_q[1:0]*8 +: 8];
 
-
-  // Capture IBI descriptor
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      data_mdb   <= '0;
-      data_len   <= '0;
-      data_words <= '0;
-    end else if (latch_descriptor) begin
-      data_mdb   <= ibi_queue_rdata_i[31:24];
-      // -1 to compensate for comparison with data_cnt
-      data_len   <= ibi_queue_rdata_i[7:0] - 1;
-      // Divide by 4 and round up
-      data_words <= 8'(ibi_queue_rdata_i[7:2] + |ibi_queue_rdata_i[1:0]);
-    end
-  end
-
-  // Data counter
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      data_cnt <= '0;
-    end else if (state_q == Idle) begin
-      data_cnt <= '0;
-    end else if (state_q == WriteData) begin
-      //if (ibi_byte_valid_o && ibi_byte_ready_i) data_cnt <= data_cnt + 1;
-    end
-  end
-
+  // FSM combinational process
   always_comb begin
     ibi_byte_o       = '0;
     ibi_byte_valid_o = 1'b0;
@@ -105,7 +70,7 @@ module descriptor_ibi #(
     latch_descriptor = 1'b0;
 
     data_cnt_d = data_cnt_q;
-    state_d = state_q;
+    state_d    = state_q;
     case (state_q)
       Idle: begin
         if (ibi_queue_rvalid_i) begin
@@ -198,10 +163,30 @@ module descriptor_ibi #(
     endcase
   end
 
-  // 32-bit to 8-bit conversion
-  assign data_byte = ibi_queue_rdata_i[data_cnt_q[1:0]*8 +: 8];
+  // Capture IBI descriptor
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      data_mdb   <= '0;
+      data_len   <= '0;
+      data_words <= '0;
+    end else if (latch_descriptor) begin
+      data_mdb   <= ibi_queue_rdata_i[31:24];
+      // -1 to compensate for comparison with data_cnt_q
+      data_len   <= ibi_queue_rdata_i[7:0] - 1;
+      // Divide by 4 and round up
+      data_words <= 8'(ibi_queue_rdata_i[7:2] + |ibi_queue_rdata_i[1:0]);
+    end
+  end
 
-  // Pop every 4 bytes and on the last byte
-  assign queue_data_pop = (data_cnt_q[1:0] == 2'b11) || (data_cnt_q == data_len);
+  // FSM and data counter flops
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      state_q    <= Idle;
+      data_cnt_q <= '0;
+    end else begin
+      state_q    <= state_d;
+      data_cnt_q <= data_cnt_d;
+    end
+  end
 
 endmodule

@@ -48,7 +48,6 @@ VERILOG_SOURCES  = \
     ${SRC_DIR}/hci/queues.sv \
     ${SRC_DIR}/hci/hci.sv \
     ${SRC_DIR}/ctrl/bus_monitor.sv \
-    ${SRC_DIR}/ctrl/ibi.sv \
     ${SRC_DIR}/ctrl/bus_tx_flow.sv \
     ${SRC_DIR}/ctrl/bus_rx_flow.sv \
     ${SRC_DIR}/ctrl/bus_timers.sv \

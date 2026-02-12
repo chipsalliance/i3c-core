@@ -1,7 +1,6 @@
 +incdir+${I3C_ROOT_DIR}/src
 ${I3C_ROOT_DIR}/src/ctrl/controller_pkg.sv
 ${I3C_ROOT_DIR}/src/i3c_pkg.sv
-// ${I3C_ROOT_DIR}/src/ctrl/ibi.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_tx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_rx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_timers.sv

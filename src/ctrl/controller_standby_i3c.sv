@@ -14,217 +14,218 @@ module controller_standby_i3c
   localparam int unsigned TtiIbiFifoDepthWidth = $clog2(TtiIbiFifoDepth + 1),
   parameter  int unsigned TtiIbiDataWidth = 32
 ) (
-    input  logic clk_i,
-    input  logic rst_ni,
+  input  logic clk_i,
+  input  logic rst_ni,
 
-    input  logic i3c_standby_en_i,
+  input  logic i3c_standby_en_i,
 
-    // Interface to/from SDA/SCL
-    input  bus_state_t ctrl_bus_i,
-    // Ungated bus state for HDR exit pattern detection
-    input  bus_state_t hdr_exit_bus_i,
-    output logic       ctrl_scl_o,
-    output logic       ctrl_sda_o,
-    output logic       ctrl_sda_oe_o,
-    output logic       phy_sel_od_pp_o,
-    input  logic       arbitration_lost_i,
+  // Interface to/from SDA/SCL
+  input  bus_state_t ctrl_bus_i,
+  // Ungated bus state for HDR exit pattern detection
+  input  bus_state_t hdr_exit_bus_i,
+  output logic       ctrl_scl_o,
+  output logic       ctrl_sda_o,
+  output logic       ctrl_sda_oe_o,
+  output logic       phy_sel_od_pp_o,
+  input  logic       arbitration_lost_i,
 
-    // Target Transaction Interface
+  // Target Transaction Interface
 
-    // TTI: RX Descriptor
-    output logic                          rx_desc_queue_wvalid_o,
-    output logic [TtiRxDescDataWidth-1:0] rx_desc_queue_wdata_o,
+  // TTI: RX Descriptor
+  output logic                          rx_desc_queue_wvalid_o,
+  output logic [TtiRxDescDataWidth-1:0] rx_desc_queue_wdata_o,
 
-    // TTI: TX Descriptor
-    input  logic                          tx_desc_queue_rvalid_i,
-    output logic                          tx_desc_queue_rready_o,
-    input  logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
+  // TTI: TX Descriptor
+  input  logic                          tx_desc_queue_rvalid_i,
+  output logic                          tx_desc_queue_rready_o,
+  input  logic [TtiTxDescDataWidth-1:0] tx_desc_queue_rdata_i,
 
-    // TTI: RX Data
-    output logic                      rx_queue_wvalid_o,
-    input  logic                      rx_queue_wready_i,
-    output logic                      rx_queue_flush_o,
-    output logic                      rx_queue_wlast_o,
-    output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
+  // TTI: RX Data
+  output logic                      rx_queue_wvalid_o,
+  input  logic                      rx_queue_wready_i,
+  output logic                      rx_queue_flush_o,
+  output logic                      rx_queue_wlast_o,
+  output logic [TtiRxDataWidth-1:0] rx_queue_wdata_o,
 
-    // TTI: TX Data
-    input  logic                           tx_queue_rvalid_i,
-    output logic                           tx_queue_rready_o,
-    input  logic                           tx_queue_empty_i,
-    output logic                           tx_queue_flush_o,
-    input  logic [TtiTxFifoDepthWidth-1:0] tx_queue_depth_i,
-    input  logic      [TtiTxDataWidth-1:0] tx_queue_rdata_i,  
+  // TTI: TX Data
+  input  logic                           tx_queue_rvalid_i,
+  output logic                           tx_queue_rready_o,
+  input  logic                           tx_queue_empty_i,
+  output logic                           tx_queue_flush_o,
+  input  logic [TtiTxFifoDepthWidth-1:0] tx_queue_depth_i,
+  input  logic      [TtiTxDataWidth-1:0] tx_queue_rdata_i,  
 
-    // TTI: In-band-interrupt queue
-    input  logic                            ibi_queue_rvalid_i,
-    output logic                            ibi_queue_rready_o,
-    input  logic                            ibi_queue_empty_i,
-    input  logic                            ibi_queue_full_i,
-    input  logic [TtiIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
-    input  logic      [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
+  // TTI: In-band-interrupt queue
+  input  logic                            ibi_queue_rvalid_i,
+  output logic                            ibi_queue_rready_o,
+  input  logic                            ibi_queue_empty_i,
+  input  logic                            ibi_queue_full_i,
+  input  logic [TtiIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
+  input  logic      [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
 
-    // I3C received address (with RnW# bit) for the recovery handler
-    output logic       bus_addr_valid_o,
-    output logic [7:0] bus_addr_o,
+  // I3C received address (with RnW# bit) for the recovery handler
+  output logic       bus_addr_valid_o,
+  output logic [7:0] bus_addr_o,
 
-    // Timing Configuration
-    input  i3c_timeparam_t t_su_dat_i,
-    input  i3c_timeparam_t t_hd_dat_i,
-    input  i3c_timeparam_t t_r_i,
-    input  i3c_timeparam_t t_f_i,
-    input  i3c_timeparam_t t_bus_free_i,
-    input  i3c_timeparam_t t_bus_idle_i,
-    input  i3c_timeparam_t t_bus_available_i,
+  // Timing Configuration
+  input  i3c_timeparam_t t_su_dat_i,
+  input  i3c_timeparam_t t_hd_dat_i,
+  input  i3c_timeparam_t t_r_i,
+  input  i3c_timeparam_t t_f_i,
+  input  i3c_timeparam_t t_bus_free_i,
+  input  i3c_timeparam_t t_bus_idle_i,
+  input  i3c_timeparam_t t_bus_available_i,
 
-    // HDR error recovery timer configuration (I3C spec §5.1.10.1.9)
-    input  logic           hdr_timeout_en_i,
-    input  i3c_timeparam_t t_hdr_timeout_i,
+  // HDR error recovery timer configuration (I3C spec §5.1.10.1.9)
+  input  logic           hdr_timeout_en_i,
+  input  i3c_timeparam_t t_hdr_timeout_i,  
 
-    // Address Control
-    input  logic      target_sta_addr_valid_i,
-    input  i3c_addr_t target_sta_addr_i,
-    input  logic      target_dyn_addr_valid_i,
-    input  i3c_addr_t target_dyn_addr_i,
-    input  logic      virtual_target_sta_addr_valid_i,
-    input  i3c_addr_t virtual_target_sta_addr_i,
-    input  logic      virtual_target_dyn_addr_valid_i,
-    input  i3c_addr_t virtual_target_dyn_addr_i,
-    input  logic      target_ibi_addr_valid_i,
-    input  i3c_addr_t target_ibi_addr_i,
-    
-    // Provisioned IDs
-    input  logic [47:0] pid_i,
-    input  logic [47:0] virtual_pid_i,
+  // Address Control
+  input  logic      target_sta_addr_valid_i,
+  input  i3c_addr_t target_sta_addr_i,
+  input  logic      target_dyn_addr_valid_i,
+  input  i3c_addr_t target_dyn_addr_i,
+  input  logic      virtual_target_sta_addr_valid_i,
+  input  i3c_addr_t virtual_target_sta_addr_i,
+  input  logic      virtual_target_dyn_addr_valid_i,
+  input  i3c_addr_t virtual_target_dyn_addr_i,
+  input  logic      target_ibi_addr_valid_i,
+  input  i3c_addr_t target_ibi_addr_i,
 
-    // IBI related control
-    input  logic       ibi_enable_i,
-    input  logic [2:0] ibi_retry_num_i,
-    output logic       ibi_status_we_o,
-    output logic [1:0] ibi_status_o,
+  // Provisioned IDs
+  input  logic [47:0] pid_i,
+  input  logic [47:0] virtual_pid_i,
 
-    // Max write length
-    output logic        set_mwl_o,
-    output logic [15:0] mwl_o,
-    input  logic [15:0] get_mwl_i,
+  // IBI related control
+  input  logic       ibi_enable_i,
+  input  logic [2:0] ibi_retry_num_i,
+  output logic       ibi_status_we_o,
+  output logic [1:0] ibi_status_o,
 
-    // Max read length
-    output logic        set_mrl_o,
-    output logic [15:0] mrl_o,
-    input  logic [15:0] get_mrl_i,
+  // Max write length
+  output logic        set_mwl_o,
+  output logic [15:0] mwl_o,
+  input  logic [15:0] get_mwl_i,
 
-    // IBI payload size, part of MRL
-    output logic       set_ibil_o,
-    output logic [7:0] ibil_o,
-    input  logic [7:0] get_ibil_i,
+  // Max read length
+  output logic        set_mrl_o,
+  output logic [15:0] mrl_o,
+  input  logic [15:0] get_mrl_i,
 
-    // Status format 1
-    input  logic [15:0] get_status_fmt1_i,
+  // IBI payload size, part of MRL
+  output logic       set_ibil_o,
+  output logic [7:0] ibil_o,
+  input  logic [7:0] get_ibil_i,
 
-    // (Virtual) Bus Capability Register
-    input  logic [7:0] bcr_i,
-    input  logic [7:0] virtual_bcr_i,
+  // Status format 1
+  input  logic [15:0] get_status_fmt1_i,
 
-    // (Virtual) Device Capability Register
-    input  logic [7:0] dcr_i,
-    input  logic [7:0] virtual_dcr_i,
+  // (Virtual) Bus Capability Register
+  input  logic [7:0] bcr_i,
+  input  logic [7:0] virtual_bcr_i,
 
-    // Target Reset Action
-    output logic       rst_action_valid_o,
-    output logic [7:0] rst_action_o,
+  // (Virtual) Device Capability Register
+  input  logic [7:0] dcr_i,
+  input  logic [7:0] virtual_dcr_i,
 
-    // Set dynamic address from static address
-    output logic      set_dasa_valid_o,
-    output logic      set_dasa_virtual_device_o,
-    output i3c_addr_t set_dasa_o,
-    // Set all addresses to static address
-    output logic set_aasa_o,
-    output logic set_aasa_virt_o,
+  // Target Reset Action
+  output logic       rst_action_valid_o,
+  output logic [7:0] rst_action_o,
 
-    // Set new dynamic address
-    output logic      set_newda_o,
-    output logic      set_newda_virtual_device_o,
-    output i3c_addr_t newda_o,
+  // Set dynamic address from static address
+  output logic      set_dasa_valid_o,
+  output logic      set_dasa_virtual_device_o,
+  output i3c_addr_t set_dasa_o,
+  // Set all addresses to static address
+  output logic set_aasa_o,
+  output logic set_aasa_virt_o,
 
-    // Reset dynamic address assignment
-    output logic rstdaa_o,
+  // Set new dynamic address
+  output logic      set_newda_o,
+  output logic      set_newda_virtual_device_o,
+  output i3c_addr_t newda_o,
 
-    // Enable/disable events
-    output logic enec_ibi_o,  // Target-initiated interrupts
-    output logic disec_ibi_o,
+  // Reset dynamic address assignment
+  output logic rstdaa_o,
 
-    output logic enec_crr_o,  // Control-role requests
-    output logic disec_crr_o,
+  // Enable/disable events
+  output logic enec_ibi_o,  // Target-initiated interrupts
+  output logic disec_ibi_o,
 
-    output logic enec_hj_o,   // Hot Join requests
-    output logic disec_hj_o,
+  output logic enec_crr_o,  // Control-role requests
+  output logic disec_crr_o,
 
-    //
-    output logic tx_host_nack_o,
-    output logic tx_pr_end_o,
-    output logic tx_pr_start_o,
+  output logic enec_hj_o,   // Hot Join requests
+  output logic disec_hj_o,
 
-    //
-    output logic get_status_done_o,
+  //
+  output logic tx_host_nack_o,
+  output logic tx_pr_end_o,
+  output logic tx_pr_start_o,
 
-    // Protocol Error Report (GETSTATUS Format 1): errors Controller cannot detect
-    output logic protocol_err_o,
-    // Individual TE error outputs for interrupt reporting
-    output logic te0_err_o,
-    output logic te1_err_o,
-    output logic te2_err_o,
-    output logic te3_err_o,
-    output logic te4_err_o,
-    output logic te5_err_o,
-    output logic framing_err_o,
+  //
+  output logic get_status_done_o,
 
-    // Target Error Detection Enables (from TTI CSR)
-    input  logic te0_err_det_en_i,
-    input  logic te1_err_det_en_i,
-    input  logic te2_err_det_en_i,
-    input  logic te3_err_det_en_i,
-    input  logic te4_err_det_en_i,
-    input  logic te5_err_det_en_i,
-    input  logic framing_err_det_en_i,
+  // Protocol Error Report (GETSTATUS Format 1): errors Controller cannot detect
+  output logic protocol_err_o,
+  // Individual TE error outputs for interrupt reporting
+  output logic te0_err_o,
+  output logic te1_err_o,
+  output logic te2_err_o,
+  output logic te3_err_o,
+  output logic te4_err_o,
+  output logic te5_err_o,
+  output logic framing_err_o,
+
+  // Target Error Detection Enables (from TTI CSR)
+  input  logic te0_err_det_en_i,
+  input  logic te1_err_det_en_i,
+  input  logic te2_err_det_en_i,
+  input  logic te3_err_det_en_i,
+  input  logic te4_err_det_en_i,
+  input  logic te5_err_det_en_i,
+  input  logic framing_err_det_en_i,
 
 
-    output logic peripheral_reset_o,
-    input  logic peripheral_reset_done_i,
-    output logic escalated_reset_o,
+  output logic peripheral_reset_o,
+  input  logic peripheral_reset_done_i,
+  output logic escalated_reset_o,
 
-    // recovery mode
-    input  logic recovery_mode_enter_i,
-    output logic virtual_device_sel_o,
-    output logic xfer_in_progress_o,
-    output logic in_hdr_mode_o
+  // recovery mode
+  input  logic recovery_mode_enter_i,
+  output logic virtual_device_sel_o,
+  output logic xfer_in_progress_o,
+  output logic in_hdr_mode_o
 );
 
   // Bus TX flow
-  bus_tx_req_t bus_tx_req, bus_tx_req_fsm, bus_tx_req_ccc, bus_tx_req_ibi;
-  bus_tx_rsp_t bus_tx_rsp, bus_tx_rsp_fsm, bus_tx_rsp_ccc, bus_tx_rsp_ibi;
+  bus_tx_req_t bus_tx_req, bus_tx_req_fsm, bus_tx_req_ccc;
+  bus_tx_rsp_t bus_tx_rsp, bus_tx_rsp_fsm, bus_tx_rsp_ccc;
 
   // Bus RX flow
-  bus_rx_req_t bus_rx_req, bus_rx_req_fsm, bus_rx_req_ccc, bus_rx_req_ibi;
-  bus_rx_rsp_t bus_rx_rsp, bus_rx_rsp_fsm, bus_rx_rsp_ccc, bus_rx_rsp_ibi;
+  bus_rx_req_t bus_rx_req, bus_rx_req_fsm, bus_rx_req_ccc;
+  bus_rx_rsp_t bus_rx_rsp, bus_rx_rsp_fsm, bus_rx_rsp_ccc;
 
   // TX Queue interface
-  logic tx_desc_avail;
-  logic tx_fifo_rvalid;
-  logic tx_fifo_rready;
-  logic [7:0] tx_fifo_rdata;
-  logic tx_host_nack;
+  logic      tx_desc_avail;
+  logic      tx_fifo_rvalid;
+  logic      tx_fifo_rready;
+  i3c_byte_t tx_fifo_rdata;
 
   // RX Queue interface
-  logic rx_fifo_wvalid;
-  logic [7:0] rx_fifo_wdata;
-  logic rx_fifo_wready;
+  logic      rx_fifo_wvalid;
+  logic      rx_fifo_wready;
+  i3c_byte_t rx_fifo_wdata;
+
   logic rx_last_byte;
   logic tx_last_byte;
 
   // IBI Queue interface
-  logic ibi_fifo_rvalid;
-  logic ibi_fifo_rready;
-  logic [7:0] ibi_fifo_rdata;
-  logic ibi_last_byte;
+  logic      ibi_fifo_rvalid;
+  logic      ibi_fifo_rready;
+  i3c_byte_t ibi_fifo_rdata;
+  logic      ibi_last_byte;
+  logic      ibi_fifo_flush;
 
   // Bus events notifications
   logic event_target_nack;
@@ -239,11 +240,7 @@ module controller_standby_i3c
   logic hdr_exit_detect;
   logic in_hdr_err_mode;
 
-  // SubFSMs status
-  logic ibi_pending;
-  logic ibi_begin;
-  logic ibi_done;
-
+  // CCC sub-FSM data and status
   ccc_cmd_e  ccc_data;
   logic      ccc_valid;
   logic      ccc_done;
@@ -291,30 +288,22 @@ module controller_standby_i3c
   assign bus_timeout  = 1'b0;
   assign hotjoin_done = 1'b0;
 
-  typedef enum logic [1:0] {
+  typedef enum logic {
     Fsm,
-    Ccc,
-    Ibi
+    Ccc
   } xfer_mux_sel_e;
 
   // Mux Rx/Tx between
   // 0 - Target FSM
   // 1 - CCC
-  // 2 - IBI
   xfer_mux_sel_e xfer_mux_sel;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       xfer_mux_sel <= Fsm;
-    end else if (xfer_mux_sel == Fsm) begin
-      unique case ({ibi_begin, ccc_valid})
-        2'b01:   xfer_mux_sel <= Ccc;
-        2'b10:   xfer_mux_sel <= Ibi;
-        default: xfer_mux_sel <= Fsm;
-      endcase
-    end else if ((xfer_mux_sel == Ccc && ccc_done) || (xfer_mux_sel == Ccc && ccc_next)) begin
-      xfer_mux_sel <= Fsm;
-    end else if (xfer_mux_sel == Ibi && ibi_done) begin
+    end else if ((xfer_mux_sel == Fsm) && ccc_valid) begin
+      xfer_mux_sel <= Ccc;
+    end else if ((xfer_mux_sel == Ccc) && (ccc_done || ccc_next)) begin
       xfer_mux_sel <= Fsm;
     end
   end
@@ -325,11 +314,9 @@ module controller_standby_i3c
 
     bus_tx_rsp_fsm = '{default: '0};
     bus_tx_rsp_ccc = '{default: '0};
-    bus_tx_rsp_ibi = '{default: '0};
 
     bus_rx_rsp_fsm = '{default: '0};
     bus_rx_rsp_ccc = '{default: '0};
-    bus_rx_rsp_ibi = '{default: '0};
 
     unique case (xfer_mux_sel)
       Fsm: begin
@@ -346,24 +333,13 @@ module controller_standby_i3c
         bus_tx_rsp_ccc = bus_tx_rsp;
         bus_rx_rsp_ccc = bus_rx_rsp;
       end
-      Ibi: begin
-        bus_tx_req = bus_tx_req_ibi;
-        bus_rx_req = bus_rx_req_ibi;
-
-        bus_tx_rsp_ibi = bus_tx_rsp;
-        bus_rx_rsp_ibi = bus_rx_rsp;
-      end
-      default: begin end
+      default: ;
     endcase
   end
 
 
   // Target FSM
-  i3c_target_fsm #(
-    .RxDataWidth (8),
-    .TxDataWidth (8),
-    .IbiDataWidth(32)
-  ) xi3c_target_fsm (
+  i3c_target_fsm xi3c_target_fsm (
     .clk_i,
     .rst_ni,
 
@@ -376,6 +352,7 @@ module controller_standby_i3c
 
     .bus_available_i      (bus_available),
     .bus_timeout_i        (bus_timeout),
+    .arbitration_lost_i,
 
     .target_idle_o        (/* unused */),
 
@@ -386,22 +363,28 @@ module controller_standby_i3c
     .bus_rx_rsp_i(bus_rx_rsp_fsm),
 
     // Private read start/abort
-    .tx_pr_start_o              (tx_pr_start_o),
-    .tx_pr_abort_o              (tx_pr_abort),
+    .tx_pr_start_o   (tx_pr_start_o),
+    .tx_pr_abort_o   (tx_pr_abort),
 
-    .tx_desc_avail_i            (tx_desc_avail),
+    .tx_desc_avail_i (tx_desc_avail),
 
-    .tx_fifo_rvalid_i           (tx_fifo_rvalid),
-    .tx_fifo_rready_o           (tx_fifo_rready),
-    .tx_fifo_rdata_i            (tx_fifo_rdata),
+    .tx_fifo_rvalid_i(tx_fifo_rvalid),
+    .tx_fifo_rready_o(tx_fifo_rready),
+    .tx_fifo_rdata_i (tx_fifo_rdata),
 
-    .tx_host_nack_o             (tx_host_nack),
-    .tx_last_byte_i             (tx_last_byte),
+    .tx_host_nack_o  (tx_host_nack_o),
+    .tx_last_byte_i  (tx_last_byte),
 
-    .rx_fifo_wvalid_o           (rx_fifo_wvalid),
-    .rx_fifo_wdata_o            (rx_fifo_wdata),
-    .rx_fifo_wready_i           (rx_fifo_wready),
-    .rx_last_byte_o             (rx_last_byte),
+    .rx_fifo_wvalid_o(rx_fifo_wvalid),
+    .rx_fifo_wdata_o (rx_fifo_wdata),
+    .rx_fifo_wready_i(rx_fifo_wready),
+    .rx_last_byte_o  (rx_last_byte),
+
+    .ibi_byte_valid_i(ibi_fifo_rvalid),
+    .ibi_byte_ready_o(ibi_fifo_rready),
+    .ibi_byte_i      (ibi_fifo_rdata),
+    .ibi_byte_last_i (ibi_last_byte),
+    .ibi_byte_flush_o(ibi_fifo_flush),
 
     .target_sta_addr_i,
     .target_sta_addr_valid_i,
@@ -414,6 +397,7 @@ module controller_standby_i3c
     .virtual_target_dyn_addr_valid_i,
 
     .target_ibi_addr_valid_i,
+    .target_ibi_addr_i,
 
     .event_target_nack_o        (event_target_nack),
     .event_cmd_complete_o       (event_cmd_complete),
@@ -427,10 +411,10 @@ module controller_standby_i3c
     .hdr_exit_detect_i          (hdr_exit_detect),
     .in_hdr_mode_i              (in_hdr_mode_o),
 
-    .ibi_enable_i               (ibi_enable_i),
-    .ibi_pending_i              (ibi_pending),
-    .ibi_begin_o                (ibi_begin),
-    .ibi_done_i                 (ibi_done),
+    .ibi_enable_i,
+    .ibi_retry_num_i,
+    .ibi_status_o,
+    .ibi_status_we_o,
 
     .ccc_data_o                 (ccc_data),
     .ccc_valid_o                (ccc_valid),
@@ -564,44 +548,6 @@ module controller_standby_i3c
     .rstact_armed_o          (rstact_armed),
     .escalate_reset_o        (escalate_reset)
   );
-
-  ibi u_ibi (
-    .clk_i,
-    .rst_ni,
-
-    .scl_negedge_i  (ctrl_bus_i.scl.neg_edge),
-    .scl_posedge_i  (ctrl_bus_i.scl.pos_edge),
-    
-    .bus_stop_i     (ctrl_bus_i.stop_det),
-    .bus_rstart_i   (ctrl_bus_i.rstart_det),
-    .bus_available_i(bus_available),
-    .arbitration_lost_i,
-
-    .begin_i(ibi_begin),
-    .done_o (ibi_done),
-
-    .target_ibi_addr_i,
-
-    .ibi_retry_num_i(ibi_retry_num_i),
-    .ibi_abort_i    (1'b0),
-    .ibi_status_o   (ibi_status_o),
-    .ibi_status_we_o(ibi_status_we_o),
-
-    .ibi_byte_valid_i(ibi_fifo_rvalid),
-    .ibi_byte_ready_o(ibi_fifo_rready),
-    .ibi_byte_i      (ibi_fifo_rdata),
-    .ibi_byte_last_i (ibi_last_byte),
-
-    .bus_tx_req_o(bus_tx_req_ibi),
-    .bus_tx_rsp_i(bus_tx_rsp_ibi),
-
-    .bus_rx_req_o(bus_rx_req_ibi),
-    .bus_rx_rsp_i(bus_rx_rsp_ibi)
-  );
-
-  // An IBI is pending as long as the descriptor_ibi has something to send to
-  // the ibi module.
-  assign ibi_pending = ibi_fifo_rvalid;
 
   bus_tx_flow u_bus_tx_flow (
     .clk_i,
@@ -760,10 +706,8 @@ module controller_standby_i3c
     .ibi_byte_ready_i(ibi_fifo_rready),
     .ibi_byte_o      (ibi_fifo_rdata),
     .ibi_byte_last_o (ibi_last_byte),
-    .ibi_byte_flush_i(1'b0)
+    .ibi_byte_flush_i(ibi_fifo_flush)
   );
-
-  assign tx_host_nack_o = tx_host_nack;
 
   logic peripheral_reset;
   logic escalated_reset;

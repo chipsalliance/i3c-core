@@ -555,7 +555,7 @@ async def test_i3c_target_ibi_retry(dut):
     # Check LAST_IBI_STATUS
     status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
     last_ibi_status = (status & (3 << 14)) >> 14
-    expected_status = 3
+    expected_status = 1
     if last_ibi_status != expected_status:
         dut._log.critical(
             f"Incorrect IBI status, expected {expected_status}, got {last_ibi_status}"
