@@ -153,6 +153,7 @@ module i3c_target_fsm import i3c_pkg::*; (
   logic is_our_addr_match, is_virtual_addr_match, is_any_addr_match, is_rsvd_byte_match;
 
   logic [2:0] ibi_retry_cnt_q, ibi_retry_cnt_d;
+  logic       ibi_inhibit_q, ibi_inhibit_d;
   logic       ibi_pending, ibi_can_retry;
 
   ccc_cmd_e  ccc_data;
@@ -171,7 +172,9 @@ module i3c_target_fsm import i3c_pkg::*; (
     // - hot-join (currently not implemented)
     // - reset pattern
     Idle,
-    // Read first incoming byte of the transaction
+    // Read first incoming byte of the transaction, arbitrable
+    RxFByteArb,
+    // Read first incoming byte of the transaction, non-arbitrable
     RxFByte,
     // Check if we should participate in the xfer
     CheckFByte,
@@ -241,7 +244,7 @@ module i3c_target_fsm import i3c_pkg::*; (
   // FUTUREFIX: tx_host_nack_o is irrelevant for v1p5 release
   assign tx_host_nack_o = 1'b0;
 
-  // Shorthand helper signal
+  // Shorthand helper signal for checking for active bit requests
   assign bus_tx_req_bit = bus_tx_req_o.req_valid && (bus_tx_req_o.req_type == RawBit);
 
   assign bus_rx_req_o = '{
@@ -387,7 +390,7 @@ module i3c_target_fsm import i3c_pkg::*; (
   always_comb begin : fsm_target_main
     tx_pr_start_o = 1'b0;
     tx_pr_abort_o = 1'b0;
-    te2_err_priv_wr  = 1'b0;
+    te2_err_priv_wr = 1'b0;
 
     nack_transaction_d = 1'b0;
 
@@ -418,6 +421,7 @@ module i3c_target_fsm import i3c_pkg::*; (
     ibi_byte_flush_o = 1'b0;
 
     ibi_retry_cnt_d = ibi_retry_cnt_q;
+    ibi_inhibit_d   = bus_available_i ? 1'b0 : ibi_inhibit_q;
 
     state_d = state_q;
     case (state_q)
@@ -439,7 +443,9 @@ module i3c_target_fsm import i3c_pkg::*; (
             state_d = DoRstAction;
           end else if (bus_start_det_i) begin
             // In Idle, we only wait for a Start, which initiates the arbitrable address header
-            state_d = RxFByte;
+            // Suppress arbitration after a lost IBI arbitration until bus available condition,
+            // as per Sect. 5.1.6.2
+            state_d = ibi_inhibit_q ? RxFByte : RxFByteArb;
           end
         end
       end
@@ -458,6 +464,7 @@ module i3c_target_fsm import i3c_pkg::*; (
           // won arbitration - bad luck for us
           ibi_status_we_o = 1'b1;
           ibi_status_o    = IbiFailureNack; // TODO extend the encoding
+          ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
           if (ibi_retry_num_i != 3'd7) begin
             ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
           end
@@ -527,6 +534,40 @@ module i3c_target_fsm import i3c_pkg::*; (
       RxFByte: begin
         bus_rx_req_byte = !bus_rstart_det_i;
         if (bus_rx_rsp_i.done) begin
+          bus_addr_valid = 1'b1;
+          bus_addr_d     = bus_rx_rsp_i.data[7:1];
+          bus_rnw_d      = bus_rx_rsp_i.data[0];
+
+          state_d = CheckFByte;
+        end
+      end
+
+      RxFByteArb: begin
+        bus_rx_req_byte = !bus_rstart_det_i;
+
+        if (ibi_pending && ibi_can_retry) begin
+          bus_tx_req_o.req_valid  = 1'b1;
+          bus_tx_req_o.req_type   = RawByte;
+          bus_tx_req_o.drive_type = OpenDrain;
+          bus_tx_req_o.data       = {target_ibi_addr_i, 1'b1};
+
+          // On arb lost, inform IBI requester and hand over to regular RxFByte
+          // to receive rest of address
+          if (arbitration_lost_i) begin
+            ibi_status_we_o = 1'b1;
+            ibi_status_o    = IbiFailureNack; // TODO extend the encoding
+            ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
+            if (ibi_retry_num_i != 3'd7) begin
+              ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
+            end
+            state_d = RxFByte;
+          end
+        end
+
+        if (bus_tx_rsp_i.done && !arbitration_lost_i) begin
+          // IBI address has been submitted successfully, we won arbitration
+          state_d = IbiReadAck;
+        end else if (bus_rx_rsp_i.done) begin
           bus_addr_valid = 1'b1;
           bus_addr_d     = bus_rx_rsp_i.data[7:1];
           bus_rnw_d      = bus_rx_rsp_i.data[0];
@@ -749,9 +790,11 @@ module i3c_target_fsm import i3c_pkg::*; (
     if (!rst_ni) begin
       state_q <= Idle;
       ibi_retry_cnt_q <= 3'd0;
+      ibi_inhibit_q   <= 1'b0;
     end else begin
       state_q <= state_d;
       ibi_retry_cnt_q <= ibi_retry_cnt_d;
+      ibi_inhibit_q   <= ibi_inhibit_d;
     end
   end
 

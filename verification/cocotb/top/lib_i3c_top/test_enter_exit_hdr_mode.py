@@ -39,7 +39,7 @@ GETSTATUS = 0x90
 
 # DUT FSM state values (from i3c_target_fsm.sv primary_state_e)
 FSM_STATE_IDLE = 0
-FSM_STATE_IN_HDR_MODE = 18
+FSM_STATE_IN_HDR_MODE = 19
 
 # DUT hierarchy path to FSM state register
 FSM_STATE_PATH = (
