@@ -101,6 +101,7 @@ module controller_standby_i3c
   input  logic [2:0] ibi_retry_num_i,
   output logic       ibi_status_we_o,
   output logic [1:0] ibi_status_o,
+  output logic       ibi_pending_o,
 
   // Max write length
   output logic        set_mwl_o,
@@ -706,7 +707,8 @@ module controller_standby_i3c
     .ibi_byte_ready_i(ibi_fifo_rready),
     .ibi_byte_o      (ibi_fifo_rdata),
     .ibi_byte_last_o (ibi_last_byte),
-    .ibi_byte_flush_i(ibi_fifo_flush)
+    .ibi_byte_flush_i(ibi_fifo_flush),
+    .ibi_pending_o
   );
 
   logic peripheral_reset;

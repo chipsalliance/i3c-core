@@ -33,7 +33,9 @@ module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
   input  logic      ibi_byte_ready_i,
   output i3c_byte_t ibi_byte_o,
   output logic      ibi_byte_last_o,
-  input  logic      ibi_byte_flush_i
+  input  logic      ibi_byte_flush_i,
+  // Asserted when descriptor processing is in progress (not gated by IBI enable)
+  output logic      ibi_pending_o
 );
 
   i3c_byte_t data_mdb;
@@ -188,5 +190,7 @@ module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
       data_cnt_q <= data_cnt_d;
     end
   end
+
+  assign ibi_pending_o = (state_q != Idle);
 
 endmodule

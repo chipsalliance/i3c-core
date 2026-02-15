@@ -2169,6 +2169,7 @@
     input bit [1-1:0] IBI_THLD_STAT,
     input bit [1-1:0] IBI_DONE,
     input bit [4-1:0] PENDING_INTERRUPT,
+    input bit [1-1:0] PENDING_IBI,
     input bit [1-1:0] TRANSFER_ABORT_STAT,
     input bit [1-1:0] TX_DESC_COMPLETE,
     input bit [1-1:0] TRANSFER_ERR_STAT
@@ -2185,6 +2186,7 @@
         IBI_THLD_STAT_cp : coverpoint IBI_THLD_STAT;
         IBI_DONE_cp : coverpoint IBI_DONE;
         PENDING_INTERRUPT_cp : coverpoint PENDING_INTERRUPT;
+        PENDING_IBI_cp : coverpoint PENDING_IBI;
         TRANSFER_ABORT_STAT_cp : coverpoint TRANSFER_ABORT_STAT;
         TX_DESC_COMPLETE_cp : coverpoint TX_DESC_COMPLETE;
         TRANSFER_ERR_STAT_cp : coverpoint TRANSFER_ERR_STAT;

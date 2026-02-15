@@ -2594,13 +2594,14 @@
             foreach(RX_DESC_THLD_STAT_bit_cg[bt]) this.RX_DESC_THLD_STAT_bit_cg[bt].sample(data[11 + bt]);
             foreach(IBI_THLD_STAT_bit_cg[bt]) this.IBI_THLD_STAT_bit_cg[bt].sample(data[12 + bt]);
             foreach(IBI_DONE_bit_cg[bt]) this.IBI_DONE_bit_cg[bt].sample(data[13 + bt]);
-            foreach(PENDING_INTERRUPT_bit_cg[bt]) this.PENDING_INTERRUPT_bit_cg[bt].sample(data[15 + bt]);
+            foreach(PENDING_INTERRUPT_bit_cg[bt]) this.PENDING_INTERRUPT_bit_cg[bt].sample(data[16 + bt]);
+            foreach(PENDING_IBI_bit_cg[bt]) this.PENDING_IBI_bit_cg[bt].sample(data[20 + bt]);
             foreach(TRANSFER_ABORT_STAT_bit_cg[bt]) this.TRANSFER_ABORT_STAT_bit_cg[bt].sample(data[25 + bt]);
             foreach(TX_DESC_COMPLETE_bit_cg[bt]) this.TX_DESC_COMPLETE_bit_cg[bt].sample(data[26 + bt]);
             foreach(TRANSFER_ERR_STAT_bit_cg[bt]) this.TRANSFER_ERR_STAT_bit_cg[bt].sample(data[31 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[0:0]/*RX_DESC_STAT*/  ,  data[1:1]/*TX_DESC_STAT*/  ,  data[2:2]/*RX_DESC_TIMEOUT*/  ,  data[3:3]/*TX_DESC_TIMEOUT*/  ,  data[8:8]/*TX_DATA_THLD_STAT*/  ,  data[9:9]/*RX_DATA_THLD_STAT*/  ,  data[10:10]/*TX_DESC_THLD_STAT*/  ,  data[11:11]/*RX_DESC_THLD_STAT*/  ,  data[12:12]/*IBI_THLD_STAT*/  ,  data[13:13]/*IBI_DONE*/  ,  data[18:15]/*PENDING_INTERRUPT*/  ,  data[25:25]/*TRANSFER_ABORT_STAT*/  ,  data[26:26]/*TX_DESC_COMPLETE*/  ,  data[31:31]/*TRANSFER_ERR_STAT*/   );
+            this.fld_cg.sample( data[0:0]/*RX_DESC_STAT*/  ,  data[1:1]/*TX_DESC_STAT*/  ,  data[2:2]/*RX_DESC_TIMEOUT*/  ,  data[3:3]/*TX_DESC_TIMEOUT*/  ,  data[8:8]/*TX_DATA_THLD_STAT*/  ,  data[9:9]/*RX_DATA_THLD_STAT*/  ,  data[10:10]/*TX_DESC_THLD_STAT*/  ,  data[11:11]/*RX_DESC_THLD_STAT*/  ,  data[12:12]/*IBI_THLD_STAT*/  ,  data[13:13]/*IBI_DONE*/  ,  data[19:16]/*PENDING_INTERRUPT*/  ,  data[20:20]/*PENDING_IBI*/  ,  data[25:25]/*TRANSFER_ABORT_STAT*/  ,  data[26:26]/*TX_DESC_COMPLETE*/  ,  data[31:31]/*TRANSFER_ERR_STAT*/   );
         end
     endfunction
 
@@ -2617,12 +2618,13 @@
             foreach(IBI_THLD_STAT_bit_cg[bt]) this.IBI_THLD_STAT_bit_cg[bt].sample(IBI_THLD_STAT.get_mirrored_value() >> bt);
             foreach(IBI_DONE_bit_cg[bt]) this.IBI_DONE_bit_cg[bt].sample(IBI_DONE.get_mirrored_value() >> bt);
             foreach(PENDING_INTERRUPT_bit_cg[bt]) this.PENDING_INTERRUPT_bit_cg[bt].sample(PENDING_INTERRUPT.get_mirrored_value() >> bt);
+            foreach(PENDING_IBI_bit_cg[bt]) this.PENDING_IBI_bit_cg[bt].sample(PENDING_IBI.get_mirrored_value() >> bt);
             foreach(TRANSFER_ABORT_STAT_bit_cg[bt]) this.TRANSFER_ABORT_STAT_bit_cg[bt].sample(TRANSFER_ABORT_STAT.get_mirrored_value() >> bt);
             foreach(TX_DESC_COMPLETE_bit_cg[bt]) this.TX_DESC_COMPLETE_bit_cg[bt].sample(TX_DESC_COMPLETE.get_mirrored_value() >> bt);
             foreach(TRANSFER_ERR_STAT_bit_cg[bt]) this.TRANSFER_ERR_STAT_bit_cg[bt].sample(TRANSFER_ERR_STAT.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( RX_DESC_STAT.get_mirrored_value()  ,  TX_DESC_STAT.get_mirrored_value()  ,  RX_DESC_TIMEOUT.get_mirrored_value()  ,  TX_DESC_TIMEOUT.get_mirrored_value()  ,  TX_DATA_THLD_STAT.get_mirrored_value()  ,  RX_DATA_THLD_STAT.get_mirrored_value()  ,  TX_DESC_THLD_STAT.get_mirrored_value()  ,  RX_DESC_THLD_STAT.get_mirrored_value()  ,  IBI_THLD_STAT.get_mirrored_value()  ,  IBI_DONE.get_mirrored_value()  ,  PENDING_INTERRUPT.get_mirrored_value()  ,  TRANSFER_ABORT_STAT.get_mirrored_value()  ,  TX_DESC_COMPLETE.get_mirrored_value()  ,  TRANSFER_ERR_STAT.get_mirrored_value()   );
+            this.fld_cg.sample( RX_DESC_STAT.get_mirrored_value()  ,  TX_DESC_STAT.get_mirrored_value()  ,  RX_DESC_TIMEOUT.get_mirrored_value()  ,  TX_DESC_TIMEOUT.get_mirrored_value()  ,  TX_DATA_THLD_STAT.get_mirrored_value()  ,  RX_DATA_THLD_STAT.get_mirrored_value()  ,  TX_DESC_THLD_STAT.get_mirrored_value()  ,  RX_DESC_THLD_STAT.get_mirrored_value()  ,  IBI_THLD_STAT.get_mirrored_value()  ,  IBI_DONE.get_mirrored_value()  ,  PENDING_INTERRUPT.get_mirrored_value()  ,  PENDING_IBI.get_mirrored_value()  ,  TRANSFER_ABORT_STAT.get_mirrored_value()  ,  TX_DESC_COMPLETE.get_mirrored_value()  ,  TRANSFER_ERR_STAT.get_mirrored_value()   );
         end
     endfunction
 

@@ -1476,6 +1476,10 @@ module I3CCSR (
                     struct packed{
                         logic next;
                         logic load_next;
+                    } PENDING_IBI;
+                    struct packed{
+                        logic next;
+                        logic load_next;
                     } TRANSFER_ABORT_STAT;
                     struct packed{
                         logic next;
@@ -2937,6 +2941,9 @@ module I3CCSR (
                     struct packed{
                         logic [3:0] value;
                     } PENDING_INTERRUPT;
+                    struct packed{
+                        logic value;
+                    } PENDING_IBI;
                     struct packed{
                         logic value;
                     } TRANSFER_ABORT_STAT;
@@ -9138,7 +9145,7 @@ module I3CCSR (
         next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
         load_next_c = '0;
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~decoded_wr_biten[18:15]) | (decoded_wr_data[18:15] & decoded_wr_biten[18:15]);
+            next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~decoded_wr_biten[19:16]) | (decoded_wr_data[19:16] & decoded_wr_biten[19:16]);
             load_next_c = '1;
         end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
@@ -9157,6 +9164,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value;
+    // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value;
+        load_next_c = '0;
+        
+        // HW Write
+        next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.next;
+        load_next_c = '1;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.next = next_c;
+        field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value <= 1'h0;
+        end else begin
+            if(field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.load_next) begin
+                field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value <= field_combo.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value = field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT
     always_comb begin
         automatic logic [0:0] next_c;
@@ -12928,15 +12958,18 @@ module I3CCSR (
     assign readback_array[83][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value : '0;
     assign readback_array[83][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value : '0;
     assign readback_array[83][7:4] = '0;
-    assign readback_array[83][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value : '0;
-    assign readback_array[83][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value : '0;
-    assign readback_array[83][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value : '0;
-    assign readback_array[83][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value : '0;
-    assign readback_array[83][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value : '0;
-    assign readback_array[83][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value : '0;
-    assign readback_array[83][24:14] = '0;
-    assign readback_array[83][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value : '0;
-    assign readback_array[83][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value : '0;
+    assign readback_array[83][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value : '0;
+    assign readback_array[83][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value : '0;
+    assign readback_array[83][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value : '0;
+    assign readback_array[83][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value : '0;
+    assign readback_array[83][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value : '0;
+    assign readback_array[83][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value : '0;
+    assign readback_array[83][15:14] = '0;
+    assign readback_array[83][19:16] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value : '0;
+    assign readback_array[83][20:20] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value : '0;
+    assign readback_array[83][24:21] = '0;
+    assign readback_array[83][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
+    assign readback_array[83][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value : '0;
     assign readback_array[83][30:27] = '0;
     assign readback_array[83][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value : '0;
     assign readback_array[84][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value : '0;

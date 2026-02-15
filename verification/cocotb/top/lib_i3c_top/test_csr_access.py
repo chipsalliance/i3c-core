@@ -176,6 +176,7 @@ async def test_ec_tti_csr_access(dut):
         "RX_DESC_QUEUE_PORT",
         "RX_DATA_PORT",
         "QUEUE_THLD_CTRL",
+        "INTERRUPT_STATUS",
     ]
     tb = await initialize(dut)
     await run_basic_csr_access(tb, tb.reg_map.I3C_EC.TTI, exceptions)

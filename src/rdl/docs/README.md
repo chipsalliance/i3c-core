@@ -2967,7 +2967,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 |  11 | RX_DESC_THLD_STAT |rw, woclr| 0x0 | RX_DESC_THLD_STAT |
 |  12 |   IBI_THLD_STAT   |rw, woclr| 0x0 |   IBI_THLD_STAT   |
 |  13 |      IBI_DONE     |rw, woclr| 0x0 |      IBI_DONE     |
-|18:15| PENDING_INTERRUPT |    rw   | 0x0 | PENDING_INTERRUPT |
+|19:16| PENDING_INTERRUPT |    rw   | 0x0 | PENDING_INTERRUPT |
+|  20 |    PENDING_IBI    |    r    | 0x0 |    PENDING_IBI    |
 |  25 |TRANSFER_ABORT_STAT|rw, woclr| 0x0 |TRANSFER_ABORT_STAT|
 |  26 |  TX_DESC_COMPLETE |rw, woclr| 0x0 |  TX_DESC_COMPLETE |
 |  31 | TRANSFER_ERR_STAT |rw, woclr| 0x0 | TRANSFER_ERR_STAT |
@@ -3015,6 +3016,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 #### PENDING_INTERRUPT field
 
 <p>Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.</p>
+
+#### PENDING_IBI field
+
+<p>At least one IBI is pending</p>
 
 #### TRANSFER_ABORT_STAT field
 

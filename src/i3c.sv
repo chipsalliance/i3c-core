@@ -536,6 +536,7 @@ module i3c
   // Status
   logic [1:0] ibi_status;
   logic ibi_status_we;
+  logic ibi_pending;
 
   logic controller_error;
   logic ri_pec_err;
@@ -743,6 +744,7 @@ module i3c
 
       .ibi_status_o(ibi_status),
       .ibi_status_we_o(ibi_status_we),
+      .ibi_pending_o(ibi_pending),
 
       .set_dasa_o(set_dasa),
       .set_dasa_valid_o(set_dasa_valid),
@@ -1071,6 +1073,7 @@ module i3c
       .virtual_device_sel_i(virtual_device_sel),
       .ibi_status_i(ibi_status),
       .ibi_status_we_i(ibi_status_we),
+      .ibi_pending_i(ibi_pending),
       .tx_pr_end_i(tti_tx_pr_end),
       .tx_pr_start_i(tti_tx_pr_start),
 

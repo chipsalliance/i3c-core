@@ -178,6 +178,7 @@ module controller_standby
 
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o,
+    output logic ibi_pending_o,
 
     output logic peripheral_reset_o,
     input  logic peripheral_reset_done_i,
@@ -512,6 +513,7 @@ module controller_standby
       .rstdaa_o(rstdaa_o),
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o),
+      .ibi_pending_o(ibi_pending_o),
       .get_status_done_o(get_status_done),
       .protocol_err_o(protocol_err),
       .te0_err_o(te0_err_o),

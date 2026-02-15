@@ -221,6 +221,7 @@ module controller
     // Status update signals
     output logic [1:0] ibi_status_o,
     output logic ibi_status_we_o,
+    output logic ibi_pending_o,
 
     output logic [7:0] rst_action_o,
     output logic       rst_action_valid_o,
@@ -624,6 +625,7 @@ module controller
       .disec_hj_o(disec_hj_o),
       .ibi_status_o(ibi_status_o),
       .ibi_status_we_o(ibi_status_we_o),
+      .ibi_pending_o(ibi_pending_o),
       .err_o,
       .set_mwl_o(set_mwl),
       .set_mrl_o(set_mrl),

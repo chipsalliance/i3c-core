@@ -172,11 +172,12 @@ module configuration (
   end
 
   assign get_status_fmt1_o = {
-    8'h00,  // Vendor-specific meaning
+    7'h00,  // Vendor-specific
+    hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value,
     2'b11,  // Unable to do Handoff
-    hwif_out_i.I3C_EC.TTI.STATUS.PROTOCOL_ERROR,
+    hwif_out_i.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value,
     1'b0,   // Reserved
-    hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT
+    hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value
   };
 
   assign pid_o = {

@@ -4,7 +4,8 @@ import logging
 import random
 
 from boot import boot_init
-from bus2csr import bytes2int
+from bus2csr import int2dword
+from utils import format_ibi_data
 from ccc import CCC
 from cocotbext_i3c.common import I3cTargetResetAction
 from i3c_controller_fixed import I3cControllerFixed as I3cController
@@ -93,6 +94,23 @@ async def test_ccc_getstatus(dut):
             # Virtual target: Activity Mode=3, no pending interrupts
             assert (status == 0x00C0), f"Unexpected value received from GETSTATUS CCC, expected: 0xC0 got: {status}"
         cocotb.log.info(f"GET STATUS = {status}")
+
+    # Enqueue an IBI with IBI handling disabled; should flip bit 0 in the vendor specific part
+    await tb.write_csr(tb.reg_map.I3C_EC.TTI.CONTROL.base_addr, int2dword(0x0), 4)
+
+    # Write descriptor to the TTI IBI queue
+    mdb = 0xCC
+    data = [0xFE, 0xED]
+    ibi_data = format_ibi_data(mdb, data)
+    dut._log.info(" ".join([f"0x{d:08X}" for d in ibi_data]))
+    for word in ibi_data:
+        await tb.write_csr(tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, int2dword(word), 4)
+
+    # Read CCC
+    responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=DYNAMIC_ADDR, count=2)
+    status = int.from_bytes(responses[0][1], byteorder="big", signed=False)
+    ibi_pend_mask = 0x0100
+    assert((status & ibi_pend_mask) == ibi_pend_mask)
 
 
 @cocotb.test()
