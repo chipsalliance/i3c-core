@@ -100,9 +100,9 @@ module tti
     input logic bypass_i3c_core_i,
 
     // IBI status
-    input logic [1:0] ibi_status_i,
-    input logic ibi_status_we_i,
-    input logic ibi_pending_i,
+    input ibi_status_e ibi_status_i,
+    input logic        ibi_status_we_i,
+    input logic        ibi_pending_i,
     // Virtual recovery target selection - gates TTI interrupts during recovery transactions
     input logic virtual_device_sel_i,
     // Private read status

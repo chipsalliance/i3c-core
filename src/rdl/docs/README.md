@@ -2764,8 +2764,8 @@ DISINT bit in the DISEC command.</p>
 
 | Bits|   Identifier  |Access|Reset|      Name     |
 |-----|---------------|------|-----|---------------|
-|  13 | PROTOCOL_ERROR|   r  | 0x0 | PROTOCOL_ERROR|
-|15:14|LAST_IBI_STATUS|   r  | 0x0 |LAST_IBI_STATUS|
+|  8  | PROTOCOL_ERROR|   r  | 0x0 | PROTOCOL_ERROR|
+|14:12|LAST_IBI_STATUS|   r  | 0x0 |LAST_IBI_STATUS|
 
 #### PROTOCOL_ERROR field
 
@@ -2780,12 +2780,16 @@ of the next GETSTATUS command.</p>
 
 <p>Status of last IBI. Should be read after IBI_DONE interrupt.</p>
 <p>Values:</p>
-<p>00 - Success: IBI was transmitted and ACK'd by the Active Controller.
-01 - Failure: Active Controller NACK'd the IBI before any data was sent.
-The Target Device will retry sending the IBI once.
-10 - Failure: Active Controller NACK'd the IBI after partial data was sent.
-Part of data in the IBI queue is considered corrupted and will be discarded.
-11 - Failure: IBI was terminated after 1 retry.</p>
+<p>000 - Success: IBI was transmitted and ACK'd by the Active Controller.
+001 - FailureNack: Active Controller NACK'd the IBI before any data was sent.
+The device will retry sending the IBI as long as permitted by the retry counter.
+010 - FailurePartialData: Active Controller NACK'd the IBI after data was
+partially sent. The remaining part of data in the IBI queue is considered
+corrupted and will be discarded.
+011 - FailureRetry: IBI could not be serviced due to reached retry count.
+100 - FailureArbitration:: IBI could not be serviced as arbitration was lost
+during the address header. The device will retry sending the IBI as long as
+permitted by the retry counter.</p>
 
 ### RESET_CONTROL register
 

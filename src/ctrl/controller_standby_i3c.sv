@@ -97,11 +97,11 @@ module controller_standby_i3c
   input  logic [47:0] virtual_pid_i,
 
   // IBI related control
-  input  logic       ibi_enable_i,
-  input  logic [2:0] ibi_retry_num_i,
-  output logic       ibi_status_we_o,
-  output logic [1:0] ibi_status_o,
-  output logic       ibi_pending_o,
+  input  logic        ibi_enable_i,
+  input  logic  [2:0] ibi_retry_num_i,
+  output logic        ibi_status_we_o,
+  output ibi_status_e ibi_status_o,
+  output logic        ibi_pending_o,
 
   // Max write length
   output logic        set_mwl_o,

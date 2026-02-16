@@ -534,9 +534,9 @@ module i3c
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   // Status
-  logic [1:0] ibi_status;
-  logic ibi_status_we;
-  logic ibi_pending;
+  ibi_status_e ibi_status;
+  logic        ibi_status_we;
+  logic        ibi_pending;
 
   logic controller_error;
   logic ri_pec_err;

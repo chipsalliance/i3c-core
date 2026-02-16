@@ -88,9 +88,9 @@ module i3c_target_fsm import i3c_pkg::*; (
   output logic      ibi_byte_flush_o,     // Aborts IBI and flushes TTI IBI Queue
 
   // IBI control / status
-  input  logic [2:0] ibi_retry_num_i, // TTI.CONTROL.IBI_RETRY_NUM
-  output logic [1:0] ibi_status_o,    // TTI.STATUS.LAST_IBI_STATUS
-  output logic       ibi_status_we_o, // IBI status write enable
+  input  logic [2:0]  ibi_retry_num_i, // TTI.CONTROL.IBI_RETRY_NUM
+  output ibi_status_e ibi_status_o,    // TTI.STATUS.LAST_IBI_STATUS
+  output logic        ibi_status_we_o, // IBI status write enable
 
   output logic [7:0] last_addr_o,     // Includes rnw as LSB
   output logic       last_addr_valid_o,
@@ -230,13 +230,6 @@ module i3c_target_fsm import i3c_pkg::*; (
 
   primary_state_e state_q, state_d;
 
-  // IBI status codes
-  typedef enum logic [1:0] {
-    IbiSuccess            = 2'b00,
-    IbiFailureNack        = 2'b01,
-    IbiFailurePartialData = 2'b10,
-    IbiFailureRetry       = 2'b11
-  } ibi_status_e;
 
   // Either Start or RStart condition
   assign bus_any_start_det = bus_start_det_i || bus_rstart_det_i;
@@ -463,7 +456,7 @@ module i3c_target_fsm import i3c_pkg::*; (
           // Someone else decided to start transmitting an IBI at almost the exact same time and
           // won arbitration - bad luck for us
           ibi_status_we_o = 1'b1;
-          ibi_status_o    = IbiFailureNack; // TODO extend the encoding
+          ibi_status_o    = IbiFailureAddressArb;
           ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
           if (ibi_retry_num_i != 3'd7) begin
             ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
@@ -555,7 +548,7 @@ module i3c_target_fsm import i3c_pkg::*; (
           // to receive rest of address
           if (arbitration_lost_i) begin
             ibi_status_we_o = 1'b1;
-            ibi_status_o    = IbiFailureNack; // TODO extend the encoding
+            ibi_status_o    = IbiFailureAddressArb;
             ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
             if (ibi_retry_num_i != 3'd7) begin
               ibi_retry_cnt_d = ibi_retry_cnt_q + 1;

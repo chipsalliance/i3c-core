@@ -1398,7 +1398,7 @@ module I3CCSR (
                         logic load_next;
                     } PROTOCOL_ERROR;
                     struct packed{
-                        logic [1:0] next;
+                        logic [2:0] next;
                         logic load_next;
                     } LAST_IBI_STATUS;
                 } STATUS;
@@ -2884,7 +2884,7 @@ module I3CCSR (
                         logic value;
                     } PROTOCOL_ERROR;
                     struct packed{
-                        logic [1:0] value;
+                        logic [2:0] value;
                     } LAST_IBI_STATUS;
                 } STATUS;
                 struct packed{
@@ -8700,7 +8700,7 @@ module I3CCSR (
     assign hwif_out.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value = field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value;
     // Field: I3CCSR.I3C_EC.TTI.STATUS.LAST_IBI_STATUS
     always_comb begin
-        automatic logic [1:0] next_c;
+        automatic logic [2:0] next_c;
         automatic logic load_next_c;
         next_c = field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value;
         load_next_c = '0;
@@ -8713,7 +8713,7 @@ module I3CCSR (
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= 2'h0;
+            field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= 3'h0;
         end else begin
             if(field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.load_next) begin
                 field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value <= field_combo.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.next;
@@ -12905,10 +12905,11 @@ module I3CCSR (
     assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
     assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
     assign readback_array[75][31:16] = '0;
-    assign readback_array[76][12:0] = '0;
-    assign readback_array[76][13:13] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
-    assign readback_array[76][15:14] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
-    assign readback_array[76][31:16] = '0;
+    assign readback_array[76][7:0] = '0;
+    assign readback_array[76][8:8] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
+    assign readback_array[76][11:9] = '0;
+    assign readback_array[76][14:12] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
+    assign readback_array[76][31:15] = '0;
     assign readback_array[77][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;
     assign readback_array[77][1:1] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value : '0;
     assign readback_array[77][2:2] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value : '0;

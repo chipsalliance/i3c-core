@@ -176,9 +176,9 @@ module controller_standby
     output logic [15:0] mrl_o,
     output logic [07:0] ibil_o,
 
-    output logic [1:0] ibi_status_o,
-    output logic ibi_status_we_o,
-    output logic ibi_pending_o,
+    output ibi_status_e ibi_status_o,
+    output logic        ibi_status_we_o,
+    output logic        ibi_pending_o,
 
     output logic peripheral_reset_o,
     input  logic peripheral_reset_done_i,
@@ -245,30 +245,31 @@ module controller_standby
   logic i3c_ibi_queue_rready_o;
   logic i3c_tx_host_nack_o;
   logic i2c_tx_host_nack_o;
+
   // Mux TTI outputs between I2C and I3C
   always_comb begin
     rx_desc_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_desc_queue_wvalid_o : i2c_rx_desc_queue_wvalid_o;
-    rx_desc_queue_wdata_o = sel_i2c_i3c ? i3c_rx_desc_queue_wdata_o : i2c_rx_desc_queue_wdata_o;
-    rx_queue_wvalid_o = sel_i2c_i3c ? i3c_rx_queue_wvalid_o : i2c_rx_queue_wvalid_o;
-    rx_queue_wdata_o = sel_i2c_i3c ? i3c_rx_queue_wdata_o : i2c_rx_queue_wdata_o;
-    rx_queue_flush_o = sel_i2c_i3c ? i3c_rx_queue_flush_o : i2c_rx_queue_flush_o;
-    rx_queue_wlast_o = sel_i2c_i3c ? i3c_rx_queue_wlast_o : 1'b0;
+    rx_desc_queue_wdata_o  = sel_i2c_i3c ? i3c_rx_desc_queue_wdata_o  : i2c_rx_desc_queue_wdata_o;
+    rx_queue_wvalid_o      = sel_i2c_i3c ? i3c_rx_queue_wvalid_o      : i2c_rx_queue_wvalid_o;
+    rx_queue_wdata_o       = sel_i2c_i3c ? i3c_rx_queue_wdata_o       : i2c_rx_queue_wdata_o;
+    rx_queue_flush_o       = sel_i2c_i3c ? i3c_rx_queue_flush_o       : i2c_rx_queue_flush_o;
+    rx_queue_wlast_o       = sel_i2c_i3c ? i3c_rx_queue_wlast_o       : 1'b0;
     tx_desc_queue_rready_o = sel_i2c_i3c ? i3c_tx_desc_queue_rready_o : i2c_tx_desc_queue_rready_o;
-    tx_queue_rready_o = sel_i2c_i3c ? i3c_tx_queue_rready_o : i2c_tx_queue_rready_o;
-    tx_queue_flush_o = sel_i2c_i3c ? i3c_tx_queue_flush_o : 1'b0;
-    bus_start_o = sel_i2c_i3c ? i3c_bus_start_o : i2c_bus_start_o;
-    bus_rstart_o = sel_i2c_i3c ? i3c_bus_rstart_o : i2c_bus_rstart_o;
-    bus_stop_o = sel_i2c_i3c ? i3c_bus_stop_o : i2c_bus_stop_o;
-    bus_addr_o = sel_i2c_i3c ? i3c_bus_addr_o : i2c_bus_addr_o;
-    bus_addr_valid_o = sel_i2c_i3c ? i3c_bus_addr_valid_o : i2c_bus_addr_valid_o;
+    tx_queue_rready_o      = sel_i2c_i3c ? i3c_tx_queue_rready_o      : i2c_tx_queue_rready_o;
+    tx_queue_flush_o       = sel_i2c_i3c ? i3c_tx_queue_flush_o       : 1'b0;
+    bus_start_o            = sel_i2c_i3c ? i3c_bus_start_o            : i2c_bus_start_o;
+    bus_rstart_o           = sel_i2c_i3c ? i3c_bus_rstart_o           : i2c_bus_rstart_o;
+    bus_stop_o             = sel_i2c_i3c ? i3c_bus_stop_o             : i2c_bus_stop_o;
+    bus_addr_o             = sel_i2c_i3c ? i3c_bus_addr_o             : i2c_bus_addr_o;
+    bus_addr_valid_o       = sel_i2c_i3c ? i3c_bus_addr_valid_o       : i2c_bus_addr_valid_o;
 
     // Connect IBI only in I3C mode
-    i3c_ibi_queue_full_i = sel_i2c_i3c ? ibi_queue_full_i : '0;
-    i3c_ibi_queue_empty_i = sel_i2c_i3c ? ibi_queue_empty_i : '0;
-    i3c_ibi_queue_rvalid_i = sel_i2c_i3c ? ibi_queue_rvalid_i : '0;
-    ibi_queue_rready_o = sel_i2c_i3c ? i3c_ibi_queue_rready_o : '0;
+    i3c_ibi_queue_full_i   = sel_i2c_i3c ? ibi_queue_full_i           : '0;
+    i3c_ibi_queue_empty_i  = sel_i2c_i3c ? ibi_queue_empty_i          : '0;
+    i3c_ibi_queue_rvalid_i = sel_i2c_i3c ? ibi_queue_rvalid_i         : '0;
+    ibi_queue_rready_o     = sel_i2c_i3c ? i3c_ibi_queue_rready_o     : '0;
 
-    tx_host_nack_o = sel_i2c_i3c ? i3c_tx_host_nack_o : i2c_tx_host_nack_o;
+    tx_host_nack_o         = sel_i2c_i3c ? i3c_tx_host_nack_o         : i2c_tx_host_nack_o;
   end
 
   logic protocol_err;
@@ -412,131 +413,131 @@ module controller_standby
 
 
   controller_standby_i3c #(
-      .TtiRxDescDataWidth(TtiRxDescDataWidth),
-      .TtiTxDescDataWidth(TtiTxDescDataWidth),
-      .TtiRxDataWidth(TtiRxDataWidth),
-      .TtiTxDataWidth(TtiTxDataWidth),
-      .TtiIbiFifoDepth(TtiIbiFifoDepth),
-      .TtiIbiDataWidth(TtiIbiDataWidth),
-      .TtiTxFifoDepth(TtiTxFifoDepth)
+    .TtiRxDescDataWidth(TtiRxDescDataWidth),
+    .TtiTxDescDataWidth(TtiTxDescDataWidth),
+    .TtiRxDataWidth(TtiRxDataWidth),
+    .TtiTxDataWidth(TtiTxDataWidth),
+    .TtiIbiFifoDepth(TtiIbiFifoDepth),
+    .TtiIbiDataWidth(TtiIbiDataWidth),
+    .TtiTxFifoDepth(TtiTxFifoDepth)
   ) xcontroller_standby_i3c (
-      .clk_i(clk_i),
-      .rst_ni(rst_ni),
-      .ctrl_bus_i(ctrl_bus_i[1]),
-      .hdr_exit_bus_i(hdr_exit_bus_i),
-      .ctrl_scl_o(ctrl_scl_o[1]),
-      .ctrl_sda_o(ctrl_sda_o[1]),
-      .ctrl_sda_oe_o(ctrl_sda_oe_o[1]),
-      .arbitration_lost_i(arbitration_lost_i),
-      .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
-      .rx_desc_queue_wvalid_o(i3c_rx_desc_queue_wvalid_o),
-      .rx_desc_queue_wdata_o(i3c_rx_desc_queue_wdata_o),
-      .tx_desc_queue_rvalid_i(tx_desc_queue_rvalid_i),
-      .tx_desc_queue_rready_o(i3c_tx_desc_queue_rready_o),
-      .tx_desc_queue_rdata_i(tx_desc_queue_rdata_i),
-      .rx_queue_wready_i(rx_queue_wready_i),
-      .rx_queue_wvalid_o(i3c_rx_queue_wvalid_o),
-      .rx_queue_wdata_o(i3c_rx_queue_wdata_o),
-      .rx_queue_flush_o(i3c_rx_queue_flush_o),
-      .rx_queue_wlast_o(i3c_rx_queue_wlast_o),
-      .tx_queue_rvalid_i(tx_queue_rvalid_i),
-      .tx_queue_depth_i(tx_queue_depth_i),
-      .tx_queue_rready_o(i3c_tx_queue_rready_o),
-      .tx_queue_rdata_i(tx_queue_rdata_i),
-      .tx_queue_empty_i(tx_queue_empty_i),
-      .tx_queue_flush_o(i3c_tx_queue_flush_o),
-      .ibi_queue_full_i(i3c_ibi_queue_full_i),
-      .ibi_queue_empty_i(i3c_ibi_queue_empty_i),
-      .ibi_queue_rvalid_i(i3c_ibi_queue_rvalid_i),
-      .ibi_queue_depth_i(ibi_queue_depth_i),
-      .ibi_queue_rready_o(i3c_ibi_queue_rready_o),
-      .ibi_queue_rdata_i(ibi_queue_rdata_i),
-      .bus_addr_o(i3c_bus_addr_o),
-      .bus_addr_valid_o(i3c_bus_addr_valid_o),
-      .i3c_standby_en_i(i3c_standby_en_i),
-      .t_su_dat_i(t_su_dat_i),
-      .t_hd_dat_i(t_hd_dat_i),
-      .t_r_i(t_r_i),
-      .t_f_i(t_f_i),
-      .t_bus_free_i(t_bus_free_i),
-      .t_bus_idle_i(t_bus_idle_i),
-      .t_bus_available_i(t_bus_available_i),
-      .hdr_timeout_en_i(hdr_timeout_en_i),
-      .t_hdr_timeout_i(t_hdr_timeout_i),
-      .get_mwl_i(get_mwl_i),
-      .get_mrl_i(get_mrl_i),
-      .get_ibil_i(get_ibil_i),
-      .get_status_fmt1_i(get_status_fmt1_i),
-      .pid_i(pid_i),
-      .bcr_i(bcr_i),
-      .dcr_i(dcr_i),
-      .virtual_pid_i(virtual_pid_i),
-      .virtual_bcr_i(virtual_bcr_i),
-      .virtual_dcr_i(virtual_dcr_i),
-      .target_sta_addr_i(target_sta_addr_i),
-      .target_sta_addr_valid_i(target_sta_addr_valid_i),
-      .target_dyn_addr_i(target_dyn_addr_i),
-      .target_dyn_addr_valid_i(target_dyn_addr_valid_i),
-      .virtual_target_sta_addr_i(virtual_target_sta_addr_i),
-      .virtual_target_sta_addr_valid_i(virtual_target_sta_addr_valid_i),
-      .virtual_target_dyn_addr_i(virtual_target_dyn_addr_i),
-      .virtual_target_dyn_addr_valid_i(virtual_target_dyn_addr_valid_i),
-      .target_ibi_addr_i(target_ibi_addr_i),
-      .target_ibi_addr_valid_i(target_ibi_addr_valid_i),
-      .ibi_enable_i(ibi_enable_i),
-      .ibi_retry_num_i(ibi_retry_num_i),
-      .tx_host_nack_o(i3c_tx_host_nack_o),
-      .tx_pr_end_o(tx_pr_end_o),
-      .tx_pr_start_o(tx_pr_start_o),
-      .set_dasa_o(set_dasa_o),
-      .set_dasa_valid_o(set_dasa_valid_o),
-      .set_dasa_virtual_device_o(set_dasa_virtual_device_o),
-      .set_aasa_o(set_aasa_o),
-      .set_aasa_virt_o(set_aasa_virt_o),
-      .set_newda_o,
-      .set_newda_virtual_device_o,
-      .newda_o,
-      .rst_action_o,
-      .rst_action_valid_o,
-      .enec_ibi_o(enec_ibi_o),
-      .enec_crr_o(enec_crr_o),
-      .enec_hj_o(enec_hj_o),
-      .disec_ibi_o(disec_ibi_o),
-      .disec_crr_o(disec_crr_o),
-      .disec_hj_o(disec_hj_o),
-      .set_mwl_o(set_mwl_o),
-      .set_mrl_o(set_mrl_o),
-      .set_ibil_o(set_ibil_o),
-      .mwl_o(mwl_o),
-      .mrl_o(mrl_o),
-      .ibil_o(ibil_o),
-      .rstdaa_o(rstdaa_o),
-      .ibi_status_o(ibi_status_o),
-      .ibi_status_we_o(ibi_status_we_o),
-      .ibi_pending_o(ibi_pending_o),
-      .get_status_done_o(get_status_done),
-      .protocol_err_o(protocol_err),
-      .te0_err_o(te0_err_o),
-      .te1_err_o(te1_err_o),
-      .te2_err_o(te2_err_o),
-      .te3_err_o(te3_err_o),
-      .te4_err_o(te4_err_o),
-      .te5_err_o(te5_err_o),
-      .framing_err_o(framing_err_o),
-      .te0_err_det_en_i(te0_err_det_en_i),
-      .te1_err_det_en_i(te1_err_det_en_i),
-      .te2_err_det_en_i(te2_err_det_en_i),
-      .te3_err_det_en_i(te3_err_det_en_i),
-      .te4_err_det_en_i(te4_err_det_en_i),
-      .te5_err_det_en_i(te5_err_det_en_i),
-      .framing_err_det_en_i(framing_err_det_en_i),
-      .peripheral_reset_o,
-      .peripheral_reset_done_i,
-      .escalated_reset_o,
-      .recovery_mode_enter_i(recovery_mode_enter_i),
-      .virtual_device_sel_o(virtual_device_sel_o),
-      .xfer_in_progress_o(xfer_in_progress_o),
-      .in_hdr_mode_o(in_hdr_mode_o)
+    .clk_i,
+    .rst_ni,
+    .i3c_standby_en_i,
+    .ctrl_bus_i             (ctrl_bus_i[1]),
+    .hdr_exit_bus_i,
+    .ctrl_scl_o             (ctrl_scl_o[1]),
+    .ctrl_sda_o             (ctrl_sda_o[1]),
+    .ctrl_sda_oe_o          (ctrl_sda_oe_o[1]),
+    .arbitration_lost_i,
+    .phy_sel_od_pp_o        (phy_sel_od_pp_o[1]),
+    .rx_desc_queue_wvalid_o (i3c_rx_desc_queue_wvalid_o),
+    .rx_desc_queue_wdata_o  (i3c_rx_desc_queue_wdata_o),
+    .tx_desc_queue_rvalid_i,
+    .tx_desc_queue_rready_o (i3c_tx_desc_queue_rready_o),
+    .tx_desc_queue_rdata_i,
+    .rx_queue_wready_i,
+    .rx_queue_wvalid_o      (i3c_rx_queue_wvalid_o),
+    .rx_queue_wdata_o       (i3c_rx_queue_wdata_o),
+    .rx_queue_flush_o       (i3c_rx_queue_flush_o),
+    .rx_queue_wlast_o       (i3c_rx_queue_wlast_o),
+    .tx_queue_rvalid_i,
+    .tx_queue_depth_i,
+    .tx_queue_rready_o      (i3c_tx_queue_rready_o),
+    .tx_queue_rdata_i,
+    .tx_queue_empty_i,
+    .tx_queue_flush_o       (i3c_tx_queue_flush_o),
+    .ibi_queue_full_i       (i3c_ibi_queue_full_i),
+    .ibi_queue_empty_i      (i3c_ibi_queue_empty_i),
+    .ibi_queue_rvalid_i     (i3c_ibi_queue_rvalid_i),
+    .ibi_queue_depth_i,
+    .ibi_queue_rready_o     (i3c_ibi_queue_rready_o),
+    .ibi_queue_rdata_i,
+    .bus_addr_o             (i3c_bus_addr_o),
+    .bus_addr_valid_o       (i3c_bus_addr_valid_o),
+    .t_su_dat_i,
+    .t_hd_dat_i,
+    .t_r_i,
+    .t_f_i,
+    .t_bus_free_i,
+    .t_bus_idle_i,
+    .t_bus_available_i,
+    .hdr_timeout_en_i,
+    .t_hdr_timeout_i,
+    .get_mwl_i,
+    .get_mrl_i,
+    .get_ibil_i,
+    .get_status_fmt1_i,
+    .pid_i,
+    .bcr_i,
+    .dcr_i,
+    .virtual_pid_i,
+    .virtual_bcr_i,
+    .virtual_dcr_i,
+    .target_sta_addr_i,
+    .target_sta_addr_valid_i,
+    .target_dyn_addr_i,
+    .target_dyn_addr_valid_i,
+    .virtual_target_sta_addr_i,
+    .virtual_target_sta_addr_valid_i,
+    .virtual_target_dyn_addr_i,
+    .virtual_target_dyn_addr_valid_i,
+    .target_ibi_addr_i,
+    .target_ibi_addr_valid_i,
+    .ibi_enable_i,
+    .ibi_retry_num_i,
+    .tx_host_nack_o         (i3c_tx_host_nack_o),
+    .tx_pr_end_o,
+    .tx_pr_start_o,
+    .set_dasa_o,
+    .set_dasa_valid_o,
+    .set_dasa_virtual_device_o,
+    .set_aasa_o,
+    .set_aasa_virt_o,
+    .set_newda_o,
+    .set_newda_virtual_device_o,
+    .newda_o,
+    .rst_action_o,
+    .rst_action_valid_o,
+    .enec_ibi_o,
+    .enec_crr_o,
+    .enec_hj_o,
+    .disec_ibi_o,
+    .disec_crr_o,
+    .disec_hj_o,
+    .set_mwl_o,
+    .set_mrl_o,
+    .set_ibil_o,
+    .mwl_o,
+    .mrl_o,
+    .ibil_o,
+    .rstdaa_o,
+    .ibi_status_o,
+    .ibi_status_we_o,
+    .ibi_pending_o,
+    .get_status_done_o      (get_status_done),
+    .protocol_err_o         (protocol_err),
+    .te0_err_o,
+    .te1_err_o,
+    .te2_err_o,
+    .te3_err_o,
+    .te4_err_o,
+    .te5_err_o,
+    .framing_err_o,
+    .te0_err_det_en_i,
+    .te1_err_det_en_i,
+    .te2_err_det_en_i,
+    .te3_err_det_en_i,
+    .te4_err_det_en_i,
+    .te5_err_det_en_i,
+    .framing_err_det_en_i,
+    .peripheral_reset_o,
+    .peripheral_reset_done_i,
+    .escalated_reset_o,
+    .recovery_mode_enter_i,
+    .virtual_device_sel_o,
+    .xfer_in_progress_o,
+    .in_hdr_mode_o
   );
 
   always_comb begin

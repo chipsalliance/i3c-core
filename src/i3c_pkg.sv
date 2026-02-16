@@ -201,6 +201,15 @@ package i3c_pkg;
     i3c_byte_t data;
   } bus_rx_rsp_t;
 
+  // IBI status codes
+  typedef enum logic [2:0] {
+    IbiSuccess            = 3'b000,
+    IbiFailureNack        = 3'b001,
+    IbiFailurePartialData = 3'b010,
+    IbiFailureRetry       = 3'b011,
+    IbiFailureAddressArb  = 3'b100
+  } ibi_status_e;
+
   // Memory port to DAT table
   typedef struct packed {
     logic             req;

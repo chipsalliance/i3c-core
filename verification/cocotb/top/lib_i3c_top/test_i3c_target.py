@@ -460,8 +460,8 @@ async def test_i3c_target_ibi(dut):
         result = False
 
     # Check LAST_IBI_STATUS
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
-    last_ibi_status = (status & (3 << 14)) >> 14
+    last_ibi_status = await tb.read_csr_field(tb.reg_map.I3C_EC.TTI.STATUS.base_addr,
+                                              tb.reg_map.I3C_EC.TTI.STATUS.LAST_IBI_STATUS)
     expected_status = 0
     if last_ibi_status != expected_status:
         dut._log.critical(
@@ -498,8 +498,8 @@ async def test_i3c_target_ibi(dut):
             result = False
 
         # Check LAST_IBI_STATUS
-        status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
-        last_ibi_status = (status & (3 << 14)) >> 14
+        last_ibi_status = await tb.read_csr_field(tb.reg_map.I3C_EC.TTI.STATUS.base_addr,
+                                                  tb.reg_map.I3C_EC.TTI.STATUS.LAST_IBI_STATUS)
         expected_status = 0
         if last_ibi_status != expected_status:
             dut._log.critical(
@@ -553,8 +553,8 @@ async def test_i3c_target_ibi_retry(dut):
     await Timer(10, "us")
 
     # Check LAST_IBI_STATUS
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
-    last_ibi_status = (status & (3 << 14)) >> 14
+    last_ibi_status = await tb.read_csr_field(tb.reg_map.I3C_EC.TTI.STATUS.base_addr,
+                                              tb.reg_map.I3C_EC.TTI.STATUS.LAST_IBI_STATUS)
     expected_status = 1
     if last_ibi_status != expected_status:
         dut._log.critical(
@@ -578,8 +578,8 @@ async def test_i3c_target_ibi_retry(dut):
         result = False
 
     # Check LAST_IBI_STATUS
-    status = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.STATUS.base_addr, 4))
-    last_ibi_status = (status & (3 << 14)) >> 14
+    last_ibi_status = await tb.read_csr_field(tb.reg_map.I3C_EC.TTI.STATUS.base_addr,
+                                              tb.reg_map.I3C_EC.TTI.STATUS.LAST_IBI_STATUS)
     expected_status = 0
     if last_ibi_status != expected_status:
         dut._log.critical(

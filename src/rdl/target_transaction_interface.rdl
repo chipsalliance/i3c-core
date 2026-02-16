@@ -102,19 +102,23 @@ regfile TargetTransactionInterfaceRegisters #(
 
             Values:
 
-            00 - Success: IBI was transmitted and ACK'd by the Active Controller.
-            01 - Failure: Active Controller NACK'd the IBI before any data was sent.
-            The Target Device will retry sending the IBI once.
-            10 - Failure: Active Controller NACK'd the IBI after partial data was sent.
-            Part of data in the IBI queue is considered corrupted and will be discarded.
-            11 - Failure: IBI was terminated after 1 retry.
+            000 - Success: IBI was transmitted and ACK'd by the Active Controller.
+            001 - FailureNack: Active Controller NACK'd the IBI before any data was sent.
+            The device will retry sending the IBI as long as permitted by the retry counter.
+            010 - FailurePartialData: Active Controller NACK'd the IBI after data was
+            partially sent. The remaining part of data in the IBI queue is considered
+            corrupted and will be discarded.
+            011 - FailureRetry: IBI could not be serviced due to reached retry count.
+            100 - FailureArbitration:: IBI could not be serviced as arbitration was lost
+            during the address header. The device will retry sending the IBI as long as
+            permitted by the retry counter.
             ";
             sw = r;
             hw = rw;
             we = true;
             reset = 2'b00;
             swacc = true;
-        } LAST_IBI_STATUS[15:14];
+        } LAST_IBI_STATUS[14:12];
         field {
             name = "PROTOCOL_ERROR";
             desc = "Protocol error occurred in the past. This field can only be reset
@@ -130,7 +134,7 @@ regfile TargetTransactionInterfaceRegisters #(
             sw = r;
             hw = rw;
             reset = 1'b0;
-        } PROTOCOL_ERROR[13:13];
+        } PROTOCOL_ERROR[8:8];
     } STATUS;
     reg {
         name = "TTI Queue Reset Control";

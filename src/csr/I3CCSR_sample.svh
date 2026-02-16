@@ -2400,11 +2400,11 @@
         m_data    = data;
         m_is_read = is_read;
         if (get_coverage(UVM_CVR_REG_BITS)) begin
-            foreach(PROTOCOL_ERROR_bit_cg[bt]) this.PROTOCOL_ERROR_bit_cg[bt].sample(data[13 + bt]);
-            foreach(LAST_IBI_STATUS_bit_cg[bt]) this.LAST_IBI_STATUS_bit_cg[bt].sample(data[14 + bt]);
+            foreach(PROTOCOL_ERROR_bit_cg[bt]) this.PROTOCOL_ERROR_bit_cg[bt].sample(data[8 + bt]);
+            foreach(LAST_IBI_STATUS_bit_cg[bt]) this.LAST_IBI_STATUS_bit_cg[bt].sample(data[12 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[13:13]/*PROTOCOL_ERROR*/  ,  data[15:14]/*LAST_IBI_STATUS*/   );
+            this.fld_cg.sample( data[8:8]/*PROTOCOL_ERROR*/  ,  data[14:12]/*LAST_IBI_STATUS*/   );
         end
     endfunction
 

@@ -1000,7 +1000,7 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t;
 
     typedef struct packed{
-        logic [1:0] next;
+        logic [2:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__in_t;
 
@@ -2888,7 +2888,7 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__out_t;
 
     typedef struct packed{
-        logic [1:0] value;
+        logic [2:0] value;
         logic swacc;
     } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__out_t;
 

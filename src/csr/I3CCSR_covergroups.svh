@@ -2005,7 +2005,7 @@
     endgroup
     covergroup I3CCSR__I3C_EC__TTI__STATUS_fld_cg with function sample(
     input bit [1-1:0] PROTOCOL_ERROR,
-    input bit [2-1:0] LAST_IBI_STATUS
+    input bit [3-1:0] LAST_IBI_STATUS
     );
         option.per_instance = 1;
         PROTOCOL_ERROR_cp : coverpoint PROTOCOL_ERROR;
