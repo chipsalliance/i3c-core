@@ -3642,17 +3642,17 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR
 
-    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_3
-    class I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3 extends uvm_reg;
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_MWL
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_bit_cg __rsvd_bit_cg[32];
-        I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_fld_cg fld_cg;
-        rand uvm_reg_field __rsvd;
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL_bit_cg MWL_bit_cg[16];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL_fld_cg fld_cg;
+        rand uvm_reg_field MWL;
 
-        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3");
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
         endfunction : new
         extern virtual function void sample_values();
@@ -3662,15 +3662,50 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.__rsvd = new("__rsvd");
-            this.__rsvd.configure(this, 32, 0, "RW", 1, 'h0, 1, 1, 0);
+            this.MWL = new("MWL");
+            this.MWL.configure(this, 16, 0, "RO", 1, 'h100, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(__rsvd_bit_cg[bt]) __rsvd_bit_cg[bt] = new();
+                foreach(MWL_bit_cg[bt]) MWL_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
         endfunction : build
-    endclass : I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL
+
+    // Reg - I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_MRL
+    class I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL_bit_cg MRL_bit_cg[16];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL_bit_cg IBIL_bit_cg[8];
+        I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL_fld_cg fld_cg;
+        rand uvm_reg_field MRL;
+        rand uvm_reg_field IBIL;
+
+        function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.MRL = new("MRL");
+            this.MRL.configure(this, 16, 0, "RO", 1, 'h100, 1, 1, 0);
+            this.IBIL = new("IBIL");
+            this.IBIL.configure(this, 8, 16, "RO", 1, 'h10, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(MRL_bit_cg[bt]) MRL_bit_cg[bt] = new();
+                foreach(IBIL_bit_cg[bt]) IBIL_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL
 
     // Regfile - I3CCSR.I3C_EC.StdbyCtrlMode
     class I3CCSR__I3C_EC__StdbyCtrlMode extends uvm_reg_block;
@@ -3689,7 +3724,8 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS STBY_CR_CCC_CONFIG_GETCAPS;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
         rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR STBY_CR_VIRT_DEVICE_ADDR;
-        rand I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3 __rsvd_3;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL STBY_CR_MWL;
+        rand I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL STBY_CR_MRL;
 
         function new(string name = "I3CCSR__I3C_EC__StdbyCtrlMode");
             super.new(name);
@@ -3772,11 +3808,16 @@ package I3CCSR_uvm;
 
             this.STBY_CR_VIRT_DEVICE_ADDR.build();
             this.default_map.add_reg(this.STBY_CR_VIRT_DEVICE_ADDR, 'h38);
-            this.__rsvd_3 = new("__rsvd_3");
-            this.__rsvd_3.configure(this);
+            this.STBY_CR_MWL = new("STBY_CR_MWL");
+            this.STBY_CR_MWL.configure(this);
 
-            this.__rsvd_3.build();
-            this.default_map.add_reg(this.__rsvd_3, 'h3c);
+            this.STBY_CR_MWL.build();
+            this.default_map.add_reg(this.STBY_CR_MWL, 'h3c);
+            this.STBY_CR_MRL = new("STBY_CR_MRL");
+            this.STBY_CR_MRL.configure(this);
+
+            this.STBY_CR_MRL.build();
+            this.default_map.add_reg(this.STBY_CR_MRL, 'h40);
         endfunction : build
     endclass : I3CCSR__I3C_EC__StdbyCtrlMode
 

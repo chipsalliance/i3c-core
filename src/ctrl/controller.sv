@@ -235,6 +235,13 @@ module controller
     output logic [6:0] newda_o,
     output logic       rstdaa_o,
 
+    output logic [15:0] mwl_o,
+    output logic        set_mwl_o,
+    output logic [15:0] mrl_o,
+    output logic        set_mrl_o,
+    output logic  [7:0] ibil_o,
+    output logic        set_ibil_o,
+
     output logic enec_ibi_o,
     output logic enec_crr_o,
     output logic enec_hj_o,
@@ -336,6 +343,14 @@ module controller
   logic       ibi_retry_ctr_rst;
 
   logic recovery_mode;
+
+  // Max lengths
+  assign mwl_o  = mwl;
+  assign mrl_o  = mrl;
+  assign ibil_o = ibil;
+  assign set_mwl_o  = set_mwl;
+  assign set_mrl_o  = set_mrl;
+  assign set_ibil_o = set_ibil;
 
   // I2C/I3C Bus state monitor
   // 'bus' is gated during HDR mode to prevent false START/STOP/RSTART detection

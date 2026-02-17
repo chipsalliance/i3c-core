@@ -172,7 +172,8 @@ module I3CCSR (
                 logic STBY_CR_CCC_CONFIG_GETCAPS;
                 logic STBY_CR_CCC_CONFIG_RSTACT_PARAMS;
                 logic STBY_CR_VIRT_DEVICE_ADDR;
-                logic __rsvd_3;
+                logic STBY_CR_MWL;
+                logic STBY_CR_MRL;
             } StdbyCtrlMode;
             struct packed{
                 logic EXTCAP_HEADER;
@@ -345,7 +346,8 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS = cpuif_req_masked & (cpuif_addr == 12'h1b0);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS = cpuif_req_masked & (cpuif_addr == 12'h1b4);
         decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR = cpuif_req_masked & (cpuif_addr == 12'h1b8);
-        decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 = cpuif_req_masked & (cpuif_addr == 12'h1bc);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_MWL = cpuif_req_masked & (cpuif_addr == 12'h1bc);
+        decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_MRL = cpuif_req_masked & (cpuif_addr == 12'h1c0);
         decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 12'h200);
         decoded_reg_strb.I3C_EC.TTI.CONTROL = cpuif_req_masked & (cpuif_addr == 12'h204);
         decoded_reg_strb.I3C_EC.TTI.STATUS = cpuif_req_masked & (cpuif_addr == 12'h208);
@@ -1368,10 +1370,20 @@ module I3CCSR (
                 } STBY_CR_VIRT_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] next;
+                        logic [15:0] next;
                         logic load_next;
-                    } __rsvd;
-                } __rsvd_3;
+                    } MWL;
+                } STBY_CR_MWL;
+                struct packed{
+                    struct packed{
+                        logic [15:0] next;
+                        logic load_next;
+                    } MRL;
+                    struct packed{
+                        logic [7:0] next;
+                        logic load_next;
+                    } IBIL;
+                } STBY_CR_MRL;
             } StdbyCtrlMode;
             struct packed{
                 struct packed{
@@ -2864,9 +2876,17 @@ module I3CCSR (
                 } STBY_CR_VIRT_DEVICE_ADDR;
                 struct packed{
                     struct packed{
-                        logic [31:0] value;
-                    } __rsvd;
-                } __rsvd_3;
+                        logic [15:0] value;
+                    } MWL;
+                } STBY_CR_MWL;
+                struct packed{
+                    struct packed{
+                        logic [15:0] value;
+                    } MRL;
+                    struct packed{
+                        logic [7:0] value;
+                    } IBIL;
+                } STBY_CR_MRL;
             } StdbyCtrlMode;
             struct packed{
                 struct packed{
@@ -8553,32 +8573,75 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
-    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL
     always_comb begin
-        automatic logic [31:0] next_c;
+        automatic logic [15:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
-            load_next_c = '1;
-        end else begin // HW Write
-            next_c = hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
+        if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.next;
             load_next_c = '1;
         end
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = next_c;
-        field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next = load_next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value <= 32'h0;
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value <= 16'h100;
         end else begin
-            if(field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.load_next) begin
-                field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value <= field_combo.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next;
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.next;
             end
         end
     end
-    assign hwif_out.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value = field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value;
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL
+    always_comb begin
+        automatic logic [15:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value;
+        load_next_c = '0;
+        if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value <= 16'h100;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value;
+    // Field: I3CCSR.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL
+    always_comb begin
+        automatic logic [7:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value;
+        load_next_c = '0;
+        if(hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.we) begin // HW Write - we
+            next_c = hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.next;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.next = next_c;
+        field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value <= 8'h10;
+        end else begin
+            if(field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.load_next) begin
+                field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value <= field_combo.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value = field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value = 8'hc4;
     assign hwif_out.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value = 16'h40;
     // Field: I3CCSR.I3C_EC.TTI.CONTROL.HJ_EN
@@ -12597,7 +12660,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [138-1:0][31:0] readback_array;
+    logic [139-1:0][31:0] readback_array;
     assign readback_array[0][31:0] = (decoded_reg_strb.I3CBase.HCI_VERSION && !decoded_req_is_wr) ? 32'h120 : '0;
     assign readback_array[1][0:0] = (decoded_reg_strb.I3CBase.HC_CONTROL && !decoded_req_is_wr) ? field_storage.I3CBase.HC_CONTROL.IBA_INCLUDE.value : '0;
     assign readback_array[1][2:1] = '0;
@@ -12928,69 +12991,55 @@ module I3CCSR (
     assign readback_array[72][22:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value : '0;
     assign readback_array[72][30:23] = '0;
     assign readback_array[72][31:31] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value : '0;
-    assign readback_array[73][31:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.__rsvd_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.value : '0;
-    assign readback_array[74][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
-    assign readback_array[74][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h40 : '0;
+    assign readback_array[73][15:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_MWL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.value : '0;
+    assign readback_array[73][31:16] = '0;
+    assign readback_array[74][15:0] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_MRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.value : '0;
+    assign readback_array[74][23:16] = (decoded_reg_strb.I3C_EC.StdbyCtrlMode.STBY_CR_MRL && !decoded_req_is_wr) ? field_storage.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.value : '0;
     assign readback_array[74][31:24] = '0;
-    assign readback_array[75][9:0] = '0;
-    assign readback_array[75][10:10] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value : '0;
-    assign readback_array[75][11:11] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value : '0;
-    assign readback_array[75][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
-    assign readback_array[75][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
-    assign readback_array[75][31:16] = '0;
-    assign readback_array[76][7:0] = '0;
-    assign readback_array[76][8:8] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
-    assign readback_array[76][11:9] = '0;
-    assign readback_array[76][14:12] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
-    assign readback_array[76][31:15] = '0;
-    assign readback_array[77][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;
-    assign readback_array[77][1:1] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value : '0;
-    assign readback_array[77][2:2] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value : '0;
-    assign readback_array[77][3:3] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value : '0;
-    assign readback_array[77][4:4] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value : '0;
-    assign readback_array[77][5:5] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value : '0;
-    assign readback_array[77][31:6] = '0;
-    assign readback_array[78][0:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DESC_QUEUE_FULL.next : '0;
-    assign readback_array[78][1:1] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DESC_QUEUE_EMPTY.next : '0;
-    assign readback_array[78][2:2] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DESC_QUEUE_FULL.next : '0;
-    assign readback_array[78][3:3] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DESC_QUEUE_EMPTY.next : '0;
-    assign readback_array[78][4:4] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DATA_QUEUE_FULL.next : '0;
-    assign readback_array[78][5:5] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DATA_QUEUE_EMPTY.next : '0;
-    assign readback_array[78][6:6] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DATA_QUEUE_FULL.next : '0;
-    assign readback_array[78][7:7] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DATA_QUEUE_EMPTY.next : '0;
-    assign readback_array[78][8:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.IBI_QUEUE_FULL.next : '0;
-    assign readback_array[78][9:9] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.IBI_QUEUE_EMPTY.next : '0;
-    assign readback_array[78][31:10] = '0;
-    assign readback_array[79][7:0] = (decoded_reg_strb.I3C_EC.TTI.DESC_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.RX_DESC_QUEUE_DEPTH.next : '0;
-    assign readback_array[79][15:8] = (decoded_reg_strb.I3C_EC.TTI.DESC_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.TX_DESC_QUEUE_DEPTH.next : '0;
-    assign readback_array[79][31:16] = '0;
-    assign readback_array[80][7:0] = (decoded_reg_strb.I3C_EC.TTI.DATA_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.RX_DATA_QUEUE_DEPTH.next : '0;
-    assign readback_array[80][15:8] = (decoded_reg_strb.I3C_EC.TTI.DATA_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.TX_DATA_QUEUE_DEPTH.next : '0;
+    assign readback_array[75][7:0] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc4 : '0;
+    assign readback_array[75][23:8] = (decoded_reg_strb.I3C_EC.TTI.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h40 : '0;
+    assign readback_array[75][31:24] = '0;
+    assign readback_array[76][9:0] = '0;
+    assign readback_array[76][10:10] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.HJ_EN.value : '0;
+    assign readback_array[76][11:11] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.CRR_EN.value : '0;
+    assign readback_array[76][12:12] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_EN.value : '0;
+    assign readback_array[76][15:13] = (decoded_reg_strb.I3C_EC.TTI.CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value : '0;
+    assign readback_array[76][31:16] = '0;
+    assign readback_array[77][7:0] = '0;
+    assign readback_array[77][8:8] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value : '0;
+    assign readback_array[77][11:9] = '0;
+    assign readback_array[77][14:12] = (decoded_reg_strb.I3C_EC.TTI.STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.STATUS.LAST_IBI_STATUS.value : '0;
+    assign readback_array[77][31:15] = '0;
+    assign readback_array[78][0:0] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.value : '0;
+    assign readback_array[78][1:1] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.value : '0;
+    assign readback_array[78][2:2] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.value : '0;
+    assign readback_array[78][3:3] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.value : '0;
+    assign readback_array[78][4:4] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.value : '0;
+    assign readback_array[78][5:5] = (decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value : '0;
+    assign readback_array[78][31:6] = '0;
+    assign readback_array[79][0:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DESC_QUEUE_FULL.next : '0;
+    assign readback_array[79][1:1] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DESC_QUEUE_EMPTY.next : '0;
+    assign readback_array[79][2:2] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DESC_QUEUE_FULL.next : '0;
+    assign readback_array[79][3:3] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DESC_QUEUE_EMPTY.next : '0;
+    assign readback_array[79][4:4] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DATA_QUEUE_FULL.next : '0;
+    assign readback_array[79][5:5] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.RX_DATA_QUEUE_EMPTY.next : '0;
+    assign readback_array[79][6:6] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DATA_QUEUE_FULL.next : '0;
+    assign readback_array[79][7:7] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.TX_DATA_QUEUE_EMPTY.next : '0;
+    assign readback_array[79][8:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.IBI_QUEUE_FULL.next : '0;
+    assign readback_array[79][9:9] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_STATUS && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.QUEUE_STATUS.IBI_QUEUE_EMPTY.next : '0;
+    assign readback_array[79][31:10] = '0;
+    assign readback_array[80][7:0] = (decoded_reg_strb.I3C_EC.TTI.DESC_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.RX_DESC_QUEUE_DEPTH.next : '0;
+    assign readback_array[80][15:8] = (decoded_reg_strb.I3C_EC.TTI.DESC_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.TX_DESC_QUEUE_DEPTH.next : '0;
     assign readback_array[80][31:16] = '0;
-    assign readback_array[81][7:0] = (decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.IBI_QUEUE_DEPTH.IBI_QUEUE_DEPTH.next : '0;
-    assign readback_array[81][31:8] = '0;
-    assign readback_array[82][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value : '0;
-    assign readback_array[82][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value : '0;
-    assign readback_array[82][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value : '0;
-    assign readback_array[82][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value : '0;
-    assign readback_array[82][7:4] = '0;
-    assign readback_array[82][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value : '0;
-    assign readback_array[82][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value : '0;
-    assign readback_array[82][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value : '0;
-    assign readback_array[82][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_THLD_STAT.value : '0;
-    assign readback_array[82][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value : '0;
-    assign readback_array[82][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.IBI_DONE.value : '0;
-    assign readback_array[82][14:14] = '0;
-    assign readback_array[82][18:15] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value : '0;
-    assign readback_array[82][24:19] = '0;
-    assign readback_array[82][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
-    assign readback_array[82][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value : '0;
-    assign readback_array[82][30:27] = '0;
-    assign readback_array[82][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value : '0;
-    assign readback_array[83][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value : '0;
-    assign readback_array[83][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value : '0;
-    assign readback_array[83][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value : '0;
-    assign readback_array[83][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value : '0;
+    assign readback_array[81][7:0] = (decoded_reg_strb.I3C_EC.TTI.DATA_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.RX_DATA_QUEUE_DEPTH.next : '0;
+    assign readback_array[81][15:8] = (decoded_reg_strb.I3C_EC.TTI.DATA_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.TX_DATA_QUEUE_DEPTH.next : '0;
+    assign readback_array[81][31:16] = '0;
+    assign readback_array[82][7:0] = (decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_DEPTH && !decoded_req_is_wr) ? hwif_in.I3C_EC.TTI.IBI_QUEUE_DEPTH.IBI_QUEUE_DEPTH.next : '0;
+    assign readback_array[82][31:8] = '0;
+    assign readback_array[83][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT.value : '0;
+    assign readback_array[83][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_STAT.value : '0;
+    assign readback_array[83][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value : '0;
+    assign readback_array[83][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value : '0;
     assign readback_array[83][7:4] = '0;
     assign readback_array[83][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value : '0;
     assign readback_array[83][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.RX_DATA_THLD_STAT.value : '0;
@@ -13005,194 +13054,210 @@ module I3CCSR (
     assign readback_array[83][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value : '0;
     assign readback_array[83][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_COMPLETE.value : '0;
     assign readback_array[83][30:27] = '0;
-    assign readback_array[83][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value : '0;
-    assign readback_array[84][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value : '0;
-    assign readback_array[84][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value : '0;
-    assign readback_array[84][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value : '0;
-    assign readback_array[84][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value : '0;
+    assign readback_array[83][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value : '0;
+    assign readback_array[84][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_STAT_EN.value : '0;
+    assign readback_array[84][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_STAT_EN.value : '0;
+    assign readback_array[84][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_TIMEOUT_EN.value : '0;
+    assign readback_array[84][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_TIMEOUT_EN.value : '0;
     assign readback_array[84][7:4] = '0;
-    assign readback_array[84][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value : '0;
-    assign readback_array[84][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value : '0;
-    assign readback_array[84][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value : '0;
-    assign readback_array[84][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value : '0;
-    assign readback_array[84][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value : '0;
-    assign readback_array[84][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value : '0;
+    assign readback_array[84][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DATA_THLD_STAT_EN.value : '0;
+    assign readback_array[84][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DATA_THLD_STAT_EN.value : '0;
+    assign readback_array[84][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_THLD_STAT_EN.value : '0;
+    assign readback_array[84][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.RX_DESC_THLD_STAT_EN.value : '0;
+    assign readback_array[84][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_THLD_STAT_EN.value : '0;
+    assign readback_array[84][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.IBI_DONE_EN.value : '0;
     assign readback_array[84][24:14] = '0;
-    assign readback_array[84][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value : '0;
-    assign readback_array[84][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value : '0;
+    assign readback_array[84][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ABORT_STAT_EN.value : '0;
+    assign readback_array[84][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TX_DESC_COMPLETE_EN.value : '0;
     assign readback_array[84][30:27] = '0;
-    assign readback_array[84][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value : '0;
-    assign readback_array[85][0:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE0_ERR_DET_EN.value : '0;
-    assign readback_array[85][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE1_ERR_DET_EN.value : '0;
-    assign readback_array[85][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE2_ERR_DET_EN.value : '0;
-    assign readback_array[85][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE3_ERR_DET_EN.value : '0;
-    assign readback_array[85][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE4_ERR_DET_EN.value : '0;
-    assign readback_array[85][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE5_ERR_DET_EN.value : '0;
-    assign readback_array[85][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.FRAMING_ERR_DET_EN.value : '0;
-    assign readback_array[85][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_PEC_ERR_DET_EN.value : '0;
-    assign readback_array[85][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_LENGTH_ERR_DET_EN.value : '0;
-    assign readback_array[85][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_READONLY_ERR_DET_EN.value : '0;
-    assign readback_array[85][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_UNSUPPORTED_ERR_DET_EN.value : '0;
-    assign readback_array[85][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_RX_FIFO_OVERFLOW_ERR_DET_EN.value : '0;
-    assign readback_array[85][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN.value : '0;
-    assign readback_array[85][31:13] = '0;
-    assign readback_array[86][0:0] = '0;
-    assign readback_array[86][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE0_ERR_STAT.value : '0;
-    assign readback_array[86][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE1_ERR_STAT.value : '0;
-    assign readback_array[86][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE2_ERR_STAT.value : '0;
-    assign readback_array[86][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE3_ERR_STAT.value : '0;
-    assign readback_array[86][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE4_ERR_STAT.value : '0;
-    assign readback_array[86][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE5_ERR_STAT.value : '0;
-    assign readback_array[86][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.FRAMING_ERR_STAT.value : '0;
-    assign readback_array[86][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_PEC_ERR_STAT.value : '0;
-    assign readback_array[86][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_LENGTH_ERR_STAT.value : '0;
-    assign readback_array[86][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_READONLY_ERR_STAT.value : '0;
-    assign readback_array[86][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_UNSUPPORTED_ERR_STAT.value : '0;
-    assign readback_array[86][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_RX_FIFO_OVERFLOW_ERR_STAT.value : '0;
-    assign readback_array[86][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT.value : '0;
-    assign readback_array[86][31:14] = '0;
+    assign readback_array[84][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_ENABLE.TRANSFER_ERR_STAT_EN.value : '0;
+    assign readback_array[85][0:0] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_STAT_FORCE.value : '0;
+    assign readback_array[85][1:1] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_STAT_FORCE.value : '0;
+    assign readback_array[85][2:2] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_TIMEOUT_FORCE.value : '0;
+    assign readback_array[85][3:3] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_TIMEOUT_FORCE.value : '0;
+    assign readback_array[85][7:4] = '0;
+    assign readback_array[85][8:8] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DATA_THLD_FORCE.value : '0;
+    assign readback_array[85][9:9] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DATA_THLD_FORCE.value : '0;
+    assign readback_array[85][10:10] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_THLD_FORCE.value : '0;
+    assign readback_array[85][11:11] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.RX_DESC_THLD_FORCE.value : '0;
+    assign readback_array[85][12:12] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_THLD_FORCE.value : '0;
+    assign readback_array[85][13:13] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.IBI_DONE_FORCE.value : '0;
+    assign readback_array[85][24:14] = '0;
+    assign readback_array[85][25:25] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ABORT_STAT_FORCE.value : '0;
+    assign readback_array[85][26:26] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TX_DESC_COMPLETE_FORCE.value : '0;
+    assign readback_array[85][30:27] = '0;
+    assign readback_array[85][31:31] = (decoded_reg_strb.I3C_EC.TTI.INTERRUPT_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.INTERRUPT_FORCE.TRANSFER_ERR_STAT_FORCE.value : '0;
+    assign readback_array[86][0:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE0_ERR_DET_EN.value : '0;
+    assign readback_array[86][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE1_ERR_DET_EN.value : '0;
+    assign readback_array[86][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE2_ERR_DET_EN.value : '0;
+    assign readback_array[86][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE3_ERR_DET_EN.value : '0;
+    assign readback_array[86][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE4_ERR_DET_EN.value : '0;
+    assign readback_array[86][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.TE5_ERR_DET_EN.value : '0;
+    assign readback_array[86][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.FRAMING_ERR_DET_EN.value : '0;
+    assign readback_array[86][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_PEC_ERR_DET_EN.value : '0;
+    assign readback_array[86][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_LENGTH_ERR_DET_EN.value : '0;
+    assign readback_array[86][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_READONLY_ERR_DET_EN.value : '0;
+    assign readback_array[86][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_UNSUPPORTED_ERR_DET_EN.value : '0;
+    assign readback_array[86][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_RX_FIFO_OVERFLOW_ERR_DET_EN.value : '0;
+    assign readback_array[86][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CTRL.RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN.value : '0;
+    assign readback_array[86][31:13] = '0;
     assign readback_array[87][0:0] = '0;
-    assign readback_array[87][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE0_ERR_EN.value : '0;
-    assign readback_array[87][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE1_ERR_EN.value : '0;
-    assign readback_array[87][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE2_ERR_EN.value : '0;
-    assign readback_array[87][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE3_ERR_EN.value : '0;
-    assign readback_array[87][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE4_ERR_EN.value : '0;
-    assign readback_array[87][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE5_ERR_EN.value : '0;
-    assign readback_array[87][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.FRAMING_ERR_EN.value : '0;
-    assign readback_array[87][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_PEC_ERR_EN.value : '0;
-    assign readback_array[87][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_LENGTH_ERR_EN.value : '0;
-    assign readback_array[87][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_READONLY_ERR_EN.value : '0;
-    assign readback_array[87][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_UNSUPPORTED_ERR_EN.value : '0;
-    assign readback_array[87][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_RX_FIFO_OVERFLOW_ERR_EN.value : '0;
-    assign readback_array[87][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_INDIRECT_FIFO_OVERFLOW_ERR_EN.value : '0;
+    assign readback_array[87][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE0_ERR_STAT.value : '0;
+    assign readback_array[87][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE1_ERR_STAT.value : '0;
+    assign readback_array[87][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE2_ERR_STAT.value : '0;
+    assign readback_array[87][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE3_ERR_STAT.value : '0;
+    assign readback_array[87][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE4_ERR_STAT.value : '0;
+    assign readback_array[87][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.TE5_ERR_STAT.value : '0;
+    assign readback_array[87][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.FRAMING_ERR_STAT.value : '0;
+    assign readback_array[87][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_PEC_ERR_STAT.value : '0;
+    assign readback_array[87][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_LENGTH_ERR_STAT.value : '0;
+    assign readback_array[87][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_READONLY_ERR_STAT.value : '0;
+    assign readback_array[87][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_UNSUPPORTED_ERR_STAT.value : '0;
+    assign readback_array[87][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_RX_FIFO_OVERFLOW_ERR_STAT.value : '0;
+    assign readback_array[87][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_STATUS.RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT.value : '0;
     assign readback_array[87][31:14] = '0;
     assign readback_array[88][0:0] = '0;
-    assign readback_array[88][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE0_ERR_FORCE.value : '0;
-    assign readback_array[88][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE1_ERR_FORCE.value : '0;
-    assign readback_array[88][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE2_ERR_FORCE.value : '0;
-    assign readback_array[88][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE3_ERR_FORCE.value : '0;
-    assign readback_array[88][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE4_ERR_FORCE.value : '0;
-    assign readback_array[88][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE5_ERR_FORCE.value : '0;
-    assign readback_array[88][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.FRAMING_ERR_FORCE.value : '0;
-    assign readback_array[88][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_PEC_ERR_FORCE.value : '0;
-    assign readback_array[88][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_LENGTH_ERR_FORCE.value : '0;
-    assign readback_array[88][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_READONLY_ERR_FORCE.value : '0;
-    assign readback_array[88][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_UNSUPPORTED_ERR_FORCE.value : '0;
-    assign readback_array[88][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_RX_FIFO_OVERFLOW_ERR_FORCE.value : '0;
-    assign readback_array[88][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE.value : '0;
+    assign readback_array[88][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE0_ERR_EN.value : '0;
+    assign readback_array[88][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE1_ERR_EN.value : '0;
+    assign readback_array[88][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE2_ERR_EN.value : '0;
+    assign readback_array[88][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE3_ERR_EN.value : '0;
+    assign readback_array[88][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE4_ERR_EN.value : '0;
+    assign readback_array[88][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.TE5_ERR_EN.value : '0;
+    assign readback_array[88][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.FRAMING_ERR_EN.value : '0;
+    assign readback_array[88][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_PEC_ERR_EN.value : '0;
+    assign readback_array[88][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_LENGTH_ERR_EN.value : '0;
+    assign readback_array[88][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_READONLY_ERR_EN.value : '0;
+    assign readback_array[88][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_UNSUPPORTED_ERR_EN.value : '0;
+    assign readback_array[88][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_RX_FIFO_OVERFLOW_ERR_EN.value : '0;
+    assign readback_array[88][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_ENABLE.RI_INDIRECT_FIFO_OVERFLOW_ERR_EN.value : '0;
     assign readback_array[88][31:14] = '0;
-    assign readback_array[89][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE0 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE0.CNT.value : '0;
-    assign readback_array[89][31:8] = '0;
-    assign readback_array[90][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE1 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE1.CNT.value : '0;
+    assign readback_array[89][0:0] = '0;
+    assign readback_array[89][1:1] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE0_ERR_FORCE.value : '0;
+    assign readback_array[89][2:2] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE1_ERR_FORCE.value : '0;
+    assign readback_array[89][3:3] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE2_ERR_FORCE.value : '0;
+    assign readback_array[89][4:4] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE3_ERR_FORCE.value : '0;
+    assign readback_array[89][5:5] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE4_ERR_FORCE.value : '0;
+    assign readback_array[89][6:6] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.TE5_ERR_FORCE.value : '0;
+    assign readback_array[89][7:7] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.FRAMING_ERR_FORCE.value : '0;
+    assign readback_array[89][8:8] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_PEC_ERR_FORCE.value : '0;
+    assign readback_array[89][9:9] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_LENGTH_ERR_FORCE.value : '0;
+    assign readback_array[89][10:10] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_READONLY_ERR_FORCE.value : '0;
+    assign readback_array[89][11:11] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_UNSUPPORTED_ERR_FORCE.value : '0;
+    assign readback_array[89][12:12] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_RX_FIFO_OVERFLOW_ERR_FORCE.value : '0;
+    assign readback_array[89][13:13] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_INTR_FORCE && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_INTR_FORCE.RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE.value : '0;
+    assign readback_array[89][31:14] = '0;
+    assign readback_array[90][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE0 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE0.CNT.value : '0;
     assign readback_array[90][31:8] = '0;
-    assign readback_array[91][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE2 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE2.CNT.value : '0;
+    assign readback_array[91][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE1 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE1.CNT.value : '0;
     assign readback_array[91][31:8] = '0;
-    assign readback_array[92][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE3 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE3.CNT.value : '0;
+    assign readback_array[92][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE2 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE2.CNT.value : '0;
     assign readback_array[92][31:8] = '0;
-    assign readback_array[93][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE4 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE4.CNT.value : '0;
+    assign readback_array[93][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE3 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE3.CNT.value : '0;
     assign readback_array[93][31:8] = '0;
-    assign readback_array[94][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE5 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE5.CNT.value : '0;
+    assign readback_array[94][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE4 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE4.CNT.value : '0;
     assign readback_array[94][31:8] = '0;
-    assign readback_array[95][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_FRAMING && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_FRAMING.CNT.value : '0;
+    assign readback_array[95][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_TE5 && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_TE5.CNT.value : '0;
     assign readback_array[95][31:8] = '0;
-    assign readback_array[96][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_PEC && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_PEC.CNT.value : '0;
+    assign readback_array[96][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_FRAMING && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_FRAMING.CNT.value : '0;
     assign readback_array[96][31:8] = '0;
-    assign readback_array[97][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_LENGTH && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_LENGTH.CNT.value : '0;
+    assign readback_array[97][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_PEC && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_PEC.CNT.value : '0;
     assign readback_array[97][31:8] = '0;
-    assign readback_array[98][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_READONLY && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_READONLY.CNT.value : '0;
+    assign readback_array[98][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_LENGTH && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_LENGTH.CNT.value : '0;
     assign readback_array[98][31:8] = '0;
-    assign readback_array[99][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_UNSUPPORTED && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_UNSUPPORTED.CNT.value : '0;
+    assign readback_array[99][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_READONLY && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_READONLY.CNT.value : '0;
     assign readback_array[99][31:8] = '0;
-    assign readback_array[100][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW.CNT.value : '0;
+    assign readback_array[100][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_UNSUPPORTED && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_UNSUPPORTED.CNT.value : '0;
     assign readback_array[100][31:8] = '0;
-    assign readback_array[101][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW.CNT.value : '0;
+    assign readback_array[101][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW.CNT.value : '0;
     assign readback_array[101][31:8] = '0;
-    assign readback_array[102] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
-    assign readback_array[103] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
-    assign readback_array[104][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[104][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[104][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[104][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[105][7:0] = (decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
-    assign readback_array[105][31:8] = '0;
-    assign readback_array[106][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value : '0;
-    assign readback_array[106][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value : '0;
-    assign readback_array[106][23:16] = '0;
-    assign readback_array[106][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value : '0;
-    assign readback_array[107][2:0] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value : '0;
-    assign readback_array[107][7:3] = '0;
-    assign readback_array[107][10:8] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value : '0;
-    assign readback_array[107][15:11] = '0;
-    assign readback_array[107][18:16] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value : '0;
-    assign readback_array[107][23:19] = '0;
-    assign readback_array[107][26:24] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value : '0;
-    assign readback_array[107][31:27] = '0;
-    assign readback_array[108][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
-    assign readback_array[108][23:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1a : '0;
-    assign readback_array[108][31:24] = '0;
-    assign readback_array[109][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
-    assign readback_array[110][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
-    assign readback_array[111][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value : '0;
-    assign readback_array[111][1:1] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value : '0;
-    assign readback_array[111][31:2] = '0;
-    assign readback_array[112][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value : '0;
-    assign readback_array[112][15:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value : '0;
-    assign readback_array[112][23:16] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value : '0;
-    assign readback_array[112][31:24] = '0;
-    assign readback_array[113][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
-    assign readback_array[114][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
-    assign readback_array[115][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value : '0;
-    assign readback_array[115][1:1] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value : '0;
-    assign readback_array[115][2:2] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value : '0;
-    assign readback_array[115][3:3] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value : '0;
-    assign readback_array[115][4:4] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value : '0;
-    assign readback_array[115][5:5] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value : '0;
-    assign readback_array[115][6:6] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value : '0;
-    assign readback_array[115][7:7] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value : '0;
-    assign readback_array[115][23:8] = '0;
-    assign readback_array[115][31:24] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value : '0;
-    assign readback_array[116][7:0] = '0;
-    assign readback_array[116][15:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value : '0;
-    assign readback_array[116][23:16] = '0;
-    assign readback_array[116][31:24] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value : '0;
-    assign readback_array[117][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
-    assign readback_array[118][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
-    assign readback_array[119][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_R_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value : '0;
-    assign readback_array[119][31:20] = '0;
-    assign readback_array[120][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_F_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value : '0;
+    assign readback_array[102][7:0] = (decoded_reg_strb.I3C_EC.TTI.TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW.CNT.value : '0;
+    assign readback_array[102][31:8] = '0;
+    assign readback_array[103] = hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_data : '0;
+    assign readback_array[104] = hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack ? hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_data : '0;
+    assign readback_array[105][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[105][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[105][23:16] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[105][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[106][7:0] = (decoded_reg_strb.I3C_EC.TTI.IBI_QUEUE_SIZE && !decoded_req_is_wr) ? 8'h5 : '0;
+    assign readback_array[106][31:8] = '0;
+    assign readback_array[107][7:0] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.value : '0;
+    assign readback_array[107][15:8] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.value : '0;
+    assign readback_array[107][23:16] = '0;
+    assign readback_array[107][31:24] = (decoded_reg_strb.I3C_EC.TTI.QUEUE_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.value : '0;
+    assign readback_array[108][2:0] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_DATA_THLD.value : '0;
+    assign readback_array[108][7:3] = '0;
+    assign readback_array[108][10:8] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_DATA_THLD.value : '0;
+    assign readback_array[108][15:11] = '0;
+    assign readback_array[108][18:16] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.TX_START_THLD.value : '0;
+    assign readback_array[108][23:19] = '0;
+    assign readback_array[108][26:24] = (decoded_reg_strb.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL && !decoded_req_is_wr) ? field_storage.I3C_EC.TTI.DATA_BUFFER_THLD_CTRL.RX_START_THLD.value : '0;
+    assign readback_array[108][31:27] = '0;
+    assign readback_array[109][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc1 : '0;
+    assign readback_array[109][23:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1a : '0;
+    assign readback_array[109][31:24] = '0;
+    assign readback_array[110][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_CONTROL.PLACEHOLDER.value : '0;
+    assign readback_array[111][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value : '0;
+    assign readback_array[112][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value : '0;
+    assign readback_array[112][1:1] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_CFG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.value : '0;
+    assign readback_array[112][31:2] = '0;
+    assign readback_array[113][7:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.value : '0;
+    assign readback_array[113][15:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.value : '0;
+    assign readback_array[113][23:16] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.value : '0;
+    assign readback_array[113][31:24] = '0;
+    assign readback_array[114][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value : '0;
+    assign readback_array[115][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_3.PLACEHOLDER.value : '0;
+    assign readback_array[116][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value : '0;
+    assign readback_array[116][1:1] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.SCHMITT_EN.value : '0;
+    assign readback_array[116][2:2] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.KEEPER_EN.value : '0;
+    assign readback_array[116][3:3] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_DIR.value : '0;
+    assign readback_array[116][4:4] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PULL_EN.value : '0;
+    assign readback_array[116][5:5] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.IO_INVERSION.value : '0;
+    assign readback_array[116][6:6] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.OD_EN.value : '0;
+    assign readback_array[116][7:7] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.VIRTUAL_OD_EN.value : '0;
+    assign readback_array[116][23:8] = '0;
+    assign readback_array[116][31:24] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_CONF && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.PAD_TYPE.value : '0;
+    assign readback_array[117][7:0] = '0;
+    assign readback_array[117][15:8] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_SLEW_RATE.value : '0;
+    assign readback_array[117][23:16] = '0;
+    assign readback_array[117][31:24] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_PAD_ATTR.DRIVE_STRENGTH.value : '0;
+    assign readback_array[118][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_2.PLACEHOLDER.value : '0;
+    assign readback_array[119][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3 && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value : '0;
+    assign readback_array[120][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_R_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value : '0;
     assign readback_array[120][31:20] = '0;
-    assign readback_array[121][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value : '0;
+    assign readback_array[121][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_F_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value : '0;
     assign readback_array[121][31:20] = '0;
-    assign readback_array[122][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value : '0;
+    assign readback_array[122][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value : '0;
     assign readback_array[122][31:20] = '0;
-    assign readback_array[123][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value : '0;
+    assign readback_array[123][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value : '0;
     assign readback_array[123][31:20] = '0;
-    assign readback_array[124][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value : '0;
+    assign readback_array[124][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value : '0;
     assign readback_array[124][31:20] = '0;
-    assign readback_array[125][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value : '0;
+    assign readback_array[125][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value : '0;
     assign readback_array[125][31:20] = '0;
-    assign readback_array[126][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value : '0;
+    assign readback_array[126][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value : '0;
     assign readback_array[126][31:20] = '0;
-    assign readback_array[127][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value : '0;
+    assign readback_array[127][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value : '0;
     assign readback_array[127][31:20] = '0;
-    assign readback_array[128][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value : '0;
-    assign readback_array[129][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value : '0;
-    assign readback_array[130][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value : '0;
-    assign readback_array[131][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.HDR_TIMEOUT_EN_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.HDR_TIMEOUT_EN_REG.HDR_TIMEOUT_EN.value : '0;
-    assign readback_array[131][31:1] = '0;
-    assign readback_array[132][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HDR_TIMEOUT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HDR_TIMEOUT_REG.T_HDR_TIMEOUT.value : '0;
-    assign readback_array[132][31:20] = '0;
-    assign readback_array[133][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
-    assign readback_array[133][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
-    assign readback_array[133][31:24] = '0;
-    assign readback_array[134][3:0] = '0;
-    assign readback_array[134][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
-    assign readback_array[134][31:6] = '0;
-    assign readback_array[135][7:0] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
-    assign readback_array[135][23:8] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1 : '0;
-    assign readback_array[135][31:24] = '0;
-    assign readback_array[136] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
-    assign readback_array[137] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
+    assign readback_array[128][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value : '0;
+    assign readback_array[128][31:20] = '0;
+    assign readback_array[129][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value : '0;
+    assign readback_array[130][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value : '0;
+    assign readback_array[131][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value : '0;
+    assign readback_array[132][0:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.HDR_TIMEOUT_EN_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.HDR_TIMEOUT_EN_REG.HDR_TIMEOUT_EN.value : '0;
+    assign readback_array[132][31:1] = '0;
+    assign readback_array[133][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HDR_TIMEOUT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HDR_TIMEOUT_REG.T_HDR_TIMEOUT.value : '0;
+    assign readback_array[133][31:20] = '0;
+    assign readback_array[134][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
+    assign readback_array[134][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
+    assign readback_array[134][31:24] = '0;
+    assign readback_array[135][3:0] = '0;
+    assign readback_array[135][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
+    assign readback_array[135][31:6] = '0;
+    assign readback_array[136][7:0] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[136][23:8] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1 : '0;
+    assign readback_array[136][31:24] = '0;
+    assign readback_array[137] = hwif_in.DAT.rd_ack ? hwif_in.DAT.rd_data : '0;
+    assign readback_array[138] = hwif_in.DCT.rd_ack ? hwif_in.DCT.rd_data : '0;
 
     // Reduce the array
     always_comb begin
@@ -13200,7 +13265,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<138; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<139; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

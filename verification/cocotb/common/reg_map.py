@@ -2928,14 +2928,38 @@ reg_map = Munch.fromDict({
                     "hwclr": 0
                 }
             },
-            "__RSVD_3": {
+            "STBY_CR_MWL": {
                 "base_addr": 444,
                 "offset": 444,
-                "__rsvd": {
+                "MWL": {
                     "low": 0,
-                    "mask": 4294967295,
-                    "reset": 0,
-                    "sw": "rw",
+                    "mask": 65535,
+                    "reset": 256,
+                    "sw": "r",
+                    "hw": "rw",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                }
+            },
+            "STBY_CR_MRL": {
+                "base_addr": 448,
+                "offset": 448,
+                "MRL": {
+                    "low": 0,
+                    "mask": 65535,
+                    "reset": 256,
+                    "sw": "r",
+                    "hw": "rw",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
+                },
+                "IBIL": {
+                    "low": 16,
+                    "mask": 16711680,
+                    "reset": 16,
+                    "sw": "r",
                     "hw": "rw",
                     "woclr": 0,
                     "rclr": 0,

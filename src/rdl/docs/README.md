@@ -1939,26 +1939,27 @@ Component Memory Space (CMS):</p>
 
 - Absolute Address: 0x180
 - Base Offset: 0x80
-- Size: 0x40
+- Size: 0x44
 
-|Offset|           Identifier           |                       Name                      |
-|------|--------------------------------|-------------------------------------------------|
-| 0x00 |          EXTCAP_HEADER         |                        —                        |
-| 0x04 |         STBY_CR_CONTROL        |            Standby Controller Control           |
-| 0x08 |       STBY_CR_DEVICE_ADDR      |        Standby Controller Device Address        |
-| 0x0C |      STBY_CR_CAPABILITIES      |         Standby Controller Capabilities         |
-| 0x10 |   STBY_CR_VIRTUAL_DEVICE_CHAR  |Standby Controller Virtual Device Characteristics|
-| 0x14 |         STBY_CR_STATUS         |            Standby Controller Status            |
-| 0x18 |       STBY_CR_DEVICE_CHAR      |    Standby Controller Device Characteristics    |
-| 0x1C |      STBY_CR_DEVICE_PID_LO     |        Standby Controller Device PID Low        |
-| 0x20 |       STBY_CR_INTR_STATUS      |       Standby Controller Interrupt Status       |
-| 0x24 |  STBY_CR_VIRTUAL_DEVICE_PID_LO |    Standby Controller Virtual Device PID Low    |
-| 0x28 |   STBY_CR_INTR_SIGNAL_ENABLE   |    Standby Controller Interrupt Signal Enable   |
-| 0x2C |       STBY_CR_INTR_FORCE       |        Standby Controller Interrupt Force       |
-| 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |   Standby Controller CCC Configuration GETCAPS  |
-| 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS|   Standby Controller CCC Configuration RSTACT   |
-| 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |    Standby Virtual Controller Device Address    |
-| 0x3C |            __rsvd_3            |                    Reserved 3                   |
+|Offset|           Identifier           |                                  Name                                 |
+|------|--------------------------------|-----------------------------------------------------------------------|
+| 0x00 |          EXTCAP_HEADER         |                                   —                                   |
+| 0x04 |         STBY_CR_CONTROL        |                       Standby Controller Control                      |
+| 0x08 |       STBY_CR_DEVICE_ADDR      |                   Standby Controller Device Address                   |
+| 0x0C |      STBY_CR_CAPABILITIES      |                    Standby Controller Capabilities                    |
+| 0x10 |   STBY_CR_VIRTUAL_DEVICE_CHAR  |           Standby Controller Virtual Device Characteristics           |
+| 0x14 |         STBY_CR_STATUS         |                       Standby Controller Status                       |
+| 0x18 |       STBY_CR_DEVICE_CHAR      |               Standby Controller Device Characteristics               |
+| 0x1C |      STBY_CR_DEVICE_PID_LO     |                   Standby Controller Device PID Low                   |
+| 0x20 |       STBY_CR_INTR_STATUS      |                  Standby Controller Interrupt Status                  |
+| 0x24 |  STBY_CR_VIRTUAL_DEVICE_PID_LO |               Standby Controller Virtual Device PID Low               |
+| 0x28 |   STBY_CR_INTR_SIGNAL_ENABLE   |               Standby Controller Interrupt Signal Enable              |
+| 0x2C |       STBY_CR_INTR_FORCE       |                   Standby Controller Interrupt Force                  |
+| 0x30 |   STBY_CR_CCC_CONFIG_GETCAPS   |              Standby Controller CCC Configuration GETCAPS             |
+| 0x34 |STBY_CR_CCC_CONFIG_RSTACT_PARAMS|              Standby Controller CCC Configuration RSTACT              |
+| 0x38 |    STBY_CR_VIRT_DEVICE_ADDR    |               Standby Virtual Controller Device Address               |
+| 0x3C |           STBY_CR_MWL          |          Standby Controller Maximum Write Length (read-only)          |
+| 0x40 |           STBY_CR_MRL          |Standby Controller Maximum Read Length and IBI Payload Size (read-only)|
 
 ### EXTCAP_HEADER register
 
@@ -2628,7 +2629,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 1'b0: VIRT_DYNAMIC_ADDR field is not valid
 1'b1: VIRT_DYNAMIC_ADDR field is valid</p>
 
-### __rsvd_3 register
+### STBY_CR_MWL register
 
 - Absolute Address: 0x1BC
 - Base Offset: 0x3C
@@ -2636,13 +2637,34 @@ shall be revoked) with this Target Reset Pattern.</p>
 
 
 
-|Bits|Identifier|Access|Reset|  Name  |
-|----|----------|------|-----|--------|
-|31:0|  __rsvd  |  rw  | 0x0 |Reserved|
+|Bits|Identifier|Access|Reset|        Name        |
+|----|----------|------|-----|--------------------|
+|15:0|    MWL   |   r  |0x100|Maximum Write Length|
 
-#### __rsvd field
+#### MWL field
+
+<p>This field contains the maximum write length (MWL) (read-only)</p>
+
+### STBY_CR_MRL register
+
+- Absolute Address: 0x1C0
+- Base Offset: 0x40
+- Size: 0x4
 
 
+
+| Bits|Identifier|Access|Reset|        Name       |
+|-----|----------|------|-----|-------------------|
+| 15:0|    MRL   |   r  |0x100|Maximum Read Length|
+|23:16|   IBIL   |   r  | 0x10|  IBI Payload Size |
+
+#### MRL field
+
+<p>This field contains the maximum read length (MRL) (read-only)</p>
+
+#### IBIL field
+
+<p>This field contains the IBI payload size (IBIL) (read-only)</p>
 
 ## TTI register file
 

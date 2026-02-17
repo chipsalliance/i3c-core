@@ -531,6 +531,13 @@ module i3c
   logic [7:0] rst_action;
   logic rst_action_valid;
 
+  logic [15:0] mwl;
+  logic set_mwl;
+  logic [15:0] mrl;
+  logic set_mrl;
+  logic [7:0] ibil;
+  logic set_ibil;
+
   I3CCSR_pkg::I3CCSR__out_t hwif_out;
 
   // Status
@@ -759,6 +766,13 @@ module i3c
       .rst_action_o(rst_action),
       .rst_action_valid_o(rst_action_valid),
 
+      .set_mwl_o(set_mwl),
+      .set_mrl_o(set_mrl),
+      .set_ibil_o(set_ibil),
+      .mwl_o(mwl),
+      .mrl_o(mrl),
+      .ibil_o(ibil),
+
       .enec_ibi_o (enec_ibi),
       .enec_crr_o (enec_crr),
       .enec_hj_o  (enec_hj),
@@ -921,7 +935,14 @@ module i3c
       .newda_i(newda),
 
       .rst_action_i(rst_action),
-      .rst_action_valid_i(rst_action_valid)
+      .rst_action_valid_i(rst_action_valid),
+
+      .set_mwl_i(set_mwl),
+      .set_mrl_i(set_mrl),
+      .set_ibil_i(set_ibil),
+      .mwl_i(mwl),
+      .mrl_i(mrl),
+      .ibil_i(ibil)
   );
 
   // TTI RX Descriptor queue

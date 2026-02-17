@@ -4,6 +4,9 @@
   This module extracts fields related to addressing from CSRs.
 */
 
+// Required to report legal MWL/MRL/IBIL after reset
+`include "i3c_defines.svh"
+
 module configuration (
     input logic clk_i,
     input logic rst_ni,
@@ -154,17 +157,11 @@ module configuration (
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.value;
   assign virtual_target_dyn_addr_o = hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.value;
 
-  logic [15:0] mwl_dword;
-  logic [15:0] mrl_dword;
-
-  assign mwl_dword = 16'd1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value + 1);
-  assign mrl_dword = 16'd1 << (hwif_out_i.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value + 1);
-
   always @(posedge clk_i or negedge rst_ni) begin : mrl_mwl
     if (~rst_ni) begin
-      get_mwl_o <= 16'd256;
-      get_mrl_o <= 16'd256;
-      get_ibil_o <= 8'd255;
+      get_mwl_o  <= 16'(`RX_FIFO_DEPTH << 2);
+      get_mrl_o  <= 16'(`TX_FIFO_DEPTH << 2);
+      get_ibil_o <= 8'd16;
     end else begin
       if (set_mwl_i) get_mwl_o <= mwl_i;
       if (set_mrl_i) get_mrl_o <= mrl_i;

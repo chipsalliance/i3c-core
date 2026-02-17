@@ -1923,8 +1923,8 @@
 
     endgroup
 
-    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE____RSVD_3 COVERGROUPS -----------------------*/
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_bit_cg with function sample(input bit reg_bit);
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_MWL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
         reg_bit_cp : coverpoint reg_bit {
             bins value[2] = {0,1};
@@ -1935,11 +1935,33 @@
         }
 
     endgroup
-    covergroup I3CCSR__I3C_EC__StdbyCtrlMode____rsvd_3_fld_cg with function sample(
-    input bit [32-1:0] __rsvd
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL_fld_cg with function sample(
+    input bit [16-1:0] MWL
     );
         option.per_instance = 1;
-        __rsvd_cp : coverpoint __rsvd;
+        MWL_cp : coverpoint MWL;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__STDBYCTRLMODE__STBY_CR_MRL COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL_fld_cg with function sample(
+    input bit [16-1:0] MRL,
+    input bit [8-1:0] IBIL
+    );
+        option.per_instance = 1;
+        MRL_cp : coverpoint MRL;
+        IBIL_cp : coverpoint IBIL;
 
     endgroup
 

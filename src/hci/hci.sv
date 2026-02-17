@@ -77,9 +77,9 @@ module hci
     output logic [HciRespThldWidth-1:0] hci_resp_ready_thld_o,
     output logic hci_resp_ready_thld_trig_o,
     output logic hci_resp_empty_o,
-    input logic hci_resp_wvalid_i,
+    input  logic hci_resp_wvalid_i,
     output logic hci_resp_wready_o,
-    input logic [CsrDataWidth-1:0] hci_resp_wdata_i,
+    input  logic [CsrDataWidth-1:0] hci_resp_wdata_i,
 
     // Command queue
     output logic hci_cmd_full_o,
@@ -88,7 +88,7 @@ module hci
     output logic hci_cmd_ready_thld_trig_o,
     output logic hci_cmd_empty_o,
     output logic hci_cmd_rvalid_o,
-    input logic hci_cmd_rready_i,
+    input  logic hci_cmd_rready_i,
     output logic [HciCmdDataWidth-1:0] hci_cmd_rdata_o,
 
     // RX queue
@@ -99,9 +99,9 @@ module hci
     output logic hci_rx_start_thld_trig_o,
     output logic hci_rx_ready_thld_trig_o,
     output logic hci_rx_empty_o,
-    input logic hci_rx_wvalid_i,
+    input  logic hci_rx_wvalid_i,
     output logic hci_rx_wready_o,
-    input logic [CsrDataWidth-1:0] hci_rx_wdata_i,
+    input  logic [CsrDataWidth-1:0] hci_rx_wdata_i,
 
     // TX queue
     output logic hci_tx_full_o,
@@ -112,7 +112,7 @@ module hci
     output logic hci_tx_ready_thld_trig_o,
     output logic hci_tx_empty_o,
     output logic hci_tx_rvalid_o,
-    input logic hci_tx_rready_i,
+    input  logic hci_tx_rready_i,
     output logic [HciTxDataWidth-1:0] hci_tx_rdata_o,
 
     // In-band Interrupt queue
@@ -121,9 +121,9 @@ module hci
     output logic [HciIbiThldWidth-1:0] hci_ibi_ready_thld_o,
     output logic hci_ibi_ready_thld_trig_o,
     output logic hci_ibi_empty_o,
-    input logic hci_ibi_wvalid_i,
+    input  logic hci_ibi_wvalid_i,
     output logic hci_ibi_wready_o,
-    input logic [HciIbiDataWidth-1:0] hci_ibi_wdata_i,
+    input  logic [HciIbiDataWidth-1:0] hci_ibi_wdata_i,
 
     // Target Transaction Interface CSRs
     output I3CCSR_pkg::I3CCSR__I3C_EC__TTI__out_t hwif_tti_o,
@@ -139,18 +139,25 @@ module hci
     // Controller configuration
     output I3CCSR_pkg::I3CCSR__out_t hwif_out_o,
 
-    input logic [6:0] set_dasa_i,
-    input logic       set_dasa_valid_i,
-    input logic       set_dasa_virtual_device_i,
-    input logic       set_aasa_i,
-    input logic       set_aasa_virt_i,
-    input logic       rstdaa_i,
-    input logic [6:0] newda_i,
-    input logic       set_newda_i,
-    input logic       set_newda_virtual_device_i,
+    input  logic  [6:0] set_dasa_i,
+    input  logic        set_dasa_valid_i,
+    input  logic        set_dasa_virtual_device_i,
+    input  logic        set_aasa_i,
+    input  logic        set_aasa_virt_i,
+    input  logic        rstdaa_i,
+    input  logic  [6:0] newda_i,
+    input  logic        set_newda_i,
+    input  logic        set_newda_virtual_device_i,
 
-    input logic [7:0] rst_action_i,
-    input logic rst_action_valid_i
+    input  logic  [7:0] rst_action_i,
+    input  logic        rst_action_valid_i,
+
+    input  logic [15:0] mwl_i,
+    input  logic        set_mwl_i,
+    input  logic [15:0] mrl_i,
+    input  logic        set_mrl_i,
+    input  logic  [7:0] ibil_i,
+    input  logic        set_ibil_i
 );
 
   I3CCSR_pkg::I3CCSR__in_t hwif_in;
@@ -351,6 +358,15 @@ module hci
       hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = 1'b0;
       hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.next = '0;
     end
+  end
+
+  always_comb begin : wire_max_lengths
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.we    = set_mwl_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MWL.MWL.next  = mwl_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.we    = set_mrl_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.MRL.next  = mrl_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.we   = set_ibil_i;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_MRL.IBIL.next = ibil_i;
   end
 
   I3CCSR i3c_csr (
@@ -556,7 +572,6 @@ module hci
 
   always_comb begin : wire_unconnected_regs
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next = '0;
-    hwif_in.I3C_EC.StdbyCtrlMode.__rsvd_3.__rsvd.next = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.we = '0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next = '0;

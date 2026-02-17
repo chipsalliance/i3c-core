@@ -23,7 +23,10 @@ regfile ECRegisters #(
         .pid_hi_reset(pid_hi_reset),
         .pid_lo_reset(pid_lo_reset),
         .virtual_pid_hi_reset(virtual_pid_hi_reset),
-        .virtual_pid_lo_reset(virtual_pid_lo_reset)
+        .virtual_pid_lo_reset(virtual_pid_lo_reset),
+        .rx_fifo_size(tti_rx_fifo_size),
+        .tx_fifo_size(tti_tx_fifo_size),
+        .ibi_fifo_size(tti_ibi_fifo_size)
     ) StdbyCtrlMode;
     TargetTransactionInterfaceRegisters #(
         .rx_desc_fifo_size(tti_rx_desc_fifo_size),

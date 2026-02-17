@@ -470,7 +470,7 @@ async def test_ccc_getmrl(dut):
 
     _TXRX_QUEUE_SIZE = 2 ** (5 + 1)  # Dwords
     _MRL_VALUE = 4 * _TXRX_QUEUE_SIZE  # Bytes
-    _IBI_PAYLOAD_SIZE = 255  # Bytes
+    _IBI_PAYLOAD_SIZE = 16  # Bytes
     command = CCC.DIRECT.GETMRL
 
     i3c_controller, _, tb = await test_setup(dut)

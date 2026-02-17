@@ -5,7 +5,10 @@ regfile StandbyControllerModeRegisters#(
     bit pid_hi_reset,
     bit pid_lo_reset,
     bit virtual_pid_hi_reset,
-    bit virtual_pid_lo_reset
+    bit virtual_pid_lo_reset,
+    bit rx_fifo_size,
+    bit tx_fifo_size,
+    bit ibi_fifo_size
 ){
     name = "Standby Controller Mode";
     default regwidth = 32;
@@ -800,14 +803,35 @@ regfile StandbyControllerModeRegisters#(
         } VIRT_STATIC_ADDR[6:0];
     } STBY_CR_VIRT_DEVICE_ADDR;
     reg {
-        name = "Reserved 3";
+        name = "Standby Controller Maximum Write Length (read-only)";
         desc = "";
         field {
-            name = "Reserved";
-            desc = "";
+            name = "Maximum Write Length";
+            desc = "This field contains the maximum write length (MWL) (read-only)";
             hw   = rw;
-            sw   = rw;
-            reset = 32'b0;
-        } __rsvd[31:0];
-    } __rsvd_3;
+            sw   = r;
+            we   = true;
+            reset = 1 << (rx_fifo_size + 3); // +1 as size is (exponent-1), +2 as one entry is 4Byte
+        } MWL[15:0];
+    } STBY_CR_MWL;
+    reg {
+        name = "Standby Controller Maximum Read Length and IBI Payload Size (read-only)";
+        desc = "";
+        field {
+            name = "IBI Payload Size";
+            desc = "This field contains the IBI payload size (IBIL) (read-only)";
+            hw   = rw;
+            sw   = r;
+            we   = true;
+            reset = 8'd16;
+        } IBIL[23:16];
+        field {
+            name = "Maximum Read Length";
+            desc = "This field contains the maximum read length (MRL) (read-only)";
+            hw   = rw;
+            sw   = r;
+            we   = true;
+            reset = 1 << (tx_fifo_size + 3); // +1 as size is (exponent-1), +2 as one entry is 4Byte
+        } MRL[15:0];
+    } STBY_CR_MRL;
 };
