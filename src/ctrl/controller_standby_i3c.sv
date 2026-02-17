@@ -99,6 +99,7 @@ module controller_standby_i3c
   // IBI related control
   input  logic        ibi_enable_i,
   input  logic  [2:0] ibi_retry_num_i,
+  input  logic        ibi_retry_ctr_rst_i,
   output logic        ibi_status_we_o,
   output ibi_status_e ibi_status_o,
   output logic        ibi_pending_o,
@@ -414,6 +415,7 @@ module controller_standby_i3c
 
     .ibi_enable_i,
     .ibi_retry_num_i,
+    .ibi_retry_ctr_rst_i,
     .ibi_status_o,
     .ibi_status_we_o,
 

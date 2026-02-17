@@ -1427,6 +1427,10 @@ module I3CCSR (
                         logic next;
                         logic load_next;
                     } IBI_QUEUE_RST;
+                    struct packed{
+                        logic next;
+                        logic load_next;
+                    } IBI_RETRY_CTR_RST;
                 } RESET_CONTROL;
                 struct packed{
                     struct packed{
@@ -2906,6 +2910,9 @@ module I3CCSR (
                     struct packed{
                         logic value;
                     } IBI_QUEUE_RST;
+                    struct packed{
+                        logic value;
+                    } IBI_RETRY_CTR_RST;
                 } RESET_CONTROL;
                 struct packed{
                     struct packed{
@@ -8878,6 +8885,32 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.value;
+    // Field: I3CCSR.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST
+    always_comb begin
+        automatic logic [0:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.TTI.RESET_CONTROL && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value & ~decoded_wr_biten[6:6]) | (decoded_wr_data[6:6] & decoded_wr_biten[6:6]);
+            load_next_c = '1;
+        end else begin // singlepulse clears back to 0
+            next_c = '0;
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.next = next_c;
+        field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value <= 1'h0;
+        end else begin
+            if(field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.load_next) begin
+                field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value <= field_combo.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value = field_storage.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value;
     // Field: I3CCSR.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_STAT
     always_comb begin
         automatic logic [0:0] next_c;

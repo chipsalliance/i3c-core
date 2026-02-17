@@ -145,6 +145,7 @@ module controller_standby
     input logic target_ibi_addr_valid_i,
     input logic ibi_enable_i,
     input logic [2:0] ibi_retry_num_i,
+    input logic ibi_retry_ctr_rst_i,
 
     output logic tx_host_nack_o,
     output logic tx_pr_end_o,
@@ -486,6 +487,7 @@ module controller_standby
     .target_ibi_addr_valid_i,
     .ibi_enable_i,
     .ibi_retry_num_i,
+    .ibi_retry_ctr_rst_i,
     .tx_host_nack_o         (i3c_tx_host_nack_o),
     .tx_pr_end_o,
     .tx_pr_start_o,

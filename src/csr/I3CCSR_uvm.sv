@@ -3907,6 +3907,7 @@ package I3CCSR_uvm;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg TX_DATA_RST_bit_cg[1];
         I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg RX_DATA_RST_bit_cg[1];
         I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg IBI_QUEUE_RST_bit_cg[1];
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL_bit_cg IBI_RETRY_CTR_RST_bit_cg[1];
         I3CCSR__I3C_EC__TTI__RESET_CONTROL_fld_cg fld_cg;
         rand uvm_reg_field SOFT_RST;
         rand uvm_reg_field TX_DESC_RST;
@@ -3914,6 +3915,7 @@ package I3CCSR_uvm;
         rand uvm_reg_field TX_DATA_RST;
         rand uvm_reg_field RX_DATA_RST;
         rand uvm_reg_field IBI_QUEUE_RST;
+        rand uvm_reg_field IBI_RETRY_CTR_RST;
 
         function new(string name = "I3CCSR__I3C_EC__TTI__RESET_CONTROL");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -3937,6 +3939,8 @@ package I3CCSR_uvm;
             this.RX_DATA_RST.configure(this, 1, 4, "RW", 1, 'h0, 1, 1, 0);
             this.IBI_QUEUE_RST = new("IBI_QUEUE_RST");
             this.IBI_QUEUE_RST.configure(this, 1, 5, "RW", 1, 'h0, 1, 1, 0);
+            this.IBI_RETRY_CTR_RST = new("IBI_RETRY_CTR_RST");
+            this.IBI_RETRY_CTR_RST.configure(this, 1, 6, "WO", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
                 foreach(SOFT_RST_bit_cg[bt]) SOFT_RST_bit_cg[bt] = new();
                 foreach(TX_DESC_RST_bit_cg[bt]) TX_DESC_RST_bit_cg[bt] = new();
@@ -3944,6 +3948,7 @@ package I3CCSR_uvm;
                 foreach(TX_DATA_RST_bit_cg[bt]) TX_DATA_RST_bit_cg[bt] = new();
                 foreach(RX_DATA_RST_bit_cg[bt]) RX_DATA_RST_bit_cg[bt] = new();
                 foreach(IBI_QUEUE_RST_bit_cg[bt]) IBI_QUEUE_RST_bit_cg[bt] = new();
+                foreach(IBI_RETRY_CTR_RST_bit_cg[bt]) IBI_RETRY_CTR_RST_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();

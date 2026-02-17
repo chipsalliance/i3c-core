@@ -333,6 +333,7 @@ module controller
   // IBI Control signals
   logic       ibi_enable;
   logic [2:0] ibi_retry_num;
+  logic       ibi_retry_ctr_rst;
 
   logic recovery_mode;
 
@@ -433,6 +434,7 @@ module controller
     .target_ibi_addr_valid_o         (target_ibi_addr_valid),
     .ibi_enable_o                    (ibi_enable),
     .ibi_retry_num_o                 (ibi_retry_num),
+    .ibi_retry_ctr_rst_o             (ibi_retry_ctr_rst),
     .set_mwl_i                       (set_mwl),
     .set_mrl_i                       (set_mrl),
     .set_ibil_i                      (set_ibil),
@@ -618,6 +620,7 @@ module controller
     .target_ibi_addr_valid_i        (target_ibi_addr_valid),
     .ibi_enable_i                   (ibi_enable),
     .ibi_retry_num_i                (ibi_retry_num),
+    .ibi_retry_ctr_rst_i            (ibi_retry_ctr_rst),
     .tx_host_nack_o                 (tti_tx_host_nack_o),
     .tx_pr_end_o                    (tti_tx_pr_end_o),
     .tx_pr_start_o                  (tti_tx_pr_start_o),

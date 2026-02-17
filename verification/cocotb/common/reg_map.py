@@ -3099,6 +3099,16 @@ reg_map = Munch.fromDict({
                     "woclr": 0,
                     "rclr": 0,
                     "hwclr": 0
+                },
+                "IBI_RETRY_CTR_RST": {
+                    "low": 6,
+                    "mask": 64,
+                    "reset": 0,
+                    "sw": "w",
+                    "hw": "r",
+                    "woclr": 0,
+                    "rclr": 0,
+                    "hwclr": 0
                 }
             },
             "QUEUE_STATUS": {

@@ -2922,12 +2922,17 @@ package I3CCSR_pkg;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__out_t;
 
     typedef struct packed{
+        logic value;
+    } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_RETRY_CTR_RST__out_t;
+
+    typedef struct packed{
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__out_t SOFT_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__out_t TX_DESC_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__out_t RX_DESC_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DATA_RST__out_t TX_DATA_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DATA_RST__out_t RX_DATA_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__out_t IBI_QUEUE_RST;
+        I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_RETRY_CTR_RST__out_t IBI_RETRY_CTR_RST;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__out_t;
 
     typedef struct packed{

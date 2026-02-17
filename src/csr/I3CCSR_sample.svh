@@ -2433,9 +2433,10 @@
             foreach(TX_DATA_RST_bit_cg[bt]) this.TX_DATA_RST_bit_cg[bt].sample(data[3 + bt]);
             foreach(RX_DATA_RST_bit_cg[bt]) this.RX_DATA_RST_bit_cg[bt].sample(data[4 + bt]);
             foreach(IBI_QUEUE_RST_bit_cg[bt]) this.IBI_QUEUE_RST_bit_cg[bt].sample(data[5 + bt]);
+            foreach(IBI_RETRY_CTR_RST_bit_cg[bt]) this.IBI_RETRY_CTR_RST_bit_cg[bt].sample(data[6 + bt]);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( data[0:0]/*SOFT_RST*/  ,  data[1:1]/*TX_DESC_RST*/  ,  data[2:2]/*RX_DESC_RST*/  ,  data[3:3]/*TX_DATA_RST*/  ,  data[4:4]/*RX_DATA_RST*/  ,  data[5:5]/*IBI_QUEUE_RST*/   );
+            this.fld_cg.sample( data[0:0]/*SOFT_RST*/  ,  data[1:1]/*TX_DESC_RST*/  ,  data[2:2]/*RX_DESC_RST*/  ,  data[3:3]/*TX_DATA_RST*/  ,  data[4:4]/*RX_DATA_RST*/  ,  data[5:5]/*IBI_QUEUE_RST*/  ,  data[6:6]/*IBI_RETRY_CTR_RST*/   );
         end
     endfunction
 
@@ -2447,9 +2448,10 @@
             foreach(TX_DATA_RST_bit_cg[bt]) this.TX_DATA_RST_bit_cg[bt].sample(TX_DATA_RST.get_mirrored_value() >> bt);
             foreach(RX_DATA_RST_bit_cg[bt]) this.RX_DATA_RST_bit_cg[bt].sample(RX_DATA_RST.get_mirrored_value() >> bt);
             foreach(IBI_QUEUE_RST_bit_cg[bt]) this.IBI_QUEUE_RST_bit_cg[bt].sample(IBI_QUEUE_RST.get_mirrored_value() >> bt);
+            foreach(IBI_RETRY_CTR_RST_bit_cg[bt]) this.IBI_RETRY_CTR_RST_bit_cg[bt].sample(IBI_RETRY_CTR_RST.get_mirrored_value() >> bt);
         end
         if (get_coverage(UVM_CVR_FIELD_VALS)) begin
-            this.fld_cg.sample( SOFT_RST.get_mirrored_value()  ,  TX_DESC_RST.get_mirrored_value()  ,  RX_DESC_RST.get_mirrored_value()  ,  TX_DATA_RST.get_mirrored_value()  ,  RX_DATA_RST.get_mirrored_value()  ,  IBI_QUEUE_RST.get_mirrored_value()   );
+            this.fld_cg.sample( SOFT_RST.get_mirrored_value()  ,  TX_DESC_RST.get_mirrored_value()  ,  RX_DESC_RST.get_mirrored_value()  ,  TX_DATA_RST.get_mirrored_value()  ,  RX_DATA_RST.get_mirrored_value()  ,  IBI_QUEUE_RST.get_mirrored_value()  ,  IBI_RETRY_CTR_RST.get_mirrored_value()   );
         end
     endfunction
 

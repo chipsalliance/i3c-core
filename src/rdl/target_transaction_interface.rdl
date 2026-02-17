@@ -137,8 +137,16 @@ regfile TargetTransactionInterfaceRegisters #(
         } PROTOCOL_ERROR[8:8];
     } STATUS;
     reg {
-        name = "TTI Queue Reset Control";
-        desc = "Queue Reset Control";
+        name = "TTI Reset Control";
+        desc = "Reset Control for Queues and IBI Retry Counter";
+        field {
+            name = "IBI_RETRY_CTR_RST";
+            desc = "TTI IBI Retry Counter Software Reset";
+            sw = w;
+            hw = r;
+            singlepulse;
+            reset = 1'b0;
+        } IBI_RETRY_CTR_RST[6:6];
         field {
             name = "IBI_QUEUE_RST";
             desc = "TTI IBI Queue Buffer Software Reset";

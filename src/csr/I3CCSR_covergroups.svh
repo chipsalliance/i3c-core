@@ -2031,7 +2031,8 @@
     input bit [1-1:0] RX_DESC_RST,
     input bit [1-1:0] TX_DATA_RST,
     input bit [1-1:0] RX_DATA_RST,
-    input bit [1-1:0] IBI_QUEUE_RST
+    input bit [1-1:0] IBI_QUEUE_RST,
+    input bit [1-1:0] IBI_RETRY_CTR_RST
     );
         option.per_instance = 1;
         SOFT_RST_cp : coverpoint SOFT_RST;
@@ -2040,6 +2041,7 @@
         TX_DATA_RST_cp : coverpoint TX_DATA_RST;
         RX_DATA_RST_cp : coverpoint RX_DATA_RST;
         IBI_QUEUE_RST_cp : coverpoint IBI_QUEUE_RST;
+        IBI_RETRY_CTR_RST_cp : coverpoint IBI_RETRY_CTR_RST;
 
     endgroup
 

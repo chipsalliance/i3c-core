@@ -2655,7 +2655,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 | 0x00 |              EXTCAP_HEADER             |                           —                           |
 | 0x04 |                 CONTROL                |                      TTI Control                      |
 | 0x08 |                 STATUS                 |                       TTI Status                      |
-| 0x0C |              RESET_CONTROL             |                TTI Queue Reset Control                |
+| 0x0C |              RESET_CONTROL             |                   TTI Reset Control                   |
 | 0x10 |              QUEUE_STATUS              |                    TTI Queue Status                   |
 | 0x14 |            DESC_QUEUE_DEPTH            |               TTI Descriptor Queue Depth              |
 | 0x18 |            DATA_QUEUE_DEPTH            |                  TTI Data Queue Depth                 |
@@ -2797,16 +2797,17 @@ permitted by the retry counter.</p>
 - Base Offset: 0xC
 - Size: 0x4
 
-<p>Queue Reset Control</p>
+<p>Reset Control for Queues and IBI Retry Counter</p>
 
-|Bits|  Identifier |Access|Reset|     Name    |
-|----|-------------|------|-----|-------------|
-|  0 |   SOFT_RST  |  rw  | 0x0 |   SOFT_RST  |
-|  1 | TX_DESC_RST |  rw  | 0x0 | TX_DESC_RST |
-|  2 | RX_DESC_RST |  rw  | 0x0 | RX_DESC_RST |
-|  3 | TX_DATA_RST |  rw  | 0x0 | TX_DATA_RST |
-|  4 | RX_DATA_RST |  rw  | 0x0 | RX_DATA_RST |
-|  5 |IBI_QUEUE_RST|  rw  | 0x0 |IBI_QUEUE_RST|
+|Bits|    Identifier   |Access|Reset|       Name      |
+|----|-----------------|------|-----|-----------------|
+|  0 |     SOFT_RST    |  rw  | 0x0 |     SOFT_RST    |
+|  1 |   TX_DESC_RST   |  rw  | 0x0 |   TX_DESC_RST   |
+|  2 |   RX_DESC_RST   |  rw  | 0x0 |   RX_DESC_RST   |
+|  3 |   TX_DATA_RST   |  rw  | 0x0 |   TX_DATA_RST   |
+|  4 |   RX_DATA_RST   |  rw  | 0x0 |   RX_DATA_RST   |
+|  5 |  IBI_QUEUE_RST  |  rw  | 0x0 |  IBI_QUEUE_RST  |
+|  6 |IBI_RETRY_CTR_RST|   w  | 0x0 |IBI_RETRY_CTR_RST|
 
 #### SOFT_RST field
 
@@ -2831,6 +2832,10 @@ permitted by the retry counter.</p>
 #### IBI_QUEUE_RST field
 
 <p>TTI IBI Queue Buffer Software Reset</p>
+
+#### IBI_RETRY_CTR_RST field
+
+<p>TTI IBI Retry Counter Software Reset</p>
 
 ### QUEUE_STATUS register
 

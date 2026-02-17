@@ -57,8 +57,9 @@ module configuration (
     output logic target_ibi_addr_valid_o,
 
     // Target IBI
-    output logic ibi_enable_o,
+    output logic       ibi_enable_o,
     output logic [2:0] ibi_retry_num_o,
+    output logic       ibi_retry_ctr_rst_o,
 
     input logic set_mwl_i,
     input logic set_mrl_i,
@@ -209,7 +210,8 @@ module configuration (
   assign target_ibi_addr_valid_o = target_sta_addr_valid_o || target_dyn_addr_valid_o;
 
   // Configuration: Target IBI
-  assign ibi_enable_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
-  assign ibi_retry_num_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
+  assign ibi_enable_o        = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
+  assign ibi_retry_num_o     = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
+  assign ibi_retry_ctr_rst_o = hwif_out_i.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value;
 
 endmodule

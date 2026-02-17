@@ -88,9 +88,10 @@ module i3c_target_fsm import i3c_pkg::*; (
   output logic      ibi_byte_flush_o,     // Aborts IBI and flushes TTI IBI Queue
 
   // IBI control / status
-  input  logic [2:0]  ibi_retry_num_i, // TTI.CONTROL.IBI_RETRY_NUM
-  output ibi_status_e ibi_status_o,    // TTI.STATUS.LAST_IBI_STATUS
-  output logic        ibi_status_we_o, // IBI status write enable
+  input  logic [2:0]  ibi_retry_num_i,     // TTI.CONTROL.IBI_RETRY_NUM
+  input  logic        ibi_retry_ctr_rst_i, // TTI.RESET_CONTROL.IBI_RETRY_CTR_RST
+  output ibi_status_e ibi_status_o,        // TTI.STATUS.LAST_IBI_STATUS
+  output logic        ibi_status_we_o,     // TTI.STATUS.LAST_IBI_STATUS write enable, triggers IRQ
 
   output logic [7:0] last_addr_o,     // Includes rnw as LSB
   output logic       last_addr_valid_o,
@@ -379,6 +380,27 @@ module i3c_target_fsm import i3c_pkg::*; (
     end
   end
 
+  // IBI retry counter and inhibit logic
+  always_comb begin
+    ibi_retry_cnt_d = ibi_retry_cnt_q;
+    ibi_inhibit_d   = ibi_inhibit_q;
+
+    // Reset counter on success or request by FW, increment on appropriate failure types
+    if ((ibi_status_we_o && (ibi_status_o == IbiSuccess)) || ibi_retry_ctr_rst_i) begin
+      ibi_retry_cnt_d = '0;
+    end else if ((ibi_retry_num_i != 3'd7) && ibi_status_we_o &&
+                 (ibi_status_o inside {IbiFailureAddressArb, IbiFailureNack})) begin
+      ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
+    end
+
+    // Reset inhibit on bus available, set on failed arbitration
+    if (ibi_status_we_o && (ibi_status_o == IbiFailureAddressArb)) begin
+      ibi_inhibit_d = 1'b1;
+    end else if (bus_available_i) begin
+      ibi_inhibit_d = 1'b0;
+    end
+  end
+
   // Main FSM
   always_comb begin : fsm_target_main
     tx_pr_start_o = 1'b0;
@@ -412,9 +434,6 @@ module i3c_target_fsm import i3c_pkg::*; (
     ibi_status_we_o  = 1'b0;
     ibi_byte_ready_o = 1'b0;
     ibi_byte_flush_o = 1'b0;
-
-    ibi_retry_cnt_d = ibi_retry_cnt_q;
-    ibi_inhibit_d   = bus_available_i ? 1'b0 : ibi_inhibit_q;
 
     state_d = state_q;
     case (state_q)
@@ -457,10 +476,6 @@ module i3c_target_fsm import i3c_pkg::*; (
           // won arbitration - bad luck for us
           ibi_status_we_o = 1'b1;
           ibi_status_o    = IbiFailureAddressArb;
-          ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
-          if (ibi_retry_num_i != 3'd7) begin
-            ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
-          end
           state_d = WaitRestart;
         end
       end
@@ -476,9 +491,6 @@ module i3c_target_fsm import i3c_pkg::*; (
             // Controller has NACKed our write request
             ibi_status_we_o = 1'b1;
             ibi_status_o    = IbiFailureNack;
-            if (ibi_retry_num_i != 3'd7) begin
-              ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
-            end
             state_d = WaitRestart;
           end else begin
             state_d = IbiSendData;
@@ -549,10 +561,6 @@ module i3c_target_fsm import i3c_pkg::*; (
           if (arbitration_lost_i) begin
             ibi_status_we_o = 1'b1;
             ibi_status_o    = IbiFailureAddressArb;
-            ibi_inhibit_d   = 1'b1; // Hold off initiating IBI until next bus available condition
-            if (ibi_retry_num_i != 3'd7) begin
-              ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
-            end
             state_d = RxFByte;
           end
         end
