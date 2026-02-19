@@ -154,8 +154,16 @@ module i3c_target_fsm import i3c_pkg::*; (
   logic is_our_addr_match, is_virtual_addr_match, is_any_addr_match, is_rsvd_byte_match;
 
   logic [2:0] ibi_retry_cnt_q, ibi_retry_cnt_d;
-  logic       ibi_inhibit_q, ibi_inhibit_d;
   logic       ibi_pending, ibi_can_retry;
+
+  // Data type to encode various conditions for suppressing the servicing of pending IBIs
+  typedef enum logic [1:0] { 
+    InhibitNone,
+    InhibitRetry,
+    InhibitArbLost
+  } ibi_inhibit_e;
+
+  ibi_inhibit_e ibi_inhibit_q, ibi_inhibit_d;
 
   ccc_cmd_e  ccc_data;
   logic      ccc_data_valid;
@@ -380,10 +388,9 @@ module i3c_target_fsm import i3c_pkg::*; (
     end
   end
 
-  // IBI retry counter and inhibit logic
+  // IBI retry counter logic
   always_comb begin
     ibi_retry_cnt_d = ibi_retry_cnt_q;
-    ibi_inhibit_d   = ibi_inhibit_q;
 
     // Reset counter on success or request by FW, increment on appropriate failure types
     if ((ibi_status_we_o && (ibi_status_o == IbiSuccess)) || ibi_retry_ctr_rst_i) begin
@@ -392,13 +399,33 @@ module i3c_target_fsm import i3c_pkg::*; (
                  (ibi_status_o inside {IbiFailureAddressArb, IbiFailureNack})) begin
       ibi_retry_cnt_d = ibi_retry_cnt_q + 1;
     end
+  end
 
-    // Reset inhibit on bus available, set on failed arbitration
-    if (ibi_status_we_o && (ibi_status_o == IbiFailureAddressArb)) begin
-      ibi_inhibit_d = 1'b1;
-    end else if (bus_available_i) begin
-      ibi_inhibit_d = 1'b0;
-    end
+  // Mini-FSM to suppress repeated IBI attempts and status reports on certain conditions
+  always_comb begin : fsm_ibi_inhibit
+    ibi_inhibit_d = ibi_inhibit_q;
+    case (ibi_inhibit_q)
+      // Normal operation; leave when any suppression condition becomes true
+      InhibitNone: begin
+        if (ibi_status_we_o && (ibi_status_o == IbiFailureAddressArb)) begin
+          ibi_inhibit_d = InhibitArbLost;
+        end else if (ibi_status_we_o && (ibi_status_o == IbiFailureRetry)) begin
+          ibi_inhibit_d = InhibitRetry;
+        end
+      end
+      // IBIs suppressed due to lost arbitration: Release upon bus available condition
+      InhibitArbLost: begin
+        if (bus_available_i) begin
+          ibi_inhibit_d = InhibitNone;
+        end
+      end
+      // IBIs suppressed due to retry failure: Release upon retry condition becoming true again
+      InhibitRetry: begin
+        if (ibi_can_retry) begin
+          ibi_inhibit_d = InhibitNone;
+        end
+      end
+    endcase
   end
 
   // Main FSM
@@ -439,11 +466,10 @@ module i3c_target_fsm import i3c_pkg::*; (
     case (state_q)
       Idle: begin
         if (target_enable_i) begin
-          if (ibi_pending) begin
+          if (ibi_pending && (ibi_inhibit_q != InhibitRetry)) begin
             if (!ibi_can_retry) begin
-              ibi_byte_flush_o = 1'b1;
-              ibi_status_we_o  = 1'b1;
-              ibi_status_o     = IbiFailureRetry;
+              ibi_status_we_o = 1'b1;
+              ibi_status_o    = IbiFailureRetry;
             end else if (bus_available_i) begin
               state_d = IbiDriveAddr;
             end
@@ -456,8 +482,8 @@ module i3c_target_fsm import i3c_pkg::*; (
           end else if (bus_start_det_i) begin
             // In Idle, we only wait for a Start, which initiates the arbitrable address header
             // Suppress arbitration after a lost IBI arbitration until bus available condition,
-            // as per Sect. 5.1.6.2
-            state_d = ibi_inhibit_q ? RxFByte : RxFByteArb;
+            // as per Sect. 5.1.6.2, or if we already had a retry failure.
+            state_d = (ibi_pending && (ibi_inhibit_q == InhibitNone)) ? RxFByteArb : RxFByte;
           end
         end
       end
@@ -550,7 +576,13 @@ module i3c_target_fsm import i3c_pkg::*; (
       RxFByteArb: begin
         bus_rx_req_byte = !bus_rstart_det_i;
 
-        if (ibi_pending && ibi_can_retry) begin
+        // Currently, we only get to this state if there is a pending IBI, and IBIs are not surpressed
+        // Therefore, the only condition where we do not submit our IBI address is if the retry
+        // counter has hit the limit. In that case, and in case we lose arbitration during the address
+        // phase, we switch to RxFByte, which continues to hold bus_rx_req_byte high, and processes the
+        // received data. We only stay in RxFByteArb is we successfully initiated an IBI, in which case
+        // the "received" data is irrelevant, as it is our own IBI address.
+        if (ibi_can_retry) begin
           bus_tx_req_o.req_valid  = 1'b1;
           bus_tx_req_o.req_type   = RawByte;
           bus_tx_req_o.drive_type = OpenDrain;
@@ -562,18 +594,15 @@ module i3c_target_fsm import i3c_pkg::*; (
             ibi_status_we_o = 1'b1;
             ibi_status_o    = IbiFailureAddressArb;
             state_d = RxFByte;
+          end else if (bus_tx_rsp_i.done) begin
+            // IBI address has been submitted successfully, we won arbitration. Continue with IBI.
+            state_d = IbiReadAck;
           end
-        end
-
-        if (bus_tx_rsp_i.done && !arbitration_lost_i) begin
-          // IBI address has been submitted successfully, we won arbitration
-          state_d = IbiReadAck;
-        end else if (bus_rx_rsp_i.done) begin
-          bus_addr_valid = 1'b1;
-          bus_addr_d     = bus_rx_rsp_i.data[7:1];
-          bus_rnw_d      = bus_rx_rsp_i.data[0];
-
-          state_d = CheckFByte;
+        end else begin
+          // Retry count reached
+          ibi_status_we_o = 1'b1;
+          ibi_status_o    = IbiFailureRetry;
+          state_d = RxFByte;
         end
       end
       CheckFByte: begin
@@ -791,7 +820,7 @@ module i3c_target_fsm import i3c_pkg::*; (
     if (!rst_ni) begin
       state_q <= Idle;
       ibi_retry_cnt_q <= 3'd0;
-      ibi_inhibit_q   <= 1'b0;
+      ibi_inhibit_q   <= InhibitNone;
     end else begin
       state_q <= state_d;
       ibi_retry_cnt_q <= ibi_retry_cnt_d;
