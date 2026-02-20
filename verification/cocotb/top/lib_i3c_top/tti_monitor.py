@@ -12,7 +12,7 @@ on violation to fail the test.
 """
 
 import cocotb
-from cocotb.triggers import RisingEdge, First
+from cocotb.triggers import RisingEdge, FallingEdge, First
 
 
 class TtiQueueMonitor:
@@ -57,7 +57,8 @@ class TtiQueueMonitor:
             data_w = int(self._rx_data_write_r.value)
             rec_pending = int(self._recovery_pending.value)
 
-            if rec_pending:
+            # Only fire if rec_pending is not de-asserted at the very same time/edge
+            if rec_pending and not(FallingEdge(self._recovery_pending)):
                 # RI write leaked through to TTI interrupt path
                 sig = []
                 if desc_w:
