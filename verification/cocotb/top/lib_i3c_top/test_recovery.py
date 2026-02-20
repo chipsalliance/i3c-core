@@ -78,6 +78,8 @@ async def initialize(dut, fclk=333.0, fbus=12.5, timeout=50,
         address=0x23,
     )
 
+    dut.peripheral_reset_done_i.value = 0
+
     tb = I3CTopTestInterface(dut)
     await tb.setup(fclk)
 

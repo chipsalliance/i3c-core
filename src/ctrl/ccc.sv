@@ -597,7 +597,8 @@ module ccc
     RxData,                  // Receive data byte
     RxDataTbit,              // Receive T-bit after data byte
     TxData,                  // Transmit data byte (GET commands)
-    TxDataTbit,              // Transmit T-bit after data byte
+    TxDataTbitCont,          // Transmit T-bit after data byte with more to send
+    TxDataTbitEnd,           // Transmit T-bit after last data byte
 
     // Bus condition handling
     WaitForBusCond,          // Wait for STOP or Repeated Start
@@ -1135,31 +1136,35 @@ module ccc
         if (bus_tx_rsp_i.done) begin
           // Increment byte counter as we need the next data byte for the Tbit request
           inc_tx_byte_num = 1'b1;
-          state_d = TxDataTbit;
+          // Handle last byte in a dedicated state
+          state_d = tx_data_last_byte ? TxDataTbitEnd : TxDataTbitCont;
         end
       end
-      
-      TxDataTbit: begin
-        // TBit: 0 = end of data, 1 = more data available
-        tx_req_ccc.req_valid  = 1'b1;
-        tx_req_ccc.req_type   = tx_data_last_byte ? TReadEnd : TReadCont;
-        tx_req_ccc.data       = tx_data;
 
-        if (bus_rstart_det_i) begin
+      TxDataTbitEnd: begin
+        tx_req_ccc.req_valid = 1'b1;
+        tx_req_ccc.req_type  = TReadEnd;
+
+        if (bus_tx_rsp_i.done) begin
+          // Target complete: Target sent T=0, wait for Sr or STOP
+          set_tx_data_complete = 1'b1;
+          state_d = WaitForBusCond;
+        end
+      end
+
+      TxDataTbitCont: begin
+        tx_req_ccc.req_valid = 1'b1;
+        tx_req_ccc.req_type  = TReadCont;
+        tx_req_ccc.data      = tx_data;
+
+        if (bus_tx_rsp_i.abort) begin
           // Controller abort: Sr during T-bit means the transfer is
           // incomplete — do NOT mark tx_data_complete. This prevents
           // get_status_done_o from falsely firing on an aborted GETSTATUS,
           // which would prematurely clear the Protocol Error in err_o.
           state_d = RxTargetAddr;
         end else if (bus_tx_rsp_i.done) begin
-          if (tx_data_last_byte) begin
-            // Target complete: Target sent T=0, wait for Sr or STOP
-            set_tx_data_complete = 1'b1;
-            state_d = WaitForBusCond;
-          end else begin
-            // Continue: Target sent T=1, Controller accepted
-            state_d = TxData;
-          end
+          state_d = TxData;
         end
       end
       
@@ -1233,8 +1238,8 @@ module ccc
     end
   end
 
-  // Last byte when we've reached tx_byte_total
-  assign tx_data_last_byte = (tx_byte_num == tx_byte_total);
+  // Last byte when we've reached (tx_byte_total - 1)
+  assign tx_data_last_byte = (tx_byte_num == tx_byte_total - 1);
 
   // TX complete tracking: set by FSM when last T-bit completes normally
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_data_complete
