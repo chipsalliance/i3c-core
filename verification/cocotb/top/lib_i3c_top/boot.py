@@ -258,28 +258,30 @@ async def umbrella_stby_init(
     )
 
     # Set static address and valid
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
-        static_addr,
-    )
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
-        0x1,
-    )
+    if static_addr is not None:
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
+            static_addr,
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
+            0x1,
+        )
 
     # Set static address and valid for virtual device
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
-        virtual_static_addr,
-    )
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
-        0x1,
-    )
+    if virtual_static_addr is not None:
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
+            virtual_static_addr,
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
+            0x1,
+        )
     # Set dynamic address and valid
     if dynamic_addr is not None:
         await tb.write_csr_field(

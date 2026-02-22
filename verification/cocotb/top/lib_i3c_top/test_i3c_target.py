@@ -21,7 +21,7 @@ TARGET_ADDRESS = 0x5A
 
 
 async def test_setup(dut, fclk=333.0, fbus=12.5,
-                     static_addr=0x5A, virtual_static_addr=0x5B,
+                     static_addr=TARGET_ADDRESS, virtual_static_addr=0x5B,
                      dynamic_addr=None, virtual_dynamic_addr=None):
     """
     Sets up controller, target models and top-level core interface
@@ -343,7 +343,7 @@ async def test_i3c_target_read_empty(dut):
 async def test_i3c_target_read_to_multiple_targets(dut):
 
     # Setup
-    i3c_controller, i3c_target, tb = await test_setup(dut, fclk=100)
+    i3c_controller, i3c_target, tb = await test_setup(dut, fclk=100, virtual_static_addr=None)
 
     # Generates a randomized transfer and puts it into the TTI TX queue
     async def make_transfer(min_len=1, max_len=16):
