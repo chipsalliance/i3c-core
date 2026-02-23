@@ -646,7 +646,8 @@ module i3c_target_fsm import i3c_pkg::*; (
       end
       TxAckFByte: begin
         bus_tx_req_o.req_valid = 1'b1;
-        bus_tx_req_o.req_type  = bus_rnw_q ? AckRegular : AckWrite;
+        // Spec Annex A: Every "FByte" Ack is a Handoff except Private Reads after non-rsvd-Byte
+        bus_tx_req_o.req_type  = (bus_rnw_q && !is_rsvd_byte_match) ? AckRegular : AckHandoff;
 
         if (bus_tx_rsp_i.done) begin
           if (is_rsvd_byte_match) begin
@@ -700,7 +701,8 @@ module i3c_target_fsm import i3c_pkg::*; (
       end
       TxAckSByte: begin
         bus_tx_req_o.req_valid = 1'b1;
-        bus_tx_req_o.req_type  = AckRegular;
+        // For Private Writes, perform AckHandoff
+        bus_tx_req_o.req_type  = bus_rnw_q ? AckRegular : AckHandoff;
 
         if (bus_tx_rsp_i.done) begin
           state_d = bus_rnw_q ? TxPReadData : RxPWriteData;

@@ -110,7 +110,7 @@ module bus_tx_flow import i3c_pkg::*; (
         req_value    = '1;
         drive_mode   = OpenDrain;
       end
-      AckRegular, AckWrite: begin
+      AckRegular, AckHandoff: begin
         req_value[7] = 1'b0;
         drive_mode   = OpenDrain;
       end
@@ -222,7 +222,7 @@ module bus_tx_flow import i3c_pkg::*; (
         if (bus_i.scl.pos_edge) begin
           // Handle all cases that require half-bit changes to SDA data and drive mode
           case (tx_req_i.req_type)
-            AckWrite: begin
+            AckHandoff: begin
               // Release SDA in the middle of ACK to high-Z; Controller takes over driving
               // Specified in Section 5.1.2.3.1
               req_value_d[7] = 1'b1;

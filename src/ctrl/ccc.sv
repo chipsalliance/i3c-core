@@ -1014,8 +1014,11 @@ module ccc
       // ---------------------------------------------------------------------
       WaitDirectRstart: begin
         // Wait for repeated start before target address
-        if (bus_rstart_det_i) state_d = RxTargetAddr;
-        else if (bus_rx_rsp_i.done) state_d = RxDirectDefByteTbit;
+        if (bus_rstart_det_i) begin
+          state_d = RxTargetAddr;
+        end else if (bus_rx_rsp_i.done) begin
+          state_d = RxDirectDefByteTbit;
+        end
       end
       
       RxDirectDefByteTbit: begin
@@ -1078,6 +1081,8 @@ module ccc
             state_d = WaitForBusCond;
           end else begin
             // ACKed SET command (including SETDASA): Target receives data
+            // We must overwrite the tx_request used above to handle the write handoff properly
+            tx_req_ccc.req_type = AckHandoff;
             state_d = RxData;
           end
         end

@@ -168,7 +168,7 @@ package i3c_pkg;
     RawBit,
     InitIbi,
     AckRegular,
-    AckWrite,
+    AckHandoff,
     AckIbi,
     TReadCont,
     TReadEnd
