@@ -161,42 +161,42 @@ Sends GETSTATUS CCC and checks that it also doesn't report protocol error.
 
 ### `Reading from empty RX descriptor FIFO`
 
-Test: [empty_rx_desc_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L44)
+Test: [empty_rx_desc_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L45)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Reading from empty RX data FIFO`
 
-Test: [empty_rx_data_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L50)
+Test: [empty_rx_data_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L51)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Reading from empty indirect FIFO`
 
-Test: [empty_indirect_fifo_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L56)
+Test: [empty_indirect_fifo_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L57)
 
 Perform read bus access to the empty RX descriptor queue,
 verify that response comes back and it holds value of 0.
 
 ### `Writing to full TX descriptor FIFO`
 
-Test: [full_tx_desc_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L61)
+Test: [full_tx_desc_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L62)
 
 Perform multiple write bus accesses to the TX descriptor queue,
 verify that all transactions has finished.
 
 ### `Writing to full TX data FIFO`
 
-Test: [full_tx_data_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L67)
+Test: [full_tx_data_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L69)
 
 Perform multiple write bus accesses to the TX data queue,
 verify that all transactions has finished.
 
 ### `Writing to full IBI FIFO`
 
-Test: [full_ibi_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L73)
+Test: [full_ibi_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bus_stall.py#L76)
 
 Perform multiple write bus accesses to the IBI queue,
 verify that all transactions has finished.
@@ -210,7 +210,7 @@ verify that all transactions has finished.
 
 ### `ccc_getstatus`
 
-Test: [ccc_getstatus](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L57)
+Test: [ccc_getstatus](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L58)
 
 The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
 status CSR. Next, it issues the GETSTATUS directed CCC to the
@@ -219,7 +219,7 @@ CCC with the one read from the register.
 
 ### `ccc_setdasa`
 
-Test: [ccc_setdasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L93)
+Test: [ccc_setdasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L94)
 
 The test sets dynamic address and virtual dynamic address by
 sending SETDASA CCC. Then it verifies that correct addresses have
@@ -229,7 +229,7 @@ than DUT, and checks if the dynamic address was not accepted.
 
 ### `ccc_setdasa_nack`
 
-Test: [ccc_setdasa_nack](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L174)
+Test: [ccc_setdasa_nack](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L175)
 
 The test sets dynamic address and virtual dynamic address by
 sending SETDASA CCC. Then it sends second SETDASA command and checks
@@ -237,7 +237,7 @@ that targets NACKed them.
 
 ### `ccc_setnewda`
 
-Test: [ccc_setnewda](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L215)
+Test: [ccc_setnewda](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L216)
 
 The test sets dynamic address and virtual dynamic address directly
 using CSR accesses. Then it sends SETNEWDA commands to both targets
@@ -245,42 +245,42 @@ and checks their dynamic addresses got updated.
 
 ### `ccc_rstdaa`
 
-Test: [ccc_rstdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L283)
+Test: [ccc_rstdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L284)
 
 Sets dynamic address via STBY_CR_DEVICE_ADDR CSR, then sends
 RSTDAA CCC and verifies that the address got cleared.
 
 ### `ccc_getbcr`
 
-Test: [ccc_getbcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L360)
+Test: [ccc_getbcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L361)
 
 Reads BCR register content by sending GETBCR CCC and examining
 returned data.
 
 ### `ccc_getdcr`
 
-Test: [ccc_getdcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L392)
+Test: [ccc_getdcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L393)
 
 Reads DCR register content by sending GETDCR CCC and examining
 returned data.
 
 ### `ccc_getmwl`
 
-Test: [ccc_getmwl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L422)
+Test: [ccc_getmwl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L423)
 
 Reads MWL register content by sending GETMWL CCC and examining
 returned data.
 
 ### `ccc_getmrl`
 
-Test: [ccc_getmrl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L439)
+Test: [ccc_getmrl](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L440)
 
 Reads MRL register content by sending GETMWL CCC and examining
 returned data.
 
 ### `ccc_setaasa`
 
-Test: [ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L457)
+Test: [ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L458)
 
 Issues the broadcast SETAASA CCC and checks if the target uses
 its static address as dynamic by examining STBY_CR_DEVICE_ADDR
@@ -288,7 +288,7 @@ CSR.
 
 ### `ccc_setaasa_ignore`
 
-Test: [ccc_setaasa_ignore](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L500)
+Test: [ccc_setaasa_ignore](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L501)
 
 Assigns dynamic address different to static address using CSR.
 Issues the broadcast SETAASA CCC and checks if the target ignores
@@ -296,28 +296,28 @@ this command by examining STBY_CR_DEVICE_ADDR CSR.
 
 ### `ccc_getpid`
 
-Test: [ccc_getpid](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L550)
+Test: [ccc_getpid](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L551)
 
 Sends the CCC to the target and examines if the returned PID
 matches the expected.
 
 ### `ccc_enec_disec_direct`
 
-Test: [ccc_enec_disec_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L610)
+Test: [ccc_enec_disec_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L611)
 
 Sends DISEC CCC to the target and verifies that events are disabled.
 Then, sends ENEC CCC to the target and checks that events are enabled.
 
 ### `ccc_enec_disec_bcast`
 
-Test: [ccc_enec_disec_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L643)
+Test: [ccc_enec_disec_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L644)
 
 Sends broadcast DISEC CCC and verifies that events are disabled.
 Then, sends broadcast ENEC CCC and checks that events are enabled.
 
 ### `ccc_setmwl_direct`
 
-Test: [ccc_setmwl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L672)
+Test: [ccc_setmwl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L673)
 
 Sends directed SETMWL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
@@ -325,7 +325,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmrl_direct`
 
-Test: [ccc_setmrl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L690)
+Test: [ccc_setmrl_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L691)
 
 Sends directed SETMRL CCC to the target and verifies that the
 register got correctly set. The check is performed by examining
@@ -333,7 +333,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmwl_bcast`
 
-Test: [ccc_setmwl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L708)
+Test: [ccc_setmwl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L711)
 
 Sends broadcast SETMWL CCC and verifies that the
 register got correctly set. The check is performed by examining
@@ -341,7 +341,7 @@ relevant wires in the target DUT.
 
 ### `ccc_setmrl_bcast`
 
-Test: [ccc_setmrl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L726)
+Test: [ccc_setmrl_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L729)
 
 Sends SETMRL CCC and verifies that the
 register got correctly set. The check is performed by examining
@@ -358,7 +358,7 @@ verifies that the peripheral_reset_o signal gets asserted.
 
 ### `ccc_direct_multiple_wr`
 
-Test: [ccc_direct_multiple_wr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L800)
+Test: [ccc_direct_multiple_wr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L809)
 
 Sends a sequence of multiple directed SETMWL CCCs. The first and
 the last have non-matching address. The two middle ones set MWL
@@ -367,7 +367,7 @@ addresses and executed both CCCs.
 
 ### `ccc_direct_multiple_rd`
 
-Test: [ccc_direct_multiple_rd](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L839)
+Test: [ccc_direct_multiple_rd](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_ccc.py#L848)
 
 Sends SETMWL CCC. Then sends multiple directed GETMWL CCCs to
 thee different addresses. Only the one for the target should
@@ -383,12 +383,12 @@ be ACK-ed with the correct MWL content.
 ### `Test CSR accesses`
 
 Tests:
-- [ec_sec_fw_rec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L169)
-- [ec_stdby_ctrl_mode_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L179)
-- [ec_tti_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L270)
-- [ec_soc_mgmt_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L320)
-- [ec_contrl_config_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L327)
-- [ec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L333)
+- [ec_sec_fw_rec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L316)
+- [ec_stdby_ctrl_mode_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L326)
+- [ec_tti_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L417)
+- [ec_soc_mgmt_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L467)
+- [ec_contrl_config_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L474)
+- [ec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L480)
 
 
 Walks over all CSRs, write random value using AHB/AXI, reads it back,
@@ -447,10 +447,10 @@ Checks that target NACKed transaction.
 ### `Enter and exit HDR-DDR mode`
 
 Tests:
-- [enter_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L56)
-- [enter_restart_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L112)
-- [enter_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L172)
-- [enter_restart_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L232)
+- [enter_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L64)
+- [enter_restart_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L120)
+- [enter_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L180)
+- [enter_restart_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L240)
 
 
 Issues ENTHDR0 CCC to the target, verifies that the target FSM
