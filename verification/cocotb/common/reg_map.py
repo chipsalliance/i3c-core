@@ -2330,7 +2330,7 @@ reg_map = Munch.fromDict({
                 "BCR_VAR": {
                     "low": 24,
                     "mask": 520093696,
-                    "reset": 22,
+                    "reset": 16,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
@@ -2408,7 +2408,7 @@ reg_map = Munch.fromDict({
                 "BCR_VAR": {
                     "low": 24,
                     "mask": 520093696,
-                    "reset": 6,
+                    "reset": 22,
                     "sw": "rw",
                     "hw": "r",
                     "woclr": 0,
