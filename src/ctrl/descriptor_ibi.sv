@@ -27,6 +27,7 @@ module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
   output logic                       ibi_queue_rready_o,
   input  logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
   input  logic [TtiIbiDataDepth-1:0] ibi_queue_depth_i,
+  input  logic                       ibi_queue_clear_i,
 
   // Interface to/from target FSM
   output logic      ibi_byte_valid_o,
@@ -163,6 +164,18 @@ module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
         end
       end
     endcase
+
+    // Overwrite all outputs and go back to Idle in case of a TTI queue reset/clear
+    if (ibi_queue_clear_i) begin
+      ibi_byte_valid_o = 1'b0;
+      ibi_byte_last_o  = 1'b0;
+
+      ibi_queue_rready_o = 1'b0;
+      latch_descriptor = 1'b0;
+
+      data_cnt_d = '0;
+      state_d    = Idle;
+    end
   end
 
   // Capture IBI descriptor

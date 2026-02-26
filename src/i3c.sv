@@ -718,6 +718,7 @@ module i3c
       .tti_ibi_queue_rvalid_i(tti_ibi_rvalid),
       .tti_ibi_queue_rready_o(tti_ibi_rready),
       .tti_ibi_queue_rdata_i(tti_ibi_rdata),
+      .tti_ibi_queue_clear_i(csr_tti_ibi_reg_rst),
 
       // I2C/I3C bus condition detection
       .bus_start_o (bus_start),

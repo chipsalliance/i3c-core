@@ -60,6 +60,7 @@ module controller_standby_i3c
   output logic                            ibi_queue_rready_o,
   input  logic                            ibi_queue_empty_i,
   input  logic                            ibi_queue_full_i,
+  input  logic                            ibi_queue_clear_i,
   input  logic [TtiIbiFifoDepthWidth-1:0] ibi_queue_depth_i,
   input  logic      [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
 
@@ -702,6 +703,7 @@ module controller_standby_i3c
     .ibi_queue_depth_i,
     .ibi_queue_rready_o,
     .ibi_queue_rdata_i,
+    .ibi_queue_clear_i,
 
     .ibi_byte_valid_o(ibi_fifo_rvalid),
     .ibi_byte_ready_i(ibi_fifo_rready),

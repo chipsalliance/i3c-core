@@ -94,6 +94,7 @@ module controller_standby
     input logic [TtiIbiThldWidth-1:0] ibi_queue_ready_thld_i,
     input logic ibi_queue_ready_thld_trig_i,
     input logic ibi_queue_empty_i,
+    input logic ibi_queue_clear_i,
     input logic ibi_queue_rvalid_i,
     output logic ibi_queue_rready_o,
     input logic [TtiIbiDataWidth-1:0] ibi_queue_rdata_i,
@@ -242,6 +243,7 @@ module controller_standby
   logic i2c_bus_addr_valid_o;
   logic i3c_ibi_queue_full_i;
   logic i3c_ibi_queue_empty_i;
+  logic i3c_ibi_queue_clear_i;
   logic i3c_ibi_queue_rvalid_i;
   logic i3c_ibi_queue_rready_o;
   logic i3c_tx_host_nack_o;
@@ -267,6 +269,7 @@ module controller_standby
     // Connect IBI only in I3C mode
     i3c_ibi_queue_full_i   = sel_i2c_i3c ? ibi_queue_full_i           : '0;
     i3c_ibi_queue_empty_i  = sel_i2c_i3c ? ibi_queue_empty_i          : '0;
+    i3c_ibi_queue_clear_i  = sel_i2c_i3c ? ibi_queue_clear_i          : '0;
     i3c_ibi_queue_rvalid_i = sel_i2c_i3c ? ibi_queue_rvalid_i         : '0;
     ibi_queue_rready_o     = sel_i2c_i3c ? i3c_ibi_queue_rready_o     : '0;
 
@@ -450,6 +453,7 @@ module controller_standby
     .tx_queue_flush_o       (i3c_tx_queue_flush_o),
     .ibi_queue_full_i       (i3c_ibi_queue_full_i),
     .ibi_queue_empty_i      (i3c_ibi_queue_empty_i),
+    .ibi_queue_clear_i      (i3c_ibi_queue_clear_i),
     .ibi_queue_rvalid_i     (i3c_ibi_queue_rvalid_i),
     .ibi_queue_depth_i,
     .ibi_queue_rready_o     (i3c_ibi_queue_rready_o),
