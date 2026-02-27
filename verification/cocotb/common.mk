@@ -89,10 +89,12 @@ comma := ,
 ifneq ($(COVERAGE_TYPE),)
     # Check if more than one test is provided
     ifeq ($(findstring $(comma),$(MODULE)),$(comma))
-        # To collect accurate coverage results each tests needs to have a unique SIM_BUILD directory to store
-        # the results. If multiple tests were to use the same directory they would override each others coverage reports
-        # causing the reported values to be incorrect.
-        $(error Collecting coverage for multiple tests is not supported. Either unset 'COVERAGE_TYPE' to run tests without coverage reporting or use nox.)
+        ifneq ($(SIM), vcs)
+            # Non-VCS sims need a unique SIM_BUILD per test to avoid overwriting coverage data.
+            $(error Collecting coverage for multiple tests is not supported with $(SIM). Either unset 'COVERAGE_TYPE' to run tests without coverage reporting or use nox.)
+        else
+            SIM_BUILD := sim_build-$(COVERAGE_TYPE)
+        endif
     else
         # Construct a unique directory for each test and coverage type
         SIM_BUILD := sim_build-$(MODULE)-$(COVERAGE_TYPE)
