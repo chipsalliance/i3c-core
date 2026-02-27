@@ -4686,9 +4686,7 @@ async def test_ri_length_underrun(dut):
     - Result should be a length underrun error (PROTOCOL_ERROR = 0x03)
     """
 
-    # Exclude 0x23 which is used by the simulated I3C target
-    valid_addrs = [a for a in VALID_I3C_ADDRESSES if a != 0x23]
-    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(valid_addrs, 4)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(
@@ -4858,9 +4856,7 @@ async def test_ri_mid_byte_stop(dut):
     - The device recovers and can process subsequent transactions
     """
 
-    # Exclude 0x23 which is used by the simulated I3C target
-    valid_addrs = [a for a in VALID_I3C_ADDRESSES if a != 0x23]
-    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(valid_addrs, 4)
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = random.sample(VALID_I3C_ADDRESSES, 4)
 
     # Initialize
     i3c_controller, i3c_target, tb, recovery = await initialize(
