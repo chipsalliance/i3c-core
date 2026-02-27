@@ -257,14 +257,14 @@ module ibi (
 
   // Retry counter
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (~rst_ni) ibi_retry_cnt <= 3'd7;
-    else if (state_q == Done)
-      if (ibi_status == IbiFailureNack) ibi_retry_cnt <= ibi_retry_cnt + 1'b1;
-      else ibi_retry_cnt <= 3'd7;
+    if (~rst_ni) ibi_retry_cnt <= '0;
+    else if (state_q == Done) ibi_retry_cnt <= '0;
+    else if (bus_rx_done_i && bus_rx_req_nack)
+      ibi_retry_cnt <= ibi_retry_cnt + 1;
 
   // Retry allowed
   assign ibi_can_retry = (ibi_retry_num_i == 3'd7) ||
-                           (ibi_retry_num_i != ibi_retry_cnt);
+                           (ibi_retry_cnt != ibi_retry_num_i + 1);
 
 
   assign done_o = (state_q == Done || (state_q == DriveAddr && arbitration_lost_i && ~bus_tx_done_i));

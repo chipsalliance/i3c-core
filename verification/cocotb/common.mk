@@ -89,8 +89,8 @@ ifeq ($(SIM), vcs)
         endif
         $(shell mkdir -p $(TEST_DIR)/sim_build)
         CM_FILE := $(TEST_DIR)/sim_build/cm.cfg
-        CONVERTER_LOG := $(TEST_DIR)/sim_build/waivers_converter.log
-        $(shell waivers-converter $(I3C_ROOT_DIR)/verification/waivers/waivers.yaml -o $(CM_FILE) --top $(TOPLEVEL) >$(CONVERTER_LOG))
+        $(shell echo "+tree $(TOPLEVEL)" > $(CM_FILE))
+        $(shell echo "-module $(TOPLEVEL)" >> $(CM_FILE))
 
         COMPILE_ARGS += -cm_hier $(CM_FILE)
     endif

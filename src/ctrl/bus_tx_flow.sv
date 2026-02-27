@@ -50,7 +50,7 @@ module bus_tx_flow (
 );
   logic drive_bit_en;
   logic drive_bit_value;
-  logic [3:0] bit_counter;
+  logic [2:0] bit_counter;
 
   logic tx_idle;
   logic tx_done;  // Indicate finished bit write

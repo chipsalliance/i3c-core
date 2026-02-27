@@ -182,7 +182,6 @@ module axi_adapter
   end
 
   logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
-  logic cpuif_req_stall;
   logic i3c_req_write;
   logic i3c_req_last;
   logic [AxiDataWidth-1:0] i3c_req_wdata;

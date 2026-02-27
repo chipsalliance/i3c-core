@@ -489,7 +489,7 @@ module ccc
 
   logic [7:0] rx_data_count;
 
-  logic entdaa_start, entdaa_done;
+  logic entdaa_done;
 
   assign is_byte_our_dynamic_addr = ((command_addr == target_dyn_address_i) && target_dyn_address_valid_i);
   assign is_byte_our_static_addr = ((command_addr == target_sta_address_i) && target_sta_address_valid_i);

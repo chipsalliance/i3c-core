@@ -19,5 +19,18 @@
       ]
       tags: ["top"]
     }
+    {
+      name: Enter and exit all HDR modes
+      desc:
+        '''
+        For each ENTHDR0-7 CCC, the controller issues the CCC, the target
+        FSM is then verified to be in the IdleHDR state. Next, the
+        controller sends the HDR exit pattern and the target FSM is
+        verified to be back in the Idle state. Finally a GETSTATUS CCC
+        is issued to confirm responsivity of the target in SDR mode.
+        '''
+      tests: ["cycle_all_hdr_modes"]
+      tags: ["top"]
+    }
   ]
 }

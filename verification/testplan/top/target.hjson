@@ -20,6 +20,19 @@
       tags: ["top"]
     }
     {
+      name: i3c_target_write_long
+      desc:
+        '''
+        Verifies the handling of long private writes (255 and 256 bytes)
+        that are not issued in any other test, in order to cover upper
+        bits of transaction length signals in the design.
+
+        Uses the same flow as i3c_target_write.
+        '''
+      tests: ["i3c_target_write_255", "i3c_target_write_256"]
+      tags: ["top"]
+    }
+    {
       name: i3c_target_read
       desc:
         '''
@@ -40,6 +53,17 @@
         The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["i3c_target_read"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_read_long
+      desc:
+        '''
+        Verifies the correct handling of long private reads (255 and 256 bytes)
+        that are not issued in any other tests, in order to cover upper bits
+        of transaction length signals in the design.
+        '''
+      tests: ["i3c_target_read_long"]
       tags: ["top"]
     }
     {
@@ -116,6 +140,33 @@
       tags: ["top"]
     }
     {
+      name: i3c_target_ibi_retry_finite
+      desc:
+        '''
+        Tests handling of different values of the IBI_RETRY_NUM CSR field.
+        For each retry number (except of 7 = infinite, since this is verified
+        by i3c_target_ibi_retry) it sets the CSR appropriately, disables
+        ACK-ing IBIs in the controller model, issues an IBI, waits until
+        an expected amount of retries were issued and verifies the LAST_IBI_STATUS
+        CSR to indicate the expected failure. Then, the IBI ACKing is reenabled
+        in the controller, another IBI is issued, handled, and the LAST_IBI_STATUS
+        is verified to indicate a success.
+        '''
+      tests: ["i3c_target_ibi_retry_finite"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_ibi_hold_time
+      desc:
+        '''
+        Since the IBI module can directly drive the SDA line, this test
+        verifies if the T_HD_DAT timing is correctly enforced by the IBI
+        module.
+        '''
+      tests: ["test_i3c_target_ibi_hold_time"]
+      tags: ["top"]
+    }
+    {
       name: i3c_target_ibi_data
       desc:
         '''
@@ -131,6 +182,17 @@
         The I3C bus clock is set to 12.5 MHz.
         '''
       tests: ["i3c_target_ibi_data"]
+      tags: ["top"]
+    }
+    {
+      name: i3c_target_ibi_data_long
+      desc:
+        '''
+        Verifies issuing an IBI of a maximum length obtained via the
+        GETMRL CCC. Also covers upper bits of the IBI descriptor data
+        length.
+        '''
+      tests: ["i3c_target_ibi_data_long"]
       tags: ["top"]
     }
     {

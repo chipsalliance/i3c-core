@@ -19,5 +19,47 @@
       ]
       tags: ["top"]
     }
+    {
+      name: AXI burst read
+      desc:
+        '''
+        Tests if the CSRs can be correctly read using variously
+        configured AXI burst read transactions.
+
+        At the beginning, the first 1KB of the register map is dumped
+        in 4B chunks using the regular read_csr helper function
+        which issues a single 4B AXI read for each chunk of data.
+
+        Then, for multiple possible combinations of arburst, arlen, arsize,
+        arlock and aruser signal values a burst read is issued for a random
+        starting address. Its response is then compared with values dumped
+        at the beginning.
+        '''
+      tests: ["basic_burst_read"]
+      tags: ["top"]
+    }
+    {
+      name: AXI burst write
+      desc:
+        '''
+        Tests if the CSRs can be correctly written to using variously
+        configured AXI burst write transactions.
+
+        Firstly, the test data is prepared for each register in the map,
+        taking into account properties of their fields. This results in
+        a 1KB write data and expected readback buffers.
+
+        Then, for multiple possible combinations of awburst, awlen, awsize,
+        awlock and awuser signal values a burst write is issued for a random
+        starting address, with data supplied by the test write data buffer.
+
+        After confirming the transaction got an OKAY response, the same range
+        of memory that had just been written to is then read back using
+        the regular read_csr function and the obtained data is compared
+        with the expected readback buffer.
+        '''
+      tests: ["basic_burst_write"]
+      tags: ["top"]
+    }
   ]
 }

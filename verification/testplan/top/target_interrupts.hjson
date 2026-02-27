@@ -71,5 +71,16 @@
       tests: ["interrupt_force"]
       tags: ["top"]
     }
+    {
+      name: rx_desc_overflow
+      desc:
+        '''
+        Checks if the tti_rx_desc_full signal gets asserted when there
+        are enough unhandled private writes issued to overfill the
+        RX descriptor FIFO.
+        '''
+      tests: ["rx_desc_overflow"]
+      tags: ["top"]
+    }
   ]
 }

@@ -1169,14 +1169,26 @@ async def test_payload_available(dut):
     # Generate random data payload. Write the payload to INDIRECT_FIFO_DATA
     payload_data = [random.randint(0, 0xFF) for i in range(fifo_size)]
     await recovery.command_write(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data[:-1]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data[:-4]
     )
+
+    await ClockCycles(tb.clk, 200)
+
+    # This read also toggles I3CCSR.readback_array[21]
+    wrptr = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_1.base_addr, 4)
+    )
+
+    assert wrptr == (fifo_size // 4) - 1, (
+        "The write pointer should point to the last dword in the FIFO"
+    )
+
     assert not bool(
         payload_available.value
     ), "After writing data without filling whole FIFO, payload_available should be deasserted"
 
     await recovery.command_write(
-        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, [payload_data[-1]]
+        VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.INDIRECT_FIFO_DATA, payload_data[-4:]
     )
 
     # Check if payload_available is asserted
@@ -1186,11 +1198,18 @@ async def test_payload_available(dut):
 
     # Read data from the indirect FIFO from the AXI side. payload_available should
     # get deasserted only when the FIFO gets empty.
-    for _ in range(fifo_size // 4):
+    for i in range(fifo_size // 4):
         # Check the signal
         assert bool(
             payload_available.value
         ), "FIFO payload_available should not be deasserted until the indirect FIFO is not empty"
+
+        # Validate read pointer
+        # This read also toggles I3CCSR.readback_array[22]
+        rdptr = dword2int(
+            await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_STATUS_2.base_addr, 4)
+        )
+        assert rdptr == i
 
         # Read & wait
         await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr, 4)

@@ -54,5 +54,17 @@
       tests: ["byte_tx_flow"]
       tags: ["bus_tx_flow"]
     }
+    {
+      name: both_reqs_at_once_error
+      desc:
+        '''
+        Simultaneously asserts both a data byte request and a bit request.
+        Then it checks if this resulted in the module asserting the error
+        signal. Finally the requests are deasserted and the error signal
+        deassertion is verified as well.
+        '''
+      tests: ["both_reqs_at_once_error"]
+      tags: ["bus_tx_flow"]
+    }
   ]
 }

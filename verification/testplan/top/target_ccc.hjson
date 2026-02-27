@@ -230,5 +230,19 @@
       tests: ["ccc_direct_multiple_rd"]
       tags: ["top"]
     }
+    {
+      name: ccc_entdaa_parity
+      desc:
+        '''
+        The controller enters the dynamic address assignment mode,
+        receives and verifies the device id of the target, then
+        responds with a random valid dynamic address and either a
+        correct or an incorrect parity bit. Finally the ACK/NACK
+        response of the target is verified.
+        This covers the NACK flow of the ccc_entdaa FSM.
+        '''
+      tests: ["ccc_entdaa_parity"]
+      tags: ["top"]
+    }
   ]
 }

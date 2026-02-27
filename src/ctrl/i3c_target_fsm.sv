@@ -149,10 +149,7 @@ module i3c_target_fsm #(
     end
   end
 
-  logic [RxDataWidth-1:0] rx_data_byte;
-  logic rx_data_byte_valid;
   logic [TxDataWidth-1:0] tx_data_byte;
-  logic tx_data_byte_valid;
   logic tx_end_xfer;
 
   // State definitions
@@ -217,7 +214,7 @@ module i3c_target_fsm #(
   primary_state_e state_q, state_d;
 
   // Register last input byte
-  logic [7:0] last_byte, last_addr;
+  logic [7:0] last_byte;
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_last_byte
     if (~rst_ni) begin
       last_byte <= '0;
@@ -240,7 +237,7 @@ module i3c_target_fsm #(
   logic bus_addr_valid;
   logic bus_rnw_d, bus_rnw_q;
   logic [6:0] bus_addr_d, bus_addr_q;
-  logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match, is_incorrect_byte_match;
+  logic is_our_addr_match, is_rsvd_byte_match, is_virtual_addr_match, is_incorrect_addr_match;
 
   assign is_our_addr_match = target_dyn_address_valid_i ? (target_dyn_address_i == bus_addr_q) :
                              target_sta_address_valid_i ? (target_sta_address_i == bus_addr_q) :
