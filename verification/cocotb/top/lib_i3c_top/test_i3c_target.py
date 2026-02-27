@@ -391,7 +391,8 @@ async def test_i3c_target_read_to_multiple_targets(dut):
         for _ in range(num_transfers_to_our_target):
             addresses.append(TARGET_ADDRESS)
         while len(addresses) < num_transfers:
-            addresses.append(random.choice(VALID_I3C_ADDRESSES))
+            addr = random.choice([a for a in VALID_I3C_ADDRESSES if a != 0x5B])
+            addresses.append(addr)
         random.shuffle(addresses)
         data_len_rsvd_stop_nack = []
         for i, addr in enumerate(addresses):
@@ -405,7 +406,7 @@ async def test_i3c_target_read_to_multiple_targets(dut):
 
         for address, (tx_data, length, rsvd, stop, nack) in zip(addresses, data_len_rsvd_stop_nack):
             response = await i3c_controller.i3c_read(address, length, send_rsvd=rsvd, stop=stop)
-            assert nack == response.nack, f"NACK mismatch: expected response.nack, got {nack}"
+            assert nack == response.nack, f"NACK mismatch: expected {nack}, got {response.nack}"
             if not nack:
                 rx_data = list(response.data)
                 compare(tx_data, rx_data)

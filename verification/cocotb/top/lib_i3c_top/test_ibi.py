@@ -128,14 +128,13 @@ async def check_ibi_done(tb, expected):
 
 
 async def check_pending_interrupt(tb, expected):
-    """Assert PENDING_INTERRUPT[0] (ibi_pending) matches expected value."""
-    pending = await tb.read_csr_field(
+    """Assert PENDING_IBI (ibi_pending) matches expected value."""
+    actual = await tb.read_csr_field(
         tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr,
-        tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT,
+        tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI,
     )
-    actual = pending & 0x1
     assert actual == expected, (
-        f"PENDING_INTERRUPT[0] mismatch: expected {expected}, got {actual}"
+        f"PENDING_IBI mismatch: expected {expected}, got {actual}"
     )
 
 
@@ -538,11 +537,11 @@ async def test_ibi_accept_then_ccc(dut):
     assert result["ccc_response"] is not None, "CCC response missing after Sr->CCC"
     dut._log.info(f"GETSTATUS response: {result['ccc_response'].hex()}")
 
-    # I2: Validate GETSTATUS content — PENDING_INTERRUPT should be 0 after IBI completes
+    # I2: Validate GETSTATUS content -- PENDING_IBI should be 0 after IBI completes
     getstatus = int.from_bytes(result["ccc_response"], byteorder="big", signed=False)
-    pending_from_getstatus = getstatus & 0xF
+    pending_from_getstatus = (getstatus >> 8) & 0x1
     assert pending_from_getstatus == 0, (
-        f"GETSTATUS PENDING_INTERRUPT should be 0 after IBI completed, got {pending_from_getstatus}"
+        f"GETSTATUS PENDING_IBI should be 0 after IBI completed, got {pending_from_getstatus}"
     )
 
     await check_ibi_status(tb, 0, "accept then CCC")
@@ -588,11 +587,11 @@ async def test_ibi_refuse_then_ccc(dut):
     assert result["ccc_response"] is not None, "CCC failed after NACK'd IBI"
     dut._log.info(f"GETSTATUS response after NACK: {result['ccc_response'].hex()}")
 
-    # I3: Validate GETSTATUS content — PENDING_INTERRUPT should still be set (IBI not serviced)
+    # I3: Validate GETSTATUS content -- PENDING_IBI should still be set (IBI not serviced)
     getstatus = int.from_bytes(result["ccc_response"], byteorder="big", signed=False)
-    pending_from_getstatus = getstatus & 0xF
+    pending_from_getstatus = (getstatus >> 8) & 0x1
     assert pending_from_getstatus != 0, (
-        f"GETSTATUS PENDING_INTERRUPT should be non-zero (IBI still pending), got {pending_from_getstatus}"
+        f"GETSTATUS PENDING_IBI should be non-zero (IBI still pending), got {pending_from_getstatus}"
     )
 
     # After STOP + bus available, target retries IBI
