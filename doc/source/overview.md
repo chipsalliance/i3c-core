@@ -58,6 +58,44 @@ Several functionalities related to the recovery interface have been implemented 
   * `recovery_payload_available_o`
   * `recovery_image_activated_o`
 
+## Address Behavior
+
+### Dynamic and Static Address Priority
+
+Per the I3C specification, once a Target has been assigned a Dynamic Address (via ENTDAA,
+SETDASA, SETAASA, or SETNEWDA), it shall stop responding to its Static Address. The
+core implements this as follows:
+
+- If `DYNAMIC_ADDR_VALID = 1`, the Target matches only on `DYNAMIC_ADDR`
+- If `DYNAMIC_ADDR_VALID = 0` and `STATIC_ADDR_VALID = 1`, the Target matches on `STATIC_ADDR`
+
+This rule applies independently to both the main target and the virtual target.
+
+### IBI Address
+
+When sending In-Band Interrupts, the Target uses a separate IBI address derived from the
+main (non-virtual) target's address with dynamic-over-static priority:
+
+- If the Dynamic Address is valid, the IBI address is the Dynamic Address.
+- Otherwise, the IBI address falls back to the Static Address.
+
+This is implemented in `configuration.sv`:
+
+    assign target_ibi_addr_o = target_dyn_addr_valid_o ? target_dyn_addr_o : target_sta_addr_o;
+    assign target_ibi_addr_valid_o = target_sta_addr_valid_o || target_dyn_addr_valid_o;
+
+IBI transmission is gated on `target_ibi_addr_valid`. If neither address is valid,
+`target_ibi_addr_valid` is deasserted and any pending IBI requests are effectively masked
+(the `ibi_pending` signal in `i3c_target_fsm.sv` requires `target_ibi_addr_valid_i`).
+
+### Virtual Target Addressing
+
+The virtual target (used for recovery) has its own independent address pair
+(`VIRT_STATIC_ADDR`, `VIRT_DYNAMIC_ADDR`) with the same dynamic-over-static priority rule.
+Both the main and virtual target addresses are checked in parallel on every incoming
+transaction. When the virtual target address matches, the `virtual_device_sel` signal
+routes the data path to the recovery handler, and TTI queue interrupts are gated.
+
 ## Private reads and writes
 
 * The core handles I3C private reads and writes
@@ -85,39 +123,9 @@ Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit wo
 
 ## I3C Common Command Codes (CCC)
 
-The I3C core supports all CCCs required by the I3C Basic spec, please see "Table 16 I3C Common Command Codes" for a full reference.
-
-All CCCs are exercised with Cocotb tests.
-
-### Broadcast CCCs
-
-The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):
-
-* ENEC (R) - Enable Events Command
-* DISEC (R) - Disable Events Command
-* SETMWL (R) - Set Max Write Length
-* SETMRL (R) - Set Max Read Length
-* SETAASA (O) - Set All Addresses to Static Adresses
-* RSTACT (R) - Target Reset Action
-
-### Direct CCCs
-
-The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):
-
-* ENEC (R) - Enable Events Command
-* DISEC (R) - Disable Events Command
-* RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec
-* SETDASA (O) - Set Dynamic Address from Static Address
-* SETMWL (R) - Set Max Write Length
-* SETMRL (R) - Set Max Read Length
-* GETMWL (R) - Get Max Write Length
-* GETMRL (R) - Set Max Read Length
-* GETPID (C) - Get Provisioned ID
-* GETBCR (C) - Get Bus Characteristics Register
-* GETDCR (C) - Get Device Characteristics Register
-* GETSTATUS (R) - Get Device Status
-* RSTACT (R) - Target Reset Action
-
+The I3C core supports all CCCs required by the I3C Basic spec.
+See {doc}`ccc` for the full list of supported CCCs, CCCs that update registers
+without firmware notification, and CCC error handling.
 
 ## Other features
 
@@ -127,3 +135,5 @@ The following Direct CCCs are currently supported by the core (all required Dire
   * `escalated_reset_o`
 
 * The core correctly detects HDR-Exit Pattern
+* Optional 60 us HDR error recovery timer for TE0/TE1 error recovery (see {doc}`error_handling`)
+* Target error detection (TE0-TE5) with interrupt reporting and saturating counters (see {doc}`error_handling`)

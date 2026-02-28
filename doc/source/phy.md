@@ -70,27 +70,68 @@ reg_val = $floor(3 / system_clock_period) - 1
 T_SU_DAT_REG = reg_val > 0 ? reg_val : 0
 ```
 
-For system clock frequencies below 320MHz, the core should be configured with the `DisableInputFF` parameter set to `True` (see [example configuration](https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml#L49))
-This parameter removes one flipflop on the input lines, shortening the response latency.
+The core supports system clock frequencies above 333MHz, and SCL frequencies up to 12.5MHz. Below 333MHz Tsco I3C timing requirement of 12ns is not met. I3C specification defines Tsco as “Clock to Data Turnaround Time: The time duration between reception of an SCL edge and the start of driving an SDA change”. With 333MHz clock the maximum response time from the core is 12ns. This timing is not affected by the chip pads delays as per MIPI CSI I3C 1.1.1 specification.
 
-The core provides 2 configurations with the `DisableInputFF` parameter set to `True`.
-In order to generate a configuration with the parameter set, run the following command from the top level of the I3C repository:
+The I3C core needs 3 system clock cycles between an event on a SCL line and driving the SDA. Since SCL and core clock are asynchronous, SCL can drop just after rising edge of the system clock. Such situation adds an additional clock cycle latency resulting in 4 cycles in total.
 
-```
-  make generate CFG_NAME=ahb CFG_FILE=i3c_core_configs.yaml
-```
+Maximal I3C core Tsco can be calculated with the Tsco = 4 * Tsys_clk formula , where Tsys_clk is a system clock period.
 
-or
-
-```
-  make generate CFG_NAME=axi CFG_FILE=i3c_core_configs.yaml
+```{warning}
+The minimum frequency calculation (333MHz) accounts only for the
+I3C core internal logic delay. It does **not** include timing delays
+introduced to and from the PADs. Integrators must account for these additional
+delays when selecting the system clock frequency. 
 ```
 
-Depending on the chosen bus interface.
-More Information about the configuration tool can be found in the relevant [README](https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md)
+Future core releases will enable the GETMXDS CCC support allowing the core to advertise longer Tsco times for lower system clock frequencies.
 
-Example configurations:
 
-* 160MHz system clock (minimal operting clock) - `DisableInputFF=True`, `T_SU_DAT_REG=0`
-* 400MHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=0`
-* 1GHz system clock - `DisableInputFF=False`, `T_SU_DAT_REG=2`
+### SDA Output Path and Output Enable
+
+The SDA output path uses a dedicated output enable (`sda_oe`) signal in addition to the
+data value (`sda_o`). The `bus_tx_flow` module computes both based on the drive mode
+(Open Drain or Push-Pull) and the data value being transmitted:
+
+```
+sda_oe = drive_mode_is_pushpull OR (NOT data_msb)
+```
+
+The resulting truth table for the SDA pad:
+
+| sel_od_pp | sda_o | sda_oe | IO State |
+|-----------|-------|--------|----------|
+| 0 (OD) | 0 | 1 | Drive Low |
+| 0 (OD) | 1 | 0 | High-Z (released) |
+| 1 (PP) | 0 | 1 | Drive Low |
+| 1 (PP) | 1 | 1 | Drive High |
+
+In Open Drain mode, the pad is released (High-Z) when driving a logical 1, allowing
+the external pull-up to assert the line. In Push-Pull mode, the pad actively drives
+both high and low.
+
+The PHY module (`i3c_phy.sv`) passes these signals through to the pad interface:
+
+- `ctrl_sda_oe_i` -> `ctrl_sda_oe_o` (output enable passthrough)
+- `sel_od_pp_i` -> `sel_od_pp_o` (drive mode passthrough)
+
+### I/O Signal Routing Constraints
+
+All six I3C bus I/O signals (`scl_i`, `sda_i`, `scl_o`, `sda_o`, `scl_oe`, `sda_oe`)
+must be routed together in physical design. The two-flop synchronizers
+(`scl_synchronizer`, `sda_synchronizer`) and the output-path flops should be placed
+close to the I/O pads to minimize routing skew between input and output paths.
+
+Keeping the synchronizing flops and output flops near each other and near the pads
+ensures that:
+
+1. Input sampling latency is minimized and consistent across SCL and SDA.
+2. Output drive timing (t{sub}`SCO`) is not degraded by long internal routing.
+3. Skew between `sda_o` / `sda_oe` and the corresponding `sda_i` sample point
+   remains within the timing budget described in the
+   [I3C timing configuration](#i3c-timing-configuration) section above.
+
+```{note}
+The `sel_od_pp_o` (Open Drain / Push-Pull select) signal should also be routed
+alongside `sda_o` and `sda_oe` since it directly controls the pad driver mode
+and must be stable before the pad switches drive state.
+```

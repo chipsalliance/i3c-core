@@ -228,8 +228,8 @@ During the Private Write transaction, an error can be caused by:
 Private Write timing diagram: Parity bit error or RX Queue overrun scenario
 :::
 
-If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor will indicate an error status and the Target Device should not ACK data on the bus.
-The Active Controller can attempt mitigating such a situation by reading Target queue size from the `TTI_QUEUE_SIZE` register before sending a big chunk of data.
+If an Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor will indicate an error status and the Target Device should not ACK data on the bus.
+The Controller can attempt mitigating such a situation by reading Target queue size from the `TTI_QUEUE_SIZE` register before sending a big chunk of data.
 
 ##### In-Band Interrupts
 
