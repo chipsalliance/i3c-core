@@ -251,5 +251,46 @@
       tests: ["ibi_flush_from_idle_interrupt_flood"]
       tags: ["top"]
     }
+    {
+      name: ibi_multi_queue_nack_recovery
+      desc:
+        '''
+        Pre-queues 3 IBIs into the TTI IBI FIFO, NACKs the first until retry
+        exhaustion (retry_num=0), then FW resets the retry counter via
+        IBI_RETRY_CTR_RST. The target retries the same IBI (still loaded in
+        descriptor_ibi), controller accepts it and all subsequent IBIs drain
+        in FIFO order. Verifies multi-IBI queuing, NACK retry exhaustion,
+        FW-initiated retry counter reset, and IBI pipeline recovery.
+        '''
+      tests: ["ibi_multi_queue_nack_recovery"]
+      tags: ["top"]
+    }
+    {
+      name: ibi_multi_queue_partial_then_continue
+      desc:
+        '''
+        Pre-queues 3 IBIs, controller truncates the first IBI (partial read).
+        descriptor_ibi flushes remaining data and auto-advances to the next
+        queued IBI without FW intervention. Remaining IBIs are accepted with
+        correct data. Verifies Flush -> Idle auto-advance path and that
+        target does NOT repeat the partially-aborted IBI (Sec 5.1.6.2).
+        '''
+      tests: ["ibi_multi_queue_partial_then_continue"]
+      tags: ["top"]
+    }
+    {
+      name: ibi_multi_queue_mixed_abort
+      desc:
+        '''
+        Pre-queues 4 IBIs, exercises both abort types in sequence:
+        IBI #0 is partially aborted (auto-advance via Flush), IBI #1 is
+        accepted normally, IBI #2 is NACKed with retry exhaustion then
+        recovered via FW retry counter reset, IBI #3 is accepted after
+        auto-advancing from FIFO. Verifies interleaved partial-abort
+        and NACK recovery paths in a single multi-IBI sequence.
+        '''
+      tests: ["ibi_multi_queue_mixed_abort"]
+      tags: ["top"]
+    }
   ]
 }
