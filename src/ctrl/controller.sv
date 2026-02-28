@@ -395,7 +395,6 @@ module controller
   assign sda_oe_o    = ctrl_sda_oe_o[3];
   assign sel_od_pp_o = ctrl_sel_od_pp_i[3];
 
-  assign ctrl_bus_i[3] = bus;
 
   // Tieoff of all other devices
   always_comb begin : mux_tieoff
@@ -407,6 +406,8 @@ module controller
       ctrl_bus_i[i].sda.stable_high = 1'b1;
       ctrl_bus_i[i].scl.stable_high = 1'b1;
     end
+    
+    ctrl_bus_i[3] = bus;
   end
 
   configuration xconfiguration (
