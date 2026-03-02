@@ -612,11 +612,21 @@ module i3c_target_fsm import i3c_pkg::*; (
           bus_tx_req_o.data       = {target_ibi_addr_i, 1'b1};
 
           // On arb lost, inform IBI requester and hand over to regular RxFByte
-          // to receive rest of address
+          // to receive rest of address.  When arb loss coincides with the
+          // final bit (RnW), bus_rx_rsp_i.done fires on the same clock;
+          // skip RxFByte and go directly to CheckFByte so the completed
+          // byte is not lost.
           if (arbitration_lost_i) begin
             ibi_status_we_o = 1'b1;
             ibi_status_o    = IbiFailureAddressArb;
-            state_d = RxFByte;
+            if (bus_rx_rsp_i.done) begin
+              bus_addr_valid = 1'b1;
+              bus_addr_d     = bus_rx_rsp_i.data[7:1];
+              bus_rnw_d      = bus_rx_rsp_i.data[0];
+              state_d = CheckFByte;
+            end else begin
+              state_d = RxFByte;
+            end
           end else if (bus_tx_rsp_i.done) begin
             // IBI address has been submitted successfully, we won arbitration. Continue with IBI.
             state_d = IbiReadAck;

@@ -19,7 +19,6 @@ module bus_rx_flow (
   logic       bit_counter_en;
 
   logic [6:0] rx_data;
-  logic       rx_bit;
 
   logic rx_bit_en;
   logic rx_done, rx_rsp_done;
@@ -40,7 +39,7 @@ module bus_rx_flow (
   assign rx_rsp_o = '{
     idle: (state_q == Idle),
     done: rx_rsp_done,
-    data: rx_req_bit ? {{7{1'b0}}, rx_bit} : {rx_data[6:0], sda_i}
+    data: rx_req_bit ? {{7{1'b0}}, sda_i} : {rx_data[6:0], sda_i}
   };
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : ff_bit_request
@@ -51,20 +50,9 @@ module bus_rx_flow (
     end
   end
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin : read_bit_from_bus
-    if (~rst_ni) begin
-      rx_done <= '0;
-      rx_bit  <= '0;
-    end else begin
-      if (rx_bit_en & scl_posedge_i) begin
-        rx_done <= 1'b1;
-        rx_bit  <= sda_i;
-      end else begin
-        rx_done <= '0;
-        rx_bit  <= '0;
-      end
-    end
-  end
+  // rx_done is combinational: fires on the same clk_i edge as scl_posedge_i,
+  // aligning it with bus_tx_flow's combinational tx_rsp_o.done.
+  assign rx_done = rx_bit_en & scl_posedge_i;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin : read_byte_from_bus
     if (~rst_ni) begin
@@ -108,13 +96,13 @@ module bus_rx_flow (
       Idle: begin end
       ReadByte: begin
         bit_counter_en = 1'b1;
-        rx_bit_en = ~rx_done;
+        rx_bit_en = 1'b1;
         if (~|bit_counter & rx_done) begin
           rx_rsp_done = 1'b1;
         end
       end
       ReadBit: begin
-        rx_bit_en = ~rx_done;
+        rx_bit_en = 1'b1;
         if (rx_done) rx_rsp_done = 1'b1;
       end
       NextTaskDecision: begin
