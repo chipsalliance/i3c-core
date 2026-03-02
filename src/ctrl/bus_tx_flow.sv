@@ -53,6 +53,8 @@ module bus_tx_flow import i3c_pkg::*; (
   logic tx_done;     // Indicates finished bit write
   logic bus_tx_done; // Feedback to requester that transfer is done
   logic bus_tx_abort;
+  logic bus_tx_done_q;  // Registered output to match bus_rx_flow timing
+  logic bus_tx_abort_q;
 
   typedef enum logic [2:0] {
     Idle,
@@ -294,24 +296,28 @@ module bus_tx_flow import i3c_pkg::*; (
     // FUTUREFIX: error is unused; available for future bus error reporting
     error: 1'b0,
     idle:  (state_q == Idle),
-    done:  bus_tx_done,
-    abort: bus_tx_abort
+    done:  bus_tx_done_q,
+    abort: bus_tx_abort_q
   };
 
   // Sequential process for all flops
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      bit_counter_q <= '0;
-      req_value_q   <= '1;
-      drive_mode_q  <= OpenDrain;
-      sda_oe_q      <= 1'b0;
-      state_q       <= Idle;
+      bit_counter_q  <= '0;
+      req_value_q    <= '1;
+      drive_mode_q   <= OpenDrain;
+      sda_oe_q       <= 1'b0;
+      state_q        <= Idle;
+      bus_tx_done_q  <= 1'b0;
+      bus_tx_abort_q <= 1'b0;
     end else begin
-      bit_counter_q <= bit_counter_d;
-      req_value_q   <= req_value_d;
-      drive_mode_q  <= drive_mode_d;
-      sda_oe_q      <= sda_oe_d;
-      state_q       <= state_d;
+      bit_counter_q  <= bit_counter_d;
+      req_value_q    <= req_value_d;
+      drive_mode_q   <= drive_mode_d;
+      sda_oe_q       <= sda_oe_d;
+      state_q        <= state_d;
+      bus_tx_done_q  <= bus_tx_done;
+      bus_tx_abort_q <= bus_tx_abort;
     end
   end
 

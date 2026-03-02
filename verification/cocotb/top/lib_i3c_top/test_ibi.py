@@ -1660,11 +1660,6 @@ async def test_ibi_rxfbytearb_wins_arbitration(dut):
     i3c_controller, _, tb = await test_setup(dut, static_addr=DUT_ADDR)
     await init_ibi(i3c_controller, tb, addr=DUT_ADDR)
 
-    # Suppress known DUT tSCO violation on IBI ACK handoff path
-    # (pre-existing issue, not related to this test's coverage goal)
-    if tb.bus_monitor:
-        tb.bus_monitor.suppress_check("IBI_ACK_HANDOFF")
-
     mdb = 0xAA
     data = [0x11, 0x22]
 
