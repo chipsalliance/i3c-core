@@ -1354,8 +1354,11 @@ async def test_ibi_multiple_arb_losses(dut):
     """
     CP25/CP4/CP10: Force multiple consecutive IBI failures to exhaust the
     retry counter. retry_num=2 allows 3 attempts total (cnt 0,1,2);
-    3 NACKs should exhaust retries → IbiFailureRetry(3).
-    HW does NOT auto-flush the IBI FIFO on retry exhaustion.
+    3 NACKs should exhaust retries -> IbiFailureRetry(3).
+
+    HW does NOT auto-flush the IBI FIFO on retry exhaustion.  FW must
+    explicitly clear the IBI queue (IBI_QUEUE_RST) and reset the retry
+    counter (IBI_RETRY_CTR_RST) before queuing a fresh IBI.
 
     Uses NACK-based approach since bus-level arbitration timing makes
     it impractical to guarantee VIP wins on every attempt.
@@ -1377,24 +1380,31 @@ async def test_ibi_multiple_arb_losses(dut):
         )
 
     # After 3 NACKs with retry_num=2, counter (3) > retry_num (2)
-    # → IbiFailureRetry(3) + flush
+    # -> IbiFailureRetry(3).  descriptor_ibi stays in WriteMdb with
+    # stale data; InhibitRetry prevents further IBI attempts.
     await ClockCycles(tb.clk, 50)
     await check_ibi_status(tb, 3, "retry exhausted via consecutive NACKs")
 
-    # Verify IBI data was flushed — a fresh IBI should work cleanly.
-    # The retry counter is NOT reset by IbiFailureRetry, so we must
-    # reset it via FW before queuing the fresh IBI. Otherwise the DUT
-    # will immediately flush the new IBI too (counter > retry_num).
+    # FW recovery sequence: flush stale IBI data, then reset retry counter.
+    # IBI_QUEUE_RST clears descriptor_ibi back to Idle + empties FIFO.
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+        tb.reg_map.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST,
+        1,
+    )
+    await ClockCycles(tb.clk, 5)
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST,
         1,
     )
+    await ClockCycles(tb.clk, 5)
+
     mdb_fresh = 0xFF
     fresh_data = [0x11, 0x22]
     await send_ibi(tb, mdb_fresh, fresh_data)
 
-    # DUT initiates IBI when bus_available fires (~1µs after last STOP).
+    # DUT initiates IBI when bus_available fires (~1us after last STOP).
     i3c_controller.enable_ibi(True)
     response = await with_timeout(
         i3c_controller.wait_for_ibi(), 20, "us",
@@ -1403,6 +1413,7 @@ async def test_ibi_multiple_arb_losses(dut):
     await check_ibi_status(tb, 0, "fresh IBI after retry exhaustion")
 
     await ClockCycles(tb.clk, 10)
+    await tb.teardown()
 
 
 # =============================================================================
@@ -1518,23 +1529,22 @@ async def test_rxfbytearb_collision_blind_drive(dut):
 @cocotb.test()
 async def test_ibi_flush_from_idle_interrupt_flood(dut):
     """
-    Provoke IbiFailureRetry while the target FSM is in Idle.
+    Verify correct behavior after IbiFailureRetry while FSM is in Idle.
 
-    i3c_target_fsm.sv:463-469: In Idle, when ibi_pending && !ibi_can_retry,
-    the FSM asserts ibi_byte_flush_o and ibi_status_we_o combinationally
-    every cycle without transitioning out of Idle.  descriptor_ibi.sv only
-    checks ibi_byte_flush_i in WriteMdb and WriteData states (lines 102, 125).
-    If the flush is ignored (descriptor_ibi still in DescLatch/DescPop) or if
-    the descriptor_ibi gets stuck in WriteMdb, ibi_pending stays high and
-    ibi_status_we_o fires every cycle, flooding IBI_DONE interrupts.
+    After retry exhaustion:
+    - descriptor_ibi stays in WriteMdb (HW does NOT auto-flush)
+    - InhibitRetry prevents repeated ibi_status_we_o pulses (no flood)
+    - FW must use IBI_QUEUE_RST to clear stale data before re-queuing
 
-    Per spec Sec.5.1.6.2: An IBI disposal shall produce a single status update.
-    ibi_status_we_o must not assert for more than one cycle per IBI disposal.
+    Verifies that:
+    1. IbiFailureRetry status is reported exactly once (InhibitRetry works)
+    2. FW recovery sequence (IBI_QUEUE_RST + IBI_RETRY_CTR_RST) restores
+       clean state for a fresh IBI
     """
     log = logging.getLogger("test_ibi_flush_idle_flood")
     i3c_controller, _, tb = await test_setup(dut)
 
-    # retry_num=0 → allows exactly 1 attempt (cnt 0 ≤ retry_num 0)
+    # retry_num=0 -> allows exactly 1 attempt (cnt 0 <= retry_num 0)
     await init_ibi(i3c_controller, tb, retry_num=0)
 
     # Internal signal handles
@@ -1559,35 +1569,27 @@ async def test_ibi_flush_from_idle_interrupt_flood(dut):
     result = await i3c_controller.wait_for_ibi_event()
     assert result["ack"] is False, "Expected NACK for first IBI"
 
-    # After NACK: counter increments 0→1.  retry_num=0, so 1 > 0 → can't retry.
-    # DUT: IbiReadAck → WaitRestart → (STOP) → Idle.
+    # After NACK: counter increments 0->1.  retry_num=0, so 1 > 0 -> can't retry.
+    # DUT: IbiReadAck -> WaitRestart -> (STOP) -> Idle.
     # In Idle: descriptor_ibi is still in WriteMdb (MDB was never consumed).
-    # ibi_pending=1 && !ibi_can_retry → IbiFailureRetry flush.
+    # ibi_pending=1 && !ibi_can_retry -> IbiFailureRetry (single pulse).
+    # InhibitRetry prevents further status writes.
     await ClockCycles(tb.clk, 200)
     await check_ibi_status(tb, 3, "IbiFailureRetry after 1 NACK")
 
-    # Confirm descriptor_ibi returned to Idle after the first flush
+    # descriptor_ibi should be in WriteMdb (state 3) -- HW does NOT
+    # auto-flush on retry exhaustion.  FW must clear explicitly.
     desc_state = int(desc_ibi.state_q.value)
-    assert desc_state == 0, (
-        f"descriptor_ibi stuck in state {desc_state} after first IbiFailureRetry"
+    assert desc_state == 3, (
+        f"descriptor_ibi expected in WriteMdb(3) after IbiFailureRetry, "
+        f"got state {desc_state}"
     )
 
     # -----------------------------------------------------------------
-    # Phase 2: Queue a FRESH IBI with the retry counter still exhausted.
-    #
-    # descriptor_ibi: Idle → DescLatch → DescPop → WriteMdb (~3 sys clks).
-    # When WriteMdb is reached:  ibi_byte_valid_o=1 → ibi_pending=1.
-    # Target FSM (Idle): ibi_pending && !ibi_can_retry → flush + status_we.
-    #
-    # Bug scenario: descriptor_ibi ignores flush or gets stuck in WriteMdb,
-    # causing ibi_status_we_o to fire every cycle (flood).
+    # Phase 2: Verify InhibitRetry prevents status flood.
+    # descriptor_ibi is still in WriteMdb (ibi_pending=1) but
+    # InhibitRetry gates the Idle IBI path.
     # -----------------------------------------------------------------
-    mdb_fresh = 0xBB
-    data_fresh = [0x22, 0x33]
-    await send_ibi(tb, mdb_fresh, data_fresh)
-
-    # Monitor ibi_status_we_o for 500 system clock cycles.
-    # Correct behavior: at most 1 pulse (single IbiFailureRetry disposal).
     status_we_count = 0
     for _ in range(500):
         await ClockCycles(tb.clk, 1)
@@ -1596,32 +1598,35 @@ async def test_ibi_flush_from_idle_interrupt_flood(dut):
             status_we_count += 1
     log.info(f"ibi_status_we_o pulse count over 500 cycles: {status_we_count}")
 
-    desc_state = int(desc_ibi.state_q.value)
-    log.info(f"descriptor_ibi state after fresh-IBI flush: {desc_state}")
-
-    # -----------------------------------------------------------------
-    # Phase 3: Assertions — correct spec behavior
-    # -----------------------------------------------------------------
-    assert status_we_count <= 1, (
+    assert status_we_count == 0, (
         f"ibi_status_we_o asserted {status_we_count} times in 500 "
-        f"cycles (expected ≤ 1).  descriptor_ibi.state_q = {desc_state}. "
-        f"Flush from Idle/IbiFailureRetry was ignored or not handled atomically, "
-        f"causing ibi_status_we_o flood."
+        f"cycles (expected 0 -- InhibitRetry should suppress). "
+        f"descriptor_ibi.state_q = {int(desc_ibi.state_q.value)}."
     )
 
+    # -----------------------------------------------------------------
+    # Phase 3: FW recovery -- flush queue, reset retry counter, fresh IBI
+    # -----------------------------------------------------------------
+    await tb.write_csr_field(
+        tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
+        tb.reg_map.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST,
+        1,
+    )
+    await ClockCycles(tb.clk, 5)
+
+    # Confirm descriptor_ibi returned to Idle after FW queue reset
+    desc_state = int(desc_ibi.state_q.value)
     assert desc_state == 0, (
-        f"descriptor_ibi stuck in state {desc_state} (expected "
-        f"Idle=0) after second IbiFailureRetry."
+        f"descriptor_ibi stuck in state {desc_state} after IBI_QUEUE_RST "
+        f"(expected Idle=0)"
     )
 
-    # -----------------------------------------------------------------
-    # Phase 4: Clean IBI after counter reset
-    # -----------------------------------------------------------------
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST,
         1,
     )
+    await ClockCycles(tb.clk, 5)
 
     mdb_clean = 0xCC
     data_clean = [0x44]
