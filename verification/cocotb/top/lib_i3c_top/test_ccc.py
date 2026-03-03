@@ -3950,9 +3950,6 @@ async def test_ccc_entdaa_stop_in_ackrsvdbyte(dut):
 
     # Raw ENTDAA: S + 7E/W + 0x07 + Sr + 7E/R + ACK bit → STOP during ACK
     log.info("ENTDAA with STOP during AckRsvdByte")
-    if tb.bus_monitor:
-        tb.bus_monitor.suppress_check("BUS_CONTENTION")
-        tb.bus_monitor.suppress_check("ENTDAA_DA_HANDOFF")
     await i3c_controller.take_bus_control()
     await i3c_controller.send_start()
     await i3c_controller.write_addr_header(0x7E)
@@ -3963,9 +3960,6 @@ async def test_ccc_entdaa_stop_in_ackrsvdbyte(dut):
     # STOP right after ACK (target is in AckRsvdByte or just transitioned)
     await i3c_controller.send_stop()
     i3c_controller.give_bus_control()
-    if tb.bus_monitor:
-        tb.bus_monitor.unsuppress_check("BUS_CONTENTION")
-        tb.bus_monitor.unsuppress_check("ENTDAA_DA_HANDOFF")
     await ClockCycles(tb.clk, 50)
 
     # Recovery
