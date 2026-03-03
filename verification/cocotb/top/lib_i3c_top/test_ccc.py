@@ -769,7 +769,7 @@ async def test_ccc_enec_disec_bcast(dut):
 
     _EVENT_TOGGLE_BYTE = 0b00001011
 
-    i3c_controller, _, tb = await test_setup(dut)
+    i3c_controller, _, tb = await test_setup(dut, static_addr=None, virtual_static_addr=None)
     await ClockCycles(tb.clk, 50)
 
     # Read default values
