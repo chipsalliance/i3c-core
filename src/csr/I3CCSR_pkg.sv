@@ -1203,7 +1203,6 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [3:0] next;
-        logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__in_t;
 
     typedef struct packed{

@@ -128,13 +128,21 @@ async def check_ibi_done(tb, expected):
 
 
 async def check_pending_interrupt(tb, expected):
-    """Assert PENDING_IBI (ibi_pending) matches expected value."""
+    """Assert PENDING_IBI (ibi_pending) and PENDING_INTERRUPT CSR fields match expected value."""
     actual = await tb.read_csr_field(
         tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr,
         tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI,
     )
     assert actual == expected, (
         f"PENDING_IBI mismatch: expected {expected}, got {actual}"
+    )
+    # PENDING_INTERRUPT[3:0] should track ibi_pending (bit 0)
+    pi_actual = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.base_addr,
+        tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT,
+    )
+    assert pi_actual == expected, (
+        f"PENDING_INTERRUPT mismatch: expected {expected}, got {pi_actual}"
     )
 
 
@@ -542,6 +550,11 @@ async def test_ibi_accept_then_ccc(dut):
     assert pending_from_getstatus == 0, (
         f"GETSTATUS PENDING_IBI should be 0 after IBI completed, got {pending_from_getstatus}"
     )
+    # PENDING_INTERRUPT[3:0] should also be 0 after IBI completes
+    pending_interrupt = getstatus & 0xF
+    assert pending_interrupt == 0, (
+        f"GETSTATUS PENDING_INTERRUPT[3:0] should be 0 after IBI completed, got {pending_interrupt}"
+    )
 
     await check_ibi_status(tb, 0, "accept then CCC")
 
@@ -591,6 +604,11 @@ async def test_ibi_refuse_then_ccc(dut):
     pending_from_getstatus = (getstatus >> 8) & 0x1
     assert pending_from_getstatus != 0, (
         f"GETSTATUS PENDING_IBI should be non-zero (IBI still pending), got {pending_from_getstatus}"
+    )
+    # PENDING_INTERRUPT[3:0] should also be non-zero (IBI still pending)
+    pending_interrupt = getstatus & 0xF
+    assert pending_interrupt != 0, (
+        f"GETSTATUS PENDING_INTERRUPT[3:0] should be non-zero (IBI still pending), got {pending_interrupt}"
     )
 
     # After STOP + bus available, target retries IBI

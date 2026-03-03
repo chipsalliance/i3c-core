@@ -9243,7 +9243,7 @@ module I3CCSR (
         if(decoded_reg_strb.I3C_EC.TTI.INTERRUPT_STATUS && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value & ~decoded_wr_biten[19:16]) | (decoded_wr_data[19:16] & decoded_wr_biten[19:16]);
             load_next_c = '1;
-        end else if(hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.we) begin // HW Write - we
+        end else begin // HW Write
             next_c = hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next;
             load_next_c = '1;
         end

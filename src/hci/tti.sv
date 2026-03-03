@@ -265,8 +265,7 @@ module tti
     hwif_tti_o.RESET_CONTROL.SOFT_RST.we = '0;
     hwif_tti_o.RESET_CONTROL.SOFT_RST.next = '0;
 
-    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = 4'h0;
-    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.we = 1'b0; // FUTUREFIX: Nice to have in the future
+    hwif_tti_o.INTERRUPT_STATUS.PENDING_INTERRUPT.next = {3'b0, ibi_pending_i};
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next = '0;
     hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.we = '0; // FUTUREFIX: Nice to have in the future
     hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next = '0;

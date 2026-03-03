@@ -102,7 +102,13 @@ async def test_ccc_getstatus(dut):
     responses = await i3c_controller.i3c_ccc_read(ccc=CCC.DIRECT.GETSTATUS, addr=DYNAMIC_ADDR, count=2)
     status = int.from_bytes(responses[0][1], byteorder="big", signed=False)
     ibi_pend_mask = 0x0100
-    assert (status & ibi_pend_mask) == ibi_pend_mask, f"GETSTATUS PENDING_INTERRUPT not set: status=0x{status:04X}"
+    assert (status & ibi_pend_mask) == ibi_pend_mask, f"GETSTATUS PENDING_IBI not set: status=0x{status:04X}"
+
+    # PENDING_INTERRUPT[3:0] should also be non-zero when IBI is pending
+    pending_interrupt = status & 0xF
+    assert pending_interrupt != 0, (
+        f"GETSTATUS PENDING_INTERRUPT[3:0] should be non-zero with IBI pending, got {pending_interrupt}"
+    )
 
     await tb.teardown()
 
