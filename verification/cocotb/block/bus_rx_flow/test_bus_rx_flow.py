@@ -6,7 +6,7 @@ from bus_monitor import BusMonitor
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, FallingEdge, First, ReadOnly, RisingEdge
+from cocotb.triggers import ClockCycles, FallingEdge, First, RisingEdge
 
 CLOCK_PERIOD_NS = 2
 SCL_CLK_RATIO = 40
@@ -63,11 +63,12 @@ async def test_multiple_bit_reads(dut):
     await setup_test(dut)
 
     for d in data:
+        # Drive SDA during SCL low, before the posedge samples it
         await FallingEdge(dut.scl_i)
+        dut.sda_i.value = d
         await RisingEdge(dut.clk_i)
         dut.rx_req_bit_i.value = 1
 
-        dut.sda_i.value = d
         scl_negedge = FallingEdge(dut.scl_i)
         done_posedge = RisingEdge(dut.rx_done_o)
         result = await First(scl_negedge, done_posedge)
@@ -93,24 +94,27 @@ async def test_multiple_byte_reads(dut):
     await setup_test(dut)
 
     for d in data:
+        # Align to SCL falling edge and set request
         await FallingEdge(dut.scl_i)
         await RisingEdge(dut.clk_i)
         dut.rx_req_byte_i.value = 1
 
+        # Drive all 8 SDA bits, each set during SCL low so it is stable
+        # before the rising edge samples it.
         for b in range(8):
             dut.sda_i.value = (d >> (7 - b)) & 1
-            scl_negedge = FallingEdge(dut.scl_i)
-            done_posedge = RisingEdge(dut.rx_done_o)
+            await RisingEdge(dut.scl_i)
+            if b < 7:
+                await FallingEdge(dut.scl_i)
 
-            result = await First(scl_negedge, done_posedge)
-
-            if result == done_posedge:
-                await ReadOnly()
-                assert dut.rx_data_o.value == d
-                break
-
-            if b == 7:
-                assert False, "Did not detect RX Done when expected"
+        # After the 8th SCL rising edge, wait for done.
+        # done fires combinationally on the 8th scl_posedge_i pulse
+        # (scl_posedge_i is delayed t_r clk cycles after SCL rises).
+        await RisingEdge(dut.rx_done_o)
+        assert dut.rx_data_o.value == d, (
+            f"Byte mismatch: rx_data_o={int(dut.rx_data_o.value):#04x}, "
+            f"expected={d:#04x}"
+        )
 
         await RisingEdge(dut.clk_i)
         dut.rx_req_byte_i.value = 0
