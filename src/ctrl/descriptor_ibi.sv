@@ -10,10 +10,6 @@
   is in the module peeks it and waits until the defined count of data words is
   written to the queue. Finally, the module outputs MDB and the data as 8-bit
   words.
-
-  TODO: The TTI IBI queue must be EMPTY each time a descriptor is written.
-  This is because the module relies on absolute count of data words stored in
-  it, not the distance between two consecutive descriptors.
 */
 module descriptor_ibi import i3c_pkg::i3c_byte_t; #(
   parameter int unsigned TtiIbiDataWidth = 32,
