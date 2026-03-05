@@ -18,6 +18,11 @@ __pycache__
 *.vpd
 *.fst
 *.fsdb
+*.rc
+.verisium_debug*
+verisium_debug*
+*.shm
+*xrun.history
 novas.*
 verdiLog
 *.xml

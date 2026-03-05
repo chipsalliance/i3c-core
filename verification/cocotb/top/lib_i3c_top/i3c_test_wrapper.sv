@@ -210,6 +210,7 @@ i3c_wrapper xi3c_wrapper (
     .rlast_o(rlast),
     .rvalid_o(rvalid),
     .rready_i(rready),
+    .ruser_o(),
 
     .awaddr_i(awaddr),
     .awburst_i(awburst),
@@ -226,11 +227,13 @@ i3c_wrapper xi3c_wrapper (
     .wlast_i(wlast),
     .wvalid_i(wvalid),
     .wready_o(wready),
+    .wuser_i('0),
 
     .bresp_o(bresp),
     .bid_o(bid),
     .bvalid_o(bvalid),
     .bready_i(bready),
+    .buser_o(),
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),

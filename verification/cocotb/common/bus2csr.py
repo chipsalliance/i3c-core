@@ -29,8 +29,10 @@ async def setup_dut(clk, rst_n, clk_period: Tuple[int, str]) -> None:
     """
     Setup clock & reset the unit
     """
-    await cocotb.start(Clock(clk, *clk_period).start())
+    clk.value = 0
     rst_n.value = 0
+    await Timer(1, units="ps")
+    await cocotb.start(Clock(clk, *clk_period).start())
     await ClockCycles(clk, 10)
     await RisingEdge(clk)
     await Timer(1, units="ns")

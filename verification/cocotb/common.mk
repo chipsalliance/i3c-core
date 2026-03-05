@@ -7,7 +7,6 @@ TRACK_FSM       ?= 1
 
 # Paths
 CURDIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-I3C_ROOT := $(abspath $(CURDIR)/../..)
 CFGDIR :=
 CONFIG :=
 $(info From common.mk, CURDIR is $(CURDIR))
@@ -21,8 +20,7 @@ COMMON_SOURCES += $(TEST_DIR)/sim_build/i3c_config.vh
 VERILOG_INCLUDE_DIRS= \
     $(CALIPTRA_ROOT)/src/libs/rtl \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl \
-    $(I3C_ROOT)/src \
-    $(I3C_ROOT)/src/libs/axi \
+    $(I3C_ROOT_DIR)/src \
     $(I3C_ROOT_DIR)/src/libs
 
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
@@ -58,17 +56,22 @@ ifeq ($(SIM), verilator)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
 endif
 
+# Switch between Verdi FSDB PLI and "classic" waveform dumping
+VERDI_PLI ?= 1
+
 ifeq ($(SIM), vcs)
-    EXTRA_ARGS += +vcs+lic+wait
-    COMPILE_ARGS += -deraceclockdata +libext+.sv +libext+.v
-    COMPILE_ARGS += $(foreach dir,$(VERILOG_INCLUDE_DIRS),-y $(dir))
     COMPILE_ARGS += -assert svaext
-    COMPILE_ARGS += -debug_access+all +memcbk -assert svaext
     COMPILE_ARGS += -Xcflags='-Wno-error=implicit-function-declaration -Wno-error=int-conversion'
+    ifeq ($(VERDI_PLI), 1)
+        COMPILE_ARGS += -P $(VERDI_HOME)/share/PLI/VCS/LINUX64/novas.tab $(VERDI_HOME)/share/PLI/VCS/LINUX64/pli.a
+    else
+        COMPILE_ARGS += -debug_access+all
     COMPILE_ARGS += -kdb +vcs+fsdbon
-    # Verdi FSDB PLI for waveform dumping
-    COMPILE_ARGS += -P $(VERDI_HOME)/share/PLI/VCS/LINUX64/novas.tab $(VERDI_HOME)/share/PLI/VCS/LINUX64/pli.a
+    endif
+    ifeq ($(WAVES), 1)
+        # Sim args seem to work for both wave dumping types (?)
     SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+    endif
     EXTRA_ARGS += +vcs+lic+wait
 
     # Opt-in FSM state transition logging: make ... TRACK_FSM=1
@@ -78,6 +81,14 @@ ifeq ($(SIM), vcs)
 
     ifneq ($(COVERAGE_TYPE),)
         EXTRA_ARGS += -cm line+cond+fsm+tgl+branch -lca
+    endif
+endif
+
+ifeq ($(SIM), xcelium)
+    ifeq ($(WAVES), 1)
+        SIM_ARGS += -input "@database -open cocotb_waves -default"
+        SIM_ARGS += -input "@probe -database cocotb_waves -create $(TOPLEVEL) -all -depth all"
+        SIM_ARGS += -input "@run" -input "@exit"
     endif
 endif
 
@@ -113,10 +124,10 @@ all: sim convert-vpd2vcd
 
 endif
 
-CFG_FILE ?= $(I3C_ROOT)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
+CFG_FILE ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
 CFG_NAME ?= axi## Valid configuration name from the YAML configuration file
 
 $(TEST_DIR)/sim_build/i3c_config.vh:
-	pushd $(I3C_ROOT) && CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME) make config && popd
+	pushd $(I3C_ROOT_DIR) && CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME) make config && popd
 	mkdir -p $(TEST_DIR)/sim_build
 	touch $(TEST_DIR)/sim_build/i3c_config.vh
