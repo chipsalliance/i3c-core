@@ -69,6 +69,13 @@ for a single stage. Steps marked with the same number happen concurrently.
           |                                      |                 .REC_IMG_INDEX = <stage>
           |                                      |                 (awaiting image)
           |                                      |                       |
+          |                                      |              3a. Wait for payload_available_o
+          |                                      |                  to deassert (no-op on first
+          |                                      |                  stage; on subsequent stages
+          |                                      |                  waits for Image Provider to
+          |                                      |                  clear REC_PAYLOAD_DONE at
+          |                                      |                  step 17)
+          |                                      |                       |
   4. Read PROT_CAP_2                             |                       |
      verify recovery capability                  |                       |
           |                                      |                       |
@@ -80,16 +87,13 @@ for a single stage. Steps marked with the same number happen concurrently.
      Read REC_IMG_INDEX to determine             |                       |
      which image Device Firmware expects         |                       |
           |                                      |                       |
-  7. Clear REC_INTF_CFG                          |                       |
-     .REC_PAYLOAD_DONE = 0                       |                       |
-          |                                      |                       |
-  8. Write INDIRECT_FIFO_CTRL_1                  |                       |
+  7. Write INDIRECT_FIFO_CTRL_1                  |                       |
      .IMAGE_SIZE = image size in 4B              |                       |
      units (i.e. byte count / 4)                 |                       |
           |                                      |                       |
           v                                      |                       |
   ,-------------------------------.              |                       |
-  | 9. DATA TRANSFER LOOP         |              |                       |
+  | 8. DATA TRANSFER LOOP         |              |                       |
   |   (Provider writes,           |              |                       |
   |    Device FW reads)           |              |                       |
   `-------------------------------'              |                       |
@@ -100,35 +104,35 @@ for a single stage. Steps marked with the same number happen concurrently.
           |                                      |  remaining bytes)     |
           |      ... repeat until all data transferred ...               |
           |                                      |                       |
- 10. Write REC_INTF_CFG                          |                       |
+  9. Write REC_INTF_CFG                          |                       |
      .REC_PAYLOAD_DONE = 1                       |                       |
      (signal last chunk sent)                    |                       |
           |                                      |                       |
-          |                                      |          11. Write DEVICE_STATUS_0
+          |                                      |          10. Write DEVICE_STATUS_0
           |                                      |              .DEV_STATUS = 0x4
           |                                      |              (recovery pending)
           |                                      |                       |
-          |                                      |          12. Poll RECOVERY_CTRL
+          |                                      |          11. Poll RECOVERY_CTRL
           |                                      |              .ACTIVATE_REC_IMG
           |                                      |              until == 0xF
           |                                      |                       |
- 13. Poll DEVICE_STATUS_0                        |                       |
+ 12. Poll DEVICE_STATUS_0                        |                       |
      until DEV_STATUS == 0x4                     |                       |
      (Device FW finished reading,                |                       |
      waiting for activation)                     |                       |
           |                                      |                       |
- 14. Write REC_INTF_REG_W1C_ACCESS               |                       |
+ 13. Write REC_INTF_REG_W1C_ACCESS               |                       |
      .RECOVERY_CTRL_ACTIVATE_REC_IMG             |                       |
      = 0xF (triggers image_activated_o)          |                       |
           |                                      |                       |
-          |                                      |          15. Write DEV_REC_STATUS = 0x2
+          |                                      |          14. Write DEV_REC_STATUS = 0x2
           |                                      |              (processing image)
           |                                      |                       |
- 16. Poll DEVICE_STATUS_0.DEV_STATUS             |                       |
+ 15. Poll DEVICE_STATUS_0.DEV_STATUS             |                       |
      Wait while DEV_STATUS == 0x4                |                       |
      (Device FW is validating the image)         |                       |
           |                                      |                       |
-          |                                      |          17. Validate image
+          |                                      |          16. Validate image
           |                                      |              (crypto verification)
           |                                      |                       |
           |                                      |              [Intermediate, on success]
@@ -147,8 +151,10 @@ for a single stage. Steps marked with the same number happen concurrently.
           |                                      |              (recovery successful,
           |                                      |              device healthy)
           |                                      |                       |
- 18. DEV_STATUS changed from 0x4:                |                       |
+ 17. DEV_STATUS changed from 0x4:                |                       |
        0x3 = next stage ready                    |                       |
+             Clear REC_INTF_CFG                  |                       |
+             .REC_PAYLOAD_DONE = 0               |                       |
              -> go back to step 5                |                       |
        0x1 = recovery complete                   |                       |
              -> exit                             |                       |
@@ -164,7 +170,14 @@ for a single stage. Steps marked with the same number happen concurrently.
 - On success, Device Firmware clears `ACTIVATE_REC_IMG`, resets the
   Indirect FIFO via `INDIRECT_FIFO_CTRL_0.RESET`, and loops back to
   step 2 (writing the next `REC_IMG_INDEX`)
-- Image Provider detects `DEV_REC_STATUS == 0x1` at step 18 and loops
+- After writing `RECOVERY_STATUS` at step 3, Device Firmware must wait
+  for `payload_available_o` to deassert before polling for new payload.
+  This avoids a race where stale `REC_PAYLOAD_DONE` from the prior
+  stage keeps `payload_available_o` asserted, causing Device Firmware
+  to read the old `IMAGE_SIZE`.  The Image Provider clears
+  `REC_PAYLOAD_DONE` at step 17, which deasserts
+  `payload_available_o`.
+- Image Provider detects `DEV_REC_STATUS == 0x1` at step 17 and loops
   back to step 5
 
 **Final stage:**
@@ -173,7 +186,7 @@ for a single stage. Steps marked with the same number happen concurrently.
   successful) and `DEV_STATUS = 0x1` (device healthy)
 - On error, Device Firmware writes `DEV_REC_STATUS >= 0xc` and
   `DEV_STATUS = 0xF`
-- Image Provider detects `DEV_REC_STATUS == 0x3` at step 18 and exits
+- Image Provider detects `DEV_REC_STATUS == 0x3` at step 17 and exits
 
 ```{important}
 **Intermediate stage completion**: For all stages except the final one,
@@ -183,10 +196,23 @@ readiness for the next image. The FIFO reset is performed by Device
 Firmware, not the Image Provider. Device Firmware writes `DEV_STATUS = 0x3`
 last (at step 2), after all cleanup is complete.
 
+**`REC_PAYLOAD_DONE` ownership**: The Image Provider owns the
+`REC_INTF_CFG.REC_PAYLOAD_DONE` bit. It sets the bit after the last
+chunk of each image (step 9) and clears it at step 17 when
+`DEV_STATUS` transitions away from 0x4 (before looping back to step 5).
+Between stages, `payload_available_o` may remain asserted because
+`REC_PAYLOAD_DONE` is still set from the prior stage.
+Device Firmware must wait for `payload_available_o` to deassert after
+writing `RECOVERY_STATUS` (step 3) and before polling for new payload.
+This wait ensures the Image Provider has cleared `REC_PAYLOAD_DONE`
+and the new `IMAGE_SIZE` is valid. Failure to perform this wait can
+cause Device Firmware to read a stale image size and set up DMA
+transfers with the wrong byte count.
+
 **Final stage completion**: After the final stage, Device Firmware
 writes `DEV_REC_STATUS = 0x3` (recovery successful) and
 `DEV_STATUS = 0x1` (device healthy). The Image Provider polls for
-this transition at step 16/18 to confirm recovery is complete.
+this transition at step 15/17 to confirm recovery is complete.
 ```
 
 ```{note}
@@ -205,7 +231,7 @@ immediately -- no further stages are executed. See OCP Recovery v1.1
 Section 7.6 for the full list of `DEV_REC_STATUS` error codes.
 
 The Image Provider should check for error status (`DEV_STATUS == 0xF`)
-at step 16 of each stage. If an error is detected, the Image Provider
+at step 15 of each stage. If an error is detected, the Image Provider
 should terminate the recovery flow. No retry is attempted.
 
 ```{note}
@@ -244,8 +270,11 @@ The AXI bypass flow also uses two registers from the SoC Management Interface:
 - `payload_available_o` asserts in bypass mode when the Indirect FIFO is
   full, `REC_PAYLOAD_DONE` is set, or the image has been activated. It
   deasserts when the FIFO is empty.
-- `REC_PAYLOAD_DONE` must be set after the last chunk and cleared after
-  activation
+- `REC_PAYLOAD_DONE` must be set after the last chunk (step 9) and
+  cleared by the Image Provider at step 17 when transitioning to the
+  next stage. Device Firmware must not poll `payload_available_o` for
+  a new image until it observes `payload_available_o` deassert,
+  confirming the Image Provider has cleared `REC_PAYLOAD_DONE`.
 
 ## AXI Bypass Architecture
 

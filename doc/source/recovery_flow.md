@@ -44,6 +44,15 @@ virtual target address. Device Firmware accesses CSRs over the AXI bus.
         |                                |                  .REC_IMG_INDEX = <stage>
         |                                |                  (awaiting image)
         |                                |                        |
+        |                                |               3a. Wait for payload_available_o
+        |                                |                   to deassert (no-op on first
+        |                                |                   stage; on subsequent stages
+        |                                |                   waits for Initiator to complete
+        |                                |                   prior image handshake; in AXI
+        |                                |                   bypass mode waits for Image
+        |                                |                   Provider to clear
+        |                                |                   REC_PAYLOAD_DONE at step 17)
+        |                                |                        |
   4. Read PROT_CAP                       |                        |
      (verify recovery caps)              |                        |
         |                                |                        |
@@ -141,6 +150,19 @@ The only differences are on the data provider (Initiator / Image Provider) side:
 | FIFO full handling | I3C core NACKs the write | Image Provider polls FIFO status |
 | CSR access | I3C private write/read commands | Direct AXI register access |
 | Activation | Initiator writes RECOVERY_CTRL directly | Image Provider writes via W1C register |
+| `REC_PAYLOAD_DONE` | Not used (HW manages `payload_available_o`) | Image Provider sets/clears to signal last chunk |
+
+```{important}
+**Inter-stage synchronization**: In multi-image recovery flows, Device
+Firmware must wait for `payload_available_o` to deassert after writing
+`RECOVERY_STATUS` (step 3) and before polling for new payload. In AXI
+bypass mode, `payload_available_o` can remain asserted between stages
+because the Image Provider's `REC_PAYLOAD_DONE` from the prior stage is
+still set. The Image Provider clears `REC_PAYLOAD_DONE` when it enters
+the next stage (step 17 in the AXI bypass flow). Without this wait,
+Device Firmware may read stale `IMAGE_SIZE` from the prior stage and
+set up DMA transfers with the wrong byte count.
+```
 
 ### Register Reference
 
