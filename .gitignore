@@ -23,6 +23,7 @@ __pycache__
 verisium_debug*
 *.shm
 *xrun.history
+*xrun.key
 novas.*
 verdiLog
 *.xml
