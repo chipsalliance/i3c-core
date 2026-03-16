@@ -125,48 +125,20 @@ def verify_sim_pid(dut, data, expected_pid):
 
 
 # =========================================================================
-# Test 1: Basic GETPID to sim target only
+# Test 1: GETPID single-target and multi-target ordering
 # =========================================================================
 @cocotb.test()
-async def test_sim_target_getpid(dut):
+async def test_getpid_multi_target_ordering(dut):
     """
-    Send GETPID to the sim target at 0x23 and verify the 6-byte PID
-    response matches the configured value. Randomize PID each run.
-
-    Spec: Section 5.1.9.3.12
-    Frame: S | 0x7E/W | GETPID | Sr | 0x23/R | 6 bytes | P
-    """
-    test_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=test_pid
-    )
-
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=SIM_TARGET_ADDR, count=6
-    )
-    await ClockCycles(tb.clk, 50)
-
-    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
-    _, data = responses[0]
-    verify_sim_pid(dut, data, test_pid)
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 2: Multi-target GETPID -- DUT first, then sim target
-# =========================================================================
-@cocotb.test()
-async def test_getpid_dut_then_sim(dut):
-    """
-    Single CCC frame: GETPID directed to DUT first (Sr), then sim target.
-    Verify both PIDs correct. Tests multi-target directed CCC with Sr.
+    Verify GETPID across single-target and multi-target directed CCC frames
+    with different target ordering. Uses one environment for all phases.
 
     Spec: Section 5.1.9.3.12, Figure 47
-    Frame: S | 0x7E/W | GETPID | Sr | DUT/R | 6B | Sr | 0x23/R | 6B | P
+
+    Phases:
+      A) Single target: GETPID to sim target only
+      B) Multi-target: DUT first, then sim target
+      C) Multi-target: sim target first, then DUT
     """
     sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
     dut_pid_hi = random.randint(0, 0x7FFF)
@@ -176,6 +148,19 @@ async def test_getpid_dut_then_sim(dut):
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
+    # --- Phase A: Single-target GETPID to sim target ---
+    dut._log.info("=== Phase A: Single-target GETPID to sim target ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=SIM_TARGET_ADDR, count=6
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
+    _, data = responses[0]
+    verify_sim_pid(dut, data, sim_pid)
+
+    # --- Phase B: Multi-target -- DUT first, then sim ---
+    dut._log.info("=== Phase B: Multi-target DUT then sim ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
         addr=[dut_addr, SIM_TARGET_ADDR],
@@ -184,35 +169,13 @@ async def test_getpid_dut_then_sim(dut):
     await ClockCycles(tb.clk, 50)
 
     assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-
     _, dut_data = responses[0]
     verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
-
     _, sim_data = responses[1]
     verify_sim_pid(dut, sim_data, sim_pid)
 
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 3: Multi-target GETPID -- sim target first, then DUT
-# =========================================================================
-@cocotb.test()
-async def test_getpid_sim_then_dut(dut):
-    """
-    Same as test_getpid_dut_then_sim but reversed order.
-    Ensures no ordering dependency in CCC frame processing.
-
-    Frame: S | 0x7E/W | GETPID | Sr | 0x23/R | 6B | Sr | DUT/R | 6B | P
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
+    # --- Phase C: Multi-target -- sim first, then DUT ---
+    dut._log.info("=== Phase C: Multi-target sim then DUT ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
         addr=[SIM_TARGET_ADDR, dut_addr],
@@ -221,10 +184,8 @@ async def test_getpid_sim_then_dut(dut):
     await ClockCycles(tb.clk, 50)
 
     assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-
     _, sim_data = responses[0]
     verify_sim_pid(dut, sim_data, sim_pid)
-
     _, dut_data = responses[1]
     verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
 
@@ -232,21 +193,19 @@ async def test_getpid_sim_then_dut(dut):
 
 
 # =========================================================================
-# Test 4: GETPID with dummy targets (NACK)
+# Test 2: GETPID with dummy NACKs and randomized target order
 # =========================================================================
 @cocotb.test()
-async def test_getpid_with_dummy_nacks(dut):
+async def test_getpid_with_nacks_and_random_order(dut):
     """
-    GETPID frame addressing DUT, then N random dummy addresses (should NACK),
-    then the sim target last. Verifies that the sim target correctly
-    maintains its CCC-pending state across multiple NON_APPLICABLE addresses.
+    Verify GETPID with non-existent (NACK) targets and randomized ordering.
+    Exercises the sim target's CCC-pending state maintenance across
+    multiple NON_APPLICABLE addresses in arbitrary positions.
 
-    Randomize dummy count (1-5) and addresses.
-
-    Frame: S | 0x7E/W | GETPID | Sr | DUT/R | 6B |
-           Sr | dummy1/R | NACK | ... | Sr | 0x23/R | 6B | P
+    Phases:
+      A) Fixed order: DUT + 1-5 random dummies + sim target
+      B) Randomized order: shuffle [DUT, sim, dummy1, dummy2]
     """
-    num_dummies = random.randint(1, 5)
     sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
@@ -255,12 +214,13 @@ async def test_getpid_with_dummy_nacks(dut):
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
-    # Pick dummy addresses not used by DUT or sim target
     excluded = {dut_addr, SIM_TARGET_ADDR}
-    dummy_addrs = random.sample(
-        [a for a in VALID_I3C_ADDRESSES if a not in excluded],
-        num_dummies,
-    )
+    available_dummies = [a for a in VALID_I3C_ADDRESSES if a not in excluded]
+
+    # --- Phase A: Fixed order with dummy NACKs ---
+    dut._log.info("=== Phase A: Fixed order with dummy NACKs ===")
+    num_dummies = random.randint(1, 5)
+    dummy_addrs = random.sample(available_dummies, num_dummies)
     dut._log.info(
         f"Address order: DUT=0x{dut_addr:02X}, "
         f"dummies={['0x%02X' % a for a in dummy_addrs]}, "
@@ -280,12 +240,10 @@ async def test_getpid_with_dummy_nacks(dut):
         f"Expected {expected_count} responses, got {len(responses)}"
     )
 
-    # Verify DUT PID (first response)
     dut_ack, dut_data = responses[0]
     assert dut_ack, "DUT should ACK GETPID"
     verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
 
-    # Verify dummy targets all NACK
     for i, dummy_addr in enumerate(dummy_addrs):
         dummy_ack = responses[1 + i][0]
         dut._log.info(
@@ -295,16 +253,50 @@ async def test_getpid_with_dummy_nacks(dut):
             f"Dummy target 0x{dummy_addr:02X} should NACK, got ACK"
         )
 
-    # Verify sim target PID (last response)
     sim_ack, sim_data = responses[-1]
     assert sim_ack, "Sim target should ACK GETPID"
     verify_sim_pid(dut, sim_data, sim_pid)
+
+    # --- Phase B: Randomized order ---
+    dut._log.info("=== Phase B: Randomized target order ===")
+    dummy_addrs_b = random.sample(available_dummies, 2)
+    addr_list_b = [dut_addr, SIM_TARGET_ADDR] + dummy_addrs_b
+    random.shuffle(addr_list_b)
+
+    dut._log.info(
+        f"Randomized order: {['0x%02X' % a for a in addr_list_b]}"
+    )
+
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID,
+        addr=addr_list_b,
+        count=6,
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == len(addr_list_b), (
+        f"Expected {len(addr_list_b)} responses, got {len(responses)}"
+    )
+
+    for i, addr in enumerate(addr_list_b):
+        ack, data = responses[i]
+        if addr == dut_addr:
+            assert ack, f"DUT at 0x{addr:02X} should ACK"
+            verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
+        elif addr == SIM_TARGET_ADDR:
+            assert ack, f"Sim target at 0x{addr:02X} should ACK"
+            verify_sim_pid(dut, data, sim_pid)
+        else:
+            dut._log.info(f"Dummy 0x{addr:02X}: ACK={ack}")
+            assert not ack, (
+                f"Dummy target 0x{addr:02X} should NACK, got ACK"
+            )
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 5: GETPID across warm and cold resets
+# Test 3: GETPID across warm and cold resets
 # =========================================================================
 async def do_pattern_reset(dut, tb, i3c_controller, expect_escalation=False):
     """Send Target Reset Pattern and handle the reset handshake."""
@@ -449,7 +441,7 @@ async def test_getpid_across_resets(dut):
 
 
 # =========================================================================
-# Test 6: GETPID vendor-fixed vs random type selector
+# Test 4: GETPID vendor-fixed vs random type selector
 # =========================================================================
 @cocotb.test()
 async def test_getpid_vendor_fixed_vs_random(dut):
@@ -536,68 +528,5 @@ async def test_getpid_vendor_fixed_vs_random(dut):
             f"Iter {iteration}: random value mismatch: "
             f"exp=0x{sim_random_val:08X} got=0x{vendor_rx:08X}"
         )
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 7: GETPID with randomized target order
-# =========================================================================
-@cocotb.test()
-async def test_getpid_randomized_target_order(dut):
-    """
-    Randomly shuffle [DUT, sim_target, dummy1, dummy2] order. Send GETPID
-    in that order. Verify DUT and sim target return correct PIDs; dummies
-    NACK.
-
-    This exercises the sim target's ability to handle CCC-pending state
-    regardless of its position in the directed phase sequence.
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
-    # Pick 2 dummy addresses
-    excluded = {dut_addr, SIM_TARGET_ADDR}
-    dummy_addrs = random.sample(
-        [a for a in VALID_I3C_ADDRESSES if a not in excluded], 2
-    )
-
-    # Build address list and shuffle
-    addr_list = [dut_addr, SIM_TARGET_ADDR] + dummy_addrs
-    random.shuffle(addr_list)
-
-    dut._log.info(
-        f"Randomized order: {['0x%02X' % a for a in addr_list]}"
-    )
-
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=addr_list,
-        count=6,
-    )
-    await ClockCycles(tb.clk, 50)
-
-    assert len(responses) == len(addr_list), (
-        f"Expected {len(addr_list)} responses, got {len(responses)}"
-    )
-
-    for i, addr in enumerate(addr_list):
-        ack, data = responses[i]
-        if addr == dut_addr:
-            assert ack, f"DUT at 0x{addr:02X} should ACK"
-            verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
-        elif addr == SIM_TARGET_ADDR:
-            assert ack, f"Sim target at 0x{addr:02X} should ACK"
-            verify_sim_pid(dut, data, sim_pid)
-        else:
-            dut._log.info(f"Dummy 0x{addr:02X}: ACK={ack}")
-            assert not ack, (
-                f"Dummy target 0x{addr:02X} should NACK, got ACK"
-            )
 
     await tb.teardown()
