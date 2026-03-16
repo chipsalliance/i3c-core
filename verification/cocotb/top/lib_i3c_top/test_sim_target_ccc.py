@@ -1,15 +1,21 @@
 # SPDX-License-Identifier: Apache-2.0
 """
-GETPID CCC tests for the I3CTargetFixed sim model.
+CCC tests for the I3CTargetFixed sim model.
 
-Tests the GETPID CCC (0x8D) across the sim target (I3CTargetFixed at 0x23)
-and the DUT in various scenarios: single-target, multi-target with Repeated
-START, with dummy NACKs, across resets, PID type selector modes, and
-randomized target order.
+Tests CCC handling across the sim target (I3CTargetFixed at 0x23) and the DUT
+in various scenarios. Each CCC is verified for correct response format, data
+content, and multi-target bus behavior.
 
 Spec references:
   - Section 5.1.9.3.12: GETPID format and requirements
-  - Section 5.1.4.1.1: 48-bit Provisioned ID structure
+  - Section 5.1.9.3.13: GETBCR format
+  - Section 5.1.9.3.14: GETDCR format
+  - Section 5.1.9.3.15: GETSTATUS format (Table 27)
+  - Section 5.1.9.3.5:  SETMWL/GETMWL format
+  - Section 5.1.9.3.6:  SETMRL/GETMRL format
+  - Section 5.1.9.3.19: GETCAPS format (Tables 35-38)
+  - Section 5.1.9.3.18: GETMXDS format (Tables 30-32)
+  - Section 5.1.4.1.1:  48-bit Provisioned ID structure
   - Figure 47: GETPID Format (multi-target with Repeated START)
 """
 
@@ -39,16 +45,32 @@ def parse_pid(data):
     return pid_48, manufacturer_id, type_selector, vendor_value
 
 
-async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
+async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
+                    sim_bcr=0x00, sim_dcr=0x00, sim_mwl=256, sim_mrl=256,
+                    sim_ibi_payload=0, sim_getcaps=None, sim_getmxds=None):
     """
-    Set up controller, I3CTargetFixed at 0x23, DUT, and configure PIDs.
+    Set up controller, I3CTargetFixed at 0x23, DUT, and configure properties.
 
     dut_pid_hi: 15-bit value for DUT's PID_HI register (bits[47:33])
     dut_pid_lo: 32-bit value for DUT's PID_LO register (bits[31:0])
     sim_pid: 48-bit PID for the sim target
+    sim_bcr: 8-bit BCR for the sim target
+    sim_dcr: 8-bit DCR for the sim target
+    sim_mwl: 16-bit Max Write Length for the sim target
+    sim_mrl: 16-bit Max Read Length for the sim target
+    sim_ibi_payload: 8-bit Max IBI Payload Size for the sim target
+    sim_getcaps: list of GETCAPS bytes for the sim target
+    sim_getmxds: list of GETMXDS bytes for the sim target
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
+
+    if dut_pid_hi is None:
+        dut_pid_hi = random.randint(0, 0x7FFF)
+    if dut_pid_lo is None:
+        dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+    if sim_pid is None:
+        sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -68,6 +90,13 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
         speed=12.5e6,
         address=SIM_TARGET_ADDR,
         pid=sim_pid,
+        bcr=sim_bcr,
+        dcr=sim_dcr,
+        max_write_length=sim_mwl,
+        max_rd_length=sim_mrl,
+        max_ibi_payload=sim_ibi_payload,
+        getcaps_bytes=sim_getcaps,
+        getmxds_bytes=sim_getmxds,
     )
 
     dut.peripheral_reset_done_i.value = 0
@@ -527,6 +556,296 @@ async def test_getpid_vendor_fixed_vs_random(dut):
         assert vendor_rx == sim_random_val, (
             f"Iter {iteration}: random value mismatch: "
             f"exp=0x{sim_random_val:08X} got=0x{vendor_rx:08X}"
+        )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 5: GETBCR + GETDCR -- identity CCCs with runtime update
+# =========================================================================
+@cocotb.test()
+async def test_sim_target_get_identity(dut):
+    """
+    Verify GETBCR and GETDCR return configured values for the sim target,
+    including runtime updates and multi-target directed frames.
+
+    Spec: Sections 5.1.9.3.13 (GETBCR), 5.1.9.3.14 (GETDCR)
+    """
+    sim_bcr = random.randint(0, 0xFF)
+    sim_dcr = random.randint(0, 0xFF)
+    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+        dut, sim_bcr=sim_bcr, sim_dcr=sim_dcr
+    )
+
+    # --- GETBCR: single-target ---
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETBCR, addr=SIM_TARGET_ADDR, count=1
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Sim target should ACK GETBCR"
+    dut._log.info(f"GETBCR: 0x{data[0]:02X} (exp 0x{sim_bcr:02X})")
+    assert data[0] == sim_bcr, (
+        f"BCR mismatch: exp=0x{sim_bcr:02X} got=0x{data[0]:02X}"
+    )
+
+    # --- GETDCR: single-target ---
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETDCR, addr=SIM_TARGET_ADDR, count=1
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Sim target should ACK GETDCR"
+    dut._log.info(f"GETDCR: 0x{data[0]:02X} (exp 0x{sim_dcr:02X})")
+    assert data[0] == sim_dcr, (
+        f"DCR mismatch: exp=0x{sim_dcr:02X} got=0x{data[0]:02X}"
+    )
+
+    # --- GETBCR: multi-target (DUT + sim) ---
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETBCR, addr=[dut_addr, SIM_TARGET_ADDR], count=1,
+    )
+    await ClockCycles(tb.clk, 50)
+    assert len(responses) == 2
+    assert responses[1][1][0] == sim_bcr, "Multi-target BCR mismatch"
+
+    # --- Runtime update: change BCR and DCR, re-read ---
+    new_bcr = sim_bcr ^ 0xFF  # flip all bits
+    new_dcr = sim_dcr ^ 0xFF
+    i3c_target.bcr = new_bcr
+    i3c_target.dcr = new_dcr
+
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETBCR, addr=SIM_TARGET_ADDR, count=1
+    )
+    await ClockCycles(tb.clk, 50)
+    assert responses[0][1][0] == new_bcr, (
+        f"Updated BCR: exp=0x{new_bcr:02X} got=0x{responses[0][1][0]:02X}"
+    )
+
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETDCR, addr=SIM_TARGET_ADDR, count=1
+    )
+    await ClockCycles(tb.clk, 50)
+    assert responses[0][1][0] == new_dcr, (
+        f"Updated DCR: exp=0x{new_dcr:02X} got=0x{responses[0][1][0]:02X}"
+    )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 6: GETSTATUS -- status format and protocol error self-clear
+# =========================================================================
+@cocotb.test()
+async def test_getstatus_sim_target(dut):
+    """
+    Verify GETSTATUS returns correct 2-byte status for the sim target.
+    Tests activity mode, pending interrupt, protocol error self-clear,
+    and vendor status byte.
+
+    Spec: Section 5.1.9.3.15, Table 27
+      MSB [15:8] = Vendor Reserved
+      LSB [7:6]  = Activity Mode
+          [5]    = Protocol Error (self-clears on read)
+          [4]    = Reserved
+          [3:0]  = Pending Interrupt
+    """
+    i3c_controller, i3c_target, tb, dut_addr = await setup_env(dut)
+
+    # (a) Default: all zeros
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETSTATUS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Should ACK GETSTATUS"
+    status = int.from_bytes(data[0:2], byteorder="big")
+    dut._log.info(f"GETSTATUS default: 0x{status:04X}")
+    assert status == 0x0000, f"Default should be 0x0000, got 0x{status:04X}"
+
+    # (b) Set activity_mode=3, pending_interrupt=5, vendor_status=0xAB
+    i3c_target.activity_mode = 3
+    i3c_target.pending_interrupt = 5
+    i3c_target.vendor_status = 0xAB
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETSTATUS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    data = responses[0][1]
+    msb = data[0]
+    lsb = data[1]
+    assert msb == 0xAB, f"Vendor status exp=0xAB got=0x{msb:02X}"
+    assert (lsb >> 6) & 0x3 == 3, f"Activity mode exp=3 got={(lsb >> 6) & 0x3}"
+    assert lsb & 0xF == 5, f"Pending int exp=5 got={lsb & 0xF}"
+
+    # (c) Protocol error: set, read (should be 1), read again (should self-clear)
+    i3c_target.protocol_error = True
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETSTATUS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    lsb = responses[0][1][1]
+    assert (lsb >> 5) & 0x1 == 1, "Protocol error should be set"
+
+    # Second read: should be cleared
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETSTATUS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    lsb = responses[0][1][1]
+    assert (lsb >> 5) & 0x1 == 0, "Protocol error should self-clear"
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 7: All remaining GET CCCs -- MWL, MRL, CAPS, MXDS + sequence
+# =========================================================================
+@cocotb.test()
+async def test_sim_target_get_all_cccs(dut):
+    """
+    Consolidates GETMWL, GETMRL (with/without IBI payload byte), GETCAPS,
+    GETMXDS, and a full back-to-back sequence of all directed GET CCCs.
+
+    Spec: Sections 5.1.9.3.5, 5.1.9.3.6, 5.1.9.3.19, 5.1.9.3.18
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    sim_bcr = random.randint(0, 0xFB) & ~0x04  # clear bit[2] initially
+    sim_dcr = random.randint(0, 0xFF)
+    sim_mwl = random.randint(16, 0xFFFF)
+    sim_mrl = random.randint(16, 0xFFFF)
+    sim_caps = [0x01, 0x01]       # HDR-DDR, I3C Basic v1.1
+    sim_mxds = [0x01, 0x02]       # maxWr=8MHz, maxRd=6MHz
+
+    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+        dut,
+        sim_pid=sim_pid, sim_bcr=sim_bcr, sim_dcr=sim_dcr,
+        sim_mwl=sim_mwl, sim_mrl=sim_mrl,
+        sim_getcaps=sim_caps, sim_getmxds=sim_mxds,
+    )
+
+    # --- (a) GETMWL ---
+    dut._log.info("=== GETMWL ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMWL, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Should ACK GETMWL"
+    mwl_rx = int.from_bytes(data[0:2], byteorder="big")
+    assert mwl_rx == sim_mwl, (
+        f"MWL exp=0x{sim_mwl:04X} got=0x{mwl_rx:04X}"
+    )
+
+    # Runtime update
+    new_mwl = random.randint(16, 0xFFFF)
+    i3c_target.max_write_length = new_mwl
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMWL, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    mwl_rx = int.from_bytes(responses[0][1][0:2], byteorder="big")
+    assert mwl_rx == new_mwl, f"Updated MWL mismatch"
+
+    # --- (b) GETMRL without IBI payload (BCR bit[2]=0) ---
+    dut._log.info("=== GETMRL (no IBI) ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMRL, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Should ACK GETMRL"
+    mrl_rx = int.from_bytes(data[0:2], byteorder="big")
+    assert mrl_rx == sim_mrl, (
+        f"MRL exp=0x{sim_mrl:04X} got=0x{mrl_rx:04X}"
+    )
+
+    # --- (c) GETMRL with IBI payload (BCR bit[2]=1) ---
+    dut._log.info("=== GETMRL (with IBI payload) ===")
+    ibi_payload = random.randint(1, 0xFF)
+    i3c_target.bcr = sim_bcr | 0x04
+    i3c_target.max_ibi_payload = ibi_payload
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMRL, addr=SIM_TARGET_ADDR, count=3
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack
+    mrl_rx = int.from_bytes(data[0:2], byteorder="big")
+    assert mrl_rx == sim_mrl, f"MRL mismatch with IBI"
+    assert data[2] == ibi_payload, (
+        f"IBI payload exp=0x{ibi_payload:02X} got=0x{data[2]:02X}"
+    )
+    # Restore BCR
+    i3c_target.bcr = sim_bcr
+
+    # --- (d) GETCAPS (2-byte, then update to 4-byte) ---
+    dut._log.info("=== GETCAPS ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETCAPS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Should ACK GETCAPS"
+    for i, exp in enumerate(sim_caps):
+        assert data[i] == exp, (
+            f"GETCAPS[{i}] exp=0x{exp:02X} got=0x{data[i]:02X}"
+        )
+
+    caps4 = [0x09, 0x41, 0x18, 0x00]
+    i3c_target.getcaps_bytes = caps4
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETCAPS, addr=SIM_TARGET_ADDR, count=4
+    )
+    await ClockCycles(tb.clk, 50)
+    for i, exp in enumerate(caps4):
+        assert responses[0][1][i] == exp, f"GETCAPS4[{i}] mismatch"
+
+    # --- (e) GETMXDS (2-byte Format 1, then 5-byte Format 2) ---
+    dut._log.info("=== GETMXDS ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMXDS, addr=SIM_TARGET_ADDR, count=2
+    )
+    await ClockCycles(tb.clk, 50)
+    ack, data = responses[0]
+    assert ack, "Should ACK GETMXDS"
+    assert data[0] == sim_mxds[0] and data[1] == sim_mxds[1], "GETMXDS F1 mismatch"
+
+    mxds5 = [0x03, 0x04, 0x00, 0x10, 0x00]
+    i3c_target.getmxds_bytes = mxds5
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMXDS, addr=SIM_TARGET_ADDR, count=5
+    )
+    await ClockCycles(tb.clk, 50)
+    for i, exp in enumerate(mxds5):
+        assert responses[0][1][i] == exp, f"GETMXDS5[{i}] mismatch"
+
+    # --- (f) Back-to-back sequence: all CCCs in rapid succession ---
+    dut._log.info("=== Back-to-back CCC sequence ===")
+    # Restore original values for clean sequence
+    i3c_target.getcaps_bytes = sim_caps
+    i3c_target.getmxds_bytes = sim_mxds
+
+    ccc_checks = [
+        (CCC.DIRECT.GETPID, 6),
+        (CCC.DIRECT.GETBCR, 1),
+        (CCC.DIRECT.GETDCR, 1),
+        (CCC.DIRECT.GETSTATUS, 2),
+        (CCC.DIRECT.GETMWL, 2),
+        (CCC.DIRECT.GETMRL, 2),
+        (CCC.DIRECT.GETCAPS, 2),
+        (CCC.DIRECT.GETMXDS, 2),
+    ]
+    for ccc_code, count in ccc_checks:
+        responses = await i3c_controller.i3c_ccc_read(
+            ccc=ccc_code, addr=SIM_TARGET_ADDR, count=count
+        )
+        await ClockCycles(tb.clk, 50)
+        assert responses[0][0], f"CCC 0x{ccc_code:02X} should ACK"
+        assert len(responses[0][1]) >= count, (
+            f"CCC 0x{ccc_code:02X}: expected >= {count} bytes"
         )
 
     await tb.teardown()

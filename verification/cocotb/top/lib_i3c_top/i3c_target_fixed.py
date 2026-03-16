@@ -6,7 +6,7 @@ This module extends the I3CTarget from cocotbext-i3c to handle Common Command
 Codes (CCCs). The base I3CTarget ignores all CCCs -- it receives the CCC byte
 but then waits for Sr/P without responding. This subclass overrides
 handle_message() and wait_header() to:
-  - Respond to directed CCC reads (GETPID)
+  - Respond to directed CCC reads (GETPID, GETBCR, GETDCR, GETSTATUS, etc.)
   - Track pending CCC state across Repeated STARTs within a frame
 
 Usage:
@@ -16,7 +16,14 @@ Usage:
         from i3c_target_fixed import I3CTargetFixed as I3CTarget
 
     The constructor accepts additional keyword arguments for device properties:
-        pid  -- 48-bit Provisioned ID (default 0x000000000000)
+        pid              -- 48-bit Provisioned ID (default 0x000000000000)
+        bcr              -- 8-bit Bus Characteristics Register (default 0x00)
+        dcr              -- 8-bit Device Characteristics Register (default 0x00)
+        max_write_length -- 16-bit Max Write Length (default 256)
+        max_read_length  -- 16-bit Max Read Length (default 256)
+        max_ibi_payload  -- 8-bit Max IBI Payload Size (default 0, unlimited)
+        getcaps_bytes    -- list of 2-4 GETCAPS bytes (default [0x00, 0x01])
+        getmxds_bytes    -- list of 2 or 5 GETMXDS bytes (default [0x00, 0x00])
 """
 
 import logging
@@ -34,7 +41,16 @@ class I3CTargetFixed(I3CTarget):
     """I3CTarget with CCC command handling."""
 
     # Sets of CCC codes by type -- derived from the shared CCC dictionary
-    DIRECTED_READ_CCCS = {CCC.DIRECT.GETPID}
+    DIRECTED_READ_CCCS = {
+        CCC.DIRECT.GETPID,
+        CCC.DIRECT.GETBCR,
+        CCC.DIRECT.GETDCR,
+        CCC.DIRECT.GETSTATUS,
+        CCC.DIRECT.GETMWL,
+        CCC.DIRECT.GETMRL,
+        CCC.DIRECT.GETCAPS,
+        CCC.DIRECT.GETMXDS,
+    }
     DIRECTED_NACK_CCCS = set()
 
     # HDR entry CCCs (handled by base class)
@@ -57,6 +73,13 @@ class I3CTargetFixed(I3CTarget):
         address=None,
         max_read_length=2,
         pid=0x000000000000,
+        bcr=0x00,
+        dcr=0x00,
+        max_write_length=256,
+        max_rd_length=256,
+        max_ibi_payload=0,
+        getcaps_bytes=None,
+        getmxds_bytes=None,
         *args,
         **kwargs,
     ):
@@ -75,7 +98,29 @@ class I3CTargetFixed(I3CTarget):
             **kwargs,
         )
 
+        # Device identity
         self._pid = pid & 0xFFFFFFFFFFFF
+        self._bcr = bcr & 0xFF
+        self._dcr = dcr & 0xFF
+
+        # Max data lengths (spec 5.1.9.3.5 / 5.1.9.3.6)
+        self._max_write_length = max_write_length & 0xFFFF
+        self._max_rd_length = max_rd_length & 0xFFFF
+        self._max_ibi_payload = max_ibi_payload & 0xFF
+
+        # GETSTATUS state (spec 5.1.9.3.15, Table 27)
+        self._vendor_status = 0x00       # bits[15:8]
+        self._activity_mode = 0          # bits[7:6], 2-bit
+        self._protocol_error = False     # bit[5], self-clears on read
+        self._pending_interrupt = 0      # bits[3:0], 4-bit
+
+        # GETCAPS response bytes (spec 5.1.9.3.19, Tables 35-38)
+        # Default: HDR Mode 0 not supported, I3C Basic v1.1 (minor=1)
+        self._getcaps_bytes = list(getcaps_bytes or [0x00, 0x01])
+
+        # GETMXDS response bytes (spec 5.1.9.3.18, Tables 30-32)
+        # Default: no speed limitations
+        self._getmxds_bytes = list(getmxds_bytes or [0x00, 0x00])
 
         # CCC state tracking
         self._pending_ccc = None
@@ -83,8 +128,10 @@ class I3CTargetFixed(I3CTarget):
         self.log.info(
             f"TARGET_FIXED:::CCC-capable target at addr="
             f"{hex(address) if address else 'None'}, "
-            f"PID=0x{pid:012X}"
+            f"PID=0x{pid:012X} BCR=0x{bcr:02X} DCR=0x{dcr:02X}"
         )
+
+    # -- Property getters/setters for device characteristics --
 
     @property
     def pid(self):
@@ -93,6 +140,94 @@ class I3CTargetFixed(I3CTarget):
     @pid.setter
     def pid(self, value):
         self._pid = value & 0xFFFFFFFFFFFF
+
+    @property
+    def bcr(self):
+        return self._bcr
+
+    @bcr.setter
+    def bcr(self, value):
+        self._bcr = value & 0xFF
+
+    @property
+    def dcr(self):
+        return self._dcr
+
+    @dcr.setter
+    def dcr(self, value):
+        self._dcr = value & 0xFF
+
+    @property
+    def max_write_length(self):
+        return self._max_write_length
+
+    @max_write_length.setter
+    def max_write_length(self, value):
+        self._max_write_length = value & 0xFFFF
+
+    @property
+    def max_rd_length(self):
+        return self._max_rd_length
+
+    @max_rd_length.setter
+    def max_rd_length(self, value):
+        self._max_rd_length = value & 0xFFFF
+
+    @property
+    def max_ibi_payload(self):
+        return self._max_ibi_payload
+
+    @max_ibi_payload.setter
+    def max_ibi_payload(self, value):
+        self._max_ibi_payload = value & 0xFF
+
+    @property
+    def activity_mode(self):
+        return self._activity_mode
+
+    @activity_mode.setter
+    def activity_mode(self, value):
+        self._activity_mode = value & 0x3
+
+    @property
+    def pending_interrupt(self):
+        return self._pending_interrupt
+
+    @pending_interrupt.setter
+    def pending_interrupt(self, value):
+        self._pending_interrupt = value & 0xF
+
+    @property
+    def protocol_error(self):
+        return self._protocol_error
+
+    @protocol_error.setter
+    def protocol_error(self, value):
+        self._protocol_error = bool(value)
+
+    @property
+    def vendor_status(self):
+        return self._vendor_status
+
+    @vendor_status.setter
+    def vendor_status(self, value):
+        self._vendor_status = value & 0xFF
+
+    @property
+    def getcaps_bytes(self):
+        return list(self._getcaps_bytes)
+
+    @getcaps_bytes.setter
+    def getcaps_bytes(self, value):
+        self._getcaps_bytes = list(value)
+
+    @property
+    def getmxds_bytes(self):
+        return list(self._getmxds_bytes)
+
+    @getmxds_bytes.setter
+    def getmxds_bytes(self, value):
+        self._getmxds_bytes = list(value)
 
     async def wait_header(self):
         """Override to allow directed CCC phases after broadcast.
@@ -239,6 +374,20 @@ class I3CTargetFixed(I3CTarget):
 
         if ccc == CCC.DIRECT.GETPID:
             return await self._send_getpid()
+        elif ccc == CCC.DIRECT.GETBCR:
+            return await self._send_getbcr()
+        elif ccc == CCC.DIRECT.GETDCR:
+            return await self._send_getdcr()
+        elif ccc == CCC.DIRECT.GETSTATUS:
+            return await self._send_getstatus()
+        elif ccc == CCC.DIRECT.GETMWL:
+            return await self._send_getmwl()
+        elif ccc == CCC.DIRECT.GETMRL:
+            return await self._send_getmrl()
+        elif ccc == CCC.DIRECT.GETCAPS:
+            return await self._send_getcaps()
+        elif ccc == CCC.DIRECT.GETMXDS:
+            return await self._send_getmxds()
         else:
             self.log.error(
                 f"TARGET_FIXED:::Unhandled directed read CCC: 0x{ccc:02X}"
@@ -260,3 +409,120 @@ class I3CTargetFixed(I3CTarget):
             f"bytes={['0x%02X' % b for b in pid_bytes]}"
         )
         return await self._send_ccc_response(pid_bytes)
+
+    async def _send_getbcr(self):
+        """Send 1-byte GETBCR response.
+
+        Per spec Section 5.1.9.3.13:
+        The BCR value is transmitted in one byte, MSb first.
+        """
+        self.log.info(
+            f"TARGET_FIXED:::GETBCR response: BCR=0x{self._bcr:02X}"
+        )
+        return await self._send_ccc_response([self._bcr])
+
+    async def _send_getdcr(self):
+        """Send 1-byte GETDCR response.
+
+        Per spec Section 5.1.9.3.14:
+        The DCR value is transmitted in one byte, MSb first.
+        """
+        self.log.info(
+            f"TARGET_FIXED:::GETDCR response: DCR=0x{self._dcr:02X}"
+        )
+        return await self._send_ccc_response([self._dcr])
+
+    async def _send_getstatus(self):
+        """Send 2-byte GETSTATUS Format 1 response.
+
+        Per spec Section 5.1.9.3.15, Table 27:
+          MSB [15:8] = Vendor Reserved
+          LSB [7:6]  = Activity Mode
+              [5]    = Protocol Error (self-clears on read)
+              [4]    = Reserved
+              [3:0]  = Pending Interrupt
+        """
+        lsb = (
+            ((self._activity_mode & 0x3) << 6)
+            | ((1 if self._protocol_error else 0) << 5)
+            | (self._pending_interrupt & 0xF)
+        )
+        msb = self._vendor_status & 0xFF
+        self.log.info(
+            f"TARGET_FIXED:::GETSTATUS response: "
+            f"MSB=0x{msb:02X} LSB=0x{lsb:02X} "
+            f"(activity={self._activity_mode} "
+            f"proto_err={self._protocol_error} "
+            f"pending_int={self._pending_interrupt})"
+        )
+        # Protocol error self-clears after successful read (spec Table 27)
+        self._protocol_error = False
+        return await self._send_ccc_response([msb, lsb])
+
+    async def _send_getmwl(self):
+        """Send 2-byte GETMWL response (MSB first).
+
+        Per spec Section 5.1.9.3.5:
+        The Max Write Length value is transmitted over two bytes,
+        with the MSB transmitted first.
+        """
+        msb = (self._max_write_length >> 8) & 0xFF
+        lsb = self._max_write_length & 0xFF
+        self.log.info(
+            f"TARGET_FIXED:::GETMWL response: "
+            f"MWL=0x{self._max_write_length:04X}"
+        )
+        return await self._send_ccc_response([msb, lsb])
+
+    async def _send_getmrl(self):
+        """Send 2 or 3 byte GETMRL response (MSB first).
+
+        Per spec Section 5.1.9.3.6:
+        The Max Read Length value is transmitted over two bytes (MSB first).
+        For devices with BCR bit 2 set, a third byte with IBI payload size
+        is appended.
+        """
+        msb = (self._max_rd_length >> 8) & 0xFF
+        lsb = self._max_rd_length & 0xFF
+        resp = [msb, lsb]
+
+        # BCR bit[2] = IBI payload support
+        if self._bcr & (1 << 2):
+            resp.append(self._max_ibi_payload & 0xFF)
+
+        self.log.info(
+            f"TARGET_FIXED:::GETMRL response: "
+            f"MRL=0x{self._max_rd_length:04X} "
+            f"ibi_payload={'0x%02X' % self._max_ibi_payload if self._bcr & (1 << 2) else 'N/A'}"
+        )
+        return await self._send_ccc_response(resp)
+
+    async def _send_getcaps(self):
+        """Send 2-4 byte GETCAPS Format 1 response.
+
+        Per spec Section 5.1.9.3.19, Tables 35-38:
+        GETCAP1: HDR mode support bitmap
+        GETCAP2: HDR-DDR capabilities, Group Address, I3C Basic version
+        GETCAP3: Optional features (MDB, HDR-BT CRC-32, GETSTATUS DB, etc.)
+        GETCAP4: Reserved
+        """
+        resp = list(self._getcaps_bytes)
+        self.log.info(
+            f"TARGET_FIXED:::GETCAPS response: "
+            f"bytes={['0x%02X' % b for b in resp]}"
+        )
+        return await self._send_ccc_response(resp)
+
+    async def _send_getmxds(self):
+        """Send 2 or 5 byte GETMXDS response.
+
+        Per spec Section 5.1.9.3.18:
+        Format 1 (2 bytes): maxWr, maxRd
+        Format 2 (5 bytes): maxWr, maxRd, 3-byte maxRdTurn
+        """
+        resp = list(self._getmxds_bytes)
+        self.log.info(
+            f"TARGET_FIXED:::GETMXDS response: "
+            f"bytes={['0x%02X' % b for b in resp]}"
+        )
+        return await self._send_ccc_response(resp)
