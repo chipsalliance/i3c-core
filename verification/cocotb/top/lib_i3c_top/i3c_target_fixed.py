@@ -27,19 +27,22 @@ from cocotbext_i3c.common import (
     I3cState,
 )
 
+from ccc import CCC
+
 
 class I3CTargetFixed(I3CTarget):
     """I3CTarget with CCC command handling."""
 
-    # Directed CCC codes (read)
-    CCC_GETPID = 0x8D
-
-    # Sets of CCC codes by type
-    DIRECTED_READ_CCCS = {CCC_GETPID}
+    # Sets of CCC codes by type -- derived from the shared CCC dictionary
+    DIRECTED_READ_CCCS = {CCC.DIRECT.GETPID}
     DIRECTED_NACK_CCCS = set()
 
     # HDR entry CCCs (handled by base class)
-    HDR_CCCS = {0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27}
+    HDR_CCCS = {
+        CCC.BCAST.ENTHDR0, CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
+        CCC.BCAST.ENTHDR3, CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
+        CCC.BCAST.ENTHDR6, CCC.BCAST.ENTHDR7,
+    }
 
     def __init__(
         self,
@@ -167,9 +170,7 @@ class I3CTargetFixed(I3CTarget):
                         )
                         # Wait for Sr or P (defining bytes / broadcast data
                         # are passively ignored on the bus)
-                        next_state = None
-                        while not next_state:
-                            next_state = await self.check_start_or_stop()
+                        next_state = await self._await_bus_condition()
                         self.header = I3cHeader.NONE
                 else:
                     # Sr/P arrived before CCC byte was fully received
@@ -188,9 +189,7 @@ class I3CTargetFixed(I3CTarget):
                 next_state = await self.handle_write()
 
             case I3cHeader.NON_APPLICABLE:
-                next_state = None
-                while not next_state:
-                    next_state = await self.check_start_or_stop()
+                next_state = await self._await_bus_condition()
                 self.header = I3cHeader.NONE
 
             case _:
@@ -204,20 +203,47 @@ class I3CTargetFixed(I3CTarget):
 
         return next_state
 
+    async def _await_bus_condition(self):
+        """Wait for the next START or STOP condition on the bus."""
+        next_state = None
+        while not next_state:
+            next_state = await self.check_start_or_stop()
+        return next_state
+
+    async def _send_ccc_response(self, data_bytes):
+        """Send a multi-byte CCC response with T-bit framing.
+
+        Each byte is sent via send_byte(); the last byte uses terminate=True
+        so the controller knows this is the final byte.
+
+        Args:
+            data_bytes: Iterable of int bytes to transmit (MSB first).
+
+        Returns:
+            The next I3cState (RS or STOP) from the bus.
+        """
+        data_bytes = list(data_bytes)
+        for i, byte in enumerate(data_bytes):
+            is_last = i == len(data_bytes) - 1
+            self.state = I3cState.DATA_RD
+            next_state = await self.send_byte(byte, terminate=is_last)
+            if next_state is not None:
+                return next_state
+
+        self.log.error("TARGET_FIXED:::CCC response: unexpected end of send loop")
+        return I3cState.STOP
+
     async def _handle_directed_read_ccc(self):
         """Dispatch directed read CCC to the appropriate handler."""
         ccc = self._pending_ccc
 
-        if ccc == self.CCC_GETPID:
+        if ccc == CCC.DIRECT.GETPID:
             return await self._send_getpid()
         else:
             self.log.error(
                 f"TARGET_FIXED:::Unhandled directed read CCC: 0x{ccc:02X}"
             )
-            next_state = None
-            while not next_state:
-                next_state = await self.check_start_or_stop()
-            return next_state
+            return await self._await_bus_condition()
 
     async def _send_getpid(self):
         """Send 6-byte GETPID response (MSB first).
@@ -233,15 +259,4 @@ class I3CTargetFixed(I3CTarget):
             f"TARGET_FIXED:::GETPID response: PID=0x{self._pid:012X} "
             f"bytes={['0x%02X' % b for b in pid_bytes]}"
         )
-
-        for i, byte in enumerate(pid_bytes):
-            is_last = i == 5
-            self.state = I3cState.DATA_RD
-            next_state = await self.send_byte(byte, terminate=is_last)
-            if next_state is not None:
-                return next_state
-
-        # Should not reach here -- send_byte with terminate=True returns
-        # a next_state (RS or STOP)
-        self.log.error("TARGET_FIXED:::GETPID: unexpected end of send loop")
-        return I3cState.STOP
+        return await self._send_ccc_response(pid_bytes)
