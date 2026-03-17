@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """
-GETPID CCC tests for the I3CTargetFixed sim model.
+CCC tests for the I3CTargetFixed sim model.
 
-Tests the GETPID CCC (0x8D) across the sim target (I3CTargetFixed at 0x23)
-and the DUT in various scenarios: single-target, multi-target with Repeated
-START, with dummy NACKs, across resets, PID type selector modes, and
-randomized target order.
+Tests directed read CCCs across the sim target (I3CTargetFixed) and the DUT
+in various scenarios: single-target, multi-target with Repeated START, with
+dummy NACKs, across resets, PID type selector modes, and randomized target
+order. Both sim target and DUT addresses are randomized.
 
 Spec references:
   - Section 5.1.9.3.12: GETPID format and requirements
@@ -25,9 +25,7 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge, ReadOnly
 
-from common import VALID_I3C_ADDRESSES, log_seed
-
-SIM_TARGET_ADDR = 0x23
+from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed
 
 
 def parse_pid(data):
@@ -39,16 +37,22 @@ def parse_pid(data):
     return pid_48, manufacturer_id, type_selector, vendor_value
 
 
-async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
+async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
     """
-    Set up controller, I3CTargetFixed at 0x23, DUT, and configure PIDs.
+    Set up controller, I3CTargetFixed, DUT, and configure PIDs.
 
     dut_pid_hi: 15-bit value for DUT's PID_HI register (bits[47:33])
     dut_pid_lo: 32-bit value for DUT's PID_LO register (bits[31:0])
     sim_pid: 48-bit PID for the sim target
+    sim_target_addr: address for the sim target (randomized if None)
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
+
+    # Pick sim target address: use provided value or randomize
+    if sim_target_addr is None:
+        sim_target_addr = pick_random_addr()
+    dut._log.info(f"Sim target address: 0x{sim_target_addr:02X}")
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -66,7 +70,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
         speed=12.5e6,
-        address=SIM_TARGET_ADDR,
+        address=sim_target_addr,
         pid=sim_pid,
     )
 
@@ -77,9 +81,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
     await ClockCycles(tb.clk, 50)
 
     # Boot DUT with a random address (avoiding sim target address)
-    dut_addr = random.choice(
-        [a for a in VALID_I3C_ADDRESSES if a != SIM_TARGET_ADDR]
-    )
+    dut_addr = pick_random_addr(exclude=(sim_target_addr,))
     await boot_init(tb, static_addr=dut_addr)
 
     # Configure DUT PID via CSRs
@@ -95,7 +97,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid):
     )
     await ClockCycles(tb.clk, 50)
 
-    return i3c_controller, i3c_target, tb, dut_addr
+    return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr
 
 
 def verify_dut_pid(dut, data, expected_pid_hi, expected_pid_lo):
@@ -144,14 +146,14 @@ async def test_getpid_multi_target_ordering(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
     # --- Phase A: Single-target GETPID to sim target ---
     dut._log.info("=== Phase A: Single-target GETPID to sim target ===")
     responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=SIM_TARGET_ADDR, count=6
+        ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
     )
     await ClockCycles(tb.clk, 50)
 
@@ -163,7 +165,7 @@ async def test_getpid_multi_target_ordering(dut):
     dut._log.info("=== Phase B: Multi-target DUT then sim ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, SIM_TARGET_ADDR],
+        addr=[dut_addr, sim_target_addr],
         count=6,
     )
     await ClockCycles(tb.clk, 50)
@@ -178,7 +180,7 @@ async def test_getpid_multi_target_ordering(dut):
     dut._log.info("=== Phase C: Multi-target sim then DUT ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
-        addr=[SIM_TARGET_ADDR, dut_addr],
+        addr=[sim_target_addr, dut_addr],
         count=6,
     )
     await ClockCycles(tb.clk, 50)
@@ -210,11 +212,11 @@ async def test_getpid_with_nacks_and_random_order(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
-    excluded = {dut_addr, SIM_TARGET_ADDR}
+    excluded = {dut_addr, sim_target_addr}
     available_dummies = [a for a in VALID_I3C_ADDRESSES if a not in excluded]
 
     # --- Phase A: Fixed order with dummy NACKs ---
@@ -224,10 +226,10 @@ async def test_getpid_with_nacks_and_random_order(dut):
     dut._log.info(
         f"Address order: DUT=0x{dut_addr:02X}, "
         f"dummies={['0x%02X' % a for a in dummy_addrs]}, "
-        f"sim=0x{SIM_TARGET_ADDR:02X}"
+        f"sim=0x{sim_target_addr:02X}"
     )
 
-    addr_list = [dut_addr] + dummy_addrs + [SIM_TARGET_ADDR]
+    addr_list = [dut_addr] + dummy_addrs + [sim_target_addr]
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
         addr=addr_list,
@@ -260,7 +262,7 @@ async def test_getpid_with_nacks_and_random_order(dut):
     # --- Phase B: Randomized order ---
     dut._log.info("=== Phase B: Randomized target order ===")
     dummy_addrs_b = random.sample(available_dummies, 2)
-    addr_list_b = [dut_addr, SIM_TARGET_ADDR] + dummy_addrs_b
+    addr_list_b = [dut_addr, sim_target_addr] + dummy_addrs_b
     random.shuffle(addr_list_b)
 
     dut._log.info(
@@ -283,7 +285,7 @@ async def test_getpid_with_nacks_and_random_order(dut):
         if addr == dut_addr:
             assert ack, f"DUT at 0x{addr:02X} should ACK"
             verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
-        elif addr == SIM_TARGET_ADDR:
+        elif addr == sim_target_addr:
             assert ack, f"Sim target at 0x{addr:02X} should ACK"
             verify_sim_pid(dut, data, sim_pid)
         else:
@@ -343,7 +345,7 @@ async def test_getpid_across_resets(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
@@ -351,7 +353,7 @@ async def test_getpid_across_resets(dut):
     dut._log.info("=== Phase A: Initial GETPID ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, SIM_TARGET_ADDR],
+        addr=[dut_addr, sim_target_addr],
         count=6,
     )
     await ClockCycles(tb.clk, 50)
@@ -390,7 +392,7 @@ async def test_getpid_across_resets(dut):
     dut._log.info("=== Phase C: GETPID after warm reset ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, SIM_TARGET_ADDR],
+        addr=[dut_addr, sim_target_addr],
         count=6,
     )
     await ClockCycles(tb.clk, 50)
@@ -429,7 +431,7 @@ async def test_getpid_across_resets(dut):
     dut._log.info("=== Phase E: GETPID after cold reset ===")
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, SIM_TARGET_ADDR],
+        addr=[dut_addr, sim_target_addr],
         count=6,
     )
     await ClockCycles(tb.clk, 50)
@@ -462,7 +464,7 @@ async def test_getpid_vendor_fixed_vs_random(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid_fixed
     )
 
@@ -474,7 +476,7 @@ async def test_getpid_vendor_fixed_vs_random(dut):
 
     for iteration in range(3):
         responses = await i3c_controller.i3c_ccc_read(
-            ccc=CCC.DIRECT.GETPID, addr=SIM_TARGET_ADDR, count=6
+            ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
         )
         await ClockCycles(tb.clk, 50)
 
@@ -507,7 +509,7 @@ async def test_getpid_vendor_fixed_vs_random(dut):
 
     for iteration in range(3):
         responses = await i3c_controller.i3c_ccc_read(
-            ccc=CCC.DIRECT.GETPID, addr=SIM_TARGET_ADDR, count=6
+            ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
         )
         await ClockCycles(tb.clk, 50)
 
