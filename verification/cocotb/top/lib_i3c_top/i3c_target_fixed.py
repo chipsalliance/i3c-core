@@ -6,7 +6,8 @@ This module extends the I3CTarget from cocotbext-i3c to handle Common Command
 Codes (CCCs). The base I3CTarget ignores all CCCs -- it receives the CCC byte
 but then waits for Sr/P without responding. This subclass overrides
 handle_message() and wait_header() to:
-  - Respond to directed CCC reads (GETPID)
+  - Respond to directed CCC reads (currently GETPID; more to come)
+  - NACK unsupported directed CCCs per spec 5.1.9.2.2
   - Track pending CCC state across Repeated STARTs within a frame
 
 Usage:
@@ -33,11 +34,32 @@ from ccc import CCC
 class I3CTargetFixed(I3CTarget):
     """I3CTarget with CCC command handling."""
 
-    # Sets of CCC codes by type -- derived from the shared CCC dictionary
-    DIRECTED_READ_CCCS = {CCC.DIRECT.GETPID}
-    DIRECTED_NACK_CCCS = set()
+    # Single set of all directed CCCs this target supports.
+    # Any directed CCC not in this set will be NACKed per spec 5.1.9.2.2:
+    # "If the Target detects an unsupported Direct CCC, then the Target
+    #  shall generate NACK after its own matched Address"
+    SUPPORTED_DIRECTED_CCCS = {
+        # Directed Read (GET) CCCs
+        CCC.DIRECT.GETPID,
+        CCC.DIRECT.GETBCR,
+        CCC.DIRECT.GETDCR,
+        CCC.DIRECT.GETSTATUS,
+        CCC.DIRECT.GETMWL,
+        CCC.DIRECT.GETMRL,
+        CCC.DIRECT.GETCAPS,
+        CCC.DIRECT.GETMXDS,
+        # Directed Write (SET) CCCs
+        CCC.DIRECT.ENEC,
+        CCC.DIRECT.DISEC,
+        CCC.DIRECT.SETMWL,
+        CCC.DIRECT.SETMRL,
+        CCC.DIRECT.SETNEWDA,
+        CCC.DIRECT.SETDASA,
+        # Directed Read/Write CCCs
+        CCC.DIRECT.RSTACT,
+    }
 
-    # HDR entry CCCs (handled by base class)
+    # HDR entry CCCs (handled by base class in broadcast phase)
     HDR_CCCS = {
         CCC.BCAST.ENTHDR0, CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
         CCC.BCAST.ENTHDR3, CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
@@ -117,13 +139,13 @@ class I3CTargetFixed(I3CTarget):
             await self.ack()
             self.header = I3cHeader.RESERVED
         elif addr == self.address:
-            # Check if this directed CCC should be NACKed
+            # NACK unsupported directed CCCs per spec 5.1.9.2.2
             if (
                 self._pending_ccc is not None
-                and self._pending_ccc in self.DIRECTED_NACK_CCCS
+                and self._pending_ccc not in self.SUPPORTED_DIRECTED_CCCS
             ):
                 self.log.info(
-                    f"TARGET_FIXED:::NACKing directed CCC "
+                    f"TARGET_FIXED:::NACKing unsupported directed CCC "
                     f"0x{self._pending_ccc:02X}"
                 )
                 self.header = I3cHeader.NON_APPLICABLE
@@ -179,7 +201,7 @@ class I3CTargetFixed(I3CTarget):
             case I3cHeader.READ:
                 if (
                     self._pending_ccc is not None
-                    and self._pending_ccc in self.DIRECTED_READ_CCCS
+                    and self._pending_ccc in self.SUPPORTED_DIRECTED_CCCS
                 ):
                     next_state = await self._handle_directed_read_ccc()
                 else:

@@ -37,7 +37,8 @@ def parse_pid(data):
     return pid_48, manufacturer_id, type_selector, vendor_value
 
 
-async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
+async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
+                    sim_target_addr=None, speed=None):
     """
     Set up controller, I3CTargetFixed, DUT, and configure PIDs.
 
@@ -45,6 +46,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
     dut_pid_lo: 32-bit value for DUT's PID_LO register (bits[31:0])
     sim_pid: 48-bit PID for the sim target
     sim_target_addr: address for the sim target (randomized if None)
+    speed: I3C bus clock frequency in Hz (randomized 1-12.5 MHz if None)
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
@@ -52,7 +54,14 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
     # Pick sim target address: use provided value or randomize
     if sim_target_addr is None:
         sim_target_addr = pick_random_addr()
-    dut._log.info(f"Sim target address: 0x{sim_target_addr:02X}")
+
+    # Pick bus speed: use provided value or randomize
+    if speed is None:
+        speed = random.uniform(1e6, 12.5e6)
+    dut._log.info(
+        f"Sim target address: 0x{sim_target_addr:02X}, "
+        f"bus speed: {speed / 1e6:.2f} MHz"
+    )
 
     i3c_controller = I3cController(
         sda_i=dut.bus_sda,
@@ -60,7 +69,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=speed,
     )
 
     i3c_target = I3CTarget(
@@ -69,7 +78,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
         scl_i=dut.bus_scl,
         scl_o=dut.scl_sim_target_i,
         debug_state_o=None,
-        speed=12.5e6,
+        speed=speed,
         address=sim_target_addr,
         pid=sim_pid,
     )
@@ -80,9 +89,10 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
     await tb.setup()
     await ClockCycles(tb.clk, 50)
 
-    # Boot DUT with a random address (avoiding sim target address)
+    # Boot DUT with random addresses (avoiding sim target address)
     dut_addr = pick_random_addr(exclude=(sim_target_addr,))
-    await boot_init(tb, static_addr=dut_addr)
+    virt_addr = pick_random_addr(exclude=(sim_target_addr, dut_addr))
+    await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
 
     # Configure DUT PID via CSRs
     await tb.write_csr_field(
@@ -97,7 +107,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid, sim_target_addr=None):
     )
     await ClockCycles(tb.clk, 50)
 
-    return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr
+    return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr
 
 
 def verify_dut_pid(dut, data, expected_pid_hi, expected_pid_lo):
@@ -146,7 +156,7 @@ async def test_getpid_multi_target_ordering(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
@@ -212,11 +222,11 @@ async def test_getpid_with_nacks_and_random_order(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
-    excluded = {dut_addr, sim_target_addr}
+    excluded = {dut_addr, sim_target_addr, virt_addr}
     available_dummies = [a for a in VALID_I3C_ADDRESSES if a not in excluded]
 
     # --- Phase A: Fixed order with dummy NACKs ---
@@ -345,7 +355,7 @@ async def test_getpid_across_resets(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
@@ -373,7 +383,7 @@ async def test_getpid_across_resets(dut):
     await ClockCycles(tb.clk, 100)
 
     # Re-boot DUT after peripheral reset
-    await boot_init(tb, static_addr=dut_addr)
+    await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
 
     # Re-configure DUT PID (may have been preserved, but set explicitly)
     await tb.write_csr_field(
@@ -412,7 +422,7 @@ async def test_getpid_across_resets(dut):
     await ClockCycles(tb.clk, 100)
 
     # Re-boot DUT after whole target reset
-    await boot_init(tb, static_addr=dut_addr)
+    await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
 
     # Re-configure DUT PID
     await tb.write_csr_field(
@@ -464,7 +474,7 @@ async def test_getpid_vendor_fixed_vs_random(dut):
     dut_pid_hi = random.randint(0, 0x7FFF)
     dut_pid_lo = random.randint(0, 0xFFFFFFFF)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr = await setup_env(
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid_fixed
     )
 
