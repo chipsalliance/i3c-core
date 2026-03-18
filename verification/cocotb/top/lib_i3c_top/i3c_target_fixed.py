@@ -79,6 +79,8 @@ class I3CTargetFixed(I3CTarget):
         address=None,
         max_read_length=2,
         pid=0x000000000000,
+        bcr=0x00,
+        dcr=0x00,
         *args,
         **kwargs,
     ):
@@ -98,6 +100,8 @@ class I3CTargetFixed(I3CTarget):
         )
 
         self._pid = pid & 0xFFFFFFFFFFFF
+        self._bcr = bcr & 0xFF
+        self._dcr = dcr & 0xFF
 
         # CCC state tracking
         self._pending_ccc = None
@@ -105,7 +109,7 @@ class I3CTargetFixed(I3CTarget):
         self.log.info(
             f"TARGET_FIXED:::CCC-capable target at addr="
             f"{hex(address) if address else 'None'}, "
-            f"PID=0x{pid:012X}"
+            f"PID=0x{pid:012X}, BCR=0x{bcr:02X}, DCR=0x{dcr:02X}"
         )
 
     @property
@@ -169,6 +173,11 @@ class I3CTargetFixed(I3CTarget):
 
         match self.header:
             case I3cHeader.RESERVED:
+                # New broadcast phase (Sr + 7'h7E/W) ends any prior Direct
+                # CCC per spec 5.1.9.2.1.  Clear stale state so a subsequent
+                # private transfer is not misinterpreted as a directed CCC.
+                self._pending_ccc = None
+
                 # Broadcast phase: receive CCC byte
                 self.state = I3cState.CCC
                 ccc_value, next_state = await self.recv_ccc()
@@ -261,6 +270,10 @@ class I3CTargetFixed(I3CTarget):
 
         if ccc == CCC.DIRECT.GETPID:
             return await self._send_getpid()
+        elif ccc == CCC.DIRECT.GETBCR:
+            return await self._send_getbcr()
+        elif ccc == CCC.DIRECT.GETDCR:
+            return await self._send_getdcr()
         else:
             self.log.error(
                 f"TARGET_FIXED:::Unhandled directed read CCC: 0x{ccc:02X}"
@@ -282,3 +295,25 @@ class I3CTargetFixed(I3CTarget):
             f"bytes={['0x%02X' % b for b in pid_bytes]}"
         )
         return await self._send_ccc_response(pid_bytes)
+
+    async def _send_getbcr(self):
+        """Send 1-byte GETBCR response.
+
+        Per spec Section 5.1.9.3.13:
+        The BCR is a single byte describing Target capabilities.
+        """
+        self.log.info(
+            f"TARGET_FIXED:::GETBCR response: BCR=0x{self._bcr:02X}"
+        )
+        return await self._send_ccc_response([self._bcr])
+
+    async def _send_getdcr(self):
+        """Send 1-byte GETDCR response.
+
+        Per spec Section 5.1.9.3.14:
+        The DCR is a single byte identifying the Target device type.
+        """
+        self.log.info(
+            f"TARGET_FIXED:::GETDCR response: DCR=0x{self._dcr:02X}"
+        )
+        return await self._send_ccc_response([self._dcr])

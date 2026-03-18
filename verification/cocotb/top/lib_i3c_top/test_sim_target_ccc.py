@@ -38,7 +38,8 @@ def parse_pid(data):
 
 
 async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
-                    sim_target_addr=None, speed=None):
+                    sim_target_addr=None, speed=None,
+                    sim_bcr=0x00, sim_dcr=0x00):
     """
     Set up controller, I3CTargetFixed, DUT, and configure PIDs.
 
@@ -47,6 +48,8 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     sim_pid: 48-bit PID for the sim target
     sim_target_addr: address for the sim target (randomized if None)
     speed: I3C bus clock frequency in Hz (randomized 1-12.5 MHz if None)
+    sim_bcr: 8-bit BCR value for the sim target
+    sim_dcr: 8-bit DCR value for the sim target
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
@@ -81,6 +84,8 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
         speed=speed,
         address=sim_target_addr,
         pid=sim_pid,
+        bcr=sim_bcr,
+        dcr=sim_dcr,
     )
 
     dut.peripheral_reset_done_i.value = 0
@@ -108,6 +113,25 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     await ClockCycles(tb.clk, 50)
 
     return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr
+
+
+async def do_directed_ccc_read(ctrl, ccc, addr, count):
+    """Send one directed CCC read phase (broadcast + directed).
+
+    Sends: Sr/S + 7'h7E/W + ccc_byte + Sr + addr/R + [count bytes].
+    Does NOT send STOP -- caller manages bus control and termination.
+
+    Returns (ack, data) where ack is True if the target ACK'd.
+    """
+    await ctrl.send_start()
+    await ctrl.write_addr_header(0x7E)
+    await ctrl.send_byte_tbit(ccc)
+    await ctrl.send_start()
+    ack = await ctrl.write_addr_header(addr, read=True)
+    data = bytearray()
+    if ack:
+        await ctrl.recv_until_eod_tbit(data, count, stop=False)
+    return ack, data
 
 
 def verify_dut_pid(dut, data, expected_pid_hi, expected_pid_lo):
@@ -303,5 +327,313 @@ async def test_getpid_with_nacks_and_random_order(dut):
             assert not ack, (
                 f"Dummy target 0x{addr:02X} should NACK, got ACK"
             )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 3: GETPID then private read -- verify _pending_ccc is cleared
+# =========================================================================
+@cocotb.test()
+async def test_getpid_then_private_read_no_stale_ccc(dut):
+    """
+    Verify that a private read after a Direct CCC does NOT replay the CCC
+    response. Per spec 5.1.9.2.1, Sr + 7'h7E/W ends a Direct CCC. The
+    subsequent Sr + addr/R is a private read, not a directed CCC phase.
+
+    Scenario (Gap #5 / Gap #1):
+      1) Send Direct GETPID to sim target -> get 6-byte PID (correct)
+      2) Send private read to sim target (S + 7'h7E/W + Sr + addr/R)
+      3) Verify response is from target memory, NOT a GETPID replay
+
+    If _pending_ccc is stale, step 2 incorrectly dispatches to the CCC
+    handler and returns PID bytes instead of memory data.
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    dut_pid_hi = random.randint(0, 0x7FFF)
+    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+    )
+
+    # Pre-load known data into sim target memory so private read has
+    # something distinguishable from PID bytes.
+    mem_data = [random.randint(0, 0xFF) for _ in range(2)]
+    i3c_target._mem.write(mem_data, length=len(mem_data))
+    dut._log.info(
+        f"Pre-loaded sim target memory: {['0x%02X' % b for b in mem_data]}"
+    )
+
+    # --- Step 1: Direct GETPID to sim target ---
+    dut._log.info("=== Step 1: Direct GETPID to sim target ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
+    _, pid_data = responses[0]
+    verify_sim_pid(dut, pid_data, sim_pid)
+    dut._log.info(f"GETPID OK: PID=0x{sim_pid:012X}")
+
+    # --- Step 2: Private read to sim target ---
+    # i3c_read sends: S + 7'h7E/W + Sr + addr/R + [data] + P
+    # The S + 7'h7E/W portion ends the previous Direct CCC context.
+    # The Sr + addr/R is a private read -- NOT a CCC directed phase.
+    dut._log.info("=== Step 2: Private read to sim target ===")
+    resp = await i3c_controller.i3c_read(
+        addr=sim_target_addr, count=len(mem_data)
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert not resp.nack, (
+        f"Sim target at 0x{sim_target_addr:02X} should ACK private read"
+    )
+
+    read_data = list(resp.data)
+    dut._log.info(
+        f"Private read data: {['0x%02X' % b for b in read_data]}"
+    )
+
+    # The key assertion: private read must return memory data, not PID.
+    # If _pending_ccc was stale, the sim target would have sent PID bytes.
+    pid_bytes = [(sim_pid >> (40 - 8 * i)) & 0xFF for i in range(6)]
+    assert read_data == mem_data, (
+        f"Private read returned wrong data: got {read_data}, "
+        f"expected memory {mem_data}. "
+        f"If got PID prefix {pid_bytes[:len(mem_data)]}, "
+        f"_pending_ccc was stale (Gap #5 bug)."
+    )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 4: CCC broadcast with no directed phases (Gap #2)
+# =========================================================================
+@cocotb.test()
+async def test_ccc_broadcast_no_directed_phase(dut):
+    """
+    Verify that sending a directed CCC broadcast with no directed phases
+    (STOP immediately after the CCC code) does not leave the DUT or sim
+    target in a broken state. A normal CCC afterward should succeed.
+
+    Per spec 5.1.9.2.1, a CCC frame may end with STOP after the Command.
+
+    Scenario (Gap #2):
+      1) Send S + 7'h7E/W + GETPID + P (no directed phases)
+      2) Send normal GETPID to both DUT and sim target
+      3) Verify both respond correctly
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    dut_pid_hi = random.randint(0, 0x7FFF)
+    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+    )
+
+    # --- Step 1: CCC broadcast with no directed phases ---
+    dut._log.info("=== Step 1: GETPID broadcast-only (no directed phase) ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=[], count=6
+    )
+    await ClockCycles(tb.clk, 50)
+    assert len(responses) == 0, (
+        f"Expected 0 responses for empty addr list, got {len(responses)}"
+    )
+
+    # --- Step 2: Normal GETPID to both targets ---
+    dut._log.info("=== Step 2: Normal GETPID to verify recovery ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID,
+        addr=[dut_addr, sim_target_addr],
+        count=6,
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
+    _, dut_data = responses[0]
+    verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
+    _, sim_data = responses[1]
+    verify_sim_pid(dut, sim_data, sim_pid)
+    dut._log.info("Both targets responded correctly after broadcast-only CCC")
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 5: CCC chaining -- two CCCs in one frame (Gap #7 / Gap #7b)
+# =========================================================================
+@cocotb.test()
+async def test_ccc_chain_two_cccs_in_one_frame(dut):
+    """
+    Verify CCC chaining via Sr+7'h7E/W in two phases:
+
+    Phase A (Gap #7): Both CCCs directed at the sim target.
+      GETPID -> Sr+7'h7E/W -> GETBCR, both to sim target.
+      Verify PID then BCR.
+
+    Phase B (Gap #7b): First CCC to DUT, second to sim target.
+      GETPID to DUT -> Sr+7'h7E/W -> GETBCR to sim target.
+      Exercises _pending_ccc update when sim target sees the broadcast
+      but is not addressed in the first directed phase.
+
+    Spec: 5.1.9.2.1 -- Sr + 7'h7E/W ends a Direct CCC and starts a new one.
+
+    Note: Uses raw protocol calls instead of i3c_ccc_read because that
+    API manages bus control internally; chaining requires holding the bus
+    across two CCCs without releasing in between.
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    sim_bcr = random.randint(0, 0xFF)
+    dut_pid_hi = random.randint(0, 0x7FFF)
+    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr
+    )
+
+    # --- Phase A: Both CCCs to sim target ---
+    dut._log.info(
+        f"=== Phase A: GETPID + GETBCR both to sim "
+        f"(0x{sim_target_addr:02X}) ==="
+    )
+    await i3c_controller.take_bus_control()
+
+    ack1, pid_data = await do_directed_ccc_read(
+        i3c_controller, CCC.DIRECT.GETPID, sim_target_addr, 6
+    )
+    assert ack1, "Sim target should ACK GETPID"
+    verify_sim_pid(dut, pid_data, sim_pid)
+
+    ack2, bcr_data_a = await do_directed_ccc_read(
+        i3c_controller, CCC.DIRECT.GETBCR, sim_target_addr, 1
+    )
+    assert ack2, "Sim target should ACK GETBCR"
+
+    await i3c_controller.send_stop()
+    i3c_controller.give_bus_control()
+    await ClockCycles(tb.clk, 50)
+
+    assert bcr_data_a[0] == sim_bcr, (
+        f"Phase A GETBCR mismatch: exp 0x{sim_bcr:02X}, "
+        f"got 0x{bcr_data_a[0]:02X}"
+    )
+    dut._log.info(
+        f"Phase A OK: PID=0x{sim_pid:012X}, BCR=0x{sim_bcr:02X}"
+    )
+
+    # --- Phase B: GETPID to DUT, then GETBCR to sim ---
+    dut._log.info(
+        f"=== Phase B: GETPID to DUT (0x{dut_addr:02X}), "
+        f"GETBCR to sim (0x{sim_target_addr:02X}) ==="
+    )
+    await i3c_controller.take_bus_control()
+
+    ack3, dut_pid_data = await do_directed_ccc_read(
+        i3c_controller, CCC.DIRECT.GETPID, dut_addr, 6
+    )
+    assert ack3, "DUT should ACK GETPID"
+    verify_dut_pid(dut, dut_pid_data, dut_pid_hi, dut_pid_lo)
+
+    ack4, bcr_data_b = await do_directed_ccc_read(
+        i3c_controller, CCC.DIRECT.GETBCR, sim_target_addr, 1
+    )
+    assert ack4, "Sim target should ACK GETBCR"
+
+    await i3c_controller.send_stop()
+    i3c_controller.give_bus_control()
+    await ClockCycles(tb.clk, 50)
+
+    assert bcr_data_b[0] == sim_bcr, (
+        f"Phase B GETBCR mismatch: exp 0x{sim_bcr:02X}, "
+        f"got 0x{bcr_data_b[0]:02X}"
+    )
+    dut._log.info(
+        f"Phase B OK: DUT PID verified, Sim BCR=0x{sim_bcr:02X}"
+    )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 6: Mid-byte STOP during GETPID response from DUT (Gap #3)
+# =========================================================================
+@cocotb.test()
+async def test_getpid_mid_byte_abort_dut_recovery(dut):
+    """
+    Verify that the DUT recovers when the controller aborts a directed
+    CCC read with STOP mid-byte (not on a byte boundary).
+
+    Per spec 5.1.9.2.1, a CCC may end with STOP at any time. The DUT
+    shall return to idle and respond correctly to subsequent transactions.
+
+    Scenario (Gap #3):
+      1) Start GETPID directed at DUT
+      2) After DUT ACKs, receive a random number of bits (1-7, mid-byte)
+      3) Issue STOP (premature termination)
+      4) Verify DUT recovers: send normal GETPID, check correct response
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    dut_pid_hi = random.randint(0, 0x7FFF)
+    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+    )
+
+    # Randomize how many bits to receive before aborting (1-7 = mid-byte)
+    abort_bits = random.randint(1, 7)
+    dut._log.info(
+        f"=== Mid-byte abort: GETPID to DUT (0x{dut_addr:02X}), "
+        f"abort after {abort_bits} bits ==="
+    )
+
+    # --- Step 1: Start GETPID, abort mid-byte ---
+    await i3c_controller.take_bus_control()
+    await i3c_controller.send_start()
+    await i3c_controller.write_addr_header(0x7E)
+    await i3c_controller.send_byte_tbit(CCC.DIRECT.GETPID)
+    await i3c_controller.send_start()
+    ack = await i3c_controller.write_addr_header(dut_addr, read=True)
+    assert ack, f"DUT should ACK GETPID at 0x{dut_addr:02X}"
+
+    # Receive partial bits (mid-byte)
+    partial_bits = []
+    for _ in range(abort_bits):
+        bit = await i3c_controller.recv_bit()
+        partial_bits.append(int(bit))
+    dut._log.info(f"Received {abort_bits} partial bits: {partial_bits}")
+
+    # Suppress bus contention check during mid-byte abort.
+    # In push-pull mode, the DUT drives SDA while the controller forces
+    # STOP -- brief contention is expected protocol physics for mid-byte
+    # termination and does not indicate a real bug.
+    if tb.bus_monitor:
+        tb.bus_monitor.suppress_check("BUS_CONTENTION")
+
+    # Abort with STOP mid-byte
+    dut._log.info("Sending STOP mid-byte (premature termination)")
+    await i3c_controller.send_stop()
+    i3c_controller.give_bus_control()
+    await ClockCycles(tb.clk, 100)
+
+    if tb.bus_monitor:
+        tb.bus_monitor.unsuppress_check("BUS_CONTENTION")
+
+    # --- Step 2: Verify DUT recovery with a normal GETPID ---
+    dut._log.info("=== Verifying DUT recovery with normal GETPID ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
+    ack_recov, pid_data = responses[0]
+    assert ack_recov, "DUT should ACK GETPID after recovery"
+    verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
+    dut._log.info("DUT recovered correctly after mid-byte abort")
 
     await tb.teardown()
