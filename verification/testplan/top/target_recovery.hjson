@@ -714,5 +714,33 @@
       tests: ["recovery_unsupported_cmd_irq"]
       tags: ["top"]
     }
+    {
+      name: recovery_tx_pec_csr_data_race
+      desc:
+        '''
+        PEC coherency under concurrent FW CSR writes. FW toggles
+        RECOVERY_STATUS every few clocks in the background while
+        the controller performs reads of the same register via I3C.
+        Verifies that PEC is always correct despite concurrent AXI
+        writes, proving csr_data snapshot integrity.
+        Spec ref: OCP Recovery v1.1 Section 8.4.
+        '''
+      tests: ["recovery_tx_pec_csr_data_race"]
+      tags: ["top"]
+    }
+    {
+      name: recovery_ri_csr_concurrent_stress
+      desc:
+        '''
+        Stress test: concurrent random FW (AXI) and I3C accesses to
+        recovery interface CSRs. FW randomly reads/writes RI CSRs via
+        AXI in the background while I3C performs random read/write
+        operations via the recovery protocol. Every I3C read checks
+        PEC, data length, and NACK status. Exposes data races,
+        coherency bugs, or FSM hangs under concurrent access.
+        '''
+      tests: ["recovery_ri_csr_concurrent_stress"]
+      tags: ["top"]
+    }
   ]
 }

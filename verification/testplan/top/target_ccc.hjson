@@ -727,5 +727,19 @@
       tests: ["ccc_stop_during_target_read"]
       tags: ["top"]
     }
+    {
+      name: ccc_csr_concurrent_stress
+      desc:
+        '''
+        Stress test: concurrent random FW (AXI) and I3C CCC accesses to
+        CCC-affected CSRs. FW randomly reads/writes CCC-related CSRs via AXI
+        in the background while I3C performs 50 random supported CCC operations
+        (GET and SET). GET CCCs verify ACK; SET CCCs send random valid data.
+        Goal: expose data races, coherency bugs, or FSM hangs under concurrent
+        access from both interfaces.
+        '''
+      tests: ["ccc_csr_concurrent_stress"]
+      tags: ["top"]
+    }
   ]
 }

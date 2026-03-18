@@ -78,6 +78,42 @@ limits on Private Read or Private Write transfers. See {doc}`firmware_guide` for
 details on firmware responsibilities.
 ```
 
+## Multi-Byte CCC Register Atomicity
+
+Several Direct GET CCCs return multi-byte values. The CCC state machine
+transmits these byte-by-byte, selecting each byte from the source signal
+combinationally as it is needed. There is no snapshot or shadow register;
+the source is re-read on every byte. If the underlying CSR is modified
+mid-transfer, remaining bytes will reflect the new value while
+already-transmitted bytes retain the old value.
+
+| CCC | Bytes | Source | Updated By |
+|-----|-------|--------|------------|
+| GETBCR | 1 | `STBY_CR_DEVICE_CHAR.BCR_*` | FW |
+| GETDCR | 1 | `STBY_CR_DEVICE_CHAR.DCR` | FW |
+| GETSTATUS | 2 | `TTI.INTERRUPT_STATUS`, `TTI.STATUS` | HW |
+| GETMWL | 2 | Internal flop | SETMWL CCC |
+| GETMRL | 3 | Internal flop | SETMRL CCC |
+| GETPID | 6 | `STBY_CR_DEVICE_CHAR.PID_HI` + `STBY_CR_DEVICE_PID_LO.PID_LO` | FW |
+
+**GETPID**: The 48-bit PID is assembled combinationally from two CSR
+registers (`STBY_CR_DEVICE_CHAR` and `STBY_CR_DEVICE_PID_LO`). If firmware
+writes either register while a GETPID CCC is in progress, the byte being
+transmitted in that cycle and all subsequent bytes will use the new register
+value. Firmware should write both PID registers before the Target receives
+a dynamic address (before ENTDAA / SETDASA / SETAASA), since GETPID is
+only issued after address assignment.
+
+**GETMWL / GETMRL**: These read internal flops that are only written by the
+SETMWL / SETMRL CCC handler. Since only one CCC can be active on the bus at
+a time, GET and SET cannot overlap. These registers are read-only to firmware
+(`sw = r`).
+
+For SET CCCs, **SETMRL** commits MRL (bytes 0-1) and IBIL (byte 2) to
+`STBY_CR_MRL` on separate clock cycles. A firmware read of `STBY_CR_MRL`
+between those two updates sees the new MRL with the stale IBIL. **SETMWL**
+commits both MWL bytes to `STBY_CR_MWL` in a single cycle.
+
 ## CCC Error Handling
 
 The core detects errors during CCC processing:
