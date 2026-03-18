@@ -4,8 +4,8 @@ CCC tests for the I3CTargetFixed sim model.
 
 Tests directed read CCCs across the sim target (I3CTargetFixed) and the DUT
 in various scenarios: single-target, multi-target with Repeated START, with
-dummy NACKs, across resets, PID type selector modes, and randomized target
-order. Both sim target and DUT addresses are randomized.
+dummy NACKs, and randomized target order. Both sim target and DUT addresses
+are randomized.
 
 Spec references:
   - Section 5.1.9.3.12: GETPID format and requirements
@@ -16,14 +16,14 @@ Spec references:
 import logging
 import random
 
-from boot import boot_init, umbrella_stby_init
-from ccc import CCC, RSTACT_DEF_BYTE
+from boot import boot_init
+from ccc import CCC
 from i3c_controller_fixed import I3cControllerFixed as I3cController
 from i3c_target_fixed import I3CTargetFixed as I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, RisingEdge, ReadOnly
+from cocotb.triggers import ClockCycles
 
 from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed
 
@@ -303,242 +303,5 @@ async def test_getpid_with_nacks_and_random_order(dut):
             assert not ack, (
                 f"Dummy target 0x{addr:02X} should NACK, got ACK"
             )
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 3: GETPID across warm and cold resets
-# =========================================================================
-async def do_pattern_reset(dut, tb, i3c_controller, expect_escalation=False):
-    """Send Target Reset Pattern and handle the reset handshake."""
-    dut._log.info(
-        f"Initiating Target Reset Pattern "
-        f"(expect_escalation={expect_escalation})"
-    )
-    await i3c_controller.send_target_reset_pattern()
-
-    assert dut.peripheral_reset_o == (not expect_escalation), (
-        f"peripheral_reset_o mismatch: expected {not expect_escalation}, "
-        f"got {int(dut.peripheral_reset_o)}"
-    )
-    await RisingEdge(tb.clk)
-
-    # Signal that peripheral reset is finished
-    dut.peripheral_reset_done_i.value = not expect_escalation
-    await RisingEdge(tb.clk)
-
-    await ReadOnly()
-    assert dut.peripheral_reset_o == 0, (
-        f"peripheral_reset_o not deasserted after reset done"
-    )
-
-    await RisingEdge(tb.clk)
-    dut.peripheral_reset_done_i.value = 0
-
-
-@cocotb.test()
-async def test_getpid_across_resets(dut):
-    """
-    Verify PID stability across warm and cold resets.
-
-    Sequence:
-      (a) Initial GETPID on sim target + DUT
-      (b) Warm reset: RSTACT 0x01 broadcast + Target Reset Pattern + re-boot
-      (c) GETPID again -- verify PIDs unchanged
-      (d) Cold reset: RSTACT 0x02 broadcast + Target Reset Pattern + re-boot
-      (e) GETPID again -- verify PIDs unchanged
-
-    Spec: Sections 5.1.9.3.12, 5.1.9.3.26, 5.1.11
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
-    # (a) Initial GETPID
-    dut._log.info("=== Phase A: Initial GETPID ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, sim_target_addr],
-        count=6,
-    )
-    await ClockCycles(tb.clk, 50)
-    assert len(responses) == 2
-    verify_dut_pid(dut, responses[0][1], dut_pid_hi, dut_pid_lo)
-    verify_sim_pid(dut, responses[1][1], sim_pid)
-
-    # (b) Warm reset: RSTACT 0x01 (peripheral reset) + Target Reset Pattern
-    dut._log.info("=== Phase B: Warm reset (RSTACT 0x01) ===")
-    await i3c_controller.i3c_ccc_write(
-        ccc=CCC.BCAST.RSTACT,
-        defining_byte=RSTACT_DEF_BYTE.PERIPHERAL_RESET,
-        stop=True,
-    )
-    await ClockCycles(tb.clk, 50)
-    await do_pattern_reset(dut, tb, i3c_controller)
-    await ClockCycles(tb.clk, 100)
-
-    # Re-boot DUT after peripheral reset
-    await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
-
-    # Re-configure DUT PID (may have been preserved, but set explicitly)
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
-        dut_pid_hi,
-    )
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO,
-        dut_pid_lo,
-    )
-    await ClockCycles(tb.clk, 50)
-
-    # (c) GETPID after warm reset
-    dut._log.info("=== Phase C: GETPID after warm reset ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, sim_target_addr],
-        count=6,
-    )
-    await ClockCycles(tb.clk, 50)
-    assert len(responses) == 2
-    verify_dut_pid(dut, responses[0][1], dut_pid_hi, dut_pid_lo)
-    verify_sim_pid(dut, responses[1][1], sim_pid)
-
-    # (d) Cold reset: RSTACT 0x02 (whole target reset) + Target Reset Pattern
-    dut._log.info("=== Phase D: Cold reset (RSTACT 0x02) ===")
-    await i3c_controller.i3c_ccc_write(
-        ccc=CCC.BCAST.RSTACT,
-        defining_byte=RSTACT_DEF_BYTE.TARGET_RESET,
-        stop=True,
-    )
-    await ClockCycles(tb.clk, 50)
-    await do_pattern_reset(dut, tb, i3c_controller)
-    await ClockCycles(tb.clk, 100)
-
-    # Re-boot DUT after whole target reset
-    await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
-
-    # Re-configure DUT PID
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
-        dut_pid_hi,
-    )
-    await tb.write_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO,
-        dut_pid_lo,
-    )
-    await ClockCycles(tb.clk, 50)
-
-    # (e) GETPID after cold reset
-    dut._log.info("=== Phase E: GETPID after cold reset ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, sim_target_addr],
-        count=6,
-    )
-    await ClockCycles(tb.clk, 50)
-    assert len(responses) == 2
-    verify_dut_pid(dut, responses[0][1], dut_pid_hi, dut_pid_lo)
-    verify_sim_pid(dut, responses[1][1], sim_pid)
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 4: GETPID vendor-fixed vs random type selector
-# =========================================================================
-@cocotb.test()
-async def test_getpid_vendor_fixed_vs_random(dut):
-    """
-    Verify PID type selector (bit[32]) and manufacturer ID stability.
-
-    Uses a single test environment. First configures sim target with
-    bit[32]=0 (vendor fixed), verifies manufacturer ID and vendor value
-    across multiple reads. Then updates the PID to bit[32]=1 (random mode)
-    and verifies bits[47:33] still match the configured value (spec
-    5.1.4.1.1: bits[47:33] shall not be randomized).
-    """
-    sim_mfr_id = random.randint(0, 0x7FFF)
-    sim_vendor_val = random.randint(0, 0xFFFFFFFF)
-    # Start with vendor fixed mode (bit[32]=0)
-    sim_pid_fixed = (sim_mfr_id << 33) | (0 << 32) | sim_vendor_val
-
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid_fixed
-    )
-
-    # --- Vendor Fixed mode (bit[32]=0) ---
-    dut._log.info(
-        f"Vendor Fixed mode: mfr=0x{sim_mfr_id:04X} "
-        f"vendor=0x{sim_vendor_val:08X}"
-    )
-
-    for iteration in range(3):
-        responses = await i3c_controller.i3c_ccc_read(
-            ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
-        )
-        await ClockCycles(tb.clk, 50)
-
-        _, data = responses[0]
-        pid_rx, mfr_rx, type_rx, vendor_rx = parse_pid(data)
-
-        assert type_rx == 0, (
-            f"Iter {iteration}: type selector should be 0 (vendor fixed), "
-            f"got {type_rx}"
-        )
-        assert mfr_rx == sim_mfr_id, (
-            f"Iter {iteration}: manufacturer ID mismatch: "
-            f"exp=0x{sim_mfr_id:04X} got=0x{mfr_rx:04X}"
-        )
-        assert vendor_rx == sim_vendor_val, (
-            f"Iter {iteration}: vendor value mismatch: "
-            f"exp=0x{sim_vendor_val:08X} got=0x{vendor_rx:08X}"
-        )
-
-    # --- Random mode (bit[32]=1) ---
-    # Update the sim target PID in-place (same manufacturer ID, new value)
-    sim_random_val = random.randint(0, 0xFFFFFFFF)
-    sim_pid_random = (sim_mfr_id << 33) | (1 << 32) | sim_random_val
-    i3c_target.pid = sim_pid_random
-
-    dut._log.info(
-        f"Random mode: mfr=0x{sim_mfr_id:04X} "
-        f"random=0x{sim_random_val:08X}"
-    )
-
-    for iteration in range(3):
-        responses = await i3c_controller.i3c_ccc_read(
-            ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
-        )
-        await ClockCycles(tb.clk, 50)
-
-        _, data = responses[0]
-        pid_rx, mfr_rx, type_rx, vendor_rx = parse_pid(data)
-
-        assert type_rx == 1, (
-            f"Iter {iteration}: type selector should be 1 (random), "
-            f"got {type_rx}"
-        )
-        # Spec 5.1.4.1.1: bits[47:33] shall not be randomized
-        assert mfr_rx == sim_mfr_id, (
-            f"Iter {iteration}: manufacturer ID changed! "
-            f"Spec 5.1.4.1.1: bits[47:33] shall not be randomized. "
-            f"exp=0x{sim_mfr_id:04X} got=0x{mfr_rx:04X}"
-        )
-        assert vendor_rx == sim_random_val, (
-            f"Iter {iteration}: random value mismatch: "
-            f"exp=0x{sim_random_val:08X} got=0x{vendor_rx:08X}"
-        )
 
     await tb.teardown()

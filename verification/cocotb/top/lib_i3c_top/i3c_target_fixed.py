@@ -177,10 +177,10 @@ class I3CTargetFixed(I3CTarget):
                     if ccc_value in self.HDR_CCCS:
                         # HDR entry -- delegate to base class HDR handling
                         self.hdr_mode = True
-                        if ccc_value == 0x20:
+                        if ccc_value == CCC.BCAST.ENTHDR0:
                             self.hdr_ddr = True
                             next_state = I3cState.HDR_DDR_HEADER
-                        elif ccc_value == 0x23:
+                        elif ccc_value == CCC.BCAST.ENTHDR3:
                             self.hdr_bt = True
                             next_state = I3cState.HDR_BT_HEADER
                     else:
