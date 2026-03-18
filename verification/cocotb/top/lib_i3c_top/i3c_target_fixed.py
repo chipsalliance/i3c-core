@@ -9,6 +9,7 @@ handle_message() and wait_header() to:
   - Respond to directed CCC reads (currently GETPID; more to come)
   - NACK unsupported directed CCCs per spec 5.1.9.2.2
   - Track pending CCC state across Repeated STARTs within a frame
+  - Reject CCCs that are prohibited in HDR mode per spec Table 62
 
 Usage:
     Instead of:
@@ -66,6 +67,34 @@ class I3CTargetFixed(I3CTarget):
         CCC.BCAST.ENTHDR6, CCC.BCAST.ENTHDR7,
     }
 
+    # CCCs NOT permitted in any HDR mode (spec Table 62, section 5.2.1.2).
+    # Broadcast CCCs prohibited in HDR:
+    #   RSTDAA(0x06), ENTDAA(0x07), ENTTM(0x0B), ENTHDR0-7(0x20-0x27),
+    #   SETAASA(0x29)
+    HDR_PROHIBITED_BCAST_CCCS = {
+        CCC.BCAST.RSTDAA,
+        CCC.BCAST.ENTDAA,
+        CCC.BCAST.ENTTM,
+        CCC.BCAST.ENTHDR0, CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
+        CCC.BCAST.ENTHDR3, CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
+        CCC.BCAST.ENTHDR6, CCC.BCAST.ENTHDR7,
+        CCC.BCAST.SETAASA,
+    }
+
+    # Directed CCCs prohibited in HDR:
+    #   RSTDAA(0x86), SETDASA(0x87), SETNEWDA(0x88), GETPID(0x8D),
+    #   GETACCCR(0x91)
+    HDR_PROHIBITED_DIRECT_CCCS = {
+        CCC.DIRECT.RSTDAA,
+        CCC.DIRECT.SETDASA,
+        CCC.DIRECT.SETNEWDA,
+        CCC.DIRECT.GETPID,
+        CCC.DIRECT.GETACCCR,
+    }
+
+    # Combined set for quick lookup
+    HDR_PROHIBITED_CCCS = HDR_PROHIBITED_BCAST_CCCS | HDR_PROHIBITED_DIRECT_CCCS
+
     def __init__(
         self,
         sda_i,
@@ -120,6 +149,23 @@ class I3CTargetFixed(I3CTarget):
     def pid(self, value):
         self._pid = value & 0xFFFFFFFFFFFF
 
+    def _is_ccc_prohibited_in_hdr(self, ccc_value):
+        """Check if a CCC is prohibited in HDR mode per spec Table 62.
+
+        Returns True if self.hdr_mode is active and ccc_value is in the
+        HDR_PROHIBITED_CCCS set. Logs a warning when a prohibited CCC
+        is detected.
+        """
+        if not self.hdr_mode:
+            return False
+        if ccc_value in self.HDR_PROHIBITED_CCCS:
+            self.log.warning(
+                f"TARGET_FIXED:::CCC 0x{ccc_value:02X} is prohibited in "
+                f"HDR mode (spec Table 62, section 5.2.1.2)"
+            )
+            return True
+        return False
+
     async def wait_header(self):
         """Override to allow directed CCC phases after broadcast.
 
@@ -150,6 +196,16 @@ class I3CTargetFixed(I3CTarget):
             ):
                 self.log.info(
                     f"TARGET_FIXED:::NACKing unsupported directed CCC "
+                    f"0x{self._pending_ccc:02X}"
+                )
+                self.header = I3cHeader.NON_APPLICABLE
+            # NACK directed CCCs prohibited in HDR mode (spec Table 62)
+            elif (
+                self._pending_ccc is not None
+                and self._is_ccc_prohibited_in_hdr(self._pending_ccc)
+            ):
+                self.log.info(
+                    f"TARGET_FIXED:::NACKing HDR-prohibited directed CCC "
                     f"0x{self._pending_ccc:02X}"
                 )
                 self.header = I3cHeader.NON_APPLICABLE
@@ -192,6 +248,15 @@ class I3CTargetFixed(I3CTarget):
                         elif ccc_value == CCC.BCAST.ENTHDR3:
                             self.hdr_bt = True
                             next_state = I3cState.HDR_BT_HEADER
+                    elif self._is_ccc_prohibited_in_hdr(ccc_value):
+                        # CCC is prohibited in HDR mode (spec Table 62).
+                        # Do not process; wait for next bus condition.
+                        self.log.info(
+                            f"TARGET_FIXED:::Ignoring HDR-prohibited "
+                            f"broadcast CCC 0x{ccc_value:02X}"
+                        )
+                        next_state = await self._await_bus_condition()
+                        self.header = I3cHeader.NONE
                     else:
                         # Store CCC for directed phase
                         self._pending_ccc = ccc_value
