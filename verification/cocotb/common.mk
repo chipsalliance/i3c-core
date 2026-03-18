@@ -50,21 +50,13 @@ ifeq ($(SIM), verilator)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
 endif
 
-# Switch between Verdi FSDB PLI and "classic" waveform dumping
-VERDI_PLI ?= 1
-
 ifeq ($(SIM), vcs)
     COMPILE_ARGS += -assert svaext
     COMPILE_ARGS += -Xcflags='-Wno-error=implicit-function-declaration -Wno-error=int-conversion'
     COMPILE_ARGS += -kdb
-    ifeq ($(VERDI_PLI), 1)
-        COMPILE_ARGS += -P $(VERDI_HOME)/share/PLI/VCS/LINUX64/novas.tab $(VERDI_HOME)/share/PLI/VCS/LINUX64/pli.a
-    else
-        COMPILE_ARGS += -debug_access+all +vcs+fsdbon
-    endif
+    COMPILE_ARGS += -debug_access+all +vcs+fsdbon
     ifeq ($(WAVES), 1)
-        # Sim args seem to work for both wave dumping types (?)
-    SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+        SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
     endif
     EXTRA_ARGS += +vcs+lic+wait
 

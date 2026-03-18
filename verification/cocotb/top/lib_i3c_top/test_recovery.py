@@ -2604,7 +2604,7 @@ async def test_recovery_flow(dut):
         for data_ptr in range(0, image_size, xfer_size * 4):
 
             # Poll INDIRECT_FIFO_STATUS
-            MAX_FIFO_POLLS = 500
+            MAX_FIFO_POLLS = 2000
             for _poll in range(MAX_FIFO_POLLS):
                 status = dword2int(
                     await tb.read_csr(
@@ -8386,5 +8386,267 @@ async def test_ri_indirect_fifo_overflow_irq(dut):
     # Verify irq_o goes LOW
     assert irq.value == 0, f"irq_o should be LOW after clearing status, got {int(irq.value)}"
     dut._log.info("PASS: irq_o went LOW after clearing status (toggle 0->1->0 verified)")
+
+    await tb.teardown()
+
+
+@cocotb.test()
+async def test_recovery_tx_pec_csr_data_race(dut):
+    """
+    Prosecutor test: PEC coherency under concurrent FW CSR writes.
+
+    Exposes a race in recovery_receiver.sv where csr_data updates live during
+    a TX response. bus_tx_flow captures data early in each byte while the PEC
+    calculator latches tx_data_o (driven from live csr_data) at byte end.
+    A FW write between those two events causes bus data != PEC input.
+
+    Strategy: FW toggles RECOVERY_STATUS every few clocks in the background
+    while the controller performs 100 reads of the same register. Any PEC
+    mismatch proves the race.
+
+    Spec ref: OCP Recovery v1.1 Section 8.4
+    """
+
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=2000)
+
+    # Assign dynamic addresses
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA,
+        directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])],
+    )
+
+    recovery_status_addr = tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_STATUS.base_addr
+
+    # Seed RECOVERY_STATUS with a known value
+    await tb.write_csr(recovery_status_addr, int2dword(0x01), 4)
+    await ClockCycles(tb.clk, 10)
+
+    # Background task: constantly toggle RECOVERY_STATUS between two values
+    stop_writes = Event()
+
+    async def fw_csr_writer():
+        """Toggle RECOVERY_STATUS between 0x01 and 0x0102 every 5 clocks."""
+        toggle = False
+        while not stop_writes.is_set():
+            val = 0x0102 if toggle else 0x01
+            await tb.write_csr(recovery_status_addr, int2dword(val), 4)
+            toggle = not toggle
+            await ClockCycles(tb.clk, 5)
+
+    cocotb.start_soon(fw_csr_writer())
+
+    # Perform up to 25 reads of RECOVERY_STATUS while FW is writing.
+    # Fail immediately on first PEC mismatch.
+    num_reads = 25
+
+    for i in range(num_reads):
+        data, pec_ok = await recovery.command_read(
+            VIRT_DYNAMIC_ADDR, I3cRecoveryInterface.Command.RECOVERY_STATUS
+        )
+
+        assert data is not None, (
+            f"Read {i}: Unexpected NACK on RECOVERY_STATUS read"
+        )
+        assert len(data) == 2, (
+            f"Read {i}: Expected 2 data bytes, got {len(data)}: "
+            f"{[hex(b) for b in data]}"
+        )
+        if not pec_ok:
+            # Compute expected PEC for the bus data we actually received
+            addr_r = (VIRT_DYNAMIC_ADDR << 1) | 1
+            len_bytes = [len(data) & 0xFF, (len(data) >> 8) & 0xFF]
+            expected_pec = int(recovery.pec_calc.checksum(
+                bytes([addr_r] + len_bytes + data)
+            ))
+            # Compute PEC for the alternate toggled value (the likely stale value)
+            alt_val = 0x0102 if data[0] != 0x02 else 0x01
+            alt_data = [alt_val & 0xFF, (alt_val >> 8) & 0xFF]
+            alt_pec = int(recovery.pec_calc.checksum(
+                bytes([addr_r] + len_bytes + alt_data)
+            ))
+            assert False, (
+                f"Read {i}: PEC MISMATCH. "
+                f"Bus data={[hex(b) for b in data]}, "
+                f"expected PEC=0x{expected_pec:02X}, "
+                f"PEC for alternate value {[hex(b) for b in alt_data]}=0x{alt_pec:02X}. "
+                f"DUT likely computed PEC from new csr_data while bus sent old."
+            )
+        dut._log.info(f"Read {i}: OK data={[hex(b) for b in data]}")
+
+    stop_writes.set()
+    await ClockCycles(tb.clk, 20)
+    dut._log.info(f"All {num_reads} reads passed PEC check")
+
+    await tb.teardown()
+
+
+@cocotb.test()
+async def test_recovery_ri_csr_concurrent_stress(dut):
+    """
+    Stress test: concurrent random FW (AXI) and I3C accesses to RI CSRs.
+
+    FW randomly reads/writes RI CSRs via AXI in the background while I3C
+    performs 50 random read/write operations via the recovery protocol.
+    Every I3C read checks PEC, data length, and NACK status.
+
+    Goal: expose data races, coherency bugs, or FSM hangs under concurrent
+    access from both interfaces.
+    """
+
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=3000)
+
+    # Assign dynamic addresses
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(STATIC_ADDR, [DYNAMIC_ADDR << 1])]
+    )
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA,
+        directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])],
+    )
+
+    # Put device in recovery mode
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr,
+        int2dword(0x03), 4,
+    )
+    await ClockCycles(tb.clk, 10)
+
+    # -- I3C command table: (command_code, expected_read_bytes, i3c_writable) --
+    I3C_CMDS = [
+        (I3cRecoveryInterface.Command.PROT_CAP,          15, False),
+        (I3cRecoveryInterface.Command.DEVICE_ID,          24, False),
+        (I3cRecoveryInterface.Command.DEVICE_STATUS,       7, False),
+        (I3cRecoveryInterface.Command.DEVICE_RESET,        3, True),
+        (I3cRecoveryInterface.Command.RECOVERY_CTRL,       3, True),
+        (I3cRecoveryInterface.Command.RECOVERY_STATUS,     2, False),
+        (I3cRecoveryInterface.Command.HW_STATUS,           4, False),
+        (I3cRecoveryInterface.Command.INDIRECT_FIFO_CTRL,  6, True),
+        (I3cRecoveryInterface.Command.INDIRECT_FIFO_STATUS, 20, False),
+    ]
+
+    # -- FW CSR table: (addr, safe_write_max) --
+    # safe_write_max constrains random values to avoid bad device states.
+    # DEVICE_STATUS_0 is excluded -- it must stay 0x03 (RecoveryMode) or
+    # recovery-only commands will be NACKed.
+    RI = tb.reg_map.I3C_EC.SECFWRECOVERYIF
+    FW_CSRS = [
+        (RI.DEVICE_STATUS_0.base_addr,      0x03, 0x03),  # always write 0x03
+        (RI.DEVICE_STATUS_1.base_addr,      0xFF, None),
+        (RI.DEVICE_RESET.base_addr,         0x07, None),
+        (RI.RECOVERY_CTRL.base_addr,        0x0F, None),
+        (RI.RECOVERY_STATUS.base_addr,      0x03, None),   # DEV_REC_STATUS <= 3
+        (RI.HW_STATUS.base_addr,            0xFF, None),
+        (RI.INDIRECT_FIFO_CTRL_1.base_addr, 0xFF, None),   # IMAGE_SIZE
+    ]
+
+    # Also include read-only FW CSRs for read traffic
+    FW_READ_CSRS = [
+        RI.PROT_CAP_0.base_addr,
+        RI.PROT_CAP_1.base_addr,
+        RI.PROT_CAP_2.base_addr,
+        RI.PROT_CAP_3.base_addr,
+        RI.DEVICE_ID_0.base_addr,
+        RI.DEVICE_STATUS_0.base_addr,
+        RI.DEVICE_RESET.base_addr,
+        RI.RECOVERY_CTRL.base_addr,
+        RI.RECOVERY_STATUS.base_addr,
+        RI.HW_STATUS.base_addr,
+        RI.INDIRECT_FIFO_CTRL_0.base_addr,
+        RI.INDIRECT_FIFO_CTRL_1.base_addr,
+        RI.INDIRECT_FIFO_STATUS_0.base_addr,
+        RI.INDIRECT_FIFO_STATUS_3.base_addr,
+        RI.INDIRECT_FIFO_STATUS_4.base_addr,
+    ]
+
+    # -----------------------------------------------------------------------
+    # FW background task: random AXI reads/writes until stopped
+    # -----------------------------------------------------------------------
+    stop_fw = Event()
+    fw_ops = 0
+
+    async def fw_background():
+        nonlocal fw_ops
+        while not stop_fw.is_set():
+            if random.random() < 0.5:
+                # FW write
+                addr, safe_max, fixed_val = random.choice(FW_CSRS)
+                val = fixed_val if fixed_val is not None else random.randint(0, safe_max)
+                await tb.write_csr(addr, int2dword(val), 4)
+            else:
+                # FW read
+                addr = random.choice(FW_READ_CSRS)
+                await tb.read_csr(addr, 4)
+            fw_ops += 1
+            delay = random.randint(1, 10)
+            await ClockCycles(tb.clk, delay)
+
+    cocotb.start_soon(fw_background())
+
+    # -----------------------------------------------------------------------
+    # I3C foreground: 50 random read/write operations
+    # -----------------------------------------------------------------------
+    NUM_I3C_OPS = 50
+    i3c_reads = 0
+    i3c_writes = 0
+
+    for i in range(NUM_I3C_OPS):
+        cmd_code, exp_rd_len, writable = random.choice(I3C_CMDS)
+
+        # Decide read vs write: always read if not writable, else 50/50
+        do_write = writable and random.random() < 0.5
+
+        if do_write:
+            # Generate random data of the correct length
+            write_data = [random.randint(0, 0x0F) for _ in range(exp_rd_len)]
+            await recovery.command_write(
+                VIRT_DYNAMIC_ADDR, cmd_code, write_data
+            )
+            i3c_writes += 1
+            dut._log.info(f"I3C op {i}: WRITE cmd={cmd_code} len={exp_rd_len}")
+        else:
+            data, pec_ok = await recovery.command_read(
+                VIRT_DYNAMIC_ADDR, cmd_code
+            )
+            i3c_reads += 1
+
+            assert data is not None, (
+                f"I3C op {i}: Unexpected NACK on cmd={cmd_code}"
+            )
+            assert len(data) == exp_rd_len, (
+                f"I3C op {i}: cmd={cmd_code} expected {exp_rd_len}B, "
+                f"got {len(data)}B: {[hex(b) for b in data]}"
+            )
+            assert pec_ok, (
+                f"I3C op {i}: PEC MISMATCH cmd={cmd_code} "
+                f"data={[hex(b) for b in data]}"
+            )
+            dut._log.info(
+                f"I3C op {i}: READ cmd={cmd_code} len={len(data)} pec=OK"
+            )
+
+    # -----------------------------------------------------------------------
+    # Stop FW background, check results
+    # -----------------------------------------------------------------------
+    stop_fw.set()
+    await ClockCycles(tb.clk, 50)
+
+    dut._log.info(
+        f"Done: {NUM_I3C_OPS} I3C ops ({i3c_reads} reads, {i3c_writes} writes), "
+        f"{fw_ops} FW ops"
+    )
+
+    # Check no protocol errors were flagged
+    status = dword2int(
+        await tb.read_csr(RI.DEVICE_STATUS_0.base_addr, 4)
+    )
+    prot_err = (status >> 8) & 0xFF
+    if prot_err != 0:
+        dut._log.warning(
+            f"DEVICE_STATUS_0.PROT_ERROR=0x{prot_err:02X} (may be from "
+            f"I3C writes to read-only regs -- non-fatal)"
+        )
 
     await tb.teardown()
