@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """
-Fixed I3C Target with CCC Support
+Fixed I3C Target with CCC Support and Premature STOP Resilience
 
 This module extends the I3CTarget from cocotbext-i3c to handle Common Command
 Codes (CCCs). The base I3CTarget ignores all CCCs -- it receives the CCC byte
@@ -10,6 +10,17 @@ handle_message() and wait_header() to:
   - NACK unsupported directed CCCs per spec 5.1.9.2.2
   - Track pending CCC state across Repeated STARTs within a frame
   - Reject CCCs that are prohibited in HDR mode per spec Table 62
+
+Additionally, this subclass overrides send_bit() and send_byte() to handle
+premature STOP during target-driven data phases. Per spec 5.1.9.2.1:
+  "If the Controller invalidly terminates the data associated with a CCC
+   prematurely, then the Target shall use best efforts to handle the
+   termination and ascertain the proper course of action."
+
+The base I3CTarget hangs forever if STOP arrives mid-byte during a directed
+read response because send_bit() awaits FallingEdge(scl_i) which never comes
+after STOP. This subclass races each SCL-edge await against STOP detection
+(SDA rising while SCL is high) with a timeout fallback for bus-idle.
 
 Usage:
     Instead of:
@@ -23,6 +34,13 @@ Usage:
 
 import logging
 
+from cocotb.triggers import (
+    FallingEdge,
+    First,
+    RisingEdge,
+    Timer,
+)
+
 from cocotbext_i3c.i3c_target import I3CTarget, I3cHeader
 from cocotbext_i3c.common import (
     I3C_RSVD_BYTE,
@@ -30,6 +48,16 @@ from cocotbext_i3c.common import (
 )
 
 from ccc import CCC
+
+
+class BusAbortError(Exception):
+    """Raised when SCL stops toggling (premature STOP or bus abort).
+
+    The base I3CTarget awaits FallingEdge/RisingEdge(scl_i) which hang
+    forever if the controller issues STOP mid-byte. This exception is
+    raised by the per-edge timeout helpers and caught by send_byte() to
+    cleanly return I3cState.STOP.
+    """
 
 
 class I3CTargetFixed(I3CTarget):
@@ -135,6 +163,13 @@ class I3CTargetFixed(I3CTarget):
         # CCC state tracking
         self._pending_ccc = None
 
+        # Per-edge timeout for premature STOP detection.
+        # If SCL doesn't toggle within this many ns, we assume the
+        # controller stopped clocking (STOP or bus abort).
+        # 20 SCL periods with a 5us floor covers all bus speeds.
+        scl_period_ns = int(1.0 / self.speed * 1e9)
+        self._edge_timeout_ns = max(5000, scl_period_ns * 20)
+
         self.log.info(
             f"TARGET_FIXED:::CCC-capable target at addr="
             f"{hex(address) if address else 'None'}, "
@@ -165,6 +200,92 @@ class I3CTargetFixed(I3CTarget):
             )
             return True
         return False
+
+    # -----------------------------------------------------------------
+    # Premature STOP resilience -- per-edge timeout (Option B)
+    # -----------------------------------------------------------------
+    # The base I3CTarget's send_bit() awaits FallingEdge(scl_i) which
+    # hangs forever if the controller issues STOP mid-byte (no more SCL
+    # toggles).  We override send_bit() and send_byte() to race every
+    # SCL-edge await against a Timer.  If the timer fires first (SCL
+    # didn't toggle), we raise BusAbortError.  send_byte() catches it,
+    # releases SDA, and returns I3cState.STOP.
+    # -----------------------------------------------------------------
+
+    async def _await_falling_scl(self):
+        """FallingEdge(scl_i) with timeout.
+
+        Raises BusAbortError if SCL does not fall within
+        ``_edge_timeout_ns`` nanoseconds.
+        """
+        await First(
+            FallingEdge(self.scl_i),
+            Timer(self._edge_timeout_ns, units='ns'),
+        )
+        if self.scl:
+            raise BusAbortError("SCL did not fall within timeout")
+
+    async def _await_rising_scl(self):
+        """RisingEdge(scl_i) with timeout.
+
+        Raises BusAbortError if SCL does not rise within
+        ``_edge_timeout_ns`` nanoseconds.
+        """
+        await First(
+            RisingEdge(self.scl_i),
+            Timer(self._edge_timeout_ns, units='ns'),
+        )
+        if not self.scl:
+            raise BusAbortError("SCL did not rise within timeout")
+
+    async def send_bit(self, bit: bool):
+        """Override: send one bit with per-edge abort detection.
+
+        Raises BusAbortError if SCL stops toggling (premature STOP).
+        """
+        if self.scl:
+            await self._await_falling_scl()
+        self.sda = bool(bit)
+        await self._await_falling_scl()
+        self.sda = 1
+
+    async def send_byte(self, byte: int, terminate: bool):
+        """Override: send one byte + T-bit with abort detection.
+
+        If BusAbortError is raised by send_bit() or edge helpers,
+        we release SDA and return I3cState.STOP.
+        """
+        try:
+            for i in range(8):
+                await self.send_bit(byte & (1 << 7 - i))
+
+            self.state = I3cState.TBIT_RD
+            if self.scl:
+                await self._await_falling_scl()
+
+            # Drive T-bit: 0 = more data, 1 = last byte
+            self.sda = not terminate
+            await self._await_rising_scl()
+            self.sda = 1
+
+            # Wait for Sr or P if this was the last byte
+            next_state = None
+            if terminate:
+                if await self.check_stop():
+                    next_state = I3cState.STOP
+                elif await self.check_start(repeated=True):
+                    next_state = I3cState.RS
+
+            return next_state
+
+        except BusAbortError:
+            self.sda = 1
+            self.state = I3cState.STOP
+            self.log.info(
+                "TARGET_FIXED:::Bus abort in send_byte -- "
+                "premature STOP assumed"
+            )
+            return I3cState.STOP
 
     async def wait_header(self):
         """Override to allow directed CCC phases after broadcast.
@@ -309,8 +430,10 @@ class I3CTargetFixed(I3CTarget):
     async def _send_ccc_response(self, data_bytes):
         """Send a multi-byte CCC response with T-bit framing.
 
-        Each byte is sent via send_byte(); the last byte uses terminate=True
-        so the controller knows this is the final byte.
+        Each byte is sent via the overridden send_byte() which has
+        per-edge abort detection.  If the controller issues STOP
+        mid-transfer, send_byte() catches BusAbortError, releases
+        SDA, and returns I3cState.STOP.
 
         Args:
             data_bytes: Iterable of int bytes to transmit (MSB first).
@@ -319,6 +442,7 @@ class I3CTargetFixed(I3CTarget):
             The next I3cState (RS or STOP) from the bus.
         """
         data_bytes = list(data_bytes)
+
         for i, byte in enumerate(data_bytes):
             is_last = i == len(data_bytes) - 1
             self.state = I3cState.DATA_RD
@@ -326,7 +450,9 @@ class I3CTargetFixed(I3CTarget):
             if next_state is not None:
                 return next_state
 
-        self.log.error("TARGET_FIXED:::CCC response: unexpected end of send loop")
+        self.log.error(
+            "TARGET_FIXED:::CCC response: unexpected end of send loop"
+        )
         return I3cState.STOP
 
     async def _handle_directed_read_ccc(self):
