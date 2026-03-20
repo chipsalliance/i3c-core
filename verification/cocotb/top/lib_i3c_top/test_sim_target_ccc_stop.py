@@ -143,11 +143,13 @@ async def abort_at_bit_offset(ctrl, abort_at):
     await ctrl.send_stop()
 
 
-async def verify_recovery(ctrl, addr, expected_pid):
-    """Verify the sim target can complete a full GETPID after an abort.
+async def verify_recovery(ctrl, sim_addr, expected_sim_pid,
+                          dut_addr, expected_dut_pid):
+    """Verify both the sim target and DUT recover after a premature STOP.
 
     Waits for the sim target's per-edge timeout to fire (~20 SCL
-    periods), then performs a complete GETPID and checks the PID.
+    periods), then performs GETPID to both the sim target and DUT
+    and checks their PIDs.
     """
     ctrl.give_bus_control()
     # Wait for per-edge timeout + margin (50 SCL periods, 10us floor)
@@ -158,21 +160,32 @@ async def verify_recovery(ctrl, addr, expected_pid):
                       RECOVERY_SCL_PERIODS * scl_period_ns)
     await Timer(recovery_ns, units='ns')
 
-    data = await do_getpid(ctrl, addr)
-    pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
-    assert pid_48 == expected_pid, (
-        f"Recovery GETPID mismatch: got 0x{pid_48:012X}, "
-        f"expected 0x{expected_pid:012X}"
+    # Check sim target recovery
+    sim_data = await do_getpid(ctrl, sim_addr)
+    sim_pid = int.from_bytes(sim_data[0:6], byteorder="big", signed=False)
+    assert sim_pid == expected_sim_pid, (
+        f"Sim target recovery GETPID mismatch: got 0x{sim_pid:012X}, "
+        f"expected 0x{expected_sim_pid:012X}"
     )
-    cocotb.log.info(f"Recovery GETPID OK: 0x{pid_48:012X}")
+    cocotb.log.info(f"Sim target recovery GETPID OK: 0x{sim_pid:012X}")
+
+    # Check DUT recovery
+    dut_data = await do_getpid(ctrl, dut_addr)
+    dut_pid = int.from_bytes(dut_data[0:6], byteorder="big", signed=False)
+    assert dut_pid == expected_dut_pid, (
+        f"DUT recovery GETPID mismatch: got 0x{dut_pid:012X}, "
+        f"expected 0x{expected_dut_pid:012X}"
+    )
+    cocotb.log.info(f"DUT recovery GETPID OK: 0x{dut_pid:012X}")
 
 
-async def do_abort_iteration(ctrl, sim_addr, iteration, abort_at):
+async def do_abort_iteration(ctrl, sim_addr, dut_addr, expected_dut_pid,
+                             iteration, abort_at):
     """Run one abort-recovery iteration.
 
     1. Baseline GETPID (sanity check before abort)
     2. Begin GETPID, clock abort_at bits, STOP
-    3. Verify recovery with a full GETPID
+    3. Verify recovery with GETPID to both sim target and DUT
     """
     cocotb.log.info(
         f"--- Iteration {iteration}: abort at bit {abort_at} "
@@ -192,8 +205,9 @@ async def do_abort_iteration(ctrl, sim_addr, iteration, abort_at):
     assert ack, f"Iteration {iteration}: sim target NACKed directed GETPID"
     await abort_at_bit_offset(ctrl, abort_at)
 
-    # Recovery
-    await verify_recovery(ctrl, sim_addr, SIM_PID)
+    # Recovery -- check both sim target and DUT
+    await verify_recovery(ctrl, sim_addr, SIM_PID,
+                          dut_addr, expected_dut_pid)
     cocotb.log.info(f"--- Iteration {iteration}: PASSED ---")
 
 
@@ -216,9 +230,13 @@ async def test_getpid_premature_stop(dut):
     """
     ctrl, target, tb, dut_addr, sim_addr = await setup_env(dut)
 
+    # DUT PID: PID_HI maps to bits[47:33], bit[32]=0, PID_LO = bits[31:0]
+    expected_dut_pid = (DUT_PID_HI << 33) | DUT_PID_LO
+
     # 6-byte GETPID = 54 bits on wire (8 data + 1 T-bit per byte)
     max_bits = 6 * 9
 
     for i in range(NUM_ITERATIONS):
         abort_at = random.randint(0, max_bits - 1)
-        await do_abort_iteration(ctrl, sim_addr, i, abort_at)
+        await do_abort_iteration(ctrl, sim_addr, dut_addr,
+                                 expected_dut_pid, i, abort_at)
