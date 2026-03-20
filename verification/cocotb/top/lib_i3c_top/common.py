@@ -6,6 +6,8 @@ import random
 import cocotb
 from cocotb.triggers import Timer
 
+from ccc import CCC
+
 # Canonical I3C address list -- single source of truth.
 # These are all valid 7-bit I3C dynamic addresses per the spec,
 # excluding reserved addresses (0x00-0x02, 0x3E, 0x5E, 0x6E, 0x76, 0x7A, 0x7C, 0x7E-0x7F).

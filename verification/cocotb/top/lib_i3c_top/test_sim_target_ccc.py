@@ -25,7 +25,7 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles
 
-from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed
+from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed, do_getpid
 
 
 def parse_pid(data):
@@ -186,13 +186,7 @@ async def test_getpid_multi_target_ordering(dut):
 
     # --- Phase A: Single-target GETPID to sim target ---
     dut._log.info("=== Phase A: Single-target GETPID to sim target ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
-    )
-    await ClockCycles(tb.clk, 50)
-
-    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
-    _, data = responses[0]
+    data = await do_getpid(i3c_controller, sim_target_addr)
     verify_sim_pid(dut, data, sim_pid)
 
     # --- Phase B: Multi-target -- DUT first, then sim ---
@@ -367,13 +361,7 @@ async def test_getpid_then_private_read_no_stale_ccc(dut):
 
     # --- Step 1: Direct GETPID to sim target ---
     dut._log.info("=== Step 1: Direct GETPID to sim target ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=sim_target_addr, count=6
-    )
-    await ClockCycles(tb.clk, 50)
-
-    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
-    _, pid_data = responses[0]
+    pid_data = await do_getpid(i3c_controller, sim_target_addr)
     verify_sim_pid(dut, pid_data, sim_pid)
     dut._log.info(f"GETPID OK: PID=0x{sim_pid:012X}")
 
@@ -625,14 +613,7 @@ async def test_getpid_mid_byte_abort_dut_recovery(dut):
 
     # --- Step 2: Verify DUT recovery with a normal GETPID ---
     dut._log.info("=== Verifying DUT recovery with normal GETPID ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
-    )
-    await ClockCycles(tb.clk, 50)
-
-    assert len(responses) == 1, f"Expected 1 response, got {len(responses)}"
-    ack_recov, pid_data = responses[0]
-    assert ack_recov, "DUT should ACK GETPID after recovery"
+    pid_data = await do_getpid(i3c_controller, dut_addr)
     verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
     dut._log.info("DUT recovered correctly after mid-byte abort")
 
