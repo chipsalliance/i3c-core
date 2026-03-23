@@ -88,7 +88,7 @@ class I3CTargetFixed(I3CTarget):
         CCC.DIRECT.RSTACT,
     }
 
-    # HDR entry CCCs (handled by base class in broadcast phase)
+    # HDR entry CCCs
     HDR_CCCS = {
         CCC.BCAST.ENTHDR0, CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
         CCC.BCAST.ENTHDR3, CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
@@ -371,7 +371,7 @@ class I3CTargetFixed(I3CTarget):
                         next_state = await self._await_bus_condition()
                         self.header = I3cHeader.NONE
                     elif ccc_value in self.HDR_CCCS:
-                        # HDR entry -- delegate to base class HDR handling
+                        # HDR entry
                         self.hdr_mode = True
                         if ccc_value == CCC.BCAST.ENTHDR0:
                             self.hdr_ddr = True

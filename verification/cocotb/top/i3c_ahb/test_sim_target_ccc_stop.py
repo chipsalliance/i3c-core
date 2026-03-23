@@ -1,1 +1,0 @@
-../lib_i3c_top/test_sim_target_ccc_stop.py
