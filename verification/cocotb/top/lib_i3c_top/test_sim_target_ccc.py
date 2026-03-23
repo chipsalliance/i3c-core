@@ -25,7 +25,7 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles
 
-from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed, do_getpid
+from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed, do_getpid, do_getbcr
 
 
 def parse_pid(data):
@@ -616,5 +616,128 @@ async def test_getpid_mid_byte_abort_dut_recovery(dut):
     pid_data = await do_getpid(i3c_controller, dut_addr)
     verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
     dut._log.info("DUT recovered correctly after mid-byte abort")
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 7: Unsupported ENTHDR entry from SDR mode
+# =========================================================================
+@cocotb.test()
+async def test_sim_target_unsupported_enthdr_from_sdr(dut):
+    """
+    Verify sim target and DUT handle an unsupported ENTHDR variant from SDR
+    mode without hanging or corrupting state.
+
+    A random unsupported ENTHDR (1/2/4/5/6/7) is selected each run; more
+    seeds cover all variants. The target must set hdr_mode=True, wait for
+    HDR exit, and cleanly return to SDR.
+
+    Flow:
+      1. Send randomly chosen unsupported ENTHDRx broadcast from SDR mode
+      2. Send HDR exit pattern
+      3. Verify sim target still ACKs GETBCR
+      4. Verify DUT still ACKs GETPID
+    """
+    dut_pid_hi = random.getrandbits(15)
+    dut_pid_lo = random.getrandbits(32)
+    sim_pid = random.getrandbits(48)
+    sim_bcr = random.randint(0, 0xFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr,
+    )
+
+    # Unsupported ENTHDR variants: everything except ENTHDR0 and ENTHDR3
+    # which have explicit DDR/BT handlers.
+    unsupported_enthdr = [
+        CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
+        CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
+        CCC.BCAST.ENTHDR6, CCC.BCAST.ENTHDR7,
+    ]
+
+    hdr_code = random.choice(unsupported_enthdr)
+    dut._log.info(
+        f"=== Testing unsupported ENTHDR 0x{hdr_code:02X} from SDR mode ==="
+    )
+
+    await i3c_controller.i3c_ccc_write(
+        ccc=hdr_code, broadcast_data=[], stop=False, pull_scl_low=True,
+    )
+
+    await i3c_controller.send_hdr_exit()
+
+    # Verify sim target recovery
+    bcr_data = await do_getbcr(i3c_controller, sim_target_addr)
+    assert bcr_data[0] == sim_bcr, (
+        f"After ENTHDR 0x{hdr_code:02X}: sim target BCR mismatch: "
+        f"expected 0x{sim_bcr:02X}, got 0x{bcr_data[0]:02X}"
+    )
+
+    # Verify DUT recovery
+    pid_data = await do_getpid(i3c_controller, dut_addr)
+    verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
+
+    dut._log.info(
+        f"Both targets recovered after unsupported ENTHDR 0x{hdr_code:02X}"
+    )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# Test 8: ENTHDR0 re-entry after HDR exit
+# =========================================================================
+@cocotb.test()
+async def test_sim_target_enthdr0_then_reentry_after_exit(dut):
+    """
+    Verify sim target and DUT correctly re-enter SDR after ENTHDR0 + HDR
+    exit, then handle another ENTHDR cycle without state corruption.
+
+    Validates that hdr_mode is properly cleared on HDR exit and that the
+    prohibited-CCC check does not spuriously block a fresh ENTHDR entry
+    from SDR mode.
+
+    Flow:
+      1. ENTHDR0 (enter HDR-DDR) -> HDR exit -> verify both targets
+      2. ENTHDR0 again -> HDR exit -> verify both targets
+      3. Unsupported ENTHDR1 -> HDR exit -> verify both targets
+    """
+    dut_pid_hi = random.getrandbits(15)
+    dut_pid_lo = random.getrandbits(32)
+    sim_pid = random.getrandbits(48)
+    sim_bcr = random.randint(0, 0xFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr,
+    )
+
+    phases = [
+        ("ENTHDR0 first",       CCC.BCAST.ENTHDR0),
+        ("ENTHDR0 second",      CCC.BCAST.ENTHDR0),
+        ("ENTHDR1 unsupported", CCC.BCAST.ENTHDR1),
+    ]
+
+    for phase_name, hdr_code in phases:
+        dut._log.info(f"=== Phase: {phase_name} (0x{hdr_code:02X}) ===")
+
+        await i3c_controller.i3c_ccc_write(
+            ccc=hdr_code, broadcast_data=[], stop=False, pull_scl_low=True,
+        )
+
+        await i3c_controller.send_hdr_exit()
+
+        # Verify sim target is back in SDR and responsive
+        bcr_data = await do_getbcr(i3c_controller, sim_target_addr)
+        assert bcr_data[0] == sim_bcr, (
+            f"Phase '{phase_name}': sim target BCR mismatch: "
+            f"expected 0x{sim_bcr:02X}, got 0x{bcr_data[0]:02X}"
+        )
+
+        # Verify DUT is back in SDR and responsive
+        pid_data = await do_getpid(i3c_controller, dut_addr)
+        verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
+
+        dut._log.info(f"Phase '{phase_name}': both targets recovered OK")
 
     await tb.teardown()

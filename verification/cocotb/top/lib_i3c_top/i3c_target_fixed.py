@@ -360,7 +360,17 @@ class I3CTargetFixed(I3CTarget):
                 ccc_value, next_state = await self.recv_ccc()
 
                 if next_state == I3cState.CCC_DATA:
-                    if ccc_value in self.HDR_CCCS:
+                    if self._is_ccc_prohibited_in_hdr(ccc_value):
+                        # CCC is prohibited in HDR mode (spec Table 62).
+                        # Must check BEFORE HDR_CCCS since ENTHDRx are
+                        # both in HDR_CCCS and HDR_PROHIBITED_CCCS.
+                        self.log.info(
+                            f"TARGET_FIXED:::Ignoring HDR-prohibited "
+                            f"broadcast CCC 0x{ccc_value:02X}"
+                        )
+                        next_state = await self._await_bus_condition()
+                        self.header = I3cHeader.NONE
+                    elif ccc_value in self.HDR_CCCS:
                         # HDR entry -- delegate to base class HDR handling
                         self.hdr_mode = True
                         if ccc_value == CCC.BCAST.ENTHDR0:
@@ -369,15 +379,17 @@ class I3CTargetFixed(I3CTarget):
                         elif ccc_value == CCC.BCAST.ENTHDR3:
                             self.hdr_bt = True
                             next_state = I3cState.HDR_BT_HEADER
-                    elif self._is_ccc_prohibited_in_hdr(ccc_value):
-                        # CCC is prohibited in HDR mode (spec Table 62).
-                        # Do not process; wait for next bus condition.
-                        self.log.info(
-                            f"TARGET_FIXED:::Ignoring HDR-prohibited "
-                            f"broadcast CCC 0x{ccc_value:02X}"
-                        )
-                        next_state = await self._await_bus_condition()
-                        self.header = I3cHeader.NONE
+                        else:
+                            # Unsupported HDR mode (ENTHDR1/2/4/5/6/7).
+                            # Enter HDR but wait for exit since we have
+                            # no handler for this sub-mode.
+                            self.log.info(
+                                f"TARGET_FIXED:::Unsupported HDR entry "
+                                f"CCC 0x{ccc_value:02X} -- waiting for "
+                                f"HDR exit"
+                            )
+                            next_state = await self._await_bus_condition()
+                            self.header = I3cHeader.NONE
                     else:
                         # Store CCC for directed phase
                         self._pending_ccc = ccc_value
