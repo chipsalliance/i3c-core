@@ -161,115 +161,140 @@ def verify_sim_pid(dut, data, expected_pid):
 
 
 # Number of abort-recovery iterations for premature STOP test.
-# Each iteration picks a fresh random abort point (0..53 bits).
 NUM_STOP_ITERATIONS = 5
 
+# ---------------------------------------------------------------------------
+# Legal abort position definitions for a GETPID directed read frame.
+#
+# GETPID directed read frame structure (from START):
+#   [S] 7E/W (8b, ctrl OD)  ACK (1b, target OD)
+#   CCC_GETPID (8b, ctrl PP)  T-bit (1b, ctrl PP)
+#   [Sr] ADDR/R (8b, ctrl OD)  ACK (1b, target OD)
+#   [DATA: byte_N (8b, target PP)  T-bit (1b, target PP)] x 6 bytes
+#
+# Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
+# Controller controls SDA or SDA is Open-Drain.  Section 5.1.2.3.4
+# defines early termination of reads at T-bit boundaries.
+#
+# Each entry: (abort_type, param, description)
+#   abort_type  "setup_broadcast" : STOP after broadcast 7E/W + ACK
+#               "setup_ccc"       : STOP after CCC byte + T-bit
+#               "data"            : STOP after *param* complete data
+#                                   bytes (each = 8 data + 1 T-bit)
+#
+# IMPORTANT: Data-phase positions (abort_type="data") are only safe
+# for the sim target (OD driver).  For the DUT, a raw STOP during
+# data-phase PP driving triggers the push-pull STOP detection bug.
+# However, the spec-defined read termination at T-bit boundaries uses
+# Repeated START (Sr), not STOP (Section 5.1.2.3.4).  Sr avoids PP
+# contention because the controller drives SDA HIGH first:
+#   - If DUT drives SDA=0: bus=0, DUT matches, no contention
+#   - If DUT drives SDA=1: bus=1, then controller pulls LOW -> Sr detected
+# So data-phase T-bit boundaries use "data_sr" (Sr then STOP).
+# Position 0 (after directed ACK) uses raw STOP since the target is
+# still transitioning from OD to PP.
+# ---------------------------------------------------------------------------
 
-async def begin_getpid_directed_read(ctrl, addr):
-    """Start a GETPID directed read: broadcast phase + address phase.
+# Full set: usable for sim target (OD) aborts -- raw STOP everywhere
+LEGAL_ABORT_POSITIONS_ALL = [
+    ("setup_broadcast", None, "after broadcast 7E/W ACK (ctrl OD)"),
+    ("setup_ccc",       None, "after CCC GETPID + T-bit (ctrl PP)"),
+    ("data",            0,    "after directed ACK (OD/PP boundary)"),
+    ("data",            1,    "after data byte 0 T-bit boundary"),
+    ("data",            2,    "after data byte 1 T-bit boundary"),
+    ("data",            3,    "after data byte 2 T-bit boundary"),
+    ("data",            4,    "after data byte 3 T-bit boundary"),
+    ("data",            5,    "after data byte 4 T-bit boundary"),
+]
 
-    Sends: S + 7'h7E/W + GETPID + Sr + addr/R
-    Does NOT read any data bytes -- caller controls how many bits to
-    clock before aborting.
+# DUT-safe set: setup phases use raw STOP (controller/OD bus control).
+# Data-phase T-bit boundaries use Sr+STOP (spec Section 5.1.2.3.4).
+LEGAL_ABORT_POSITIONS_DUT = [
+    ("setup_broadcast", None, "after broadcast 7E/W ACK (ctrl OD)"),
+    ("setup_ccc",       None, "after CCC GETPID + T-bit (ctrl PP)"),
+    ("data_sr",         1,    "Sr after data byte 0 T-bit (spec 5.1.2.3.4)"),
+    ("data_sr",         2,    "Sr after data byte 1 T-bit (spec 5.1.2.3.4)"),
+    ("data_sr",         3,    "Sr after data byte 2 T-bit (spec 5.1.2.3.4)"),
+    ("data_sr",         4,    "Sr after data byte 3 T-bit (spec 5.1.2.3.4)"),
+    ("data_sr",         5,    "Sr after data byte 4 T-bit (spec 5.1.2.3.4)"),
+]
 
-    Returns True if the target ACKed the directed address phase.
+
+
+async def abort_getpid_at_legal_position(ctrl, addr, abort_type, param):
+    """Execute partial GETPID frame with abort at a spec-legal position.
+
+    Builds the GETPID directed read frame incrementally and issues the
+    appropriate termination at the requested legal position.
+
+    Abort types:
+        "setup_broadcast": STOP after broadcast 7E/W + ACK
+        "setup_ccc":       STOP after CCC byte + T-bit
+        "data":            Raw STOP after *param* complete data bytes
+                           (suitable for OD sim target, not for DUT PP)
+        "data_sr":         Repeated START + STOP after *param* complete
+                           data bytes.  Per Section 5.1.2.3.4, Sr is the
+                           spec-defined way to terminate a read at a T-bit
+                           boundary.  Sr avoids PP contention because the
+                           controller drives SDA HIGH first (safe in
+                           wired-AND), unlike STOP which drives SDA LOW
+                           first (contention when DUT drives HIGH).
+
+    Args:
+        ctrl:       I3C controller handle.
+        addr:       Target address for the directed read.
+        abort_type: One of the types listed above.
+        param:      For "data"/"data_sr": number of complete data bytes
+                    to clock before abort (1..5 = after that many
+                    byte+T-bit groups).  Ignored for setup types.
+
+    Returns:
+        True if the directed address phase was reached and ACKed,
+        False if the directed address was NACKed,
+        None if the abort was in a setup phase (no directed ACK).
     """
     await ctrl.take_bus_control()
     await ctrl.send_start()
     await ctrl.write_addr_header(0x7E)
+
+    if abort_type == "setup_broadcast":
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return None
+
     await ctrl.send_byte_tbit(CCC.DIRECT.GETPID)
+
+    if abort_type == "setup_ccc":
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return None
+
+    # "data" or "data_sr": complete the directed address, then read bytes
     await ctrl.send_start()
     ack = await ctrl.write_addr_header(addr, read=True)
-    return ack
+    if not ack:
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return False
 
+    if abort_type == "data_sr":
+        # Spec 5.1.2.3.4: Early Read Termination at T-bit boundary.
+        # recv_byte_t_bit(stop=True) calls tbit_eod(request_end=True)
+        # which issues Repeated START *during* the T-bit SCL HIGH
+        # period -- inside the ~40ns Hi-Z window where the target has
+        # released SDA per spec.  This is the defined abort mechanism.
+        for _ in range(param - 1):
+            await ctrl.recv_byte_t_bit(stop=False)
+        await ctrl.recv_byte_t_bit(stop=True)
+        await ctrl.send_stop()
+    else:
+        for _ in range(param):
+            await ctrl.recv_byte_t_bit(stop=False)
+        await ctrl.send_stop()
 
-async def abort_at_bit_offset(ctrl, abort_at):
-    """Clock *abort_at* bits of the GETPID response, then send STOP.
-
-    Uses recv_byte_t_bit for complete 9-bit groups (8 data + T-bit)
-    and recv_bit for any remaining bits, then issues STOP.
-
-    Args:
-        ctrl:     I3C controller handle.
-        abort_at: Number of bits to clock before STOP (0 = immediately
-                  after ACK, 53 = last possible bit of a 6-byte response).
-    """
-    full_bytes = abort_at // 9
-    remaining_bits = abort_at % 9
-    for _ in range(full_bytes):
-        await ctrl.recv_byte_t_bit(stop=False)
-    for _ in range(remaining_bits):
-        await ctrl.recv_bit()
-    await ctrl.send_stop()
-
-
-async def verify_stop_recovery(ctrl, sim_addr, expected_sim_pid,
-                               dut_addr, expected_dut_pid):
-    """Verify both the sim target and DUT recover after a premature STOP.
-
-    Waits for the sim target's per-edge timeout to fire (~20 SCL
-    periods), then performs GETPID to both the sim target and DUT
-    and checks their PIDs.
-    """
     ctrl.give_bus_control()
-    # Wait for per-edge timeout + margin (50 SCL periods, 10us floor)
-    RECOVERY_SCL_PERIODS = 50
-    MIN_RECOVERY_NS = 10_000
-    scl_period_ns = int(1e9 / ctrl.speed)
-    recovery_ns = max(MIN_RECOVERY_NS,
-                      RECOVERY_SCL_PERIODS * scl_period_ns)
-    await Timer(recovery_ns, units='ns')
+    return True
 
-    # Check sim target recovery
-    sim_data = await do_getpid(ctrl, sim_addr)
-    sim_pid = int.from_bytes(sim_data[0:6], byteorder="big", signed=False)
-    assert sim_pid == expected_sim_pid, (
-        f"Sim target recovery GETPID mismatch: got 0x{sim_pid:012X}, "
-        f"expected 0x{expected_sim_pid:012X}"
-    )
-    cocotb.log.info(f"Sim target recovery GETPID OK: 0x{sim_pid:012X}")
-
-    # Check DUT recovery
-    dut_data = await do_getpid(ctrl, dut_addr)
-    dut_pid = int.from_bytes(dut_data[0:6], byteorder="big", signed=False)
-    assert dut_pid == expected_dut_pid, (
-        f"DUT recovery GETPID mismatch: got 0x{dut_pid:012X}, "
-        f"expected 0x{expected_dut_pid:012X}"
-    )
-    cocotb.log.info(f"DUT recovery GETPID OK: 0x{dut_pid:012X}")
-
-
-async def do_abort_iteration(ctrl, sim_addr, dut_addr,
-                             expected_sim_pid, expected_dut_pid,
-                             iteration, abort_at):
-    """Run one abort-recovery iteration.
-
-    1. Baseline GETPID (sanity check before abort)
-    2. Begin GETPID, clock abort_at bits, STOP
-    3. Verify recovery with GETPID to both sim target and DUT
-    """
-    cocotb.log.info(
-        f"--- Iteration {iteration}: abort at bit {abort_at} "
-        f"(byte {abort_at // 9}, bit-in-byte {abort_at % 9}) ---"
-    )
-
-    # Baseline
-    data = await do_getpid(ctrl, sim_addr)
-    pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
-    assert pid_48 == expected_sim_pid, (
-        f"Iteration {iteration} baseline GETPID failed: "
-        f"got 0x{pid_48:012X}, expected 0x{expected_sim_pid:012X}"
-    )
-
-    # Abort
-    ack = await begin_getpid_directed_read(ctrl, sim_addr)
-    assert ack, f"Iteration {iteration}: sim target NACKed directed GETPID"
-    await abort_at_bit_offset(ctrl, abort_at)
-
-    # Recovery -- check both sim target and DUT
-    await verify_stop_recovery(ctrl, sim_addr, expected_sim_pid,
-                               dut_addr, expected_dut_pid)
-    cocotb.log.info(f"--- Iteration {iteration}: PASSED ---")
 
 
 # =========================================================================
@@ -659,22 +684,29 @@ async def test_ccc_chain_two_cccs_in_one_frame(dut):
 
 
 # =========================================================================
-# Test 6: Mid-byte STOP during GETPID response from DUT (Gap #3)
+# Test 6: Premature STOP at spec-legal positions during GETPID (DUT)
 # =========================================================================
 @cocotb.test()
 async def test_getpid_mid_byte_abort_dut_recovery(dut):
-    """
-    Verify that the DUT recovers when the controller aborts a directed
-    CCC read with STOP mid-byte (not on a byte boundary).
+    """STOP at spec-legal positions within a GETPID directed read to the DUT.
 
-    Per spec 5.1.9.2.1, a CCC may end with STOP at any time. The DUT
-    shall return to idle and respond correctly to subsequent transactions.
+    Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
+    Controller controls SDA or SDA is Open-Drain.
 
-    Scenario (Gap #3):
-      1) Start GETPID directed at DUT
-      2) After DUT ACKs, receive a random number of bits (1-7, mid-byte)
-      3) Issue STOP (premature termination)
-      4) Verify DUT recovers: send normal GETPID, check correct response
+    This test exercises DUT-safe abort positions:
+      - setup_broadcast: STOP after broadcast 7E/W + ACK (ctrl OD)
+      - setup_ccc:       STOP after CCC byte + T-bit (ctrl PP)
+      - data_sr N:       Sr + STOP after N complete byte+T-bit groups
+
+    Data-phase T-bit boundaries use Repeated START (Sr) followed by STOP,
+    per the spec-defined read early termination mechanism (Section
+    5.1.2.3.4).  Sr avoids PP contention because the controller drives
+    SDA HIGH first (safe in wired-AND), unlike a raw STOP which drives
+    SDA LOW first and contends when the DUT drives HIGH.
+
+    Each position is tested once, then the remaining iterations (up to
+    NUM_STOP_ITERATIONS) pick random legal positions for extra coverage.
+    Recovery is verified with GETPID to both sim target and DUT.
     """
     sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
     dut_pid_hi = random.randint(0, 0x7FFF)
@@ -684,50 +716,65 @@ async def test_getpid_mid_byte_abort_dut_recovery(dut):
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
-    # Randomize how many bits to receive before aborting (1-7 = mid-byte)
-    abort_bits = random.randint(1, 7)
-    dut._log.info(
-        f"=== Mid-byte abort: GETPID to DUT (0x{dut_addr:02X}), "
-        f"abort after {abort_bits} bits ==="
-    )
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+    expected_sim_pid = sim_pid
 
-    # --- Step 1: Start GETPID, abort mid-byte ---
-    await i3c_controller.take_bus_control()
-    await i3c_controller.send_start()
-    await i3c_controller.write_addr_header(0x7E)
-    await i3c_controller.send_byte_tbit(CCC.DIRECT.GETPID)
-    await i3c_controller.send_start()
-    ack = await i3c_controller.write_addr_header(dut_addr, read=True)
-    assert ack, f"DUT should ACK GETPID at 0x{dut_addr:02X}"
+    # Build iteration schedule: cover all DUT-safe positions, then extras.
+    # Setup phases use raw STOP; data-phase T-bit boundaries use Sr+STOP
+    # per spec Section 5.1.2.3.4 (avoids PP contention).
+    positions = list(LEGAL_ABORT_POSITIONS_DUT)
+    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
+    for _ in range(n_extra):
+        positions.append(random.choice(LEGAL_ABORT_POSITIONS_DUT))
 
-    # Receive partial bits (mid-byte)
-    partial_bits = []
-    for _ in range(abort_bits):
-        bit = await i3c_controller.recv_bit()
-        partial_bits.append(int(bit))
-    dut._log.info(f"Received {abort_bits} partial bits: {partial_bits}")
+    for i, (abort_type, param, desc) in enumerate(positions):
+        cocotb.log.info(
+            f"--- Iteration {i}: DUT abort [{abort_type}] {desc} ---"
+        )
 
-    # Suppress bus contention check during mid-byte abort.
-    # In push-pull mode, the DUT drives SDA while the controller forces
-    # STOP -- brief contention is expected protocol physics for mid-byte
-    # termination and does not indicate a real bug.
-    if tb.bus_monitor:
-        tb.bus_monitor.suppress_check("BUS_CONTENTION")
+        # Baseline GETPID to DUT before each abort
+        data = await do_getpid(i3c_controller, dut_addr)
+        pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
+        assert pid_48 == expected_dut_pid, (
+            f"Iteration {i} baseline GETPID failed: "
+            f"got 0x{pid_48:012X}, expected 0x{expected_dut_pid:012X}"
+        )
 
-    # Abort with STOP mid-byte
-    dut._log.info("Sending STOP mid-byte (premature termination)")
-    await i3c_controller.send_stop()
-    i3c_controller.give_bus_control()
-    await ClockCycles(tb.clk, 100)
+        # Execute the abort at the legal position
+        result = await abort_getpid_at_legal_position(
+            i3c_controller, dut_addr, abort_type, param
+        )
 
-    if tb.bus_monitor:
-        tb.bus_monitor.unsuppress_check("BUS_CONTENTION")
+        if abort_type in ("data", "data_sr"):
+            assert result is True, (
+                f"Iteration {i}: DUT NACKed directed GETPID"
+            )
 
-    # --- Step 2: Verify DUT recovery with a normal GETPID ---
-    dut._log.info("=== Verifying DUT recovery with normal GETPID ===")
-    pid_data = await do_getpid(i3c_controller, dut_addr)
-    verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
-    dut._log.info("DUT recovered correctly after mid-byte abort")
+        # Recovery: wait, then verify both targets respond correctly
+        RECOVERY_SCL_PERIODS = 50
+        MIN_RECOVERY_NS = 10_000
+        scl_period_ns = int(1e9 / i3c_controller.speed)
+        recovery_ns = max(MIN_RECOVERY_NS,
+                          RECOVERY_SCL_PERIODS * scl_period_ns)
+        await Timer(recovery_ns, units='ns')
+
+        sim_data = await do_getpid(i3c_controller, sim_target_addr)
+        sim_pid_val = int.from_bytes(sim_data[0:6], byteorder="big",
+                                     signed=False)
+        assert sim_pid_val == expected_sim_pid, (
+            f"Iteration {i} sim target recovery GETPID mismatch: "
+            f"got 0x{sim_pid_val:012X}, expected 0x{expected_sim_pid:012X}"
+        )
+
+        dut_data = await do_getpid(i3c_controller, dut_addr)
+        dut_pid_val = int.from_bytes(dut_data[0:6], byteorder="big",
+                                     signed=False)
+        assert dut_pid_val == expected_dut_pid, (
+            f"Iteration {i} DUT recovery GETPID mismatch: "
+            f"got 0x{dut_pid_val:012X}, expected 0x{expected_dut_pid:012X}"
+        )
+
+        cocotb.log.info(f"--- Iteration {i}: PASSED ---")
 
     await tb.teardown()
 
@@ -856,32 +903,29 @@ async def test_sim_target_enthdr0_then_reentry_after_exit(dut):
 
 
 # =========================================================================
-# Test 9: Premature STOP at random bit offsets during GETPID (sim target)
+# Test 9: Premature STOP at spec-legal positions during GETPID (sim target)
 # =========================================================================
 @cocotb.test()
 async def test_getpid_premature_stop(dut):
-    """STOP at random bit offsets within a GETPID directed read to sim target.
+    """STOP at spec-legal positions within a GETPID directed read to sim target.
 
-    Runs NUM_STOP_ITERATIONS rounds. Each round picks a random abort point
-    in the range [0, 53] (6 bytes x 9 bits/byte on the wire), issues
-    STOP at that point, and verifies both sim target and DUT recover.
+    Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
+    Controller controls SDA or SDA is Open-Drain.  Section 5.1.2.3.4
+    defines early read termination at T-bit boundaries.
+
+    This test exercises all legal abort positions targeting the sim target:
+      - setup_broadcast: STOP after broadcast 7E/W + ACK (ctrl OD)
+      - setup_ccc:       STOP after CCC byte + T-bit (ctrl PP)
+      - data byte 0:     STOP right after directed ACK (OD boundary)
+      - data byte N:     STOP after N complete byte+T-bit groups
+
+    Each position is tested once, then the remaining iterations (up to
+    NUM_STOP_ITERATIONS) pick random legal positions for extra coverage.
+    Recovery is verified with GETPID to both sim target and DUT.
 
     Without the send_bit/send_byte overrides in I3CTargetFixed, the sim
     target hangs because the base class awaits FallingEdge(scl_i) which
     never arrives after STOP.
-
-    Spec reference:
-      Section 5.1.9.2.1: "If the Controller invalidly terminates the data
-      associated with a CCC prematurely, then the Target shall use best
-      efforts to handle the termination."
-
-    Abort point semantics:
-      0      = immediately after target ACK (before any data bits)
-      1..7   = mid-byte within byte 0
-      8      = after 8 data bits (T-bit phase of byte 0)
-      9      = after byte 0 + T-bit (byte boundary)
-      ...
-      53     = last bit before final T-bit of byte 5
     """
     dut_pid_hi = random.getrandbits(15)
     dut_pid_lo = random.getrandbits(32)
@@ -891,15 +935,63 @@ async def test_getpid_premature_stop(dut):
         dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
     )
 
-    # DUT PID: PID_HI maps to bits[47:33], bit[32]=0, PID_LO = bits[31:0]
     expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+    expected_sim_pid = sim_pid
 
-    # 6-byte GETPID = 54 bits on wire (8 data + 1 T-bit per byte)
-    max_bits = 6 * 9
+    # Build iteration schedule: cover all positions, then random extras.
+    # Sim target uses OD, so all positions including data-phase are safe.
+    positions = list(LEGAL_ABORT_POSITIONS_ALL)
+    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
+    for _ in range(n_extra):
+        positions.append(random.choice(LEGAL_ABORT_POSITIONS_ALL))
 
-    for i in range(NUM_STOP_ITERATIONS):
-        abort_at = random.randint(0, max_bits - 1)
-        await do_abort_iteration(i3c_controller, sim_target_addr, dut_addr,
-                                 sim_pid, expected_dut_pid, i, abort_at)
+    for i, (abort_type, param, desc) in enumerate(positions):
+        cocotb.log.info(
+            f"--- Iteration {i}: sim abort [{abort_type}] {desc} ---"
+        )
+
+        # Baseline GETPID to sim target before each abort
+        data = await do_getpid(i3c_controller, sim_target_addr)
+        pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
+        assert pid_48 == expected_sim_pid, (
+            f"Iteration {i} baseline GETPID failed: "
+            f"got 0x{pid_48:012X}, expected 0x{expected_sim_pid:012X}"
+        )
+
+        # Execute the abort at the legal position
+        result = await abort_getpid_at_legal_position(
+            i3c_controller, sim_target_addr, abort_type, param
+        )
+
+        if abort_type in ("data", "data_sr"):
+            assert result is True, (
+                f"Iteration {i}: sim target NACKed directed GETPID"
+            )
+
+        # Recovery: wait, then verify both targets respond correctly
+        RECOVERY_SCL_PERIODS = 50
+        MIN_RECOVERY_NS = 10_000
+        scl_period_ns = int(1e9 / i3c_controller.speed)
+        recovery_ns = max(MIN_RECOVERY_NS,
+                          RECOVERY_SCL_PERIODS * scl_period_ns)
+        await Timer(recovery_ns, units='ns')
+
+        sim_data = await do_getpid(i3c_controller, sim_target_addr)
+        sim_pid_val = int.from_bytes(sim_data[0:6], byteorder="big",
+                                     signed=False)
+        assert sim_pid_val == expected_sim_pid, (
+            f"Iteration {i} sim target recovery GETPID mismatch: "
+            f"got 0x{sim_pid_val:012X}, expected 0x{expected_sim_pid:012X}"
+        )
+
+        dut_data = await do_getpid(i3c_controller, dut_addr)
+        dut_pid_val = int.from_bytes(dut_data[0:6], byteorder="big",
+                                     signed=False)
+        assert dut_pid_val == expected_dut_pid, (
+            f"Iteration {i} DUT recovery GETPID mismatch: "
+            f"got 0x{dut_pid_val:012X}, expected 0x{expected_dut_pid:012X}"
+        )
+
+        cocotb.log.info(f"--- Iteration {i}: PASSED ---")
 
     await tb.teardown()
