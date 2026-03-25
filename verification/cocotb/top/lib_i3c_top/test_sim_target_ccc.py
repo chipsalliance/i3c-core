@@ -995,3 +995,73 @@ async def test_getpid_premature_stop(dut):
         cocotb.log.info(f"--- Iteration {i}: PASSED ---")
 
     await tb.teardown()
+
+# =========================================================================
+# Test 10: Duplicate address in multi-target directed CCC frame
+# =========================================================================
+@cocotb.test()
+async def test_getpid_duplicate_address_multi_target(dut):
+    """
+    Issue directed GETPID with the same target address appearing twice
+    in a single multi-target CCC frame. The target must respond correctly
+    both times, returning identical PID data.
+
+    Two sub-tests:
+      A) DUT address repeated:   addr=[dut, dut]
+      B) Sim target address repeated: addr=[sim, sim]
+
+    This exercises the target's ability to re-enter the directed CCC
+    read phase for the same address after responding once and seeing
+    a Repeated START instead of a STOP.
+
+    Spec: Section 5.1.9.3.12 -- directed CCC may address any combination
+    of targets; the spec does not prohibit addressing the same target
+    multiple times.
+    """
+    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
+    dut_pid_hi = random.randint(0, 0x7FFF)
+    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+
+    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+    )
+
+    # --- Phase A: DUT address repeated twice in one frame ---
+    dut._log.info("=== Phase A: GETPID with DUT addr repeated ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID,
+        addr=[dut_addr, dut_addr],
+        count=6,
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
+    for idx, (ack, data) in enumerate(responses):
+        assert ack, f"Phase A: DUT NACK on occurrence {idx}"
+        verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
+        dut._log.info(f"Phase A occurrence {idx}: DUT PID OK")
+
+    # --- Phase B: Sim target address repeated twice in one frame ---
+    dut._log.info("=== Phase B: GETPID with sim target addr repeated ===")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID,
+        addr=[sim_target_addr, sim_target_addr],
+        count=6,
+    )
+    await ClockCycles(tb.clk, 50)
+
+    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
+    for idx, (ack, data) in enumerate(responses):
+        assert ack, f"Phase B: sim target NACK on occurrence {idx}"
+        verify_sim_pid(dut, data, sim_pid)
+        dut._log.info(f"Phase B occurrence {idx}: sim PID OK")
+
+    # Sanity: single-target reads still work after duplicate-addr frames
+    dut._log.info("=== Sanity: single-target reads after duplicate frames ===")
+    data = await do_getpid(i3c_controller, dut_addr)
+    verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
+
+    data = await do_getpid(i3c_controller, sim_target_addr)
+    verify_sim_pid(dut, data, sim_pid)
+
+    await tb.teardown()

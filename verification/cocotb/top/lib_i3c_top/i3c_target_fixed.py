@@ -188,13 +188,13 @@ class I3CTargetFixed(I3CTarget):
         """Check if a CCC is prohibited in HDR mode per spec Table 62.
 
         Returns True if self.hdr_mode is active and ccc_value is in the
-        HDR_PROHIBITED_CCCS set. Logs a warning when a prohibited CCC
+        HDR_PROHIBITED_CCCS set. Logs an error when a prohibited CCC
         is detected.
         """
         if not self.hdr_mode:
             return False
         if ccc_value in self.HDR_PROHIBITED_CCCS:
-            self.log.warning(
+            self.log.error(
                 f"TARGET_FIXED:::CCC 0x{ccc_value:02X} is prohibited in "
                 f"HDR mode (spec Table 62, section 5.2.1.2)"
             )
@@ -202,7 +202,7 @@ class I3CTargetFixed(I3CTarget):
         return False
 
     # -----------------------------------------------------------------
-    # Premature STOP resilience -- per-edge timeout (Option B)
+    # Premature STOP resilience -- per-edge timeout
     # -----------------------------------------------------------------
     # The base I3CTarget's send_bit() awaits FallingEdge(scl_i) which
     # hangs forever if the controller issues STOP mid-byte (no more SCL
