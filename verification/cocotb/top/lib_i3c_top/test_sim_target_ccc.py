@@ -115,24 +115,6 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr
 
 
-async def do_directed_ccc_read(ctrl, ccc, addr, count):
-    """Send one directed CCC read phase (broadcast + directed).
-
-    Sends: Sr/S + 7'h7E/W + ccc_byte + Sr + addr/R + [count bytes].
-    Does NOT send STOP -- caller manages bus control and termination.
-
-    Returns (ack, data) where ack is True if the target ACK'd.
-    """
-    await ctrl.send_start()
-    await ctrl.write_addr_header(0x7E)
-    await ctrl.send_byte_tbit(ccc)
-    await ctrl.send_start()
-    ack = await ctrl.write_addr_header(addr, read=True)
-    data = bytearray()
-    if ack:
-        await ctrl.recv_until_eod_tbit(data, count, stop=False)
-    return ack, data
-
 
 def verify_dut_pid(dut, data, expected_pid_hi, expected_pid_lo):
     """Verify DUT GETPID response. DUT bit[32] is always 0."""
@@ -606,10 +588,6 @@ async def test_ccc_chain_two_cccs_in_one_frame(dut):
       but is not addressed in the first directed phase.
 
     Spec: 5.1.9.2.1 -- Sr + 7'h7E/W ends a Direct CCC and starts a new one.
-
-    Note: Uses raw protocol calls instead of i3c_ccc_read because that
-    API manages bus control internally; chaining requires holding the bus
-    across two CCCs without releasing in between.
     """
     sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
     sim_bcr = random.randint(0, 0xFF)
@@ -625,23 +603,17 @@ async def test_ccc_chain_two_cccs_in_one_frame(dut):
         f"=== Phase A: GETPID + GETBCR both to sim "
         f"(0x{sim_target_addr:02X}) ==="
     )
-    await i3c_controller.take_bus_control()
+    responses_a = await i3c_controller.i3c_ccc_read_chained([
+        (CCC.DIRECT.GETPID, sim_target_addr, 6),
+        (CCC.DIRECT.GETBCR, sim_target_addr, 1),
+    ])
 
-    ack1, pid_data = await do_directed_ccc_read(
-        i3c_controller, CCC.DIRECT.GETPID, sim_target_addr, 6
-    )
+    (ack1, pid_data) = responses_a[0]
     assert ack1, "Sim target should ACK GETPID"
     verify_sim_pid(dut, pid_data, sim_pid)
 
-    ack2, bcr_data_a = await do_directed_ccc_read(
-        i3c_controller, CCC.DIRECT.GETBCR, sim_target_addr, 1
-    )
+    (ack2, bcr_data_a) = responses_a[1]
     assert ack2, "Sim target should ACK GETBCR"
-
-    await i3c_controller.send_stop()
-    i3c_controller.give_bus_control()
-    await ClockCycles(tb.clk, 50)
-
     assert bcr_data_a[0] == sim_bcr, (
         f"Phase A GETBCR mismatch: exp 0x{sim_bcr:02X}, "
         f"got 0x{bcr_data_a[0]:02X}"
@@ -655,23 +627,17 @@ async def test_ccc_chain_two_cccs_in_one_frame(dut):
         f"=== Phase B: GETPID to DUT (0x{dut_addr:02X}), "
         f"GETBCR to sim (0x{sim_target_addr:02X}) ==="
     )
-    await i3c_controller.take_bus_control()
+    responses_b = await i3c_controller.i3c_ccc_read_chained([
+        (CCC.DIRECT.GETPID, dut_addr, 6),
+        (CCC.DIRECT.GETBCR, sim_target_addr, 1),
+    ])
 
-    ack3, dut_pid_data = await do_directed_ccc_read(
-        i3c_controller, CCC.DIRECT.GETPID, dut_addr, 6
-    )
+    (ack3, dut_pid_data) = responses_b[0]
     assert ack3, "DUT should ACK GETPID"
     verify_dut_pid(dut, dut_pid_data, dut_pid_hi, dut_pid_lo)
 
-    ack4, bcr_data_b = await do_directed_ccc_read(
-        i3c_controller, CCC.DIRECT.GETBCR, sim_target_addr, 1
-    )
+    (ack4, bcr_data_b) = responses_b[1]
     assert ack4, "Sim target should ACK GETBCR"
-
-    await i3c_controller.send_stop()
-    i3c_controller.give_bus_control()
-    await ClockCycles(tb.clk, 50)
-
     assert bcr_data_b[0] == sim_bcr, (
         f"Phase B GETBCR mismatch: exp 0x{sim_bcr:02X}, "
         f"got 0x{bcr_data_b[0]:02X}"

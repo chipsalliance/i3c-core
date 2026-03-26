@@ -564,6 +564,61 @@ class I3cControllerFixed(I3cController):
         self.give_bus_control()
         raise RuntimeError(f"i3c_ccc_read: exceeded {_MAX_IBI_RETRIES} IBI retries")
 
+    async def i3c_ccc_read_chained(
+        self,
+        commands: list,
+    ) -> list:
+        """Issue multiple directed CCC Reads in a single bus frame.
+
+        Each element of *commands* is a (ccc, addr, count) tuple describing
+        one directed CCC read.  All CCCs are executed within a single
+        take_bus_control / give_bus_control window with no STOP between them
+        (only Sr + 7E/W transitions).  STOP is sent after the last CCC.
+
+        Bus sequence for two commands::
+
+            S + 7E/W + ccc1 + Sr + addr1/R + [count1 bytes]
+            Sr + 7E/W + ccc2 + Sr + addr2/R + [count2 bytes] + P
+
+        Returns a list of (ack, bytearray) tuples, one per command.
+        """
+        desc = ", ".join(f"{hex(c)}@{hex(a)}x{n}" for c, a, n in commands)
+        self.log_info(f"I3C: CCC RD chained [{desc}]")
+
+        await self.take_bus_control()
+
+        for _retry in range(_MAX_IBI_RETRIES):
+            try:
+                responses = []
+                for idx, (ccc, addr, count) in enumerate(commands):
+                    is_last = (idx == len(commands) - 1)
+                    await self.send_start()
+                    await self.write_addr_header(I3C_RSVD_BYTE)
+                    await self.send_byte_tbit(ccc)
+                    await self.send_start()
+                    ack = await self.write_addr_header(addr, read=True)
+                    rd_data = bytearray()
+                    if ack:
+                        await self.recv_until_eod_tbit(
+                            rd_data, count, stop=False
+                        )
+                    responses.append((ack, rd_data))
+
+                await self.send_stop()
+                self.give_bus_control()
+                return responses
+
+            except IbiArbitrationEvent:
+                self.log_info(
+                    f"I3C CCC Read chained: IBI handled, retrying ({_retry + 1})"
+                )
+                continue
+
+        self.give_bus_control()
+        raise RuntimeError(
+            f"i3c_ccc_read_chained: exceeded {_MAX_IBI_RETRIES} IBI retries"
+        )
+
     # =========================================================================
     # TARGET RESET PATTERN STRESS TEST METHODS
     # =========================================================================
