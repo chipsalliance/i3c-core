@@ -322,6 +322,26 @@ regfile SoCManagementInterfaceRegisters #(
     reg {
         name = "";
         field {
+            name = "High period of the SCL in Open-Drain mode in clock units";
+            desc = "";
+            sw = rw;
+            hw = r;
+            reset = 20'h00000;
+        } T_HIGH_OD[T_WIDTH-1:0];
+    } T_HIGH_OD_REG;
+    reg {
+        name = "";
+        field {
+            name = "High period of the SCL in Open-Drain mode during bus initialization in clock units";
+            desc = "";
+            sw = rw;
+            hw = r;
+            reset = 20'h00000;
+        } T_HIGH_INIT_OD[T_WIDTH-1:0];
+    } T_HIGH_INIT_OD_REG;
+    reg {
+        name = "";
+        field {
             name = "";
             desc = "Low period of the SCL in clock units";
             sw = rw;
@@ -329,6 +349,16 @@ regfile SoCManagementInterfaceRegisters #(
             reset = 20'h00000;
         } T_LOW[T_WIDTH-1:0];
     } T_LOW_REG;
+    reg {
+        name = "";
+        field {
+            name = "";
+            desc = "Low period of the SCL in Open-Drain mode in clock units";
+            sw = rw;
+            hw = r;
+            reset = 20'h00000;
+        } T_LOW_OD[T_WIDTH-1:0];
+    } T_LOW_OD_REG;
     reg {
         name = "";
         field {

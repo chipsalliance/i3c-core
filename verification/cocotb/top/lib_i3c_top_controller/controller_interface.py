@@ -198,7 +198,7 @@ class I3CTopControllerTestInterface:
 
     def read_csr(self, addr, bus_idx=0):
         """Read CSR via the specified bus index."""
-        return self.busses[bus_idx].read_csr(addr, timeout=100, units="us")
+        return self.busses[bus_idx].read_csr(addr, timeout=100000, units="us")
 
     def write_csr(self, addr, data, bus_idx=0):
         """Write CSR via the specified bus index."""

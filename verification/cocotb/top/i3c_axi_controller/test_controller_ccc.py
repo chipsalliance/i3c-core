@@ -40,7 +40,19 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None, enable_targe
     addr_helper = I3CAddressHelper(dut)
     dut._log.info("Generated random I3C addresses: ")
     addr_helper.print_addresses()
-    
+
+    # The target is listening to the I3C bus and will include assertions for the phy_sel_od_pp signal
+
+    i3c_target = I3CTarget( 
+        sda_i=dut.act_bus_sda_q2,
+        sda_o=dut.exp_bus_sda,
+        scl_i=dut.act_bus_scl_q2,
+        scl_o=dut.exp_bus_scl,
+        phy_sel_od_pp_i=dut.phy_sel_od_pp_o,
+        debug_state_o=dut.debug_state_target_i,
+        speed=fbus * 1e6,
+    )
+
     await tb.setup(fclk)
 
     dut._log.info("Booting I3C Cores...")
@@ -82,7 +94,7 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None, enable_targe
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-    return tb, addr_helper 
+    return tb, i3c_target, addr_helper 
 
 async def read_target_events(tb):
 
@@ -156,7 +168,8 @@ async def test_controller_ccc_enec_disec_bcast(dut):
     _EVENT_TOGGLE_BYTE = 0b00001011
     immediate = random.getrandbits(1)
 
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
 
 
     # Read default values
@@ -191,7 +204,8 @@ async def test_controller_ccc_enec_disec_direct_one_target(dut):
 
     _EVENT_TOGGLE_BYTE = 0b00001011
 
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
 
     # Read default values
     event_en = await read_target_events(tb)
@@ -228,7 +242,9 @@ async def test_controller_ccc_enec_disec_direct_multiple_targets(dut):
     _EVENT_TOGGLE_BYTE = 0b00001011
     immediate = random.getrandbits(1)
 
-    tb, addr_helper = await test_setup(dut)
+    tb, _, addr_helper = await test_setup(dut)
+    #i3c_target.address = addr_helper.trgt_dyn_addr
+    # TODO: enable cocotbext target for this test
 
     # Read default values
     event_en = await read_target_events(tb)
@@ -258,13 +274,13 @@ async def test_controller_ccc_enec_disec_direct_multiple_targets(dut):
     assert event_en == (1, 1, 1)
 
 
-
 @cocotb.test()
 async def test_controller_ccc_setaasa(dut):
 
     I3C_BCAST_SETAASA = CCC.BCAST.SETAASA
     # Note that we initialize the I3C target without a DYNAMIC ADDRESS. If we set a DYNAMIC ADDR during initialisation the I3C target will keep the dynamic address and not the STATIC ADDR.
-    tb, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False)
+    tb, i3c_target, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     STATIC_ADDR = addr_helper.trgt_static_addr
 
     VIRT_STATIC_ADDR = addr_helper.trgt_virt_static_addr

@@ -108,9 +108,14 @@ module i3c_controller_test_wrapper #(
     output logic exp_bus_sda,
     output logic exp_bus_scl,
     output i3c_pkg::bus_state_t exp_bus_state,
+    output logic phy_sel_od_pp_o,
 
-    output logic act_bus_sda,
-    output logic act_bus_scl,
+    output logic act_bus_sda_o,
+    output logic act_bus_scl_o,
+    // These signals are shifted by 2 clock cycles s.t. the phy_sel_od_pp_o
+    // signal and bus signals line up perfectly for the cocotbext i3c target
+    output logic act_bus_scl_q2,
+    output logic act_bus_sda_q2,
     output i3c_pkg::bus_state_t act_bus_state,
     output logic irq_o[3]
 );
@@ -131,6 +136,9 @@ module i3c_controller_test_wrapper #(
   //───────────────────────── Bus instantiations ─────────────────────────
 
   logic irq[3];
+  assign irq_o[0] = irq[0];
+  assign irq_o[1] = irq[1];
+  assign irq_o[2] = irq[2];
 
   ///////////////////////////////////////////////////////////////
   //                       Expected BUS                        //
@@ -278,6 +286,7 @@ module i3c_controller_test_wrapper #(
       // I3C Bus signals
       .bus_sda_o(act_bus_sda),
       .bus_scl_o(act_bus_scl),
+      .phy_sel_od_pp_o,
 
       .recovery_payload_available_o(recovery_payload_available_o[1:2]),
       .recovery_image_activated_o  (recovery_image_activated_o[1:2]),
@@ -302,4 +311,23 @@ module i3c_controller_test_wrapper #(
       .state_o(act_bus_state)
   );
 
+  assign act_bus_scl_o = act_bus_state.scl.value;
+  assign act_bus_sda_o = act_bus_state.sda.value;
+  logic act_bus_scl_q, act_bus_sda_q;
+
+  always_ff @(posedge aclk[1] or negedge areset_n[1]) begin
+    if (~areset_n[1]) begin
+      act_bus_scl_q  <= 1'b0;
+      act_bus_scl_q2 <= 1'b0;
+      act_bus_sda_q  <= 1'b0;
+      act_bus_sda_q2 <= 1'b0;
+    end else begin
+      act_bus_scl_q  <= act_bus_scl_o;
+      act_bus_scl_q2 <= act_bus_scl_q;
+      act_bus_sda_q  <= act_bus_sda_o;
+      act_bus_sda_q2 <= act_bus_sda_q;
+    end
+  end
+
 endmodule
+

@@ -103,6 +103,7 @@ module i3c_actual_bus_wrapper #(
     // I3C Bus signals
     output logic bus_sda_o,
     output logic bus_scl_o,
+    output logic phy_sel_od_pp_o,
 
     output logic recovery_payload_available_o[2],
     output logic recovery_image_activated_o  [2],
@@ -130,6 +131,7 @@ module i3c_actual_bus_wrapper #(
   logic [NumDevices-1:0] sda;
   logic [NumDevices-1:0] scl;
 
+  assign phy_sel_od_pp_o = sel_od_pp[0];
 
   i3c_bus_harness #(
       .NumDevices(NumDevices)

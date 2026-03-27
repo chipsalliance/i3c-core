@@ -178,7 +178,7 @@ module flow_active
   logic cmd_is_broadcast_ccc;
   i3c_cmd_attr_e cmd_attr;
   logic [4:0] dev_index;
-  logic [3:0] cmd_tid;
+  logic [2:0] cmd_tid;
   logic [15:0] data_length;
   logic imm_use_def_byte;
   logic is_direct_transfer;
@@ -602,6 +602,7 @@ module flow_active
         if (transfer_cnt_q == data_length + (BytesBeforeImmData)) begin
           fmt_flag_stop_after_o = immediate_direct_cmd_desc.toc;
           fmt_flag_restart_after_o = ~immediate_direct_cmd_desc.toc;
+          resp_err_status_d = Success;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
         if (fmt_fifo_rready_i && (transfer_cnt_q < data_length + 1 + BytesBeforeImmData)) begin

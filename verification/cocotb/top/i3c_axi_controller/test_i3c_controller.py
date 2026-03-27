@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
+# NOTE: once we have added the MVP features this test will test all of them together as a "top-level" test
+# for now this test is unused
 import functools
 import logging
 import random
@@ -9,6 +11,7 @@ from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
 from hci import immediate_transfer_descriptor_direct
 from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_target import I3CTarget
 
 from controller_interface import I3CTopControllerTestInterface
 from utils import format_ibi_data, get_interrupt_status
@@ -33,6 +36,7 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     """
 
     cocotb.log.setLevel(logging.INFO)
+    logging.getLogger("cocotb.3").setLevel(logging.WARNING)
     dut._log.info(f"fclk = {fclk:.3f} MHz")
     dut._log.info(f"fbus = {fbus:.3f} MHz")
 
@@ -45,6 +49,18 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
         scl_i=dut.exp_bus_scl,
         scl_o=dut.scl_sim_ctrl_i,
         debug_state_o=None,
+        speed=fbus * 1e6,
+    )
+
+    # The target is listening to the I3C bus and will include assertions for the phy_sel_od_pp signal
+
+    i3c_target = I3CTarget( 
+        sda_i=dut.act_bus_sda_q2,
+        sda_o=dut.exp_bus_sda,
+        scl_i=dut.act_bus_scl_q2,
+        scl_o=dut.exp_bus_scl,
+        phy_sel_od_pp_i=dut.phy_sel_od_pp_o,
+        debug_state_o=dut.debug_state_target_i,
         speed=fbus * 1e6,
     )
 
@@ -85,7 +101,8 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-    return i3c_controller, tb    
+    return i3c_controller, i3c_target, tb 
+
 
 async def test_i3c_private_write(dut):
 
@@ -104,7 +121,8 @@ async def test_i3c_private_write(dut):
         )
 
     # Setup
-    i3c_controller, tb = await test_setup(dut)
+    i3c_controller, i3c_target, tb = await test_setup(dut)
+    i3c_target.address = 0x50
 
     # Start monitor
     mon_exp = BusStateMonitor(

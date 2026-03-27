@@ -11,6 +11,8 @@ from hci import immediate_transfer_descriptor_direct, regular_transfer_descripto
 from cocotbext_i3c.i3c_controller import I3cController
 
 from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
+from cocotbext_i3c.i3c_target import I3CTarget
+
 from controller_interface import get_interrupt_status
 
 import cocotb
@@ -38,6 +40,17 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     dut._log.info("Generated random I3C addresses: ")
     addr_helper.print_addresses()
     
+    # The target is listening to the I3C bus and will include assertions for the phy_sel_od_pp signal
+
+    i3c_target = I3CTarget( 
+        sda_i=dut.act_bus_sda_q2,
+        sda_o=dut.exp_bus_sda,
+        scl_i=dut.act_bus_scl_q2,
+        scl_o=dut.exp_bus_scl,
+        phy_sel_od_pp_i=dut.phy_sel_od_pp_o,
+        debug_state_o=dut.debug_state_target_i,
+        speed=fbus * 1e6,
+    )
     await tb.setup(fclk)
 
     dut._log.info("Booting I3C Cores...")
@@ -72,7 +85,7 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-    return tb, addr_helper 
+    return tb, i3c_target, addr_helper 
 
 @cocotb.test(timeout_time=20000, timeout_unit='us')
 async def test_i3c_private_read_no_edge_case(dut):
@@ -82,7 +95,8 @@ async def test_i3c_private_read_no_edge_case(dut):
     """
 
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -156,7 +170,8 @@ async def test_i3c_private_read_short_read(dut):
     """
 
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 

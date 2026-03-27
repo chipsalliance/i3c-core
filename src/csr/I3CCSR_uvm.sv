@@ -4546,6 +4546,66 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG_bit_cg T_HIGH_OD_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HIGH_OD;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_HIGH_OD = new("T_HIGH_OD");
+            this.T_HIGH_OD.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_HIGH_OD_bit_cg[bt]) T_HIGH_OD_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG
+
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG_bit_cg T_HIGH_INIT_OD_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HIGH_INIT_OD;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_HIGH_INIT_OD = new("T_HIGH_INIT_OD");
+            this.T_HIGH_INIT_OD.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_HIGH_INIT_OD_bit_cg[bt]) T_HIGH_INIT_OD_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -4575,6 +4635,36 @@ package I3CCSR_uvm;
                 fld_cg = new();
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG
+
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_OD_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG_bit_cg T_LOW_OD_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_LOW_OD;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_LOW_OD = new("T_LOW_OD");
+            this.T_LOW_OD.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_LOW_OD_bit_cg[bt]) T_LOW_OD_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG
 
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG extends uvm_reg;
@@ -4894,7 +4984,10 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG T_SU_DAT_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG T_HD_DAT_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG T_HIGH_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG T_HIGH_OD_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG T_HIGH_INIT_OD_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG T_LOW_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG T_LOW_OD_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG T_HD_STA_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG T_HD_RSTA_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG T_SU_STA_REG;
@@ -4992,61 +5085,66 @@ package I3CCSR_uvm;
 
             this.T_HIGH_REG.build();
             this.default_map.add_reg(this.T_HIGH_REG, 'h3c);
+            this.T_HIGH_OD_REG = new("T_HIGH_OD_REG");
+            this.T_HIGH_OD_REG.configure(this);
+
+            this.T_HIGH_OD_REG.build();
+            this.default_map.add_reg(this.T_HIGH_OD_REG, 'h40);
+            this.T_HIGH_INIT_OD_REG = new("T_HIGH_INIT_OD_REG");
+            this.T_HIGH_INIT_OD_REG.configure(this);
+
+            this.T_HIGH_INIT_OD_REG.build();
+            this.default_map.add_reg(this.T_HIGH_INIT_OD_REG, 'h44);
             this.T_LOW_REG = new("T_LOW_REG");
             this.T_LOW_REG.configure(this);
 
             this.T_LOW_REG.build();
-            this.default_map.add_reg(this.T_LOW_REG, 'h40);
+            this.default_map.add_reg(this.T_LOW_REG, 'h48);
+            this.T_LOW_OD_REG = new("T_LOW_OD_REG");
+            this.T_LOW_OD_REG.configure(this);
+
+            this.T_LOW_OD_REG.build();
+            this.default_map.add_reg(this.T_LOW_OD_REG, 'h4c);
             this.T_HD_STA_REG = new("T_HD_STA_REG");
             this.T_HD_STA_REG.configure(this);
 
             this.T_HD_STA_REG.build();
-            this.default_map.add_reg(this.T_HD_STA_REG, 'h44);
+            this.default_map.add_reg(this.T_HD_STA_REG, 'h50);
             this.T_HD_RSTA_REG = new("T_HD_RSTA_REG");
             this.T_HD_RSTA_REG.configure(this);
 
             this.T_HD_RSTA_REG.build();
-            this.default_map.add_reg(this.T_HD_RSTA_REG, 'h48);
+            this.default_map.add_reg(this.T_HD_RSTA_REG, 'h54);
             this.T_SU_STA_REG = new("T_SU_STA_REG");
             this.T_SU_STA_REG.configure(this);
 
             this.T_SU_STA_REG.build();
-            this.default_map.add_reg(this.T_SU_STA_REG, 'h4c);
+            this.default_map.add_reg(this.T_SU_STA_REG, 'h58);
             this.T_SU_STO_REG = new("T_SU_STO_REG");
             this.T_SU_STO_REG.configure(this);
 
             this.T_SU_STO_REG.build();
-            this.default_map.add_reg(this.T_SU_STO_REG, 'h50);
+            this.default_map.add_reg(this.T_SU_STO_REG, 'h5c);
             this.T_DS_OD_REG = new("T_DS_OD_REG");
             this.T_DS_OD_REG.configure(this);
 
             this.T_DS_OD_REG.build();
-            this.default_map.add_reg(this.T_DS_OD_REG, 'h54);
+            this.default_map.add_reg(this.T_DS_OD_REG, 'h60);
             this.T_FREE_REG = new("T_FREE_REG");
             this.T_FREE_REG.configure(this);
 
             this.T_FREE_REG.build();
-            this.default_map.add_reg(this.T_FREE_REG, 'h58);
+            this.default_map.add_reg(this.T_FREE_REG, 'h64);
             this.T_AVAL_REG = new("T_AVAL_REG");
             this.T_AVAL_REG.configure(this);
 
             this.T_AVAL_REG.build();
-            this.default_map.add_reg(this.T_AVAL_REG, 'h5c);
+            this.default_map.add_reg(this.T_AVAL_REG, 'h68);
             this.T_IDLE_REG = new("T_IDLE_REG");
             this.T_IDLE_REG.configure(this);
 
             this.T_IDLE_REG.build();
-            this.default_map.add_reg(this.T_IDLE_REG, 'h58);
-            this.HDR_TIMEOUT_EN_REG = new("HDR_TIMEOUT_EN_REG");
-            this.HDR_TIMEOUT_EN_REG.configure(this);
-
-            this.HDR_TIMEOUT_EN_REG.build();
-            this.default_map.add_reg(this.HDR_TIMEOUT_EN_REG, 'h5c);
-            this.T_HDR_TIMEOUT_REG = new("T_HDR_TIMEOUT_REG");
-            this.T_HDR_TIMEOUT_REG.configure(this);
-
-            this.T_HDR_TIMEOUT_REG.build();
-            this.default_map.add_reg(this.T_HDR_TIMEOUT_REG, 'h60);
+            this.default_map.add_reg(this.T_IDLE_REG, 'h6c);
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf
 
@@ -5208,12 +5306,12 @@ package I3CCSR_uvm;
             this.CtrlCfg = new("CtrlCfg");
             this.CtrlCfg.configure(this);
             this.CtrlCfg.build();
-            this.default_map.add_submap(this.CtrlCfg.default_map, 'h268);
+            this.default_map.add_submap(this.CtrlCfg.default_map, 'h170);
             this.TERMINATION_EXTCAP_HEADER = new("TERMINATION_EXTCAP_HEADER");
             this.TERMINATION_EXTCAP_HEADER.configure(this);
 
             this.TERMINATION_EXTCAP_HEADER.build();
-            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h270);
+            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h178);
         endfunction : build
     endclass : I3CCSR__I3C_EC
 

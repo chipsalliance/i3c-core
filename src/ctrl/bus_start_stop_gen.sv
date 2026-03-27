@@ -4,7 +4,7 @@ module bus_start_stop_gen (
     input logic rst_ni,
 
     input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_sta_i,  // hold time for START in clock units
+    input [i3c_pkg::TimingWidth-1:0] thd_sta_od_i,  // hold time for START in clock units
     input [i3c_pkg::TimingWidth-1:0] thd_rsta_i,  // hold time for repeated START in clock units
     input [i3c_pkg::TimingWidth-1:0] tsu_rsta_i,  // setup time for repeated START in clock units
     input [i3c_pkg::TimingWidth-1:0] tsu_sto_i,  // setup time for STOP in clock units
@@ -47,7 +47,7 @@ module bus_start_stop_gen (
   logic [i3c_pkg::TimingWidth:0] total_hold_start, total_setup_stop;
   logic [i3c_pkg::TimingWidth-1:0] total_setup_repeated_start, t_scl_zero;
 
-  assign total_hold_start = t_f_i + thd_sta_i;  // See Fig 144 I3C Basic Spec
+  assign total_hold_start = t_f_i + thd_sta_od_i;  // See Fig 144 I3C Basic Spec
   assign total_setup_stop = tsu_sto_i + t_r_i;
   assign total_setup_repeated_start = tsu_rsta_i + tlow_i; // according to Fig 153 I3C Basic Spec t_r_i is not taken into account for the setup time
   assign total_hold_repeated_start = t_f_i + thd_rsta_i + total_setup_repeated_start; // add with total setup time so we can use only one timer for repeated start

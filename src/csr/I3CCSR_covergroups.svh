@@ -2399,6 +2399,46 @@
 
     endgroup
 
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_HIGH_OD_REG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG_fld_cg with function sample(
+    input bit [20-1:0] T_HIGH_OD
+    );
+        option.per_instance = 1;
+        T_HIGH_OD_cp : coverpoint T_HIGH_OD;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_HIGH_INIT_OD_REG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG_fld_cg with function sample(
+    input bit [20-1:0] T_HIGH_INIT_OD
+    );
+        option.per_instance = 1;
+        T_HIGH_INIT_OD_cp : coverpoint T_HIGH_INIT_OD;
+
+    endgroup
+
     /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_LOW_REG COVERGROUPS -----------------------*/
     covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG_bit_cg with function sample(input bit reg_bit);
         option.per_instance = 1;
@@ -2416,6 +2456,26 @@
     );
         option.per_instance = 1;
         T_LOW_cp : coverpoint T_LOW;
+
+    endgroup
+
+    /*----------------------- I3CCSR__I3C_EC__SOCMGMTIF__T_LOW_OD_REG COVERGROUPS -----------------------*/
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG_bit_cg with function sample(input bit reg_bit);
+        option.per_instance = 1;
+        reg_bit_cp : coverpoint reg_bit {
+            bins value[2] = {0,1};
+        }
+        reg_bit_edge_cp : coverpoint reg_bit {
+            bins rise = (0 => 1);
+            bins fall = (1 => 0);
+        }
+
+    endgroup
+    covergroup I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG_fld_cg with function sample(
+    input bit [20-1:0] T_LOW_OD
+    );
+        option.per_instance = 1;
+        T_LOW_OD_cp : coverpoint T_LOW_OD;
 
     endgroup
 

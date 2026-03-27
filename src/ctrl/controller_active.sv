@@ -301,20 +301,24 @@ module controller_active
       .ctrl_bus_i(ctrl_bus_i[1]),
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
+      .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
 
       // TODO: use values form CSRs
-      .thigh_i(20'd15),
-      .tlow_i(20'd15),
+      .thigh_i(20'd10),
+      .tlow_i(20'd10),
+      .thigh_od_i(20'd12),
+      .tlow_od_i(20'd70),
+      .thigh_od_init_i(20'd70),
       .t_r_i(20'd1),
       .t_f_i(20'd1),
-      .thd_sta_i(20'd4),
+      .thd_sta_od_i(20'd12),
       .thd_rsta_i(20'd9),
       .tsu_rsta_i(20'd9),  // NOTE: this register is named T_SU_STA for some reason...
       .tsu_sta_i(20'd6),
-      .tsu_sto_i(20'd5),
-      .t_ds_od_i(20'd8),
-      .tsu_dat_i(20'd3),
-      .thd_dat_i(20'd3),
+      .tsu_sto_i(20'd8),
+      .t_ds_od_i(20'd24),
+      .tsu_dat_i(20'd2),
+      .thd_dat_i(20'd2),
       .t_buf_i(20'd3),
 
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
@@ -337,5 +341,4 @@ module controller_active
 
   // FUTUREFIX: Handle driver switching in the active controller mode
   assign phy_sel_od_pp_o[0] = '0;
-  assign phy_sel_od_pp_o[1] = '0;
 endmodule

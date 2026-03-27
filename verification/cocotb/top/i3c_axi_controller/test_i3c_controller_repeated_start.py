@@ -9,6 +9,7 @@ from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
 from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct
 from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_target import I3CTarget
 
 from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
 from controller_interface import get_interrupt_status
@@ -33,6 +34,17 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     dut._log.info(f"fclk = {fclk:.3f} MHz")
     dut._log.info(f"fbus = {fbus:.3f} MHz")
 
+    # The target is listening to the I3C bus and will include assertions for the phy_sel_od_pp signal
+
+    i3c_target = I3CTarget( 
+        sda_i=dut.act_bus_sda_q2,
+        sda_o=dut.exp_bus_sda,
+        scl_i=dut.act_bus_scl_q2,
+        scl_o=dut.exp_bus_scl,
+        phy_sel_od_pp_i=dut.phy_sel_od_pp_o,
+        debug_state_o=dut.debug_state_target_i,
+        speed=fbus * 1e6,
+    )
     tb = I3CTopControllerTestInterface(dut, num_busses=3)
 
     addr_helper = I3CAddressHelper(dut)
@@ -73,7 +85,7 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-    return tb, addr_helper 
+    return tb, i3c_target, addr_helper 
 
 
 @cocotb.test()
@@ -88,7 +100,9 @@ async def test_i3c_private_write_repeated_start(dut):
     - Verifies that the Target received the continuous stream of data correctly.
     """
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, _, addr_helper = await test_setup(dut)
+    #i3c_target.address = addr_helper.trgt_dyn_addr
+    # TODO: enable cocotbext target for this test
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -182,7 +196,9 @@ async def test_i3c_private_read_repeated_start(dut):
     - Verifies that the Controller received the continuous stream of data correctly.
     """
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, _, addr_helper = await test_setup(dut)
+    #i3c_target.address = addr_helper.trgt_dyn_addr
+    # TODO: enable cocotbext target for this test
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 

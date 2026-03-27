@@ -6,15 +6,9 @@ module bus_scl_flow (
 
     // I3C bus timings
     input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_r_i,  // rise time of both SDA and SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_f_i,  // fall time of both SDA and SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_sta_i,  // hold time for (repeated) START in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_sta_i,  // setup time for repeated START in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_sto_i,  // setup time for STOP in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_dat_i,  // data setup time in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_dat_i,  // data hold time in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_buf_i,  // bus free time between STOP and START in clock units
+    input [i3c_pkg::TimingWidth-1:0] tlow_i,   // low period of the SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] t_r_i,    // rise time of both SDA and SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] t_f_i,    // fall time of both SDA and SCL in clock units
 
     // Output I3C Bus events
     output logic scl_negedge_o,

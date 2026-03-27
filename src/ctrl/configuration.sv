@@ -81,7 +81,7 @@ module configuration (
   assign stby_cr_enable_init =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
 
-  assign i3c_active_en_o = (stby_cr_enable_init == 2'b01) | (stby_cr_enable_init == 2'b11);
+  assign i3c_active_en_o = ((stby_cr_enable_init == 2'b01) | (stby_cr_enable_init == 2'b11)) & bus_enable;
   assign i3c_standby_en_o = stby_cr_enable_init == 2'b10;
 
   // Bus Configuration

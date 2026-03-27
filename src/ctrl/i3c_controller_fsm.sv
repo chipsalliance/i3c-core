@@ -17,13 +17,17 @@ module i3c_controller_fsm
     output logic ctrl_scl_o,
     output logic ctrl_sda_o,
     input bus_state_t ctrl_bus_i,
+    output logic phy_sel_od_pp_o,
 
     // Timing constants
-    input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units
+    input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units in Push-Pull Mode
+    input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units in Push-Pull Mode
+    input [i3c_pkg::TimingWidth-1:0] thigh_od_i,  // high period of the SCL in clock units in Open-Drain Mode
+    input [i3c_pkg::TimingWidth-1:0] thigh_od_init_i,  // high period of the SCL in clock units in Open-Drain Mode during init procedure
+    input [i3c_pkg::TimingWidth-1:0] tlow_od_i,  // low period of the SCL in clock units in Open-Drain Mode
     input [i3c_pkg::TimingWidth-1:0] t_r_i,  // rise time of both SDA and SCL in clock units
     input [i3c_pkg::TimingWidth-1:0] t_f_i,  // fall time of both SDA and SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_sta_i,  // hold time for START in clock units
+    input [i3c_pkg::TimingWidth-1:0] thd_sta_od_i,  // hold time for START in clock units
     input [i3c_pkg::TimingWidth-1:0] thd_rsta_i,  // hold time for repeated START in clock units
     input [i3c_pkg::TimingWidth-1:0] tsu_rsta_i,  // setup time for repeated START in clock units
     input [i3c_pkg::TimingWidth-1:0] tsu_sta_i,  // setup time for repeated START in clock units
@@ -86,6 +90,48 @@ module i3c_controller_fsm
   logic received_nack_d, received_nack_q;
   assign fmt_receive_nack_o = received_nack_q | received_nack_d;  // instantly update fmt flag
 
+  // Open-Drain vs Push-Pull Mode selection
+  logic phy_sel_od_pp_d, phy_sel_od_pp_q;
+  assign phy_sel_od_pp_o = phy_sel_od_pp_q;
+
+  // Timing Inputs
+  logic [i3c_pkg::TimingWidth-1:0] thigh, tlow;
+
+
+  always_comb begin
+    phy_sel_od_pp_d = phy_sel_od_pp_q;
+    if (start_done) begin
+      phy_sel_od_pp_d = 1'b0;
+    end
+    if ((phy_sel_od_pp_q == 1'b0) && (state_q != Address)) begin // all I3C transactions except first address after Start are in Push-Pull Mode
+      phy_sel_od_pp_d = 1'b1;
+    end
+    if ((state_q == Idle) || (state_q == Start)) begin
+      phy_sel_od_pp_d = 1'b0;
+    end
+    if ((state_q == Address) & bus_rx_req_bit) begin
+      phy_sel_od_pp_d = 1'b0;  // When waiting for ACK we are in OD Mode
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      phy_sel_od_pp_q <= 1'b0;
+    end else begin
+      phy_sel_od_pp_q <= phy_sel_od_pp_d;
+    end
+  end
+
+  // Bus initialization
+  logic bus_init_d, bus_init_q;
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      bus_init_q <= 1'b1;
+    end else begin
+      bus_init_q <= bus_init_d;
+    end
+  end
+
   // TX signals
   logic [7:0] bus_tx_req_value;
   logic
@@ -136,7 +182,7 @@ module i3c_controller_fsm
         end
       end
       ReStart: begin
-        if (repeated_start_done) begin
+        if (repeated_start_done & fmt_fifo_rvalid_i) begin
           state_d = Address;
         end
       end
@@ -157,6 +203,7 @@ module i3c_controller_fsm
 
   // Output Logic
   always_comb begin
+    bus_init_d = bus_init_q;
     fmt_bit_o = 1'b0;
     fmt_byte_o = rx_byte_q;
     rx_byte_d = rx_byte_q;
@@ -216,6 +263,9 @@ module i3c_controller_fsm
         end
       end
       BusTX: begin
+        if (bus_init_q) begin
+          bus_init_d = 1'b0;  // Clear init flag
+        end
         ctrl_sda_o = tx_flow_sda;
         ctrl_scl_o = scl_flow_scl;
         if (tx_bit_q) begin
@@ -235,6 +285,9 @@ module i3c_controller_fsm
         end
       end
       BusRX: begin
+        if (bus_init_q) begin
+          bus_init_d = 1'b0;  // Clear init flag
+        end
         ctrl_scl_o = scl_flow_scl;
         bus_rx_req_byte = fmt_flag_read_bytes_i & ~bus_rx_req_bit_q;
         bus_rx_req_bit = bus_rx_req_bit_q;
@@ -289,6 +342,20 @@ module i3c_controller_fsm
     end
   end
 
+  // Timing Mux
+  always_comb begin
+    thigh = thigh_i;
+    tlow  = tlow_i;
+    if (phy_sel_od_pp_o) begin  // I3C Push-Pull Mode
+      thigh = thigh_i;
+      tlow  = tlow_i;
+    end else if (~phy_sel_od_pp_o) begin  // I3C bus initialization timings (See t_HIGH_INIT Table 86 I3C Basic Spec)
+      thigh = bus_init_q ? thigh_od_init_i : thigh_od_i;
+      tlow  = tlow_od_i;
+    end
+  end
+
+
   // Read Bus
 
   bus_rx_flow i_bus_rx_flow (
@@ -334,16 +401,10 @@ module i3c_controller_fsm
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       // I3C bus timings
-      .thigh_i(thigh_i),
-      .tlow_i(tlow_i),
+      .thigh_i(thigh),
+      .tlow_i(tlow),
       .t_r_i(t_r_i),
       .t_f_i(t_f_i),
-      .thd_sta_i(thd_sta_i),
-      .tsu_sta_i(tsu_sta_i),
-      .tsu_sto_i(tsu_sto_i),
-      .tsu_dat_i(tsu_dat_i),
-      .thd_dat_i(thd_dat_i),
-      .t_buf_i(t_buf_i),
       // Output I3C Bus events
       .scl_negedge_o(scl_negedge),
       .scl_posedge_o(scl_posedge),
@@ -361,8 +422,8 @@ module i3c_controller_fsm
       .clk_i,
       .rst_ni,
 
-      .thd_sta_i,
-      .tlow_i(tlow_i),
+      .thd_sta_od_i,
+      .tlow_i(tlow),
       .thd_rsta_i,
       .tsu_rsta_i,
       .tsu_sto_i,

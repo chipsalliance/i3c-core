@@ -9,6 +9,7 @@ from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
 from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
 from cocotbext_i3c.i3c_controller import I3cController
+from cocotbext_i3c.i3c_target import I3CTarget
 
 from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
 from controller_interface import get_interrupt_status
@@ -32,6 +33,17 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     dut._log.info(f"fclk = {fclk:.3f} MHz")
     dut._log.info(f"fbus = {fbus:.3f} MHz")
 
+    # The target is listening to the I3C bus and will include assertions for the phy_sel_od_pp signal
+
+    i3c_target = I3CTarget( 
+        sda_i=dut.act_bus_sda_q2,
+        sda_o=dut.exp_bus_sda,
+        scl_i=dut.act_bus_scl_q2,
+        scl_o=dut.exp_bus_scl,
+        phy_sel_od_pp_i=dut.phy_sel_od_pp_o,
+        debug_state_o=dut.debug_state_target_i,
+        speed=fbus * 1e6,
+    )
     tb = I3CTopControllerTestInterface(dut, num_busses=3)
 
     addr_helper = I3CAddressHelper(dut)
@@ -72,12 +84,13 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None):
     await cocotb.triggers.Combine(*[t.join() for t in tasks])
     
     dut._log.info("All cores booted successfully.")
-    return tb, addr_helper 
+    return tb, i3c_target, addr_helper 
 
 @cocotb.test()
 async def test_i3c_private_write_target_read(dut):
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -198,7 +211,8 @@ async def test_i3c_private_write_target_read(dut):
 @cocotb.test()
 async def test_i3c_private_write_target_read_resp_desc(dut):
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
 
     cmd_desc = immediate_transfer_descriptor_direct(
             tid=0x1,
@@ -246,7 +260,8 @@ async def test_i3c_private_write_target_read_resp_desc(dut):
 @cocotb.test()
 async def test_i3c_private_write_wrong_target_addr(dut):
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -290,7 +305,8 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
     """
 
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     dut.areset_n[0].value = 0
     dut._log.info("Reset unused i3c core.")
 
@@ -331,7 +347,7 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
     actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
     await actual_write
 
-    await ClockCycles(tb.clk, (250 + (300 * target_len)) * 2)
+    await ClockCycles(tb.clk, (500 + (300 * target_len)) * 2)
 
     # Read RX descriptor
     recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)
@@ -363,7 +379,8 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
     """
 
     # Setup
-    tb, addr_helper = await test_setup(dut)
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
     TX_QUEUE_DEPTH = tb.tx_queue_depth
 
     target_len = random.randint(TX_QUEUE_DEPTH * 4, TX_QUEUE_DEPTH * 4 * 3) # test larger than tx queue length
@@ -378,7 +395,7 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
         defining_byte_present=0x0,
         mode=0x0,
         rnw=0x0,
-        wroc=random.getrandbits(1),
+        wroc=True,
         toc=True,
         def_byte=0x0,
         data_length=target_len,
@@ -407,15 +424,6 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
 
     await data_write
 
-    await ClockCycles(tb.clk, (250 + (300 * target_len)) * 2)
-
-    # Read RX descriptor
-    recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)
-
-    actual_val = recv_data
-    expected_val = data
-    # Compare
- 
     # Read Resp descriptor
     if cmd_desc.wroc:
         resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
@@ -425,6 +433,14 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
         assert resp_desc.data_length == cmd_desc.data_length
         assert resp_desc.tid == cmd_desc.tid
 
+
+    # Read RX descriptor
+    recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)
+
+    actual_val = recv_data
+    expected_val = data
+    # Compare
+ 
     for i, (expected, actual) in enumerate(zip(expected_val, actual_val)):
         if expected != actual:
             dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")

@@ -5,6 +5,9 @@ from bus2csr import bytes2int, int2bytes
 import cocotb
 from cocotb.triggers import ClockCycles
 
+# Device Bus Indices
+ACT_CONTROLLER_IDX = 1
+
 # Helper to define the Initialization Modes (Table 5 I3C Basic Spec)
 MODE_TARGET = 2     # Standby Controller / Target
 MODE_CONTROLLER = 3 # Active Controller
@@ -54,6 +57,10 @@ async def boot_init(
     await umbrella_stby_init(
         tb, bus_idx, mode, verify, static_addr, virtual_static_addr, dynamic_addr, virtual_dynamic_addr
     )
+
+    # Setup Host Controller
+    if (bus_idx == ACT_CONTROLLER_IDX):
+        await setup_host_controller(tb, bus_idx=ACT_CONTROLLER_IDX)
 
 async def umbrella_stby_init(
     tb,
@@ -146,3 +153,13 @@ async def umbrella_stby_init(
 
 async def setup_hci_thresholds(tb, bus_idx=0):
     pass
+
+async def setup_host_controller(tb, bus_idx=ACT_CONTROLLER_IDX):
+    # Enable Bus
+    await tb.write_csr_field(
+        tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
+        tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
+        1,
+        bus_idx=bus_idx
+    )
+

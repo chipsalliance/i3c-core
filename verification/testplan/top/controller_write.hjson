@@ -1,5 +1,5 @@
 {
-  name: Controller write
+  name: Controller Private Write
   testpoints:
   [
     {
@@ -7,7 +7,7 @@
       desc:
         '''
         Testbench:
-        I3C wrapper (DUT) -> cocotbext controller
+        I3C Controller (RTL) <-> I3C Target (RTL)
 
         Intent:
         Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) to an individual I3C Target Device with known static address
@@ -44,7 +44,7 @@
       desc:
         '''
         Testbench:
-        I3C wrapper (DUT) -> cocotbext controller
+        I3C Controller (RTL) <-> I3C Target (RTL)
 
         Intent:
         Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) to an individual I3C Target Device with known static address
@@ -159,10 +159,10 @@
             - DBP = 0 // no def byte
             - MODE = 0x0 // standard I3C SDR Speed
             - RNW = 0x0 // Write transfer
-            - WROC = 0x0 // no response  
+            - WROC: random // randomly generate response descriptor 
             - TOC = 0x1 // want to generate a stop signal after first transfer 
             - DEF_BYTE: random // this is disregarded
-            - DATA_LENGTH: length of data transfer (< TX_QUEUE depth and > TX_QUEUE depth) // Indicates the number of bytes to be transferred
+            - DATA_LENGTH: length of data transfer (1 < DATA_LENGTH < TX_QUEUE_DEPTH*4) // Indicates the number of bytes to be transferred
         - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
@@ -194,7 +194,7 @@
             - DBP = 0 // no def byte
             - MODE = 0x0 // standard I3C SDR Speed
             - RNW = 0x0 // Write transfer
-            - WROC: random // randomly generate response descriptor 
+            - WROC = 0x1 // write response descriptor
             - TOC = 0x1 // want to generate a stop signal after first transfer 
             - DEF_BYTE: random // this is disregarded
             - DATA_LENGTH: length of data transfer (TX_QUEUE_DEPTH*4 < DATA_LENGTH < TX_QUEUE_DEPTH*4*3) // Indicates the number of bytes to be transferred
@@ -309,7 +309,5 @@
       tests: ["i3c_controller_write_DAT_txqueue"]
       tags: ["top"]
     }
-
- 
   ]
 }
