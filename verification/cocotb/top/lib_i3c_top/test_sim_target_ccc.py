@@ -39,7 +39,8 @@ def parse_pid(data):
 
 async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
                     sim_target_addr=None, speed=None,
-                    sim_bcr=0x00, sim_dcr=0x00):
+                    sim_bcr=0x00, sim_dcr=0x00,
+                    sda_read_timeout_us=100):
     """
     Set up controller, I3CTargetFixed, DUT, and configure PIDs.
 
@@ -50,6 +51,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     speed: I3C bus clock frequency in Hz (randomized 1-12.5 MHz if None)
     sim_bcr: 8-bit BCR value for the sim target
     sim_dcr: 8-bit DCR value for the sim target
+    sda_read_timeout_us: SDA read detector timeout in microseconds
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
@@ -86,6 +88,7 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
         pid=sim_pid,
         bcr=sim_bcr,
         dcr=sim_dcr,
+        sda_read_timeout_us=sda_read_timeout_us,
     )
 
     dut.peripheral_reset_done_i.value = 0
@@ -897,8 +900,11 @@ async def test_getpid_premature_stop(dut):
     dut_pid_lo = random.getrandbits(32)
     sim_pid = random.getrandbits(48)
 
+    # Use a shorter SDA read timer (5us) so abort recovery stays brief.
+    # This test exercises abort/recovery behavior, not timer duration.
     i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid,
+        sda_read_timeout_us=5,
     )
 
     expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo

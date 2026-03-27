@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """
-Fixed I3C Target with CCC Support and Premature STOP Resilience
+Fixed I3C Target with CCC Support, Premature STOP Resilience, and SDA Read Timer
 
 This module extends the I3CTarget from cocotbext-i3c to handle Common Command
 Codes (CCCs). The base I3CTarget ignores all CCCs -- it receives the CCC byte
@@ -22,6 +22,16 @@ read response because send_bit() awaits FallingEdge(scl_i) which never comes
 after STOP. This subclass races each SCL-edge await against STOP detection
 (SDA rising while SCL is high) with a timeout fallback for bus-idle.
 
+SDA Read Detector Timer (spec S5.1.2.3 Note):
+  "A Target should have an SDA Read detector that determines if the SCL
+   clock has not changed for 100 us or more, so that it can abandon the
+   read by switching SDA to High-Z and waiting for Repeated START or STOP."
+
+During target-driven data phases (private read, CCC directed read), the
+SCL-edge await uses the SDA read timer (default 100us) instead of the short
+premature-STOP timeout.  On expiry, the target releases SDA to Hi-Z and
+waits for Sr or STOP before returning.
+
 Usage:
     Instead of:
         from cocotbext_i3c.i3c_target import I3CTarget
@@ -29,7 +39,9 @@ Usage:
         from i3c_target_fixed import I3CTargetFixed as I3CTarget
 
     The constructor accepts additional keyword arguments for device properties:
-        pid  -- 48-bit Provisioned ID (default 0x000000000000)
+        pid                -- 48-bit Provisioned ID (default 0x000000000000)
+        sda_read_timeout_us -- SDA read timer threshold in microseconds
+                               (default 100, per spec S5.1.2.3 Note)
 """
 
 import logging
@@ -37,6 +49,7 @@ import logging
 from cocotb.triggers import (
     FallingEdge,
     First,
+    ReadOnly,
     RisingEdge,
     Timer,
 )
@@ -57,6 +70,19 @@ class BusAbortError(Exception):
     forever if the controller issues STOP mid-byte. This exception is
     raised by the per-edge timeout helpers and caught by send_byte() to
     cleanly return I3cState.STOP.
+    """
+
+
+class SdaReadTimerExpired(Exception):
+    """Raised when SCL has not toggled for >= sda_read_timeout during a read.
+
+    Per I3C spec S5.1.2.3 Note:
+      "A Target should have an SDA Read detector that determines if the
+       SCL clock has not changed for 100 us or more, so that it can
+       abandon the read by switching SDA to High-Z and waiting for
+       Repeated START or STOP."
+
+    When caught, the target releases SDA and waits for Sr or STOP.
     """
 
 
@@ -138,6 +164,7 @@ class I3CTargetFixed(I3CTarget):
         pid=0x000000000000,
         bcr=0x00,
         dcr=0x00,
+        sda_read_timeout_us=100,
         *args,
         **kwargs,
     ):
@@ -170,10 +197,25 @@ class I3CTargetFixed(I3CTarget):
         scl_period_ns = int(1.0 / self.speed * 1e9)
         self._edge_timeout_ns = max(5000, scl_period_ns * 20)
 
+        # SDA Read Detector Timer (spec S5.1.2.3 Note).
+        # During target-driven reads, if SCL does not toggle for this
+        # duration, the target abandons the read (releases SDA to Hi-Z)
+        # and waits for Sr or STOP.
+        if sda_read_timeout_us <= 0:
+            raise ValueError(
+                f"sda_read_timeout_us must be > 0, got {sda_read_timeout_us}"
+            )
+        self._sda_read_timeout_ns = int(sda_read_timeout_us * 1000)
+
+        # Flag: True when the target is driving SDA during a read transfer.
+        # Controls which timeout/exception is used in edge helpers.
+        self._in_read_transfer = False
+
         self.log.info(
             f"TARGET_FIXED:::CCC-capable target at addr="
             f"{hex(address) if address else 'None'}, "
-            f"PID=0x{pid:012X}, BCR=0x{bcr:02X}, DCR=0x{dcr:02X}"
+            f"PID=0x{pid:012X}, BCR=0x{bcr:02X}, DCR=0x{dcr:02X}, "
+            f"sda_read_timeout={sda_read_timeout_us}us"
         )
 
     @property
@@ -201,41 +243,79 @@ class I3CTargetFixed(I3CTarget):
             return True
         return False
 
+    async def handle_read(self):
+        """Override: private read with SDA read timer active.
+
+        Wraps the base class handle_read() with the _in_read_transfer
+        flag so that the SDA read timer (spec S5.1.2.3 Note) is used
+        for SCL-edge timeouts during target-driven data phases.
+        """
+        self._in_read_transfer = True
+        try:
+            return await super().handle_read()
+        finally:
+            self._in_read_transfer = False
+
     # -----------------------------------------------------------------
     # Premature STOP resilience -- per-edge timeout
+    # SDA Read Detector Timer -- spec S5.1.2.3 Note
     # -----------------------------------------------------------------
     # The base I3CTarget's send_bit() awaits FallingEdge(scl_i) which
     # hangs forever if the controller issues STOP mid-byte (no more SCL
     # toggles).  We override send_bit() and send_byte() to race every
     # SCL-edge await against a Timer.  If the timer fires first (SCL
-    # didn't toggle), we raise BusAbortError.  send_byte() catches it,
-    # releases SDA, and returns I3cState.STOP.
+    # didn't toggle), we raise an exception.
+    #
+    # During target-driven read phases (_in_read_transfer == True), the
+    # SDA read timer (100us default) supersedes the short edge timeout
+    # and raises SdaReadTimerExpired.  Outside reads, the short timeout
+    # raises BusAbortError for premature STOP detection.
     # -----------------------------------------------------------------
 
     async def _await_falling_scl(self):
         """FallingEdge(scl_i) with timeout.
 
-        Raises BusAbortError if SCL does not fall within
-        ``_edge_timeout_ns`` nanoseconds.
+        During reads: uses SDA read timer, raises SdaReadTimerExpired.
+        Outside reads: uses edge timeout, raises BusAbortError.
         """
+        if self._in_read_transfer:
+            timeout_ns = self._sda_read_timeout_ns
+        else:
+            timeout_ns = self._edge_timeout_ns
+
         await First(
             FallingEdge(self.scl_i),
-            Timer(self._edge_timeout_ns, units='ns'),
+            Timer(timeout_ns, units='ns'),
         )
         if self.scl:
+            if self._in_read_transfer:
+                raise SdaReadTimerExpired(
+                    f"SCL did not fall within {timeout_ns}ns "
+                    f"(SDA read timer, spec S5.1.2.3)"
+                )
             raise BusAbortError("SCL did not fall within timeout")
 
     async def _await_rising_scl(self):
         """RisingEdge(scl_i) with timeout.
 
-        Raises BusAbortError if SCL does not rise within
-        ``_edge_timeout_ns`` nanoseconds.
+        During reads: uses SDA read timer, raises SdaReadTimerExpired.
+        Outside reads: uses edge timeout, raises BusAbortError.
         """
+        if self._in_read_transfer:
+            timeout_ns = self._sda_read_timeout_ns
+        else:
+            timeout_ns = self._edge_timeout_ns
+
         await First(
             RisingEdge(self.scl_i),
-            Timer(self._edge_timeout_ns, units='ns'),
+            Timer(timeout_ns, units='ns'),
         )
         if not self.scl:
+            if self._in_read_transfer:
+                raise SdaReadTimerExpired(
+                    f"SCL did not rise within {timeout_ns}ns "
+                    f"(SDA read timer, spec S5.1.2.3)"
+                )
             raise BusAbortError("SCL did not rise within timeout")
 
     async def send_bit(self, bit: bool):
@@ -254,6 +334,9 @@ class I3CTargetFixed(I3CTarget):
 
         If BusAbortError is raised by send_bit() or edge helpers,
         we release SDA and return I3cState.STOP.
+
+        If SdaReadTimerExpired is raised (spec S5.1.2.3 Note), we
+        release SDA to Hi-Z and wait for Sr or STOP before returning.
         """
         try:
             for i in range(8):
@@ -276,6 +359,31 @@ class I3CTargetFixed(I3CTarget):
                 elif await self.check_start(repeated=True):
                     next_state = I3cState.RS
 
+            return next_state
+
+        except SdaReadTimerExpired:
+            # Spec S5.1.2.3 Note: abandon read, release SDA to Hi-Z,
+            # then wait for Repeated START or STOP.
+            self.sda = 1
+            self.log.info(
+                "TARGET_FIXED:::SDA read timer expired -- "
+                "releasing SDA to Hi-Z and waiting for Sr or STOP "
+                "(spec S5.1.2.3 Note)"
+            )
+            # If STOP already occurred before the timer expired, the bus
+            # is idle (SDA=1, SCL=1).  Detect this immediately instead
+            # of blocking in _await_bus_condition() for an Sr/STOP that
+            # will never come.
+            await ReadOnly()
+            if self.sda and self.scl:
+                self.log.info(
+                    "TARGET_FIXED:::Bus already idle (STOP occurred "
+                    "before timer expiry) -- returning STOP"
+                )
+                self.state = I3cState.STOP
+                return I3cState.STOP
+            next_state = await self._await_bus_condition()
+            self.state = next_state
             return next_state
 
         except BusAbortError:
@@ -443,9 +551,10 @@ class I3CTargetFixed(I3CTarget):
         """Send a multi-byte CCC response with T-bit framing.
 
         Each byte is sent via the overridden send_byte() which has
-        per-edge abort detection.  If the controller issues STOP
-        mid-transfer, send_byte() catches BusAbortError, releases
-        SDA, and returns I3cState.STOP.
+        per-edge abort detection and SDA read timer support.
+
+        The SDA read timer (spec S5.1.2.3 Note) is active during CCC
+        directed reads because the target drives SDA in these phases.
 
         Args:
             data_bytes: Iterable of int bytes to transmit (MSB first).
@@ -454,18 +563,22 @@ class I3CTargetFixed(I3CTarget):
             The next I3cState (RS or STOP) from the bus.
         """
         data_bytes = list(data_bytes)
+        self._in_read_transfer = True
 
-        for i, byte in enumerate(data_bytes):
-            is_last = i == len(data_bytes) - 1
-            self.state = I3cState.DATA_RD
-            next_state = await self.send_byte(byte, terminate=is_last)
-            if next_state is not None:
-                return next_state
+        try:
+            for i, byte in enumerate(data_bytes):
+                is_last = i == len(data_bytes) - 1
+                self.state = I3cState.DATA_RD
+                next_state = await self.send_byte(byte, terminate=is_last)
+                if next_state is not None:
+                    return next_state
 
-        self.log.error(
-            "TARGET_FIXED:::CCC response: unexpected end of send loop"
-        )
-        return I3cState.STOP
+            self.log.error(
+                "TARGET_FIXED:::CCC response: unexpected end of send loop"
+            )
+            return I3cState.STOP
+        finally:
+            self._in_read_transfer = False
 
     async def _handle_directed_read_ccc(self):
         """Dispatch directed read CCC to the appropriate handler."""
