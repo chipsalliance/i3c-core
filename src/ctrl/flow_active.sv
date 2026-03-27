@@ -855,12 +855,13 @@ module flow_active
           32'd2: begin  // Transmit Target Addr
             fmt_byte_o = is_regular_transfer ? {regular_direct_cmd_desc.dev_address, cmd_dir == Read} 
                                              : {immediate_direct_cmd_desc.dev_address, cmd_dir == Read};
+            tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i & (prev_ccc_q == cmd_ccc); // Pop payload byte for next cycle if we skipped sending 7'h7E and CCC bytes
             if (fmt_receive_nack_i) begin
               resp_err_status_d = Nack;
             end
           end
           32'd3: begin  // Transmit the first Payload byte
-            ccc_done = ((cmd_ccc == `I3C_DIRECT_ENEC) | (cmd_ccc == `I3C_DIRECT_DISEC)) & fmt_fifo_rdone_i; // CCC is done if it only needs one payload byte
+            ccc_done = ((cmd_ccc == `I3C_DIRECT_ENEC) | (cmd_ccc == `I3C_DIRECT_DISEC) | (cmd_ccc == `I3C_DIRECT_SETDASA)) & fmt_fifo_rdone_i; // CCC is done if it only needs one payload byte
             if (is_regular_transfer) begin
               fmt_byte_o = tx_dword_array[0];
               fmt_bit_o = ^{fmt_byte_o, 1'b1};

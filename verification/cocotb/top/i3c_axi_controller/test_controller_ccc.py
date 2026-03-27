@@ -331,3 +331,73 @@ async def test_controller_ccc_setaasa(dut):
     assert virt_dynamic_address_valid == 1, "New VIRT DYNAMIC ADDRESS is not set as valid"
     assert virt_dynamic_address == VIRT_STATIC_ADDR, "Unexpected VIRT DYNAMIC ADDRESS read from the CSR"
 
+
+@cocotb.test()
+async def test_controller_ccc_setdasa_direct(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    STATIC_ADDR = addr_helper.trgt_static_addr
+    DYNAMIC_ADDR = addr_helper.trgt_dyn_addr
+    VIRTUAL_STATIC_ADDR = addr_helper.trgt_virt_static_addr
+    VIRTUAL_DYNAMIC_ADDR = addr_helper.trgt_virt_dyn_addr
+    command_setdasa = CCC.DIRECT.SETDASA # SETDASA
+
+    # Read target STATIC_ADDR and VIRTUAL_STATIC_ADDR 
+    static_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert static_addr == STATIC_ADDR, "Unexpected STATIC ADDRESS read from the target CSR"
+    static_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert static_addr_en == 1, "STATIC ADDRESS is not set as valid"
+
+    virt_static_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_static_addr == VIRTUAL_STATIC_ADDR, "Unexpected VIRTUAL STATIC ADDRESS read from the target CSR"
+    virt_static_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_static_addr_en == 1, "VIRTUAL STATIC ADDRESS is not set as valid"
+
+    # Set dynamic address
+    await write_ccc(tb, command_setdasa, payload=[DYNAMIC_ADDR << 1], data_length=1, device_address=STATIC_ADDR, toc=False)
+    await write_ccc(tb, command_setdasa, payload=[VIRTUAL_DYNAMIC_ADDR << 1], data_length=1, device_address=VIRTUAL_STATIC_ADDR, toc=True)
+
+    # Check that dynamic address was set correctly
+    dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the target CSR"
+    dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr_en == 1, "DYNAMIC ADDRESS is not set as valid"
+
+    virt_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr == VIRTUAL_DYNAMIC_ADDR, "Unexpected VIRTUAL DYNAMIC ADDRESS read from the target CSR"
+    virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr_en == 1, "VIRTUAL DYNAMIC ADDRESS is not set as valid"

@@ -196,6 +196,9 @@
         The test sets the dynamic address of the i3c target using the I2C static target address.
 
         Stimulus:
+        - Randomly generate a STATIC_ADDR and VIRTUAL_STATIC_ADDR and write them to the i3c target CSR.
+        - Create a valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+        - Generate 2 SETDASA CCCs to assign the DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR using STATIC_ADDR and VIRTUAL_STATIC_ADDR respectively (simulates SETDASA for multiple targets).
         - randomly create a regular or immediate 64b CMD descriptor. With:
             - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
             - CMD: 0x87 // SETDASA Direct
@@ -214,7 +217,7 @@
           - After sending the SETDASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic address that was sent.
 
         '''
-      tests: ["controller_ccc_setdasa_dir"]
+      tests: ["controller_ccc_setdasa_direct"]
       tags: ["top"]
     },
     {

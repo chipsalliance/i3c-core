@@ -4486,6 +4486,36 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG_bit_cg T_SU_DAT_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_DAT_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_SU_DAT_I2C = new("T_SU_DAT_I2C");
+            this.T_SU_DAT_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_SU_DAT_I2C_bit_cg[bt]) T_SU_DAT_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_DAT_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -4606,6 +4636,36 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG_bit_cg T_HIGH_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HIGH_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_HIGH_I2C = new("T_HIGH_I2C");
+            this.T_HIGH_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_HIGH_I2C_bit_cg[bt]) T_HIGH_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -4666,6 +4726,36 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG_bit_cg T_LOW_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_LOW_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_LOW_I2C = new("T_LOW_I2C");
+            this.T_LOW_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_LOW_I2C_bit_cg[bt]) T_LOW_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -4696,15 +4786,45 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG_bit_cg T_HD_STA_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_HD_STA_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_HD_STA_I2C = new("T_HD_STA_I2C");
+            this.T_HD_STA_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_HD_STA_I2C_bit_cg[bt]) T_HD_STA_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
         protected uvm_reg_data_t m_data;
         protected bit            m_is_read;
 
-        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG_bit_cg T_HD_STA_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG_bit_cg T_HD_RSTA_bit_cg[20];
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG_fld_cg fld_cg;
-        rand uvm_reg_field T_HD_STA;
+        rand uvm_reg_field T_HD_RSTA;
 
         function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG");
             super.new(name, 32, build_coverage(UVM_CVR_ALL));
@@ -4716,10 +4836,10 @@ package I3CCSR_uvm;
                                                       uvm_reg_map     map);
 
         virtual function void build();
-            this.T_HD_STA = new("T_HD_STA");
-            this.T_HD_STA.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            this.T_HD_RSTA = new("T_HD_RSTA");
+            this.T_HD_RSTA.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
             if (has_coverage(UVM_CVR_REG_BITS)) begin
-                foreach(T_HD_STA_bit_cg[bt]) T_HD_STA_bit_cg[bt] = new();
+                foreach(T_HD_RSTA_bit_cg[bt]) T_HD_RSTA_bit_cg[bt] = new();
             end
             if (has_coverage(UVM_CVR_FIELD_VALS))
                 fld_cg = new();
@@ -4756,6 +4876,36 @@ package I3CCSR_uvm;
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG
 
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG_bit_cg T_SU_STA_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_STA_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_SU_STA_I2C = new("T_SU_STA_I2C");
+            this.T_SU_STA_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_SU_STA_I2C_bit_cg[bt]) T_SU_STA_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG
+
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STO_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG extends uvm_reg;
         protected uvm_reg_data_t m_current;
@@ -4785,6 +4935,36 @@ package I3CCSR_uvm;
                 fld_cg = new();
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG
+
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG_bit_cg T_SU_STO_I2C_bit_cg[20];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_SU_STO_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_SU_STO_I2C = new("T_SU_STO_I2C");
+            this.T_SU_STO_I2C.configure(this, 20, 0, "RW", 0, 'h0, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_SU_STO_I2C_bit_cg[bt]) T_SU_STO_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG
 
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_DS_OD_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG extends uvm_reg;
@@ -4845,6 +5025,36 @@ package I3CCSR_uvm;
                 fld_cg = new();
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG
+
+    // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG
+    class I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG extends uvm_reg;
+        protected uvm_reg_data_t m_current;
+        protected uvm_reg_data_t m_data;
+        protected bit            m_is_read;
+
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG_bit_cg T_FREE_I2C_bit_cg[32];
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG_fld_cg fld_cg;
+        rand uvm_reg_field T_FREE_I2C;
+
+        function new(string name = "I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG");
+            super.new(name, 32, build_coverage(UVM_CVR_ALL));
+        endfunction : new
+        extern virtual function void sample_values();
+        extern protected virtual function void sample(uvm_reg_data_t  data,
+                                                      uvm_reg_data_t  byte_en,
+                                                      bit             is_read,
+                                                      uvm_reg_map     map);
+
+        virtual function void build();
+            this.T_FREE_I2C = new("T_FREE_I2C");
+            this.T_FREE_I2C.configure(this, 32, 0, "RW", 0, 'hc, 1, 1, 0);
+            if (has_coverage(UVM_CVR_REG_BITS)) begin
+                foreach(T_FREE_I2C_bit_cg[bt]) T_FREE_I2C_bit_cg[bt] = new();
+            end
+            if (has_coverage(UVM_CVR_FIELD_VALS))
+                fld_cg = new();
+        endfunction : build
+    endclass : I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG
 
     // Reg - I3CCSR.I3C_EC.SoCMgmtIf.T_AVAL_REG
     class I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG extends uvm_reg;
@@ -4982,18 +5192,25 @@ package I3CCSR_uvm;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG T_R_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG T_F_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG T_SU_DAT_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG T_SU_DAT_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG T_HD_DAT_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG T_HIGH_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG T_HIGH_OD_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG T_HIGH_INIT_OD_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG T_HIGH_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG T_LOW_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG T_LOW_OD_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG T_LOW_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG T_HD_STA_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG T_HD_STA_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG T_HD_RSTA_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG T_SU_STA_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG T_SU_STA_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG T_SU_STO_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG T_SU_STO_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG T_DS_OD_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG T_FREE_REG;
+        rand I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG T_FREE_I2C_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG T_AVAL_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG T_IDLE_REG;
         rand I3CCSR__I3C_EC__SoCMgmtIf__HDR_TIMEOUT_EN_REG HDR_TIMEOUT_EN_REG;
@@ -5075,76 +5292,111 @@ package I3CCSR_uvm;
 
             this.T_SU_DAT_REG.build();
             this.default_map.add_reg(this.T_SU_DAT_REG, 'h34);
+            this.T_SU_DAT_I2C_REG = new("T_SU_DAT_I2C_REG");
+            this.T_SU_DAT_I2C_REG.configure(this);
+
+            this.T_SU_DAT_I2C_REG.build();
+            this.default_map.add_reg(this.T_SU_DAT_I2C_REG, 'h38);
             this.T_HD_DAT_REG = new("T_HD_DAT_REG");
             this.T_HD_DAT_REG.configure(this);
 
             this.T_HD_DAT_REG.build();
-            this.default_map.add_reg(this.T_HD_DAT_REG, 'h38);
+            this.default_map.add_reg(this.T_HD_DAT_REG, 'h3c);
             this.T_HIGH_REG = new("T_HIGH_REG");
             this.T_HIGH_REG.configure(this);
 
             this.T_HIGH_REG.build();
-            this.default_map.add_reg(this.T_HIGH_REG, 'h3c);
+            this.default_map.add_reg(this.T_HIGH_REG, 'h40);
             this.T_HIGH_OD_REG = new("T_HIGH_OD_REG");
             this.T_HIGH_OD_REG.configure(this);
 
             this.T_HIGH_OD_REG.build();
-            this.default_map.add_reg(this.T_HIGH_OD_REG, 'h40);
+            this.default_map.add_reg(this.T_HIGH_OD_REG, 'h44);
             this.T_HIGH_INIT_OD_REG = new("T_HIGH_INIT_OD_REG");
             this.T_HIGH_INIT_OD_REG.configure(this);
 
             this.T_HIGH_INIT_OD_REG.build();
-            this.default_map.add_reg(this.T_HIGH_INIT_OD_REG, 'h44);
+            this.default_map.add_reg(this.T_HIGH_INIT_OD_REG, 'h48);
+            this.T_HIGH_I2C_REG = new("T_HIGH_I2C_REG");
+            this.T_HIGH_I2C_REG.configure(this);
+
+            this.T_HIGH_I2C_REG.build();
+            this.default_map.add_reg(this.T_HIGH_I2C_REG, 'h4c);
             this.T_LOW_REG = new("T_LOW_REG");
             this.T_LOW_REG.configure(this);
 
             this.T_LOW_REG.build();
-            this.default_map.add_reg(this.T_LOW_REG, 'h48);
+            this.default_map.add_reg(this.T_LOW_REG, 'h50);
             this.T_LOW_OD_REG = new("T_LOW_OD_REG");
             this.T_LOW_OD_REG.configure(this);
 
             this.T_LOW_OD_REG.build();
-            this.default_map.add_reg(this.T_LOW_OD_REG, 'h4c);
+            this.default_map.add_reg(this.T_LOW_OD_REG, 'h54);
+            this.T_LOW_I2C_REG = new("T_LOW_I2C_REG");
+            this.T_LOW_I2C_REG.configure(this);
+
+            this.T_LOW_I2C_REG.build();
+            this.default_map.add_reg(this.T_LOW_I2C_REG, 'h58);
             this.T_HD_STA_REG = new("T_HD_STA_REG");
             this.T_HD_STA_REG.configure(this);
 
             this.T_HD_STA_REG.build();
-            this.default_map.add_reg(this.T_HD_STA_REG, 'h50);
+            this.default_map.add_reg(this.T_HD_STA_REG, 'h5c);
+            this.T_HD_STA_I2C_REG = new("T_HD_STA_I2C_REG");
+            this.T_HD_STA_I2C_REG.configure(this);
+
+            this.T_HD_STA_I2C_REG.build();
+            this.default_map.add_reg(this.T_HD_STA_I2C_REG, 'h60);
             this.T_HD_RSTA_REG = new("T_HD_RSTA_REG");
             this.T_HD_RSTA_REG.configure(this);
 
             this.T_HD_RSTA_REG.build();
-            this.default_map.add_reg(this.T_HD_RSTA_REG, 'h54);
+            this.default_map.add_reg(this.T_HD_RSTA_REG, 'h64);
             this.T_SU_STA_REG = new("T_SU_STA_REG");
             this.T_SU_STA_REG.configure(this);
 
             this.T_SU_STA_REG.build();
-            this.default_map.add_reg(this.T_SU_STA_REG, 'h58);
+            this.default_map.add_reg(this.T_SU_STA_REG, 'h68);
+            this.T_SU_STA_I2C_REG = new("T_SU_STA_I2C_REG");
+            this.T_SU_STA_I2C_REG.configure(this);
+
+            this.T_SU_STA_I2C_REG.build();
+            this.default_map.add_reg(this.T_SU_STA_I2C_REG, 'h6c);
             this.T_SU_STO_REG = new("T_SU_STO_REG");
             this.T_SU_STO_REG.configure(this);
 
             this.T_SU_STO_REG.build();
-            this.default_map.add_reg(this.T_SU_STO_REG, 'h5c);
+            this.default_map.add_reg(this.T_SU_STO_REG, 'h70);
+            this.T_SU_STO_I2C_REG = new("T_SU_STO_I2C_REG");
+            this.T_SU_STO_I2C_REG.configure(this);
+
+            this.T_SU_STO_I2C_REG.build();
+            this.default_map.add_reg(this.T_SU_STO_I2C_REG, 'h74);
             this.T_DS_OD_REG = new("T_DS_OD_REG");
             this.T_DS_OD_REG.configure(this);
 
             this.T_DS_OD_REG.build();
-            this.default_map.add_reg(this.T_DS_OD_REG, 'h60);
+            this.default_map.add_reg(this.T_DS_OD_REG, 'h78);
             this.T_FREE_REG = new("T_FREE_REG");
             this.T_FREE_REG.configure(this);
 
             this.T_FREE_REG.build();
-            this.default_map.add_reg(this.T_FREE_REG, 'h64);
+            this.default_map.add_reg(this.T_FREE_REG, 'h7c);
+            this.T_FREE_I2C_REG = new("T_FREE_I2C_REG");
+            this.T_FREE_I2C_REG.configure(this);
+
+            this.T_FREE_I2C_REG.build();
+            this.default_map.add_reg(this.T_FREE_I2C_REG, 'h80);
             this.T_AVAL_REG = new("T_AVAL_REG");
             this.T_AVAL_REG.configure(this);
 
             this.T_AVAL_REG.build();
-            this.default_map.add_reg(this.T_AVAL_REG, 'h68);
+            this.default_map.add_reg(this.T_AVAL_REG, 'h84);
             this.T_IDLE_REG = new("T_IDLE_REG");
             this.T_IDLE_REG.configure(this);
 
             this.T_IDLE_REG.build();
-            this.default_map.add_reg(this.T_IDLE_REG, 'h6c);
+            this.default_map.add_reg(this.T_IDLE_REG, 'h88);
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf
 
@@ -5306,12 +5558,12 @@ package I3CCSR_uvm;
             this.CtrlCfg = new("CtrlCfg");
             this.CtrlCfg.configure(this);
             this.CtrlCfg.build();
-            this.default_map.add_submap(this.CtrlCfg.default_map, 'h170);
+            this.default_map.add_submap(this.CtrlCfg.default_map, 'h190);
             this.TERMINATION_EXTCAP_HEADER = new("TERMINATION_EXTCAP_HEADER");
             this.TERMINATION_EXTCAP_HEADER.configure(this);
 
             this.TERMINATION_EXTCAP_HEADER.build();
-            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h178);
+            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h198);
         endfunction : build
     endclass : I3CCSR__I3C_EC
 

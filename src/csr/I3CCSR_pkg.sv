@@ -3233,6 +3233,14 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG__T_SU_DAT_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG__T_SU_DAT_I2C__out_t T_SU_DAT_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__T_HD_DAT__out_t;
 
     typedef struct packed{
@@ -3265,6 +3273,14 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG__T_HIGH_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG__T_HIGH_I2C__out_t T_HIGH_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__T_LOW__out_t;
 
     typedef struct packed{
@@ -3281,6 +3297,14 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG__T_LOW_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG__T_LOW_I2C__out_t T_LOW_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__T_HD_STA__out_t;
 
     typedef struct packed{
@@ -3289,10 +3313,18 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
-    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_STA__out_t;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG__T_HD_STA_I2C__out_t;
 
     typedef struct packed{
-        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_STA__out_t T_HD_STA;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG__T_HD_STA_I2C__out_t T_HD_STA_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_RSTA__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__T_HD_RSTA__out_t T_HD_RSTA;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__out_t;
 
     typedef struct packed{
@@ -3305,11 +3337,27 @@ package I3CCSR_pkg;
 
     typedef struct packed{
         logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG__T_SU_STA_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG__T_SU_STA_I2C__out_t T_SU_STA_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t;
 
     typedef struct packed{
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t T_SU_STO;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t;
+
+    typedef struct packed{
+        logic [19:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG__T_SU_STO_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG__T_SU_STO_I2C__out_t T_SU_STO_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG__out_t;
 
     typedef struct packed{
         logic [19:0] value;
@@ -3326,6 +3374,14 @@ package I3CCSR_pkg;
     typedef struct packed{
         I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__T_FREE__out_t T_FREE;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t;
+
+    typedef struct packed{
+        logic [31:0] value;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG__T_FREE_I2C__out_t;
+
+    typedef struct packed{
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG__T_FREE_I2C__out_t T_FREE_I2C;
+    } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG__out_t;
 
     typedef struct packed{
         logic [31:0] value;
@@ -3374,18 +3430,25 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__out_t T_R_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__out_t T_F_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__out_t T_SU_DAT_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_I2C_REG__out_t T_SU_DAT_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__out_t T_HD_DAT_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__out_t T_HIGH_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_OD_REG__out_t T_HIGH_OD_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_INIT_OD_REG__out_t T_HIGH_INIT_OD_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_I2C_REG__out_t T_HIGH_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__out_t T_LOW_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_OD_REG__out_t T_LOW_OD_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_I2C_REG__out_t T_LOW_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__out_t T_HD_STA_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_I2C_REG__out_t T_HD_STA_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_RSTA_REG__out_t T_HD_RSTA_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__out_t T_SU_STA_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_I2C_REG__out_t T_SU_STA_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t T_SU_STO_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_I2C_REG__out_t T_SU_STO_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_DS_OD_REG__out_t T_DS_OD_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t T_FREE_REG;
+        I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_I2C_REG__out_t T_FREE_I2C_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__out_t T_AVAL_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__out_t T_IDLE_REG;
         I3CCSR__I3C_EC__SoCMgmtIf__HDR_TIMEOUT_EN_REG__out_t HDR_TIMEOUT_EN_REG;

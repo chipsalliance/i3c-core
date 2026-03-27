@@ -118,7 +118,33 @@ module controller_active
     input logic [i3c_pkg::TimingWidth-1:0] t_hd_dat_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_r_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_f_i,
+    // I2C timings
+    input logic [i3c_pkg::TimingWidth-1:0] t_low_i2c_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_high_i2c_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_sta_i2c_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_sta_i2c_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_dat_i2c_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_sto_i2c_i,
+
+    // I3C timings
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_dat_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_high_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_high_od_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_high_init_od_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_low_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_low_od_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_sta_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_hd_rsta_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_sta_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_su_sto_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_ds_od_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_free_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_aval_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_idle_i,
+
+
     input logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i,
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i2c_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i
 
@@ -270,16 +296,16 @@ module controller_active
 
       // TODO: Use calculated timing values
       // TODO: Expose as programmable feature
-      .thigh_i(20'd200),
-      .tlow_i(20'd500),
-      .t_r_i(20'd50),
-      .t_f_i(20'd10),
-      .thd_sta_i(20'd200),
-      .tsu_sta_i(20'd200),
-      .tsu_sto_i(20'd200),
-      .tsu_dat_i(20'd35),
-      .thd_dat_i(20'd2),
-      .t_buf_i(20'd3),
+      .thigh_i(t_high_i2c_i),
+      .tlow_i(t_low_i2c_i),
+      .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
+      .thd_sta_i(t_hd_sta_i2c_i),
+      .tsu_sta_i(t_su_sta_i2c_i),
+      .tsu_sto_i(t_su_sto_i2c_i),
+      .tsu_dat_i(t_su_dat_i2c_i),
+      .thd_dat_i(t_hd_dat_i),
+      .t_buf_i(t_bus_free_i2c_i),
 
       // Clock stretch is not supported by I3C bus
       .stretch_timeout_i('0),
@@ -314,22 +340,21 @@ module controller_active
       .is_i2c_transfer_i(is_i2c_transfer),
 
       // TODO: use values form CSRs
-      .thigh_i(20'd10),
-      .tlow_i(20'd10),
-      .thigh_od_i(20'd12),
-      .tlow_od_i(20'd70),
-      .thigh_od_init_i(20'd70),
-      .t_r_i(20'd1),
-      .t_f_i(20'd1),
-      .thd_sta_od_i(20'd12),
-      .thd_rsta_i(20'd9),
-      .tsu_rsta_i(20'd9),  // NOTE: this register is named T_SU_STA for some reason...
-      .tsu_sta_i(20'd6),
-      .tsu_sto_i(20'd8),
-      .t_ds_od_i(20'd24),
-      .tsu_dat_i(20'd2),
-      .thd_dat_i(20'd2),
-      .t_buf_i(20'd3),
+      .thigh_i(t_high_i),
+      .tlow_i(t_low_i),
+      .thigh_od_i(t_high_od_i),
+      .tlow_od_i(t_low_od_i),
+      .thigh_od_init_i(t_high_init_od_i),
+      .t_r_i(t_r_i),
+      .t_f_i(t_f_i),
+      .thd_sta_od_i(t_hd_sta_i),
+      .thd_rsta_i(t_hd_rsta_i),
+      .tsu_rsta_i(t_su_sta_i),  // NOTE: this register is named T_SU_STA for some reason...
+      .tsu_sto_i(t_su_sto_i),
+      .t_ds_od_i(t_ds_od_i),
+      .tsu_dat_i(t_su_dat_i),
+      .thd_dat_i(t_hd_dat_i),
+      .t_buf_i(t_bus_free_i),
 
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),

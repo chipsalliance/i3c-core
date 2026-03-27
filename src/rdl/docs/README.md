@@ -8,7 +8,7 @@ Don't override. Generated from: I3CCSR
 
 - Absolute Address: 0x0
 - Base Offset: 0x0
-- Size: 0x27C
+- Size: 0x29C
 
 |Offset|Identifier|         Name        |
 |------|----------|---------------------|
@@ -18,7 +18,7 @@ Don't override. Generated from: I3CCSR
 
 - Absolute Address: 0x100
 - Base Offset: 0x100
-- Size: 0x17C
+- Size: 0x19C
 
 |Offset|        Identifier       |               Name               |
 |------|-------------------------|----------------------------------|
@@ -26,8 +26,8 @@ Don't override. Generated from: I3CCSR
 | 0x080|      StdbyCtrlMode      |      Standby Controller Mode     |
 | 0x0C0|           TTI           |   Target Transaction Interface   |
 | 0x100|        SoCMgmtIf        |     SoC Management Interface     |
-| 0x170|         CtrlCfg         |         Controller Config        |
-| 0x178|TERMINATION_EXTCAP_HEADER|                 —                |
+| 0x190|         CtrlCfg         |         Controller Config        |
+| 0x198|TERMINATION_EXTCAP_HEADER|                 —                |
 
 ## SecFwRecoveryIf register file
 
@@ -2858,7 +2858,7 @@ permitted by the retry counter.</p>
 
 - Absolute Address: 0x200
 - Base Offset: 0x100
-- Size: 0x70
+- Size: 0x8C
 
 |Offset|       Identifier      |                  Name                  |
 |------|-----------------------|----------------------------------------|
@@ -2876,20 +2876,27 @@ permitted by the retry counter.</p>
 | 0x2C |        T_R_REG        |                                        |
 | 0x30 |        T_F_REG        |                                        |
 | 0x34 |      T_SU_DAT_REG     |                                        |
-| 0x38 |      T_HD_DAT_REG     |                                        |
-| 0x3C |       T_HIGH_REG      |                                        |
-| 0x40 |     T_HIGH_OD_REG     |                                        |
-| 0x44 |   T_HIGH_INIT_OD_REG  |                                        |
-| 0x48 |       T_LOW_REG       |                                        |
-| 0x4C |      T_LOW_OD_REG     |                                        |
-| 0x50 |      T_HD_STA_REG     |                                        |
-| 0x54 |     T_HD_RSTA_REG     |                                        |
-| 0x58 |      T_SU_STA_REG     |                                        |
-| 0x5C |      T_SU_STO_REG     |                                        |
-| 0x60 |      T_DS_OD_REG      |                                        |
-| 0x64 |       T_FREE_REG      |                                        |
-| 0x68 |       T_AVAL_REG      |                                        |
-| 0x6C |       T_IDLE_REG      |                                        |
+| 0x38 |    T_SU_DAT_I2C_REG   |                                        |
+| 0x3C |      T_HD_DAT_REG     |                                        |
+| 0x40 |       T_HIGH_REG      |                                        |
+| 0x44 |     T_HIGH_OD_REG     |                                        |
+| 0x48 |   T_HIGH_INIT_OD_REG  |                                        |
+| 0x4C |     T_HIGH_I2C_REG    |                                        |
+| 0x50 |       T_LOW_REG       |                                        |
+| 0x54 |      T_LOW_OD_REG     |                                        |
+| 0x58 |     T_LOW_I2C_REG     |                                        |
+| 0x5C |      T_HD_STA_REG     |                                        |
+| 0x60 |    T_HD_STA_I2C_REG   |                                        |
+| 0x64 |     T_HD_RSTA_REG     |                                        |
+| 0x68 |      T_SU_STA_REG     |                                        |
+| 0x6C |    T_SU_STA_I2C_REG   |                                        |
+| 0x70 |      T_SU_STO_REG     |                                        |
+| 0x74 |    T_SU_STO_I2C_REG   |                                        |
+| 0x78 |      T_DS_OD_REG      |                                        |
+| 0x7C |       T_FREE_REG      |                                        |
+| 0x80 |     T_FREE_I2C_REG    |                                        |
+| 0x84 |       T_AVAL_REG      |                                        |
+| 0x88 |       T_IDLE_REG      |                                        |
 
 ### EXTCAP_HEADER register
 
@@ -3184,10 +3191,24 @@ permitted by the retry counter.</p>
 
 <p>Data setup time in clock units</p>
 
-### T_HD_DAT_REG register
+### T_SU_DAT_I2C_REG register
 
 - Absolute Address: 0x338
 - Base Offset: 0x38
+- Size: 0x4
+
+|Bits| Identifier |Access|Reset|Name|
+|----|------------|------|-----|----|
+|19:0|T_SU_DAT_I2C|  rw  | 0x0 |    |
+
+#### T_SU_DAT_I2C field
+
+<p>Data setup time in I2C mode in clock units</p>
+
+### T_HD_DAT_REG register
+
+- Absolute Address: 0x23C
+- Base Offset: 0x3C
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3200,8 +3221,8 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_REG register
 
-- Absolute Address: 0x33C
-- Base Offset: 0x3C
+- Absolute Address: 0x240
+- Base Offset: 0x40
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|                 Name                |
@@ -3214,8 +3235,8 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_OD_REG register
 
-- Absolute Address: 0x340
-- Base Offset: 0x40
+- Absolute Address: 0x244
+- Base Offset: 0x44
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|                          Name                          |
@@ -3228,8 +3249,8 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_INIT_OD_REG register
 
-- Absolute Address: 0x244
-- Base Offset: 0x44
+- Absolute Address: 0x248
+- Base Offset: 0x48
 - Size: 0x4
 
 |Bits|  Identifier  |Access|Reset|                                       Name                                       |
@@ -3240,10 +3261,24 @@ permitted by the retry counter.</p>
 
 
 
+### T_HIGH_I2C_REG register
+
+- Absolute Address: 0x24C
+- Base Offset: 0x4C
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|                       Name                      |
+|----|----------|------|-----|-------------------------------------------------|
+|19:0|T_HIGH_I2C|  rw  | 0x0 |High period of the SCL in I2C mode in clock units|
+
+#### T_HIGH_I2C field
+
+
+
 ### T_LOW_REG register
 
-- Absolute Address: 0x248
-- Base Offset: 0x48
+- Absolute Address: 0x250
+- Base Offset: 0x50
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3256,8 +3291,8 @@ permitted by the retry counter.</p>
 
 ### T_LOW_OD_REG register
 
-- Absolute Address: 0x24C
-- Base Offset: 0x4C
+- Absolute Address: 0x254
+- Base Offset: 0x54
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3268,10 +3303,24 @@ permitted by the retry counter.</p>
 
 <p>Low period of the SCL in Open-Drain mode in clock units</p>
 
+### T_LOW_I2C_REG register
+
+- Absolute Address: 0x258
+- Base Offset: 0x58
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|19:0| T_LOW_I2C|  rw  | 0x0 |    |
+
+#### T_LOW_I2C field
+
+<p>Low period of the SCL in I2C mode in clock units</p>
+
 ### T_HD_STA_REG register
 
-- Absolute Address: 0x250
-- Base Offset: 0x50
+- Absolute Address: 0x25C
+- Base Offset: 0x5C
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3282,24 +3331,38 @@ permitted by the retry counter.</p>
 
 <p>Hold time for START in clock units</p>
 
+### T_HD_STA_I2C_REG register
+
+- Absolute Address: 0x260
+- Base Offset: 0x60
+- Size: 0x4
+
+|Bits| Identifier |Access|Reset|Name|
+|----|------------|------|-----|----|
+|19:0|T_HD_STA_I2C|  rw  | 0x0 |    |
+
+#### T_HD_STA_I2C field
+
+<p>Hold time for START in I2C mode in clock units</p>
+
 ### T_HD_RSTA_REG register
 
-- Absolute Address: 0x254
-- Base Offset: 0x54
+- Absolute Address: 0x264
+- Base Offset: 0x64
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
 |----|----------|------|-----|----|
-|19:0| T_HD_STA |  rw  | 0x0 |    |
+|19:0| T_HD_RSTA|  rw  | 0x0 |    |
 
-#### T_HD_STA field
+#### T_HD_RSTA field
 
 <p>Hold time for repeated START in clock units</p>
 
 ### T_SU_STA_REG register
 
-- Absolute Address: 0x258
-- Base Offset: 0x58
+- Absolute Address: 0x268
+- Base Offset: 0x68
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3310,10 +3373,24 @@ permitted by the retry counter.</p>
 
 <p>Setup time for repeated START in clock units</p>
 
+### T_SU_STA_I2C_REG register
+
+- Absolute Address: 0x26C
+- Base Offset: 0x6C
+- Size: 0x4
+
+|Bits| Identifier |Access|Reset|Name|
+|----|------------|------|-----|----|
+|19:0|T_SU_STA_I2C|  rw  | 0x0 |    |
+
+#### T_SU_STA_I2C field
+
+<p>Setup time for repeated START in I2C mode in clock units</p>
+
 ### T_SU_STO_REG register
 
-- Absolute Address: 0x25C
-- Base Offset: 0x5C
+- Absolute Address: 0x270
+- Base Offset: 0x70
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3324,10 +3401,24 @@ permitted by the retry counter.</p>
 
 <p>Setup time for STOP in clock units</p>
 
+### T_SU_STO_I2C_REG register
+
+- Absolute Address: 0x274
+- Base Offset: 0x74
+- Size: 0x4
+
+|Bits| Identifier |Access|Reset|Name|
+|----|------------|------|-----|----|
+|19:0|T_SU_STO_I2C|  rw  | 0x0 |    |
+
+#### T_SU_STO_I2C field
+
+<p>Setup time for STOP in in I2C mode clock units</p>
+
 ### T_DS_OD_REG register
 
-- Absolute Address: 0x260
-- Base Offset: 0x60
+- Absolute Address: 0x278
+- Base Offset: 0x78
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3340,8 +3431,8 @@ permitted by the retry counter.</p>
 
 ### T_FREE_REG register
 
-- Absolute Address: 0x264
-- Base Offset: 0x64
+- Absolute Address: 0x27C
+- Base Offset: 0x7C
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3350,12 +3441,26 @@ permitted by the retry counter.</p>
 
 #### T_FREE field
 
-<p>Time in clock cycles from STOP detection until Bus Free Condition (tBUF/tCAS). Configure based on System Clock.</p>
+<p>Bus Free Time Between a STOP and a START</p>
+
+### T_FREE_I2C_REG register
+
+- Absolute Address: 0x280
+- Base Offset: 0x80
+- Size: 0x4
+
+|Bits|Identifier|Access|Reset|Name|
+|----|----------|------|-----|----|
+|31:0|T_FREE_I2C|  rw  | 0xC |    |
+
+#### T_FREE_I2C field
+
+<p>Bus Free Time Between a STOP and a START in I2C mode</p>
 
 ### T_AVAL_REG register
 
-- Absolute Address: 0x268
-- Base Offset: 0x68
+- Absolute Address: 0x284
+- Base Offset: 0x84
 - Size: 0x4
 
 |Bits|Identifier|Access|Reset|Name|
@@ -3368,8 +3473,8 @@ permitted by the retry counter.</p>
 
 ### T_IDLE_REG register
 
-- Absolute Address: 0x26C
-- Base Offset: 0x6C
+- Absolute Address: 0x288
+- Base Offset: 0x88
 - Size: 0x4
 
 |Bits|Identifier|Access| Reset|Name|
@@ -3410,8 +3515,8 @@ permitted by the retry counter.</p>
 
 ## CtrlCfg register file
 
-- Absolute Address: 0x270
-- Base Offset: 0x170
+- Absolute Address: 0x290
+- Base Offset: 0x190
 - Size: 0x8
 
 |Offset|    Identifier   |       Name      |
@@ -3421,7 +3526,7 @@ permitted by the retry counter.</p>
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x270
+- Absolute Address: 0x290
 - Base Offset: 0x0
 - Size: 0x4
 
@@ -3440,7 +3545,7 @@ permitted by the retry counter.</p>
 
 ### CONTROLLER_CONFIG register
 
-- Absolute Address: 0x274
+- Absolute Address: 0x294
 - Base Offset: 0x4
 - Size: 0x4
 
@@ -3454,8 +3559,8 @@ permitted by the retry counter.</p>
 
 ### TERMINATION_EXTCAP_HEADER register
 
-- Absolute Address: 0x278
-- Base Offset: 0x178
+- Absolute Address: 0x298
+- Base Offset: 0x198
 - Size: 0x4
 
 <p>Register after the last EC must advertise ID == 0.

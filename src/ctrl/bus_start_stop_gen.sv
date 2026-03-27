@@ -78,7 +78,8 @@ module bus_start_stop_gen (
           scl_o = 1'b0;
           active_o = 1'b1;
         end else if (repeated_start_i) begin
-          state_d  = RepeatedStart;
+          state_d = RepeatedStart;
+          scl_o = 1'b0;
           active_o = 1'b1;
         end
       end

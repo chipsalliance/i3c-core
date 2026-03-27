@@ -4,6 +4,7 @@ from bus2csr import get_frontend_bus_if, int2dword, dword2int
 from hci import immediate_transfer_descriptor, ResponseDescriptor
 from cocotb_helpers import reset_n
 from reg_map import reg_map
+from utils import get_sv_define
 
 import cocotb
 import random
@@ -12,27 +13,6 @@ from cocotb.handle import SimHandleBase
 from cocotb.triggers import Event, Timer, ClockCycles, RisingEdge
 import re
 import os
-
-def get_sv_define(define_name):
-    # Adjust the path if your Python script isn't in the same directory as the .svh
-    root_dir = os.getenv("I3C_ROOT_DIR")
-    if not root_dir:
-        raise EnvironmentError("The 'I3C_ROOT_DIR' environment variable is not set!")
-    path = os.path.join(root_dir, "src/i3c_defines.svh")
-
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Could not find header file at {path}")
-        
-    with open(path, 'r') as f:
-        for line in f:
-            # Matches lines like: `define TX_FIFO_DEPTH 8
-            # Ignores leading spaces and grabs the numeric value
-            match = re.search(fr'^\s*`define\s+{define_name}\s+(\d+)', line)
-            if match:
-                return int(match.group(1))
-                
-    raise ValueError(f"Define '{define_name}' not found in {path}")
-
 
 class I3CAddressHelper:
     # NOTE: these are the always valid addresses as specified in Table 8 I3C Target Address Restrictions (I3C Basic Spec)

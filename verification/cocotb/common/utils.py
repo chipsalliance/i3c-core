@@ -5,6 +5,7 @@ from itertools import chain
 from math import ceil, log2
 from random import choice, randint
 from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar, Union
+import re
 
 import colorama
 

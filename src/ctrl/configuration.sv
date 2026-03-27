@@ -27,8 +27,30 @@ module configuration (
     output logic [i3c_pkg::TimingWidth-1:0] t_r_o,
     output logic [i3c_pkg::TimingWidth-1:0] t_f_o,
 
+    // I2C timings
+    output logic [i3c_pkg::TimingWidth-1:0] t_low_i2c_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_high_i2c_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_sta_i2c_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_hd_sta_i2c_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_dat_i2c_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_sto_i2c_o,
+
+    // I3C timings
+    output logic [i3c_pkg::TimingWidth-1:0] t_high_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_high_od_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_high_init_od_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_low_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_low_od_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_hd_sta_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_hd_rsta_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_sta_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_su_sto_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_ds_od_o,
+
+
     // Bus timers
     output logic [i3c_pkg::TimingWidth-1:0] t_bus_free_o,
+    output logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i2c_o,
     output logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_o,
     output logic [i3c_pkg::TimingWidth-1:0] t_bus_available_o,
 
@@ -146,10 +168,31 @@ module configuration (
   assign t_r_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_R_REG.T_R.value);
   assign t_f_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_F_REG.T_F.value);
 
+  // Configuration: i2c timings
+  assign t_low_i2c_o      = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value);
+  assign t_high_i2c_o     = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value);
+  assign t_su_sta_i2c_o   = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value);
+  assign t_hd_sta_i2c_o   = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value);
+  assign t_su_dat_i2c_o   = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value);
+  assign t_su_sto_i2c_o   = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value);
+
+  // Configuration: i3c timings
+  assign t_high_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value);
+  assign t_high_od_o      = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG.T_HIGH_OD.value);
+  assign t_high_init_od_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG.T_HIGH_INIT_OD.value);
+  assign t_low_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value);
+  assign t_low_od_o       = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_LOW_OD_REG.T_LOW_OD.value);
+  assign t_hd_sta_o       = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value);
+  assign t_hd_rsta_o      = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value);
+  assign t_su_sta_o       = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value);
+  assign t_su_sto_o       = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value);
+  assign t_ds_od_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value);
+
   // Configuration: bus_timers
   // 20 bits is enough to measure 1ms for clock speed 1GHz.
   // See width_timing_csr function in tools/timing.py
   assign t_bus_free_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value);
+  assign t_bus_free_i2c_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value);
   assign t_bus_idle_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value);
   assign t_bus_available_o = i3c_pkg::TimingWidth'(hwif_out_i.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value);
 

@@ -433,6 +433,16 @@ def configure_i3c_cores_verify(session, test_group, test_name, coverage, simulat
     TestParams(
         ["tests", "controller-axi", "target", "controller"],
         ["i3c_axi_controller"],
+        ["test_i3c_controller"],
+    )
+)
+def i3c_controller_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
         ["test_i3c_controller_write_target_read"],
     )
 )

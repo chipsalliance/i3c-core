@@ -190,18 +190,25 @@ module I3CCSR (
                 logic T_R_REG;
                 logic T_F_REG;
                 logic T_SU_DAT_REG;
+                logic T_SU_DAT_I2C_REG;
                 logic T_HD_DAT_REG;
                 logic T_HIGH_REG;
                 logic T_HIGH_OD_REG;
                 logic T_HIGH_INIT_OD_REG;
+                logic T_HIGH_I2C_REG;
                 logic T_LOW_REG;
                 logic T_LOW_OD_REG;
+                logic T_LOW_I2C_REG;
                 logic T_HD_STA_REG;
+                logic T_HD_STA_I2C_REG;
                 logic T_HD_RSTA_REG;
                 logic T_SU_STA_REG;
+                logic T_SU_STA_I2C_REG;
                 logic T_SU_STO_REG;
+                logic T_SU_STO_I2C_REG;
                 logic T_DS_OD_REG;
                 logic T_FREE_REG;
+                logic T_FREE_I2C_REG;
                 logic T_AVAL_REG;
                 logic T_IDLE_REG;
                 logic HDR_TIMEOUT_EN_REG;
@@ -304,23 +311,30 @@ module I3CCSR (
         decoded_reg_strb.I3C_EC.SoCMgmtIf.T_R_REG = cpuif_req_masked & (cpuif_addr == 10'h22c);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.T_F_REG = cpuif_req_masked & (cpuif_addr == 10'h230);
         decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_REG = cpuif_req_masked & (cpuif_addr == 10'h234);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG = cpuif_req_masked & (cpuif_addr == 10'h238);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG = cpuif_req_masked & (cpuif_addr == 10'h23c);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h240);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h244);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG = cpuif_req_masked & (cpuif_addr == 10'h248);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h24c);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG = cpuif_req_masked & (cpuif_addr == 10'h250);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG = cpuif_req_masked & (cpuif_addr == 10'h254);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG = cpuif_req_masked & (cpuif_addr == 10'h258);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG = cpuif_req_masked & (cpuif_addr == 10'h25c);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_DS_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h260);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG = cpuif_req_masked & (cpuif_addr == 10'h264);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG = cpuif_req_masked & (cpuif_addr == 10'h268);
-        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG = cpuif_req_masked & (cpuif_addr == 10'h26c);
-        decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 10'h270);
-        decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG = cpuif_req_masked & (cpuif_addr == 10'h274);
-        decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 10'h278);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h238);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG = cpuif_req_masked & (cpuif_addr == 10'h23c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG = cpuif_req_masked & (cpuif_addr == 10'h240);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h244);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h248);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h24c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG = cpuif_req_masked & (cpuif_addr == 10'h250);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h254);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h258);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG = cpuif_req_masked & (cpuif_addr == 10'h25c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h260);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG = cpuif_req_masked & (cpuif_addr == 10'h264);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG = cpuif_req_masked & (cpuif_addr == 10'h268);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h26c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG = cpuif_req_masked & (cpuif_addr == 10'h270);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h274);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_DS_OD_REG = cpuif_req_masked & (cpuif_addr == 10'h278);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG = cpuif_req_masked & (cpuif_addr == 10'h27c);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG = cpuif_req_masked & (cpuif_addr == 10'h280);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG = cpuif_req_masked & (cpuif_addr == 10'h284);
+        decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG = cpuif_req_masked & (cpuif_addr == 10'h288);
+        decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 10'h290);
+        decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG = cpuif_req_masked & (cpuif_addr == 10'h294);
+        decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER = cpuif_req_masked & (cpuif_addr == 10'h298);
         decoded_strb_is_external = is_external;
         external_req = is_external;
     end
@@ -1591,6 +1605,12 @@ module I3CCSR (
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
+                    } T_SU_DAT_I2C;
+                } T_SU_DAT_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
                     } T_HD_DAT;
                 } T_HD_DAT_REG;
                 struct packed{
@@ -1615,6 +1635,12 @@ module I3CCSR (
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
+                    } T_HIGH_I2C;
+                } T_HIGH_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
                     } T_LOW;
                 } T_LOW_REG;
                 struct packed{
@@ -1627,13 +1653,25 @@ module I3CCSR (
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
+                    } T_LOW_I2C;
+                } T_LOW_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
                     } T_HD_STA;
                 } T_HD_STA_REG;
                 struct packed{
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
-                    } T_HD_STA;
+                    } T_HD_STA_I2C;
+                } T_HD_STA_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
+                    } T_HD_RSTA;
                 } T_HD_RSTA_REG;
                 struct packed{
                     struct packed{
@@ -1645,8 +1683,20 @@ module I3CCSR (
                     struct packed{
                         logic [19:0] next;
                         logic load_next;
+                    } T_SU_STA_I2C;
+                } T_SU_STA_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
                     } T_SU_STO;
                 } T_SU_STO_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] next;
+                        logic load_next;
+                    } T_SU_STO_I2C;
+                } T_SU_STO_I2C_REG;
                 struct packed{
                     struct packed{
                         logic [19:0] next;
@@ -1659,6 +1709,12 @@ module I3CCSR (
                         logic load_next;
                     } T_FREE;
                 } T_FREE_REG;
+                struct packed{
+                    struct packed{
+                        logic [31:0] next;
+                        logic load_next;
+                    } T_FREE_I2C;
+                } T_FREE_I2C_REG;
                 struct packed{
                     struct packed{
                         logic [31:0] next;
@@ -2678,6 +2734,11 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [19:0] value;
+                    } T_SU_DAT_I2C;
+                } T_SU_DAT_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
                     } T_HD_DAT;
                 } T_HD_DAT_REG;
                 struct packed{
@@ -2698,6 +2759,11 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [19:0] value;
+                    } T_HIGH_I2C;
+                } T_HIGH_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
                     } T_LOW;
                 } T_LOW_REG;
                 struct packed{
@@ -2708,12 +2774,22 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [19:0] value;
+                    } T_LOW_I2C;
+                } T_LOW_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
                     } T_HD_STA;
                 } T_HD_STA_REG;
                 struct packed{
                     struct packed{
                         logic [19:0] value;
-                    } T_HD_STA;
+                    } T_HD_STA_I2C;
+                } T_HD_STA_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
+                    } T_HD_RSTA;
                 } T_HD_RSTA_REG;
                 struct packed{
                     struct packed{
@@ -2723,8 +2799,18 @@ module I3CCSR (
                 struct packed{
                     struct packed{
                         logic [19:0] value;
+                    } T_SU_STA_I2C;
+                } T_SU_STA_I2C_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
                     } T_SU_STO;
                 } T_SU_STO_REG;
+                struct packed{
+                    struct packed{
+                        logic [19:0] value;
+                    } T_SU_STO_I2C;
+                } T_SU_STO_I2C_REG;
                 struct packed{
                     struct packed{
                         logic [19:0] value;
@@ -2735,6 +2821,11 @@ module I3CCSR (
                         logic [31:0] value;
                     } T_FREE;
                 } T_FREE_REG;
+                struct packed{
+                    struct packed{
+                        logic [31:0] value;
+                    } T_FREE_I2C;
+                } T_FREE_I2C_REG;
                 struct packed{
                     struct packed{
                         logic [31:0] value;
@@ -9599,6 +9690,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9691,6 +9805,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG.T_HIGH_INIT_OD.value = field_storage.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG.T_HIGH_INIT_OD.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9737,6 +9874,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_LOW_OD_REG.T_LOW_OD.value = field_storage.I3C_EC.SoCMgmtIf.T_LOW_OD_REG.T_LOW_OD.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9760,29 +9920,52 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value;
-    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C
     always_comb begin
         automatic logic [19:0] next_c;
         automatic logic load_next_c;
-        next_c = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value;
         load_next_c = '0;
-        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG && decoded_req_is_wr) begin // SW write
-            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
             load_next_c = '1;
         end
-        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.next = next_c;
-        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.load_next = load_next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.load_next = load_next_c;
     end
     always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
         if(~hwif_in.rst_ni) begin
-            field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value <= 20'h0;
+            field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value <= 20'h0;
         end else begin
-            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.load_next) begin
-                field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.next;
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.next;
             end
         end
     end
-    assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value;
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value <= field_combo.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value = field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9806,6 +9989,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9829,6 +10035,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C
+    always_comb begin
+        automatic logic [19:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value & ~decoded_wr_biten[19:0]) | (decoded_wr_data[19:0] & decoded_wr_biten[19:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value <= 20'h0;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD
     always_comb begin
         automatic logic [19:0] next_c;
@@ -9875,6 +10104,29 @@ module I3CCSR (
         end
     end
     assign hwif_out.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value = field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value;
+    // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C
+    always_comb begin
+        automatic logic [31:0] next_c;
+        automatic logic load_next_c;
+        next_c = field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value;
+        load_next_c = '0;
+        if(decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG && decoded_req_is_wr) begin // SW write
+            next_c = (field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value & ~decoded_wr_biten[31:0]) | (decoded_wr_data[31:0] & decoded_wr_biten[31:0]);
+            load_next_c = '1;
+        end
+        field_combo.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.next = next_c;
+        field_combo.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.load_next = load_next_c;
+    end
+    always_ff @(posedge clk or negedge hwif_in.rst_ni) begin
+        if(~hwif_in.rst_ni) begin
+            field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value <= 32'hc;
+        end else begin
+            if(field_combo.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.load_next) begin
+                field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value <= field_combo.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.next;
+            end
+        end
+    end
+    assign hwif_out.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value = field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value;
     // Field: I3CCSR.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL
     always_comb begin
         automatic logic [31:0] next_c;
@@ -10032,7 +10284,7 @@ module I3CCSR (
     logic [31:0] readback_data;
 
     // Assign readback values to a flattened array
-    logic [87-1:0][31:0] readback_array;
+    logic [94-1:0][31:0] readback_array;
     assign readback_array[0][7:0] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'hc0 : '0;
     assign readback_array[0][23:8] = (decoded_reg_strb.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h20 : '0;
     assign readback_array[0][31:24] = '0;
@@ -10329,40 +10581,53 @@ module I3CCSR (
     assign readback_array[68][31:20] = '0;
     assign readback_array[69][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_REG.T_SU_DAT.value : '0;
     assign readback_array[69][31:20] = '0;
-    assign readback_array[70][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value : '0;
+    assign readback_array[70][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_DAT_I2C_REG.T_SU_DAT_I2C.value : '0;
     assign readback_array[70][31:20] = '0;
-    assign readback_array[71][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value : '0;
+    assign readback_array[71][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_DAT_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_DAT_REG.T_HD_DAT.value : '0;
     assign readback_array[71][31:20] = '0;
-    assign readback_array[72][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG.T_HIGH_OD.value : '0;
+    assign readback_array[72][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_REG.T_HIGH.value : '0;
     assign readback_array[72][31:20] = '0;
-    assign readback_array[73][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG.T_HIGH_INIT_OD.value : '0;
+    assign readback_array[73][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_OD_REG.T_HIGH_OD.value : '0;
     assign readback_array[73][31:20] = '0;
-    assign readback_array[74][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value : '0;
+    assign readback_array[74][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_INIT_OD_REG.T_HIGH_INIT_OD.value : '0;
     assign readback_array[74][31:20] = '0;
-    assign readback_array[75][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_OD_REG.T_LOW_OD.value : '0;
+    assign readback_array[75][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HIGH_I2C_REG.T_HIGH_I2C.value : '0;
     assign readback_array[75][31:20] = '0;
-    assign readback_array[76][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value : '0;
+    assign readback_array[76][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_REG.T_LOW.value : '0;
     assign readback_array[76][31:20] = '0;
-    assign readback_array[77][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_STA.value : '0;
+    assign readback_array[77][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_OD_REG.T_LOW_OD.value : '0;
     assign readback_array[77][31:20] = '0;
-    assign readback_array[78][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value : '0;
+    assign readback_array[78][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_LOW_I2C_REG.T_LOW_I2C.value : '0;
     assign readback_array[78][31:20] = '0;
-    assign readback_array[79][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value : '0;
+    assign readback_array[79][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_REG.T_HD_STA.value : '0;
     assign readback_array[79][31:20] = '0;
-    assign readback_array[80][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_DS_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value : '0;
+    assign readback_array[80][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_STA_I2C_REG.T_HD_STA_I2C.value : '0;
     assign readback_array[80][31:20] = '0;
-    assign readback_array[81][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value : '0;
-    assign readback_array[82][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value : '0;
-    assign readback_array[83][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value : '0;
-    assign readback_array[84][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
-    assign readback_array[84][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
-    assign readback_array[84][31:24] = '0;
-    assign readback_array[85][3:0] = '0;
-    assign readback_array[85][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
-    assign readback_array[85][31:6] = '0;
-    assign readback_array[86][7:0] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
-    assign readback_array[86][23:8] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1 : '0;
-    assign readback_array[86][31:24] = '0;
+    assign readback_array[81][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_HD_RSTA_REG.T_HD_RSTA.value : '0;
+    assign readback_array[81][31:20] = '0;
+    assign readback_array[82][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_REG.T_SU_STA.value : '0;
+    assign readback_array[82][31:20] = '0;
+    assign readback_array[83][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STA_I2C_REG.T_SU_STA_I2C.value : '0;
+    assign readback_array[83][31:20] = '0;
+    assign readback_array[84][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_REG.T_SU_STO.value : '0;
+    assign readback_array[84][31:20] = '0;
+    assign readback_array[85][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_SU_STO_I2C_REG.T_SU_STO_I2C.value : '0;
+    assign readback_array[85][31:20] = '0;
+    assign readback_array[86][19:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_DS_OD_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_DS_OD_REG.T_DS_OD.value : '0;
+    assign readback_array[86][31:20] = '0;
+    assign readback_array[87][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_FREE_REG.T_FREE.value : '0;
+    assign readback_array[88][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_FREE_I2C_REG.T_FREE_I2C.value : '0;
+    assign readback_array[89][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_AVAL_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_AVAL_REG.T_AVAL.value : '0;
+    assign readback_array[90][31:0] = (decoded_reg_strb.I3C_EC.SoCMgmtIf.T_IDLE_REG && !decoded_req_is_wr) ? field_storage.I3C_EC.SoCMgmtIf.T_IDLE_REG.T_IDLE.value : '0;
+    assign readback_array[91][7:0] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h2 : '0;
+    assign readback_array[91][23:8] = (decoded_reg_strb.I3C_EC.CtrlCfg.EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h2 : '0;
+    assign readback_array[91][31:24] = '0;
+    assign readback_array[92][3:0] = '0;
+    assign readback_array[92][5:4] = (decoded_reg_strb.I3C_EC.CtrlCfg.CONTROLLER_CONFIG && !decoded_req_is_wr) ? field_storage.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value : '0;
+    assign readback_array[92][31:6] = '0;
+    assign readback_array[93][7:0] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 8'h0 : '0;
+    assign readback_array[93][23:8] = (decoded_reg_strb.I3C_EC.TERMINATION_EXTCAP_HEADER && !decoded_req_is_wr) ? 16'h1 : '0;
+    assign readback_array[93][31:24] = '0;
 
     // Reduce the array
     always_comb begin
@@ -10370,7 +10635,7 @@ module I3CCSR (
         readback_done = decoded_req & ~decoded_req_is_wr & ~decoded_strb_is_external;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<87; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<94; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

@@ -41,6 +41,34 @@
         '''
       tests: ["multiple_interleaved_transaction_sequences"]
       tags: ["top"]
+    },
+    {
+      name: controller_flow_simple
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify simple I3C operation including SETDASA CCC to assign dynamic address, I3C private read and I3C private write.
+
+        Stimulus:
+        - Issue a SETDASA CCC using either immediate or regular command descriptor with a random (valid) I3C dynamic address. 
+        - Generate random data (length: 1 < DATA_LENGTH < TX_QUEUE_DEPTH*4 bytes)
+        - Write data using the dynamic address in an I3C private write.
+        - Generate random data (length: 1 < DATA_LENGTH < TX_QUEUE_DEPTH*4 bytes)
+        - Write data to the I3C target using the TTI_TX_DATA_PORT.
+        - Read data using the dynamic address in an I3C private read.
+
+        Check:
+          - SETDASA: the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR contains the dynamic address which was set.  
+          - I3C private write: data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
+          - I3C private read: data read from controller RX_DATA_PORT matches data sent to TTI_TX_DATA_PORT
+          - For all transactions: response descriptor data length matches data bytes specified in CMD desc, resp desc TID matches TID form CMD desc and resp error status is SUCCESS.
+ 
+        '''
+      tests: ["controller_flow_simple"]
+      tags: ["top"]
     }
   ]
 }
