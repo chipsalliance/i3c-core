@@ -19,6 +19,7 @@ module configuration (
     output logic i2c_standby_en_o,
     output logic i3c_active_en_o,
     output logic i3c_standby_en_o,
+    input logic is_i2c_transfer_i,
 
     // Bus monitor
     output logic [i3c_pkg::TimingWidth-1:0] t_su_dat_o,
@@ -136,7 +137,7 @@ module configuration (
   // 01 - i3c active controller
   // 10 - i2c standby controller (target)
   // 11 - i3c standby controller (target)
-  assign phy_mux_select_o[0] = i3c_active_en_o | i3c_standby_en_o;
+  assign phy_mux_select_o[0] = (i3c_active_en_o | i3c_standby_en_o) & ~is_i2c_transfer_i;
   assign phy_mux_select_o[1] = i2c_standby_en_o | i3c_standby_en_o;
 
   // Configuration: bus_monitor

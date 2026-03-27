@@ -19,6 +19,9 @@ module i3c_controller_fsm
     input bus_state_t ctrl_bus_i,
     output logic phy_sel_od_pp_o,
 
+    // Is I2C Transfer
+    input logic is_i2c_transfer_i,
+
     // Timing constants
     input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units in Push-Pull Mode
     input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units in Push-Pull Mode
@@ -153,7 +156,7 @@ module i3c_controller_fsm
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        if (fmt_fifo_rvalid_i & fmt_flag_start_before_i) begin
+        if (fmt_fifo_rvalid_i & fmt_flag_start_before_i & ~is_i2c_transfer_i) begin
           state_d = Start;
         end
       end

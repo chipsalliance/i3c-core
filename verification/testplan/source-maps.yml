@@ -119,6 +119,12 @@ testplans:
         source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py"
       - name: "*read*"
         source: "verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py"
+  - name: 'Controller I2C Mode'
+    testpoints:
+    - name: "^(.*)$"
+      tests:
+      - name: "^(.*)$"
+        source: "verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py"
   - name: '^(controller|target)_axi_filtering$'
     testpoints:
     - name: "^(.*)$"

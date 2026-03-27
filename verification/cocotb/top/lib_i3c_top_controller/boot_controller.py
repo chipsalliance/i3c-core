@@ -59,8 +59,8 @@ async def boot_init(
     )
 
     # Setup Host Controller
-    if (bus_idx == ACT_CONTROLLER_IDX):
-        await setup_host_controller(tb, bus_idx=ACT_CONTROLLER_IDX)
+    if (mode == MODE_CONTROLLER):
+        await setup_host_controller(tb, bus_idx=bus_idx)
 
 async def umbrella_stby_init(
     tb,

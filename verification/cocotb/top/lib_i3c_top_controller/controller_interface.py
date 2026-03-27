@@ -9,7 +9,29 @@ import cocotb
 import random
 from math import ceil
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import Event, Timer, ClockCycles
+from cocotb.triggers import Event, Timer, ClockCycles, RisingEdge
+import re
+import os
+
+def get_sv_define(define_name):
+    # Adjust the path if your Python script isn't in the same directory as the .svh
+    root_dir = os.getenv("I3C_ROOT_DIR")
+    if not root_dir:
+        raise EnvironmentError("The 'I3C_ROOT_DIR' environment variable is not set!")
+    path = os.path.join(root_dir, "src/i3c_defines.svh")
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Could not find header file at {path}")
+        
+    with open(path, 'r') as f:
+        for line in f:
+            # Matches lines like: `define TX_FIFO_DEPTH 8
+            # Ignores leading spaces and grabs the numeric value
+            match = re.search(fr'^\s*`define\s+{define_name}\s+(\d+)', line)
+            if match:
+                return int(match.group(1))
+                
+    raise ValueError(f"Define '{define_name}' not found in {path}")
 
 
 class I3CAddressHelper:
@@ -181,19 +203,22 @@ class I3CTopControllerTestInterface:
 
         # Instantiate a bus driver for each port (0, 1, 2)
         for i in range(num_busses):
-            # Create a proxy that makes Port 'i' look like a standalone DUT
-            port_proxy = PortProxy(dut, i)
-            
-            # Initialize the driver using the proxy
-            # The driver thinks it has the whole DUT, but gets specific slices
-            bus_if = self.bus_if_cls(port_proxy)
+            if num_busses == 1:
+                bus_if = self.bus_if_cls(self.dut)
+            else:
+                # Create a proxy that makes Port 'i' look like a standalone DUT
+                port_proxy = PortProxy(dut, i)
+                
+                # Initialize the driver using the proxy
+                # The driver thinks it has the whole DUT, but gets specific slices
+                bus_if = self.bus_if_cls(port_proxy)
             self.busses.append(bus_if)
 
         # Set default handles to Port 0 for backward compatibility
         self.default_bus = self.busses[0]
         self.clk   = self.default_bus.clk  # maps to dut.aclk[0]
         self.rst_n = self.default_bus.rst_n
-        self.tx_queue_depth = int(self.dut.i_actual_bus.i_controller_i3c_wrapper.i3c.HciTxFifoDepth.value)
+        self.tx_queue_depth = get_sv_define("TX_FIFO_DEPTH")
 
 
     def read_csr(self, addr, bus_idx=0):
@@ -279,7 +304,7 @@ class I3CTopControllerTestInterface:
         await self.write_csr(cmd_port_addr, int2dword(cmd_low), bus_idx=bus_idx)
         await self.write_csr(cmd_port_addr, int2dword(cmd_high), bus_idx=bus_idx)
 
-    async def put_tx_data(self, data, tx_queue_depth=64, tx_thld=1, bus_idx=0, ready_event=None):
+    async def put_tx_data(self, data, tx_queue_depth=None, tx_thld=1, bus_idx=0, ready_event=None):
         """
         Writes data to TX Queue. Handles overflows by waiting for TX_THLD_STAT.
         
@@ -288,6 +313,8 @@ class I3CTopControllerTestInterface:
             bus_idx: Bus index.
             ready_event: cocotb.triggers.Event - Set when the initial FIFO fill is done.
         """
+        if tx_queue_depth is None:
+            tx_queue_depth = self.tx_queue_depth
         TX_QUEUE_DEPTH = tx_queue_depth  # Hardware FIFO Depth
         TX_THLD_VAL    = tx_thld   # Number of empty slots guaranteed when interrupt fires
         
@@ -317,14 +344,22 @@ class I3CTopControllerTestInterface:
         # PHASE 2: Refill Loop (Wait for Interrupt, then Write)
         # -------------------------------------------------------
         while words_written < total_len:
-            while True:
-                val = await self.read_csr(status_addr, bus_idx=bus_idx)
-                status_reg = dword2int(val)
-                
-                if status_reg & 0x1:
-                    break # Interrupt is active, we have space!
-                
-                await ClockCycles(self.clk, 100)
+            try:
+                irq_sig = self.dut.irq_o[bus_idx]
+            except (TypeError, IndexError):
+                irq_sig = self.dut.irq_o
+
+            self.dut._log.debug(f"irq_o is {irq_sig.value}")
+            if(irq_sig.value == 0):
+                self.dut._log.debug("irq signal is low")
+                await RisingEdge(irq_sig)
+                self.dut._log.debug("Got rising edge of interrupt")
+            val = await self.read_csr(status_addr, bus_idx=bus_idx)
+            status_reg = dword2int(val)
+
+            if status_reg != 0x1:
+                self.dut._log.info("TX Queue ready interrupt is not valid")
+                continue
 
             remaining = total_len - words_written
             burst_size = min(remaining, TX_THLD_VAL)
@@ -333,6 +368,7 @@ class I3CTopControllerTestInterface:
                 await self.write_csr(tx_port_addr, int2dword(data[words_written + i]), bus_idx=bus_idx)
             
             words_written += burst_size
+            self.dut._log.debug(f"[TX] Written a burst of size {burst_size} words")
         self.dut._log.info("[TX] All data written successfully.")
 
     async def read_rx_queue(self, num_words, bus_idx, rx_port_addr=None ):

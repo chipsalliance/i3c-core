@@ -347,7 +347,7 @@ async def test_i3c_private_write_tx_queue_target_read(dut):
     actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
     await actual_write
 
-    await ClockCycles(tb.clk, (500 + (300 * target_len)) * 2)
+    await ClockCycles(tb.clk, (1000 + (300 * target_len)) * 2)
 
     # Read RX descriptor
     recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)

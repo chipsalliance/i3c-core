@@ -188,7 +188,31 @@
       name: controller_ccc_setdasa
       desc:
         '''
-        The test issues SETDASA direct
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.10 Set Dynamic Address from Static Address (SETDASA) from I3C Basic Spec. Using Direct mode.
+        The test sets the dynamic address of the i3c target using the I2C static target address.
+
+        Stimulus:
+        - randomly create a regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x87 // SETDASA Direct
+            - CP = 0x1 // CMD field is valid
+            - DEV_ADDRESS: I2C Static Address
+            - DTT/DATA_LENGTH = 1 // Dynamic Address payload
+            - RNW = 0x0 // Write transfer
+            - WROC = random // randomly generate response descriptor
+            - TOC = 0x1 // want to generate a stop signal after first transfer 
+            - DATA_BYTE1: Dynamic Address 
+        - send CMD descriptor
+
+        Check:
+          - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
+          - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+          - After sending the SETDASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic address that was sent.
+
         '''
       tests: ["controller_ccc_setdasa_dir"]
       tags: ["top"]

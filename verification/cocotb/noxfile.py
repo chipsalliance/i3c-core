@@ -398,6 +398,100 @@ def i3c_axi_verify(session, test_group, test_name, coverage, simulator):
 def ccc_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
+@test(
+    TestParams(
+        ["tests", "axi", "target"],
+        ["i3c_axi"],
+        ["test_i3c_target"],
+    )
+)
+def i3c_axi_target_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
+        ["tests", "axi", "target"],
+        ["i3c_axi"],
+        ["test_recovery"],
+    )
+)
+def i3c_axi_recovery_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_configure_i3c_cores"],
+    )
+)
+def configure_i3c_cores_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_i3c_controller_write_target_read"],
+    )
+)
+def i3c_controller_write_target_read_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_i3c_controller_repeated_start"],
+    )
+)
+def i3c_controller_repeated_start_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_i3c_controller_read_target_write"],
+    )
+)
+def i3c_controller_read_target_write_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_controller_ccc"],
+    )
+)
+def controller_ccc_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i2c_axi_controller"],
+        ["test_i2c_controller"],
+    )
+)
+def i2c_controller_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
+        ["tests", "ahb", "axi", "target"],
+        ["ccc"],
+        ["test_ccc"],
+    )
+>>>>>>> a0815f5c2 (WIP: Add I2C private write and read)
+)
+@nox.parametrize("coverage", coverage_types)
+@nox.parametrize("simulator", simulators)
+def ccc_verify(session, test_group, test_name, coverage, simulator):
+    verify_block(session, test_group, test_name, coverage, simulator)
+
 
 @nox.session(tags=["tests", "ahb", "axi", "axi_block"])
 @nox.parametrize("test_group", ["ctrl_bus_timers"])

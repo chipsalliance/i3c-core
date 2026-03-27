@@ -1,0 +1,67 @@
+{
+  name: Controller I2C Transaction
+  testpoints:
+  [
+    {
+      name: i2c_private_write
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+        Intent:
+        Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) or Regular Data Transfer Command Descriptor (7.2.2.2 TCRI Spec) to an individual I2C Target Device with known address
+
+        Stimulus:
+         - create a CMD descriptor setting the I2C field to 0x1. The first data byte is the internal memory address (from which the monitor will read the data received by the target) the remaining data bytes are randomized.
+        Check:
+            - Read data from the I2C target memory by reading from the memory address specified in the first data byte. 
+            - Assert that the received data matches the sent data.
+            - Assert that the response descriptor returns the correct data length (including first memory address byte) and a SUCCESS status.
+        '''
+      tests: ["i2c_private_write"]
+      tags: ["top"]
+    },
+    {
+      name: i2c_private_read
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+        Intent:
+        Verify Private Read with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) or Regular Data Transfer Command Descriptor (7.2.2.2 TCRI Spec) to an individual I2C Target Device with known address
+
+        Stimulus:
+         - Write `target_len` random bytes to the cocotbext I2C memory.
+         - create a CMD descriptor setting the I2C field to 0x1. Write a data byte for the internal memory address (from which the target will send the data), set the TOC field to 0x0 to issue a repeated Start.
+         - create a second CMD descriptor setting the I2C field to 0x1. Set the data_length to `target_len` and the RnW field to 0x1 for a Read transaction.
+        Check:
+            - Read received data from the Controller RX Queue and verify it matches the data written to the I2C target.
+            - Assert that the response descriptors return the correct data length (including first memory address byte) and a SUCCESS status.
+        '''
+      tests: ["i2c_private_read"]
+      tags: ["top"]
+    },
+    {
+      name: i2c_handle_nack
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+        Intent:
+        Handle a NACK by the I2C target during a private write.
+
+        Stimulus:
+         - set the I2C target memory length to be less than the data length to be written (such that we can generate a NACK condition)
+         - create a CMD descriptor setting the I2C field to 0x1. The first data byte is the internal memory address (from which the monitor will read the data received by the target) the remaining data bytes are randomized.
+        Check:
+            - Assert that the response descriptor returns a NACK Error State.
+        '''
+      tests: ["i2c_handle_nack"]
+      tags: ["top"]
+    },
+    
+  ]
+}

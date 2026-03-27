@@ -36,6 +36,7 @@ module controller_active
     output logic ctrl_scl_o[2],
     output logic ctrl_sda_o[2],
     output logic phy_sel_od_pp_o[2],
+    output logic is_i2c_transfer_o,
 
     // HCI queues
     // Command FIFO
@@ -124,6 +125,7 @@ module controller_active
 );
 
   logic host_enable;
+  logic is_i2c_transfer;
   logic fmt_fifo_rvalid;
   logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth;
   logic fmt_fifo_rready_i2c;
@@ -143,6 +145,12 @@ module controller_active
   logic unhandled_nak_timeout;
   logic rx_fifo_wvalid;
   logic [RxFifoWidth-1:0] rx_fifo_wdata;
+  logic fmt_fifo_rdone_i2c_and_i3c;
+  logic event_cmd_complete;
+  logic i2c_host_idle;
+  logic fmt_fifo_rready_i2c_and_i3c;
+  assign fmt_fifo_rready_i2c_and_i3c = (fmt_fifo_rready & ~is_i2c_transfer) | ((fmt_fifo_rready_i2c | i2c_host_idle) & is_i2c_transfer);
+  assign fmt_fifo_rdone_i2c_and_i3c = (fmt_fifo_rdone & ~is_i2c_transfer) | ((fmt_fifo_rready_i2c) & is_i2c_transfer);
 
   logic unassigned_sel_od_pp_o;
   flow_active flow_fsm (
@@ -196,10 +204,12 @@ module controller_active
       .dct_wdata_hw_o,
       .dct_rdata_hw_i,
       .host_enable_o(host_enable),
+      .is_i2c_transfer_o(is_i2c_transfer),
+      .i2c_cmd_complete_i(event_cmd_complete),
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid),
       .fmt_fifo_depth_o(fmt_fifo_depth),
-      .fmt_fifo_rready_i(fmt_fifo_rready),
-      .fmt_fifo_rdone_i(fmt_fifo_rdone),
+      .fmt_fifo_rready_i(fmt_fifo_rready_i2c_and_i3c),
+      .fmt_fifo_rdone_i(fmt_fifo_rdone_i2c_and_i3c),
       .fmt_byte_o(fmt_byte),
       .fmt_bit_o(fmt_bit),
       .fmt_flag_start_before_o(fmt_flag_start_before),
@@ -211,7 +221,7 @@ module controller_active
       .fmt_flag_read_valid_i(fmt_flag_read_valid),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
       .fmt_flag_read_continue_o(fmt_flag_read_continue),
-      .fmt_receive_nack_i(fmt_receive_nack),
+      .fmt_receive_nack_i(fmt_receive_nack | event_nak_o),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok),
       .phy_sel_od_pp_i(1'b1),  // TODO: assign these signals
       .phy_sel_od_pp_o(unassigned_sel_od_pp_o),
@@ -225,14 +235,12 @@ module controller_active
       .irq
   );
 
-  logic unused_host_idle_o;
-  logic unused_event_nak_o;
+  logic event_nak_o;
   logic unused_event_unhandled_nak_timeout_o;
   logic unused_event_scl_interference_o;
   logic unused_event_sda_interference_o;
   logic unused_event_stretch_timeout_o;
   logic unused_event_sda_unstable_o;
-  logic unused_event_cmd_complete_o;
 
   i2c_controller_fsm i2c_fsm (
       .clk_i (clk_i),
@@ -243,8 +251,8 @@ module controller_active
       .sda_o (ctrl_sda_o[0]),
 
       // These should be controlled by the flow FSM
-      // FUTUREFIX: reconnect to flow fsm once configuration.sv is connected properly to CSRs
-      .host_enable_i('0),
+      // TODO: reconnect to flow fsm once configuration.sv is connected properly to CSRs
+      .host_enable_i(is_i2c_transfer),
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),
       .fmt_fifo_rready_o(fmt_fifo_rready_i2c),
@@ -258,20 +266,20 @@ module controller_active
       .unhandled_nak_timeout_i(unhandled_nak_timeout),
       .rx_fifo_wvalid_o(rx_fifo_wvalid),
       .rx_fifo_wdata_o(rx_fifo_wdata),
-      .host_idle_o(unused_host_idle_o),
+      .host_idle_o(i2c_host_idle),
 
       // TODO: Use calculated timing values
       // TODO: Expose as programmable feature
-      .thigh_i(20'd10),
-      .tlow_i(20'd10),
-      .t_r_i(20'd1),
-      .t_f_i(20'd1),
-      .thd_sta_i(20'd1),
-      .tsu_sta_i(20'd1),
-      .tsu_sto_i(20'd1),
-      .tsu_dat_i(20'd1),
-      .thd_dat_i(20'd1),
-      .t_buf_i(20'd1),
+      .thigh_i(20'd200),
+      .tlow_i(20'd500),
+      .t_r_i(20'd50),
+      .t_f_i(20'd10),
+      .thd_sta_i(20'd200),
+      .tsu_sta_i(20'd200),
+      .tsu_sto_i(20'd200),
+      .tsu_dat_i(20'd35),
+      .thd_dat_i(20'd2),
+      .t_buf_i(20'd3),
 
       // Clock stretch is not supported by I3C bus
       .stretch_timeout_i('0),
@@ -281,14 +289,14 @@ module controller_active
       .host_nack_handler_timeout_i('0),
       .host_nack_handler_timeout_en_i('0),
 
-      // FUTUREFIX: Handle bus events
-      .event_nak_o(unused_event_nak_o),
+      // TODO: Handle bus events
+      .event_nak_o(event_nak_o),
       .event_unhandled_nak_timeout_o(unused_event_unhandled_nak_timeout_o),
       .event_scl_interference_o(unused_event_scl_interference_o),
       .event_sda_interference_o(unused_event_sda_interference_o),
       .event_stretch_timeout_o(unused_event_stretch_timeout_o),
       .event_sda_unstable_o(unused_event_sda_unstable_o),
-      .event_cmd_complete_o(unused_event_cmd_complete_o)
+      .event_cmd_complete_o(event_cmd_complete)
   );
 
   // FUTUREFIX: Handle i3c waveform
@@ -302,6 +310,8 @@ module controller_active
       .ctrl_scl_o(ctrl_scl_o[1]),
       .ctrl_sda_o(ctrl_sda_o[1]),
       .phy_sel_od_pp_o(phy_sel_od_pp_o[1]),
+
+      .is_i2c_transfer_i(is_i2c_transfer),
 
       // TODO: use values form CSRs
       .thigh_i(20'd10),
@@ -341,4 +351,5 @@ module controller_active
 
   // FUTUREFIX: Handle driver switching in the active controller mode
   assign phy_sel_od_pp_o[0] = '0;
+  assign is_i2c_transfer_o  = is_i2c_transfer;
 endmodule

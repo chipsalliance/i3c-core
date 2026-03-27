@@ -39,6 +39,29 @@
         "configure_target_and_controller",
       ]
       tags: ["top"]
+    },
+    {
+      name: Timing CSR checks 
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL)
+
+        Intent:
+        Read the CSRs holding the timing values specified in 6.2 Timing Specification (I3C Basic Spec) and check that they are in the limits of the Spec.
+
+        Stimulus:
+        - Provide the I3C controller clk frequency.
+        - Write timing parameters into the I3C_EC.SOCMGMTIF.T_* CSRs.
+
+        Check:
+        - Read each timing CSR and verify that the time adheres to the limits in the spec.
+
+        '''
+      tests: [
+        "check_timing_csr",
+      ]
+      tags: ["top"]
     }
   ]
 }
