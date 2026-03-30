@@ -193,9 +193,9 @@ class I3CTargetFixed(I3CTarget):
         # Per-edge timeout for premature STOP detection.
         # If SCL doesn't toggle within this many ns, we assume the
         # controller stopped clocking (STOP or bus abort).
-        # 20 SCL periods with a 5us floor covers all bus speeds.
-        scl_period_ns = int(1.0 / self.speed * 1e9)
-        self._edge_timeout_ns = max(5000, scl_period_ns * 20)
+        # 5us is a TB implementation choice (not spec-defined); sufficient
+        # for the 12.5 MHz SDR push-pull speed used in this testbench.
+        self._edge_timeout_ns = 5000
 
         # SDA Read Detector Timer (spec S5.1.2.3 Note).
         # During target-driven reads, if SCL does not toggle for this
