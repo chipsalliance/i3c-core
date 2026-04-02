@@ -32,6 +32,7 @@ VERILOG_SOURCES += \
     $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_wr.sv \
     $(SRC_DIR)/hci/axi_adapter.sv \
     $(SRC_DIR)/hci/dxt.sv \
+    $(SRC_DIR)/interrupt.sv \
     $(SRC_DIR)/hci/queues/write_queue.sv \
     $(SRC_DIR)/hci/queues/read_queue.sv \
     $(SRC_DIR)/hci/queues.sv \
