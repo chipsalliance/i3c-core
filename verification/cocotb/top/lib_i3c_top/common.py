@@ -35,9 +35,18 @@ async def timeout_task(timeout_us):
 
 
 def log_seed(dut):
-    """Log the random seed for reproducibility."""
-    seed = cocotb.plusargs.get("seed", None)
-    dut._log.info(f"Random seed: {seed or 'unknown (set via RANDOM_SEED plusarg)'}")
+    """Log the random seed for reproducibility.
+
+    The seed is controlled via the COCOTB_RANDOM_SEED environment variable
+    which cocotb reads automatically to seed Python's random module.
+    Use RANDOM_SEED env var (via nox) or SEED= make var for direct make runs.
+    """
+    import os
+    seed = os.environ.get("RANDOM_SEED", None)
+    if seed is not None:
+        dut._log.info(f"Random seed: {seed} (from RANDOM_SEED)")
+    else:
+        dut._log.info("Random seed: not set (use RANDOM_SEED env var)")
 
 
 # =============================================================================

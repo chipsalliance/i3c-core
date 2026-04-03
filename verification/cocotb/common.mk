@@ -35,6 +35,26 @@ else
     VERILATOR_COVERAGE = ""
 endif
 
+# Per-test/seed output isolation via RUN_DIR
+# Auto-generate a seed when the caller does not supply one so that every run
+# gets an isolated output directory under sim_build/runs/.
+# RUN_DIR can still be overridden explicitly on the make command line.
+# Must be defined before simulator-specific blocks that reference it.
+ifndef RANDOM_SEED
+    RANDOM_SEED := $(shell python3 -c "import random,time; random.seed(time.time_ns()); print(random.randint(1,10000))")
+    $(info Auto-generated RANDOM_SEED=$(RANDOM_SEED))
+endif
+# Export so cocotb's recursive $(MAKE) in the 'sim' target inherits the same seed.
+export RANDOM_SEED
+
+ifneq ($(findstring $(comma),$(MODULE)),)
+    RUN_DIR ?= sim_build/runs/all__$(RANDOM_SEED)
+else
+    RUN_DIR ?= sim_build/runs/$(MODULE)__$(RANDOM_SEED)
+endif
+
+COCOTB_RESULTS_FILE := $(RUN_DIR)/results.xml
+
 COMPILE_ARGS += +define+DIGITAL_IO_I3C
 
 ifeq ($(SIM), verilator)
@@ -56,7 +76,14 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += -kdb
     COMPILE_ARGS += -debug_access+all +vcs+fsdbon
     ifeq ($(WAVES), 1)
-        SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+        ifneq ($(RUN_DIR),)
+            SIM_ARGS += +fsdbfile+$(RUN_DIR)/dump.fsdb +fsdb+all=on +fsdb+mda=on
+        else
+            SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+        endif
+    endif
+    ifneq ($(RUN_DIR),)
+        SIM_ARGS += -l $(RUN_DIR)/run.log
     endif
     EXTRA_ARGS += +vcs+lic+wait
 
@@ -99,6 +126,25 @@ ifneq ($(COVERAGE_TYPE),)
 endif
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
+
+# Ensure RUN_DIR exists before simulation writes outputs there
+ifneq ($(RUN_DIR),)
+$(COCOTB_RESULTS_FILE): | $(RUN_DIR)
+$(RUN_DIR):
+	mkdir -p $@
+endif
+
+# Collect stray logs into RUN_DIR after simulation completes.
+# FSM tracker modules ($fopen) and VCS (novas*) write to CWD; move them.
+ifneq ($(RUN_DIR),)
+.PHONY: collect-run-logs
+collect-run-logs: $(COCOTB_RESULTS_FILE)
+	@for f in *_transitions.log *_transactions.log novas.fsdb novas_dump.log novas.rc; do \
+	  if [ -e "$$f" ]; then mv -f "$$f" $(RUN_DIR)/; fi; \
+	done
+
+all: collect-run-logs
+endif
 
 ifeq ($(SIM), vcs)
 
