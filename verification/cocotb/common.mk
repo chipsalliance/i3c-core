@@ -150,7 +150,7 @@ ifeq ($(SIM), vcs)
 
 .PHONY: convert-vpd2vcd
 convert-vpd2vcd: $(COCOTB_RESULTS_FILE)
-	vpd2vcd -full64 dump.vpd dump.vcd +splitpacked
+	@if [ -f dump.vpd ]; then vpd2vcd -full64 dump.vpd dump.vcd +splitpacked; fi
 
 all: sim convert-vpd2vcd
 
