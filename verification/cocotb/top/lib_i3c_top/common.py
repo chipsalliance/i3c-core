@@ -8,9 +8,9 @@ from cocotb.triggers import Timer
 
 from ccc import CCC
 
-# Canonical I3C address list -- single source of truth.
-# These are all valid 7-bit I3C dynamic addresses per the spec,
-# excluding reserved addresses (0x00-0x02, 0x3E, 0x5E, 0x6E, 0x76, 0x7A, 0x7C, 0x7E-0x7F).
+# Canonical I3C address list -- single source of truth
+# 0x23 is excluded: it is hardcoded as the I3CTarget sim model address
+# and selecting it for DUT addresses causes bus contention.
 VALID_I3C_ADDRESSES = (
     [i for i in range(0x03, 0x3E)]
     + [i for i in range(0x3F, 0x5E)]

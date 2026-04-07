@@ -2,7 +2,7 @@
 
 TOPLEVEL_LANG    = verilog
 SIM             ?= verilator
-WAVES           ?= 1
+WAVES           ?= 0
 TRACK_FSM       ?= 1
 
 # Paths
@@ -102,11 +102,25 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 
 ifeq ($(SIM), vcs)
 
-.PHONY: convert-vpd2vcd
-convert-vpd2vcd: $(COCOTB_RESULTS_FILE)
-	vpd2vcd -full64 dump.vpd dump.vcd +splitpacked
+.PHONY: convert-waves2vcd
+convert-waves2vcd: $(COCOTB_RESULTS_FILE)
+	@if [ -f dump.vpd ]; then \
+		echo "Converting dump.vpd to dump.vcd..."; \
+		vpd2vcd -full64 dump.vpd dump.vcd +splitpacked; \
+	elif [ -f dump.fsdb ]; then \
+		if command -v fsdb2vcd >/dev/null 2>&1; then \
+			echo "Converting dump.fsdb to dump.vcd..."; \
+			fsdb2vcd dump.fsdb -o dump.vcd; \
+		else \
+			echo "Warning: dump.fsdb found but fsdb2vcd not in PATH. Skipping VCD conversion."; \
+		fi \
+	fi
 
-all: sim convert-vpd2vcd
+ifeq ($(WAVES), 1)
+all: sim convert-waves2vcd
+else
+all: sim
+endif
 
 endif
 

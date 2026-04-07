@@ -14,13 +14,11 @@ TOPLEVEL     = controller_standby_i2c_harness
 
 EXTRA_ARGS += -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-PINCONNECTEMPTY -Wno-UNUSEDPARAM
 
-VERILOG_SOURCES  = \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert.sv \
+include $(TEST_DIR)/../../caliptra_common.mk
+
+VERILOG_SOURCES  += \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert_dummy_macros.svh \
-    ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \
-    ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_count_pkg.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
@@ -44,6 +42,7 @@ VERILOG_SOURCES  = \
     ${SRC_DIR}/hci/ahb_if.sv \
     ${SRC_DIR}/hci/axi_adapter.sv \
     ${SRC_DIR}/hci/dxt.sv \
+    ${SRC_DIR}/interrupt.sv \
     ${SRC_DIR}/hci/tti.sv \
     ${SRC_DIR}/hci/queues.sv \
     ${SRC_DIR}/hci/hci.sv \
