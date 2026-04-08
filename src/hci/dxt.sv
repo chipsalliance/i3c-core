@@ -145,14 +145,14 @@ module dxt
 
   // Connect signals to DCT memory
   assign dct_rdata_hw_o = dct_mem_src_i.rdata;
-  assign dct_mem_sink_o.req = dct_read_valid;
+  assign dct_mem_sink_o.req = dct_read_valid | dct_write_valid; // the generic SRAM first checks if req is 1 and then if write is 1
   assign dct_mem_sink_o.write = dct_write_valid;
   assign dct_mem_sink_o.addr = dct_addr;
   assign dct_mem_sink_o.wdata = dct_wdata;
   assign dct_mem_sink_o.wmask = dct_wmask;
 
   always_comb begin
-    if (dct_read_valid_hw_i) begin
+    if (dct_read_valid_hw_i | dct_write_valid_hw_i) begin
       dct_addr  = dct_index_hw_i;
       dct_wmask = {128{1'b1}};
     end else begin
@@ -191,4 +191,4 @@ module dxt
   end
 
 endmodule
-`endif // CONTROLLER_SUPPORT
+`endif  // CONTROLLER_SUPPORT

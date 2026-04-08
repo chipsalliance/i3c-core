@@ -8,7 +8,7 @@ from math import ceil
 from boot_controller import boot_init
 from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
-from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
+from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus, immediate_transfer_descriptor, regular_transfer_descriptor
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from cocotbext.i2c import I2cMemory
@@ -70,41 +70,77 @@ async def test_setup(dut, fclk=333.0, fbus=12.5):
     dut._log.info("I3C Controller booted successfully.")
     return i2c_mem, addr_helper, tb    
 
-async def write_i2c(tb, payload, target_len, immediate=None, device_address=0x50, toc=True):
+async def write_i2c(tb, addr_helper, payload, target_len, immediate=None, device_address=0x50, toc=True, dat=None, device_index=None):
     # Disable all target events
+    if dat == None:
+        dat = random.getrandbits(1)
     if immediate == None:
         immediate = random.getrandbits(1)
+
+    if dat:
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=True, bus_idx=0)
     if immediate and len(payload) == 1:
-        cmd_desc = immediate_transfer_descriptor_direct(
-            tid=random.getrandbits(3),
-            i2c=True,
-            cmd=0x0,
-            cp=False,
-            device_address=device_address,
-            dtt=target_len,
-            mode=0,
-            rnw=False,
-            wroc=0x1,
-            toc=toc,  
-            data=payload[0]
-        )
+        if dat: 
+            cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=0x0,
+                cp=False,
+                device_index=device_index,
+                byte_count=target_len,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=toc,  
+                data=payload[0]
+            )
+
+        else:
+            cmd_desc = immediate_transfer_descriptor_direct(
+                tid=random.getrandbits(3),
+                i2c=True,
+                cmd=0x0,
+                cp=False,
+                device_address=device_address,
+                dtt=target_len,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=toc,  
+                data=payload[0]
+            )
         await tb.put_command_desc(cmd_desc.to_int(), bus_idx=0)
     else:
-        cmd_desc = regular_transfer_descriptor_direct(
-        tid=random.getrandbits(3),
-        i2c=0x1,
-        cmd=0x0,
-        cp=0x0,
-        device_address=device_address,
-        short_read_err=0x0,
-        defining_byte_present=0x0,
-        mode=0x0,
-        rnw=0x0,
-        wroc=True,
-        toc=toc,
-        def_byte=0x0,
-        data_length=target_len,
-        )
+        if dat:
+            cmd_desc = regular_transfer_descriptor(
+            tid=random.getrandbits(3),
+            cmd=0x0,
+            cp=0x0,
+            device_index=device_index,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=True,
+            toc=toc,
+            def_byte=0x0,
+            data_length=target_len,
+            )
+        else:
+            cmd_desc = regular_transfer_descriptor_direct(
+            tid=random.getrandbits(3),
+            i2c=0x1,
+            cmd=0x0,
+            cp=0x0,
+            device_address=device_address,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=True,
+            toc=toc,
+            def_byte=0x0,
+            data_length=target_len,
+            )
         queue_filled_event = Event()
         data_write = cocotb.start_soon(tb.put_tx_data(payload, ready_event=queue_filled_event, tx_thld=TX_READY_THLD, bus_idx=0))
         await queue_filled_event.wait()
@@ -117,27 +153,46 @@ async def write_i2c(tb, payload, target_len, immediate=None, device_address=0x50
     assert resp_desc.data_length == target_len
     assert resp_desc.tid == cmd_desc.tid
 
-async def read_i2c(tb, target_mem_addr, target_len, device_address=0x50, toc=True):
+async def read_i2c(tb, addr_helper, target_mem_addr, target_len, device_address=0x50, toc=True, dat=None, device_index=None):
     # Tell the I2C memory where we want to read from using a private write
+    if dat == None:
+        dat = random.getrandbits(1)
     tb.dut._log.info("Starting I2C private write to write internal register address")
-    await write_i2c(tb, payload=[target_mem_addr], target_len=1, device_address=device_address, toc=True)
+    await write_i2c(tb, addr_helper=addr_helper, payload=[target_mem_addr], target_len=1, device_address=device_address, toc=True, device_index=device_index)
     tb.dut._log.info("Finished I2C private write")
     
-    cmd_desc = regular_transfer_descriptor_direct(
-    tid=random.getrandbits(3),
-    i2c=0x1,
-    cmd=0x0,
-    cp=0x0,
-    device_address=device_address,
-    short_read_err=0x0,
-    defining_byte_present=0x0,
-    mode=0x0,
-    rnw=0x1,
-    wroc=True,
-    toc=toc,
-    def_byte=0x0,
-    data_length=target_len,
-    )
+    if dat:
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=True, bus_idx=0)
+        cmd_desc = regular_transfer_descriptor(
+        tid=random.getrandbits(3),
+        cmd=0x0,
+        cp=0x0,
+        device_index=device_index,
+        short_read_err=0x0,
+        defining_byte_present=0x0,
+        mode=0x0,
+        rnw=0x1,
+        wroc=True,
+        toc=toc,
+        def_byte=0x0,
+        data_length=target_len,
+        )
+    else:
+        cmd_desc = regular_transfer_descriptor_direct(
+        tid=random.getrandbits(3),
+        i2c=0x1,
+        cmd=0x0,
+        cp=0x0,
+        device_address=device_address,
+        short_read_err=0x0,
+        defining_byte_present=0x0,
+        mode=0x0,
+        rnw=0x1,
+        wroc=True,
+        toc=toc,
+        def_byte=0x0,
+        data_length=target_len,
+        )
 
     tb.dut._log.info("Sending Command Descriptor for I2C private read")
     await tb.put_command_desc(cmd_desc.to_int(), bus_idx=0)
@@ -162,6 +217,7 @@ async def test_i2c_private_write(dut):
     target_len = random.randint(2, TX_QUEUE_DEPTH * 4 * 2) # Total bytes to send over the bus (1 addr + 11 payload)
     payload_len = target_len - 1
     dut._log.info(f"Target length is {target_len} bytes ({payload_len} bytes of actual payload).")
+    device_index = random.getrandbits(5)
     
     target_mem_addr = 0x00
 
@@ -182,7 +238,7 @@ async def test_i2c_private_write(dut):
     i2c_mem, addr_helper, tb = await test_setup(dut)
 
     dut._log.info("Starting I2C private write")
-    await write_i2c(tb, data_words, target_len, immediate=False, device_address=addr_helper.trgt_static_addr)
+    await write_i2c(tb, addr_helper=addr_helper, payload=data_words, target_len=target_len, immediate=False, device_address=addr_helper.trgt_static_addr, device_index=device_index)
     dut._log.info("Finished I2C private write")
 
     await ClockCycles(tb.clk, 500) # Such that test doesn't finish immediately before we have a nice stop condition in the waveform
@@ -201,6 +257,7 @@ async def test_i2c_private_read(dut):
     TX_QUEUE_DEPTH = 8
     target_len = random.randint(4, TX_QUEUE_DEPTH * 4 * 2)
     dut._log.info(f"Target length is {target_len} bytes.")
+    device_index = random.getrandbits(5)
     
     target_mem_addr = 0x00
 
@@ -212,7 +269,7 @@ async def test_i2c_private_read(dut):
     dut._log.info(f"Writing {target_len} bytes to I2C memory at address {target_mem_addr:x}")
     i2c_mem.write_mem(target_mem_addr, expected_payload_bytes)
 
-    recv_data_raw = await read_i2c(tb, target_mem_addr, target_len, device_address=addr_helper.trgt_static_addr)
+    recv_data_raw = await read_i2c(tb, addr_helper=addr_helper, target_mem_addr=target_mem_addr, target_len=target_len, device_address=addr_helper.trgt_static_addr, device_index=device_index)
 
     # Convert data for comparison
     recv_data_padded = b''.join(word.to_bytes(4, byteorder='little') for word in recv_data_raw)

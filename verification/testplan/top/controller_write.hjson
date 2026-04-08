@@ -166,7 +166,6 @@
         - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
-        Verify that:
           - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
         '''
       tests: ["i3c_private_write_tx_queue_target_read"]
@@ -201,7 +200,6 @@
         - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
-        Verify that:
           - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
         '''
       tests: ["i3c_private_write_tx_queue_target_read_fifo_full"]
@@ -236,77 +234,35 @@
         - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
-        Verify that:
           - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
         '''
       tests: ["i3c_private_write_repeated_start"]
       tags: ["top"]
     },
-    // FIXME: add detailed descriptions for theses testpoints  once DAT is implemented
     {
-      name: regular_write_using_dat_target_read_from_rx_queue
+      name: i3c_private_write_dat
       desc:
         '''
         Testbench:
-        I3C wrapper (DUT) -> cocotbext controller
+        I3C Controller (RTL) <-> I3C Target (RTL)
 
         Intent:
-        Verify Private Write as per 7.1.2.1 TCRI Spec to an individual I3C Target Device with known DAT index
+        Verify Private Write as per 7.1.2.1 / 7.1.2.2 TCRI Spec to an individual I3C Target Device with known DAT index
 
         Stimulus:
-         - Start with sendinng ENTDAA CCC to assign dynamic addresses
          - Assign dynamic address of device to DAT index 
          - create a CMD 64bit descriptor as per Table 7 7.1.2.1 TCRI Spec. With:
-            - CMD_ATTR = 0x1 // ImmediateDataTransfer in DAT Format
-            - TID: random transaction ID
-            - CMD: random this field is disregarded
-            - CP = 0x0 // CMD field is not valid
-            - DEV_INDEX: random allowed I3C address 
-            - DTT: number of bytes to be transferred
-            - MODE = 0x0 // standard I3C SDR Speed
+            - CMD_ATTR = 0x1 / 0x0 // ImmediateDataTransfer in DAT Format / Regular Transfer Command in DAT Format
+            - DEV_INDEX: random 5 bit number 
             - RNW = 0x0 // Write transfer
-            - WROC: random 
-            - TOC: random
             - DATA_BYTES: random data to be sent
         - split the 64bit descriptor into 2 32bit words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
         Check:
-        Verify that:
-            - correct start/restart condition is generated 
-            - check that following data bytes are correctly serialized (from MSB to LSB)
-            - first byte is DYNAMIC_ADDRESS as stored in the DAT / assigned at ENTDAA stage 
-            - following DTT bytes is DATA_BYTES
-            - correct stop condition is generated
+          - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
+          - response descriptor data length matches data bytes specified in CMD desc, resp desc TID matches TID form CMD desc and resp error status is SUCCESS.
         '''
-      tests: ["i3c_controller_write_DAT_txqueue"]
-      tags: ["top"]
-    },
-    {
-      name: Test I3C controller SDR DAT address private writes with data in TX Queue and AXI bus
-      desc:
-        '''
-        Testbench:
-        I3C wrapper (DUT) -> cocotbext controller
-
-        Intent:
-        Verify Private Write as per 7.1.2.2 TCRI Spec to an individual I3C Target Device with known DAT index
-
-        Stimulus:
-        - Start with sendinng ENTDAA CCC to assign dynamic addresses
-        - Assign dynamic address of device to DAT index 
-        - create a CMD 64bit descriptor as per Table 9 7.1.2.2 TCRI Spec.
-        - write data in 32bit chunks to TX_DATA_PORT (amount as specified in the cmd_desc)    
-        - split the 64bit descriptor into 2 32bit words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
-
-        Check:
-        Verify that:
-            - correct start/restart condition is generated 
-            - check that following data bytes are correctly serialized (from MSB to LSB)
-            - first byte is DEV_ADDRESS
-            - following bytes is DATA_BYTES
-            - correct stop condition is generated
-        '''
-      tests: ["i3c_controller_write_DAT_txqueue"]
+      tests: ["i3c_private_write_dat"]
       tags: ["top"]
     }
   ]

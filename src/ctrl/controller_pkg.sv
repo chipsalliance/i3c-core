@@ -80,4 +80,15 @@ package controller_pkg;
     logic [6:0] static_address;
   } dat_entry_t;
 
+  typedef struct packed {
+    logic [23:0] __rsvd127_104;
+    logic [7:0]  dynamic_address;
+    logic [15:0] __rsvd95_80;
+    logic [7:0]  bcr;
+    logic [7:0]  dcr;
+    logic [15:0] __rsvd63_48;
+    logic [15:0] pid_lo;
+    logic [31:0] pid_hi;
+  } dct_entry_t;
+
 endpackage

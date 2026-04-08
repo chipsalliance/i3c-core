@@ -8,7 +8,7 @@ from math import ceil
 from boot_controller import boot_init
 from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
-from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
+from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus, regular_transfer_descriptor, immediate_transfer_descriptor, address_assignment_descriptor
 from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
@@ -98,44 +98,78 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None, enable_targe
     dut._log.info("All cores booted successfully.")
     return tb, i3c_target, addr_helper 
 
-async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True):
+async def write_ccc(tb, addr_helper, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True, dat=None, device_index=None):
     # Disable all target events
     no_payload = False
+    if dat == None:
+        dat = random.getrandbits(1)
     if immediate == None:
         immediate = random.getrandbits(1)
+    if dat:
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
     if payload == None:
         no_payload = True
         payload = [0]
     if immediate or no_payload: # no payload CCCs are always immediate transfers
-        cmd_desc = immediate_transfer_descriptor_direct(
-            tid=random.getrandbits(3),
-            i2c=False,
-            cmd=ccc,
-            cp=True,
-            device_address=device_address,
-            dtt=data_length,
-            mode=0,
-            rnw=False,
-            wroc=toc,
-            toc=toc,  
-            data=payload[0]
-        )
+        if dat:
+            cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=ccc,
+                cp=True,
+                device_index=device_index,
+                byte_count=data_length,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=toc,  
+                data=payload[0]
+            )
+        else:
+            cmd_desc = immediate_transfer_descriptor_direct(
+                tid=random.getrandbits(3),
+                i2c=False,
+                cmd=ccc,
+                cp=True,
+                device_address=device_address,
+                dtt=data_length,
+                mode=0,
+                rnw=False,
+                wroc=toc,
+                toc=toc,  
+                data=payload[0]
+            )
     else:
-        cmd_desc = regular_transfer_descriptor_direct(
-        tid=random.getrandbits(3),
-        i2c=0x0,
-        cmd=ccc,
-        cp=0x1,
-        device_address=device_address,
-        short_read_err=0x0,
-        defining_byte_present=0x0,
-        mode=0x0,
-        rnw=0x0,
-        wroc=toc,
-        toc=toc,
-        def_byte=0x0,
-        data_length=data_length,
-        )
+        if dat:
+            cmd_desc = regular_transfer_descriptor(
+            tid=random.getrandbits(3),
+            cmd=ccc,
+            cp=0x1,
+            device_index=device_index,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=True,
+            toc=toc,
+            def_byte=0x0,
+            data_length=data_length,
+            )
+        else:
+            cmd_desc = regular_transfer_descriptor_direct(
+            tid=random.getrandbits(3),
+            i2c=0x0,
+            cmd=ccc,
+            cp=0x1,
+            device_address=device_address,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=toc,
+            toc=toc,
+            def_byte=0x0,
+            data_length=data_length,
+            )
         await tb.put_tx_data(payload, tx_queue_depth=TX_QUEUE_DEPTH, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX)
 
     await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
@@ -147,41 +181,98 @@ async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device
         assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
         await ClockCycles(tb.clk, 500) # 500 Cycles stop
 
-async def write_i3c(tb, payload, target_len, immediate=None, device_address=0x50, toc=True):
+async def write_setdasa(tb, dyn_addr, static_addr, toc=True, device_index=None):
+    await tb.put_dat_entry(device_index=device_index, dyn_addr=dyn_addr, static_addr=static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+    cmd_desc = address_assignment_descriptor(
+        tid=random.getrandbits(3),
+        cmd=CCC.DIRECT.SETDASA,
+        device_index=device_index,
+        device_count=1,
+        wroc=True,
+        toc=toc
+    )
+    
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    # Wait for response Descriptor when it's the last cmd descriptor
+    if toc:
+        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        #assert resp_desc.data_length == len(payload)
+        assert resp_desc.tid == cmd_desc.tid
+        assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
+        await ClockCycles(tb.clk, 500) # 500 Cycles stop
+
+
+async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device_address=0x50, toc=True, dat=None, device_index=None):
     # Disable all target events
+    if dat == None:
+        dat = random.getrandbits(1)
     if immediate == None:
         immediate = random.getrandbits(1)
+
+    if dat:
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+
     if immediate and len(payload) == 1:
-        cmd_desc = immediate_transfer_descriptor_direct(
-            tid=random.getrandbits(3),
-            i2c=False,
-            cmd=0x0,
-            cp=False,
-            device_address=device_address,
-            dtt=target_len,
-            mode=0,
-            rnw=False,
-            wroc=0x1,
-            toc=toc,  
-            data=payload[0]
+        if dat:
+            cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=0x0,
+                cp=False,
+                device_index=device_index,
+                byte_count=target_len,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=toc,  
+                data=payload[0]
         )
+        else:
+            cmd_desc = immediate_transfer_descriptor_direct(
+                tid=random.getrandbits(3),
+                i2c=False,
+                cmd=0x0,
+                cp=False,
+                device_address=device_address,
+                dtt=target_len,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=toc,  
+                data=payload[0]
+            )
         await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
     else:
-        cmd_desc = regular_transfer_descriptor_direct(
-        tid=random.getrandbits(3),
-        i2c=0x0,
-        cmd=0x0,
-        cp=0x0,
-        device_address=device_address,
-        short_read_err=0x0,
-        defining_byte_present=0x0,
-        mode=0x0,
-        rnw=0x0,
-        wroc=True,
-        toc=toc,
-        def_byte=0x0,
-        data_length=target_len,
-        )
+        if dat: 
+            cmd_desc = regular_transfer_descriptor(
+            tid=random.getrandbits(3),
+            cmd=0x0,
+            cp=0x0,
+            device_index=device_index,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=True,
+            toc=toc,
+            def_byte=0x0,
+            data_length=target_len,
+            )
+        else:
+            cmd_desc = regular_transfer_descriptor_direct(
+            tid=random.getrandbits(3),
+            i2c=0x0,
+            cmd=0x0,
+            cp=0x0,
+            device_address=device_address,
+            short_read_err=0x0,
+            defining_byte_present=0x0,
+            mode=0x0,
+            rnw=0x0,
+            wroc=True,
+            toc=toc,
+            def_byte=0x0,
+            data_length=target_len,
+            )
         queue_filled_event = Event()
         data_write = cocotb.start_soon(tb.put_tx_data(payload, ready_event=queue_filled_event, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX))
         await queue_filled_event.wait()
@@ -210,22 +301,42 @@ async def write_i3c(tb, payload, target_len, immediate=None, device_address=0x50
 
 
 
-async def read_i3c(tb, target_len, device_address=0x50, toc=True):
-    cmd_desc = regular_transfer_descriptor_direct(
-    tid=random.getrandbits(3),
-    i2c=0x0,
-    cmd=0x0,
-    cp=0x0,
-    device_address=device_address,
-    short_read_err=0x0,
-    defining_byte_present=0x0,
-    mode=0x0,
-    rnw=0x1,
-    wroc=True,
-    toc=toc,
-    def_byte=0x0,
-    data_length=target_len,
-    )
+async def read_i3c(tb, addr_helper, target_len, device_address=0x50, toc=True, dat=None, device_index=None):
+    if dat == None:
+        dat = random.getrandbits(1)
+
+    if dat:
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+        cmd_desc = regular_transfer_descriptor(
+        tid=random.getrandbits(3),
+        cmd=0x0,
+        cp=0x0,
+        device_index=device_index,
+        short_read_err=0x0,
+        defining_byte_present=0x0,
+        mode=0x0,
+        rnw=0x1,
+        wroc=True,
+        toc=toc,
+        def_byte=0x0,
+        data_length=target_len,
+        )
+    else:
+        cmd_desc = regular_transfer_descriptor_direct(
+        tid=random.getrandbits(3),
+        i2c=0x0,
+        cmd=0x0,
+        cp=0x0,
+        device_address=device_address,
+        short_read_err=0x0,
+        defining_byte_present=0x0,
+        mode=0x0,
+        rnw=0x1,
+        wroc=True,
+        toc=toc,
+        def_byte=0x0,
+        data_length=target_len,
+        )
 
     num_words = (target_len + 3) // 4
     data = [random.getrandbits(32) for _ in range(num_words)]
@@ -238,12 +349,12 @@ async def read_i3c(tb, target_len, device_address=0x50, toc=True):
     await tb.put_tx_tti_data(data, data_length=target_len, bus_idx=ACT_TARGET_IDX)
     tb.dut._log.info("Filling TTI TX Queue...")
 
-    tb.dut._log.info("Sending Command Descriptor for I2C/I3C private read")
+    tb.dut._log.info("Sending Command Descriptor for I3C private read")
     await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
 
     # Wait for response Descriptor when it's the last cmd descriptor
     resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
-    tb.dut._log.info("Finished I2C/I3C private read")
+    tb.dut._log.info("Finished I3C private read")
     assert resp_desc.err_status == ErrorStatus.SUCCESS
     assert resp_desc.data_length == target_len
     assert resp_desc.tid == cmd_desc.tid
@@ -272,6 +383,7 @@ async def test_controller_flow_simple(dut):
     TX_QUEUE_DEPTH = 8
     tb, i3c_target, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False) # We don't want to init the target with a dynamic address because we do this with SETDASA
     i3c_target.address = addr_helper.trgt_dyn_addr
+    device_index = random.getrandbits(5)
 
 # //////////////////////////////////////////////////////////////
 # //                       SETDASA CCC                        //
@@ -296,7 +408,7 @@ async def test_controller_flow_simple(dut):
     assert static_addr_en == 1, "STATIC ADDRESS is not set as valid"
 
     # Set dynamic address
-    await write_ccc(tb, command_setdasa, payload=[DYNAMIC_ADDR << 1], data_length=1, device_address=STATIC_ADDR, toc=True)
+    await write_setdasa(tb, dyn_addr=DYNAMIC_ADDR, static_addr=STATIC_ADDR, toc=True, device_index=device_index)
 
     # Check that dynamic address was set correctly
     dynamic_addr = await tb.read_csr_field(
@@ -332,7 +444,7 @@ async def test_controller_flow_simple(dut):
 
 
     tb.dut._log.info("Starting I3C private write")
-    await write_i3c(tb, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True)
+    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index)
     tb.dut._log.info("Finished I3C private write")
 
 
@@ -341,6 +453,6 @@ async def test_controller_flow_simple(dut):
 # //////////////////////////////////////////////////////////////
 
     tb.dut._log.info("Starting I3C private read")
-    await read_i3c(tb, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True)
+    await read_i3c(tb, addr_helper=addr_helper, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index)
     tb.dut._log.info("Finished I3C private read")
 

@@ -138,9 +138,6 @@ module controller_active
     input logic [i3c_pkg::TimingWidth-1:0] t_su_sta_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_su_sto_i,
     input logic [i3c_pkg::TimingWidth-1:0] t_ds_od_i,
-    input logic [i3c_pkg::TimingWidth-1:0] t_free_i,
-    input logic [i3c_pkg::TimingWidth-1:0] t_aval_i,
-    input logic [i3c_pkg::TimingWidth-1:0] t_idle_i,
 
 
     input logic [i3c_pkg::TimingWidth-1:0] t_bus_free_i,
@@ -165,7 +162,7 @@ module controller_active
   logic fmt_flag_restart_after;
   logic fmt_flag_read_valid;
   logic fmt_flag_read_bytes;
-  logic fmt_flag_read_continue;
+  logic fmt_flag_read_continuous;
   logic fmt_flag_nak_ok;
   logic unhandled_unexp_nak;
   logic unhandled_nak_timeout;
@@ -246,7 +243,7 @@ module controller_active
       .fmt_bit_i(fmt_rx_bit),
       .fmt_flag_read_valid_i(fmt_flag_read_valid),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
-      .fmt_flag_read_continue_o(fmt_flag_read_continue),
+      .fmt_flag_read_continuous_o(fmt_flag_read_continuous),
       .fmt_receive_nack_i(fmt_receive_nack | event_nak_o),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok),
       .phy_sel_od_pp_i(1'b1),  // TODO: assign these signals
@@ -286,7 +283,7 @@ module controller_active
       .fmt_flag_start_before_i(fmt_flag_start_before),
       .fmt_flag_stop_after_i(fmt_flag_stop_after),
       .fmt_flag_read_bytes_i(fmt_flag_read_bytes),
-      .fmt_flag_read_continue_i(fmt_flag_read_continue),
+      .fmt_flag_read_continue_i(fmt_flag_read_continuous),
       .fmt_flag_nak_ok_i(fmt_flag_nak_ok),
       .unhandled_unexp_nak_i(unhandled_unexp_nak),
       .unhandled_nak_timeout_i(unhandled_nak_timeout),
@@ -369,7 +366,7 @@ module controller_active
       .fmt_bit_o(fmt_rx_bit),
       .fmt_flag_read_valid_o(fmt_flag_read_valid),
       .fmt_flag_restart_after_i(fmt_flag_restart_after),
-      .fmt_flag_read_continue_i(fmt_flag_read_continue),
+      .fmt_flag_read_continuous_i(fmt_flag_read_continuous),
       .fmt_flag_stop_after_i(fmt_flag_stop_after),
       .fmt_flag_read_bytes_i(fmt_flag_read_bytes)
   );

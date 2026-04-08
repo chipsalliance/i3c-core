@@ -7,7 +7,7 @@ from math import ceil
 from boot_controller import boot_init
 from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
-from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
+from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus, immediate_transfer_descriptor, regular_transfer_descriptor
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 
@@ -445,5 +445,90 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
         if expected != actual:
             dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
     assert expected_val == actual_val
+
+async def write_i3c_dat(tb, addr_helper, payload, target_len, immediate=None, device_index=0x0, toc=True):
+    await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+
+    if immediate == None:
+        immediate = random.getrandbits(1)
+    if immediate and len(payload) == 1:
+        cmd_desc = immediate_transfer_descriptor(
+            tid=random.getrandbits(3),
+            cmd=0x0,
+            cp=False,
+            device_index=device_index,
+            byte_count=target_len,
+            mode=0,
+            rnw=False,
+            wroc=0x1,
+            toc=toc,  
+            data=payload[0]
+        )
+        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    else:
+        cmd_desc = regular_transfer_descriptor(
+        tid=random.getrandbits(3),
+        cmd=0x0,
+        cp=0x0,
+        device_index=device_index,
+        short_read_err=0x0,
+        defining_byte_present=0x0,
+        mode=0x0,
+        rnw=0x0,
+        wroc=True,
+        toc=toc,
+        def_byte=0x0,
+        data_length=target_len,
+        )
+        queue_filled_event = Event()
+        data_write = cocotb.start_soon(tb.put_tx_data(payload, ready_event=queue_filled_event, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX))
+        await queue_filled_event.wait()
+        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+        await data_write
+
+    # Wait for response Descriptor when it's the last cmd descriptor
+    resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+    assert resp_desc.err_status == ErrorStatus.SUCCESS
+    assert resp_desc.data_length == target_len
+    assert resp_desc.tid == cmd_desc.tid
+
+    await ClockCycles(tb.clk, 100)
+
+    num_words = (target_len + 3) // 4
+    # Read RX descriptor
+    recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)
+
+    actual_val = recv_data
+    expected_val = payload
+    # Compare
+ 
+    for i, (expected, actual) in enumerate(zip(expected_val, actual_val)):
+        if expected != actual:
+            tb.dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
+    assert expected_val == actual_val
+
+@cocotb.test()
+async def test_i3c_private_write_dat(dut):
+    # Setup
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    #target_len = random.randint(tb.tx_queue_depth * 4, tb.tx_queue_depth * 4 * 3) # test larger than tx queue length
+    target_len = 7
+    num_words = (target_len + 3) // 4
+    # Setup
+
+    data = [random.getrandbits(32) for _ in range(num_words)]
+    # Masking the last word
+    remainder = target_len % 4
+    if remainder != 0:
+        mask = (1 << (remainder * 8)) - 1
+        data[-1] = data[-1] & mask
+
+
+    tb.dut._log.info("Starting I3C private write")
+    await write_i3c_dat(tb, addr_helper=addr_helper, payload=data, target_len=target_len, immediate=False, device_index=0x0, toc=True)
+    tb.dut._log.info("Finished I3C private write")
+
 
 

@@ -53,7 +53,7 @@
         Verify simple I3C operation including SETDASA CCC to assign dynamic address, I3C private read and I3C private write.
 
         Stimulus:
-        - Issue a SETDASA CCC using either immediate or regular command descriptor with a random (valid) I3C dynamic address. 
+        - Issue a SETDASA CCC using an address assignment command descriptor with a random (valid) I3C dynamic address. 
         - Generate random data (length: 1 < DATA_LENGTH < TX_QUEUE_DEPTH*4 bytes)
         - Write data using the dynamic address in an I3C private write.
         - Generate random data (length: 1 < DATA_LENGTH < TX_QUEUE_DEPTH*4 bytes)

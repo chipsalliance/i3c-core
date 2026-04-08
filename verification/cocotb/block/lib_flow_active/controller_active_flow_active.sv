@@ -208,7 +208,7 @@ module controller_active_flow_active
       .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes_o),
       .fmt_flag_restart_after_o(unused_fmt_flag_restart_after),
-      .fmt_flag_read_continue_o(fmt_flag_read_continue_o),
+      .fmt_flag_read_continuous_o(fmt_flag_read_continue_o),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok_o),
       .fmt_receive_nack_i(1'b0),  // we never receive nacks in this test
       .fmt_byte_i('0),  // unused

@@ -166,6 +166,28 @@ class immediate_transfer_descriptor_direct:
             | (cmd_attr & 0x7)
         )
 
+@dataclass
+class address_assignment_descriptor:
+    tid: int
+    cmd: int
+    device_index: int
+    device_count: int
+    wroc: bool
+    toc: bool
+
+    def to_int(self):
+        cmd_attr = 2  # Address Assignment Command
+        return (
+            (int(self.toc) & 0x1) << 31
+            | (int(self.wroc) & 0x1) << 30
+            | (self.device_count & 0xF) << 26
+            | (self.device_index & 0x1F) << 16
+            | (self.cmd & 0xFF) << 7
+            | (self.tid & 0xF) << 3
+            | (cmd_attr & 0x7)
+        )
+
+
 
 @dataclass
 class dat_entry:

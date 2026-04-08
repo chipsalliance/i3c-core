@@ -128,7 +128,27 @@
       name: controller_ccc_entdaa
       desc:
         '''
-        The test issues ENTDAA broadcast
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.4.2 Bus Initialization Sequence with Dynamic Address Assignment from I3C Basic Spec. Using ENTDAA CCC in Broadcast mode.
+        The test sets the dynamic address of the i3c target as well as the dynamic address of the virtual target to predefined values in the DAT.
+
+        Stimulus:
+        - Create a valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+        - Write DAT entries including the (VIRTUAL) DYNAMIC_ADDR
+        - Generate ENTDAA CCC to enter the dynamic address assignment mode and assign the DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR respectively (simulates ENTDAA for multiple targets).
+        - create a address assignment 64b CMD descriptor. With:
+            - CMD_ATTR = 0x2 // Address Assignment Command
+            - CMD: 0x07 // ENTDAA BCAST
+            - DEV_INDEX: DAT Table Entry Containing the STATIC_ADDR and DYNAMIC_ADDR
+        - send CMD descriptor
+
+        Check:
+          - After sending the ENTDAA CCC the response descriptor returns SUCCESS
+          - After sending the ENTDAA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic addresses specified in the DAT.
+          - Verify that the DCT entries (starting at the index specified in the TABLE_INDEX field of the DCT_SECTION_OFFSET register) contain the PID, BCR, DCR and dynamic address of the (Virtual) target.
         '''
       tests: ["controller_ccc_entdaa"]
       tags: ["top"]
@@ -198,17 +218,12 @@
         Stimulus:
         - Randomly generate a STATIC_ADDR and VIRTUAL_STATIC_ADDR and write them to the i3c target CSR.
         - Create a valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+        - Write DAT entries including the (VIRTUAL) STATIC_ADDR and (VIRTUAL) DYNAMIC_ADDR
         - Generate 2 SETDASA CCCs to assign the DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR using STATIC_ADDR and VIRTUAL_STATIC_ADDR respectively (simulates SETDASA for multiple targets).
-        - randomly create a regular or immediate 64b CMD descriptor. With:
-            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+        - create a address assignment 64b CMD descriptor. With:
+            - CMD_ATTR = 0x2 // Address Assignment Command
             - CMD: 0x87 // SETDASA Direct
-            - CP = 0x1 // CMD field is valid
-            - DEV_ADDRESS: I2C Static Address
-            - DTT/DATA_LENGTH = 1 // Dynamic Address payload
-            - RNW = 0x0 // Write transfer
-            - WROC = random // randomly generate response descriptor
-            - TOC = 0x1 // want to generate a stop signal after first transfer 
-            - DATA_BYTE1: Dynamic Address 
+            - DEV_INDEX: DAT Table Entry Containing the STATIC_ADDR and DYNAMIC_ADDR
         - send CMD descriptor
 
         Check:

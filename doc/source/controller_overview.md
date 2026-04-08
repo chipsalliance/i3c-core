@@ -58,7 +58,7 @@ The I3C Controller includes support for the following subset of CCCs required fo
 * **ENEC:** Enable Events Command (Broadcast).
 * **DISEC:** Disable Events Command (Broadcast).
 * **(WIP) RSTDAA:** Reset Dynamic Address Assignment (Broadcast).
-* **(WIP) ENTDAA:** Enter Dynamic Address Assignment (Broadcast).
+* **ENTDAA:** Enter Dynamic Address Assignment (Broadcast).
 * **SETAASA:** Set All Addresses to Static Address (Broadcast).
 
 #### Direct Support
@@ -70,6 +70,16 @@ The I3C Controller includes support for the following subset of CCCs required fo
 * **(WIP) GETBCR:** Get Bus Characteristics Register (Direct).
 * **(WIP) GETDCR:** Get Device Characteristics Register (Direct).
 * **(WIP) GETSTATUS:** Get Device Status (Direct).
+
+#### Dynamic Address Assignment (DAA)
+
+The controller implements Dynamic Address Assignment (DAA) in accordance with the bus initialization sequence defined in the **I3C Basic Specification (Section 5.1.4.2)** and the usage guidelines for the `ENTDAA` CCC in the **I3C HCI Specification (Section 8.4.1.1)**.
+
+When configuring the DAA procedure, software developers must adhere to the following guidelines:
+
+1. **Pre-populate the DAT:** All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated **before** initiating the DAA procedure with the `ENTDAA` CCC. 
+2. **Handling Unassigned Targets:** If the specified `DEV_COUNT` number of dynamic addresses has been successfully assigned, but unaddressed devices still remain on the bus, the controller will return a value of `0x1` in the `DATA_LENGTH` field of the Response Descriptor. This signals to the host that at least one target device still requires an address.
+3. **DCT Initialization:** The Device Characteristics Table (DCT) Index always starts at `0`.
 
 ### Error Conditions
 

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Description: Serializes byte from flow_active and transmitts it on the I3C
 // bus.
-// Limitations: Selecting Push-Pull mode vs Open-Drain mode is currently not
-// supported
 
 module i3c_controller_fsm
   import controller_pkg::*;
@@ -45,27 +43,29 @@ module i3c_controller_fsm
     output logic                         fmt_fifo_rready_o,
     output logic                         fmt_fifo_rdone_o,
     input  logic [                  7:0] fmt_byte_i,
-    input  logic                         fmt_bit_i,                 // T bit
+    input  logic                         fmt_bit_i,                   // T bit
     input  logic                         fmt_flag_start_before_i,
     input  logic                         fmt_flag_stop_after_i,
     input  logic                         fmt_flag_restart_after_i,
     output logic                         fmt_receive_nack_o,
     // fmt RX signals
     output logic [                  7:0] fmt_byte_o,
-    output logic                         fmt_bit_o,                 // T bit
+    output logic                         fmt_bit_o,                   // T bit
     input  logic                         fmt_flag_read_bytes_i,
-    input  logic                         fmt_flag_read_continue_i,
+    // this signal is used for DAA where we continuously have to read 8 bytes (without T bit)
+    input  logic                         fmt_flag_read_continuous_i,
     output logic                         fmt_flag_read_valid_o
 
 
 );
   // State definition
-  typedef enum logic [2:0] {
+  typedef enum logic [3:0] {
     Idle,
     Start,
     Address,
     BusTX,
     BusRX,
+    BusReadContinuous,
     ReStart,
     IBI,
     Stop
@@ -108,7 +108,7 @@ module i3c_controller_fsm
     if ((phy_sel_od_pp_q == 1'b0) && (state_q != Address)) begin // all I3C transactions except first address after Start are in Push-Pull Mode
       phy_sel_od_pp_d = 1'b1;
     end
-    if ((state_q == Idle) || (state_q == Start) || (state_q == BusRX)) begin
+    if ((state_q == Idle) || (state_q == Start) || (state_q == BusRX) || (state_q == BusReadContinuous)) begin
       phy_sel_od_pp_d = 1'b0;
     end
     if ((state_q == Address) & bus_rx_req_bit) begin
@@ -175,9 +175,9 @@ module i3c_controller_fsm
       Address: begin
         if (bus_rx_done & tx_bit_q) begin
           if (fmt_receive_nack_o) begin  // wait for SCL to finish cycle before switching state
-            state_d = Stop;
+            state_d = fmt_flag_restart_after_i ? ReStart : Stop;
           end else begin
-            state_d = fmt_flag_read_bytes_i ? BusRX : BusTX;
+            state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : (fmt_flag_read_continuous_i ? BusReadContinuous : (fmt_flag_read_bytes_i ? BusRX : BusTX)));
           end
         end
       end
@@ -189,6 +189,13 @@ module i3c_controller_fsm
       BusRX: begin
         if (bus_rx_done & fmt_flag_read_bytes_i) begin
           state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : BusRX);
+        end
+      end
+      BusReadContinuous: begin
+        if (bus_rx_done & fmt_flag_read_continuous_i) begin
+          state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : BusReadContinuous);
+        end else if ((bus_rx_done || bus_rx_idle) & ~fmt_flag_read_continuous_i) begin  // this happens during DAA where we should go into address state
+          state_d = Address;
         end
       end
       ReStart: begin
@@ -242,9 +249,10 @@ module i3c_controller_fsm
         received_nack_d = 1'b0;
       end
       Start: begin
+        received_nack_d = 1'b0;
         start_before = 1'b1;
-        ctrl_sda_o   = start_stop_sda;
-        ctrl_scl_o   = start_stop_scl;
+        ctrl_sda_o = start_stop_sda;
+        ctrl_scl_o = start_stop_scl;
       end
       Address: begin
         ctrl_sda_o = tx_flow_sda;
@@ -312,7 +320,18 @@ module i3c_controller_fsm
           rx_byte_d = bus_rx_data;
         end
       end
+      BusReadContinuous: begin
+        ctrl_scl_o = scl_flow_scl;
+        bus_rx_req_byte = 1'b1;
+        bus_rx_req_bit_d = 1'b0;
+        if (bus_rx_done) begin
+          fmt_flag_read_valid_o = 1'b1;  // Signals that fmt_byte_o is valid
+          rx_byte_d = bus_rx_data;
+          fmt_byte_o = bus_rx_data;
+        end
+      end
       ReStart: begin
+        received_nack_d = 1'b0;
         repeated_start_d = ~start_stop_active;
         ctrl_sda_o = start_stop_sda;
         ctrl_scl_o = start_stop_active ? start_stop_scl : scl_flow_scl;
@@ -322,6 +341,7 @@ module i3c_controller_fsm
         // TODO: implement
       end
       Stop: begin
+        received_nack_d = 1'b0;
         if (scl_negedge | scl_stable_low | start_stop_active) begin  // wait for cycle to finish and then stop
           stop_after_d = 1'b1;
           ctrl_sda_o = start_stop_sda;
@@ -439,7 +459,7 @@ module i3c_controller_fsm
       .thd_rsta_i,
       .tsu_rsta_i,
       .tsu_sto_i,
-      .t_ds_od_i,  // TODO: change to read from CSR
+      .t_ds_od_i,
       .t_r_i,
       .t_f_i,
 

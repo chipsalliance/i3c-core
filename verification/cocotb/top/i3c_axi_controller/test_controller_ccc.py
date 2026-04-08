@@ -1,13 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
 import functools
 import logging
+from os import stat
 import random
 from math import ceil
 
 from boot_controller import boot_init
 from monitor import BusStateMonitor
 from bus2csr import dword2int, int2dword
-from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus
+from hci import immediate_transfer_descriptor_direct, regular_transfer_descriptor_direct, ResponseDescriptor, ErrorStatus, address_assignment_descriptor
 from ccc import CCC
 from cocotbext_i3c.i3c_controller import I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
@@ -157,6 +158,49 @@ async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device
         assert resp_desc.tid == cmd_desc.tid
         assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
         await ClockCycles(tb.clk, 500) # 500 Cycles stop
+
+async def write_setdasa(tb, dyn_addr, static_addr, toc=True, device_index=None):
+    await tb.put_dat_entry(device_index=device_index, dyn_addr=dyn_addr, static_addr=static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+    cmd_desc = address_assignment_descriptor(
+        tid=random.getrandbits(3),
+        cmd=CCC.DIRECT.SETDASA,
+        device_index=device_index,
+        device_count=1,
+        wroc=True,
+        toc=toc
+    )
+    
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    # Wait for response Descriptor when it's the last cmd descriptor
+    if toc:
+        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        #assert resp_desc.data_length == len(payload)
+        assert resp_desc.tid == cmd_desc.tid
+        assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
+        await ClockCycles(tb.clk, 500) # 500 Cycles stop
+
+async def write_entdaa(tb, addr_helper, device_index=None):
+    if device_index is None:
+        device_index = random.getrandbits(5)
+    await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=0x0, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+    await tb.put_dat_entry(device_index=(device_index+1), dyn_addr=addr_helper.trgt_virt_dyn_addr, static_addr=0x0, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX) # TODO: figure out the increment on the device index
+    cmd_desc = address_assignment_descriptor(
+        tid=random.getrandbits(3),
+        cmd=CCC.BCAST.ENTDAA,
+        device_index=device_index,
+        device_count=2,
+        wroc=True,
+        toc=True
+    )
+    
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    # Wait for response Descriptor when it's the last cmd descriptor
+    resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+    await ClockCycles(tb.clk, 500) # 500 Cycles stop
+    assert resp_desc.data_length == 0x0 # 0 targets left to assign -> we've assigned all addresses
+    assert resp_desc.tid == cmd_desc.tid
+    assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
+
 
 
 @cocotb.test()
@@ -372,8 +416,8 @@ async def test_controller_ccc_setdasa_direct(dut):
     assert virt_static_addr_en == 1, "VIRTUAL STATIC ADDRESS is not set as valid"
 
     # Set dynamic address
-    await write_ccc(tb, command_setdasa, payload=[DYNAMIC_ADDR << 1], data_length=1, device_address=STATIC_ADDR, toc=False)
-    await write_ccc(tb, command_setdasa, payload=[VIRTUAL_DYNAMIC_ADDR << 1], data_length=1, device_address=VIRTUAL_STATIC_ADDR, toc=True)
+    await write_setdasa(tb, dyn_addr=DYNAMIC_ADDR, static_addr=STATIC_ADDR, toc=True, device_index=0x5)
+    await write_setdasa(tb, dyn_addr=VIRTUAL_DYNAMIC_ADDR, static_addr=VIRTUAL_STATIC_ADDR, toc=True, device_index=0x7)
 
     # Check that dynamic address was set correctly
     dynamic_addr = await tb.read_csr_field(
@@ -401,3 +445,192 @@ async def test_controller_ccc_setdasa_direct(dut):
         bus_idx=ACT_TARGET_IDX
     )
     assert virt_dynamic_addr_en == 1, "VIRTUAL DYNAMIC ADDRESS is not set as valid"
+
+@cocotb.test()
+async def test_controller_ccc_entdaa(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+
+# //////////////////////////////////////////////////////////////
+# //   Read the characteristic registers of the target and    //
+# //                      virtual target                      //
+# //////////////////////////////////////////////////////////////
+
+    dut._log.info("Reading Target Characteristics...")
+    
+    # Actual Target
+    target_dcr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_pid_hi = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_pid_lo = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_bcr_var = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_bcr_fixed = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_FIXED,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_pid = (target_pid_hi << 33) | target_pid_lo
+    target_bcr = (target_bcr_fixed << 5) | target_bcr_var
+
+    dut._log.info(f"Target PID: {target_pid:#014x}, DCR: {target_dcr:#04x}, BCR: {target_bcr:#04x}")
+
+    # Virtual Target
+    virt_target_dcr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.DCR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    virt_target_pid_hi = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.PID_HI,
+        bus_idx=ACT_TARGET_IDX
+    )
+    virt_target_pid_lo = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_PID_LO.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_PID_LO.PID_LO,
+        bus_idx=ACT_TARGET_IDX
+    )
+    virt_target_bcr_var = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_VAR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    virt_target_bcr_fixed = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_FIXED,
+        bus_idx=ACT_TARGET_IDX
+    )
+    
+    virt_target_pid = (virt_target_pid_hi << 33) | virt_target_pid_lo
+    virt_target_bcr = (virt_target_bcr_fixed << 5) | virt_target_bcr_var
+
+    dut._log.info(f"Virtual Target PID: {virt_target_pid:#014x}, DCR: {virt_target_dcr:#04x}, BCR: {virt_target_bcr:#04x}")
+    # -------------------------------------------------------------------------
+
+
+# //////////////////////////////////////////////////////////////
+# //             Start Dynamic Address Assignment             //
+# //////////////////////////////////////////////////////////////
+
+
+    dut._log.info("Starting DAA")
+    await write_entdaa(tb, addr_helper=addr_helper, device_index=0x0)
+    dut._log.info("Finished DAA")
+
+
+# //////////////////////////////////////////////////////////////
+# //       Check that dynamic address was set correctly       //
+# //////////////////////////////////////////////////////////////
+
+    dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr == addr_helper.trgt_dyn_addr, "Unexpected DYNAMIC ADDRESS read from the target CSR"
+    dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr_en == 1, "DYNAMIC ADDRESS is not set as valid"
+
+    virt_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr == addr_helper.trgt_virt_dyn_addr, "Unexpected VIRTUAL DYNAMIC ADDRESS read from the target CSR"
+    virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr_en == 1, "VIRTUAL DYNAMIC ADDRESS is not set as valid"
+
+
+# //////////////////////////////////////////////////////////////
+# //          Check that the DCT entries are correct          //
+# //////////////////////////////////////////////////////////////
+
+    # -------------------------------------------------------------------------
+    dct_table_index = await tb.read_csr_field(
+        tb.reg_map.I3CBASE.DCT_SECTION_OFFSET.base_addr,
+        tb.reg_map.I3CBASE.DCT_SECTION_OFFSET.TABLE_INDEX,
+        bus_idx=ACT_CONTROLLER_IDX
+    )
+    
+    # Based on the reg_map, each entry is 128-bits / 16-bytes
+    dct_base_addr = tb.reg_map.DCT.DCT_MEMORY.base_addr
+    entry_size_bytes = 16 
+
+    actual_target_found = False
+    virt_target_found = False
+
+    for i in range(2):
+        entry_addr = dct_base_addr + ((dct_table_index + i) * entry_size_bytes)
+        
+        dword0_obj = await tb.read_csr(entry_addr + 0x0, bus_idx=ACT_CONTROLLER_IDX)
+        dword1_obj = await tb.read_csr(entry_addr + 0x4, bus_idx=ACT_CONTROLLER_IDX)
+        dword2_obj = await tb.read_csr(entry_addr + 0x8, bus_idx=ACT_CONTROLLER_IDX)
+        dword3_obj = await tb.read_csr(entry_addr + 0xC, bus_idx=ACT_CONTROLLER_IDX)
+        
+        dword0 = dword2int(dword0_obj)
+        dword1 = dword2int(dword1_obj)
+        dword2 = dword2int(dword2_obj)
+        dword3 = dword2int(dword3_obj)
+        
+        entry_pid_hi   = dword0                   # Bits [31:0] of the 128-bit entry
+        entry_pid_lo   = dword1 & 0xFFFF          # Bits [47:32] (Lower 16 bits of DWORD 1)
+        entry_dcr      = dword2 & 0xFF            # Bits [71:64] (Lower 8 bits of DWORD 2)
+        entry_bcr      = (dword2 >> 8) & 0xFF     # Bits [79:72] (Next 8 bits of DWORD 2)
+        entry_dyn_addr = (dword3 & 0xFF) >> 1            # Bits [103:96] (7 bits of DWORD 3, LSB is parity bit)
+        
+        # Reconstruct the 48-bit PID to compare safely against the STBY_CR reading
+        entry_pid = (entry_pid_lo << 32) | entry_pid_hi
+        
+        dut._log.info(
+            f"DCT Entry {i} (Index {dct_table_index + i}) at address 0x{entry_addr:x}: "
+            f"PID={entry_pid:#014x}, DCR={entry_dcr:#04x}, "
+            f"BCR={entry_bcr:#04x}, DYN_ADDR={entry_dyn_addr:#04x}"
+        )
+        
+        if entry_dyn_addr == addr_helper.trgt_dyn_addr:
+            dut._log.info("-> Matching Actual Target properties")
+            assert entry_pid == target_pid, f"Actual Target PID mismatch: expected {target_pid:#014x}, got {entry_pid:#014x}"
+            assert entry_dcr == target_dcr, f"Actual Target DCR mismatch: expected {target_dcr:#04x}, got {entry_dcr:#04x}"
+            assert entry_bcr == target_bcr, f"Actual Target BCR mismatch: expected {target_bcr:#04x}, got {entry_bcr:#04x}"
+            actual_target_found = True
+            
+        elif entry_dyn_addr == addr_helper.trgt_virt_dyn_addr:
+            dut._log.info("-> Matching Virtual Target properties")
+            assert entry_pid == virt_target_pid, f"Virtual Target PID mismatch: expected {virt_target_pid:#014x}, got {entry_pid:#014x}"
+            assert entry_dcr == virt_target_dcr, f"Virtual Target DCR mismatch: expected {virt_target_dcr:#04x}, got {entry_dcr:#04x}"
+            assert entry_bcr == virt_target_bcr, f"Virtual Target BCR mismatch: expected {virt_target_bcr:#04x}, got {entry_bcr:#04x}"
+            virt_target_found = True
+            
+        else:
+            assert False, f"Unexpected DYNAMIC ADDRESS in DCT entry {i}: {entry_dyn_addr:x}"
+    
+    assert actual_target_found, "Actual target dynamic address was never found in the DCT!"
+    assert virt_target_found, "Virtual target dynamic address was never found in the DCT!"
+    # -------------------------------------------------------------------------
+
+

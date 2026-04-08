@@ -395,3 +395,42 @@ class I3CTopControllerTestInterface:
         # Write the TX descriptor
         await self.write_csr(self.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(data_length), bus_idx=bus_idx)
 
+    async def put_dat_entry(self, device_index, dyn_addr=0x00, static_addr=0x00, is_i2c=False, ibi_reject=False, ibi_payload=False, bus_idx=0):
+        """
+        Writes a 64-bit Device Address Table (DAT) entry.
+        Requires two 32-bit APB/AXI writes per entry.
+        """
+        # -------------------------------------------------------------
+        # DWORD 0: Core Address and Flag Configuration
+        # -------------------------------------------------------------
+        dword0 = 0
+        dword0 |= (static_addr & 0x7F)           # STATIC_ADDRESS  [6:0]
+        
+        if ibi_payload:
+            dword0 |= (1 << 12)                  # IBI_PAYLOAD     [12]
+        if ibi_reject:
+            dword0 |= (1 << 13)                  # IBI_REJECT      [13]
+            
+        # DYNAMIC_ADDRESS [23:16]
+        dword0 |= ((dyn_addr & 0xFF) << 16)
+        
+        # DEVICE [31] (1 = Legacy I2C, 0 = I3C Target)
+        if is_i2c:
+            dword0 |= (1 << 31)                  
+            
+        # -------------------------------------------------------------
+        # DWORD 1: Auto-Command Configuration (Defaulting to 0)
+        # -------------------------------------------------------------
+        dword1 = 0 
+        
+        # Calculate Base Address for this specific entry
+        # Each entry is 8 bytes (two 32-bit words)
+        dat_base_addr = self.reg_map.DAT.DAT_MEMORY.base_addr
+        entry_addr = dat_base_addr + (device_index * 8)
+        
+        # Write Low Word, then High Word
+        await self.write_csr(entry_addr, int2dword(dword0), bus_idx=bus_idx)
+        await self.write_csr(entry_addr + 4, int2dword(dword1), bus_idx=bus_idx)
+        
+        dev_type = "I2C" if is_i2c else "I3C"
+        self.dut._log.info(f"[DAT] Assigned {dev_type} at Index {device_index} | Static: {hex(static_addr)}, Dyn: {hex(dyn_addr)}")
