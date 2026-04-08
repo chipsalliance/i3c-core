@@ -42,7 +42,7 @@ comma := ,
 # gets an isolated output directory under sim_build/runs/.
 # RUN_DIR can still be overridden explicitly on the make command line.
 ifndef RANDOM_SEED
-    RANDOM_SEED := $(shell python3 -c "import random,time; random.seed(time.time_ns()); print(random.randint(1,2**32-1))")
+    RANDOM_SEED := $(shell python3 -c "import random,time; random.seed(time.time_ns()); print(random.randint(1,2**31-1))")
     $(info Auto-generated RANDOM_SEED=$(RANDOM_SEED))
 endif
 # Export so cocotb's recursive $(MAKE) in the 'sim' target inherits the same seed.
