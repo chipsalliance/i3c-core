@@ -104,15 +104,12 @@ class VerificationTest:
         self.seed = seed
         self.testPath = os.path.join(blockPath, blockName)
 
-        # Compilation directory (shared across test runs)
-        if coverage is None:
-            self.sim_build = "sim_build"
-        else:
-            self.sim_build = f"sim_build-{self.testName}-{coverage}"
+        # Compilation directory (shared across all test runs and coverage types)
+        self.sim_build = "sim_build"
 
         # Per-test/seed run directory for outputs
         if seed is not None:
-            self.run_dir = f"sim_build/runs/{testName}{pfx}__{seed}"
+            self.run_dir = f"{self.sim_build}/runs/{testName}{pfx}__{seed}"
         else:
             self.run_dir = None
 

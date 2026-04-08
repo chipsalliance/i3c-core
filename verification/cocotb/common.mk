@@ -35,11 +35,13 @@ else
     VERILATOR_COVERAGE = ""
 endif
 
+# Build directory
+comma := ,
+
 # Per-test/seed output isolation via RUN_DIR
 # Auto-generate a seed when the caller does not supply one so that every run
 # gets an isolated output directory under sim_build/runs/.
 # RUN_DIR can still be overridden explicitly on the make command line.
-# Must be defined before simulator-specific blocks that reference it.
 ifndef RANDOM_SEED
     RANDOM_SEED := $(shell python3 -c "import random,time; random.seed(time.time_ns()); print(random.randint(1,10000))")
     $(info Auto-generated RANDOM_SEED=$(RANDOM_SEED))
@@ -94,6 +96,9 @@ ifeq ($(SIM), vcs)
 
     ifneq ($(COVERAGE_TYPE),)
         EXTRA_ARGS += -cm line+cond+fsm+tgl+branch -lca
+        ifneq ($(RUN_DIR),)
+            SIM_ARGS += -cm_dir $(RUN_DIR)/coverage
+        endif
     endif
 endif
 
@@ -108,24 +113,7 @@ endif
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 1fs ## we need 1fs resolution to handle 333MHz clocks
 
-# Build directory
-comma := ,
-ifneq ($(COVERAGE_TYPE),)
-    # Check if more than one test is provided
-    ifeq ($(findstring $(comma),$(MODULE)),$(comma))
-        ifneq ($(SIM), vcs)
-            # Non-VCS sims need a unique SIM_BUILD per test to avoid overwriting coverage data.
-            $(error Collecting coverage for multiple tests is not supported with $(SIM). Either unset 'COVERAGE_TYPE' to run tests without coverage reporting or use nox.)
-        else
-            SIM_BUILD := sim_build-$(COVERAGE_TYPE)
-        endif
-    else
-        # Construct a unique directory for each test and coverage type
-        SIM_BUILD := sim_build-$(MODULE)-$(COVERAGE_TYPE)
-    endif
-endif
-
-include $(shell cocotb-config --makefiles)/Makefile.sim
+include $(shell python3 -m cocotb.config --makefiles)/Makefile.sim
 
 # Ensure RUN_DIR exists before simulation writes outputs there
 ifneq ($(RUN_DIR),)
