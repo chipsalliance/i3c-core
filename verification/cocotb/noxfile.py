@@ -74,7 +74,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             seed = int(external_seed)
         else:
             random.seed(time.time_ns())
-            seed = random.randint(1, 10000)
+            seed = random.randint(1, 2**32 - 1)
 
         test = VerificationTest(test_group, test_type, test_name, coverage, pfx, seed)
         # Translate session options to plusargs

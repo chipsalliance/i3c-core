@@ -35,7 +35,6 @@ else
     VERILATOR_COVERAGE = ""
 endif
 
-# Build directory
 comma := ,
 
 # Per-test/seed output isolation via RUN_DIR
