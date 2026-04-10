@@ -420,13 +420,11 @@ jobs:
           echo "=== Directory listing ==="
           ls -laR tests-results 2>/dev/null | head -50 || echo "tests-results directory not found"
 
-      - name: Setup Python virtual environment
+      - name: Setup Python environment (uv)
         run: |
-          python3 -m venv .venv
-          source .venv/bin/activate
-          export I3C_ROOT_DIR="$(pwd)"
-          pip3 install -r requirements.txt
-          pip3 install -r doc/requirements.txt
+          python3 -m pip install uv
+          uv sync
+          uv pip install -r doc/requirements.txt
 
       - name: Generate verification documentation
         run: |
@@ -459,8 +457,8 @@ jobs:
 
       - name: Build Sphinx documentation
         run: |
+          source .venv/bin/activate
           pushd doc
-            pip3 install -r requirements.txt
             TZ=UTC make html
           popd
           # Include coverage results if available

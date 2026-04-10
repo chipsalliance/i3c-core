@@ -24,5 +24,7 @@ pyenv virtualenv ${PYTHON_VERSION} ${VENV_NAME} || true
 pyenv shell ${VENV_NAME}
 python --version
 pip install --upgrade pip
-python -m pip install -r "$(pwd)"/requirements.txt
+python -m pip install uv
 pyenv rehash
+uv sync
+. .venv/bin/activate
