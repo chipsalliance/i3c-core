@@ -137,8 +137,8 @@ module i3c_target_fsm import i3c_pkg::*; (
   // Target specific variables
   logic nack_transaction_q, nack_transaction_d;
   logic rx_overflow_err_q, rx_overflow_err_d;
+  logic tx_pr_start_q, tx_pr_start_d;
   logic rx_fifo_wvalid_raw;
-
 
   i3c_byte_t last_byte;
 
@@ -402,6 +402,9 @@ module i3c_target_fsm import i3c_pkg::*; (
   assign rx_last_byte_o = (state_q inside {RxPWriteData, RxPWriteTbit}) &&
                           (state_d inside {RxFByte, Idle});
 
+  // Output the delayed version to align with virtual_device_sel
+  assign tx_pr_start_o = tx_pr_start_q;
+
   // Logic for latching CCC code
   always_ff @(posedge clk_i or negedge rst_ni) begin : latch_ccc_data
     if (~rst_ni) begin
@@ -453,7 +456,7 @@ module i3c_target_fsm import i3c_pkg::*; (
 
   // Main FSM
   always_comb begin : fsm_target_main
-    tx_pr_start_o = 1'b0;
+    tx_pr_start_d = 1'b0;
     tx_pr_abort_o = 1'b0;
     te2_err_priv_wr = 1'b0;
 
@@ -640,7 +643,7 @@ module i3c_target_fsm import i3c_pkg::*; (
       end
       CheckFByte: begin
         // Signal begin of a private read
-        tx_pr_start_o = is_any_addr_match && bus_rnw_q;
+        tx_pr_start_d = is_any_addr_match && bus_rnw_q;
 
         if (is_rsvd_byte_match || is_any_addr_match) begin
           // Do not ACK transaction if it is a read and we don't have data to send
@@ -697,7 +700,7 @@ module i3c_target_fsm import i3c_pkg::*; (
       CheckSByte: begin
         if (is_any_addr_match) begin
           // Signal begin of a private read
-          tx_pr_start_o = bus_rnw_q;
+          tx_pr_start_d = bus_rnw_q;
           if (!bus_rnw_q || tx_desc_avail_i) begin
             // Either private write or private read and data available
             state_d = TxAckSByte;
@@ -856,10 +859,12 @@ module i3c_target_fsm import i3c_pkg::*; (
       state_q <= Idle;
       ibi_retry_cnt_q <= 3'd0;
       ibi_inhibit_q   <= InhibitNone;
+      tx_pr_start_q   <= 1'b0;
     end else begin
       state_q <= state_d;
       ibi_retry_cnt_q <= ibi_retry_cnt_d;
       ibi_inhibit_q   <= ibi_inhibit_d;
+      tx_pr_start_q   <= tx_pr_start_d;
     end
   end
 
@@ -871,16 +876,12 @@ module i3c_target_fsm import i3c_pkg::*; (
     end else if (bus_any_start_det || bus_stop_det_i) begin
       // Clear on Start/Repeated Start/Stop - transaction boundary
       virtual_device_sel_o <= '0;
-    end else unique case(state_q)
-      CheckFByte:
-        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
-            virtual_device_sel_o <= is_virtual_addr_match;
-      CheckSByte:
-        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
-            virtual_device_sel_o <= is_virtual_addr_match;
-      default:
-        virtual_device_sel_o <= virtual_device_sel_o;
-    endcase
+    end else if (state_q inside {CheckFByte, CheckSByte}) begin
+      // Set on match of address header on either "first" or "second" byte
+      virtual_device_sel_o <= is_virtual_addr_match;
+    end else begin
+      virtual_device_sel_o <= virtual_device_sel_o;
+    end
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
