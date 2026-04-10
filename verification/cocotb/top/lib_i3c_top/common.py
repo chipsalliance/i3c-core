@@ -20,11 +20,19 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 
+# Fixed sim-target address -- single source of truth.
+SIM_TARGET_ADDR = 0x23
+
 
 def pick_random_addr(exclude=()):
-    """Pick a random valid I3C address, excluding any in `exclude`."""
-    candidates = [a for a in VALID_I3C_ADDRESSES if a not in exclude]
-    assert candidates, f"No valid I3C addresses left after excluding {exclude}"
+    """Pick a random valid I3C address, excluding any in `exclude`.
+
+    Always excludes SIM_TARGET_ADDR (0x23) since the sim target is
+    permanently assigned to that address in this testbench.
+    """
+    full_exclude = set(exclude) | {SIM_TARGET_ADDR}
+    candidates = [a for a in VALID_I3C_ADDRESSES if a not in full_exclude]
+    assert candidates, f"No valid I3C addresses left after excluding {full_exclude}"
     return random.choice(candidates)
 
 

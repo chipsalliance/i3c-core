@@ -25,7 +25,7 @@ from interface import I3CTopTestInterface
 import cocotb
 from cocotb.triggers import ClockCycles, Timer
 
-from common import VALID_I3C_ADDRESSES, pick_random_addr, log_seed, do_getpid, do_getbcr
+from common import VALID_I3C_ADDRESSES, SIM_TARGET_ADDR, pick_random_addr, log_seed, do_getpid, do_getbcr
 
 
 def parse_pid(data):
@@ -38,7 +38,7 @@ def parse_pid(data):
 
 
 async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
-                    sim_target_addr=None, speed=None,
+                    speed=None,
                     sim_bcr=0x00, sim_dcr=0x00,
                     sda_read_timeout_us=100):
     """
@@ -47,7 +47,6 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     dut_pid_hi: 15-bit value for DUT's PID_HI register (bits[47:33])
     dut_pid_lo: 32-bit value for DUT's PID_LO register (bits[31:0])
     sim_pid: 48-bit PID for the sim target
-    sim_target_addr: address for the sim target (randomized if None)
     speed: I3C bus clock frequency in Hz (randomized 1-12.5 MHz if None)
     sim_bcr: 8-bit BCR value for the sim target
     sim_dcr: 8-bit DCR value for the sim target
@@ -56,9 +55,12 @@ async def setup_env(dut, dut_pid_hi, dut_pid_lo, sim_pid,
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
 
-    # Pick sim target address: use provided value or randomize
-    if sim_target_addr is None:
-        sim_target_addr = pick_random_addr()
+    # Fixed sim target address.
+    # TODO(Option-B): Re-enable sim target address randomization.
+    # To randomize, restore the sim_target_addr parameter and uncomment:
+    #   if sim_target_addr is None:
+    #       sim_target_addr = pick_random_addr()
+    sim_target_addr = SIM_TARGET_ADDR
 
     # Pick bus speed: use provided value or randomize
     if speed is None:
