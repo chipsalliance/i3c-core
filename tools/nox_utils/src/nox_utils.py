@@ -116,6 +116,9 @@ class VerificationTest:
         # Convert NoneType to empty string
         coverage = "" if coverage is None else str(coverage)
 
+        def get_path(name):
+            return os.path.join(self.testPath, name)
+
         if self.run_dir is not None:
             # Outputs go into run_dir with generic names
             self.filenames = {
@@ -136,9 +139,6 @@ class VerificationTest:
 
             def get_run_path(name):
                 return os.path.join(self.testPath, self.run_dir, name)
-
-            def get_path(name):
-                return os.path.join(self.testPath, name)
 
             self.paths = {
                 "vcd_default": get_run_path("dump.vcd"),
@@ -187,9 +187,6 @@ class VerificationTest:
                 "fst_default": defaultNameFST,
                 "fst": testNameFST,
             }
-
-            def get_path(name):
-                return os.path.join(self.testPath, name)
 
             self.paths = {
                 "vcd_default": get_path(defaultNameVCD),
