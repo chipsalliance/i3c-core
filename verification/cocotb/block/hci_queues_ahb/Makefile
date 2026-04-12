@@ -24,8 +24,10 @@ VERILOG_SOURCES += \
     $(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \
+    $(CALIPTRA_ROOT)/src/libs/rtl/ahb_slv_sif.sv \
     $(SRC_DIR)/hci/ahb_if.sv \
     $(SRC_DIR)/hci/dxt.sv \
+    $(SRC_DIR)/interrupt.sv \
     $(SRC_DIR)/hci/queues/write_queue.sv \
     $(SRC_DIR)/hci/queues/read_queue.sv \
     $(SRC_DIR)/hci/tti.sv \

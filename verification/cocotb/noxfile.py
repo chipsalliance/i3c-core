@@ -64,15 +64,26 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
     # session.install("-r", pip_requirements_path)
 
     test_iterations = int(os.getenv("TEST_ITERATIONS", 1))
+    external_seed = os.getenv("RANDOM_SEED", None)
+
     for i in range(test_iterations):
         pfx = "" if test_iterations == 1 else f"_{i}"
-        test = VerificationTest(test_group, test_type, test_name, coverage, pfx)
+
+        # Determine seed: use user-provided or generate one
+        if external_seed is not None:
+            seed = int(external_seed)
+        else:
+            random.seed(time.time_ns())
+            seed = random.randint(1, 2**31 - 1)
+
+        test = VerificationTest(test_group, test_type, test_name, coverage, pfx, seed)
         # Translate session options to plusargs
         plusargs = list(session.posargs)
 
-        # Randomize seed for initialization of undefined signals in the simulation
-        random.seed(time.time_ns())
-        seed = random.randint(1, 10000)
+        # Ensure run directory exists before writing the log
+        if test.run_dir is not None:
+            run_dir_abs = os.path.join(test.testPath, test.run_dir)
+            os.makedirs(run_dir_abs, exist_ok=True)
 
         with open(test.paths["log_default"], "w") as test_log:
             # Remove simulation build artifacts
@@ -88,8 +99,18 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 test.testPath,
                 "all",
                 "MODULE=" + test_name,
-                "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
             ]
+
+            # Seed Python's random module via cocotb's built-in mechanism
+            args.append(f"RANDOM_SEED={seed}")
+
+            # Pass run directory for output isolation.
+            # When run_dir is set, common.mk computes COCOTB_RESULTS_FILE
+            # from RUN_DIR. Otherwise, pass the filename explicitly.
+            if test.run_dir is not None:
+                args.append(f"RUN_DIR={test.run_dir}")
+            else:
+                args.append("COCOTB_RESULTS_FILE=" + test.filenames["xml"])
 
             if simulator == "verilator":
                 plusargs.extend(
@@ -100,6 +121,10 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 )
                 if os.getenv("WAVES", "0") == "1":
                     plusargs.append("--trace")
+
+            if simulator == "vcs":
+                plusargs.append(f"+ntb_random_seed={seed}")
+
             if coverage:
                 args.append("COVERAGE_TYPE=" + coverage)
 

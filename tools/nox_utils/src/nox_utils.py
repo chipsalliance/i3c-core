@@ -90,70 +90,119 @@ def isUVMSimFailure(resultsFile="nox_uvm.log", suppress_return_code=False, verbo
 class VerificationTest:
     """
     Useful to manage files produced by Cocotb+Verilator in I3C_ROOT_DIR/verification/block
+
+    When a seed is provided, outputs are isolated under sim_build/runs/{test}__{seed}/.
+    The compilation directory (sim_build/) is shared across runs.
     """
 
-    def __init__(self, blockName: str, blockPath: str, testName: str, coverage: str | None, pfx=""):
+    def __init__(self, blockName: str, blockPath: str, testName: str, coverage: str | None, pfx="", seed: int | None = None):
         self.blockName = blockName
         self.blockPath = blockPath
         self.testName = testName
         self.coverage = coverage
         self.pfx = pfx
+        self.seed = seed
         self.testPath = os.path.join(blockPath, blockName)
-        self.sim_build = "sim_build" if coverage is None else f"sim_build-{self.testName}-{coverage}"
+
+        # Compilation directory (shared across all test runs and coverage types)
+        self.sim_build = "sim_build"
+
+        # Per-test/seed run directory for outputs
+        if seed is not None:
+            self.run_dir = f"{self.sim_build}/runs/{testName}{pfx}__{seed}"
+        else:
+            self.run_dir = None
 
         # Convert NoneType to empty string
         coverage = "" if coverage is None else str(coverage)
 
-        # Defaults from verilator
-        defaultNameVCD = "dump.vcd"
-        defaultNameCoverage = "coverage.dat"
-        defaultTestNameLog = f"{self.testName}{pfx}.log"
-        defaultNameVDB = f"{self.sim_build}/simv.vdb"
-        defaultNameFSDB = "dump.fsdb"
-        defaultNameFST = "dump.fst"
-
-        testNameVCD = f"{self.testName}{pfx}.vcd"
-        testNameXML = f"{self.testName}{pfx}.xml"
-        testCoverageName = f"{self.testName}{pfx}_{coverage}.dat"
-        testNameLog = f"{self.testName}{pfx}_{coverage}.log"
-        testNameVDB = f"{self.testName}{pfx}.vdb"
-        testNameFSDB = f"{self.testName}{pfx}.fsdb"
-        testNameFST = f"{self.testName}{pfx}.fst"
-
-        self.filenames = {
-            "vcd_default": defaultNameVCD,
-            "vcd": testNameVCD,
-            "xml": testNameXML,
-            "log_default": defaultTestNameLog,
-            "log": testNameLog,
-            "cov_default": defaultNameCoverage,
-            "cov": testCoverageName,
-            "vdb_default": defaultNameVDB,
-            "vdb": testNameVDB,
-            "fsdb_default": defaultNameFSDB,
-            "fsdb": testNameFSDB,
-            "fst_default": defaultNameFST,
-            "fst": testNameFST,
-        }
-
         def get_path(name):
             return os.path.join(self.testPath, name)
 
-        self.paths = {
-            "vcd_default": get_path(defaultNameVCD),
-            "vcd": get_path(testNameVCD),
-            "xml": get_path(testNameXML),
-            "log_default": get_path(defaultTestNameLog),
-            "log": get_path(testNameLog),
-            "cov_default": get_path(defaultNameCoverage),
-            "cov": get_path(testCoverageName),
-            "vdb_default": get_path(defaultNameVDB),
-            "vdb": get_path(testNameVDB),
-            "fsdb_default": get_path(defaultNameFSDB),
-            "fsdb": get_path(testNameFSDB),
-            "fst_default": get_path(defaultNameFST),
-            "fst": get_path(testNameFST),
-        }
+        if self.run_dir is not None:
+            # Outputs go into run_dir with generic names
+            self.filenames = {
+                "vcd_default": "dump.vcd",
+                "vcd": "dump.vcd",
+                "xml": "results.xml",
+                "log_default": "run.log",
+                "log": "run.log",
+                "cov_default": "coverage.dat",
+                "cov": "coverage.dat",
+                "vdb_default": f"{self.sim_build}/simv.vdb",
+                "vdb": f"{self.testName}{pfx}.vdb",
+                "fsdb_default": "dump.fsdb",
+                "fsdb": "dump.fsdb",
+                "fst_default": "dump.fst",
+                "fst": "dump.fst",
+            }
+
+            def get_run_path(name):
+                return os.path.join(self.testPath, self.run_dir, name)
+
+            self.paths = {
+                "vcd_default": get_run_path("dump.vcd"),
+                "vcd": get_run_path("dump.vcd"),
+                "xml": get_run_path("results.xml"),
+                "log_default": get_run_path("run.log"),
+                "log": get_run_path("run.log"),
+                "cov_default": get_run_path("coverage.dat"),
+                "cov": get_run_path("coverage.dat"),
+                "vdb_default": get_path(f"{self.sim_build}/simv.vdb"),
+                "vdb": get_path(f"{self.testName}{pfx}.vdb"),
+                "fsdb_default": get_run_path("dump.fsdb"),
+                "fsdb": get_run_path("dump.fsdb"),
+                "fst_default": get_run_path("dump.fst"),
+                "fst": get_run_path("dump.fst"),
+            }
+        else:
+            # Legacy behavior: flat files in testPath
+            defaultNameVCD = "dump.vcd"
+            defaultNameCoverage = "coverage.dat"
+            defaultTestNameLog = f"{self.testName}{pfx}.log"
+            defaultNameVDB = f"{self.sim_build}/simv.vdb"
+            defaultNameFSDB = "dump.fsdb"
+            defaultNameFST = "dump.fst"
+
+            testNameVCD = f"{self.testName}{pfx}.vcd"
+            testNameXML = f"{self.testName}{pfx}.xml"
+            testCoverageName = f"{self.testName}{pfx}_{coverage}.dat"
+            testNameLog = f"{self.testName}{pfx}_{coverage}.log"
+            testNameVDB = f"{self.testName}{pfx}.vdb"
+            testNameFSDB = f"{self.testName}{pfx}.fsdb"
+            testNameFST = f"{self.testName}{pfx}.fst"
+
+            self.filenames = {
+                "vcd_default": defaultNameVCD,
+                "vcd": testNameVCD,
+                "xml": testNameXML,
+                "log_default": defaultTestNameLog,
+                "log": testNameLog,
+                "cov_default": defaultNameCoverage,
+                "cov": testCoverageName,
+                "vdb_default": defaultNameVDB,
+                "vdb": testNameVDB,
+                "fsdb_default": defaultNameFSDB,
+                "fsdb": testNameFSDB,
+                "fst_default": defaultNameFST,
+                "fst": testNameFST,
+            }
+
+            self.paths = {
+                "vcd_default": get_path(defaultNameVCD),
+                "vcd": get_path(testNameVCD),
+                "xml": get_path(testNameXML),
+                "log_default": get_path(defaultTestNameLog),
+                "log": get_path(testNameLog),
+                "cov_default": get_path(defaultNameCoverage),
+                "cov": get_path(testCoverageName),
+                "vdb_default": get_path(defaultNameVDB),
+                "vdb": get_path(testNameVDB),
+                "fsdb_default": get_path(defaultNameFSDB),
+                "fsdb": get_path(testNameFSDB),
+                "fst_default": get_path(defaultNameFST),
+                "fst": get_path(testNameFST),
+            }
 
     def rename_default(self, dest: str):
         source = self.paths[f"{dest}_default"]
@@ -163,6 +212,9 @@ class VerificationTest:
         os.rename(source, self.paths[dest])
 
     def rename_defaults(self, coverage: str | None, simulator: str | None):
+        # When run_dir is set, outputs are already isolated — no renaming needed
+        if self.run_dir is not None:
+            return
         if coverage:
             self.rename_default("log")
             if simulator is not None and "vcs" in simulator:

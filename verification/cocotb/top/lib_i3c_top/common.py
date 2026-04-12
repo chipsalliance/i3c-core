@@ -8,11 +8,12 @@ from cocotb.triggers import Timer
 
 from ccc import CCC
 
-# Canonical I3C address list -- single source of truth.
-# These are all valid 7-bit I3C dynamic addresses per the spec,
-# excluding reserved addresses (0x00-0x02, 0x3E, 0x5E, 0x6E, 0x76, 0x7A, 0x7C, 0x7E-0x7F).
+# Canonical I3C address list -- single source of truth
+# 0x23 is excluded: it is hardcoded as the I3CTarget sim model address
+# and selecting it for DUT addresses causes bus contention.
 VALID_I3C_ADDRESSES = (
-    [i for i in range(0x03, 0x3E)]
+    [i for i in range(0x03, 0x23)]
+    + [i for i in range(0x24, 0x3E)]
     + [i for i in range(0x3F, 0x5E)]
     + [i for i in range(0x5F, 0x6E)]
     + [i for i in range(0x6F, 0x76)]
@@ -20,11 +21,19 @@ VALID_I3C_ADDRESSES = (
     + [0x7B, 0x7D]
 )
 
+# Fixed sim-target address -- single source of truth.
+SIM_TARGET_ADDR = 0x23
+
 
 def pick_random_addr(exclude=()):
-    """Pick a random valid I3C address, excluding any in `exclude`."""
-    candidates = [a for a in VALID_I3C_ADDRESSES if a not in exclude]
-    assert candidates, f"No valid I3C addresses left after excluding {exclude}"
+    """Pick a random valid I3C address, excluding any in `exclude`.
+
+    Always excludes SIM_TARGET_ADDR (0x23) since the sim target is
+    permanently assigned to that address in this testbench.
+    """
+    full_exclude = set(exclude) | {SIM_TARGET_ADDR}
+    candidates = [a for a in VALID_I3C_ADDRESSES if a not in full_exclude]
+    assert candidates, f"No valid I3C addresses left after excluding {full_exclude}"
     return random.choice(candidates)
 
 
@@ -35,9 +44,18 @@ async def timeout_task(timeout_us):
 
 
 def log_seed(dut):
-    """Log the random seed for reproducibility."""
-    seed = cocotb.plusargs.get("seed", None)
-    dut._log.info(f"Random seed: {seed or 'unknown (set via RANDOM_SEED plusarg)'}")
+    """Log the random seed for reproducibility.
+
+    The seed is controlled via the COCOTB_RANDOM_SEED environment variable
+    which cocotb reads automatically to seed Python's random module.
+    Use RANDOM_SEED env var (via nox) or SEED= make var for direct make runs.
+    """
+    import os
+    seed = os.environ.get("RANDOM_SEED", None)
+    if seed is not None:
+        dut._log.info(f"Random seed: {seed} (from RANDOM_SEED)")
+    else:
+        dut._log.info("Random seed: not set (use RANDOM_SEED env var)")
 
 
 # =============================================================================

@@ -2,7 +2,7 @@
 
 TOPLEVEL_LANG    = verilog
 SIM             ?= verilator
-WAVES           ?= 1
+WAVES           ?= 0
 TRACK_FSM       ?= 1
 
 # Paths
@@ -35,6 +35,27 @@ else
     VERILATOR_COVERAGE = ""
 endif
 
+comma := ,
+
+# Per-test/seed output isolation via RUN_DIR
+# Auto-generate a seed when the caller does not supply one so that every run
+# gets an isolated output directory under sim_build/runs/.
+# RUN_DIR can still be overridden explicitly on the make command line.
+ifndef RANDOM_SEED
+    RANDOM_SEED := $(shell python3 -c "import random,time; random.seed(time.time_ns()); print(random.randint(1,2**31-1))")
+    $(info Auto-generated RANDOM_SEED=$(RANDOM_SEED))
+endif
+# Export so cocotb's recursive $(MAKE) in the 'sim' target inherits the same seed.
+export RANDOM_SEED
+
+ifneq ($(findstring $(comma),$(MODULE)),)
+    RUN_DIR ?= sim_build/runs/all__$(RANDOM_SEED)
+else
+    RUN_DIR ?= sim_build/runs/$(MODULE)__$(RANDOM_SEED)
+endif
+
+COCOTB_RESULTS_FILE := $(RUN_DIR)/results.xml
+
 COMPILE_ARGS += +define+DIGITAL_IO_I3C
 
 ifeq ($(SIM), verilator)
@@ -56,7 +77,14 @@ ifeq ($(SIM), vcs)
     COMPILE_ARGS += -kdb
     COMPILE_ARGS += -debug_access+all +vcs+fsdbon
     ifeq ($(WAVES), 1)
-        SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+        ifneq ($(RUN_DIR),)
+            SIM_ARGS += +fsdbfile+$(RUN_DIR)/dump.fsdb +fsdb+all=on +fsdb+mda=on
+        else
+            SIM_ARGS += +fsdbfile+dump.fsdb +fsdb+all=on +fsdb+mda=on
+        endif
+    endif
+    ifneq ($(RUN_DIR),)
+        SIM_ARGS += -l $(RUN_DIR)/run.log
     endif
     EXTRA_ARGS += +vcs+lic+wait
 
@@ -67,6 +95,9 @@ ifeq ($(SIM), vcs)
 
     ifneq ($(COVERAGE_TYPE),)
         EXTRA_ARGS += -cm line+cond+fsm+tgl+branch -lca
+        ifneq ($(RUN_DIR),)
+            SIM_ARGS += -cm_dir $(RUN_DIR)/coverage
+        endif
     endif
 endif
 
@@ -81,32 +112,48 @@ endif
 COCOTB_HDL_TIMEUNIT         = 1ns
 COCOTB_HDL_TIMEPRECISION    = 1fs ## we need 1fs resolution to handle 333MHz clocks
 
-# Build directory
-comma := ,
-ifneq ($(COVERAGE_TYPE),)
-    # Check if more than one test is provided
-    ifeq ($(findstring $(comma),$(MODULE)),$(comma))
-        ifneq ($(SIM), vcs)
-            # Non-VCS sims need a unique SIM_BUILD per test to avoid overwriting coverage data.
-            $(error Collecting coverage for multiple tests is not supported with $(SIM). Either unset 'COVERAGE_TYPE' to run tests without coverage reporting or use nox.)
-        else
-            SIM_BUILD := sim_build-$(COVERAGE_TYPE)
-        endif
-    else
-        # Construct a unique directory for each test and coverage type
-        SIM_BUILD := sim_build-$(MODULE)-$(COVERAGE_TYPE)
-    endif
+include $(shell python3 -m cocotb.config --makefiles)/Makefile.sim
+
+# Ensure RUN_DIR exists before simulation writes outputs there
+ifneq ($(RUN_DIR),)
+$(COCOTB_RESULTS_FILE): | $(RUN_DIR)
+$(RUN_DIR):
+	mkdir -p $@
 endif
 
-include $(shell cocotb-config --makefiles)/Makefile.sim
+# Collect stray logs into RUN_DIR after simulation completes.
+# FSM tracker modules ($fopen) and VCS (novas*) write to CWD; move them.
+ifneq ($(RUN_DIR),)
+.PHONY: collect-run-logs
+collect-run-logs: $(COCOTB_RESULTS_FILE)
+	@for f in *_transitions.log *_transactions.log novas.fsdb novas_dump.log novas.rc; do \
+	  if [ -e "$$f" ]; then mv -f "$$f" $(RUN_DIR)/; fi; \
+	done
+
+all: collect-run-logs
+endif
 
 ifeq ($(SIM), vcs)
 
-.PHONY: convert-vpd2vcd
-convert-vpd2vcd: $(COCOTB_RESULTS_FILE)
-	vpd2vcd -full64 dump.vpd dump.vcd +splitpacked
+.PHONY: convert-waves2vcd
+convert-waves2vcd: $(COCOTB_RESULTS_FILE)
+	@if [ -f dump.vpd ]; then \
+		echo "Converting dump.vpd to dump.vcd..."; \
+		vpd2vcd -full64 dump.vpd dump.vcd +splitpacked; \
+	elif [ -f dump.fsdb ]; then \
+		if command -v fsdb2vcd >/dev/null 2>&1; then \
+			echo "Converting dump.fsdb to dump.vcd..."; \
+			fsdb2vcd dump.fsdb -o dump.vcd; \
+		else \
+			echo "Warning: dump.fsdb found but fsdb2vcd not in PATH. Skipping VCD conversion."; \
+		fi \
+	fi
 
-all: sim convert-vpd2vcd
+ifeq ($(WAVES), 1)
+all: sim convert-waves2vcd
+else
+all: sim
+endif
 
 endif
 
