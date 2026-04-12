@@ -8,6 +8,7 @@ from random import choice, randint
 from typing import List, Tuple
 
 # AHB
+from cocotb_AHB.AHB_common.AHB_types import IRESP
 from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper
 from cocotb_AHB.drivers.DutSubordinate import DUTSubordinate
 from cocotb_AHB.drivers.SimSimpleManager import SimSimpleManager
@@ -21,7 +22,7 @@ from reg_map import reg_map
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, Lock, RisingEdge, Timer, with_timeout
+from cocotb.triggers import ClockCycles, Lock, ReadOnly, ReadWrite, RisingEdge, Timer, with_timeout
 
 
 # Helpers
@@ -161,12 +162,43 @@ class AHBTestInterface(FrontBusTestInterface):
     async def read_csr(
         self, addr: int, size: int = 4, arid=None, timeout: int = 1, units: str = "us"
     ) -> List[int]:
-        """Send a read request & await the response for 'timeout' in 'units'."""
+        """Send a read request & await the response for 'timeout' in 'units'.
+
+        A background coroutine samples DUT response signals (hrdata) at the
+        ReadOnly phase every cycle.  This guarantees settled combinational
+        values regardless of the simulator's VPI scheduling region, working
+        around VCS builds where a ReadWrite-phase read may return stale data.
+        """
         if arid:
             self.dut._log.debug(f"AHB doesn't support user id, ignoring arid={arid}")
         async with self._bus_lock:
+            captured_hrdata = [0]
+
+            async def _readonly_sampler():
+                """Continuously sample hrdata at ReadOnly when hreadyout is asserted."""
+                while True:
+                    await ReadOnly()
+                    try:
+                        if int(self.dut.hreadyout.value) == 1:
+                            captured_hrdata[0] = int(self.dut.hrdata.value)
+                    except ValueError:
+                        pass  # X/Z values during reset
+                    await RisingEdge(self.clk)
+
+            sampler = await cocotb.start(_readonly_sampler())
             self.AHBManager.read(addr, size)
-            await with_timeout(self.AHBManager.transfer_done(), timeout, units)
+            try:
+                await with_timeout(self.AHBManager.transfer_done(), timeout, units)
+            finally:
+                sampler.kill()
+
+            # Patch framework responses with ReadOnly-sampled data, then use
+            # the framework's own byte-extraction logic (get_rsp) to return
+            # the correctly-ordered byte list.
+            for i, rsp in enumerate(self.AHBManager.responses):
+                self.AHBManager.responses[i] = IRESP(
+                    hRData=captured_hrdata[0], hResp=rsp.hResp, hExOkay=rsp.hExOkay
+                )
             read = self.AHBManager.get_rsp(addr, self.data_byte_width)
         return read
 
