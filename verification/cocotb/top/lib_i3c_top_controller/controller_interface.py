@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from bus2csr import get_frontend_bus_if, int2dword, dword2int
-from hci import immediate_transfer_descriptor, ResponseDescriptor
+from hci import immediate_transfer_descriptor, ResponseDescriptor, I3cIbiStatusDesc
 from cocotb_helpers import reset_n
 from reg_map import reg_map
 from utils import get_sv_define
@@ -434,3 +434,30 @@ class I3CTopControllerTestInterface:
         
         dev_type = "I2C" if is_i2c else "I3C"
         self.dut._log.info(f"[DAT] Assigned {dev_type} at Index {device_index} | Static: {hex(static_addr)}, Dyn: {hex(dyn_addr)}")
+
+    async def read_ibi(self, bus_idx=0):
+        """
+        Reads the IBI data from the IBI_PORT.
+        Extracts the IBI Status Descriptor to determine the payload length,
+        then reads the subsequent DWORDs from the FIFO.
+        """
+        ibi_port_addr = self.reg_map.PIOCONTROL.IBI_PORT.base_addr
+        
+        desc_obj = await self.read_csr(ibi_port_addr, bus_idx=bus_idx)
+        desc_int = dword2int(desc_obj)
+        ibi_status_desc = I3cIbiStatusDesc.from_int(desc_int)
+        
+        data_length = ibi_status_desc.data_length
+        
+        num_dwords = ceil(data_length / 4)
+        
+        self.dut._log.info(f"[IBI] Status Descriptor: {hex(desc_int)} | Payload Length: {data_length} bytes ({num_dwords} DWORDs)")
+        
+        ibi_payload = []
+        for i in range(num_dwords):
+            data_obj = await self.read_csr(ibi_port_addr, bus_idx=bus_idx)
+            data_int = dword2int(data_obj)
+            ibi_payload.append(data_int)
+            self.dut._log.debug(f"[IBI] Payload DWORD {i}: {hex(data_int)}")
+            
+        return ibi_status_desc, ibi_payload

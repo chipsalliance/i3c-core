@@ -188,6 +188,25 @@ class address_assignment_descriptor:
         )
 
 
+@dataclass
+class internal_control_descriptor:
+    tid: int
+    vip: bool
+    mipi_cmd: int
+    mipi_rsvd: int
+    vendor_specific: int
+
+    def to_int(self):
+        cmd_attr = 0x7  # Internal Control Command
+        return (
+            self.vendor_specific & 0xFFFFFFFF << 32
+            | (self.mipi_rsvd & 0xFFFFF) << 12
+            | (self.mipi_cmd & 0xF) << 8
+            | (int(self.vip) & 0x1) << 7
+            | (self.tid & 0xF) << 3
+            | (cmd_attr & 0x7)
+        )
+
 
 @dataclass
 class dat_entry:
@@ -222,6 +241,51 @@ class dat_entry:
             | self.static_addr & 0x7F
         )
 
+# IBI Status Type Enum
+class IbiStatusType(IntEnum):
+    REGULAR_IBI = 0b000
+    CREDIT_ACK = 0b001
+    SCHEDULED_CMD = 0b010
+    AUTOCMD_READ = 0b100
+    STBY_CR_BCAST_CCC = 0b111
+
+# IBI Status Descriptor
+@dataclass
+class I3cIbiStatusDesc:
+    data_length: int
+    ibi_id: int
+    chunks: int
+    last_status: int
+    ts: int
+    status_type: int
+    error: int
+    ibi_sts: int
+
+    def to_int(self):
+        return (
+            (self.ibi_sts & 0x1) << 31
+            | (self.error & 0x1) << 30
+            | (self.status_type & 0x7) << 27
+            | (self.ts & 0x1) << 25
+            | (self.last_status & 0x1) << 24
+            | (self.chunks & 0xFF) << 16
+            | (self.ibi_id & 0xFF) << 8
+            | (self.data_length & 0xFF)
+        )
+
+    @classmethod
+    def from_int(cls, val: int):
+        return cls(
+            ibi_sts=(val >> 31) & 0x1,
+            error=(val >> 30) & 0x1,
+            status_type=(val >> 27) & 0x7,
+            ts=(val >> 25) & 0x1,
+            last_status=(val >> 24) & 0x1,
+            chunks=(val >> 16) & 0xFF,
+            ibi_id=(val >> 8) & 0xFF,
+            data_length=val & 0xFF
+        )
+        
 
 class ErrorStatus(IntEnum):
     SUCCESS = 0

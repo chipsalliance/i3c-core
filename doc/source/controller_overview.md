@@ -34,16 +34,16 @@ High-Level Block Diagram
 ### Host Controller Interface (HCI)
 * **Registers (RDL):** Full implementation of the Register Description List for configuration and status monitoring.
 * **Queues:** Support for Command, Response, TX, RX, and IBI queues.
-* **(WIP) Tables:**
+* **Tables:**
     * **DAT (Device Address Table):** Storage for Dynamic Addresses and device types.
     * **DCT (Device Characteristics Table):** Storage for device-specific parameters (PID, BCR, DCR).
 
 ### Controller Core Logic
-* **(WIP) SDA Arbitration Management:** Handling of bus arbitration during Start/Restart phases.
+* **SDA Arbitration Management:** Handling of bus arbitration during Start/Restart phases.
 * **Frame Generation:**
     * **Read Frame:** Support for SDR Read transactions with and without `7'h7E` I3C address.
     * **Write Frame:** Support for SDR Write transactions with and without `7'h7E` I3C address.
-* **(WIP) IBI Handling:** Detection and processing of In-Band Interrupts from Targets.
+* **IBI Handling:** Detection and processing of In-Band Interrupts from Targets.
 * **(WIP) HDR Pattern Generation:**
     * **HDR Exit Pattern:** Logic to generate the specific sequence to exit High Data Rate modes (ensuring bus reset/compatibility).
     * **HDR Restart Pattern:** Logic to generate the HDR Restart sequence.
@@ -80,6 +80,24 @@ When configuring the DAA procedure, software developers must adhere to the follo
 1. **Pre-populate the DAT:** All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated **before** initiating the DAA procedure with the `ENTDAA` CCC. 
 2. **Handling Unassigned Targets:** If the specified `DEV_COUNT` number of dynamic addresses has been successfully assigned, but unaddressed devices still remain on the bus, the controller will return a value of `0x1` in the `DATA_LENGTH` field of the Response Descriptor. This signals to the host that at least one target device still requires an address.
 3. **DCT Initialization:** The Device Characteristics Table (DCT) Index always starts at `0`.
+
+### In-Band Interrupts (IBI)
+
+The I3C Controller supports the detection and servicing of In-Band Interrupts (IBIs) initiated by target devices.
+The controller can recognize and process these interrupts whether they are raised during a Bus Available condition or during arbitrable address headers.
+
+When an IBI is processed, the controller writes the resulting data into the `PIOCONTROL.IBI_PORT` CSR.
+To ensure efficient reading by the host software, the IBI data is packed into the 32-bit port in the following sequence:
+
+1. **IBI Status Descriptor:** The first 32-bit word (DWORD) written to the port is always the IBI Status Descriptor. This descriptor contains vital metadata about the interrupt, including the `data_length` (in bytes) of the incoming payload as well as the dynamic address of the target issuing the IBI.
+2. **Payload Data:** The Status Descriptor is immediately followed by the actual IBI data payload. The data is chunked and written as `(data_length + 3) / 4` DWORDs.
+3. **Mandatory Data Byte (MDB) Placement:** If the target sends a Mandatory Data Byte (MDB), it is always packed into the Least Significant Byte (LSB) of the very first data DWORD immediately following the Status Descriptor.
+
+#### Internal Buffer & Overflow Handling
+In accordance with the I3C HCI Specification (Section 6.9.1, *IBI Handling in PIO Mode*), the controller utilizes an internal hardware buffer to temporarily hold the target's optional IBI data bytes during the read transaction. 
+
+* **Overflow Condition:** If a target attempts to send a number of optional bytes that is **greater than or equal to** the internal buffer size, the controller will flag an error and immediately abort the IBI transaction.
+* **Data Retention:** In the event of a buffer overflow and subsequent abort, the controller recovers by writing the first *buffer size* bytes (the maximum data it successfully captured before the abort) into the `IBI_PORT`.
 
 ### Error Conditions
 
@@ -449,6 +467,10 @@ Flow Active FSM
   - input
   - 1
   - Format receive NACK
+* - `fmt_sda_arbitration_i`
+  - input
+  - 1
+  - SDA line arbitration is detected
 * - `fmt_byte_i`
   - input
   - 8
@@ -624,6 +646,14 @@ This module acts as the main controller of the I3C bus, handling the serializati
   - input
   - `i3c_pkg::TimingWidth`
   - Bus free time between STOP and START in clock units
+* - `t_bus_idle_i`
+  - input
+  - `i3c_pkg::TimingWidth`
+  - Bus IDLE condition time in clock units
+* - `t_bus_available_i`
+  - input
+  - `i3c_pkg::TimingWidth`
+  - Bus AVAILABLE condition time in clock units
 * - `fmt_fifo_rvalid_i`
   - input
   - 1
@@ -664,6 +694,10 @@ This module acts as the main controller of the I3C bus, handling the serializati
   - output
   - 1
   - Format receive NACK
+* - `fmt_sda_arbitration_o`
+  - output
+  - 1
+  - SDA line arbitration is detected
 * - `fmt_byte_o`
   - output
   - 8

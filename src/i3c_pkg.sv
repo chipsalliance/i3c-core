@@ -283,6 +283,28 @@ package i3c_pkg;
     logic [15:0] data_length;
   } i3c_response_desc_t;
 
+  // IBI Status Type
+  typedef enum logic [2:0] {
+    RegularIBI = 3'b000,
+    CreditACK = 3'b001,
+    ScheduledCMD = 3'b010,
+    AutocmdRead = 3'b100,
+    StbyCRBcastCCC = 3'b111
+  } ibi_status_e;
+
+  // IBI Status Descriptor (See Table 147 I3C HCI Spec)
+  typedef struct packed {
+    logic ibi_sts;
+    logic error;
+    ibi_status_e status_type;
+    logic __rsvd26;
+    logic ts;
+    logic last_status;
+    logic [7:0] chunks;
+    logic [7:0] ibi_id;
+    logic [7:0] data_length;
+  } i3c_ibi_status_desc_t;
+
   typedef struct packed {
     logic [31:16] data_length;
     logic [15:0]  __rsvd15_0;

@@ -21,21 +21,23 @@ module i3c_controller_fsm
     input logic is_i2c_transfer_i,
 
     // Timing constants
-    input [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units in Push-Pull Mode
-    input [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units in Push-Pull Mode
-    input [i3c_pkg::TimingWidth-1:0] thigh_od_i,  // high period of the SCL in clock units in Open-Drain Mode
-    input [i3c_pkg::TimingWidth-1:0] thigh_od_init_i,  // high period of the SCL in clock units in Open-Drain Mode during init procedure
-    input [i3c_pkg::TimingWidth-1:0] tlow_od_i,  // low period of the SCL in clock units in Open-Drain Mode
-    input [i3c_pkg::TimingWidth-1:0] t_r_i,  // rise time of both SDA and SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_f_i,  // fall time of both SDA and SCL in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_sta_od_i,  // hold time for START in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_rsta_i,  // hold time for repeated START in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_rsta_i,  // setup time for repeated START in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_sto_i,  // setup time for STOP in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_ds_od_i,  // setup time for SDA during START in clock units
-    input [i3c_pkg::TimingWidth-1:0] tsu_dat_i,  // data setup time in clock units
-    input [i3c_pkg::TimingWidth-1:0] thd_dat_i,  // data hold time in clock units
-    input [i3c_pkg::TimingWidth-1:0] t_buf_i,  // bus free time between STOP and START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] thigh_i,  // high period of the SCL in clock units in Push-Pull Mode
+    input logic [i3c_pkg::TimingWidth-1:0] tlow_i,  // low period of the SCL in clock units in Push-Pull Mode
+    input logic [i3c_pkg::TimingWidth-1:0] thigh_od_i,  // high period of the SCL in clock units in Open-Drain Mode
+    input logic [i3c_pkg::TimingWidth-1:0] thigh_od_init_i,  // high period of the SCL in clock units in Open-Drain Mode during init procedure
+    input logic [i3c_pkg::TimingWidth-1:0] tlow_od_i,  // low period of the SCL in clock units in Open-Drain Mode
+    input logic [i3c_pkg::TimingWidth-1:0] t_r_i,  // rise time of both SDA and SCL in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] t_f_i,  // fall time of both SDA and SCL in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] thd_sta_od_i,  // hold time for START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] thd_rsta_i,  // hold time for repeated START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] tsu_rsta_i,  // setup time for repeated START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] tsu_sto_i,  // setup time for STOP in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] t_ds_od_i,  // setup time for SDA during START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] tsu_dat_i,  // data setup time in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] thd_dat_i,  // data hold time in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] t_buf_i,  // bus free time between STOP and START in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_idle_i,  // Bus IDLE condition time in clock units
+    input logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i,  // Bus AVAILABLE condition time in clock units
 
     //FMT Interface
     input  logic                         fmt_fifo_rvalid_i,
@@ -48,6 +50,7 @@ module i3c_controller_fsm
     input  logic                         fmt_flag_stop_after_i,
     input  logic                         fmt_flag_restart_after_i,
     output logic                         fmt_receive_nack_o,
+    output logic                         fmt_sda_arbitration_o,
     // fmt RX signals
     output logic [                  7:0] fmt_byte_o,
     output logic                         fmt_bit_o,                   // T bit
@@ -73,7 +76,7 @@ module i3c_controller_fsm
   // Declare internal signals
   state_e state_d, state_q;
 
-  logic tx_bit_q, tx_bit_d;
+  logic tx_bit_q, tx_bit_d, rx_done_bit_q, rx_done_bit_d;
 
   // Bus SCL flow internal signals
   logic scl_negedge, scl_posedge, scl_stable_low, scl_stable_high;
@@ -96,8 +99,14 @@ module i3c_controller_fsm
   logic phy_sel_od_pp_d, phy_sel_od_pp_q, phy_sel_od_pp_real_q, phy_sel_od_pp_real_d;
   assign phy_sel_od_pp_o = phy_sel_od_pp_real_q;
 
+  // IBI Signals
+  logic ibi_done;
+  logic stop_next_q, stop_next_d;
+  assign stop_next_d = fmt_flag_stop_after_i;
+
   // Timing Inputs
   logic [i3c_pkg::TimingWidth-1:0] thigh, tlow;
+  logic bus_busy, bus_free, bus_idle, bus_available;
 
 
   always_comb begin
@@ -108,7 +117,7 @@ module i3c_controller_fsm
     if ((phy_sel_od_pp_q == 1'b0) && (state_q != Address)) begin // all I3C transactions except first address after Start are in Push-Pull Mode
       phy_sel_od_pp_d = 1'b1;
     end
-    if ((state_q == Idle) || (state_q == Start) || (state_q == BusRX) || (state_q == BusReadContinuous)) begin
+    if ((state_q == Idle) || (state_q == Start) || (state_q == BusRX) || (state_q == BusReadContinuous) || (state_q == IBI)) begin
       phy_sel_od_pp_d = 1'b0;
     end
     if ((state_q == Address) & bus_rx_req_bit) begin
@@ -163,7 +172,7 @@ module i3c_controller_fsm
     state_d = state_q;
     unique case (state_q)
       Idle: begin
-        if (fmt_fifo_rvalid_i & fmt_flag_start_before_i & ~is_i2c_transfer_i) begin
+        if (fmt_fifo_rvalid_i & fmt_flag_start_before_i & ~is_i2c_transfer_i & bus_available) begin
           state_d = Start;
         end
       end
@@ -204,7 +213,9 @@ module i3c_controller_fsm
         end
       end
       IBI: begin
-        // TODO: implement
+        if (bus_tx_done) begin
+          state_d = ibi_done ? Stop : BusRX; // either NACK by controller or proceed with reading IBI data
+        end
       end
       Stop: begin
         if (stop_done) begin
@@ -215,6 +226,9 @@ module i3c_controller_fsm
         state_d = Idle;
       end
     endcase
+    if (fmt_sda_arbitration_o) begin
+      state_d = IBI;
+    end
 
   end
 
@@ -234,6 +248,7 @@ module i3c_controller_fsm
     ctrl_sda_o = 1'b1;
     ctrl_scl_o = 1'b1;
     tx_bit_d = 1'b0;
+    rx_done_bit_d = rx_done_bit_q;
     bus_tx_req_byte = 1'b0;
     bus_tx_req_bit = 1'b0;
     bus_tx_req_value = '0;
@@ -242,6 +257,7 @@ module i3c_controller_fsm
     bus_rx_req_bit_d = bus_rx_req_bit_q;
     scl_enable = ~start_stop_active;
     scl_stall = 1'b0;
+    ibi_done = 1'b0;
     unique case (state_q)
       Idle: begin
         fmt_fifo_rready_o = 1'b1;
@@ -279,6 +295,7 @@ module i3c_controller_fsm
             tx_bit_d = 1'b1;
           end
         end
+        bus_rx_req_byte = ~phy_sel_od_pp_o & ~bus_rx_req_bit;  // In OD mode read the addr just in case an IBI happens
       end
       BusTX: begin
         if (bus_init_q) begin
@@ -315,6 +332,12 @@ module i3c_controller_fsm
           fmt_flag_read_valid_o = 1'b1;  // Signals that fmt_byte_o and fmt_bit_o are valid
           fmt_bit_o = bus_rx_data[0];
         end else if (bus_rx_done & ~bus_rx_req_bit_q) begin
+          fmt_byte_o = bus_rx_data;
+          if (stop_next_q) begin  // abort the read by driving TX bit low
+            bus_tx_req_bit = 1'b1;
+            fmt_flag_read_valid_o = 1'b1;
+            bus_tx_req_value = 8'b0;
+          end
           bus_rx_req_bit_d = 1'b1;
           bus_rx_req_byte = 1'b0;
           rx_byte_d = bus_rx_data;
@@ -339,6 +362,26 @@ module i3c_controller_fsm
       end
       IBI: begin
         // TODO: implement
+        ctrl_scl_o = scl_flow_scl;
+        if (rx_done_bit_q) begin
+          bus_tx_req_bit = 1'b1;
+          ctrl_sda_o = tx_flow_sda;
+          bus_tx_req_value = {7'b0, fmt_bit_i};
+          if (bus_tx_done) begin
+            rx_done_bit_d = 1'b0;
+          end
+        end else begin
+          rx_byte_d = bus_rx_data;
+          fmt_byte_o = bus_rx_data;
+          bus_rx_req_byte = 1'b1;
+          if (bus_rx_done) begin
+            fmt_flag_read_valid_o = 1'b1;  // Signals that fmt_byte_o is valid
+            rx_done_bit_d = 1'b1;
+          end
+        end
+        if (fmt_flag_stop_after_i & bus_tx_done) begin  // Controller NACKed the IBI
+          ibi_done = 1'b1;
+        end
       end
       Stop: begin
         received_nack_d = 1'b0;
@@ -358,19 +401,23 @@ module i3c_controller_fsm
     if (~rst_ni) begin
       state_q <= Idle;
       tx_bit_q <= 1'b0;
+      rx_done_bit_q <= 1'b0;
       received_nack_q <= 1'b0;
       bus_rx_req_bit_q <= 1'b0;
       rx_byte_q <= '0;
       stop_after_q <= 1'b0;
       repeated_start_q <= 1'b0;
+      stop_next_q <= 1'b0;
     end else begin
       state_q <= state_d;
       tx_bit_q <= tx_bit_d;
+      rx_done_bit_q <= rx_done_bit_d;
       received_nack_q <= received_nack_d;
       bus_rx_req_bit_q <= bus_rx_req_bit_d;
       rx_byte_q <= rx_byte_d;
       stop_after_q <= stop_after_d;
       repeated_start_q <= repeated_start_d;
+      stop_next_q <= stop_next_d;
     end
   end
 
@@ -384,6 +431,18 @@ module i3c_controller_fsm
     end else if (~phy_sel_od_pp_o) begin  // I3C bus initialization timings (See t_HIGH_INIT Table 86 I3C Basic Spec)
       thigh = bus_init_q ? thigh_od_init_i : thigh_od_i;
       tlow  = tlow_od_i;
+    end
+  end
+
+  // SDA Arbitration detection logic
+  always_comb begin
+    fmt_sda_arbitration_o = 1'b0;
+    // Check during arbitrable address phase (not during ACK) and in Idle
+    // state
+    if (((state_q == Address) || ((state_q == Idle) && bus_available)) && (phy_sel_od_pp_o == 1'b0) && (bus_rx_req_bit == 1'b0)) begin
+      if (ctrl_bus_i.scl.stable_high & scl_stable_high) begin
+        fmt_sda_arbitration_o = ctrl_bus_i.sda.value ^ ctrl_sda_o;
+      end
     end
   end
 
@@ -477,5 +536,19 @@ module i3c_controller_fsm
       .sel_od_pp_o(unassigned_sel_od_pp_o),
 
       .active_o(start_stop_active)
+  );
+
+  bus_timers xbus_timers (
+      .clk_i,
+      .rst_ni,
+      .enable_i         (1'b1),
+      .reset_counter_ni (ctrl_bus_i.scl.value & ctrl_bus_i.sda.value),
+      .t_bus_free_i     (t_buf_i),
+      .t_bus_idle_i     (t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i),
+      .bus_busy_o       (bus_busy),
+      .bus_free_o       (bus_free),
+      .bus_idle_o       (bus_idle),
+      .bus_available_o  (bus_available)
   );
 endmodule

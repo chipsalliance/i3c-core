@@ -38,7 +38,7 @@ def calculate_min_timings(fclk_mhz: float) -> dict:
         "T_SU_DAT_I2C": 100.0,  # I2C FM Data Setup >= 100 ns
         "T_HD_DAT": 0.0,        # Data Hold >= 0 ns
         "T_HIGH": 24.0,         # I3C PP High >= 24 ns
-        "T_HIGH_OD": 200.0,     # I3C OD High >= 200 ns
+        "T_HIGH_OD": 24.0,     # I3C OD High >= 24 ns
         "T_HIGH_INIT_OD": 200.0,# I3C Init OD High >= 200 ns
         "T_HIGH_I2C": 600.0,    # I2C FM High >= 600 ns
         "T_LOW": 24.0,          # I3C PP Low >= 24 ns
@@ -131,7 +131,7 @@ async def boot_init(
             "T_SU_DAT_I2C": 35,
             "T_HD_DAT": 2,
             "T_HIGH": 14,
-            "T_HIGH_OD": 70,
+            "T_HIGH_OD": 20,
             "T_HIGH_INIT_OD": 70,
             "T_HIGH_I2C": 200,
             "T_LOW": 14,

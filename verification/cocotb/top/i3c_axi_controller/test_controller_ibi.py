@@ -20,6 +20,7 @@ from controller_interface import get_interrupt_status
 import cocotb
 from common import *
 from cocotb.triggers import ClockCycles, RisingEdge, Timer, Combine, Event
+from utils import format_ibi_data
 
 ACT_TARGET_IDX = 2 # Port idx of actual target
 ACT_CONTROLLER_IDX = 1 # Port idx of actual controller
@@ -99,15 +100,35 @@ async def test_setup(dut, fclk=333.0, fbus=12.5, core_configs=None, enable_targe
     dut._log.info("All cores booted successfully.")
     return tb, i3c_target, addr_helper 
 
+def pack_expected_ibi(mdb: int, payload_bytes: list) -> list:
+    """
+    Packs an MDB byte and a list of 8-bit payload bytes into a list of 32-bit DWORDs,
+    where the MDB occupies the LSB of the first DWORD.
+    """
+    # 1. Prepend the MDB to the raw bytes
+    packed_bytes = bytearray([mdb]) + bytearray(payload_bytes)
+    
+    # 2. Pad the end with zeros to ensure the total length is a multiple of 4 (DWORD aligned)
+    while len(packed_bytes) % 4 != 0:
+        packed_bytes.append(0x00)
+        
+    # 3. Chunk the bytes into 32-bit integers (little-endian)
+    packed_dwords = []
+    for i in range(0, len(packed_bytes), 4):
+        dword = int.from_bytes(packed_bytes[i:i+4], byteorder='little')
+        packed_dwords.append(dword)
+        
+    return packed_dwords
+
 @cocotb.test()
-async def test_controller_flow_simple(dut):
+async def test_controller_ibi_accepted(dut):
 
 # //////////////////////////////////////////////////////////////
 # //                          Setup                           //
 # //////////////////////////////////////////////////////////////
 
     TX_QUEUE_DEPTH = 8
-    tb, i3c_target, addr_helper = await test_setup(dut, enable_target_dynamic_addr=False) # We don't want to init the target with a dynamic address because we do this with SETDASA
+    tb, i3c_target, addr_helper = await test_setup(dut)
     i3c_target.address = addr_helper.trgt_dyn_addr
     device_index = random.getrandbits(5)
 
@@ -117,54 +138,28 @@ async def test_controller_flow_simple(dut):
 # //////////////////////////////////////////////////////////////
 
     cmd_desc = internal_control_descriptor(tid=random.getrandbits(4), vip=False, mipi_cmd=0x2, mipi_rsvd=0x1, vendor_specific=0x0)
-    tb.dut._log.info("Sending Command Descriptor to activate I3C Broadcast Header")
+    dut._log.info("Sending Command Descriptor to activate I3C Broadcast Header")
     await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
 
-# //////////////////////////////////////////////////////////////
-# //                       SETDASA CCC                        //
-# //////////////////////////////////////////////////////////////
-
-    STATIC_ADDR = addr_helper.trgt_static_addr
-    DYNAMIC_ADDR = addr_helper.trgt_dyn_addr
-    command_setdasa = CCC.DIRECT.SETDASA # SETDASA
-
-    # Read target STATIC_ADDR and VIRTUAL_STATIC_ADDR 
-    static_addr = await tb.read_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR,
-        bus_idx=ACT_TARGET_IDX
-    )
-    assert static_addr == STATIC_ADDR, "Unexpected STATIC ADDRESS read from the target CSR"
-    static_addr_en = await tb.read_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID,
-        bus_idx=ACT_TARGET_IDX
-    )
-    assert static_addr_en == 1, "STATIC ADDRESS is not set as valid"
-
-    # Set dynamic address
-    await write_setdasa(tb, dyn_addr=DYNAMIC_ADDR, static_addr=STATIC_ADDR, toc=True, device_index=device_index)
-
-    # Check that dynamic address was set correctly
-    dynamic_addr = await tb.read_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
-        bus_idx=ACT_TARGET_IDX
-    )
-    assert dynamic_addr == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the target CSR"
-    dynamic_addr_en = await tb.read_csr_field(
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
-        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
-        bus_idx=ACT_TARGET_IDX
-    )
-    assert dynamic_addr_en == 1, "DYNAMIC ADDRESS is not set as valid"
-
 
 # //////////////////////////////////////////////////////////////
-# //                         I3C Write                        //
+# //                 Send IBI Desc to Target                  //
+# //////////////////////////////////////////////////////////////
+    mdb = 0xAA
+    payload_length = random.randrange(11) # TODO: once we have the internal buffer limit as a define use this as a bound for now the max is 3 DWORDs
+    ibi_payload = [random.getrandbits(8) for _ in range(payload_length)]
+    ibi_data = format_ibi_data(mdb, ibi_payload)
+    dut._log.info(f"Sending IBI to the target with mdb: {mdb:x} and ibi_payload: {[hex(x) for x in ibi_payload]}")
+    for word in ibi_data:
+        await tb.write_csr(addr=tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, data=int2dword(word), bus_idx=ACT_TARGET_IDX)
+
+    await ClockCycles(tb.clk, 1000)
+
+# //////////////////////////////////////////////////////////////
+# //         I3C Private Write (will get interrupted)         //
 # //////////////////////////////////////////////////////////////
 
-    i3c_target_len = random.randint(4, TX_QUEUE_DEPTH * 4 * 2)
+    i3c_target_len = 3 # doesn't matter what it is since it will get interrupted either way
     dut._log.info(f"I3C Target length is {i3c_target_len} bytes.")
 
     num_words = (i3c_target_len + 3) // 4
@@ -179,15 +174,65 @@ async def test_controller_flow_simple(dut):
 
 
     tb.dut._log.info("Starting I3C private write")
-    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index)
-    tb.dut._log.info("Finished I3C private write")
+    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index, expect_success=False)
+
+    await check_ibi(tb, exp_payload=pack_expected_ibi(mdb, ibi_payload), target_dyn_address=addr_helper.trgt_dyn_addr)
+
+@cocotb.test()
+async def test_controller_ibi_rejected(dut):
+
+# //////////////////////////////////////////////////////////////
+# //                          Setup                           //
+# //////////////////////////////////////////////////////////////
+
+    TX_QUEUE_DEPTH = 8
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+    device_index = random.getrandbits(5)
 
 
 # //////////////////////////////////////////////////////////////
-# //                         I3C Read                         //
+# //                 Internal Control Command                 //
 # //////////////////////////////////////////////////////////////
 
-    tb.dut._log.info("Starting I3C private read")
-    await read_i3c(tb, addr_helper=addr_helper, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index)
-    tb.dut._log.info("Finished I3C private read")
+    cmd_desc = internal_control_descriptor(tid=random.getrandbits(4), vip=False, mipi_cmd=0x2, mipi_rsvd=0x1, vendor_specific=0x0)
+    dut._log.info("Sending Command Descriptor to activate I3C Broadcast Header")
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
 
+
+# //////////////////////////////////////////////////////////////
+# //                 Send IBI Desc to Target                  //
+# //////////////////////////////////////////////////////////////
+    mdb = 0xAA
+    # Try to overflow the internal IBI Data Buffer in flow_active
+    payload_length = random.randrange(12, 20) # TODO: once we have the internal buffer limit as a define use this as a bound
+    ibi_payload = [random.getrandbits(8) for _ in range(payload_length)]
+    ibi_data = format_ibi_data(mdb, ibi_payload)
+    dut._log.info(f"Sending IBI to the target with mdb: {mdb:x} and ibi_payload: {[hex(x) for x in ibi_payload]}")
+    for word in ibi_data:
+        await tb.write_csr(addr=tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr, data=int2dword(word), bus_idx=ACT_TARGET_IDX)
+
+    await ClockCycles(tb.clk, 1000)
+
+# //////////////////////////////////////////////////////////////
+# //         I3C Private Write (will get interrupted)         //
+# //////////////////////////////////////////////////////////////
+
+    i3c_target_len = 3 # doesn't matter what it is since it will get interrupted either way
+    dut._log.info(f"I3C Target length is {i3c_target_len} bytes.")
+
+    num_words = (i3c_target_len + 3) // 4
+    # Setup
+
+    data = [random.getrandbits(32) for _ in range(num_words)]
+    # Masking the last word
+    remainder = i3c_target_len % 4
+    if remainder != 0:
+        mask = (1 << (remainder * 8)) - 1
+        data[-1] = data[-1] & mask
+
+
+    tb.dut._log.info("Starting I3C private write")
+    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, device_index=device_index, expect_success=False)
+
+    await check_ibi(tb, exp_payload=pack_expected_ibi(mdb, ibi_payload), target_dyn_address=addr_helper.trgt_dyn_addr, expect_err=True)

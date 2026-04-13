@@ -3,8 +3,6 @@
 // Description: Decodes Command Descriptor and forwards byte to be sent on the
 // I3C / I2C bus to the
 // i3c_controller_fsm and i2c_controller_fsm
-// Limitations: currently only I3C Write Immediate and I3C Write Regular with
-// direct addresses are supported. 
 // TODO: Add support for data byte ordering modes (HC_CONTROL.DATA_BYTE_ORDER_MODE)
 
 module flow_active
@@ -103,6 +101,7 @@ module flow_active
     output logic                         fmt_flag_stop_after_o,
     output logic                         fmt_flag_read_continuous_o,
     input  logic                         fmt_receive_nack_i,
+    input  logic                         fmt_sda_arbitration_i,
     // fmt RX signals
     input  logic [                  7:0] fmt_byte_i,
     input  logic                         fmt_bit_i,
@@ -125,6 +124,7 @@ module flow_active
     output i3c_err_t err,
     output i3c_irq_t irq
 );
+  localparam int IBIBufferDepthDwords = 3; // TODO: add a define in defines.svh to controll this parameter
 
   // Helper function to check if current CCC has payload or not
   function automatic logic has_payload(logic [7:0] ccc);
@@ -136,7 +136,6 @@ module flow_active
     end
   endfunction
 
-  assign ibi_queue_wvalid_o = '0;
   assign err = '0;
   assign irq = tx_queue_ready_thld_trig_i;  // TODO: update to assign other interrupts
   assign phy_sel_od_pp_o = phy_sel_od_pp_i;
@@ -156,7 +155,10 @@ module flow_active
     DirectCCC = 5'd11,
     BroadcastCCC = 5'd12,
     DynamicAddrAssignment = 5'd13,
-    WriteResp = 5'd14
+    WriteResp = 5'd14,
+    InternalControlCommand = 5'd15,
+    I3CBcastHeader = 5'd16,
+    IBI = 5'd17
   } flow_fsm_state_e;
 
   // TODO: Set BytesBeforeImmData from the HC_CONTROL.IBA_INCLUDE
@@ -170,6 +172,7 @@ module flow_active
   regular_trans_direct_desc_t regular_direct_cmd_desc;
   combo_trans_desc_t combo_cmd_desc;
   addr_assign_desc_t addr_cmd_desc;
+  internal_control_desc_t internal_ctrl_cmd_desc;
   logic [63:0] cmd_desc;
 
   // Values extracted from the Command Descriptor
@@ -241,6 +244,23 @@ module flow_active
   logic daa_iteration_done;
   logic first_nack_q, first_nack_d;
 
+  // Internal Control Command Signals / Flags
+  logic icc_done;
+  logic broadcast_addr_enable_d, broadcast_addr_enable_q;
+  logic prev_cmd_toc_d, prev_cmd_toc_q;
+
+  // IBI signals
+  logic mdb_present, ibi_done;
+  i3c_ibi_status_desc_t ibi_status_d, ibi_status_q;
+  logic [  $clog2(IBIBufferDepthDwords)-1:0] ibi_dword_select;
+  logic [$clog2((HciIbiDataWidth >> 3))-1:0] ibi_byte_select;
+  logic [IBIBufferDepthDwords-1:0][(HciIbiDataWidth >> 3)-1:0][7:0] ibi_data_d, ibi_data_q;
+  logic ibi_wb_d, ibi_wb_q;
+  logic [5:0] ibi_wb_cnt_q, ibi_wb_cnt_d;  // max of 64 DWORDs can be sent per IBI
+
+  assign ibi_dword_select = (transfer_cnt_q - 1) >> 2;
+  assign ibi_byte_select  = (transfer_cnt_q - 1) & 2'b11;
+
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       assigned_addr_cnt_q <= '0;
@@ -271,6 +291,7 @@ module flow_active
   assign regular_dat_cmd_desc = cmd_desc;
   assign combo_cmd_desc = cmd_desc;
   assign addr_cmd_desc = cmd_desc;
+  assign internal_ctrl_cmd_desc = cmd_desc;
 
   // Initialize descriptor's reserved field
   assign resp_desc.__rsvd23_16 = '0;
@@ -281,11 +302,11 @@ module flow_active
   assign cmd_is_ccc = cmd_desc[15];
   assign cmd_is_broadcast_ccc = ~cmd_desc[14]; // the MSB of the CCC indicates if it's direct or a broadcast see Table 16 I3C Basic Spec
   assign cmd_attr = i3c_cmd_attr_e'(cmd_desc[2:0]);
-  assign is_direct_transfer = ((cmd_attr == ImmediateDataTransferDirect) || (cmd_attr == RegularTransferDirect) || (cmd_attr == ComboTransferDirect)) && ((cmd_attr != InternalControl) && (cmd_attr != AddressAssignment));
+  assign is_direct_transfer = ((cmd_attr == ImmediateDataTransferDirect) || (cmd_attr == RegularTransferDirect) || (cmd_attr == ComboTransferDirect) || (cmd_attr == InternalControl)) && ((cmd_attr != AddressAssignment));
   assign is_regular_transfer = (cmd_attr == RegularTransferDirect) || (cmd_attr == RegularTransferDAT);
   assign cmd_tid = is_direct_transfer ? {1'b0, cmd_desc[5:3]} : cmd_desc[6:3];
   // Assign if target is an I2C device
-  assign i2c_cmd = is_direct_transfer ? cmd_desc[6] : dat_rdata.device; // NOTE: the i2c bit is the same for regular cmd desc and immediate cmd desc, that's why no further checking is needed
+  assign i2c_cmd = (is_direct_transfer && (cmd_attr != InternalControl)) ? cmd_desc[6] : dat_rdata.device; // NOTE: the i2c bit is the same for regular cmd desc and immediate cmd desc, that's why no further checking is needed
   assign is_i2c_transfer_o = i2c_cmd;
 
 
@@ -338,6 +359,17 @@ module flow_active
     end else begin
       cmd_queue_rvalid <= cmd_queue_rvalid_i;
       cmd_queue_rdata  <= cmd_queue_rdata_i;
+    end
+  end
+
+  // Store Internal Control Flags
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      broadcast_addr_enable_q <= 1'b0;
+      prev_cmd_toc_q          <= 1'b1;
+    end else begin
+      broadcast_addr_enable_q <= broadcast_addr_enable_d;
+      prev_cmd_toc_q          <= prev_cmd_toc_d;
     end
   end
 
@@ -455,7 +487,6 @@ module flow_active
       // status.
       rx_dword_q <= '0;
       resp_err_status_q <= AbortedWithCRC;
-      rx_dword_q <= '0;
     end else begin
       resp_err_status_q <= resp_err_status_d;
       rx_dword_q <= rx_dword_d;
@@ -490,6 +521,21 @@ module flow_active
     end
   end
 
+  // Store IBI Status Descriptor
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      ibi_status_q <= '0;
+      ibi_data_q   <= '0;
+      ibi_wb_q     <= 1'b0;
+      ibi_wb_cnt_q <= '0;
+    end else begin
+      ibi_status_q <= ibi_status_d;
+      ibi_data_q   <= ibi_data_d;
+      ibi_wb_q     <= ibi_wb_d;
+      ibi_wb_cnt_q <= ibi_wb_cnt_d;
+    end
+  end
+
   // Combinational state output update
   always_comb begin
     i3c_fsm_idle_o = 1'b0;
@@ -514,6 +560,7 @@ module flow_active
     fmt_bit_o = '0;
     dct_wdata_hw_o = '0;
     ibi_queue_wdata_o = '0;
+    ibi_queue_wvalid_o = 1'b0;
     resp_data_length_d = '0;
     resp_queue_wdata_o = '0;
     resp_err_status_d = resp_err_status_q;
@@ -529,6 +576,15 @@ module flow_active
     dat_index_d = dat_index_q;
     dct_data = '0;
     dct_index_d = dct_index_q;
+    broadcast_addr_enable_d = broadcast_addr_enable_q;
+    icc_done = 1'b0;
+    prev_cmd_toc_d = prev_cmd_toc_q;
+    ibi_done = 1'b0;
+    mdb_present = 1'b1;
+    ibi_status_d = ibi_status_q;
+    ibi_data_d = ibi_data_q;
+    ibi_wb_d = ibi_wb_q;
+    ibi_wb_cnt_d = ibi_wb_cnt_q;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -667,6 +723,7 @@ module flow_active
         if (transfer_cnt_q == data_length + (BytesBeforeImmData)) begin
           fmt_flag_stop_after_o = is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc;
+          prev_cmd_toc_d = ~fmt_flag_restart_after_o;
           resp_err_status_d = Success;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
@@ -699,6 +756,7 @@ module flow_active
         if (transfer_cnt_q >= data_length) begin
           fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+          prev_cmd_toc_d = ~fmt_flag_restart_after_o;
           tx_queue_rready_o = 1'b0;  // when we're done we don't want to pop new data from the queue
           resp_err_status_d = Success;  // successfull transfer without errors
         end
@@ -750,6 +808,7 @@ module flow_active
         transfer_cnt_en = fmt_fifo_rdone_i | fmt_flag_read_valid_i;
         resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q;
         fmt_flag_read_bytes_o = 1'b1;
+        fmt_flag_stop_after_o = 1'b0;
         if (transfer_cnt_q == 32'd0) begin
           fmt_byte_o = is_direct_transfer ? {regular_direct_cmd_desc.dev_address, 1'b1} : {dat_rdata.dynamic_address, 1'b1};
           fmt_flag_start_before_o = 1'b1;
@@ -777,6 +836,7 @@ module flow_active
         if (transfer_cnt_q >= data_length & fmt_flag_read_valid_i) begin
           fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+          prev_cmd_toc_d = ~fmt_flag_restart_after_o;
           resp_err_status_d = Success;  // successfull transfer without errors
           rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished
         end
@@ -1055,6 +1115,95 @@ module flow_active
         resp_queue_wvalid_o = 1'b1;
         resp_queue_wdata_o = resp_desc;
       end
+      // InternalControlCommand: Controls the Host Controller itself (not I3C
+      // Transfer Command)
+      InternalControlCommand: begin
+        icc_done = 1'b0;
+        unique case (internal_ctrl_cmd_desc.mipi_cmd)
+          BrodcastAddressEnable: begin
+            broadcast_addr_enable_d = cmd_desc[12];  // See Table 137 I3C HCI Spec
+            icc_done = 1'b1;
+          end
+          // TODO: add more cases
+          default: begin
+            icc_done = 1'b1;
+          end
+        endcase
+      end
+
+      // I3CBcastHeader: sends I3C Broadcast Header if flag is set
+      I3CBcastHeader: begin
+        fmt_fifo_rvalid_o = 1'b1;
+        fmt_flag_start_before_o = 1'b1;
+        fmt_flag_stop_after_o = 1'b0;
+        fmt_flag_restart_after_o = 1'b1;
+        fmt_byte_o = {7'h7E, 1'b0};
+        if (fmt_fifo_rdone_i && fmt_receive_nack_i) begin
+          resp_err_status_d = AddrHeader;
+        end
+      end
+      IBI: begin
+        fmt_flag_read_bytes_o = 1'b1;
+        transfer_cnt_clr = 1'b0;
+        transfer_cnt_en = fmt_fifo_rdone_i | fmt_flag_read_valid_i;
+        fmt_fifo_rvalid_o = 1'b1;
+        fmt_flag_start_before_o = 1'b0;
+        fmt_flag_stop_after_o = 1'b0;
+        fmt_flag_restart_after_o = 1'b0;
+        ibi_data_d = ibi_data_q;
+        if (~ibi_wb_q) begin
+          if (transfer_cnt_q == '0) begin
+            fmt_flag_read_bytes_o = 1'b1;  // read dynamic address
+            fmt_bit_o = 1'b0;
+            if (~mdb_present) begin
+              fmt_flag_stop_after_o = 1'b1;
+              fmt_flag_read_bytes_o = 1'b0;
+              ibi_wb_d = 1'b1;
+            end
+            ibi_status_d.ibi_sts = 1'b0;  // TODO: change to 1'b1 if we NACK the IBI
+            ibi_status_d.error = 1'b0;  // TODO: change if HC terminates the IBI for any reason
+            ibi_status_d.status_type = RegularIBI;
+            ibi_status_d.ts = 1'b0;
+            ibi_status_d.last_status = 1'b1; // TODO: some IBIs require multiple IBI status desc according to HCI Spec
+            ibi_status_d.ibi_id = fmt_flag_read_valid_i ? fmt_byte_i : ibi_status_q.ibi_id;
+          end else begin
+            if (transfer_cnt_q == (IBIBufferDepthDwords << 2)) begin
+              fmt_flag_stop_after_o = 1'b1;
+              ibi_status_d.error = 1'b1; // NOTE: if the target sends the max amount of bytes the controller will still abort it and report an error (even though it's technically not an error)
+            end
+            if (fmt_flag_read_valid_i) begin
+              if (((transfer_cnt_q - 1) >> 2) < IBIBufferDepthDwords) begin
+                ibi_status_d.data_length = ibi_status_q.data_length + 1;
+                ibi_wb_d = ~fmt_bit_i;
+                fmt_flag_stop_after_o = ~fmt_bit_i;
+                ibi_data_d[ibi_dword_select][ibi_byte_select] = fmt_byte_i;
+              end else begin  // Internal IBI buffer overflow
+                ibi_status_d.error = 1'b1;
+                fmt_flag_stop_after_o = 1'b1;
+                ibi_wb_d = 1'b1;
+                ibi_wb_cnt_d = '0;
+              end
+            end
+          end
+        end else begin  // Write Back the IBI Status + Payload to IBI Queue
+          if (ibi_queue_wready_i) begin
+            if (ibi_wb_cnt_q == '0) begin  // First entry is the IBI Status Descriptor
+              ibi_queue_wdata_o  = ibi_status_q;
+              ibi_queue_wvalid_o = 1'b1;
+            end else if (ibi_wb_cnt_q < ((ibi_status_q.data_length + 3) >> 2)) begin
+              ibi_queue_wdata_o  = ibi_data_q[ibi_wb_cnt_q-1];
+              ibi_queue_wvalid_o = 1'b1;
+            end else begin  // Wrote back all data
+              ibi_queue_wdata_o = ibi_data_q[ibi_wb_cnt_q-1];
+              ibi_queue_wvalid_o = 1'b1;
+              ibi_done = 1'b1;
+              ibi_wb_cnt_d = '0;
+              ibi_wb_d = 1'b0;
+            end
+            ibi_wb_cnt_d = ibi_queue_wvalid_o ? ibi_wb_cnt_q + 1 : ibi_wb_cnt_q; // increment writeback counter upon successfull write
+          end
+        end
+      end
       default: begin
         resp_desc.err_status = AbortedWithCRC;  // TODO: change default state?
         resp_desc.tid = '0;
@@ -1086,15 +1235,19 @@ module flow_active
             ImmediateDataTransferDirect: begin
               state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
                            i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediate :
-                           (fmt_fifo_rready_i ? I3CWriteImmediate : state);
+                           (fmt_fifo_rready_i ? ((broadcast_addr_enable_q & prev_cmd_toc_q) ? I3CBcastHeader : I3CWriteImmediate) : state);
             end
             RegularTransferDirect: begin
               state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
                            i2c_cmd & fmt_fifo_rready_i ? ((cmd_dir == Read) ? I2CRead : I2CWriteRegular) : 
-                          (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state);
+                           ((broadcast_addr_enable_q & prev_cmd_toc_q) ? I3CBcastHeader : 
+                          (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state));
             end
             ComboTransferDirect: begin
               // TODO
+            end
+            InternalControl: begin
+              state_next = InternalControlCommand;
             end
             default: state_next = state;  // Stall
           endcase
@@ -1104,12 +1257,13 @@ module flow_active
               ImmediateDataTransferDAT: begin
                 state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
                            i2c_cmd & fmt_fifo_rready_i ? I2CWriteImmediate :
-                           (fmt_fifo_rready_i ? I3CWriteImmediate : state);
+                           (fmt_fifo_rready_i ? ((broadcast_addr_enable_q & prev_cmd_toc_q) ? I3CBcastHeader : I3CWriteImmediate) : state);
               end
               RegularTransferDAT: begin
                 state_next = cmd_is_ccc & fmt_fifo_rready_i ? (cmd_is_broadcast_ccc ? BroadcastCCC : DirectCCC) :
                            i2c_cmd & fmt_fifo_rready_i ? ((cmd_dir == Read) ? I2CRead : I2CWriteRegular) : 
-                          (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state);
+                          ((broadcast_addr_enable_q & prev_cmd_toc_q) ? I3CBcastHeader : 
+                          (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state));
               end
               ComboTransferDAT: begin
                 // TODO: implement
@@ -1210,10 +1364,51 @@ module flow_active
           state_next = Idle;
         end
       end
+      // InternalControlCommand: Controls the Host Controller itself (not I3C
+      // Transfer Command)
+      InternalControlCommand: begin
+        if (icc_done) begin
+          state_next = Idle;
+          // TODO: some ICCs require a response, switch to WriteResp state for
+          // these once they are implemented
+        end
+      end
+      // I3CBcastHeader: sends I3C Broadcast Header if flag is set
+      I3CBcastHeader: begin
+        if (fmt_fifo_rdone_i) begin
+          if (fmt_receive_nack_i) begin  // AddrHeader error
+            state_next = WriteResp;
+          end else begin
+            unique case (cmd_attr)
+              ImmediateDataTransferDirect: begin
+                state_next = I3CWriteImmediate;
+              end
+              RegularTransferDirect: begin
+                state_next = (cmd_dir == Read) ? I3CRead : I3CWriteRegular;
+              end
+              ImmediateDataTransferDAT: begin
+                state_next = I3CWriteImmediate;
+              end
+              RegularTransferDAT: begin
+                state_next = (cmd_dir == Read) ? I3CRead : I3CWriteRegular;
+              end
+              default: state_next = state;  // Stall
+            endcase
+          end
+        end
+      end
+      IBI: begin
+        if (ibi_done) begin
+          state_next = Idle;
+        end
+      end
       default: begin
         state_next = Idle;
       end
     endcase
+    if (fmt_sda_arbitration_i) begin
+      state_next = IBI;
+    end
   end
 
   // Sequential state update

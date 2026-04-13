@@ -482,6 +482,17 @@ def controller_ccc_verify(session, test_group, test_name, coverage, simulator):
 @test(
     TestParams(
         ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller"],
+        ["test_controller_ibi"],
+    )
+)
+def controller_ibi_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+
+@test(
+    TestParams(
+        ["tests", "controller-axi", "target", "controller"],
         ["i2c_axi_controller"],
         ["test_i2c_controller"],
     )

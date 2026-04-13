@@ -17,6 +17,11 @@ testplans:
     testpoints:
     - name: "^(.*)$"
       source: "verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py"
+  - name: 'Controller IBI Handling'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py"
+
   - name: '(Controller-specific)? ?CSR access check'
     testpoints:
     - name: "^(.*)$"

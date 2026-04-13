@@ -1,17 +1,8 @@
 // FIXME: add detailed description of tests using testbench/stimulus/check template
 {
-  name: Controller Handle IBI
+  name: Controller IBI Handling
   testpoints:
   [
-    {
-      name: Controller Handle a target Interrupt Request
-      desc:
-        '''
-        Recognize the IBI pattern as specified in 5.1.6.2 I3C Basic Spec, refuse or accept the interrupt. Write to the IBI queue
-        '''
-      tests: ["controller_target_interrupt_request"]
-      tags: ["top"]
-    }
     {
       name: Controller Active Controller Initiating a Transaction
       desc:
@@ -19,6 +10,62 @@
         As per 5.1.6.4 I3C Basic Spec issue the I3C broadcast address and wait for incoming IBI from targets. 
         '''
       tests: ["controller_controller_initiate_interrupt_request"]
+      tags: ["top"]
+    },
+    {
+      name: controller_ibi_accepted
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.6 In-Band Interrupt from I3C Basic Spec. Using Broadcast mode.
+        The target sends an IBI request with a mandatory data byte as well as optional data bytes and the controller accepts the request and pushes the results to the IBI_PORT.
+
+        Stimulus:
+          - write a Target IBI Descriptor to the Targets TTI.IBI_PORT register containing the MDB and optional IBI payload.
+          - Enable generation of the I3C Broadcast Header before private reads and writes using the internal control command descriptor with the following fields set:
+            - mipi_cmd=0x2 // Broadcast Address Enable/Disable
+            - mipi_rsvd=0x1 // Broadcast Address Enable
+          - send a private i3c write.
+
+        Check:
+          - The private write should finish correctly. 
+          - Read the PIOCONTROL.IBI_PORT CSR to retreive the IBI Status Descriptor as well as the IBI Payload.
+          - IBI Status Descriptor Error should be 1'b0 (not aborted by controller).
+          - The IBI Payload should match the MDB sent to the target as well as the optional IBI data bytes sent by the target.
+
+        '''
+      tests: ["controller_ibi_accepted"]
+      tags: ["top"]
+    },
+    {
+      name: controller_ibi_rejected
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.6 In-Band Interrupt from I3C Basic Spec. Using Broadcast mode.
+        The target sends an IBI request with a mandatory data byte as well as optional data bytes and the controller rejects the request (due to an internal buffer overflow) and pushes the results to the IBI_PORT.
+
+        Stimulus:
+          - write a Target IBI Descriptor to the Targets TTI.IBI_PORT register containing the MDB and optional IBI payloads with total byte length larger than IBIDataBuffer.
+          - Enable generation of the I3C Broadcast Header before private reads and writes using the internal control command descriptor with the following fields set:
+            - mipi_cmd=0x2 // Broadcast Address Enable/Disable
+            - mipi_rsvd=0x1 // Broadcast Address Enable
+          - send a private i3c write.
+
+        Check:
+          - The private write should finish correctly. 
+          - Read the PIOCONTROL.IBI_PORT CSR to retreive the IBI Status Descriptor as well as the IBI Payload.
+          - IBI Status Descriptor Error should be 1'b1 (aborted by controller).
+          - The first IBIDataBuffer bytes of IBI Payload should match the MDB sent to the target as well as the optional IBI data bytes sent by the target.
+
+        '''
+      tests: ["controller_ibi_rejected"]
       tags: ["top"]
     }
   ]

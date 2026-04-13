@@ -157,6 +157,7 @@ module controller_active
   logic [7:0] fmt_byte, fmt_rx_byte;
   logic fmt_bit, fmt_rx_bit;
   logic fmt_receive_nack;
+  logic fmt_sda_arbitration;
   logic fmt_flag_start_before;
   logic fmt_flag_stop_after;
   logic fmt_flag_restart_after;
@@ -245,6 +246,7 @@ module controller_active
       .fmt_flag_read_bytes_o(fmt_flag_read_bytes),
       .fmt_flag_read_continuous_o(fmt_flag_read_continuous),
       .fmt_receive_nack_i(fmt_receive_nack | event_nak_o),
+      .fmt_sda_arbitration_i(fmt_sda_arbitration),
       .fmt_flag_nak_ok_o(fmt_flag_nak_ok),
       .phy_sel_od_pp_i(1'b1),  // TODO: assign these signals
       .phy_sel_od_pp_o(unassigned_sel_od_pp_o),
@@ -352,6 +354,8 @@ module controller_active
       .tsu_dat_i(t_su_dat_i),
       .thd_dat_i(t_hd_dat_i),
       .t_buf_i(t_bus_free_i),
+      .t_bus_idle_i(t_bus_idle_i),
+      .t_bus_available_i(t_bus_available_i),
 
       .fmt_fifo_rvalid_i(fmt_fifo_rvalid),
       .fmt_fifo_depth_i(fmt_fifo_depth),
@@ -360,6 +364,7 @@ module controller_active
       .fmt_byte_i(fmt_byte),
       .fmt_bit_i(fmt_bit),  // T bit
       .fmt_receive_nack_o(fmt_receive_nack),
+      .fmt_sda_arbitration_o(fmt_sda_arbitration),
       .fmt_flag_start_before_i(fmt_flag_start_before),
       // fmt RX signals
       .fmt_byte_o(fmt_rx_byte),

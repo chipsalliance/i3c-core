@@ -53,6 +53,7 @@ module bus_scl_flow (
     scl_o = 1'b1;
     unique case (state_q)
       Idle: begin
+        scl_stable_high_o = 1'b1;
         if (scl_enable_i) begin
           state_d = Low;
           timer_d = '0;
