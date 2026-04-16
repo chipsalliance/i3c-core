@@ -166,6 +166,7 @@ def axi_adapter_verify(session, test_group, test_name, coverage, simulator):
     [
         "test_seq_csr_access",
         "test_bus_stress",
+        "test_priv_id_variation",
     ],
 )
 @nox.parametrize("coverage", coverage_types)

@@ -7,6 +7,7 @@ __pycache__
 *.egg-info
 *.exe
 *.fsdb*
+*.vdb
 *.info
 *.ipynb
 *.json

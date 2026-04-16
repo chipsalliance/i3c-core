@@ -224,7 +224,7 @@ install-uvm:
 clean: ## Clean all generated sources
 	rm -rf $(I3C_ROOT_DIR)/{dsim.env,dsim_work,sw,*.log,*.rpt,*.vcd}
 	rm -rf $(GENERIC_UVM_DIR) $(VERILATOR_UVM_DIR)
-	rm -rf {$(VERIFICATION_DIR),$(COCOTB_VERIF_DIR),$(BLOCK_VERIF_DIR),$(TOP_VERIF_DIR),$(UVM_VERIF_DIR)}/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.json,*.log,*.vpd,*.vcd,*.fsdb,*.fst,*.shm,*.xml,ucli.key,xrun.history}
+	rm -rf {$(VERIFICATION_DIR),$(COCOTB_VERIF_DIR),$(BLOCK_VERIF_DIR),$(TOP_VERIF_DIR),$(UVM_VERIF_DIR)}/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.json,*.log,*.vpd,*.vcd,*.vdb,*.fsdb*,*.fst,*.shm,*.xml,ucli.key,xrun.history}
 	rm -rf $(TOOL_DIR)/**/{.nox,obj_dir,__pycache__,report,sim_build,*.dat,*.info,*.log,*.vcd,*.xml}
 
 .PHONY: lint lint-check lint-rtl lint-tests \
