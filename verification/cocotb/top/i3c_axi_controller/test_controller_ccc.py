@@ -110,7 +110,7 @@ async def read_target_events(tb):
 
     return (ibi_en, crr_en, hj_en)
 
-async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True):
+async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True, rnw=False):
     # Disable all target events
     no_payload = False
     if immediate == None:
@@ -118,7 +118,7 @@ async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device
     if payload == None:
         no_payload = True
         payload = [0]
-    if immediate or no_payload: # no payload CCCs are always immediate transfers
+    if immediate or (no_payload and not rnw): 
         cmd_desc = immediate_transfer_descriptor_direct(
             tid=random.getrandbits(3),
             i2c=False,
@@ -142,7 +142,7 @@ async def write_ccc(tb, ccc, immediate=None, payload=None, data_length=0, device
         short_read_err=0x0,
         defining_byte_present=0x0,
         mode=0x0,
-        rnw=0x0,
+        rnw=int(rnw),
         wroc=toc,
         toc=toc,
         def_byte=0x0,
@@ -632,5 +632,238 @@ async def test_controller_ccc_entdaa(dut):
     assert actual_target_found, "Actual target dynamic address was never found in the DCT!"
     assert virt_target_found, "Virtual target dynamic address was never found in the DCT!"
     # -------------------------------------------------------------------------
+
+
+@cocotb.test()
+async def test_controller_ccc_rstdaa(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    DYNAMIC_ADDR = addr_helper.trgt_dyn_addr
+    VIRTUAL_DYNAMIC_ADDR = addr_helper.trgt_virt_dyn_addr
+
+    # Read target DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR
+    dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the target CSR"
+    dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr_en == 1, "DYNAMIC ADDRESS is not set as valid"
+
+    virt_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr == VIRTUAL_DYNAMIC_ADDR, "Unexpected VIRTUAL DYNAMIC ADDRESS read from the target CSR"
+    virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr_en == 1, "VIRTUAL DYNAMIC ADDRESS is not set as valid"
+
+
+    # Set dynamic address
+    dut._log.info("Sending RSTDAA CCC.")
+    await write_ccc(tb, CCC.BCAST.RSTDAA)
+    dut._log.info("Finished sending RSTDAA CCC")
+
+    # Check that dynamic address was reset correctly
+    dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr_en == 0, "DYNAMIC ADDRESS is not reset correctly (should be invalid)"
+
+    virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr_en == 0, "VIRTUAL DYNAMIC ADDRESS is not reset correctly (should be invalid)"
+
+@cocotb.test()
+async def test_controller_ccc_setnewda(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    DYNAMIC_ADDR = addr_helper.trgt_dyn_addr
+    VIRTUAL_DYNAMIC_ADDR = addr_helper.trgt_virt_dyn_addr
+
+    # Read target DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR
+    dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr == DYNAMIC_ADDR, "Unexpected DYNAMIC ADDRESS read from the target CSR"
+    dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert dynamic_addr_en == 1, "DYNAMIC ADDRESS is not set as valid"
+
+    virt_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr == VIRTUAL_DYNAMIC_ADDR, "Unexpected VIRTUAL DYNAMIC ADDRESS read from the target CSR"
+    virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert virt_dynamic_addr_en == 1, "VIRTUAL DYNAMIC ADDRESS is not set as valid"
+
+    # Generate New Dynamic Addresses
+    NEW_DYN_ADDR = addr_helper.get_unassigned_valid_address()
+    NEW_VIRT_DYN_ADDR = addr_helper.get_unassigned_valid_address()
+
+    dut._log.info(f"Assigning new dynamic address: 0x{NEW_DYN_ADDR:x} and new virtual dynamic address: 0x{NEW_VIRT_DYN_ADDR:x}")
+
+    # Set new dynamic address
+    dut._log.info("Sending SETNEWDA CCCs.")
+    await write_ccc(tb, CCC.DIRECT.SETNEWDA, payload=[NEW_DYN_ADDR << 1], device_address=addr_helper.trgt_dyn_addr, toc=False)
+    await write_ccc(tb, CCC.DIRECT.SETNEWDA, payload=[NEW_VIRT_DYN_ADDR << 1], device_address=addr_helper.trgt_virt_dyn_addr, toc=True)
+    dut._log.info("Finished sending SETNEWDA CCCs")
+
+    # Read new target DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR
+    new_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert new_dynamic_addr == NEW_DYN_ADDR, "Unexpected New DYNAMIC ADDRESS read from the target CSR"
+    new_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert new_dynamic_addr_en == 1, "New DYNAMIC ADDRESS is not set as valid"
+
+    new_virt_dynamic_addr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert new_virt_dynamic_addr == NEW_VIRT_DYN_ADDR, "Unexpected New VIRTUAL DYNAMIC ADDRESS read from the target CSR"
+    new_virt_dynamic_addr_en = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+        bus_idx=ACT_TARGET_IDX
+    )
+    assert new_virt_dynamic_addr_en == 1, "New VIRTUAL DYNAMIC ADDRESS is not set as valid"
+
+@cocotb.test()
+async def test_controller_ccc_getpid(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    target_pid_hi = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_pid_lo = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_pid = (target_pid_hi << 33) | target_pid_lo
+
+    dut._log.info(f"Target PID: {target_pid:#014x}")
+
+    await write_ccc(tb, CCC.DIRECT.GETPID, data_length=6, device_address=addr_helper.trgt_dyn_addr, toc=True, immediate=False, rnw=True)
+
+    # Read RX queue
+    dut._log.info("Reading PID from the RX Queue")
+    ctrl_rx_queue_addr = tb.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr
+    # PID is 6 bytes, which means we have to read 2 DWORDs
+    recv_data = await tb.read_rx_queue(2, bus_idx=ACT_CONTROLLER_IDX, rx_port_addr=ctrl_rx_queue_addr)
+    dut._log.info("Finished reading RX Queue.")
+    b0 = recv_data[0].to_bytes(4, 'little')
+    b1 = recv_data[1].to_bytes(4, 'little')
+    total_bytes = b0 + b1[0:2]
+    received_pid = int.from_bytes(total_bytes, 'big')
+
+    dut._log.info(f"Received PID: {received_pid:#014x}")
+
+    assert received_pid == target_pid, f"PID Mismatch! Expected {target_pid:x}, but got {received_pid:x}"
+
+@cocotb.test()
+async def test_controller_ccc_getbcr(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    target_bcr_var = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_bcr_fixed = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_FIXED,
+        bus_idx=ACT_TARGET_IDX
+    )
+    target_bcr = (target_bcr_fixed << 5) | target_bcr_var
+
+    dut._log.info(f"BCR: {target_bcr:#04x}")
+
+    await write_ccc(tb, CCC.DIRECT.GETBCR, data_length=1, device_address=addr_helper.trgt_dyn_addr, toc=True, immediate=False, rnw=True)
+
+    # Read RX queue
+    dut._log.info("Reading PID from the RX Queue")
+    ctrl_rx_queue_addr = tb.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr
+    # PID is 6 bytes, which means we have to read 2 DWORDs
+    recv_data = await tb.read_rx_queue(1, bus_idx=ACT_CONTROLLER_IDX, rx_port_addr=ctrl_rx_queue_addr)
+    dut._log.info("Finished reading RX Queue.")
+    received_bcr = recv_data[0] & 0xFF
+
+    dut._log.info(f"Received BCR: {received_bcr:x}")
+
+    assert received_bcr == target_bcr, f"BCR Mismatch! Expected {target_bcr:x}, but got {received_bcr:x}"
+
+@cocotb.test()
+async def test_controller_ccc_getdcr(dut):
+
+    tb, i3c_target, addr_helper = await test_setup(dut)
+    i3c_target.address = addr_helper.trgt_dyn_addr
+
+    target_dcr = await tb.read_csr_field(
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
+        tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR,
+        bus_idx=ACT_TARGET_IDX
+    )
+
+
+    dut._log.info(f"DCR: {target_dcr:#04x}")
+
+    await write_ccc(tb, CCC.DIRECT.GETDCR, data_length=1, device_address=addr_helper.trgt_dyn_addr, toc=True, immediate=False, rnw=True)
+
+    # Read RX queue
+    dut._log.info("Reading PID from the RX Queue")
+    ctrl_rx_queue_addr = tb.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr
+    # PID is 6 bytes, which means we have to read 2 DWORDs
+    recv_data = await tb.read_rx_queue(1, bus_idx=ACT_CONTROLLER_IDX, rx_port_addr=ctrl_rx_queue_addr)
+    dut._log.info("Finished reading RX Queue.")
+    received_dcr = recv_data[0] & 0xFF
+
+    dut._log.info(f"Received DCR: {received_dcr:x}")
+
+    assert received_dcr == target_dcr, f"DCR Mismatch! Expected {target_dcr:x}, but got {received_dcr:x}"
 
 

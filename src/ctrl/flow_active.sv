@@ -136,6 +136,17 @@ module flow_active
     end
   endfunction
 
+  // Helper function to check if current CCC has only one byte of payload or not
+  function automatic logic ccc_has_one_byte_of_payload(logic [7:0] ccc);
+    if(((ccc == `I3C_DIRECT_ENEC) | (ccc == `I3C_DIRECT_DISEC) | (ccc == `I3C_DIRECT_SETDASA) | (ccc == `I3C_DIRECT_SETNEWDA) | (ccc == `I3C_DIRECT_GETBCR) | (ccc == `I3C_DIRECT_GETDCR))) begin
+      // TODO: add more CCCs with payload
+      return 1'b1;
+    end else begin
+      return 1'b0;
+    end
+  endfunction
+
+
   assign err = '0;
   assign irq = tx_queue_ready_thld_trig_i;  // TODO: update to assign other interrupts
   assign phy_sel_od_pp_o = phy_sel_od_pp_i;
@@ -215,7 +226,9 @@ module flow_active
   logic [HciTxDataWidth-1:0] tx_dword;
   logic [(HciTxDataWidth>>3)-1:0][7:0] tx_dword_array;
   logic [$clog2(HciTxDataWidth>>3)-1 : 0] byte_select;
+  logic [$clog2(HciTxDataWidth>>3)-1 : 0] ccc_byte_select;
   assign byte_select = ((transfer_cnt_q - 1) % (HciTxDataWidth >> 3));
+  assign ccc_byte_select = ((transfer_cnt_q - 3) % (HciTxDataWidth >> 3)); // the first 2 CCC transfers are irrelevant for the byte_select signal (CCC and target addr)
   assign tx_dword_array = tx_dword;
   logic pop_tx_fifo;
 
@@ -231,6 +244,7 @@ module flow_active
 
   // CCC signals
   logic ccc_done;
+  logic ccc_last_trans;
   logic ccc_has_payload;
   logic [7:0] cmd_ccc, prev_ccc_d, prev_ccc_q;
   assign cmd_ccc = cmd_desc[14:7];
@@ -585,6 +599,7 @@ module flow_active
     ibi_data_d = ibi_data_q;
     ibi_wb_d = ibi_wb_q;
     ibi_wb_cnt_d = ibi_wb_cnt_q;
+    ccc_last_trans = 1'b0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -890,15 +905,16 @@ module flow_active
       end
       DirectCCC: begin
         transfer_cnt_clr = 1'b0;
-        transfer_cnt_en = fmt_fifo_rdone_i;
+        transfer_cnt_en = fmt_fifo_rdone_i | fmt_flag_read_valid_i;
         fmt_fifo_rvalid_o = 1'b1;
+        ccc_last_trans = 1'b0;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
         resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
         ccc_done = 1'b0;
         fmt_bit_o = 1'b1;
         tx_queue_rready_o = 1'b0;
-        unique case (transfer_cnt_q)
+        unique case (transfer_cnt_q) inside
           32'd0: begin  // Broadcast Address
             fmt_byte_o = {7'h7E, 1'b0};
             fmt_flag_start_before_o = 1'b1;
@@ -915,32 +931,91 @@ module flow_active
                                              : ((cmd_ccc == `I3C_DIRECT_SETDASA) ? {dat_rdata.static_address, cmd_dir == Read} : {dat_rdata.dynamic_address, cmd_dir == Read});
             // SETDASA is the only CCC using the static address instead of the dynamic address
             tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i & (prev_ccc_q == cmd_ccc); // Pop payload byte for next cycle if we skipped sending 7'h7E and CCC bytes
+            fmt_flag_read_bytes_o = fmt_fifo_rdone_i & (cmd_dir == Read);
             if (fmt_receive_nack_i) begin
               resp_err_status_d = Nack;
             end
           end
           32'd3: begin  // Transmit the first Payload byte
-            ccc_done = ((cmd_ccc == `I3C_DIRECT_ENEC) | (cmd_ccc == `I3C_DIRECT_DISEC) | (cmd_ccc == `I3C_DIRECT_SETDASA)) & fmt_fifo_rdone_i; // CCC is done if it only needs one payload byte
+            ccc_last_trans = ccc_has_one_byte_of_payload(cmd_ccc);
+            ccc_done =  ccc_last_trans & transfer_cnt_en; // CCC is done if it only needs one payload byte
             if (is_regular_transfer) begin
-              fmt_byte_o = tx_dword_array[0];
-              fmt_bit_o = ^{fmt_byte_o, 1'b1};
-              // TODO: when we have more than one payload byte stop/restart should not
-              // be set
-              fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
-              fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
-              resp_err_status_d = (cmd_ccc == `I3C_DIRECT_SETDASA) ? NotSupported : Success;  // SETDASA is only supported with address assignment cmd desc
+              if (cmd_dir == Read) begin
+                fmt_fifo_rvalid_o = 1'b0;
+                fmt_flag_read_bytes_o = 1'b1;
+                rx_dword_array = (ccc_byte_select == '0) & fmt_flag_read_valid_i ? '0 : rx_dword_q;  // reset each new word to 0
+                if (fmt_flag_read_valid_i) begin
+                  rx_dword_array[ccc_byte_select] = fmt_byte_i;
+                end
+                if (ccc_done) begin
+                  rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
+                  if (~rx_queue_wready_i) begin
+                    // TODO: stall SCL until rx_queue can consume data
+                  end
+                end
+                if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+                  fmt_flag_stop_after_o = 1'b1;
+                  fmt_bit_o = 1'b0;
+                  resp_err_status_d = I3cShortReadErr;
+                  rx_dword_array[ccc_byte_select] = fmt_byte_i;
+                  rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
+                end
+              end else begin
+                fmt_byte_o = tx_dword_array[0];
+                fmt_bit_o  = ^{fmt_byte_o, 1'b1};
+              end
+              if (ccc_last_trans) begin
+                fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
+                fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+                resp_err_status_d = (cmd_ccc == `I3C_DIRECT_SETDASA) ? NotSupported : Success;  // SETDASA is only supported with address assignment cmd desc
+              end
             end else begin
               fmt_byte_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? {dat_rdata.dynamic_address, 1'b0} : (is_direct_transfer ? immediate_direct_cmd_desc.def_or_data_byte1 : immediate_dat_cmd_desc.def_or_data_byte1);
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
-              // TODO: when we have more than one payload byte this should not
-              // be set
-              fmt_flag_stop_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? addr_cmd_desc.toc : (is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc);
-              fmt_flag_restart_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? ~addr_cmd_desc.toc : (is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc);
-              resp_err_status_d = Success;  // successfull transfer without errors
+              if (ccc_last_trans) begin
+                fmt_flag_stop_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? addr_cmd_desc.toc : (is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc);
+                fmt_flag_restart_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? ~addr_cmd_desc.toc : (is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc);
+                resp_err_status_d = Success;  // successfull transfer without errors
+              end
             end
           end
-          32'd4: begin
-            // TODO: implement direct CCC with more than one payload byte
+          [32'd4 : 32'd8]: begin
+            if (is_regular_transfer) begin
+              ccc_last_trans = is_direct_transfer ? (transfer_cnt_q == (regular_dat_cmd_desc.data_length + 2)) : (transfer_cnt_q == (regular_direct_cmd_desc.data_length + 2));
+              ccc_done = ccc_last_trans & transfer_cnt_en;
+              if (cmd_dir == Read) begin  // GET CCC
+                fmt_flag_read_bytes_o = 1'b1;
+                fmt_fifo_rvalid_o = 1'b0;
+                rx_dword_array = (ccc_byte_select == '0) & fmt_flag_read_valid_i ? '0 : rx_dword_q;  // reset each new word to 0
+                if (fmt_flag_read_valid_i) begin
+                  rx_dword_array[ccc_byte_select] = fmt_byte_i;
+                end
+                if (((transfer_cnt_q - 2) % (HciRxDataWidth >> 3)) == 0) begin
+                  rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
+                  if (~rx_queue_wready_i) begin
+                    // TODO: stall SCL until rx_queue can consume data
+                  end
+                end
+                if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+                  fmt_flag_stop_after_o = 1'b1;
+                  fmt_bit_o = 1'b0;
+                  resp_err_status_d = I3cShortReadErr;
+                  rx_dword_array[ccc_byte_select] = fmt_byte_i;
+                  rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
+                end
+              end
+              if (ccc_last_trans) begin
+                fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
+                rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue even if DWORD is not full
+                fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+                fmt_bit_o = 1'b0;
+                resp_err_status_d = Success;
+              end
+            end else begin
+              // Should not use immediate transfer descriptors for GET CCCs
+              ccc_done = 1'b1;
+              resp_err_status_d = NotSupported;
+            end
           end
           default: begin
             resp_err_status_d = HcAborted;

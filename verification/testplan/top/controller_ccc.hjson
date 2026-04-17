@@ -107,19 +107,29 @@
       tags: ["top"]
     },
     {
-      name: controller_ccc_disec
-      desc:
-        '''
-        The test issues DISEC broadcast
-        '''
-      tests: ["controller_ccc_disec"]
-      tags: ["top"]
-    },
-    {
       name: controller_ccc_rstdaa
       desc:
         '''
-        The test issues RSTDAA broadcast
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.3 Reset Dynamic Address Assignment (RSTDAA) from I3C Basic Spec. Using Broadcast mode.
+        The test resets the dynamic addresses of the target and virtual target device.
+
+        Stimulus:
+        - assign DYNAMIC_ADDR and VIRT_DYNAMIC_ADDR during boot by writing to the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR and I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR CSRs
+        - randomly create a regular or immediate 64b CMD descriptor. With:
+            - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+            - CMD: 0x06 // RSTDAA BCAST
+            - CP = 0x1 // CMD field is valid
+            - DTT/DATA_LENGTH = 0 // No Payload
+        - send CMD descriptor
+
+        Check:
+        - Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
+        - Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
+
         '''
       tests: ["controller_ccc_rstdaa"]
       tags: ["top"]
@@ -187,24 +197,6 @@
       tags: ["top"]
     },
     {
-      name: controller_ccc_enec_dir
-      desc:
-        '''
-        The test issues ENEC direct
-        '''
-      tests: ["controller_ccc_enec_dir"]
-      tags: ["top"]
-    },
-    {
-      name: controller_ccc_disec_dir
-      desc:
-        '''
-        The test issues DISEC direct
-        '''
-      tests: ["controller_ccc_disec_dir"]
-      tags: ["top"]
-    },
-    {
       name: controller_ccc_setdasa
       desc:
         '''
@@ -239,36 +231,90 @@
       name: controller_ccc_setnewda
       desc:
         '''
-        The test issues SETNEWDA direct
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.11 Set New Dynamic Address (SETNEWDA) from I3C Basic Spec. Using Direct mode.
+        The test sets a new dynamic address, using the old target dynamic address of the I3C target.
+
+        Stimulus:
+        - Initialize the target and virtual target with valid dynamic addressses.
+        - Create new valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+        - Generate 2 SETNEWDA CCCs using the old DYNAMIC_ADDR and old VIRTUAL_DYNAMIC_ADDR and the new DYNAMIC_ADDR and VIRT_DYNAMIC_ADDR as payload.
+
+        Check:
+          - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+          - After sending the SETNEWDA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the new dynamic address that was sent.
+
         '''
-      tests: ["controller_ccc_setnewda_dir"]
+      tests: ["controller_ccc_setnewda"]
       tags: ["top"]
     },
     {
       name: controller_ccc_getpid
       desc:
         '''
-        The test issues GETPID direct
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.12 Get Provisioned ID (GETPID) from I3C Basic Spec. Using Direct mode.
+        The test reads the targets PID.
+
+        Stimulus:
+        - Issue a GETPID CCC to the targets dynamic address.
+
+        Check:
+          - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO CSRs to get the full PID
+          - Read the RX_PORT and verify that the data received by the controller matches the PID from the targets PID CSRs.
+
         '''
-      tests: ["controller_ccc_getpid_dir"]
+      tests: ["controller_ccc_getpid"]
       tags: ["top"]
     },
     {
       name: controller_ccc_getbcr
       desc:
         '''
-        The test issues GETBCR direct
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.13 Get Bus Characteristics Register (GETBCR) from I3C Basic Spec. Using Direct mode.
+        The test reads the targets BCR.
+
+        Stimulus:
+        - Issue a GETBCR CCC to the targets dynamic address.
+
+        Check:
+          - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_FIXED CSRs to get the full BCR
+          - Read the RX_PORT and verify that the data received by the controller matches the BCR from the targets BCR CSRs.
+
         '''
-      tests: ["controller_ccc_getbcr_dir"]
+      tests: ["controller_ccc_getbcr"]
       tags: ["top"]
     },
     {
       name: controller_ccc_getdcr
       desc:
         '''
-        The test issues GETDCR direct
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify 5.1.9.3.14 Get Device Characteristics Register (GETDCR) from I3C Basic Spec. Using Direct mode.
+        The test reads the targets DCR.
+
+        Stimulus:
+        - Issue a GETDCR CCC to the targets dynamic address.
+
+        Check:
+          - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR CSR to get the DCR
+          - Read the RX_PORT and verify that the data received by the controller matches the DCR from the targets DCR CSR.
+
         '''
-      tests: ["controller_ccc_getdcr_dir"]
+      tests: ["controller_ccc_getdcr"]
       tags: ["top"]
     }
   

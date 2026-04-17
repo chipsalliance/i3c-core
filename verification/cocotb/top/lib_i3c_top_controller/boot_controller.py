@@ -255,6 +255,19 @@ async def umbrella_stby_init(
             1,
             bus_idx=bus_idx
         )
+    if virtual_dynamic_addr is not None:
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR,
+            virtual_dynamic_addr,
+            bus_idx=bus_idx
+        )
+        await tb.write_csr_field(
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+            tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID,
+            1,
+            bus_idx=bus_idx
+        )
 
     # 5. Enable Target Transaction Interface
     await tb.write_csr_field(

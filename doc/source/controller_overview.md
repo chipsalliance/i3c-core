@@ -57,7 +57,7 @@ The I3C Controller includes support for the following subset of CCCs required fo
 #### Broadcast Support
 * **ENEC:** Enable Events Command (Broadcast).
 * **DISEC:** Disable Events Command (Broadcast).
-* **(WIP) RSTDAA:** Reset Dynamic Address Assignment (Broadcast).
+* **RSTDAA:** Reset Dynamic Address Assignment (Broadcast).
 * **ENTDAA:** Enter Dynamic Address Assignment (Broadcast).
 * **SETAASA:** Set All Addresses to Static Address (Broadcast).
 
@@ -65,11 +65,11 @@ The I3C Controller includes support for the following subset of CCCs required fo
 * **ENEC:** Enable Events Command (Direct).
 * **DISEC:** Disable Events Command (Direct).
 * **SETDASA:** Set Dynamic Address from Static Address (Direct).
-* **(WIP) SETNEWDA:** Set New Dynamic Address (Direct).
-* **(WIP) GETPID:** Get Provisional ID (Direct).
-* **(WIP) GETBCR:** Get Bus Characteristics Register (Direct).
-* **(WIP) GETDCR:** Get Device Characteristics Register (Direct).
-* **(WIP) GETSTATUS:** Get Device Status (Direct).
+* **SETNEWDA:** Set New Dynamic Address (Direct).
+* **GETPID:** Get Provisional ID (Direct).
+* **GETBCR:** Get Bus Characteristics Register (Direct).
+* **GETDCR:** Get Device Characteristics Register (Direct).
+* **GETSTATUS:** Get Device Status (Direct).
 
 #### Dynamic Address Assignment (DAA)
 
