@@ -383,13 +383,7 @@ be ACK-ed with the correct MWL content.
 ### `Test CSR accesses`
 
 Tests:
-- [ec_sec_fw_rec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L316)
-- [ec_stdby_ctrl_mode_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L326)
-- [ec_tti_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L417)
-- [ec_soc_mgmt_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L467)
-- [ec_contrl_config_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L474)
-- [ec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L480)
-
+- [ec_sec_fw_rec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L316)- [ec_stdby_ctrl_mode_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L326)- [ec_tti_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L417)- [ec_soc_mgmt_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L467)- [ec_contrl_config_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L474)- [ec_csr_access](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_csr_access.py#L480)
 
 Walks over all CSRs, write random value using AHB/AXI, reads it back,
 and compares with expected output.
@@ -404,9 +398,7 @@ and compares with expected output.
 ### `Detect target error condition 0`
 
 Tests:
-- [TE0_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L61)
-- [TE0_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L105)
-
+- [TE0_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L61)- [TE0_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L105)
 
 Issues I3C transaction with address set to broadcast address with single
 bit error.
@@ -417,9 +409,7 @@ is back to Idle state.
 ### `Detect target error condition 1`
 
 Tests:
-- [TE1_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L148)
-- [TE1_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L187)
-
+- [TE1_HDR_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L148)- [TE1_idle_exit](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L187)
 
 Issues I3C CCC transaction with invalid T-bit.
 Checks target FSM transitioned to WaitHDRExitOrIdle.
@@ -429,9 +419,7 @@ is back to Idle state.
 ### `Detect target error condition 5`
 
 Tests:
-- [TE5_read_on_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L225)
-- [TE5_write_on_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L261)
-
+- [TE5_read_on_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L225)- [TE5_write_on_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_err_conds.py#L261)
 
 Issues one of the CCC that is either read-only, or write-only.
 Issues target address with incorrect direction bit.
@@ -447,11 +435,7 @@ Checks that target NACKed transaction.
 ### `Enter and exit HDR-DDR mode`
 
 Tests:
-- [enter_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L64)
-- [enter_restart_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L120)
-- [enter_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L180)
-- [enter_restart_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L240)
-
+- [enter_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L64)- [enter_restart_exit_hdr_mode_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L120)- [enter_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L180)- [enter_restart_exit_hdr_mode_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py#L240)
 
 Issues ENTHDR0 CCC to the target, verifies that the target FSM
 is in IdleHDR state. Issues at least 1 read/write HDR-DDR command(s)
@@ -841,9 +825,7 @@ Verify basic bypass functionality
 ### `check_csr_access`
 
 Tests:
-- [ocp_csr_access_bypass_enabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1009)
-- [ocp_csr_access_bypass_disabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1014)
-
+- [ocp_csr_access_bypass_enabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1009)- [ocp_csr_access_bypass_disabled](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L1014)
 
 Verify accessibility of CSRs as specified in the OCP Secure Firmware Recovery
 specification with additional bypass features
@@ -857,9 +839,7 @@ specification with additional bypass features
 ### `recovery_status_wires`
 
 Tests:
-- [payload_available_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362)
-- [image_activated_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426)
-
+- [payload_available_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L362)- [image_activated_bypass](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_bypass.py#L426)
 
 Verify recovery status wires as specified in the Caliptra SS Hardware Specification
 - Write to the TTI TX Queue and read from the Indirect FIFO Queue.
