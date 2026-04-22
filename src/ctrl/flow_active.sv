@@ -87,29 +87,26 @@ module flow_active
     output logic host_enable_o,  // enable host functionality
     output logic is_i2c_transfer_o,  // is it an I2C transfer
     input logic i2c_cmd_complete_i,
-    input logic phy_sel_od_pp_i,
-    output logic phy_sel_od_pp_o,
 
-    output logic                         fmt_fifo_rvalid_o,
-    output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
-    input  logic                         fmt_fifo_rready_i,
-    input  logic                         fmt_fifo_rdone_i,
-    output logic [                  7:0] fmt_byte_o,
-    output logic                         fmt_bit_o,                   // T bit
-    output logic                         fmt_flag_start_before_o,
-    output logic                         fmt_flag_restart_after_o,
-    output logic                         fmt_flag_stop_after_o,
-    output logic                         fmt_flag_read_continuous_o,
-    input  logic                         fmt_receive_nack_i,
-    input  logic                         fmt_sda_arbitration_i,
+    output logic       fmt_fifo_rvalid_o,
+    input  logic       fmt_fifo_rready_i,
+    input  logic       fmt_fifo_rdone_i,
+    output logic [7:0] fmt_byte_o,
+    output logic       fmt_bit_o,                   // T bit
+    output logic       fmt_flag_start_before_o,
+    output logic       fmt_flag_restart_after_o,
+    output logic       fmt_flag_stop_after_o,
+    output logic       fmt_flag_read_continuous_o,
+    input  logic       fmt_receive_nack_i,
+    input  logic       fmt_sda_arbitration_i,
     // fmt RX signals
-    input  logic [                  7:0] fmt_byte_i,
-    input  logic                         fmt_bit_i,
-    output logic                         fmt_flag_read_bytes_o,
-    input  logic                         fmt_flag_read_valid_i,
+    input  logic [7:0] fmt_byte_i,
+    input  logic       fmt_bit_i,
+    output logic       fmt_flag_read_bytes_o,
+    input  logic       fmt_flag_read_valid_i,
 
     output logic fmt_flag_nak_ok_o,
-    output logic unhandled_unexp_nak_o,
+    output logic fmt_flag_hdr_exit_o,
     output logic unhandled_nak_timeout_o,
 
     // RX FIFO queue from I2C Controller
@@ -121,15 +118,16 @@ module flow_active
     output logic i3c_fsm_idle_o,
 
     // Errors and Interrupts
-    output i3c_err_t err,
-    output i3c_irq_t irq
+    output i3c_err_t err_o,  // directly sets the PIO_INTR_STATUS.TRANSFER_ERR_STAT CSR
+    input logic resume_i,  // HC_CONTROL.RESUME CSR field
+    output i3c_irq_t irq_o
 );
-  localparam int IBIBufferDepthDwords = 3; // TODO: add a define in defines.svh to controll this parameter
+  localparam int IBIBufferDepthDwords = 3; // TODO:#95744 add a define in defines.svh to control this parameter
 
   // Helper function to check if current CCC has payload or not
   function automatic logic has_payload(logic [7:0] ccc);
     if((ccc == `I3C_DIRECT_ENEC) || (ccc == `I3C_DIRECT_DISEC) || (ccc == `I3C_BCAST_ENEC) || (ccc == `I3C_BCAST_DISEC)) begin
-      // TODO: add more CCCs with payload
+      // TODO: #95745 add more CCCs with payload
       return 1'b1;
     end else begin
       return 1'b0;
@@ -139,7 +137,7 @@ module flow_active
   // Helper function to check if current CCC has only one byte of payload or not
   function automatic logic ccc_has_one_byte_of_payload(logic [7:0] ccc);
     if(((ccc == `I3C_DIRECT_ENEC) | (ccc == `I3C_DIRECT_DISEC) | (ccc == `I3C_DIRECT_SETDASA) | (ccc == `I3C_DIRECT_SETNEWDA) | (ccc == `I3C_DIRECT_GETBCR) | (ccc == `I3C_DIRECT_GETDCR))) begin
-      // TODO: add more CCCs with payload
+      // TODO: #95745 add more CCCs with payload
       return 1'b1;
     end else begin
       return 1'b0;
@@ -147,9 +145,7 @@ module flow_active
   endfunction
 
 
-  assign err = '0;
-  assign irq = tx_queue_ready_thld_trig_i;  // TODO: update to assign other interrupts
-  assign phy_sel_od_pp_o = phy_sel_od_pp_i;
+  assign irq_o = tx_queue_ready_thld_trig_i;  // TODO: #95747 update to assign other interrupts
 
   typedef enum logic [4:0] {
     Idle = 5'd0,
@@ -169,7 +165,8 @@ module flow_active
     WriteResp = 5'd14,
     InternalControlCommand = 5'd15,
     I3CBcastHeader = 5'd16,
-    IBI = 5'd17
+    IBI = 5'd17,
+    Error = 5'd18
   } flow_fsm_state_e;
 
   // TODO: Set BytesBeforeImmData from the HC_CONTROL.IBA_INCLUDE
@@ -204,7 +201,6 @@ module flow_active
   logic transfer_cnt_clr;
 
   logic [HciCmdDataWidth-1:0] cmd_queue_rdata;
-  logic cmd_queue_rvalid;
 
   // DAT table
   dat_entry_t dat_rdata;
@@ -215,7 +211,7 @@ module flow_active
   // FUTUREFIX: Use DCT typedef struct
   logic [127:0] dct_rdata;
   dct_entry_t dct_data;
-  logic dct_captured, dct_read_valid_d;
+  logic dct_read_valid_d;
   logic [$clog2(`DCT_DEPTH)-1:0] dct_index_q, dct_index_d;
 
   // I2C Signals
@@ -260,8 +256,13 @@ module flow_active
 
   // Internal Control Command Signals / Flags
   logic icc_done;
-  logic broadcast_addr_enable_d, broadcast_addr_enable_q;
+  logic
+      broadcast_addr_enable_d,
+      broadcast_addr_enable_q,
+      use_ce2_error_handling_on_nack_d,
+      use_ce2_error_handling_on_nack_q;
   logic prev_cmd_toc_d, prev_cmd_toc_q;
+  logic err_handled_q, err_handled_d;
 
   // IBI signals
   logic mdb_present, ibi_done;
@@ -281,7 +282,7 @@ module flow_active
       dct_raw_data_q <= '0;
       first_nack_q <= 1'b1;
       dat_index_q <= dev_index;
-      dct_index_q <= '0; // TODO: base index should be the one in I3CBASE.DCT_SECTION_OFFSET.TABLE_INDEX
+      dct_index_q <= '0; // TODO: #95749 base index should be the one in I3CBASE.DCT_SECTION_OFFSET.TABLE_INDEX
     end else begin
       assigned_addr_cnt_q <= assigned_addr_cnt_d;
       dct_raw_data_q <= dct_raw_data_d;
@@ -291,10 +292,9 @@ module flow_active
     end
   end
 
-  // TODO: Set appropriately
+  // TODO: #95750 Remove unused signals
   always_comb begin
     fmt_flag_nak_ok_o = 1'b0;
-    unhandled_unexp_nak_o = 1'b0;
     unhandled_nak_timeout_o = 1'b0;
   end
 
@@ -333,7 +333,6 @@ module flow_active
   // Assign constants
   // FUTUREFIX: Add control logic to constant signals
   assign host_enable_o = 1'b1;
-  assign fmt_fifo_depth_o = 8'd1;
 
   // Capture data from DAT/DCT tables
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -343,7 +342,6 @@ module flow_active
       dat_rdata <= '0;
       dct_rdata <= '0;
       dat_captured <= 1'b0;
-      dct_captured <= 1'b0;
     end else begin
       dat_read_valid_d <= dat_read_valid_hw_o;
       dct_read_valid_d <= dct_read_valid_hw_o;
@@ -355,10 +353,8 @@ module flow_active
       end
       if (dct_read_valid_d) begin
         dct_rdata <= dct_rdata_hw_i;
-        dct_captured <= 1'b1;
       end else begin
         dct_rdata <= dct_rdata;
-        dct_captured <= 1'b0;
       end
     end
   end
@@ -368,22 +364,24 @@ module flow_active
   // Capture command FIFO control signals
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      cmd_queue_rvalid <= '0;
-      cmd_queue_rdata  <= '0;
+      cmd_queue_rdata <= '0;
     end else begin
-      cmd_queue_rvalid <= cmd_queue_rvalid_i;
-      cmd_queue_rdata  <= cmd_queue_rdata_i;
+      cmd_queue_rdata <= cmd_queue_rdata_i;
     end
   end
 
   // Store Internal Control Flags
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      broadcast_addr_enable_q <= 1'b0;
-      prev_cmd_toc_q          <= 1'b1;
+      broadcast_addr_enable_q          <= 1'b0;
+      use_ce2_error_handling_on_nack_q <= 1'b0;
+      prev_cmd_toc_q                   <= 1'b1;
+      err_handled_q                    <= 1'b0;
     end else begin
-      broadcast_addr_enable_q <= broadcast_addr_enable_d;
-      prev_cmd_toc_q          <= prev_cmd_toc_d;
+      broadcast_addr_enable_q          <= broadcast_addr_enable_d;
+      use_ce2_error_handling_on_nack_q <= use_ce2_error_handling_on_nack_d;
+      prev_cmd_toc_q                   <= prev_cmd_toc_d;
+      err_handled_q                    <= err_handled_d;
     end
   end
 
@@ -423,7 +421,6 @@ module flow_active
         data_length = combo_cmd_desc.data_length;
       end
       InternalControl: begin
-        // FUTUREFIX
         imm_use_def_byte = '0;
         data_length = '0;
       end
@@ -443,8 +440,6 @@ module flow_active
   end
 
   // Control internal transfer counter
-  // FUTUREFIX: Consider using decremental counter with different load values
-  // See i2c_controller_fsm.sv for reference
   always_comb begin
     transfer_cnt_d = transfer_cnt_q;
     if (transfer_cnt_clr) begin
@@ -591,6 +586,7 @@ module flow_active
     dct_data = '0;
     dct_index_d = dct_index_q;
     broadcast_addr_enable_d = broadcast_addr_enable_q;
+    use_ce2_error_handling_on_nack_d = use_ce2_error_handling_on_nack_q;
     icc_done = 1'b0;
     prev_cmd_toc_d = prev_cmd_toc_q;
     ibi_done = 1'b0;
@@ -600,6 +596,9 @@ module flow_active
     ibi_wb_d = ibi_wb_q;
     ibi_wb_cnt_d = ibi_wb_cnt_q;
     ccc_last_trans = 1'b0;
+    err_o = 1'b0;
+    err_handled_d = 1'b0;
+    fmt_flag_hdr_exit_o = 1'b0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -611,7 +610,6 @@ module flow_active
       end
       // FetchAddr: Fetch DAT entry
       FetchAddr: begin
-        // TODO: Optimize DAT read so it takes just 1 cycle
         dat_read_valid_hw_o = ~is_direct_transfer;
         dat_index_hw_o = $clog2(`DAT_DEPTH)'(dev_index);
       end
@@ -624,7 +622,7 @@ module flow_active
         fmt_flag_stop_after_o = 1'b0;
         resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q;
         unique case (transfer_cnt_q)
-          // TODO: Add support for broadcast address control before private transfers. This can
+          // TODO: #95752 Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
           // 32'd0: fmt_byte_o = {7'h7e, 1'b0};
           // Target address
@@ -690,7 +688,7 @@ module flow_active
         resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
         fmt_bit_o = 1'b1;
         unique case (transfer_cnt_q)
-          // TODO: Add support for broadcast address control before private transfers. This can
+          // TODO: #95752 Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
           // 32'd0: fmt_byte_o = {7'h7e, 1'b0};
           // Target address
@@ -746,7 +744,8 @@ module flow_active
           fmt_fifo_rvalid_o = 1'b1;
         end
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          resp_err_status_d = Nack;
+          resp_err_status_d   = Nack;
+          fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
         end
       end
       I3CWriteRegular: begin
@@ -778,10 +777,11 @@ module flow_active
 
         // Error conditions
         if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i) begin
-          // TODO: implement error handling 
+          // TODO: #95753 implement error handling: OVL resp error code
         end
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          resp_err_status_d = Nack;
+          resp_err_status_d   = Nack;
+          fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
         end
       end
       I2CWriteRegular: begin
@@ -812,7 +812,7 @@ module flow_active
 
         // Error conditions
         if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i) begin
-          // TODO: implement error handling 
+          // TODO: #95753 implement error handling: OVL resp error code
         end
         if (fmt_receive_nack_i) begin
           resp_err_status_d = Nack;
@@ -836,7 +836,9 @@ module flow_active
           if (((transfer_cnt_q) % (HciRxDataWidth >> 3)) == 0) begin
             rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
             if (~rx_queue_wready_i) begin
-              // TODO: stall SCL until rx_queue can consume data
+              // TODO: #95753 implement error handling: OVL resp error code
+              // (queue is not ready because of overflow, else it's always
+              // ready)
             end
           end
         end
@@ -858,6 +860,7 @@ module flow_active
 
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           resp_err_status_d = Nack;
+          fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
           rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished
         end
 
@@ -883,7 +886,9 @@ module flow_active
           if (((transfer_cnt_q) % (HciRxDataWidth >> 3)) == 0) begin
             rx_queue_wvalid_o = rx_fifo_wvalid_i;  // Send data to rx queue
             if (~rx_queue_wready_i) begin
-              // TODO: stall SCL until rx_queue can consume data
+              // TODO: #95753 implement error handling: OVL resp error code
+              // (queue is not ready because of overflow, else it's always
+              // ready)
             end
           end
         end
@@ -898,10 +903,10 @@ module flow_active
 
       end
       StallWrite: begin
-        // FUTUREFIX
+        // TODO: #95754 is this state ever needed?
       end
       StallRead: begin
-        // FUTUREFIX
+        // TODO: #95754 is this state ever needed?
       end
       DirectCCC: begin
         transfer_cnt_clr = 1'b0;
@@ -918,6 +923,10 @@ module flow_active
           32'd0: begin  // Broadcast Address
             fmt_byte_o = {7'h7E, 1'b0};
             fmt_flag_start_before_o = 1'b1;
+            if (fmt_receive_nack_i) begin
+              resp_err_status_d   = AddrHeader;
+              fmt_flag_hdr_exit_o = 1'b1;  // CE2 recovery
+            end
           end
           32'd1: begin  // Broadcast the CCC
             fmt_byte_o = cmd_ccc;
@@ -933,7 +942,8 @@ module flow_active
             tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i & (prev_ccc_q == cmd_ccc); // Pop payload byte for next cycle if we skipped sending 7'h7E and CCC bytes
             fmt_flag_read_bytes_o = fmt_fifo_rdone_i & (cmd_dir == Read);
             if (fmt_receive_nack_i) begin
-              resp_err_status_d = Nack;
+              resp_err_status_d   = Nack;
+              fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
             end
           end
           32'd3: begin  // Transmit the first Payload byte
@@ -950,7 +960,9 @@ module flow_active
                 if (ccc_done) begin
                   rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
                   if (~rx_queue_wready_i) begin
-                    // TODO: stall SCL until rx_queue can consume data
+                    // TODO: #95753 implement error handling: OVL resp error code
+                    // (queue is not ready because of overflow, else it's always
+                    // ready)
                   end
                 end
                 if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
@@ -993,7 +1005,9 @@ module flow_active
                 if (((transfer_cnt_q - 2) % (HciRxDataWidth >> 3)) == 0) begin
                   rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
                   if (~rx_queue_wready_i) begin
-                    // TODO: stall SCL until rx_queue can consume data
+                    // TODO: #95753 implement error handling: OVL resp error code
+                    // (queue is not ready because of overflow, else it's always
+                    // ready)
                   end
                 end
                 if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
@@ -1036,6 +1050,10 @@ module flow_active
           32'd0: begin  // Broadcast Address
             fmt_byte_o = {7'h7E, 1'b0};
             fmt_flag_start_before_o = 1'b1;
+            if (fmt_receive_nack_i) begin
+              resp_err_status_d   = AddrHeader;
+              fmt_flag_hdr_exit_o = 1'b1;  // CE2 recovery
+            end
           end
           32'd1: begin  // Broadcast the CCC
             fmt_byte_o = cmd_ccc;
@@ -1052,21 +1070,21 @@ module flow_active
             if (is_regular_transfer) begin
               fmt_byte_o = tx_dword_array[0];
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
-              // TODO: when we have more than one payload byte this should not
+              // TODO: #95745 when we have more than one payload byte this should not
               // be set
               fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
               fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
             end else begin
               fmt_byte_o = is_direct_transfer ? immediate_direct_cmd_desc.def_or_data_byte1 : immediate_dat_cmd_desc.def_or_data_byte1;
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
-              // TODO: when we have more than one payload byte this should not
+              // TODO: #95745 when we have more than one payload byte this should not
               // be set
               fmt_flag_stop_after_o = is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc;
               fmt_flag_restart_after_o = is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc;
             end
           end
           32'd3: begin
-            // TODO: implement broadcast CCC with more than one payload byte
+            // TODO: #95745 implement broadcast CCC with more than one payload byte
           end
           default: begin
             resp_err_status_d = HcAborted;
@@ -1103,7 +1121,8 @@ module flow_active
             fmt_byte_o = {7'h7E, 1'b0};
             fmt_flag_start_before_o = 1'b1;
             if (fmt_fifo_rdone_i && fmt_receive_nack_i) begin
-              resp_err_status_d = AddrHeader;
+              resp_err_status_d   = AddrHeader;
+              fmt_flag_hdr_exit_o = 1'b1;  // CE2 recovery
             end
           end
           32'd1: begin  // CCC Byte
@@ -1149,6 +1168,7 @@ module flow_active
                   fmt_flag_restart_after_o = 1'b0;
                   ccc_done = 1'b1;
                   resp_err_status_d = Nack;
+                  fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
                   first_nack_d = 1'b1;
                 end
               end else begin  // we have successfully assigned a dynamic address
@@ -1199,7 +1219,21 @@ module flow_active
             broadcast_addr_enable_d = cmd_desc[12];  // See Table 137 I3C HCI Spec
             icc_done = 1'b1;
           end
-          // TODO: add more cases
+          CtrlSDARecoveryOrBusReset: begin
+            unique case (internal_ctrl_cmd_desc[15:12]) // subcommand REC_RESET_PROC see Table 140 I3C HCI Spec
+              4'h5: begin
+                // Use CE2 error handling for a non-responsive I3C Target, by
+                // sending HDR Exit Pattern after NACK of Private read/write
+                use_ce2_error_handling_on_nack_d = 1'b1;
+                icc_done = 1'b1;
+              end
+              // TODO: #95755 add support for all REC_RESET_PROC
+              default: begin
+                icc_done = 1'b1;
+              end
+            endcase
+          end
+          // TODO: #95756 add more cases of subcommands
           default: begin
             icc_done = 1'b1;
           end
@@ -1214,7 +1248,8 @@ module flow_active
         fmt_flag_restart_after_o = 1'b1;
         fmt_byte_o = {7'h7E, 1'b0};
         if (fmt_fifo_rdone_i && fmt_receive_nack_i) begin
-          resp_err_status_d = AddrHeader;
+          resp_err_status_d   = AddrHeader;
+          fmt_flag_hdr_exit_o = 1'b1;  // CE2 recovery
         end
       end
       IBI: begin
@@ -1235,11 +1270,11 @@ module flow_active
               fmt_flag_read_bytes_o = 1'b0;
               ibi_wb_d = 1'b1;
             end
-            ibi_status_d.ibi_sts = 1'b0;  // TODO: change to 1'b1 if we NACK the IBI
-            ibi_status_d.error = 1'b0;  // TODO: change if HC terminates the IBI for any reason
+            ibi_status_d.ibi_sts = 1'b0;  // TODO: #95757 change to 1'b1 if we NACK the IBI
+            ibi_status_d.error = 1'b0;  // TODO: #95757 change if HC terminates the IBI for any reason
             ibi_status_d.status_type = RegularIBI;
             ibi_status_d.ts = 1'b0;
-            ibi_status_d.last_status = 1'b1; // TODO: some IBIs require multiple IBI status desc according to HCI Spec
+            ibi_status_d.last_status = 1'b1; // TODO: #95758 some IBIs require multiple IBI status desc according to HCI Spec
             ibi_status_d.ibi_id = fmt_flag_read_valid_i ? fmt_byte_i : ibi_status_q.ibi_id;
           end else begin
             if (transfer_cnt_q == (IBIBufferDepthDwords << 2)) begin
@@ -1278,6 +1313,59 @@ module flow_active
             ibi_wb_cnt_d = ibi_queue_wvalid_o ? ibi_wb_cnt_q + 1 : ibi_wb_cnt_q; // increment writeback counter upon successfull write
           end
         end
+      end
+      Error: begin
+        // TODO: implement
+        err_o = ~err_handled_q;
+        err_handled_d = err_handled_q;
+        unique case (resp_err_status_q)
+          Crc: begin
+            // TODO: implement
+          end
+          Parity: begin
+            // TODO: implement
+          end
+          Frame: begin
+            // TODO: implement
+          end
+          AddrHeader: begin
+            // Error Type CE 2 requires generating HDR Exit pattern
+            fmt_flag_hdr_exit_o = 1'b1;
+            if (fmt_fifo_rdone_i) begin
+              err_handled_d = 1'b1;  // hdr exit pattern was sent
+            end
+          end
+          Nack: begin
+            // TODO: implement
+            if (use_ce2_error_handling_on_nack_q) begin
+              fmt_flag_hdr_exit_o = 1'b1;
+              if (fmt_fifo_rdone_i) begin
+                err_handled_d = 1'b1;  // hdr exit pattern was sent
+              end
+            end
+          end
+          Ovl: begin
+            // TODO: implement
+          end
+          I3cShortReadErr: begin
+            // TODO: implement
+          end
+          HcAborted: begin
+            // TODO: implement
+          end
+          I2cDataNackOrI3cBusAborted: begin
+            // TODO: implement
+          end
+          NotSupported: begin
+            // TODO: implement
+          end
+          AbortedWithCRC: begin
+            // TODO: implement
+          end
+          default: begin
+            // TODO: implement
+          end
+        endcase
       end
       default: begin
         resp_desc.err_status = AbortedWithCRC;  // TODO: change default state?
@@ -1319,7 +1407,7 @@ module flow_active
                           (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state));
             end
             ComboTransferDirect: begin
-              // TODO
+              // TODO: #95759 implement combo transfer command descriptor
             end
             InternalControl: begin
               state_next = InternalControlCommand;
@@ -1341,7 +1429,7 @@ module flow_active
                           (cmd_dir == Read) ? I3CRead : (fmt_fifo_rready_i ? I3CWriteRegular : state));
               end
               ComboTransferDAT: begin
-                // TODO: implement
+                // TODO: #95759 implement combo transfer command descriptor
               end
               AddressAssignment: begin
                 state_next = fmt_fifo_rready_i ? (cmd_ccc == `I3C_DIRECT_SETDASA ? DirectCCC : DynamicAddrAssignment) : state;
@@ -1404,13 +1492,13 @@ module flow_active
         end
         // TODO: add transition for RX queue full state
         // We only abort the read due to controller errors, the i2c target
-        // cannot abort a read
+        // cannot abort a read, this is handled as part of error handling
       end
       StallWrite: begin
-        // FUTUREFIX
+        // TODO: #95754 is this state ever needed?
       end
       StallRead: begin
-        // FUTUREFIX
+        // TODO: #95754 is this state ever needed?
       end
       DirectCCC: begin
         if (ccc_done) begin
@@ -1436,7 +1524,7 @@ module flow_active
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
         if (resp_queue_wready_i) begin
-          state_next = Idle;
+          state_next = (resp_err_status_q != Success) ? Error : Idle; // Wait in the error state upon sending an error to the driver
         end
       end
       // InternalControlCommand: Controls the Host Controller itself (not I3C
@@ -1444,7 +1532,7 @@ module flow_active
       InternalControlCommand: begin
         if (icc_done) begin
           state_next = Idle;
-          // TODO: some ICCs require a response, switch to WriteResp state for
+          // TODO: #95756 some ICCs require a response, switch to WriteResp state for
           // these once they are implemented
         end
       end
@@ -1474,6 +1562,11 @@ module flow_active
       end
       IBI: begin
         if (ibi_done) begin
+          state_next = Idle;
+        end
+      end
+      Error: begin
+        if (~resume_i & err_handled_q) begin  // the driver has cleared the RESUME field in the HC_CONTROL CSR.
           state_next = Idle;
         end
       end

@@ -559,7 +559,11 @@ module hci_queues_wrapper
       .hci_ibi_empty_o,
       .hci_ibi_wvalid_i,
       .hci_ibi_wready_o,
-      .hci_ibi_wdata_i
+      .hci_ibi_wdata_i,
+
+      .transfer_err_stat_i  (1'b0),  // UNUSED
+      .transfer_abort_stat_i(1'b0)   // UNUSED
+
   );
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
@@ -617,6 +621,7 @@ module hci_queues_wrapper
   logic                          csr_tti_ibi_queue_reg_rst;
   logic                          csr_tti_ibi_queue_reg_rst_we;
   logic                          csr_tti_ibi_queue_reg_rst_data;
+
   logic                          unused_irq;
 
   tti xtti (
@@ -752,16 +757,8 @@ module hci_queues_wrapper
       .dct_i(dct_in),
       .dct_o(dct_out),
 `endif  // CONTROLLER_SUPPORT
-      .hwif_out_o(unused_hwif_out),
+      .hwif_out_o(unused_hwif_out)
 
-      // Controller configuration status
-      .set_dasa_i('0),
-      .set_dasa_valid_i('0),
-      .set_dasa_virtual_device_i('0),
-      .rstdaa_i('0),
-
-      .rst_action_i,
-      .rst_action_valid_i('0)
   );
 `ifdef TARGET_SUPPORT
   logic unused_recovery_mode_enter;

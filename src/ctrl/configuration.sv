@@ -92,7 +92,9 @@ module configuration (
     input logic set_ibil_i,
     input logic [15:0] mwl_i,
     input logic [15:0] mrl_i,
-    input logic [7:0] ibil_i
+    input logic [7:0] ibil_i,
+
+    output logic resume_o
 );
 
   // Mode of operation
@@ -101,6 +103,7 @@ module configuration (
   // 10 - SCM_RUNNING
   // 11 - SCM_HOT_JOIN
   logic [1:0] stby_cr_enable_init;
+  logic bus_enable;
   assign stby_cr_enable_init =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value;
 
@@ -108,6 +111,7 @@ module configuration (
   assign i3c_standby_en_o = stby_cr_enable_init == 2'b10;
 
   // Bus Configuration
+  // TODO: implement usage for this signal
   logic i2c_dev_present;
 `ifdef CONTROLLER_SUPPORT
   assign i2c_dev_present = hwif_out_i.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
@@ -116,18 +120,18 @@ module configuration (
 `endif  // CONTROLLER_SUPPORT
 
   // Disables the TTI
+  // TODO: implement usage for this signal
   logic target_xact_enable;
   assign target_xact_enable =
     hwif_out_i.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value;
 
   // Define state: running, idle, waiting, halted, etc.
-  logic bus_enable;
-  logic resume;
+
   logic abort;
 `ifdef CONTROLLER_SUPPORT
   assign bus_enable = hwif_out_i.I3CBase.HC_CONTROL.BUS_ENABLE.value;
-  assign resume = hwif_out_i.I3CBase.HC_CONTROL.RESUME.value;
-  assign abort = hwif_out_i.I3CBase.HC_CONTROL.ABORT.value;
+  assign resume_o = hwif_out_i.I3CBase.HC_CONTROL.RESUME.value;
+  assign abort = hwif_out_i.I3CBase.HC_CONTROL.ABORT.value;  // TODO: implement aborting transaction
 `else
   assign bus_enable = hwif_out_i.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
   assign resume = '0;
@@ -135,6 +139,9 @@ module configuration (
 `endif  // CONTROLLER_SUPPORT
 
   // These affect queue ctrl logic
+  // for now these are not used since we only support PIO Mode -> it's
+  // always enabled
+  // TODO: implement DMA support
   logic pio_enable;
   logic pio_abort;
   logic pio_rs;

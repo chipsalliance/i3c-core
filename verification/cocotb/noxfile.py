@@ -502,6 +502,16 @@ def i2c_controller_verify(session, test_group, test_name, coverage, simulator):
 
 @test(
     TestParams(
+        ["tests", "controller-axi", "target", "controller"],
+        ["i3c_axi_controller_err"],
+        ["test_controller_error"],
+    )
+)
+def controller_error_verify(session, test_group, test_name, coverage, simulator):
+    verify_top(session, test_group, test_name, coverage, simulator)
+
+@test(
+    TestParams(
         ["tests", "ahb", "axi", "target"],
         ["ccc"],
         ["test_ccc"],

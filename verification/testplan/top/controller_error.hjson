@@ -4,12 +4,29 @@
   testpoints:
   [
     {
-      name: Controller Generate Error response
+      name: Controller Error 2: No response to Broadcast Address (7'h7E)
       desc:
         '''
-        Handle Error as per 6.13 HCI Spec for each type of error as specified in the ERR_STATUS field of the resp desc (Table 146 HCI Spec). I.e. halt execution until error is resolved by driver.
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 5.1.10.2.3 Error Type CE2 I3C Basic Spec.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target
+        - enable bcast nack error injection on the Cocotbext Target
+        - send an ENEC CCC (this will get NACKed)
+        - Clear HC_CONTROL.RESUME and PIO_INTR_STATUS.TRANSFER_ERR_STAT to resume normal operation.
+        - send an ENEC CCC
+
+        Check:
+          - Observe a NACK for the ENEC CCC.
+          - After NACK the Controller should generate a HDR Exit Pattern.
+          - Check if the target recognizes the HDR Exit Pattern by monitoring the cocotbext targets `hdr_exit_detected` variable.
+          - Check if subsequent ENEC CCC finishes as expected.
         '''
-      tests: ["controller_errors"]
+      tests: ["controller_error_nack_on_bcast"]
       tags: ["top"]
     }
   

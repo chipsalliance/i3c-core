@@ -21,6 +21,14 @@ testplans:
     testpoints:
     - name: "^(.*)$"
       source: "verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py"
+  - name: 'Controller Generate HDR Exit Pattern'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/i3c_axi_controller/test_controller_hdr_exit.py"
+  - name: 'Controller error generation'
+    testpoints:
+    - name: "^(.*)$"
+      source: "verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py"
 
   - name: '(Controller-specific)? ?CSR access check'
     testpoints:

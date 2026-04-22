@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 `include "i3c_defines.svh"
 
-module test_wrapper #(
+module i3c_controller_error_test_wrapper #(
 `ifdef I3C_USE_AHB
     parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
     parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
@@ -20,10 +20,11 @@ module test_wrapper #(
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
 ) (
+    input clk_i,  // clock
+    input rst_ni, // active low reset
+
 `ifdef I3C_USE_AHB
     // AHB-Lite interface
-    input  logic                      hclk,
-    input  logic                      hreset_n,
     // Byte address of the transfer
     input  logic [  AhbAddrWidth-1:0] haddr_i,
     // Indicates the number of bursts in a transfer
@@ -53,8 +54,8 @@ module test_wrapper #(
 
 `elsif I3C_USE_AXI
     // AXI4 Interface
-    input  logic                    aclk,      // clock
-    input  logic                    areset_n,  // active low reset
+    input  logic                    aclk,
+    input  logic                    areset_n,
     // AXI Read Channels
     input  logic [AxiAddrWidth-1:0] araddr,
     input  logic [             1:0] arburst,
@@ -104,18 +105,16 @@ module test_wrapper #(
 `endif
 `endif
 
-    // FMT interface
-    output logic fmt_fifo_rvalid_o,
-    input logic fmt_fifo_rready_i,
-    input logic fmt_fifo_rdone_i,
-    output logic [7:0] fmt_byte_o,
-    output logic fmt_flag_start_before_o,
-    output logic fmt_flag_stop_after_o,
-    output logic fmt_flag_read_bytes_o,
-    output logic fmt_flag_read_continue_o,
-    output logic fmt_flag_nak_ok_o,
-    output logic unhandled_unexp_nak_o,
-    output logic unhandled_nak_timeout_o,
+    // I3C bus driver signals
+    input  logic scl_i,
+    input  logic sda_i,
+    output logic scl_o,
+    output logic sda_o,
+    output logic scl_oe,
+    output logic sda_oe,
+
+    output logic sel_od_pp_o,
+    input wire [4:0] debug_state_target_i,
 
     // Recovery interface signals
     output logic recovery_payload_available_o,
@@ -127,14 +126,22 @@ module test_wrapper #(
 
     output irq_o
 );
-  logic clk, rst_n;
-  logic [AxiUserWidth-1:0] priv_ids[NumPrivIds];
-  genvar i;
-  generate
-    for (i = 0; i < NumPrivIds; i++) begin
-      assign priv_ids[i] = '0;
-    end
-  endgenerate
+
+  localparam int unsigned NumDevices = 2;  // 1 Target, 1 Controller
+
+  logic [NumDevices-1:0] sda;
+  logic [NumDevices-1:0] scl;
+  assign sda[0] = sda_i;
+  assign scl[0] = scl_i;
+
+  i3c_bus_harness #(
+      .NumDevices(NumDevices)
+  ) xi3_bus_harness (
+      .sda_i(sda),
+      .scl_i(scl),
+      .sda_o(sda_o),
+      .scl_o(scl_o)
+  );
 
 `ifdef CONTROLLER_SUPPORT
   // DAT memory export interface
@@ -146,7 +153,7 @@ module test_wrapper #(
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
 `endif  // CONTROLLER_SUPPORT
 
-  i3c_flow_active #(
+  i3c #(
 `ifdef I3C_USE_AHB
       .AhbDataWidth(AhbDataWidth),
       .AhbAddrWidth(AhbAddrWidth),
@@ -163,7 +170,7 @@ module test_wrapper #(
       .CsrAddrWidth(CsrAddrWidth),
       .DatAw(DatAw),
       .DctAw(DctAw)
-  ) i3c_flow_active (
+  ) i3c (
       .clk_i (aclk),
       .rst_ni(areset_n),
 
@@ -227,21 +234,15 @@ module test_wrapper #(
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
-      .priv_ids_i(priv_ids), // Set this to zero such that we can have legal writes (the awuserid is always 0 for this test)
+      .priv_ids_i(priv_ids_i),
 `endif
 `endif
 
-      .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
-      .fmt_fifo_rready_i(fmt_fifo_rready_i),
-      .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
-      .fmt_byte_o(fmt_byte_o),
-      .fmt_flag_start_before_o(fmt_flag_start_before_o),
-      .fmt_flag_stop_after_o(fmt_flag_stop_after_o),
-      .fmt_flag_read_bytes_o(fmt_flag_read_bytes_o),
-      .fmt_flag_read_continue_o(fmt_flag_read_continue_o),
-      .fmt_flag_nak_ok_o(fmt_flag_nak_ok_o),
-      .unhandled_unexp_nak_o(unhandled_unexp_nak_o),
-      .unhandled_nak_timeout_o(unhandled_nak_timeout_o),
+      .i3c_scl_i  (scl_o),
+      .i3c_scl_o  (scl[1]),
+      .i3c_sda_i  (sda_o),
+      .i3c_sda_o  (sda[1]),
+      .sel_od_pp_o(sel_od_pp_o),
 
 `ifdef CONTROLLER_SUPPORT
       .dat_mem_src_i (dat_mem_src),
@@ -308,4 +309,8 @@ module test_wrapper #(
        1      |   0    ||   1    |    0
        1      |   1    ||   1    |    1
 */
+
+  assign sda_oe = sel_od_pp_o || !sda_o;
+  assign scl_oe = 1'b0;
+
 endmodule

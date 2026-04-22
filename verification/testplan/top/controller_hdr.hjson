@@ -1,15 +1,32 @@
-// FIXME: add detailed description of tests using testbench/stimulus/check template
 {
-  name: Controller Enter and exit HDR mode
+  name: Controller Generate HDR Exit Pattern
   testpoints:
   [
     {
-      name: Controller Generate HDR exit pattern
+      name: Controller Generate HDR Exit Pattern
       desc:
         '''
-        Generate HDR exit pattern, as per 5.2.1.1.1 I3C Basic Spec
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Generate HDR exit pattern, as per 5.2.1.1.1 I3C Basic Spec.
+
+        Stimulus:
+        - Send an Internal Control Command (Table 140 I3C HCI Spec) with:
+          - MIPI_CMD: 0x5 // Controller SDA Recovery or Bus Reset Procedure
+          - REC_RESET_PROC: 0x5 // Use CE2 error handling for a non-responsive I3C Target, by sending HDR Exit Pattern after NACK of Private read/write.
+        - Send an I3C private read or private write to an unassigned target address.
+        - Send an I3C private private write to the correct target address.
+
+        Check:
+          - Observe a NACK for the I3C private Read or Write.
+          - After NACK the Controller should generate a HDR Exit Pattern.
+          - Check if the target recognizes the HDR Exit Pattern by monitoring the cocotbext targets `hdr_exit_detected` variable.
+          - Check if subsequent private write finishes as expected.
+
         '''
-      tests: ["controller_exit_hdr_mode"]
+      tests: ["controller_gen_hdr_exit_pattern"]
       tags: ["top"]
     }
   ]

@@ -25,9 +25,6 @@ module bus_start_stop_gen (
 
     output logic scl_o,
     output logic sda_o,
-    // TODO: implement
-    output logic sel_od_pp_o, // Open Drain or Push Pull
-
     output logic active_o // This signal is used to select between SCL/SDA of this module and bus_tx_flow and bus_scl_flow
 );
   // FSM signals
@@ -155,5 +152,4 @@ module bus_start_stop_gen (
       timer_q <= timer_d;
     end
   end
-  assign sel_od_pp_o = 1'b0;  // TODO: assign this properly
 endmodule

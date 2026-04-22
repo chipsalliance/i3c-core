@@ -40,24 +40,24 @@ module i3c_controller_fsm
     input logic [i3c_pkg::TimingWidth-1:0] t_bus_available_i,  // Bus AVAILABLE condition time in clock units
 
     //FMT Interface
-    input  logic                         fmt_fifo_rvalid_i,
-    input  logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_i,
-    output logic                         fmt_fifo_rready_o,
-    output logic                         fmt_fifo_rdone_o,
-    input  logic [                  7:0] fmt_byte_i,
-    input  logic                         fmt_bit_i,                   // T bit
-    input  logic                         fmt_flag_start_before_i,
-    input  logic                         fmt_flag_stop_after_i,
-    input  logic                         fmt_flag_restart_after_i,
-    output logic                         fmt_receive_nack_o,
-    output logic                         fmt_sda_arbitration_o,
+    input  logic       fmt_fifo_rvalid_i,
+    output logic       fmt_fifo_rready_o,
+    output logic       fmt_fifo_rdone_o,
+    input  logic [7:0] fmt_byte_i,
+    input  logic       fmt_bit_i,                   // T bit
+    input  logic       fmt_flag_start_before_i,
+    input  logic       fmt_flag_stop_after_i,
+    input  logic       fmt_flag_restart_after_i,
+    output logic       fmt_receive_nack_o,
+    output logic       fmt_sda_arbitration_o,
     // fmt RX signals
-    output logic [                  7:0] fmt_byte_o,
-    output logic                         fmt_bit_o,                   // T bit
-    input  logic                         fmt_flag_read_bytes_i,
+    output logic [7:0] fmt_byte_o,
+    output logic       fmt_bit_o,                   // T bit
+    input  logic       fmt_flag_read_bytes_i,
     // this signal is used for DAA where we continuously have to read 8 bytes (without T bit)
-    input  logic                         fmt_flag_read_continuous_i,
-    output logic                         fmt_flag_read_valid_o
+    input  logic       fmt_flag_read_continuous_i,
+    output logic       fmt_flag_read_valid_o,
+    input  logic       fmt_flag_hdr_exit_i
 
 
 );
@@ -71,7 +71,8 @@ module i3c_controller_fsm
     BusReadContinuous,
     ReStart,
     IBI,
-    Stop
+    Stop,
+    HDRExit
   } state_e;
   // Declare internal signals
   state_e state_d, state_q;
@@ -106,7 +107,25 @@ module i3c_controller_fsm
 
   // Timing Inputs
   logic [i3c_pkg::TimingWidth-1:0] thigh, tlow;
-  logic bus_busy, bus_free, bus_idle, bus_available;
+  logic bus_busy, bus_free, bus_idle, bus_available, bus_rx_req_bit;
+
+  // HDR Exit Generation Signals
+  logic hdr_exit_done, is_high_q, is_high_d;
+  logic [2:0] hdr_falling_count_q, hdr_falling_count_d;
+  logic [i3c_pkg::TimingWidth-1:0] timer_d, timer_q;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      is_high_q <= 1'b0;
+      hdr_falling_count_q <= 3'd0;
+      timer_q <= '0;
+    end else begin
+      is_high_q <= is_high_d;
+      hdr_falling_count_q <= hdr_falling_count_d;
+      timer_q <= timer_d;
+    end
+  end
+
 
 
   always_comb begin
@@ -128,7 +147,7 @@ module i3c_controller_fsm
   // phy_sel_od_pp should only change when SCL is low to prevent SDA changing
   // while SCL is high. That's why we wait until scl is low to update the
   // phy_sel_od_pp_o signal
-  assign phy_sel_od_pp_real_d = scl_stable_low || (start_stop_active && (start_stop_scl == 1'b0)) ? phy_sel_od_pp_q : phy_sel_od_pp_real_q;
+  assign phy_sel_od_pp_real_d = scl_stable_low || (start_stop_active && (start_stop_scl == 1'b0)) || (state_q == HDRExit) ? phy_sel_od_pp_q : phy_sel_od_pp_real_q;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
@@ -164,8 +183,7 @@ module i3c_controller_fsm
 
   // RX signals
   logic [7:0] bus_rx_data, rx_byte_d, rx_byte_q;
-  logic
-      bus_rx_req_bit, bus_rx_req_bit_d, bus_rx_req_bit_q, bus_rx_req_byte, bus_rx_done, bus_rx_idle;
+  logic bus_rx_req_bit_d, bus_rx_req_bit_q, bus_rx_req_byte, bus_rx_done, bus_rx_idle;
 
   // State Transition
   always_comb begin
@@ -184,7 +202,7 @@ module i3c_controller_fsm
       Address: begin
         if (bus_rx_done & tx_bit_q) begin
           if (fmt_receive_nack_o) begin  // wait for SCL to finish cycle before switching state
-            state_d = fmt_flag_restart_after_i ? ReStart : Stop;
+            state_d = fmt_flag_hdr_exit_i ? HDRExit : (fmt_flag_restart_after_i ? ReStart : Stop);
           end else begin
             state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : (fmt_flag_read_continuous_i ? BusReadContinuous : (fmt_flag_read_bytes_i ? BusRX : BusTX)));
           end
@@ -220,6 +238,11 @@ module i3c_controller_fsm
       Stop: begin
         if (stop_done) begin
           state_d = Idle;
+        end
+      end
+      HDRExit: begin
+        if (hdr_exit_done) begin
+          state_d = Stop;
         end
       end
       default: begin
@@ -258,6 +281,10 @@ module i3c_controller_fsm
     scl_enable = ~start_stop_active;
     scl_stall = 1'b0;
     ibi_done = 1'b0;
+    hdr_exit_done = 1'b0;
+    is_high_d = is_high_q;
+    hdr_falling_count_d = hdr_falling_count_q;
+    timer_d = timer_q;
     unique case (state_q)
       Idle: begin
         fmt_fifo_rready_o = 1'b1;
@@ -361,7 +388,6 @@ module i3c_controller_fsm
         fmt_fifo_rready_o = 1'b1;
       end
       IBI: begin
-        // TODO: implement
         ctrl_scl_o = scl_flow_scl;
         if (rx_done_bit_q) begin
           bus_tx_req_bit = 1'b1;
@@ -390,6 +416,36 @@ module i3c_controller_fsm
           ctrl_sda_o = start_stop_sda;
           ctrl_scl_o = stop_after_q ? start_stop_scl : 1'b0;
           received_nack_d = 1'b0;
+        end
+      end
+      HDRExit: begin
+        ctrl_sda_o = 1'b1;
+        ctrl_scl_o = 1'b0;
+        is_high_d = is_high_q;
+        hdr_falling_count_d = hdr_falling_count_q;
+        timer_d = timer_q;
+        if (hdr_falling_count_q >= 3'd4) begin
+          timer_d = timer_q + 1;
+          hdr_falling_count_d = hdr_falling_count_q;
+          // Set up SCL for STOP
+          ctrl_sda_o = 1'b0;
+          ctrl_scl_o = 1'b0;
+          if (timer_q >= tlow_i) begin  // wait before switching to STOP
+            hdr_falling_count_d = 3'd0;
+            timer_d = '0;
+            hdr_exit_done = 1'b1;  // generate STOP condition
+            fmt_fifo_rdone_o = 1'b1; // signal to flow_active that we are done with the HDR Exit pattern
+          end
+        end else begin
+          if (timer_q < tlow_i) begin
+            timer_d = timer_q + 1;
+            ctrl_sda_o = ~is_high_q;
+          end else begin
+            ctrl_sda_o = ~is_high_q;
+            hdr_falling_count_d = ~is_high_q ? hdr_falling_count_q + 1 : hdr_falling_count_q;
+            is_high_d = ~is_high_q;
+            timer_d = '0;
+          end
         end
       end
       default: begin
@@ -466,6 +522,7 @@ module i3c_controller_fsm
 
   // SDA driver
   logic unassigned_bus_sel_od_pp;
+  assign bus_tx_sel_od_pp = 1'b0;  // UNUSED
   bus_tx_flow i_bus_tx_flow (
       .clk_i,
       .rst_ni,
@@ -507,7 +564,6 @@ module i3c_controller_fsm
       .scl_o(scl_flow_scl)
   );
 
-  logic unassigned_sel_od_pp_o;
   // Generate start(S), stop(P) and repeated start(Sr) condition
   bus_start_stop_gen i_bus_start_stop_gen (
       .clk_i,
@@ -532,8 +588,6 @@ module i3c_controller_fsm
 
       .scl_o(start_stop_scl),
       .sda_o(start_stop_sda),
-
-      .sel_od_pp_o(unassigned_sel_od_pp_o),
 
       .active_o(start_stop_active)
   );

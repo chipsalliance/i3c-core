@@ -130,7 +130,7 @@ module i3c_actual_bus_wrapper #(
 
   logic [NumDevices-1:0] sda;
   logic [NumDevices-1:0] scl;
-
+  logic [1:0] sel_od_pp;
   assign phy_sel_od_pp_o = sel_od_pp[0];
 
   i3c_bus_harness #(
@@ -141,8 +141,6 @@ module i3c_actual_bus_wrapper #(
       .sda_o(bus_sda_o),
       .scl_o(bus_scl_o)
   );
-
-  logic [1:0] sel_od_pp;
 
   ///////////////////////////////////////////////////////////////
   //                        Controller                         //

@@ -826,7 +826,7 @@ async def test_controller_ccc_getbcr(dut):
     await write_ccc(tb, CCC.DIRECT.GETBCR, data_length=1, device_address=addr_helper.trgt_dyn_addr, toc=True, immediate=False, rnw=True)
 
     # Read RX queue
-    dut._log.info("Reading PID from the RX Queue")
+    dut._log.info("Reading BCR from the RX Queue")
     ctrl_rx_queue_addr = tb.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr
     # PID is 6 bytes, which means we have to read 2 DWORDs
     recv_data = await tb.read_rx_queue(1, bus_idx=ACT_CONTROLLER_IDX, rx_port_addr=ctrl_rx_queue_addr)
@@ -855,7 +855,7 @@ async def test_controller_ccc_getdcr(dut):
     await write_ccc(tb, CCC.DIRECT.GETDCR, data_length=1, device_address=addr_helper.trgt_dyn_addr, toc=True, immediate=False, rnw=True)
 
     # Read RX queue
-    dut._log.info("Reading PID from the RX Queue")
+    dut._log.info("Reading DCR from the RX Queue")
     ctrl_rx_queue_addr = tb.reg_map.PIOCONTROL.RX_DATA_PORT.base_addr
     # PID is 6 bytes, which means we have to read 2 DWORDs
     recv_data = await tb.read_rx_queue(1, bus_idx=ACT_CONTROLLER_IDX, rx_port_addr=ctrl_rx_queue_addr)

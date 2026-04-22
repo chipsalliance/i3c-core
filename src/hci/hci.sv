@@ -125,7 +125,11 @@ module hci
 
     // DCT CSR interface
     input  I3CCSR_pkg::I3CCSR__DCT__out_t dct_i,
-    output I3CCSR_pkg::I3CCSR__DCT__in_t  dct_o
+    output I3CCSR_pkg::I3CCSR__DCT__in_t  dct_o,
+
+    // Error Interface from flow_active
+    input logic transfer_err_stat_i,
+    input logic transfer_abort_stat_i
 );
 
   // Reset control
@@ -432,12 +436,14 @@ module hci
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
-    hwif_base_o.HC_CONTROL.RESUME.we = '0;
-    hwif_base_o.HC_CONTROL.RESUME.next = '0;
+    hwif_base_o.HC_CONTROL.RESUME.we = transfer_err_stat_i; // TODO: maybe we have to change this, s.t. it's only written once and can be reset by SW
+    hwif_base_o.HC_CONTROL.RESUME.next = transfer_err_stat_i;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.we = '0;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.next = '0;
-    hwif_base_o.RESET_CONTROL.SOFT_RST = '0;  //TODO: change
-    hwif_base_o.PRESENT_STATE.AC_CURRENT_OWN.next = '0;
+    hwif_base_o.RESET_CONTROL.SOFT_RST = '0;
+    hwif_base_o.PRESENT_STATE.AC_CURRENT_OWN.next = 1'b1; // TODO: change this based on if we are the active controller or not
+    // TODO: the INTR_STATUS registers should be set by the controller
+    // (flow_active)
     hwif_base_o.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = '0;
     hwif_base_o.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = '0;
     hwif_base_o.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = '0;
@@ -446,15 +452,15 @@ module hci
     hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.we = '0;
     hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.next = '0;
     hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = '0;
-    hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;
+    hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;  // This feature is not supported
 
     hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = hci_tx_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = '0;
-    hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = '0;
-    hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = '0;
-    hwif_pio_control_o.PIO_INTR_STATUS.RESP_READY_STAT.next = '0;
-    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = '0;
-    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = '0;
+    hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = hci_rx_ready_thld_trig_o;
+    hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = hci_ibi_ready_thld_trig_o;
+    hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = hci_cmd_ready_thld_trig_o;
+    hwif_pio_control_o.PIO_INTR_STATUS.RESP_READY_STAT.next = hci_resp_ready_thld_trig_o;
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = transfer_abort_stat_i;  // TODO: implement
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = transfer_err_stat_i; // TODO: implement during error handling
   end
 
 endmodule : hci

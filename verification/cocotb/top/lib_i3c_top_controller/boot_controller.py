@@ -6,6 +6,18 @@ import cocotb
 from cocotb.triggers import ClockCycles
 import math
 import logging
+import os
+import sys
+
+i3c_root = os.environ.get("I3C_ROOT_DIR")
+
+if i3c_root:
+    if i3c_root not in sys.path:
+        sys.path.append(i3c_root)
+else:
+    raise EnvironmentError("I3C_ROOT_DIR environment variable is not set. Cannot import timing module.")
+
+from tools.timing.timings import validate_timings, log_timing_configuration
 
 # Device Bus Indices
 ACT_CONTROLLER_IDX = 1
@@ -19,85 +31,6 @@ MODE_CONTROLLER = 3 # Active Controller
 
 def mask(width):
     return (1 << width) - 1
-
-# Helpers for timing
-def calculate_min_timings(fclk_mhz: float) -> dict:
-    """
-    Calculates the minimum I3C and I2C Fast Mode timings in clock cycles 
-    based on the core clock frequency.
-    """
-    def ns_to_cycles(ns: float) -> int:
-        # Cycles = time(ns) / clock_period(ns) = time(ns) * fclk(MHz) / 1000
-        return math.ceil((ns * fclk_mhz) / 1000.0)
-
-    # Dictionary of absolute minimums according to the spec (in nanoseconds)
-    min_ns = {
-        "T_R": 0,               # Managed physically by pull-ups/bus capacitance
-        "T_F": 0,               # Managed physically by drive strength
-        "T_SU_DAT": 3.0,        # I3C Data Setup >= 3 ns
-        "T_SU_DAT_I2C": 100.0,  # I2C FM Data Setup >= 100 ns
-        "T_HD_DAT": 0.0,        # Data Hold >= 0 ns
-        "T_HIGH": 24.0,         # I3C PP High >= 24 ns
-        "T_HIGH_OD": 24.0,     # I3C OD High >= 24 ns
-        "T_HIGH_INIT_OD": 200.0,# I3C Init OD High >= 200 ns
-        "T_HIGH_I2C": 600.0,    # I2C FM High >= 600 ns
-        "T_LOW": 24.0,          # I3C PP Low >= 24 ns
-        "T_LOW_OD": 200.0,      # I3C OD Low >= 200 ns
-        "T_LOW_I2C": 1300.0,    # I2C FM Low >= 1300 ns
-        "T_HD_STA": 38.4,       # I3C tCAS (Hold START) >= 38.4 ns
-        "T_HD_STA_I2C": 600.0,  # I2C FM Hold START >= 600 ns
-        "T_HD_RSTA": 19.2,      # I3C tCASr (Hold Repeated START) >= 19.2 ns
-        "T_SU_STA": 19.2,       # I3C tCBSr (Setup Repeated START) >= 19.2 ns
-        "T_SU_STA_I2C": 600.0,  # I2C FM Setup Repeated START >= 600 ns
-        "T_SU_STO": 19.2,       # I3C tCBP (Setup STOP) >= 19.2 ns
-        "T_SU_STO_I2C": 600.0,  # I2C FM Setup STOP >= 600 ns
-        "T_DS_OD": 19.2,        # I3C Start to SCL fall >= 19.2 ns
-        "T_FREE": 38.4,         # I3C Bus Free >= tCAS (38.4 ns)
-        "T_FREE_I2C": 1300.0,   # I2C FM Bus Free >= 1.3 us
-        "T_AVAL": 1000.0,       # Bus Available >= 1 us
-        "T_IDLE": 200000.0,     # Bus Idle >= 200 us
-    }
-
-    # Convert mapping to clock cycles
-    return {reg: ns_to_cycles(ns) for reg, ns in min_ns.items()}
-
-def validate_timings(timings: dict, fclk_mhz: float) -> bool:
-    """
-    Validates a dictionary of timing registers against the I3C Basic spec.
-    Logs errors for any violations and returns a boolean status.
-    """
-    min_timings = calculate_min_timings(fclk_mhz)
-    is_valid = True
-    
-    # 1. Check individual minimum constraints
-    for key, min_cycles in min_timings.items():
-        if key not in timings:
-            logging.error(f"Validation Error: Missing timing parameter '{key}'")
-            is_valid = False
-            continue
-            
-        if timings[key] < min_cycles:
-            logging.error(
-                f"Validation Error: {key} value ({timings[key]} cycles) "
-                f"is less than the minimum spec requirement ({min_cycles} cycles)."
-            )
-            is_valid = False
-
-    # 2. Check holistic I3C spec limits
-    if "T_HIGH" in timings and "T_LOW" in timings:
-        # T_HIGH + T_LOW must be >= 80 ns (max frequency is 12.5 MHz)
-        period_ns = (timings["T_HIGH"] + timings["T_LOW"]) * 1000.0 / fclk_mhz
-        if period_ns < 80.0:
-            logging.error(
-                f"Validation Error: I3C SDR Period ({period_ns:.1f} ns) "
-                f"violates the 12.5 MHz max frequency (Must be >= 80.0 ns)."
-            )
-            is_valid = False
-
-    if is_valid:
-        logging.info("All timings validated successfully against I3C Basic Spec!")
-        
-    return is_valid
 
 # Updated helpers to accept bus_idx
 async def _read_csr(tb, register, bus_idx=0):
@@ -152,7 +85,8 @@ async def boot_init(
         }
 
     # Verify Timings
-    assert validate_timings(timings=timings, fclk_mhz=333.0), "Invalid timing values specified" # TODO: pass in fclk from tb setup function
+    assert validate_timings(timings=timings, f_sys=333.0e6), "Invalid timing values specified" # TODO: pass in fclk from tb setup function
+    log_timing_configuration(timings, f_sys=333.0e6)
 
     # Write Timings (Pass bus_idx)
     await _write_csr(tb, tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG.base_addr, timings["T_R"], bus_idx)

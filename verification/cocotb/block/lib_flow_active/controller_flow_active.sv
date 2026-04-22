@@ -42,7 +42,6 @@ module controller_flow_active
 
     // FMT interface
     output logic fmt_fifo_rvalid_o,
-    output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
     input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
@@ -277,7 +276,6 @@ module controller_flow_active
       .clk_i(clk_i),
       .rst_ni(rst_ni),
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
-      .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
       .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),

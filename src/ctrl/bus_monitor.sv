@@ -34,7 +34,6 @@ module bus_monitor
   logic scl_posedge_i;
   logic scl_negedge;
   logic scl_posedge;
-  logic scl_edge;
   logic scl_stable_high;
   logic scl_stable_low;
   logic scl_internal;
@@ -44,7 +43,6 @@ module bus_monitor
   logic sda_posedge;
   logic sda_negedge_i;
   logic sda_posedge_i;
-  logic sda_edge;
   logic sda_stable_high;
   logic sda_stable_low;
   logic sda_internal;
@@ -80,8 +78,6 @@ module bus_monitor
   assign sda_negedge_i = sda_i_q && !sda_internal;
   assign sda_posedge_i = !sda_i_q && sda_internal;
 
-  assign scl_edge = scl_negedge | scl_posedge;
-  assign sda_edge = sda_negedge | sda_posedge;
 
   logic simultaneous_posedge, simultaneous_negedge;
   assign simultaneous_posedge = sda_posedge && scl_posedge;

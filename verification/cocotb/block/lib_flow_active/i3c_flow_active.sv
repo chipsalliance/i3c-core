@@ -156,7 +156,6 @@ module i3c_flow_active
 
     // FMT interface
     output logic fmt_fifo_rvalid_o,
-    output logic [I2CFifoDepthWidth-1:0] fmt_fifo_depth_o,
     input logic fmt_fifo_rready_i,
     input logic fmt_fifo_rdone_i,
     output logic [7:0] fmt_byte_o,
@@ -497,7 +496,6 @@ module i3c_flow_active
       .rst_ni(rst_ni),
 
       .fmt_fifo_rvalid_o(fmt_fifo_rvalid_o),
-      .fmt_fifo_depth_o(fmt_fifo_depth_o),
       .fmt_fifo_rready_i(fmt_fifo_rready_i),
       .fmt_fifo_rdone_i(fmt_fifo_rdone_i),
       .fmt_byte_o(fmt_byte_o),
@@ -725,16 +723,9 @@ module i3c_flow_active
       .hci_ibi_wready_o(hci_ibi_wready),
       .hci_ibi_wdata_i(hci_ibi_wdata),
 
-      .set_dasa_i(set_dasa),
-      .set_dasa_valid_i(set_dasa_valid),
-      .set_dasa_virtual_device_i(set_dasa_virtual_device),
-      .rstdaa_i(rstdaa),
-      .set_newda_i(set_newda),
-      .set_newda_virtual_device_i(set_newda_virtual_device),
-      .newda_i(newda),
+      .transfer_err_stat_i  (1'b0),  // UNUSED
+      .transfer_abort_stat_i(1'b0)   // UNUSED
 
-      .rst_action_i(rst_action),
-      .rst_action_valid_i(rst_action_valid)
   );
 `endif  // CONTROLLER_SUPPORT
 

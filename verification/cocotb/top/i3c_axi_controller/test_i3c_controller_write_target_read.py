@@ -414,12 +414,12 @@ async def test_i3c_private_write_tx_queue_target_read_fifo_full(dut):
 
     queue_filled_event = Event()
 
-    data_write = cocotb.start_soon(tb.put_tx_data(data, ready_event=queue_filled_event, tx_queue_depth=TX_QUEUE_DEPTH, tx_thld=TX_READY_THLD, bus_idx=1))
+    data_write = cocotb.start_soon(tb.put_tx_data(data, ready_event=queue_filled_event, tx_queue_depth=TX_QUEUE_DEPTH, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX))
     dut._log.info("Filling TX Queue...")
     await queue_filled_event.wait() 
     dut._log.info("Queue Full. Sending Command Descriptor.")
 
-    actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=1))
+    actual_write = cocotb.start_soon(tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX))
     await actual_write
 
     await data_write

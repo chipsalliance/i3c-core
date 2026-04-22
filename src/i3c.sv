@@ -493,28 +493,10 @@ module i3c
   logic               ctrl_sel_od_pp;
   logic               ctrl_sda_oe;
 
-  // Configuration
-  logic               phy_en;
-  logic        [ 1:0] phy_mux_select;
-  logic               i2c_active_en;
-  logic               i2c_standby_en;
-  logic               i3c_active_en;
-  logic               i3c_standby_en;
-  logic        [19:0] t_hd_dat;
-  logic        [19:0] t_su_dat;
-  logic        [19:0] t_r;
-  logic        [19:0] t_f;
-  logic        [19:0] t_bus_free;
-  logic        [19:0] t_bus_idle;
-  logic        [19:0] t_bus_available;
-  logic        [31:0] stby_cr_device_addr_reg;
-  logic        [31:0] stby_cr_device_char_reg;
-  logic        [31:0] stby_cr_device_pid_lo_reg;
-
   // Interrupts
-  logic               ctl_irq;
-  logic               tti_irq;
-  logic               recovery_irq;
+  i3c_irq_t ctrl_irq;
+  logic tti_irq;
+  logic recovery_irq;
 
   logic               bus_start;
   logic               bus_rstart;
@@ -554,13 +536,14 @@ module i3c
   logic               ibi_status_we;
   logic               ibi_pending;
 
-  logic               controller_error;
   logic               ri_pec_err;
   logic               ri_length_err;
   logic               ri_readonly_err;
   logic               ri_unsupported_err;
   logic               ri_rx_fifo_overflow_err;
   logic               ri_indirect_fifo_overflow_err;
+
+  i3c_err_t           controller_error;
 
   // Individual TE error signals for interrupt reporting
   logic               te0_err;
@@ -780,8 +763,8 @@ module i3c
       .i3c_fsm_en_i(i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
-      .err(),  // FUTUREFIX: err is hardcoded to '0 in flow_active.sv; connect if active controller errors are implemented
-      .irq(ctl_irq),
+      .ctrl_err_o(controller_error),  // TODO: Handle errors
+      .ctrl_irq_o(ctrl_irq),
       .hwif_out_i(hwif_out),
       .hwif_rec_i(hwif_rec_out),
 
@@ -820,7 +803,6 @@ module i3c
       .peripheral_reset_done_i,
       .escalated_reset_o,
 
-      .err_o(controller_error),
       .te0_err_o(te0_err),
       .te1_err_o(te1_err),
       .te2_err_o(te2_err),
@@ -842,6 +824,9 @@ module i3c
       .xfer_in_progress_o(xfer_in_progress),
       .in_hdr_mode_o(in_hdr_mode)
   );
+
+  logic unused_transfer_abort;
+  assign unused_transfer_abort = 1'b0;
 
   // HCI
 `ifdef CONTROLLER_SUPPORT
@@ -944,7 +929,11 @@ module i3c
       .hci_ibi_empty_o(hci_ibi_empty),
       .hci_ibi_wvalid_i(hci_ibi_wvalid),
       .hci_ibi_wready_o(hci_ibi_wready),
-      .hci_ibi_wdata_i(hci_ibi_wdata)
+      .hci_ibi_wdata_i(hci_ibi_wdata),
+
+      .transfer_err_stat_i  (controller_error),
+      .transfer_abort_stat_i(unused_transfer_abort)
+
   );
 `endif  // CONTROLLER_SUPPORT
 
@@ -959,10 +948,6 @@ module i3c
   logic                          csr_tti_rx_desc_reg_rst;
   logic                          csr_tti_rx_desc_reg_rst_we;
   logic                          csr_tti_rx_desc_reg_rst_data;
-
-  logic                          csr_tti_rx_desc_empty;
-  logic                          csr_tti_rx_desc_full;
-  logic                          csr_tti_rx_desc_write;
 
   // TTI TX Descriptor queue
   logic                          csr_tti_tx_desc_req;
@@ -986,10 +971,6 @@ module i3c
   logic                          csr_tti_rx_data_reg_rst;
   logic                          csr_tti_rx_data_reg_rst_we;
   logic                          csr_tti_rx_data_reg_rst_data;
-
-  logic                          csr_tti_rx_data_empty;
-  logic                          csr_tti_rx_data_full;
-  logic                          csr_tti_rx_data_write;
 
   // TTI TX data queue
   logic                          csr_tti_tx_data_req;
@@ -1110,7 +1091,7 @@ module i3c
       .disec_crr_i(disec_crr),
       .disec_hj_i (disec_hj),
 
-      .err_i(controller_error),
+      .err_i(target_error),
 
       // TE error inputs for interrupt reporting
       .te0_err_i(te0_err),
@@ -1395,6 +1376,6 @@ module i3c
   );
 
   // Aggregate interrupts
-  assign irq_o = ctl_irq | tti_irq | recovery_irq;
+  assign irq_o = ctrl_irq | tti_irq | recovery_irq;
 
 endmodule

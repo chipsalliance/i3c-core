@@ -13,7 +13,7 @@ TX_QUEUE_DEPTH = 64 # Depth of TX_QUEUE in dwords.
 TX_READY_THLD = 0x1 # TX ready threshold
 TX_START_THLD = 0x1 # TX start threshold
 
-async def write_ccc(tb, addr_helper, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True, dat=None, device_index=None):
+async def write_ccc(tb, addr_helper, ccc, immediate=None, payload=None, data_length=0, device_address=0x50, toc=True, dat=None, device_index=None, bus_idx=ACT_CONTROLLER_IDX):
     # Disable all target events
     no_payload = False
     if dat == None:
@@ -21,7 +21,7 @@ async def write_ccc(tb, addr_helper, ccc, immediate=None, payload=None, data_len
     if immediate == None:
         immediate = random.getrandbits(1)
     if dat:
-        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=bus_idx)
     if payload == None:
         no_payload = True
         payload = [0]
@@ -85,12 +85,12 @@ async def write_ccc(tb, addr_helper, ccc, immediate=None, payload=None, data_len
             def_byte=0x0,
             data_length=data_length,
             )
-        await tb.put_tx_data(payload, tx_queue_depth=TX_QUEUE_DEPTH, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX)
+        await tb.put_tx_data(payload, tx_queue_depth=TX_QUEUE_DEPTH, tx_thld=TX_READY_THLD, bus_idx=bus_idx)
 
-    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=bus_idx)
     # Wait for response Descriptor when it's the last cmd descriptor
     if toc:
-        resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+        resp_desc = await tb.read_resp_desc(bus_idx=bus_idx)
         #assert resp_desc.data_length == len(payload)
         assert resp_desc.tid == cmd_desc.tid
         assert resp_desc.err_status == ErrorStatus(0) # SUCCESS
@@ -121,6 +121,8 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
     # Disable all target events
     if dat == None:
         dat = random.getrandbits(1)
+        if device_index == None:
+            device_index = random.getrandbits(5)
     if immediate == None:
         immediate = random.getrandbits(1)
 
@@ -219,6 +221,8 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
 async def read_i3c(tb, addr_helper, target_len, device_address=0x50, toc=True, dat=None, device_index=None):
     if dat == None:
         dat = random.getrandbits(1)
+        if device_index == None:
+            device_index = random.getrandbits(5)
 
     if dat:
         await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)

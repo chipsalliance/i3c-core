@@ -336,9 +336,11 @@ class I3CTopControllerTestInterface:
                 self.dut._log.debug("Got rising edge of interrupt")
             val = await self.read_csr(status_addr, bus_idx=bus_idx)
             status_reg = dword2int(val)
+            tx_thld_stat = status_reg & 0x1
+            self.dut._log.info(f"PIO_INTR_STATUS is 0b{status_reg:b} and tx_thld_stat is 0b{tx_thld_stat:b}")
 
-            if status_reg != 0x1:
-                self.dut._log.info("TX Queue ready interrupt is not valid")
+            if tx_thld_stat != 0x1:
+                self.dut._log.debug("TX Queue ready interrupt is not valid")
                 continue
 
             remaining = total_len - words_written

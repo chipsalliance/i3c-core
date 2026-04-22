@@ -16,5 +16,5 @@ recovery_flow
 axi_id_filtering
 axi_recovery_flow
 registers
-known_limitations
+timing_csr
 ```
