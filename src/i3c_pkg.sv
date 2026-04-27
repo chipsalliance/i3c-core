@@ -517,4 +517,15 @@ package i3c_pkg;
     target_dev_id_value_t vendor_random_value;
   } target_dev_provisioned_id_t;
 
+  // To raise global interrupts
+  typedef struct packed {
+    logic sched_cmd_missed_tick_stat;
+    logic hc_err_cmd_seq_timeout_stat;
+    logic hc_warn_cmd_seq_stall_stat;
+    logic hc_seq_cancel_stat;
+    logic hc_internal_err_stat;
+    logic pio_transfer_err_stat;
+    logic pio_transfer_abort_stat;
+  } i3c_irq_t;
+
 endpackage

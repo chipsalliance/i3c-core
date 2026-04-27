@@ -24,11 +24,198 @@
           - Observe a NACK for the ENEC CCC.
           - After NACK the Controller should generate a HDR Exit Pattern.
           - Check if the target recognizes the HDR Exit Pattern by monitoring the cocotbext targets `hdr_exit_detected` variable.
+          - After the Broadcast Address NACK the controller should return a response descriptor with Error Status: ADDRESS_HEADER.
           - Check if subsequent ENEC CCC finishes as expected.
         '''
       tests: ["controller_error_nack_on_bcast"]
       tags: ["top"]
+    },
+    {
+      name: Controller TX Queue Underflow
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 6.13.1.2 Underflow Error I3C HCI Spec.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target
+        - Write an I3C Write CMD desc specifying the write length to be i3c_target_len
+        - generate act_len < i3c_target_len bytes of data and write into TX Queue
+        - Clear HC_CONTROL.RESUME and PIO_INTR_STATUS.TRANSFER_ERR_STAT to resume normal operation.
+        - send a regular I3C Write
+
+        Check:
+          - After the TX Queue underflow the controller should return a response descriptor with Error Status: OVL.
+          - After the regular I3C Write the controller should return a response descriptor with Error Status: SUCCESS.
+        '''
+      tests: ["controller_tx_queue_underflow"]
+      tags: ["top"]
+    },
+    {
+      name: Controller RX Queue Overflow
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 6.13.1.2 Overflow Error I3C HCI Spec.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target
+        - Write an I3C Read CMD desc specifying the write length to be i3c_target_len > RX_QUEUE_DEPTH * 4
+        - don't read any data from the RX Queue 
+        - Clear HC_CONTROL.RESUME and PIO_INTR_STATUS.TRANSFER_ERR_STAT to resume normal operation.
+        - Flush the RX Queue by setting the I3CBASE.RESET_CONTROL.RX_FIFO_RST CSR
+        - send a regular I3C Read
+
+        Check:
+          - After the RX Queue overflow the controller should return a response descriptor with Error Status: OVL.
+          - After the regular I3C Read the controller should return a response descriptor with Error Status: SUCCESS.
+        '''
+      tests: ["controller_rx_queue_overflow"]
+      tags: ["top"]
+    },
+    {
+      name: Controller CE0 Handling (illegally formatted CCC)
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 5.1.10.2.1 Error Type CE0 I3C Basic Spec (illegally formatted CCC).
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target
+        - send a GETPID CCC with the data length field set to 6 bytes.
+        - target returns less than 6 bytes. After the controller retries the CCC, the target should return the correct PID (6 bytes).
+        - send another GETPID CCC with the data length field set to 6 bytes.
+        - target returns less than 6 bytes. After the controller retries the CCC, the target should still return less than 6 bytes.
+        - Clear HC_CONTROL.RESUME and PIO_INTR_STATUS.TRANSFER_ERR_STAT to resume normal operation.
+        - send another GETPID CCC with the data length field set to 6 bytes.
+        - target returns the correct PID (6 bytes).
+        - send a private i3c Write.
+
+        Check:
+        - after the first GETPID CCC the response descriptor should report SUCCESS (the controller should automatically recover the error by retrying, this is transparent to SW).
+        - after the second GETPID CCC the response descriptor should report I3C_SHORT_READ.
+        - after the third GETPID CCC the response descriptor should report SUCCESS.
+        - after the private i3c write the response descriptor should report SUCCESS.
+        '''
+      tests: ["controller_error_short_ccc_ce0"]
+      tags: ["top"]
+    },
+    {
+      name: Controller Abort Transaction
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 6.8.4 Host Controller Abort Operation I3C HCI Spec.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target
+        - set PIO_CONTROL.RS CSR field to 1'b0
+        - enqueue 2 private i3c write command descriptors with their respective TX data into the CMD/TX Queues.
+        - set PIO_CONTROL.RS CSR field to 1'b1 to start execution.
+        - set HC_CONTROL.ABORT CSR field to 1'b1 to abort current transaction.
+        - set HC_CONTROL.ABORT and PIO_CONTROL.ABORT CSR fields to 1'b0 and HC_CONTROL.RESUME CSR field to 1'b1 to resume operation.
+        - set RESET_CONTROL.TX_FIFO_RST CSR field to 1'b1 to flush TX Queue.
+        - requeue the data for the 2nd i3c write into the TX Queue.
+
+        Check:
+        - the response descriptor for the first private write cmd should report HC_ABORTED as an error status.
+        - the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
+        '''
+      tests: ["hc_abort"]
+      tags: ["top"]
+    },
+    {
+      name: Command Sequence Timeout (no halt)
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 6.13.2 Errors Due to Command Sequence Stall or Timeout I3C HCI Spec without halting execution.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target.
+        - set HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT CSR field to 1'b0 to enable auto-resume on cmd seq timeout.
+        - send a private write cmd descriptor with the TOC field set to 1'b0.
+        - read the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs.
+        - clear the interrupts by writing 1'b1 to INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT CSR fields.
+        - send a second private write cmd descriptor with the TOC field set to 1'b1.
+
+        Check:
+        - the response descriptor for the first private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
+        - the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs should both be set to 1'b1.
+        - the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
+        '''
+      tests: ["cmd_seq_timeout_no_halt"]
+      tags: ["top"]
+    },
+    {
+      name: Command Sequence Timeout (halt)
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Handle 6.13.2 Errors Due to Command Sequence Stall or Timeout I3C HCI Spec with halting the execution.
+
+        Stimulus:
+        - send a SETDASA CCC to assign a dynamic address to the i3c target.
+        - set HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT CSR field to 1'b1 to enable halting on cmd seq timeout.
+        - send a private write cmd descriptor with the TOC field set to 1'b0.
+        - read the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs.
+        - clear the interrupts by writing 1'b1 to INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT CSR fields.
+        - resume operation by writing 1'b1 to the HC_CONTROL.RESUME CSR field.
+        - send a second private write cmd descriptor with the TOC field set to 1'b1.
+
+        Check:
+        - the response descriptor for the first private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
+        - the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs should both be set to 1'b1.
+        - the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
+        '''
+      tests: ["cmd_seq_timeout_halt"]
+      tags: ["top"]
+    },
+    {
+      name: Interrupt Routing and Masking
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (Cocotbext)
+
+        Intent:
+        Systematically verify the two-tier interrupt masking architecture (STATUS_ENABLE and SIGNAL_ENABLE) 6.14 Interrupts I3C HCI Spec.
+
+        Stimulus:
+        Loop through a predefined list of all interrupt fields. For each field:
+        - Write 1'b0 to both the STATUS_ENABLE and SIGNAL_ENABLE CSR fields.
+        - Write 1'b1 to the corresponding FORCE CSR field.
+        - Write 1'b1 to the STATUS_ENABLE CSR field, then write 1'b1 to the FORCE CSR field again.
+        - Write 1'b1 to the SIGNAL_ENABLE CSR field.
+        - Write 1'b1 to the STATUS CSR field to clear the interrupt.
+
+        Check:
+        For each interrupt field in the loop:
+        - After the first force, the STATUS CSR field should remain 1'b0 (verifies STATUS_ENABLE masking).
+        - After the second force, the STATUS CSR field should be 1'b1, but the physical `irq_o` pin should remain 1'b0 (verifies SIGNAL_ENABLE masking).
+        - After setting SIGNAL_ENABLE, the physical `irq_o` pin should assert to 1'b1 (verifies hardware signal routing).
+        - After writing to the STATUS CSR field, both the STATUS CSR field and the physical `irq_o` pin should de-assert to 1'b0 (verifies W1C clearing).
+        '''
+      tests: ["interrupt_routing_and_masking"]
+      tags: ["top"]
     }
-  
   ]
 }

@@ -103,7 +103,6 @@ module i3c_controller_fsm
   // IBI Signals
   logic ibi_done;
   logic stop_next_q, stop_next_d;
-  assign stop_next_d = fmt_flag_stop_after_i;
 
   // Timing Inputs
   logic [i3c_pkg::TimingWidth-1:0] thigh, tlow;
@@ -183,7 +182,7 @@ module i3c_controller_fsm
 
   // RX signals
   logic [7:0] bus_rx_data, rx_byte_d, rx_byte_q;
-  logic bus_rx_req_bit_d, bus_rx_req_bit_q, bus_rx_req_byte, bus_rx_done, bus_rx_idle;
+  logic bus_rx_req_bit_d, bus_rx_req_bit_q, bus_rx_req_byte, bus_rx_done, bus_rx_idle, t_bit_done;
 
   // State Transition
   always_comb begin
@@ -214,8 +213,8 @@ module i3c_controller_fsm
         end
       end
       BusRX: begin
-        if (bus_rx_done & fmt_flag_read_bytes_i) begin
-          state_d = fmt_flag_stop_after_i ? Stop : (fmt_flag_restart_after_i ? ReStart : BusRX);
+        if ((bus_rx_done & fmt_flag_read_bytes_i & bus_rx_req_bit_q) || (t_bit_done)) begin
+          state_d = (fmt_flag_stop_after_i | stop_next_q) ? Stop : (fmt_flag_restart_after_i ? ReStart : BusRX);
         end
       end
       BusReadContinuous: begin
@@ -285,6 +284,8 @@ module i3c_controller_fsm
     is_high_d = is_high_q;
     hdr_falling_count_d = hdr_falling_count_q;
     timer_d = timer_q;
+    stop_next_d = fmt_flag_stop_after_i;
+    t_bit_done = 1'b0;
     unique case (state_q)
       Idle: begin
         fmt_fifo_rready_o = 1'b1;
@@ -347,6 +348,8 @@ module i3c_controller_fsm
         end
       end
       BusRX: begin
+        stop_next_d = stop_next_q;
+        t_bit_done  = 1'b0;
         if (bus_init_q) begin
           bus_init_d = 1'b0;  // Clear init flag
         end
@@ -358,16 +361,24 @@ module i3c_controller_fsm
           bus_rx_req_byte = 1'b1;
           fmt_flag_read_valid_o = 1'b1;  // Signals that fmt_byte_o and fmt_bit_o are valid
           fmt_bit_o = bus_rx_data[0];
+          if (fmt_flag_stop_after_i) begin  // abort the read by driving TX bit low
+            stop_next_d = 1'b1;
+            ctrl_sda_o  = 1'b0;
+          end
         end else if (bus_rx_done & ~bus_rx_req_bit_q) begin
           fmt_byte_o = bus_rx_data;
           if (stop_next_q) begin  // abort the read by driving TX bit low
-            bus_tx_req_bit = 1'b1;
             fmt_flag_read_valid_o = 1'b1;
-            bus_tx_req_value = 8'b0;
+            ctrl_sda_o = 1'b0;
           end
           bus_rx_req_bit_d = 1'b1;
           bus_rx_req_byte = 1'b0;
           rx_byte_d = bus_rx_data;
+        end
+        if (stop_next_q) begin  // abort the read by driving TX bit low
+          ctrl_sda_o  = 1'b0;
+          stop_next_d = scl_negedge ? 1'b0 : stop_next_q;
+          t_bit_done  = scl_negedge;
         end
       end
       BusReadContinuous: begin
@@ -411,6 +422,8 @@ module i3c_controller_fsm
       end
       Stop: begin
         received_nack_d = 1'b0;
+        ctrl_scl_o = scl_flow_scl;
+        ctrl_sda_o = 1'b0;
         if (scl_negedge | scl_stable_low | start_stop_active) begin  // wait for cycle to finish and then stop
           stop_after_d = 1'b1;
           ctrl_sda_o = start_stop_sda;

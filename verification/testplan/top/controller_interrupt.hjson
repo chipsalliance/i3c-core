@@ -4,15 +4,6 @@
   testpoints:
   [
     {
-      name: Controller Active Controller Initiating a Transaction
-      desc:
-        '''
-        As per 5.1.6.4 I3C Basic Spec issue the I3C broadcast address and wait for incoming IBI from targets. 
-        '''
-      tests: ["controller_controller_initiate_interrupt_request"]
-      tags: ["top"]
-    },
-    {
       name: controller_ibi_accepted
       desc:
         '''

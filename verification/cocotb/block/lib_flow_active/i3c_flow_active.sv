@@ -721,11 +721,7 @@ module i3c_flow_active
       .hci_ibi_empty_o(hci_ibi_empty),
       .hci_ibi_wvalid_i(hci_ibi_wvalid),
       .hci_ibi_wready_o(hci_ibi_wready),
-      .hci_ibi_wdata_i(hci_ibi_wdata),
-
-      .transfer_err_stat_i  (1'b0),  // UNUSED
-      .transfer_abort_stat_i(1'b0)   // UNUSED
-
+      .hci_ibi_wdata_i(hci_ibi_wdata)
   );
 `endif  // CONTROLLER_SUPPORT
 

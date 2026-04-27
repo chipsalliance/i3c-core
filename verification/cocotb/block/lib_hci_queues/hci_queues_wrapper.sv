@@ -559,11 +559,7 @@ module hci_queues_wrapper
       .hci_ibi_empty_o,
       .hci_ibi_wvalid_i,
       .hci_ibi_wready_o,
-      .hci_ibi_wdata_i,
-
-      .transfer_err_stat_i  (1'b0),  // UNUSED
-      .transfer_abort_stat_i(1'b0)   // UNUSED
-
+      .hci_ibi_wdata_i
   );
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT

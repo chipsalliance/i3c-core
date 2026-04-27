@@ -494,7 +494,8 @@ module i3c
   logic               ctrl_sda_oe;
 
   // Interrupts
-  i3c_irq_t ctrl_irq;
+  i3c_irq_t ctrl_int_stat;
+  logic ctrl_irq;
   logic tti_irq;
   logic recovery_irq;
 
@@ -542,8 +543,9 @@ module i3c
   logic               ri_unsupported_err;
   logic               ri_rx_fifo_overflow_err;
   logic               ri_indirect_fifo_overflow_err;
+  i3c_err_t controller_error;
+  logic transfer_abort, hc_err_cmd_seq_timeout_stat, hc_seq_cancel_stat;
 
-  i3c_err_t           controller_error;
 
   // Individual TE error signals for interrupt reporting
   logic               te0_err;
@@ -763,7 +765,7 @@ module i3c
       .i3c_fsm_en_i(i3c_fsm_en_i),
       .i3c_fsm_idle_o(i3c_fsm_idle_o),
 
-      .ctrl_err_o(controller_error),  // TODO: Handle errors
+      .ctrl_int_stat_o(ctrl_int_stat),
       .ctrl_irq_o(ctrl_irq),
       .hwif_out_i(hwif_out),
       .hwif_rec_i(hwif_rec_out),
@@ -825,8 +827,6 @@ module i3c
       .in_hdr_mode_o(in_hdr_mode)
   );
 
-  logic unused_transfer_abort;
-  assign unused_transfer_abort = 1'b0;
 
   // HCI
 `ifdef CONTROLLER_SUPPORT
@@ -931,9 +931,7 @@ module i3c
       .hci_ibi_wready_o(hci_ibi_wready),
       .hci_ibi_wdata_i(hci_ibi_wdata),
 
-      .transfer_err_stat_i  (controller_error),
-      .transfer_abort_stat_i(unused_transfer_abort)
-
+      .ctrl_int_stat_i(ctrl_int_stat)
   );
 `endif  // CONTROLLER_SUPPORT
 

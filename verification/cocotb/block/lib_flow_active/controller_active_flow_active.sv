@@ -110,6 +110,11 @@ module controller_active_flow_active
     // TODO: rename
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o,
+    input  logic pio_rs_i,
+
+    output logic transfer_abort_stat_o,
+    input  logic resume_i,
+    input  logic abort_i,
 
     // Errors and Interrupts
     output i3c_err_t err,
@@ -218,7 +223,9 @@ module controller_active_flow_active
       .rx_fifo_wdata_i(rx_fifo_wdata),  // unconnected
       .i3c_fsm_en_i(i3c_active_en_i),
       .i3c_fsm_idle_o(unused_i3c_fsm_idle),
-      .err_o(err),
+      .pio_rs_i(1'b1),
+      .resume_i,
+      .abort_i,
       .irq_o(irq)
   );
 

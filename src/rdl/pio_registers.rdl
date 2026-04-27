@@ -253,14 +253,14 @@ regfile PIORegs #(
             name = "TRANSFER_ERR_STAT_EN";
             desc = "Enable transfer error monitoring";
             sw = rw;
-            hw = na;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ERR_STAT_EN[9:9];
         field {
             name = "TRANSFER_ABORT_STAT_EN";
             desc = "Enable transfer abort monitoring";
             sw = rw;
-            hw = na;
+            hw = r;
             reset = 1'b0;
         } TRANSFER_ABORT_STAT_EN[5:5];
         field {

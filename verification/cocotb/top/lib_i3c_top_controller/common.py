@@ -117,7 +117,7 @@ async def write_setdasa(tb, dyn_addr, static_addr, toc=True, device_index=None):
         await ClockCycles(tb.clk, 500) # 500 Cycles stop
 
 
-async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device_address=0x50, toc=True, dat=None, device_index=None, expect_success=True):
+async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device_address=0x50, toc=True, dat=None, device_index=None, expect_success=True, bus_idx=ACT_CONTROLLER_IDX):
     # Disable all target events
     if dat == None:
         dat = random.getrandbits(1)
@@ -127,7 +127,7 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
         immediate = random.getrandbits(1)
 
     if dat:
-        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=ACT_CONTROLLER_IDX)
+        await tb.put_dat_entry(device_index=device_index, dyn_addr=addr_helper.trgt_dyn_addr, static_addr=addr_helper.trgt_static_addr, is_i2c=False, bus_idx=bus_idx)
 
     if immediate and len(payload) == 1:
         if dat:
@@ -157,7 +157,7 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
                 toc=toc,  
                 data=payload[0]
             )
-        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=bus_idx)
     else:
         if dat: 
             cmd_desc = regular_transfer_descriptor(
@@ -191,13 +191,13 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
             data_length=target_len,
             )
         queue_filled_event = Event()
-        data_write = cocotb.start_soon(tb.put_tx_data(payload, ready_event=queue_filled_event, tx_thld=TX_READY_THLD, bus_idx=ACT_CONTROLLER_IDX))
+        data_write = cocotb.start_soon(tb.put_tx_data(payload, ready_event=queue_filled_event, tx_thld=TX_READY_THLD, bus_idx=bus_idx))
         await queue_filled_event.wait()
-        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+        await tb.put_command_desc(cmd_desc.to_int(), bus_idx=bus_idx)
         await data_write
 
     # Wait for response Descriptor when it's the last cmd descriptor
-    resp_desc = await tb.read_resp_desc(bus_idx=ACT_CONTROLLER_IDX)
+    resp_desc = await tb.read_resp_desc(bus_idx=bus_idx)
     if expect_success:
         assert resp_desc.err_status == ErrorStatus.SUCCESS
         assert resp_desc.data_length == target_len

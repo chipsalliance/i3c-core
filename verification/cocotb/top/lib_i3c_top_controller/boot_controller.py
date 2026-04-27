@@ -232,11 +232,67 @@ async def setup_hci_thresholds(tb, bus_idx=0):
     pass
 
 async def setup_host_controller(tb, bus_idx=ACT_CONTROLLER_IDX):
+
+# //////////////////////////////////////////////////////////////
+# //                        Enable HW                         //
+# //////////////////////////////////////////////////////////////
+
     # Enable Bus
     await tb.write_csr_field(
         tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
         tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
-        1,
-        bus_idx=bus_idx
+        1, bus_idx=bus_idx
+    )
+    # Enable PIO Queue start
+    await tb.write_csr_field(
+        tb.reg_map.PIOCONTROL.PIO_CONTROL.base_addr,
+        tb.reg_map.PIOCONTROL.PIO_CONTROL.RS,
+        1, bus_idx=bus_idx
     )
 
+
+# //////////////////////////////////////////////////////////////
+# //                    Enable Interrupts                     //
+# //////////////////////////////////////////////////////////////
+
+    all_interrupts = [
+        # GLOBAL INTERRUPTS (I3CBASE)
+        (tb.reg_map.I3CBASE, "INTR", "HC_INTERNAL_ERR"),
+        (tb.reg_map.I3CBASE, "INTR", "HC_SEQ_CANCEL"),
+        (tb.reg_map.I3CBASE, "INTR", "HC_WARN_CMD_SEQ_STALL"),
+        (tb.reg_map.I3CBASE, "INTR", "HC_ERR_CMD_SEQ_TIMEOUT"),
+        (tb.reg_map.I3CBASE, "INTR", "SCHED_CMD_MISSED_TICK"),
+        
+        # PIO INTERRUPTS (PIOCONTROL)
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "TX_THLD"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "RX_THLD"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "IBI_STATUS_THLD"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "CMD_QUEUE_READY"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "RESP_READY"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "TRANSFER_ABORT"),
+        (tb.reg_map.PIOCONTROL, "PIO_INTR", "TRANSFER_ERR")
+    ]
+
+    # ------------------------------------------------------------------
+    # 3. Loop through and set both STATUS_EN and SIGNAL_EN to 1'b1
+    # ------------------------------------------------------------------
+    for block, reg_prefix, field_prefix in all_interrupts:
+        status_en_reg = getattr(block, f"{reg_prefix}_STATUS_ENABLE")
+        signal_en_reg = getattr(block, f"{reg_prefix}_SIGNAL_ENABLE")
+
+        status_en_field = getattr(status_en_reg, f"{field_prefix}_STAT_EN")
+        signal_en_field = getattr(signal_en_reg, f"{field_prefix}_SIGNAL_EN")
+
+        # Write 1 to STATUS_ENABLE (allows the event to be logged)
+        await tb.write_csr_field(
+            status_en_reg.base_addr, 
+            status_en_field, 
+            1, bus_idx=bus_idx
+        )
+        
+        # Write 1 to SIGNAL_ENABLE (routes the logged event to irq_o pin)
+        await tb.write_csr_field(
+            signal_en_reg.base_addr, 
+            signal_en_field, 
+            1, bus_idx=bus_idx
+        )

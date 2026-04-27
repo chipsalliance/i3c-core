@@ -104,10 +104,12 @@ module controller_active
 
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o,
+    input  logic pio_rs_i,
+    input  logic halt_on_cmd_seq_timeout_i,
 
     // Errors and Interrupts
-    output i3c_err_t err_o,
     input logic resume_i,
+    input logic abort_i,
     output i3c_irq_t irq_o,
     // this signal is taken from the I3CBase.HC_CONTROL.BUS_ENABLE CSR
     // TODO: use phy_en_i to control if bus is active
@@ -256,8 +258,10 @@ module controller_active
       .rx_fifo_wdata_i(rx_fifo_wdata),
       .i3c_fsm_en_i,
       .i3c_fsm_idle_o,
-      .err_o,
+      .pio_rs_i,
+      .halt_on_cmd_seq_timeout_i,
       .resume_i,
+      .abort_i,
       .irq_o
   );
 

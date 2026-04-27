@@ -116,10 +116,13 @@ module flow_active
     // I3C FSM control & status
     input  logic i3c_fsm_en_i,
     output logic i3c_fsm_idle_o,
+    input  logic pio_rs_i,
+    input  logic halt_on_cmd_seq_timeout_i,
 
     // Errors and Interrupts
-    output i3c_err_t err_o,  // directly sets the PIO_INTR_STATUS.TRANSFER_ERR_STAT CSR
     input logic resume_i,  // HC_CONTROL.RESUME CSR field
+    input logic abort_i,   // HC_CONTROL.ABORT | PIO_CONTROL.ABORT CSR fields
+
     output i3c_irq_t irq_o
 );
   localparam int IBIBufferDepthDwords = 3; // TODO:#95744 add a define in defines.svh to control this parameter
@@ -144,8 +147,21 @@ module flow_active
     end
   endfunction
 
+  logic
+      hc_err_cmd_seq_timeout_stat,
+      hc_seq_cancel_stat,
+      pio_transfer_abort_stat,
+      pio_transfer_err_stat;
 
-  assign irq_o = tx_queue_ready_thld_trig_i;  // TODO: #95747 update to assign other interrupts
+  always_comb begin : interrupt_assignment
+    irq_o.sched_cmd_missed_tick_stat = 1'b0;
+    irq_o.hc_err_cmd_seq_timeout_stat = hc_err_cmd_seq_timeout_stat;
+    irq_o.hc_warn_cmd_seq_stall_stat = 1'b0;
+    irq_o.hc_seq_cancel_stat = hc_seq_cancel_stat;
+    irq_o.hc_internal_err_stat = 1'b0;
+    irq_o.pio_transfer_err_stat = pio_transfer_err_stat;
+    irq_o.pio_transfer_abort_stat = pio_transfer_abort_stat;
+  end
 
   typedef enum logic [4:0] {
     Idle = 5'd0,
@@ -204,14 +220,14 @@ module flow_active
 
   // DAT table
   dat_entry_t dat_rdata;
-  logic dat_captured, dat_read_valid_d;
+  logic dat_captured, dat_read_valid_d, dat_read_valid_q;
   logic [$clog2(`DAT_DEPTH)-1:0] dat_index_q, dat_index_d;
 
   // DCT table
   // FUTUREFIX: Use DCT typedef struct
   logic [127:0] dct_rdata;
   dct_entry_t dct_data;
-  logic dct_read_valid_d;
+  logic dct_read_valid_d, dct_read_valid_q;
   logic [$clog2(`DCT_DEPTH)-1:0] dct_index_q, dct_index_d;
 
   // I2C Signals
@@ -242,6 +258,7 @@ module flow_active
   logic ccc_done;
   logic ccc_last_trans;
   logic ccc_has_payload;
+  logic ccc_ce0_first_retry_d, ccc_ce0_first_retry_q;
   logic [7:0] cmd_ccc, prev_ccc_d, prev_ccc_q;
   assign cmd_ccc = cmd_desc[14:7];
   assign ccc_has_payload = has_payload(cmd_ccc);
@@ -325,7 +342,7 @@ module flow_active
 
 
   // Assign TX fifo signals
-  assign pop_tx_fifo = tx_queue_rready_o;
+  assign pop_tx_fifo = tx_queue_rready_o & tx_queue_rvalid_i;
 
   // Assign RX Queue signals
   assign rx_queue_wdata_o = rx_dword_d; // when transaction is finished early we update rx_word_d at the same time as setting rx_queue_wvalid_o
@@ -337,21 +354,28 @@ module flow_active
   // Capture data from DAT/DCT tables
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      dat_read_valid_d <= 1'b0;
-      dct_read_valid_d <= 1'b0;
+      dat_read_valid_q <= 1'b0;
+      dct_read_valid_q <= 1'b0;
+    end else begin
+      dat_read_valid_q <= dat_read_valid_d;
+      dct_read_valid_q <= dct_read_valid_d;
+    end
+  end
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
       dat_rdata <= '0;
       dct_rdata <= '0;
       dat_captured <= 1'b0;
     end else begin
-      dat_read_valid_d <= dat_read_valid_hw_o;
-      dct_read_valid_d <= dct_read_valid_hw_o;
-      if (dat_read_valid_d) begin
+      if (dat_read_valid_q) begin
         dat_rdata <= dat_rdata_hw_i;
         dat_captured <= 1'b1;
       end else begin
         dat_rdata <= dat_rdata;
+        dat_captured <= 1'b0;
       end
-      if (dct_read_valid_d) begin
+      if (dct_read_valid_q) begin
         dct_rdata <= dct_rdata_hw_i;
       end else begin
         dct_rdata <= dct_rdata;
@@ -359,7 +383,9 @@ module flow_active
     end
   end
 
-  assign dct_index_hw_o = dct_index_q;
+  assign dct_index_hw_o   = dct_index_q;
+  assign dat_read_valid_d = dat_read_valid_hw_o;
+  assign dct_read_valid_d = dct_read_valid_hw_o;
 
   // Capture command FIFO control signals
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -375,11 +401,13 @@ module flow_active
     if (~rst_ni) begin
       broadcast_addr_enable_q          <= 1'b0;
       use_ce2_error_handling_on_nack_q <= 1'b0;
+      ccc_ce0_first_retry_q            <= 1'b0;
       prev_cmd_toc_q                   <= 1'b1;
       err_handled_q                    <= 1'b0;
     end else begin
       broadcast_addr_enable_q          <= broadcast_addr_enable_d;
       use_ce2_error_handling_on_nack_q <= use_ce2_error_handling_on_nack_d;
+      ccc_ce0_first_retry_q            <= ccc_ce0_first_retry_d;
       prev_cmd_toc_q                   <= prev_cmd_toc_d;
       err_handled_q                    <= err_handled_d;
     end
@@ -447,7 +475,7 @@ module flow_active
     end else if (transfer_cnt_en) begin
       transfer_cnt_d = transfer_cnt_q + 1;
 
-    end else if ((transfer_cnt_q == '0) && cmd_is_ccc && ~cmd_is_broadcast_ccc && (prev_ccc_q == cmd_ccc)) begin
+    end else if ((transfer_cnt_q == '0) && cmd_is_ccc && ~cmd_is_broadcast_ccc && ((prev_ccc_q == cmd_ccc) && ~prev_cmd_toc_q)) begin
       transfer_cnt_d = 2; // transfer_cnt_q = 0: 7'h7E byte, transfer_cnt_q = 1: CCC byte according to Figure 32 I3C Basic Spec we are allowed to skip these two bytes when the CCC stays the same.
     end else if(state == DynamicAddrAssignment && daa_iteration_done && (assigned_addr_cnt_q <= addr_cmd_desc.dev_count)) begin
       transfer_cnt_d = 2;  // transfer_cnt_q = 2: is the start of a DAA "frame", while we have not assigned all addresses we should try again
@@ -596,9 +624,14 @@ module flow_active
     ibi_wb_d = ibi_wb_q;
     ibi_wb_cnt_d = ibi_wb_cnt_q;
     ccc_last_trans = 1'b0;
-    err_o = 1'b0;
+    pio_transfer_err_stat = 1'b0;
     err_handled_d = 1'b0;
     fmt_flag_hdr_exit_o = 1'b0;
+    ccc_ce0_first_retry_d = 1'b0;
+    // Interrupts
+    pio_transfer_abort_stat = 1'b0;
+    hc_seq_cancel_stat = 1'b0;
+    hc_err_cmd_seq_timeout_stat = 1'b0;
     unique case (state)
       // Idle: Wait for command appearance in the Command Queue
       Idle: begin
@@ -606,7 +639,10 @@ module flow_active
       end
       // WaitForCmd: Fetch Command Descriptor
       WaitForCmd: begin
-        cmd_queue_rready_o = 1'b1;
+        cmd_queue_rready_o = 1'b0;
+        if (pio_rs_i) begin
+          cmd_queue_rready_o = 1'b1;
+        end
       end
       // FetchAddr: Fetch DAT entry
       FetchAddr: begin
@@ -620,7 +656,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q;
+        resp_data_length_d = transfer_cnt_q;
         unique case (transfer_cnt_q)
           // TODO: #95752 Add support for broadcast address control before private transfers. This can
           // be realized via HC_CONTROL.I2C_DEV_PRESENT and HC_CONTROL.IBA_INCLUDE register fields.
@@ -665,6 +701,13 @@ module flow_active
         if (transfer_cnt_q == data_length + (BytesBeforeImmData)) begin
           fmt_flag_stop_after_o = is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc;
+          prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+          if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+            fmt_flag_stop_after_o = 1'b1;
+            fmt_flag_restart_after_o = 1'b0;
+            hc_seq_cancel_stat = 1'b1;
+            hc_err_cmd_seq_timeout_stat = 1'b1;
+          end
           resp_err_status_d = Success;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
@@ -673,6 +716,10 @@ module flow_active
         end
         if (fmt_receive_nack_i) begin
           resp_err_status_d = Nack;
+        end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
         end
       end
       // I3CWriteImmediate: Execute Immediate Transfer to I3C Device
@@ -685,7 +732,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
+        resp_data_length_d = transfer_cnt_q;
         fmt_bit_o = 1'b1;
         unique case (transfer_cnt_q)
           // TODO: #95752 Add support for broadcast address control before private transfers. This can
@@ -737,6 +784,12 @@ module flow_active
           fmt_flag_stop_after_o = is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc;
           prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+          if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+            fmt_flag_stop_after_o = 1'b1;
+            fmt_flag_restart_after_o = 1'b0;
+            hc_seq_cancel_stat = 1'b1;
+            hc_err_cmd_seq_timeout_stat = 1'b1;
+          end
           resp_err_status_d = Success;
         end
         // Disable FIFO valid whenever I2C Controller is not ready or an immediate transfer is finished
@@ -747,6 +800,10 @@ module flow_active
           resp_err_status_d   = Nack;
           fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
         end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       I3CWriteRegular: begin
         transfer_cnt_clr = 1'b0;
@@ -754,7 +811,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q - 1;
+        resp_data_length_d = transfer_cnt_q;
         fmt_bit_o = 1'b1;
         tx_queue_rready_o = ((transfer_cnt_q % (HciTxDataWidth >> 3)) == 0) & transfer_cnt_en;
 
@@ -771,17 +828,28 @@ module flow_active
           fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
           prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+          if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+            fmt_flag_stop_after_o = 1'b1;
+            fmt_flag_restart_after_o = 1'b0;
+            hc_seq_cancel_stat = 1'b1;
+            hc_err_cmd_seq_timeout_stat = 1'b1;
+          end
           tx_queue_rready_o = 1'b0;  // when we're done we don't want to pop new data from the queue
           resp_err_status_d = Success;  // successfull transfer without errors
         end
 
         // Error conditions
-        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i) begin
-          // TODO: #95753 implement error handling: OVL resp error code
+        if (tx_queue_rready_o && tx_queue_empty_i) begin
+          resp_err_status_d = Ovl;
+          fmt_flag_stop_after_o = 1'b1;
         end
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           resp_err_status_d   = Nack;
           fmt_flag_hdr_exit_o = use_ce2_error_handling_on_nack_q;
+        end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
         end
       end
       I2CWriteRegular: begin
@@ -790,7 +858,7 @@ module flow_active
         fmt_fifo_rvalid_o = 1'b1;
         fmt_flag_start_before_o = 1'b0;
         fmt_flag_stop_after_o = 1'b0;
-        resp_data_length_d = (transfer_cnt_q == 0) ? '0 : transfer_cnt_q;
+        resp_data_length_d = transfer_cnt_q;
         fmt_bit_o = 1'b1;
         tx_queue_rready_o = ((transfer_cnt_q % (HciTxDataWidth >> 3)) == 0) & transfer_cnt_en;
 
@@ -811,11 +879,16 @@ module flow_active
         end
 
         // Error conditions
-        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i) begin
-          // TODO: #95753 implement error handling: OVL resp error code
+        if (tx_queue_rready_o && tx_queue_empty_i) begin
+          resp_err_status_d = Ovl;
+          fmt_flag_stop_after_o = 1'b1;
         end
         if (fmt_receive_nack_i) begin
           resp_err_status_d = Nack;
+        end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
         end
       end
       I3CRead: begin
@@ -835,15 +908,15 @@ module flow_active
           end
           if (((transfer_cnt_q) % (HciRxDataWidth >> 3)) == 0) begin
             rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
-            if (~rx_queue_wready_i) begin
-              // TODO: #95753 implement error handling: OVL resp error code
-              // (queue is not ready because of overflow, else it's always
-              // ready)
+            if (~rx_queue_wready_i & rx_queue_full_i & rx_queue_wvalid_o) begin
+              resp_err_status_d = Ovl;
+              rx_dword_array = '0;  // Reset the DWORD
+              fmt_flag_stop_after_o = 1'b1;
             end
           end
         end
 
-        if (transfer_cnt_q <= data_length & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
+        if (transfer_cnt_q <= data_length & (~fmt_bit_i & fmt_flag_read_valid_i) & ~fmt_flag_stop_after_o) begin  // receive RX T bit
           fmt_flag_stop_after_o = 1'b1;
           resp_err_status_d = I3cShortReadErr;
           rx_dword_array[byte_select] = fmt_byte_i;
@@ -854,6 +927,12 @@ module flow_active
           fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
           prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+          if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+            fmt_flag_stop_after_o = 1'b1;
+            fmt_flag_restart_after_o = 1'b0;
+            hc_seq_cancel_stat = 1'b1;
+            hc_err_cmd_seq_timeout_stat = 1'b1;
+          end
           resp_err_status_d = Success;  // successfull transfer without errors
           rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished
         end
@@ -864,6 +943,10 @@ module flow_active
           rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished
         end
 
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       I2CRead: begin
         transfer_cnt_clr = 1'b0;
@@ -885,10 +968,10 @@ module flow_active
           end
           if (((transfer_cnt_q) % (HciRxDataWidth >> 3)) == 0) begin
             rx_queue_wvalid_o = rx_fifo_wvalid_i;  // Send data to rx queue
-            if (~rx_queue_wready_i) begin
-              // TODO: #95753 implement error handling: OVL resp error code
-              // (queue is not ready because of overflow, else it's always
-              // ready)
+            if (~rx_queue_wready_i & rx_queue_full_i & rx_queue_wvalid_o) begin
+              resp_err_status_d = Ovl;
+              rx_dword_array = '0;  // Reset the DWORD
+              fmt_flag_stop_after_o = 1'b1;
             end
           end
         end
@@ -897,10 +980,21 @@ module flow_active
           fmt_flag_read_continuous_o = 1'b0;
           fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
           fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+          prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+          if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+            fmt_flag_stop_after_o = 1'b1;
+            fmt_flag_restart_after_o = 1'b0;
+            hc_seq_cancel_stat = 1'b1;
+            hc_err_cmd_seq_timeout_stat = 1'b1;
+          end
           resp_err_status_d = Success;  // successfull transfer without errors
           rx_queue_wvalid_o = rx_fifo_wvalid_i;  // Send data to rx queue after transaction is done
         end
 
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       StallWrite: begin
         // TODO: #95754 is this state ever needed?
@@ -919,6 +1013,7 @@ module flow_active
         ccc_done = 1'b0;
         fmt_bit_o = 1'b1;
         tx_queue_rready_o = 1'b0;
+        ccc_ce0_first_retry_d = ccc_ce0_first_retry_q;
         unique case (transfer_cnt_q) inside
           32'd0: begin  // Broadcast Address
             fmt_byte_o = {7'h7E, 1'b0};
@@ -960,9 +1055,8 @@ module flow_active
                 if (ccc_done) begin
                   rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
                   if (~rx_queue_wready_i) begin
-                    // TODO: #95753 implement error handling: OVL resp error code
-                    // (queue is not ready because of overflow, else it's always
-                    // ready)
+                    resp_err_status_d = Ovl;
+                    fmt_flag_stop_after_o = 1'b1;
                   end
                 end
                 if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
@@ -979,6 +1073,13 @@ module flow_active
               if (ccc_last_trans) begin
                 fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
                 fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+                prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+                if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+                  fmt_flag_stop_after_o = 1'b1;
+                  fmt_flag_restart_after_o = 1'b0;
+                  hc_seq_cancel_stat = 1'b1;
+                  hc_err_cmd_seq_timeout_stat = 1'b1;
+                end
                 resp_err_status_d = (cmd_ccc == `I3C_DIRECT_SETDASA) ? NotSupported : Success;  // SETDASA is only supported with address assignment cmd desc
               end
             end else begin
@@ -987,6 +1088,13 @@ module flow_active
               if (ccc_last_trans) begin
                 fmt_flag_stop_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? addr_cmd_desc.toc : (is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc);
                 fmt_flag_restart_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? ~addr_cmd_desc.toc : (is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc);
+                prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+                if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+                  fmt_flag_stop_after_o = 1'b1;
+                  fmt_flag_restart_after_o = 1'b0;
+                  hc_seq_cancel_stat = 1'b1;
+                  hc_err_cmd_seq_timeout_stat = 1'b1;
+                end
                 resp_err_status_d = Success;  // successfull transfer without errors
               end
             end
@@ -1005,23 +1113,36 @@ module flow_active
                 if (((transfer_cnt_q - 2) % (HciRxDataWidth >> 3)) == 0) begin
                   rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue
                   if (~rx_queue_wready_i) begin
-                    // TODO: #95753 implement error handling: OVL resp error code
-                    // (queue is not ready because of overflow, else it's always
-                    // ready)
+                    resp_err_status_d = Ovl;
+                    fmt_flag_stop_after_o = 1'b1;
                   end
                 end
                 if (~ccc_done & (~fmt_bit_i & fmt_flag_read_valid_i)) begin  // receive RX T bit
                   fmt_flag_stop_after_o = 1'b1;
                   fmt_bit_o = 1'b0;
-                  resp_err_status_d = I3cShortReadErr;
-                  rx_dword_array[ccc_byte_select] = fmt_byte_i;
-                  rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
+                  if (ccc_ce0_first_retry_q) begin
+                    resp_err_status_d = I3cShortReadErr;
+                    rx_dword_array[ccc_byte_select] = fmt_byte_i;
+                    rx_queue_wvalid_o = 1'b1; // send the uncompleted word to the RX queue when transaction is finished early
+                    ccc_done = 1'b1;
+                  end else begin  // retry the CCC
+                    transfer_cnt_clr = 1'b1;
+                    ccc_ce0_first_retry_d = 1'b1;
+                    rx_dword_array = '0;  // reset the received data
+                  end
                 end
               end
               if (ccc_last_trans) begin
                 fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
                 rx_queue_wvalid_o = fmt_flag_read_valid_i;  // Send data to rx queue even if DWORD is not full
                 fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+                prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+                if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+                  fmt_flag_stop_after_o = 1'b1;
+                  fmt_flag_restart_after_o = 1'b0;
+                  hc_seq_cancel_stat = 1'b1;
+                  hc_err_cmd_seq_timeout_stat = 1'b1;
+                end
                 fmt_bit_o = 1'b0;
                 resp_err_status_d = Success;
               end
@@ -1035,6 +1156,10 @@ module flow_active
             resp_err_status_d = HcAborted;
           end
         endcase
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       BroadcastCCC: begin
         transfer_cnt_clr = 1'b0;
@@ -1062,6 +1187,14 @@ module flow_active
                                    | (~is_regular_transfer & ((is_direct_transfer & immediate_direct_cmd_desc.toc) | (~is_direct_transfer & immediate_dat_cmd_desc.toc))));
             fmt_flag_restart_after_o = ~ccc_has_payload & ((is_regular_transfer & ((is_direct_transfer & ~regular_direct_cmd_desc.toc) | (~is_direct_transfer & ~regular_dat_cmd_desc.toc)))
                                    | (~is_regular_transfer & ((is_direct_transfer & ~immediate_direct_cmd_desc.toc) | (~is_direct_transfer & ~immediate_dat_cmd_desc.toc))));
+            prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+            if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+              fmt_flag_stop_after_o = 1'b1;
+              fmt_flag_restart_after_o = 1'b0;
+              hc_seq_cancel_stat = 1'b1;
+              hc_err_cmd_seq_timeout_stat = 1'b1;
+            end
+
             tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i; // Pop payload byte for next cycle
             ccc_done = ~ccc_has_payload & fmt_fifo_rdone_i;
           end
@@ -1074,6 +1207,13 @@ module flow_active
               // be set
               fmt_flag_stop_after_o = is_direct_transfer ? regular_direct_cmd_desc.toc : regular_dat_cmd_desc.toc;
               fmt_flag_restart_after_o = is_direct_transfer ? ~regular_direct_cmd_desc.toc : ~regular_dat_cmd_desc.toc;
+              prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+              if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+                fmt_flag_stop_after_o = 1'b1;
+                fmt_flag_restart_after_o = 1'b0;
+                hc_seq_cancel_stat = 1'b1;
+                hc_err_cmd_seq_timeout_stat = 1'b1;
+              end
             end else begin
               fmt_byte_o = is_direct_transfer ? immediate_direct_cmd_desc.def_or_data_byte1 : immediate_dat_cmd_desc.def_or_data_byte1;
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
@@ -1081,6 +1221,13 @@ module flow_active
               // be set
               fmt_flag_stop_after_o = is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc;
               fmt_flag_restart_after_o = is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc;
+              prev_cmd_toc_d = ~fmt_flag_restart_after_o;
+              if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
+                fmt_flag_stop_after_o = 1'b1;
+                fmt_flag_restart_after_o = 1'b0;
+                hc_seq_cancel_stat = 1'b1;
+                hc_err_cmd_seq_timeout_stat = 1'b1;
+              end
             end
           end
           32'd3: begin
@@ -1092,6 +1239,10 @@ module flow_active
         endcase
         if (ccc_done) begin
           resp_err_status_d = Success;  // successfull transfer without errors
+        end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
         end
 
       end
@@ -1201,6 +1352,10 @@ module flow_active
           end
         endcase
 
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       // WriteResp: Generate Response Descriptor and load it to Response Queue
       WriteResp: begin
@@ -1250,6 +1405,10 @@ module flow_active
         if (fmt_fifo_rdone_i && fmt_receive_nack_i) begin
           resp_err_status_d   = AddrHeader;
           fmt_flag_hdr_exit_o = 1'b1;  // CE2 recovery
+        end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
         end
       end
       IBI: begin
@@ -1313,11 +1472,15 @@ module flow_active
             ibi_wb_cnt_d = ibi_queue_wvalid_o ? ibi_wb_cnt_q + 1 : ibi_wb_cnt_q; // increment writeback counter upon successfull write
           end
         end
+        if (abort_i) begin
+          fmt_flag_stop_after_o = 1'b1;
+          resp_err_status_d = HcAborted;
+        end
       end
       Error: begin
-        // TODO: implement
-        err_o = ~err_handled_q;
+        pio_transfer_err_stat = ~err_handled_q;
         err_handled_d = err_handled_q;
+        resp_err_status_d = resp_err_status_q;
         unique case (resp_err_status_q)
           Crc: begin
             // TODO: implement
@@ -1333,6 +1496,7 @@ module flow_active
             fmt_flag_hdr_exit_o = 1'b1;
             if (fmt_fifo_rdone_i) begin
               err_handled_d = 1'b1;  // hdr exit pattern was sent
+              resp_err_status_d = AbortedWithCRC;
             end
           end
           Nack: begin
@@ -1341,17 +1505,25 @@ module flow_active
               fmt_flag_hdr_exit_o = 1'b1;
               if (fmt_fifo_rdone_i) begin
                 err_handled_d = 1'b1;  // hdr exit pattern was sent
+                resp_err_status_d = AbortedWithCRC;
               end
             end
           end
           Ovl: begin
-            // TODO: implement
+            err_handled_d = 1'b1;  // Nothing to handle by the Controller
+            resp_err_status_d = AbortedWithCRC;
           end
           I3cShortReadErr: begin
-            // TODO: implement
+            err_handled_d = 1'b1;  // Nothing to handle by the Controller
+            resp_err_status_d = I3cShortReadErr;
           end
           HcAborted: begin
-            // TODO: implement
+            pio_transfer_abort_stat = 1'b1;
+            if (~abort_i) begin
+              err_handled_d = 1'b1;
+              resp_err_status_d = AbortedWithCRC;
+              pio_transfer_abort_stat = 1'b0;
+            end
           end
           I2cDataNackOrI3cBusAborted: begin
             // TODO: implement
@@ -1363,10 +1535,12 @@ module flow_active
             // TODO: implement
           end
           default: begin
-            // TODO: implement
+            // We land in this case when a cmd seq error happens
+            err_handled_d = 1'b1;
           end
         endcase
       end
+
       default: begin
         resp_desc.err_status = AbortedWithCRC;  // TODO: change default state?
         resp_desc.tid = '0;
@@ -1387,7 +1561,7 @@ module flow_active
       end
       // WaitForCmd: Fetch Command Descriptor
       WaitForCmd: begin
-        if (~cmd_queue_empty_i & cmd_queue_rvalid_i) begin
+        if (~cmd_queue_empty_i & cmd_queue_rvalid_i & cmd_queue_rready_o) begin
           state_next = FetchAddr;
         end
       end
@@ -1442,7 +1616,7 @@ module flow_active
       // I2CWriteImmediate: Execute Immediate Transfer to Legacy I2C Device via I2C Controller
       I2CWriteImmediate: begin
         if (fmt_receive_nack_i) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions
+          state_next = WriteResp;
         end else if ((transfer_cnt_q >= data_length + BytesBeforeImmData) && fmt_fifo_rdone_i) begin
           state_next = immediate_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
@@ -1450,33 +1624,35 @@ module flow_active
       // I3CWriteImmediate: Execute Immediate Transfer to I3C Device
       I3CWriteImmediate: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions
-        end else if (transfer_cnt_q > data_length + BytesBeforeImmData) begin
+          state_next = WriteResp;
+        end else if ((transfer_cnt_q >= data_length + BytesBeforeImmData) && fmt_fifo_rdone_i) begin
           state_next = immediate_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
       end
       I2CWriteRegular: begin
         if (fmt_receive_nack_i) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions
+          state_next = WriteResp;
         end else if ((transfer_cnt_q >= data_length) && fmt_fifo_rdone_i) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
-        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i && tx_queue_rready_o) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions (tx queue underflow)
+        if (tx_queue_empty_i && tx_queue_rready_o) begin
+          state_next = WriteResp;
         end
       end
       I3CWriteRegular: begin
         if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions
-        end else if (transfer_cnt_q > data_length) begin
+          state_next = WriteResp;
+        end else if ((transfer_cnt_q >= data_length) && fmt_fifo_rdone_i) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
-        if (transfer_cnt_q < data_length && transfer_cnt_en && tx_queue_empty_i && tx_queue_rready_o) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions (tx queue underflow)
+        if (tx_queue_empty_i && tx_queue_rready_o) begin
+          state_next = WriteResp;
         end
       end
       I3CRead: begin
-        if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+        if (rx_queue_full_i & rx_queue_wvalid_o) begin  // OVL condition
+          state_next = WriteResp;
+        end else if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           state_next = WriteResp;
         end else if (transfer_cnt_q >= data_length & fmt_flag_read_valid_i) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
@@ -1485,14 +1661,13 @@ module flow_active
         end
       end
       I2CRead: begin
-        if (fmt_receive_nack_i) begin
-          state_next = WriteResp;  // TODO: create an error state for such occasions
+        if (rx_queue_full_i & rx_queue_wvalid_o) begin  // OVL condition
+          state_next = WriteResp;
+        end else if (fmt_receive_nack_i) begin
+          state_next = WriteResp;
         end else if (transfer_cnt_q >= data_length & fmt_fifo_rready_i) begin
           state_next = regular_direct_cmd_desc.wroc ? WriteResp : Idle;
         end
-        // TODO: add transition for RX queue full state
-        // We only abort the read due to controller errors, the i2c target
-        // cannot abort a read, this is handled as part of error handling
       end
       StallWrite: begin
         // TODO: #95754 is this state ever needed?
@@ -1507,12 +1682,18 @@ module flow_active
         end else if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
           state_next = WriteResp;
         end
+        if (rx_queue_full_i & rx_queue_wvalid_o) begin  // OVL condition
+          state_next = WriteResp;
+        end
       end
       BroadcastCCC: begin
         if (ccc_done) begin
           state_next = (~is_regular_transfer & immediate_direct_cmd_desc.wroc) ? WriteResp : 
                        (is_regular_transfer & regular_direct_cmd_desc.wroc)    ? WriteResp : Idle;
         end else if (fmt_receive_nack_i & fmt_fifo_rdone_i) begin
+          state_next = WriteResp;
+        end
+        if (rx_queue_full_i & rx_queue_wvalid_o) begin  // OVL condition
           state_next = WriteResp;
         end
       end
@@ -1525,6 +1706,9 @@ module flow_active
       WriteResp: begin
         if (resp_queue_wready_i) begin
           state_next = (resp_err_status_q != Success) ? Error : Idle; // Wait in the error state upon sending an error to the driver
+          if (halt_on_cmd_seq_timeout_i & ~prev_cmd_toc_q & ~cmd_queue_rvalid_i) begin  // CMD Seq timeout
+            state_next = Error;
+          end
         end
       end
       // InternalControlCommand: Controls the Host Controller itself (not I3C
@@ -1576,6 +1760,9 @@ module flow_active
     endcase
     if (fmt_sda_arbitration_i) begin
       state_next = IBI;
+    end
+    if (abort_i & fmt_fifo_rready_i & (state != WriteResp) & (state != Error)) begin // wait for the i3c_controller_fsm to issue stop and go back to idle
+      state_next = WriteResp;
     end
   end
 

@@ -94,7 +94,11 @@ module configuration (
     input logic [15:0] mrl_i,
     input logic [7:0] ibil_i,
 
-    output logic resume_o
+    output logic resume_o,
+    output logic abort_o,
+    output logic pio_rs_o,
+    output logic halt_on_cmd_seq_timeout_o,
+    output logic ctrl_irq_o
 );
 
   // Mode of operation
@@ -115,8 +119,10 @@ module configuration (
   logic i2c_dev_present;
 `ifdef CONTROLLER_SUPPORT
   assign i2c_dev_present = hwif_out_i.I3CBase.HC_CONTROL.I2C_DEV_PRESENT.value;
+  assign halt_on_cmd_seq_timeout_o = hwif_out_i.I3CBase.HC_CONTROL.HALT_ON_CMD_SEQ_TIMEOUT.value;
 `else
   assign i2c_dev_present = '0;
+  assign halt_on_cmd_seq_timeout_o = 1'b0;
 `endif  // CONTROLLER_SUPPORT
 
   // Disables the TTI
@@ -127,15 +133,17 @@ module configuration (
 
   // Define state: running, idle, waiting, halted, etc.
 
-  logic abort;
+  logic abort, hc_intr;
 `ifdef CONTROLLER_SUPPORT
   assign bus_enable = hwif_out_i.I3CBase.HC_CONTROL.BUS_ENABLE.value;
   assign resume_o = hwif_out_i.I3CBase.HC_CONTROL.RESUME.value;
   assign abort = hwif_out_i.I3CBase.HC_CONTROL.ABORT.value;  // TODO: implement aborting transaction
+  assign hc_intr = hwif_out_i.I3CBase.INTR_STATUS.intr;
 `else
   assign bus_enable = hwif_out_i.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
   assign resume = '0;
   assign abort = '0;
+  assign hc_intr = 1'b0;
 `endif  // CONTROLLER_SUPPORT
 
   // These affect queue ctrl logic
@@ -145,15 +153,23 @@ module configuration (
   logic pio_enable;
   logic pio_abort;
   logic pio_rs;
+  logic pio_intr_signal;
 `ifdef CONTROLLER_SUPPORT
   assign pio_enable = hwif_out_i.PIOControl.PIO_CONTROL.ENABLE.value;
   assign pio_abort = hwif_out_i.PIOControl.PIO_CONTROL.ABORT.value;
   assign pio_rs = hwif_out_i.PIOControl.PIO_CONTROL.RS.value;
+  assign pio_intr_signal = hwif_out_i.PIOControl.PIO_INTR_STATUS.intr;
 `else
   assign pio_enable = '0;
   assign pio_abort = '0;
   assign pio_rs = '0;
+  assign pio_intr_signal = 1'b0;
 `endif  // CONTROLLER_SUPPORT
+
+  assign abort_o = pio_abort | abort; // since we only support PIO mode the global abort and PIO abort are handled equivalently.
+  assign pio_rs_o = pio_rs;
+  // Interrupt signal going out from the controller
+  assign ctrl_irq_o = pio_intr_signal | hc_intr;
 
   assign i2c_active_en_o = 1'b0;
   assign i2c_standby_en_o = 1'b0;

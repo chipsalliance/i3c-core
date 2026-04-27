@@ -219,8 +219,8 @@ module controller
     output logic i3c_fsm_idle_o,
 
     // Errors and Interrupts
-    output i3c_err_t ctrl_err_o,
-    output i3c_irq_t ctrl_irq_o,
+    output i3c_irq_t ctrl_int_stat_o,
+    output logic ctrl_irq_o,
 
     // Controller configuration
     input I3CCSR_pkg::I3CCSR__out_t hwif_out_i,
@@ -357,7 +357,7 @@ module controller
   assign set_mwl_o  = set_mwl;
   assign set_mrl_o  = set_mrl;
   assign set_ibil_o = set_ibil;
-  logic resume;
+  logic resume, abort, pio_rs, halt_on_cmd_seq_timeout;
 
   // I2C/I3C Bus state monitor
   // 'bus' is gated during HDR mode to prevent false START/STOP/RSTART detection
@@ -483,7 +483,11 @@ module controller
       .mwl_i                          (mwl),
       .mrl_i                          (mrl),
       .ibil_i                         (ibil),
-      .resume_o                       (resume)
+      .resume_o                       (resume),
+      .abort_o                        (abort),
+      .pio_rs_o                       (pio_rs),
+      .halt_on_cmd_seq_timeout_o      (halt_on_cmd_seq_timeout),
+      .ctrl_irq_o                     (ctrl_irq_o)
   );
 
   assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
@@ -552,9 +556,11 @@ module controller
       .dct_rdata_hw_i              (dct_rdata_hw_i),
       .i3c_fsm_en_i                (i3c_active_en),
       .i3c_fsm_idle_o              (i3c_fsm_idle_o),
-      .err_o                       (ctrl_err_o),
       .resume_i                    (resume),
-      .irq_o                       (ctrl_irq_o),
+      .abort_i                     (abort),
+      .pio_rs_i                    (pio_rs),
+      .halt_on_cmd_seq_timeout_i   (halt_on_cmd_seq_timeout),
+      .irq_o                       (ctrl_int_stat_o),
       .phy_en_i                    (phy_en),
       .phy_mux_select_i            (phy_mux_select),
       .i2c_active_en_i             (i2c_active_en),
@@ -588,8 +594,7 @@ module controller
   );
 `else
   always_comb begin
-    ctrl_err_o = '0;
-    ctrl_irq_o = '0;
+    ctrl_int_stat_o = '0;
     ctrl_scl_o[0] = 1'b1;
     ctrl_scl_o[1] = 1'b1;
     ctrl_sda_o[0] = 1'b1;

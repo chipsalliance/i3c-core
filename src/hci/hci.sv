@@ -128,8 +128,7 @@ module hci
     output I3CCSR_pkg::I3CCSR__DCT__in_t  dct_o,
 
     // Error Interface from flow_active
-    input logic transfer_err_stat_i,
-    input logic transfer_abort_stat_i
+    input i3c_irq_t ctrl_int_stat_i
 );
 
   // Reset control
@@ -431,36 +430,70 @@ module hci
       .reg_rst_data_o(hci_ibi_rst_next)
   );
 
-  always_comb begin : wire_unconnected_regs  //TODO: check all of this
+  always_comb begin : wire_controller_regs
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next = '0;
     hwif_base_o.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next = '0;
-    hwif_base_o.HC_CONTROL.RESUME.we = transfer_err_stat_i; // TODO: maybe we have to change this, s.t. it's only written once and can be reset by SW
-    hwif_base_o.HC_CONTROL.RESUME.next = transfer_err_stat_i;
+    hwif_base_o.HC_CONTROL.RESUME.we = ctrl_int_stat_i.pio_transfer_err_stat;
+    hwif_base_o.HC_CONTROL.RESUME.next = ctrl_int_stat_i.pio_transfer_err_stat;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.we = '0;
     hwif_base_o.HC_CONTROL.BUS_ENABLE.next = '0;
     hwif_base_o.RESET_CONTROL.SOFT_RST = '0;
     hwif_base_o.PRESENT_STATE.AC_CURRENT_OWN.next = 1'b1; // TODO: change this based on if we are the active controller or not
-    // TODO: the INTR_STATUS registers should be set by the controller
-    // (flow_active)
-    hwif_base_o.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = '0;
-    hwif_base_o.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = '0;
-    hwif_base_o.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = '0;
-    hwif_base_o.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = '0;
-    hwif_base_o.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = '0;
+
+    // Global I3C Interrupts: (HW Event | SW Force) & Status Enable Mask
+    hwif_base_o.INTR_STATUS.HC_INTERNAL_ERR_STAT.next = 
+        (ctrl_int_stat_i.hc_internal_err_stat | hwif_base_i.INTR_FORCE.HC_INTERNAL_ERR_FORCE.value) 
+        & hwif_base_i.INTR_STATUS_ENABLE.HC_INTERNAL_ERR_STAT_EN.value;
+
+    hwif_base_o.INTR_STATUS.HC_SEQ_CANCEL_STAT.next = 
+        (ctrl_int_stat_i.hc_seq_cancel_stat | hwif_base_i.INTR_FORCE.HC_SEQ_CANCEL_FORCE.value) 
+        & hwif_base_i.INTR_STATUS_ENABLE.HC_SEQ_CANCEL_STAT_EN.value;
+
+    hwif_base_o.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next = 
+        (ctrl_int_stat_i.hc_warn_cmd_seq_stall_stat | hwif_base_i.INTR_FORCE.HC_WARN_CMD_SEQ_STALL_FORCE.value) 
+        & hwif_base_i.INTR_STATUS_ENABLE.HC_WARN_CMD_SEQ_STALL_STAT_EN.value;
+
+    hwif_base_o.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next = 
+        (ctrl_int_stat_i.hc_err_cmd_seq_timeout_stat | hwif_base_i.INTR_FORCE.HC_ERR_CMD_SEQ_TIMEOUT_FORCE.value) 
+        & hwif_base_i.INTR_STATUS_ENABLE.HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN.value;
+
+    hwif_base_o.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next = 
+        (ctrl_int_stat_i.sched_cmd_missed_tick_stat | hwif_base_i.INTR_FORCE.SCHED_CMD_MISSED_TICK_FORCE.value) 
+        & hwif_base_i.INTR_STATUS_ENABLE.SCHED_CMD_MISSED_TICK_STAT_EN.value;
+
     hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.we = '0;
     hwif_base_o.DCT_SECTION_OFFSET.TABLE_INDEX.next = '0;
     hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = '0;
     hwif_base_o.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next = '0;  // This feature is not supported
 
-    hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = hci_tx_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = hci_rx_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = hci_ibi_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = hci_cmd_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.RESP_READY_STAT.next = hci_resp_ready_thld_trig_o;
-    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = transfer_abort_stat_i;  // TODO: implement
-    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = transfer_err_stat_i; // TODO: implement during error handling
+    // The I3CCSR internally masks the respective interrupts using the
+    // PIO_INTR_STATUS_ENABLE register fields, so we just OR the force bits.
+
+    hwif_pio_control_o.PIO_INTR_STATUS.TX_THLD_STAT.next = 
+        hci_tx_ready_thld_trig_o | hwif_pio_control_i.PIO_INTR_FORCE.TX_THLD_FORCE.value;
+
+    hwif_pio_control_o.PIO_INTR_STATUS.RX_THLD_STAT.next = 
+        hci_rx_ready_thld_trig_o | hwif_pio_control_i.PIO_INTR_FORCE.RX_THLD_FORCE.value;
+
+    hwif_pio_control_o.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next = 
+        hci_ibi_ready_thld_trig_o | hwif_pio_control_i.PIO_INTR_FORCE.IBI_THLD_FORCE.value;
+
+    hwif_pio_control_o.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next = 
+        hci_cmd_ready_thld_trig_o | hwif_pio_control_i.PIO_INTR_FORCE.CMD_QUEUE_READY_FORCE.value;
+
+    hwif_pio_control_o.PIO_INTR_STATUS.RESP_READY_STAT.next = 
+        hci_resp_ready_thld_trig_o | hwif_pio_control_i.PIO_INTR_FORCE.RESP_READY_FORCE.value;
+
+    // Must be manually masked with STATUS_ENABLE
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next = 
+        (ctrl_int_stat_i.pio_transfer_abort_stat | hwif_pio_control_i.PIO_INTR_FORCE.TRANSFER_ABORT_FORCE.value) 
+        & hwif_pio_control_i.PIO_INTR_STATUS_ENABLE.TRANSFER_ABORT_STAT_EN.value;
+
+    hwif_pio_control_o.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next = 
+        (ctrl_int_stat_i.pio_transfer_err_stat | hwif_pio_control_i.PIO_INTR_FORCE.TRANSFER_ERR_FORCE.value) 
+        & hwif_pio_control_i.PIO_INTR_STATUS_ENABLE.TRANSFER_ERR_STAT_EN.value;
   end
 
 endmodule : hci

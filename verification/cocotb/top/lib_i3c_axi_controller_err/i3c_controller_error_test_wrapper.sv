@@ -114,7 +114,7 @@ module i3c_controller_error_test_wrapper #(
     output logic sda_oe,
 
     output logic sel_od_pp_o,
-    input wire [4:0] debug_state_target_i,
+    input logic [4:0] debug_state_target_i,
 
     // Recovery interface signals
     output logic recovery_payload_available_o,

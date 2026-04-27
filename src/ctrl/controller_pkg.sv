@@ -53,8 +53,6 @@ package controller_pkg;
   // To raise errors
   typedef struct packed {logic err_0;} i3c_err_t;
 
-  // To raise interrupts
-  typedef struct packed {logic irq_0;} i3c_irq_t;
 
   typedef enum logic {
     Write = 1'b0,
