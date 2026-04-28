@@ -17,7 +17,10 @@ from cocotb.handle import Force, Release
 from cocotb.triggers import ClockCycles, RisingEdge, Event
 from cocotb.regression import TestFactory
 
-from common import VALID_I3C_ADDRESSES, log_seed
+from common import (
+    VALID_I3C_ADDRESSES, log_seed, build_ccc_stress_table,
+    do_getbcr, do_enec_direct,
+)
 
 TGT_ADR = 0x5A
 
@@ -4017,5 +4020,149 @@ async def test_ccc_entdaa_stop_in_sendnack(dut):
         ccc=CCC.DIRECT.GETBCR, addr=DYNAMIC_ADDR, count=1)
     assert responses[0][0] == True, \
         "Recovery failed after ENTDAA SendNack STOP"
+
+    await tb.teardown()
+
+
+# =============================================================================
+# CCC + CSR Concurrent Stress Test
+# =============================================================================
+
+
+@cocotb.test(timeout_time=3000, timeout_unit="us")
+async def test_ccc_csr_concurrent_stress(dut):
+    """
+    Stress test: concurrent random FW (AXI) and I3C CCC accesses to
+    CCC-affected CSRs.
+
+    FW randomly reads/writes CCC-related CSRs via AXI in the background
+    while I3C performs 50 random supported CCC operations (GET and SET).
+    GET CCCs verify ACK; SET CCCs send random valid data.
+
+    Goal: expose data races, coherency bugs, or FSM hangs under concurrent
+    access from both interfaces.
+    """
+    log = logging.getLogger("test_ccc_csr_concurrent_stress")
+
+    (STATIC_ADDR, VIRT_STATIC_ADDR, DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR) = \
+        random.sample(VALID_I3C_ADDRESSES, 4)
+    i3c_controller, _, tb = await test_setup(
+        dut, STATIC_ADDR, VIRT_STATIC_ADDR,
+        dynamic_addr=DYNAMIC_ADDR, virtual_dynamic_addr=VIRT_DYNAMIC_ADDR)
+    await ClockCycles(tb.clk, 50)
+
+    targets = [DYNAMIC_ADDR, VIRT_DYNAMIC_ADDR]
+
+    # ------------------------------------------------------------------
+    # CCC command table (from common.py)
+    # ------------------------------------------------------------------
+    CCC_TABLE = build_ccc_stress_table(i3c_controller, targets)
+
+    # ------------------------------------------------------------------
+    # FW CSR tables
+    # ------------------------------------------------------------------
+    SM = tb.reg_map.I3C_EC.STDBYCTRLMODE
+    TTI = tb.reg_map.I3C_EC.TTI
+
+    # FW writable CSRs: (addr, mask, safe_max_or_fixed)
+    # Write random value & mask into the field bits.
+    FW_WRITE_CSRS = [
+        # TTI.CONTROL event enable bits (IBI_EN=bit12, CRR_EN=bit11, HJ_EN=bit10)
+        # Write full register with random event bits, keep IBI_RETRY_NUM=0
+        (TTI.CONTROL.base_addr, 0x1C00, None),
+        # STBY_CR_DEVICE_CHAR: BCR_VAR(bits[28:24]), DCR(bits[23:16]), PID_HI(bits[15:1])
+        (SM.STBY_CR_DEVICE_CHAR.base_addr, 0x3FFFFFFE, None),
+        # STBY_CR_DEVICE_PID_LO
+        (SM.STBY_CR_DEVICE_PID_LO.base_addr, 0xFFFFFFFF, None),
+        # STBY_CR_VIRTUAL_DEVICE_CHAR
+        (SM.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr, 0x3FFFFFFE, None),
+        # STBY_CR_VIRTUAL_DEVICE_PID_LO
+        (SM.STBY_CR_VIRTUAL_DEVICE_PID_LO.base_addr, 0xFFFFFFFF, None),
+        # STBY_CR_CCC_CONFIG_GETCAPS
+        (SM.STBY_CR_CCC_CONFIG_GETCAPS.base_addr, 0x0F07, None),
+        # STBY_CR_CCC_CONFIG_RSTACT_PARAMS: RESET_TIME_PERIPHERAL(bits[15:8]),
+        # RESET_TIME_TARGET(bits[23:16]). Avoid RESET_DYNAMIC_ADDR(bit31).
+        (SM.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.base_addr, 0x00FFFF00, None),
+        # STBY_CR_INTR_STATUS: W1C bits (write 1 to clear)
+        (SM.STBY_CR_INTR_STATUS.base_addr, 0x000FFFFF, None),
+        # TARGET_ERR_CTRL: TE0-TE5 det_en bits
+        (TTI.TARGET_ERR_CTRL.base_addr, 0x3F, None),
+    ]
+
+    # FW readable CSRs (all CCC-affected registers)
+    FW_READ_CSRS = [
+        TTI.CONTROL.base_addr,
+        TTI.STATUS.base_addr,
+        SM.STBY_CR_MWL.base_addr,
+        SM.STBY_CR_MRL.base_addr,
+        SM.STBY_CR_DEVICE_CHAR.base_addr,
+        SM.STBY_CR_DEVICE_PID_LO.base_addr,
+        SM.STBY_CR_VIRTUAL_DEVICE_CHAR.base_addr,
+        SM.STBY_CR_VIRTUAL_DEVICE_PID_LO.base_addr,
+        SM.STBY_CR_CCC_CONFIG_GETCAPS.base_addr,
+        SM.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.base_addr,
+        SM.STBY_CR_DEVICE_ADDR.base_addr,
+        SM.STBY_CR_VIRT_DEVICE_ADDR.base_addr,
+        SM.STBY_CR_INTR_STATUS.base_addr,
+        SM.STBY_CR_STATUS.base_addr,
+        TTI.TARGET_ERR_CTRL.base_addr,
+        TTI.TARGET_ERR_INTR_STATUS.base_addr,
+        TTI.TARGET_ERR_CNT_TE0.base_addr,
+        TTI.TARGET_ERR_CNT_TE1.base_addr,
+        TTI.TARGET_ERR_CNT_TE2.base_addr,
+        TTI.TARGET_ERR_CNT_TE3.base_addr,
+        TTI.TARGET_ERR_CNT_TE4.base_addr,
+        TTI.TARGET_ERR_CNT_TE5.base_addr,
+    ]
+
+    # ------------------------------------------------------------------
+    # FW background task: random AXI reads/writes until stopped
+    # ------------------------------------------------------------------
+    stop_fw = Event()
+    fw_ops = [0]
+
+    async def fw_background():
+        while not stop_fw.is_set():
+            if random.random() < 0.5:
+                # FW write (masked to safe field bits)
+                addr, mask, fixed_val = random.choice(FW_WRITE_CSRS)
+                if fixed_val is not None:
+                    val = fixed_val
+                else:
+                    val = random.randint(0, 0xFFFFFFFF) & mask
+                await tb.write_csr(addr, int2dword(val), 4)
+            else:
+                # FW read
+                addr = random.choice(FW_READ_CSRS)
+                await tb.read_csr(addr, 4)
+            fw_ops[0] += 1
+            delay = random.randint(1, 10)
+            await ClockCycles(tb.clk, delay)
+
+    cocotb.start_soon(fw_background())
+
+    # ------------------------------------------------------------------
+    # I3C foreground: 50 random CCC operations
+    # ------------------------------------------------------------------
+    NUM_CCC_OPS = 50
+    for i in range(NUM_CCC_OPS):
+        handler = random.choice(CCC_TABLE)
+        result = await handler()
+        log.info(f"CCC op {i}: result={result}")
+
+    # ------------------------------------------------------------------
+    # Stop FW background, post-test validation
+    # ------------------------------------------------------------------
+    stop_fw.set()
+    await ClockCycles(tb.clk, 50)
+
+    log.info(f"Done: {NUM_CCC_OPS} CCC ops, {fw_ops[0]} FW ops")
+
+    # Verify target is still functional
+    await do_getbcr(i3c_controller, DYNAMIC_ADDR)
+    await do_getbcr(i3c_controller, VIRT_DYNAMIC_ADDR)
+
+    # Re-enable all events for clean teardown
+    await do_enec_direct(i3c_controller, DYNAMIC_ADDR, pattern=0x0B)
 
     await tb.teardown()

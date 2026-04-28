@@ -21,7 +21,6 @@ VERILOG_SOURCES += \
     $(SRC_DIR)/i3c_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \
-    $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_count_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_addr.v \
@@ -32,6 +31,7 @@ VERILOG_SOURCES += \
     $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_wr.sv \
     $(SRC_DIR)/hci/axi_adapter.sv \
     $(SRC_DIR)/hci/dxt.sv \
+    $(SRC_DIR)/interrupt.sv \
     $(SRC_DIR)/hci/queues/write_queue.sv \
     $(SRC_DIR)/hci/queues/read_queue.sv \
     $(SRC_DIR)/hci/queues.sv \

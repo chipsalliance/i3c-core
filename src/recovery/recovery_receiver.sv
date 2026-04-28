@@ -353,8 +353,9 @@ module recovery_receiver
   logic capture_pec;
   logic set_cmd_is_rd;
   logic latch_pec_from_len;
-  logic load_csr_sel;
-  logic inc_csr_sel;
+  logic load_csr_sel;    // Loads csr_sel/csr_end (CmdDispatch)
+  logic inc_csr_sel;     // Advances csr_sel at DWORD boundaries
+  logic load_csr_data;   // Delayed pulse: captures csr_data 1 cycle after csr_sel settles
   logic load_csr_length;
 
   //----------------------------------------------------------------------------
@@ -1210,11 +1211,16 @@ module recovery_receiver
     if (!rst_ni) begin
       csr_sel <= CSR_INVALID;
       csr_end <= CSR_INVALID;
+      load_csr_data <= '0;
     end else if (load_csr_sel) begin
       csr_sel <= csr_sel_next;
       csr_end <= csr_end_next;
+      load_csr_data <= 1'b1;
     end else if (inc_csr_sel && (csr_sel < csr_end)) begin
       csr_sel <= csr_e'(csr_sel + 8'd1);
+      load_csr_data <= 1'b1;
+    end else begin
+      load_csr_data <= '0;
     end
   end
 
@@ -1438,10 +1444,12 @@ module recovery_receiver
     endcase
   end
 
+  // Capture csr_data one cycle after csr_sel settles to ensure
+  // csr_data_next (driven by case(csr_sel)) sees the correct selector.
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       csr_data <= '0;
-    end else begin
+    end else if (load_csr_data) begin
       csr_data <= csr_data_next;
     end
   end
