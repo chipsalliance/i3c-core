@@ -26,6 +26,7 @@ from interface import I3CTopTestInterface
 from utils import format_ibi_data, get_interrupt_status
 
 import cocotb
+from cocotb.handle import Force, Release
 from cocotb.result import SimTimeoutError
 from cocotb.triggers import ClockCycles, RisingEdge, Timer, with_timeout
 from common import timeout_task, log_seed
@@ -513,3 +514,93 @@ async def test_ibi_multi_queue_mixed_abort(dut):
 
     await ClockCycles(tb.clk, 10)
     await tb.teardown()
+
+# =============================================================================
+# Test 4: coverage of Overflow protection in Flush state for discriptor_ibi.sv
+# =============================================================================
+
+@cocotb.test()
+async def test_ibi_multi_queue_flush_large_payload(dut):
+    """
+    Pre-queue IBIs including one with a large payload. Truncate it early
+    so the target spends multiple cycles in the Flush state, hitting the
+    "Flush out any data as fast as possible" (data_cnt_d = data_cnt_q + 4)
+    logic. Then, force the data_cnt_q to overflow to hit the protection branch.
+
+    Verifies:
+    - Multi-cycle Flush state operation
+    - Overflow protection in Flush state
+    - Auto-advance to next queued IBI
+    """
+    i3c_controller, _, tb = await test_setup(dut)
+    await init_ibi(i3c_controller, tb)
+
+    # Internal signal handles for coverage injection
+    standby = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.xcontroller_standby_i3c
+    desc_ibi = standby.u_descriptor_ibi
+
+    # IBI #0 has 20 bytes payload (will be truncated to 4)
+    # IBI #1 has 4 bytes
+    ibi_vectors = [
+        (0xE1, [i for i in range(20)]),
+        (0xE2, [0x11, 0x22, 0x33, 0x44]),
+    ]
+
+    dut._log.info("Phase 1: Pre-queuing 2 IBIs")
+    for i, (mdb, data) in enumerate(ibi_vectors):
+        dut._log.info(f"  Queuing IBI #{i}: MDB=0x{mdb:02X}, len={len(data)}")
+        await send_ibi(tb, mdb, data)
+
+    await ClockCycles(tb.clk, 10)
+
+    dut._log.info("Phase 2: Partial read on IBI #0 to trigger Flush")
+    i3c_controller.set_max_ibi_data_len(4)
+
+    async def force_overflow_in_flush():
+        # Wait until descriptor_ibi enters Flush (state 5)
+        while int(desc_ibi.state_q.value) != 5:
+            await RisingEdge(tb.clk)
+
+        # Let it run naturally for a cycle to hit `data_cnt_q + 4`
+        await ClockCycles(tb.clk, 1)
+
+        # Now force it to max to hit `data_cnt_q[7:2] == '1`
+        desc_ibi.data_cnt_q.value = Force(252)
+        desc_ibi.data_len.value = Force(255)
+        await ClockCycles(tb.clk, 1)
+
+        # Release
+        desc_ibi.data_cnt_q.value = Release()
+        desc_ibi.data_len.value = Release()
+
+    # Start the monitor
+    monitor_task = cocotb.start_soon(force_overflow_in_flush())
+
+    mdb0, data0 = ibi_vectors[0]
+    response = await with_timeout(i3c_controller.wait_for_ibi(), 20, "us")
+    await monitor_task
+
+    # Controller should have received MDB + 4 data bytes
+    expected_truncated = bytearray([TARGET_ADDRESS, mdb0] + data0[:4])
+    assert response == expected_truncated, (
+        f"Truncated IBI mismatch: expected {expected_truncated.hex()}, got {response.hex()}"
+    )
+    await ClockCycles(tb.clk, 50)
+    await check_ibi_status(tb, 2, "IBI #0 partial abort")
+
+    # Target must not repeat aborted IBI
+    await expect_no_ibi(i3c_controller, 2)
+
+    dut._log.info("Phase 3: Accept remaining IBI (auto-advanced)")
+    i3c_controller.set_max_ibi_data_len(65536)
+
+    mdb1, data1 = ibi_vectors[1]
+    response = await with_timeout(i3c_controller.wait_for_ibi(), 20, "us")
+    await verify_ibi_response(dut, response, TARGET_ADDRESS, mdb1, data1)
+    await check_ibi_status(tb, 0, "IBI #1 success")
+
+    await ClockCycles(tb.clk, 50)
+    await check_pending_interrupt(tb, 0)
+
+    await tb.teardown()
+
