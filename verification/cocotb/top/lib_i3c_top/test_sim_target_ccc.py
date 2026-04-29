@@ -1,23 +1,42 @@
 # SPDX-License-Identifier: Apache-2.0
 """
-CCC tests for the I3CTargetFixed sim model.
+Feature-grouped CCC tests for the I3CTargetFixed sim model.
 
-Tests directed read CCCs across the sim target (I3CTargetFixed) and the DUT
-in various scenarios: single-target, multi-target with Repeated START, with
-dummy NACKs, and randomized target order. Both sim target and DUT addresses
-are randomized.
+Tests are organized by **scenario / feature** rather than per-CCC. Each
+test randomizes the CCC under test (via the `SUPPORTED_CCCS` table in
+`ccc_descriptors.py`) so that all supported CCCs are exercised in every
+scenario across multiple seeds.
+
+Scenarios (generalized -- pick a random CCC per seed):
+  1. test_ccc_single_target           -- single-target read/write/bcast
+  2. test_ccc_multi_target_ordering   -- DUT + sim, both orderings
+  3. test_ccc_with_nack_targets       -- random NACK targets interleaved
+  4. test_ccc_chained                 -- multiple CCCs in one frame
+  5. test_ccc_runtime_update          -- read, mutate, re-read
+  6. test_ccc_back_to_back_sequence   -- shuffled run of all reads
+  7. test_ccc_then_private_read       -- no stale CCC after directed read
+  8. test_ccc_broadcast_only_recovery -- broadcast w/o directed phase
+  9. test_ccc_post_read_self_clear    -- GETSTATUS protocol-error self-clear
+
+Bus-level frame-structure tests (CCC randomized where natural):
+ 10. test_ccc_premature_stop                -- spec-legal STOP positions (sim)
+ 11. test_ccc_mid_byte_abort_recovery       -- DUT-safe abort positions
+ 12. test_ccc_duplicate_address_multi_target -- same addr twice in frame
+ 13. test_ccc_unsupported_enthdr_from_sdr   -- HDR mode recovery
+ 14. test_ccc_enthdr0_then_reentry_after_exit
 
 Spec references:
-  - Section 5.1.9.3.12: GETPID format and requirements
-  - Section 5.1.9.3.13: GETBCR format
-  - Section 5.1.9.3.14: GETDCR format
-  - Section 5.1.9.3.15: GETSTATUS format (Table 27)
-  - Section 5.1.9.3.5:  SETMWL/GETMWL format
-  - Section 5.1.9.3.6:  SETMRL/GETMRL format
-  - Section 5.1.9.3.19: GETCAPS format (Tables 35-38)
-  - Section 5.1.9.3.18: GETMXDS format (Tables 30-32)
-  - Section 5.1.4.1.1:  48-bit Provisioned ID structure
-  - Figure 47: GETPID Format (multi-target with Repeated START)
+  - Section 5.1.9.2.1: Direct CCC framing (Sr+7E/W ends a Direct CCC)
+  - Section 5.1.9.3.5: SETMWL/GETMWL
+  - Section 5.1.9.3.6: SETMRL/GETMRL
+  - Section 5.1.9.3.12: GETPID
+  - Section 5.1.9.3.13: GETBCR
+  - Section 5.1.9.3.14: GETDCR
+  - Section 5.1.9.3.15: GETSTATUS (self-clear of bit[5])
+  - Section 5.1.9.3.18: GETMXDS
+  - Section 5.1.9.3.19: GETCAPS
+  - Section 5.1.2.3.4: Early read termination at T-bit boundary
+  - Figure 47: GETPID multi-target with Repeated START
 """
 
 import logging
@@ -25,48 +44,50 @@ import random
 
 from boot import boot_init
 from ccc import CCC
+from ccc_descriptors import (
+    SUPPORTED_CCCS,
+    READ_CCCS,
+    WRITE_CCCS,
+    BCAST_CCCS,
+    do_ccc_read,
+    do_ccc_read_multi,
+    do_ccc_read_verify,
+    do_ccc_write,
+    do_ccc_bcast,
+    descriptor_count,
+    setup_descriptor_state,
+    log_ccc_pick,
+    pick_random_ccc,
+    legal_abort_positions,
+    abort_ccc_at_legal_position,
+    recovery_wait,
+    verify_set_via_get,
+)
 from i3c_controller_fixed import I3cControllerFixed as I3cController
 from i3c_target_fixed import I3CTargetFixed as I3CTarget
 from interface import I3CTopTestInterface
 
 import cocotb
-from cocotb.triggers import ClockCycles, Timer
 
 from common import (
     VALID_I3C_ADDRESSES, SIM_TARGET_ADDR, pick_random_addr, log_seed,
-    do_getpid, do_getbcr, do_getdcr, do_getstatus, do_getmwl, do_getmrl,
 )
 
 
-def parse_pid(data):
-    """Parse 6-byte GETPID response into PID fields."""
-    pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
-    manufacturer_id = (pid_48 >> 33) & 0x7FFF  # bits[47:33]
-    type_selector = (pid_48 >> 32) & 0x1       # bit[32]
-    vendor_value = pid_48 & 0xFFFFFFFF          # bits[31:0]
-    return pid_48, manufacturer_id, type_selector, vendor_value
+# =========================================================================
+# Environment setup -- reused across all tests
+# =========================================================================
 
-  
-async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
-                    speed=None,
-                    sim_bcr=0x00, sim_dcr=0x00, sim_mwl=256, sim_mrl=256, sim_ibi_payload=0,
-                    sim_getcaps=None, sim_getmxds=None,
-                    sda_read_timeout_us=100):
-    """
-    Set up controller, I3CTargetFixed, DUT, and configure properties.
+async def setup_env(dut, *, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
+                    speed=None, sda_read_timeout_us=100):
+    """Set up controller, sim target, DUT, and randomize identities.
 
-    dut_pid_hi: 15-bit value for DUT's PID_HI register (bits[47:33])
-    dut_pid_lo: 32-bit value for DUT's PID_LO register (bits[31:0])
-    sim_pid: 48-bit PID for the sim target
-    sim_mwl: 16-bit Max Write Length for the sim target
-    sim_mrl: 16-bit Max Read Length for the sim target
-    sim_ibi_payload: 8-bit Max IBI Payload Size for the sim target
-    sim_getcaps: list of GETCAPS bytes for the sim target
-    sim_getmxds: list of GETMXDS bytes for the sim target
-    speed: I3C bus clock frequency in Hz (randomized 1-12.5 MHz if None)
-    sim_bcr: 8-bit BCR value for the sim target
-    sim_dcr: 8-bit DCR value for the sim target
-    sda_read_timeout_us: SDA read detector timeout in microseconds
+    Returns (i3c_controller, i3c_target, tb, dut_addr, sim_target_addr,
+             virt_addr, dut_pid_hi, dut_pid_lo).
+
+    Per-CCC backing state on the sim target is randomized by each test via
+    the descriptor's `setup()` callback, not here. This helper only wires
+    up the bus and assigns dynamic addresses + DUT PID.
     """
     cocotb.log.setLevel(logging.DEBUG)
     log_seed(dut)
@@ -77,14 +98,8 @@ async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
         dut_pid_lo = random.randint(0, 0xFFFFFFFF)
     if sim_pid is None:
         sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    # Fixed sim target address.
-    # TODO(Option-B): Re-enable sim target address randomization.
-    # To randomize, restore the sim_target_addr parameter and uncomment:
-    #   if sim_target_addr is None:
-    #       sim_target_addr = pick_random_addr()
     sim_target_addr = SIM_TARGET_ADDR
 
-    # Pick bus speed: use provided value or randomize
     if speed is None:
         speed = random.uniform(1e6, 12.5e6)
     dut._log.info(
@@ -93,30 +108,17 @@ async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
     )
 
     i3c_controller = I3cController(
-        sda_i=dut.bus_sda,
-        sda_o=dut.sda_sim_ctrl_i,
-        scl_i=dut.bus_scl,
-        scl_o=dut.scl_sim_ctrl_i,
-        debug_state_o=None,
-        speed=speed,
+        sda_i=dut.bus_sda, sda_o=dut.sda_sim_ctrl_i,
+        scl_i=dut.bus_scl, scl_o=dut.scl_sim_ctrl_i,
+        debug_state_o=None, speed=speed,
     )
 
     i3c_target = I3CTarget(
-        sda_i=dut.bus_sda,
-        sda_o=dut.sda_sim_target_i,
-        scl_i=dut.bus_scl,
-        scl_o=dut.scl_sim_target_i,
-        debug_state_o=None,
-        speed=speed,
+        sda_i=dut.bus_sda, sda_o=dut.sda_sim_target_i,
+        scl_i=dut.bus_scl, scl_o=dut.scl_sim_target_i,
+        debug_state_o=None, speed=speed,
         address=sim_target_addr,
         pid=sim_pid,
-        bcr=sim_bcr,
-        dcr=sim_dcr,
-        max_write_length=sim_mwl,
-        max_rd_length=sim_mrl,
-        max_ibi_payload=sim_ibi_payload,
-        getcaps_bytes=sim_getcaps,
-        getmxds_bytes=sim_getmxds,
         sda_read_timeout_us=sda_read_timeout_us,
     )
 
@@ -125,12 +127,11 @@ async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
     tb = I3CTopTestInterface(dut)
     await tb.setup()
 
-    # Boot DUT with random addresses (avoiding sim target address)
     dut_addr = pick_random_addr(exclude=(sim_target_addr,))
     virt_addr = pick_random_addr(exclude=(sim_target_addr, dut_addr))
     await boot_init(tb, static_addr=dut_addr, virtual_static_addr=virt_addr)
 
-    # Configure DUT PID via CSRs
+    # Configure DUT PID via CSRs.
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.base_addr,
         tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI,
@@ -142,723 +143,665 @@ async def setup_env(dut, dut_pid_hi=None, dut_pid_lo=None, sim_pid=None,
         dut_pid_lo,
     )
 
-    return i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr
-
-
-
-def verify_dut_pid(dut, data, expected_pid_hi, expected_pid_lo):
-    """Verify DUT GETPID response. DUT bit[32] is always 0."""
-    pid_rx, mfr_rx, type_rx, vendor_rx = parse_pid(data)
-    # DUT PID_HI maps to bits[47:33], bit[32]=0 always
-    expected_48 = (expected_pid_hi << 33) | expected_pid_lo
-    dut._log.info(
-        f"DUT PID: 0x{pid_rx:012X} "
-        f"(mfr=0x{mfr_rx:04X} type={type_rx} vendor=0x{vendor_rx:08X})"
-    )
-    assert pid_rx == expected_48, (
-        f"DUT PID mismatch: exp=0x{expected_48:012X} got=0x{pid_rx:012X}"
-    )
-
-
-def verify_sim_pid(dut, data, expected_pid):
-    """Verify sim target GETPID response."""
-    pid_rx, mfr_rx, type_rx, vendor_rx = parse_pid(data)
-    dut._log.info(
-        f"Sim PID: 0x{pid_rx:012X} "
-        f"(mfr=0x{mfr_rx:04X} type={type_rx} vendor=0x{vendor_rx:08X})"
-    )
-    assert pid_rx == expected_pid, (
-        f"Sim PID mismatch: exp=0x{expected_pid:012X} got=0x{pid_rx:012X}"
-    )
-
-
-# Number of abort-recovery iterations for premature STOP test.
-NUM_STOP_ITERATIONS = 5
-
-# ---------------------------------------------------------------------------
-# Legal abort position definitions for a GETPID directed read frame.
-#
-# GETPID directed read frame structure (from START):
-#   [S] 7E/W (8b, ctrl OD)  ACK (1b, target OD)
-#   CCC_GETPID (8b, ctrl PP)  T-bit (1b, ctrl PP)
-#   [Sr] ADDR/R (8b, ctrl OD)  ACK (1b, target OD)
-#   [DATA: byte_N (8b, target PP)  T-bit (1b, target PP)] x 6 bytes
-#
-# Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
-# Controller controls SDA or SDA is Open-Drain.  Section 5.1.2.3.4
-# defines early termination of reads at T-bit boundaries.
-#
-# Each entry: (abort_type, param, description)
-#   abort_type  "setup_broadcast" : STOP after broadcast 7E/W + ACK
-#               "setup_ccc"       : STOP after CCC byte + T-bit
-#               "data"            : STOP after *param* complete data
-#                                   bytes (each = 8 data + 1 T-bit)
-#
-# IMPORTANT: Data-phase positions (abort_type="data") are only safe
-# for the sim target (OD driver).  For the DUT, a raw STOP during
-# data-phase PP driving triggers the push-pull STOP detection bug.
-# However, the spec-defined read termination at T-bit boundaries uses
-# Repeated START (Sr), not STOP (Section 5.1.2.3.4).  Sr avoids PP
-# contention because the controller drives SDA HIGH first:
-#   - If DUT drives SDA=0: bus=0, DUT matches, no contention
-#   - If DUT drives SDA=1: bus=1, then controller pulls LOW -> Sr detected
-# So data-phase T-bit boundaries use "data_sr" (Sr then STOP).
-# Position 0 (after directed ACK) uses raw STOP since the target is
-# still transitioning from OD to PP.
-# ---------------------------------------------------------------------------
-
-# Full set: usable for sim target (OD) aborts -- raw STOP everywhere
-LEGAL_ABORT_POSITIONS_ALL = [
-    ("setup_broadcast", None, "after broadcast 7E/W ACK (ctrl OD)"),
-    ("setup_ccc",       None, "after CCC GETPID + T-bit (ctrl PP)"),
-    ("data",            0,    "after directed ACK (OD/PP boundary)"),
-    ("data",            1,    "after data byte 0 T-bit boundary"),
-    ("data",            2,    "after data byte 1 T-bit boundary"),
-    ("data",            3,    "after data byte 2 T-bit boundary"),
-    ("data",            4,    "after data byte 3 T-bit boundary"),
-    ("data",            5,    "after data byte 4 T-bit boundary"),
-]
-
-# DUT-safe set: setup phases use raw STOP (controller/OD bus control).
-# Data-phase T-bit boundaries use Sr+STOP (spec Section 5.1.2.3.4).
-LEGAL_ABORT_POSITIONS_DUT = [
-    ("setup_broadcast", None, "after broadcast 7E/W ACK (ctrl OD)"),
-    ("setup_ccc",       None, "after CCC GETPID + T-bit (ctrl PP)"),
-    ("data_sr",         1,    "Sr after data byte 0 T-bit (spec 5.1.2.3.4)"),
-    ("data_sr",         2,    "Sr after data byte 1 T-bit (spec 5.1.2.3.4)"),
-    ("data_sr",         3,    "Sr after data byte 2 T-bit (spec 5.1.2.3.4)"),
-    ("data_sr",         4,    "Sr after data byte 3 T-bit (spec 5.1.2.3.4)"),
-    ("data_sr",         5,    "Sr after data byte 4 T-bit (spec 5.1.2.3.4)"),
-]
-
-
-
-async def abort_getpid_at_legal_position(ctrl, addr, abort_type, param):
-    """Execute partial GETPID frame with abort at a spec-legal position.
-
-    Builds the GETPID directed read frame incrementally and issues the
-    appropriate termination at the requested legal position.
-
-    Abort types:
-        "setup_broadcast": STOP after broadcast 7E/W + ACK
-        "setup_ccc":       STOP after CCC byte + T-bit
-        "data":            Raw STOP after *param* complete data bytes
-                           (suitable for OD sim target, not for DUT PP)
-        "data_sr":         Repeated START + STOP after *param* complete
-                           data bytes.  Per Section 5.1.2.3.4, Sr is the
-                           spec-defined way to terminate a read at a T-bit
-                           boundary.  Sr avoids PP contention because the
-                           controller drives SDA HIGH first (safe in
-                           wired-AND), unlike STOP which drives SDA LOW
-                           first (contention when DUT drives HIGH).
-
-    Args:
-        ctrl:       I3C controller handle.
-        addr:       Target address for the directed read.
-        abort_type: One of the types listed above.
-        param:      For "data"/"data_sr": number of complete data bytes
-                    to clock before abort (1..5 = after that many
-                    byte+T-bit groups).  Ignored for setup types.
-
-    Returns:
-        True if the directed address phase was reached and ACKed,
-        False if the directed address was NACKed,
-        None if the abort was in a setup phase (no directed ACK).
-    """
-    await ctrl.take_bus_control()
-    await ctrl.send_start()
-    await ctrl.write_addr_header(0x7E)
-
-    if abort_type == "setup_broadcast":
-        await ctrl.send_stop()
-        ctrl.give_bus_control()
-        return None
-
-    await ctrl.send_byte_tbit(CCC.DIRECT.GETPID)
-
-    if abort_type == "setup_ccc":
-        await ctrl.send_stop()
-        ctrl.give_bus_control()
-        return None
-
-    # "data" or "data_sr": complete the directed address, then read bytes
-    await ctrl.send_start()
-    ack = await ctrl.write_addr_header(addr, read=True)
-    if not ack:
-        await ctrl.send_stop()
-        ctrl.give_bus_control()
-        return False
-
-    if abort_type == "data_sr":
-        # Spec 5.1.2.3.4: Early Read Termination at T-bit boundary.
-        # recv_byte_t_bit(stop=True) calls tbit_eod(request_end=True)
-        # which issues Repeated START *during* the T-bit SCL HIGH
-        # period -- inside the ~40ns Hi-Z window where the target has
-        # released SDA per spec.  This is the defined abort mechanism.
-        for _ in range(param - 1):
-            await ctrl.recv_byte_t_bit(stop=False)
-        await ctrl.recv_byte_t_bit(stop=True)
-        await ctrl.send_stop()
-    else:
-        for _ in range(param):
-            await ctrl.recv_byte_t_bit(stop=False)
-        await ctrl.send_stop()
-
-    ctrl.give_bus_control()
-    return True
-
-
+    return (i3c_controller, i3c_target, tb, dut_addr, sim_target_addr,
+            virt_addr, dut_pid_hi, dut_pid_lo)
 
 # =========================================================================
-# Test 1: GETPID single-target and multi-target ordering
+# 1. Single-target CCC -- random read/write/bcast
 # =========================================================================
 @cocotb.test()
-async def test_getpid_multi_target_ordering(dut):
+async def test_ccc_single_target(dut):
+    """Random directed read, directed write, and broadcast write to sim target.
+
+    For each kind we pick a random CCC from the descriptor table, set up
+    target state, and verify protocol behavior:
+      - Read:  ACK + value matches target state.
+      - Write: ACK; for SETs we re-read via the matching GET to confirm
+               the side-effect was applied.
+      - Bcast: completes without error; for SET-bcasts we re-read via the
+               matching GET to confirm the side-effect.
     """
-    Verify GETPID across single-target and multi-target directed CCC frames
-    with different target ordering. Uses one environment for all phases.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
 
-    Spec: Section 5.1.9.3.12, Figure 47
+    # ----- Read -----
+    rdesc = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Read phase", rdesc)
+    setup_descriptor_state(rdesc, i3c_target)
+    await do_ccc_read_verify(i3c_controller, rdesc, sim_addr, i3c_target)
 
-    Phases:
-      A) Single target: GETPID to sim target only
-      B) Multi-target: DUT first, then sim target
-      C) Multi-target: sim target first, then DUT
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+    # ----- Directed write -----
+    wdesc = pick_random_ccc(kinds=["write"])
+    log_ccc_pick(dut, "Directed write phase", wdesc)
+    ok = await do_ccc_write(i3c_controller, wdesc, sim_addr, i3c_target)
+    assert ok, f"{wdesc.name} should ACK at 0x{sim_addr:02X}"
+    await verify_set_via_get(dut, i3c_controller, i3c_target, wdesc, sim_addr)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
-    # --- Phase A: Single-target GETPID to sim target ---
-    dut._log.info("=== Phase A: Single-target GETPID to sim target ===")
-    data = await do_getpid(i3c_controller, sim_target_addr)
-    verify_sim_pid(dut, data, sim_pid)
-
-    # --- Phase B: Multi-target -- DUT first, then sim ---
-    dut._log.info("=== Phase B: Multi-target DUT then sim ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, sim_target_addr],
-        count=6,
-    )
-
-    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-    _, dut_data = responses[0]
-    verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
-    _, sim_data = responses[1]
-    verify_sim_pid(dut, sim_data, sim_pid)
-
-    # --- Phase C: Multi-target -- sim first, then DUT ---
-    dut._log.info("=== Phase C: Multi-target sim then DUT ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[sim_target_addr, dut_addr],
-        count=6,
-    )
-
-    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-    _, sim_data = responses[0]
-    verify_sim_pid(dut, sim_data, sim_pid)
-    _, dut_data = responses[1]
-    verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
+    # ----- Broadcast write -----
+    bdesc = pick_random_ccc(kinds=["bcast_write"])
+    log_ccc_pick(dut, "Broadcast phase", bdesc)
+    await do_ccc_bcast(i3c_controller, bdesc, i3c_target)
+    await verify_set_via_get(dut, i3c_controller, i3c_target, bdesc, sim_addr)
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 2: GETPID with dummy NACKs and randomized target order
+# 2. Multi-target ordering -- DUT + sim, both orderings
 # =========================================================================
 @cocotb.test()
-async def test_getpid_with_nacks_and_random_order(dut):
+async def test_ccc_multi_target_ordering(dut):
+    """Random `dut_supported` read CCC sent to DUT+sim in both orderings.
+
+    DUT is checked only for ACK + non-empty response (we do not configure
+    DUT BCR/DCR/etc., so we can only value-verify GETPID for the DUT).
+    Sim target response is fully verified via `desc.verify`.
     """
-    Verify GETPID with non-existent (NACK) targets and randomized ordering.
-    Exercises the sim target's CCC-pending state maintenance across
-    multiple NON_APPLICABLE addresses in arbitrary positions.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    Phases:
-      A) Fixed order: DUT + 1-5 random dummies + sim target
-      B) Randomized order: shuffle [DUT, sim, dummy1, dummy2]
+    desc = pick_random_ccc(kinds=["read"], predicate=lambda d: d.dut_supported)
+    log_ccc_pick(dut, "Multi-target", desc)
+    setup_descriptor_state(desc, i3c_target)
+    count = descriptor_count(desc, i3c_target)
+
+    for label, addr_list in [
+        ("Phase A: sim only",          [sim_addr]),
+        ("Phase B: DUT then sim",      [dut_addr, sim_addr]),
+        ("Phase C: sim then DUT",      [sim_addr, dut_addr]),
+    ]:
+        dut._log.info(f"--- {label} ---")
+        responses = await do_ccc_read_multi(
+            i3c_controller, desc, addr_list, i3c_target, count=count
+        )
+        assert len(responses) == len(addr_list), (
+            f"{label}: expected {len(addr_list)} responses, got {len(responses)}"
+        )
+        for addr, (ack, data) in zip(addr_list, responses):
+            assert ack, f"{label}: NACK from 0x{addr:02X}"
+            if addr == sim_addr:
+                desc.verify(i3c_target, data)
+            else:
+                # DUT response: only check that we got the expected count.
+                # (DUT-specific verification for GETPID is below.)
+                assert len(data) >= count, (
+                    f"{label}: DUT returned {len(data)} bytes, expected {count}"
+                )
+                if desc.name == "GETPID":
+                    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+                    pid_rx = int.from_bytes(data[0:6], byteorder="big")
+                    assert pid_rx == expected_dut_pid, (
+                        f"DUT GETPID: exp 0x{expected_dut_pid:012X} "
+                        f"got 0x{pid_rx:012X}"
+                    )
+
+        # Re-run post_read_check after each phase if applicable, since the
+        # sim target may have self-cleared state on each read.
+        if desc.has_post_read_check and desc.post_read_check is not None:
+            desc.post_read_check(i3c_target)
+
+    await tb.teardown()
+
+
+# =========================================================================
+# 3. NACK targets interleaved with valid sim
+# =========================================================================
+@cocotb.test()
+async def test_ccc_with_nack_targets(dut):
+    """Random read CCC with 1-5 dummy NACK addrs interleaved with sim target.
+
+    Verifies the sim target maintains its CCC-pending state across an
+    arbitrary number of NACKed positions in the directed phase.
     """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     virt_addr, _, _) = await setup_env(dut)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, virt_addr = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
+    desc = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "NACK targets", desc)
+    setup_descriptor_state(desc, i3c_target)
+    count = descriptor_count(desc, i3c_target)
 
-    excluded = {dut_addr, sim_target_addr, virt_addr}
-    available_dummies = [a for a in VALID_I3C_ADDRESSES if a not in excluded]
-
-    # --- Phase A: Fixed order with dummy NACKs ---
-    dut._log.info("=== Phase A: Fixed order with dummy NACKs ===")
+    excluded = {dut_addr, sim_addr, virt_addr}
+    available = [a for a in VALID_I3C_ADDRESSES if a not in excluded]
     num_dummies = random.randint(1, 5)
-    dummy_addrs = random.sample(available_dummies, num_dummies)
+    dummies = random.sample(available, num_dummies)
+
+    addr_list = dummies + [sim_addr]
+    random.shuffle(addr_list)
     dut._log.info(
-        f"Address order: DUT=0x{dut_addr:02X}, "
-        f"dummies={['0x%02X' % a for a in dummy_addrs]}, "
-        f"sim=0x{sim_target_addr:02X}"
+        f"Address order: {['0x%02X' % a for a in addr_list]} "
+        f"(sim=0x{sim_addr:02X}, dummies={['0x%02X' % a for a in dummies]})"
     )
 
-    addr_list = [dut_addr] + dummy_addrs + [sim_target_addr]
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=addr_list,
-        count=6,
+    responses = await do_ccc_read_multi(
+        i3c_controller, desc, addr_list, i3c_target, count=count
+    )
+    assert len(responses) == len(addr_list), (
+        f"Expected {len(addr_list)} responses, got {len(responses)}"
     )
 
-    expected_count = 1 + num_dummies + 1
-    assert len(responses) == expected_count, (
-        f"Expected {expected_count} responses, got {len(responses)}"
-    )
-
-    dut_ack, dut_data = responses[0]
-    assert dut_ack, "DUT should ACK GETPID"
-    verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
-
-    for i, dummy_addr in enumerate(dummy_addrs):
-        dummy_ack = responses[1 + i][0]
-        dut._log.info(
-            f"Dummy target 0x{dummy_addr:02X}: ACK={dummy_ack}"
-        )
-        assert not dummy_ack, (
-            f"Dummy target 0x{dummy_addr:02X} should NACK, got ACK"
-        )
-
-    sim_ack, sim_data = responses[-1]
-    assert sim_ack, "Sim target should ACK GETPID"
-    verify_sim_pid(dut, sim_data, sim_pid)
-
-    # --- Phase B: Randomized order ---
-    dut._log.info("=== Phase B: Randomized target order ===")
-    dummy_addrs_b = random.sample(available_dummies, 2)
-    addr_list_b = [dut_addr, sim_target_addr] + dummy_addrs_b
-    random.shuffle(addr_list_b)
-
-    dut._log.info(
-        f"Randomized order: {['0x%02X' % a for a in addr_list_b]}"
-    )
-
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=addr_list_b,
-        count=6,
-    )
-
-    assert len(responses) == len(addr_list_b), (
-        f"Expected {len(addr_list_b)} responses, got {len(responses)}"
-    )
-
-    for i, addr in enumerate(addr_list_b):
-        ack, data = responses[i]
-        if addr == dut_addr:
-            assert ack, f"DUT at 0x{addr:02X} should ACK"
-            verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
-        elif addr == sim_target_addr:
-            assert ack, f"Sim target at 0x{addr:02X} should ACK"
-            verify_sim_pid(dut, data, sim_pid)
+    for addr, (ack, data) in zip(addr_list, responses):
+        if addr == sim_addr:
+            assert ack, f"Sim target 0x{addr:02X} should ACK"
+            desc.verify(i3c_target, data)
         else:
-            dut._log.info(f"Dummy 0x{addr:02X}: ACK={ack}")
-            assert not ack, (
-                f"Dummy target 0x{addr:02X} should NACK, got ACK"
-            )
+            assert not ack, f"Dummy 0x{addr:02X} should NACK, got ACK"
+
+    if desc.has_post_read_check and desc.post_read_check is not None:
+        desc.post_read_check(i3c_target)
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 3: GETPID then private read -- verify _pending_ccc is cleared
+# 4. CCC chaining -- 2-4 CCCs in one frame via Sr+7E/W
 # =========================================================================
 @cocotb.test()
-async def test_getpid_then_private_read_no_stale_ccc(dut):
+async def test_ccc_chained(dut):
+    """Chain 2-4 random read CCCs in a single frame via Sr + 7'h7E/W.
+
+    Each chain entry can target sim or DUT. Sim responses are value-verified;
+    DUT responses are checked for ACK + length (with GETPID also verified).
     """
-    Verify that a private read after a Direct CCC does NOT replay the CCC
-    response. Per spec 5.1.9.2.1, Sr + 7'h7E/W ends a Direct CCC. The
-    subsequent Sr + addr/R is a private read, not a directed CCC phase.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    Scenario (Gap #5 / Gap #1):
-      1) Send Direct GETPID to sim target -> get 6-byte PID (correct)
-      2) Send private read to sim target (S + 7'h7E/W + Sr + addr/R)
-      3) Verify response is from target memory, NOT a GETPID replay
+    chain_len = random.randint(2, 4)
+    dut._log.info(f"Chain length: {chain_len}")
 
-    If _pending_ccc is stale, step 2 incorrectly dispatches to the CCC
-    handler and returns PID bytes instead of memory data.
+    # Pick a fresh random CCC for each chain entry; setup all of them on
+    # the sim target so concurrent state for every CCC is consistent.
+    chain = []
+    for _ in range(chain_len):
+        desc = pick_random_ccc(kinds=["read"])
+        setup_descriptor_state(desc, i3c_target)
+        # Mix of sim/DUT: prefer sim, but pick DUT 1/3 of the time when
+        # the descriptor is dut_supported.
+        if desc.dut_supported and random.random() < 1 / 3:
+            target_addr = dut_addr
+        else:
+            target_addr = sim_addr
+        count = descriptor_count(desc, i3c_target)
+        chain.append((desc, target_addr, count))
+
+    dut._log.info("Chain: " + ", ".join(
+        f"{d.name}@0x{a:02X}({c}B)" for d, a, c in chain
+    ))
+
+    request = [(d.code, a, c) for d, a, c in chain]
+    responses = await i3c_controller.i3c_ccc_read_chained(request)
+
+    assert len(responses) == chain_len, (
+        f"Expected {chain_len} responses, got {len(responses)}"
+    )
+
+    for (desc, addr, count), (ack, data) in zip(chain, responses):
+        assert ack, f"NACK from 0x{addr:02X} on {desc.name}"
+        if addr == sim_addr:
+            desc.verify(i3c_target, data)
+            if desc.has_post_read_check and desc.post_read_check is not None:
+                desc.post_read_check(i3c_target)
+        else:
+            assert len(data) >= count, (
+                f"{desc.name}@0x{addr:02X}: got {len(data)} bytes, "
+                f"expected {count}"
+            )
+            if desc.name == "GETPID":
+                expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+                pid_rx = int.from_bytes(data[0:6], byteorder="big")
+                assert pid_rx == expected_dut_pid, (
+                    f"DUT GETPID in chain: exp 0x{expected_dut_pid:012X} "
+                    f"got 0x{pid_rx:012X}"
+                )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# 5. Runtime update -- read, mutate target state, re-read
+# =========================================================================
+@cocotb.test()
+async def test_ccc_runtime_update(dut):
+    """Verify that runtime changes to target state are reflected in the next
+    read of the same CCC.
+
+    Picks a random read CCC that has a `mutate` hook, configures the sim
+    target, reads, mutates, reads again. Verifies both reads see the
+    correct (different) state.
     """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
+    desc = pick_random_ccc(
+        kinds=["read"], predicate=lambda d: d.mutate is not None
     )
+    log_ccc_pick(dut, "Runtime update", desc)
+    setup_descriptor_state(desc, i3c_target)
 
-    # Pre-load known data into sim target memory so private read has
-    # something distinguishable from PID bytes.
-    mem_data = [random.randint(0, 0xFF) for _ in range(2)]
-    i3c_target._mem.write(mem_data, length=len(mem_data))
-    dut._log.info(
-        f"Pre-loaded sim target memory: {['0x%02X' % b for b in mem_data]}"
-    )
+    dut._log.info("Initial read")
+    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
 
-    # --- Step 1: Direct GETPID to sim target ---
-    dut._log.info("=== Step 1: Direct GETPID to sim target ===")
-    pid_data = await do_getpid(i3c_controller, sim_target_addr)
-    verify_sim_pid(dut, pid_data, sim_pid)
-    dut._log.info(f"GETPID OK: PID=0x{sim_pid:012X}")
+    dut._log.info(f"Mutating {desc.name} backing state")
+    desc.mutate(i3c_target)
 
-    # --- Step 2: Private read to sim target ---
-    # i3c_read sends: S + 7'h7E/W + Sr + addr/R + [data] + P
-    # The S + 7'h7E/W portion ends the previous Direct CCC context.
-    # The Sr + addr/R is a private read -- NOT a CCC directed phase.
-    dut._log.info("=== Step 2: Private read to sim target ===")
-    resp = await i3c_controller.i3c_read(
-        addr=sim_target_addr, count=len(mem_data)
-    )
+    dut._log.info("Post-mutate read")
+    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
 
-    assert not resp.nack, (
-        f"Sim target at 0x{sim_target_addr:02X} should ACK private read"
-    )
+    await tb.teardown()
+
+
+# =========================================================================
+# 6. Back-to-back read sequence -- shuffled run of all read CCCs
+# =========================================================================
+@cocotb.test()
+async def test_ccc_back_to_back_sequence(dut):
+    """Run all directed read CCCs back-to-back in random order.
+
+    Verifies state isolation: each CCC must return its own configured
+    value, not a stale response from a prior CCC.
+    """
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
+
+    # Configure backing state for every read CCC up front.
+    for desc in READ_CCCS:
+        setup_descriptor_state(desc, i3c_target)
+
+    sequence = list(READ_CCCS)
+    random.shuffle(sequence)
+    dut._log.info("Sequence: " + ", ".join(d.name for d in sequence))
+
+    for desc in sequence:
+        await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+    await tb.teardown()
+
+
+# =========================================================================
+# 7. Directed CCC then private read -- no stale CCC dispatch
+# =========================================================================
+@cocotb.test()
+async def test_ccc_then_private_read(dut):
+    """After a directed read CCC, a private read must return memory data,
+    not a CCC replay (Section 5.1.9.2.1: Sr+7'h7E/W ends a Direct CCC)."""
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
+
+    desc = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Then private read", desc)
+    setup_descriptor_state(desc, i3c_target)
+
+    # Pre-load distinguishable memory data for the private read.
+    mem_len = 2
+    mem_data = [random.randint(0, 0xFF) for _ in range(mem_len)]
+    i3c_target._mem.write(mem_data, length=mem_len)
+    dut._log.info(f"Memory: {['0x%02X' % b for b in mem_data]}")
+
+    # Step 1: directed CCC.
+    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+    # Step 2: private read.  The Sr+7E/W inside i3c_read terminates any
+    # prior Direct CCC context; the subsequent Sr+addr/R is private.
+    resp = await i3c_controller.i3c_read(addr=sim_addr, count=mem_len)
+    assert not resp.nack, f"Sim target 0x{sim_addr:02X} should ACK private read"
 
     read_data = list(resp.data)
-    dut._log.info(
-        f"Private read data: {['0x%02X' % b for b in read_data]}"
-    )
-
-    # The key assertion: private read must return memory data, not PID.
-    # If _pending_ccc was stale, the sim target would have sent PID bytes.
-    pid_bytes = [(sim_pid >> (40 - 8 * i)) & 0xFF for i in range(6)]
+    dut._log.info(f"Private read: {['0x%02X' % b for b in read_data]}")
     assert read_data == mem_data, (
         f"Private read returned wrong data: got {read_data}, "
-        f"expected memory {mem_data}. "
-        f"If got PID prefix {pid_bytes[:len(mem_data)]}, "
-        f"_pending_ccc was stale (Gap #5 bug)."
+        f"expected memory {mem_data}.  If it matches a prefix of {desc.name} "
+        f"output, _pending_ccc was stale."
     )
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 4: CCC broadcast with no directed phases (Gap #2)
+# 8. Broadcast-only frame followed by recovery
 # =========================================================================
 @cocotb.test()
-async def test_ccc_broadcast_no_directed_phase(dut):
+async def test_ccc_broadcast_only_recovery(dut):
+    """Send a directed-CCC code with no directed phases (broadcast then STOP),
+    then verify normal CCC traffic still works.
+
+    Per spec 5.1.9.2.1 a CCC frame may end with STOP after the Command.
     """
-    Verify that sending a directed CCC broadcast with no directed phases
-    (STOP immediately after the CCC code) does not leave the DUT or sim
-    target in a broken state. A normal CCC afterward should succeed.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
 
-    Per spec 5.1.9.2.1, a CCC frame may end with STOP after the Command.
-
-    Scenario (Gap #2):
-      1) Send S + 7'h7E/W + GETPID + P (no directed phases)
-      2) Send normal GETPID to both DUT and sim target
-      3) Verify both respond correctly
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
-    # --- Step 1: CCC broadcast with no directed phases ---
-    dut._log.info("=== Step 1: GETPID broadcast-only (no directed phase) ===")
+    # Step 1: pick a random read CCC and send it without any directed phase.
+    desc1 = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Broadcast-only", desc1)
+    count = descriptor_count(desc1, i3c_target)
     responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID, addr=[], count=6
+        ccc=desc1.code, addr=[], count=count
     )
     assert len(responses) == 0, (
         f"Expected 0 responses for empty addr list, got {len(responses)}"
     )
 
-    # --- Step 2: Normal GETPID to both targets ---
-    dut._log.info("=== Step 2: Normal GETPID to verify recovery ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, sim_target_addr],
-        count=6,
-    )
-
-    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-    _, dut_data = responses[0]
-    verify_dut_pid(dut, dut_data, dut_pid_hi, dut_pid_lo)
-    _, sim_data = responses[1]
-    verify_sim_pid(dut, sim_data, sim_pid)
-    dut._log.info("Both targets responded correctly after broadcast-only CCC")
+    # Step 2: pick a (possibly different) random read CCC and verify
+    # normal directed reads still work to the sim target.
+    desc2 = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Recovery", desc2)
+    setup_descriptor_state(desc2, i3c_target)
+    await do_ccc_read_verify(i3c_controller, desc2, sim_addr, i3c_target)
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 5: CCC chaining -- two CCCs in one frame (Gap #7 / Gap #7b)
+# 9. Post-read self-clear -- GETSTATUS protocol-error bit[5]
 # =========================================================================
 @cocotb.test()
-async def test_ccc_chain_two_cccs_in_one_frame(dut):
+async def test_ccc_post_read_self_clear(dut):
+    """For CCCs whose reads have self-clearing semantics (GETSTATUS bit[5]),
+    verify the bit reads 1 once and 0 on subsequent reads.
+
+    Spec 5.1.9.3.15: protocol error self-clears after a single GETSTATUS.
     """
-    Verify CCC chaining via Sr+7'h7E/W in two phases:
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
 
-    Phase A (Gap #7): Both CCCs directed at the sim target.
-      GETPID -> Sr+7'h7E/W -> GETBCR, both to sim target.
-      Verify PID then BCR.
+    candidates = [d for d in READ_CCCS if d.has_post_read_check]
+    assert candidates, "No CCC with post_read_check in SUPPORTED_CCCS"
+    desc = random.choice(candidates)
+    log_ccc_pick(dut, "Post-read self-clear", desc)
 
-    Phase B (Gap #7b): First CCC to DUT, second to sim target.
-      GETPID to DUT -> Sr+7'h7E/W -> GETBCR to sim target.
-      Exercises _pending_ccc update when sim target sees the broadcast
-      but is not addressed in the first directed phase.
-
-    Spec: 5.1.9.2.1 -- Sr + 7'h7E/W ends a Direct CCC and starts a new one.
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    sim_bcr = random.randint(0, 0xFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr
+    # Currently only GETSTATUS hits this path; the verification logic
+    # below is GETSTATUS-specific because that's the only self-clearing
+    # behavior in the I3C spec we model.
+    assert desc.name == "GETSTATUS", (
+        f"Unexpected post-read CCC {desc.name}; extend this test if a "
+        f"new self-clearing CCC is added"
     )
 
-    # --- Phase A: Both CCCs to sim target ---
-    dut._log.info(
-        f"=== Phase A: GETPID + GETBCR both to sim "
-        f"(0x{sim_target_addr:02X}) ==="
-    )
-    responses_a = await i3c_controller.i3c_ccc_read_chained([
-        (CCC.DIRECT.GETPID, sim_target_addr, 6),
-        (CCC.DIRECT.GETBCR, sim_target_addr, 1),
-    ])
+    # Force protocol_error=True and verify it reads 1 then self-clears.
+    i3c_target.protocol_error = True
+    i3c_target.vendor_status = random.randint(0, 0xFF)
+    i3c_target.activity_mode = random.randint(0, 3)
+    i3c_target.pending_interrupt = random.randint(0, 0xF)
 
-    (ack1, pid_data) = responses_a[0]
-    assert ack1, "Sim target should ACK GETPID"
-    verify_sim_pid(dut, pid_data, sim_pid)
+    _, data = await do_ccc_read(i3c_controller, desc, sim_addr, i3c_target)
+    assert (data[1] >> 5) & 0x1 == 1, "protocol_error should be set"
 
-    (ack2, bcr_data_a) = responses_a[1]
-    assert ack2, "Sim target should ACK GETBCR"
-    assert bcr_data_a[0] == sim_bcr, (
-        f"Phase A GETBCR mismatch: exp 0x{sim_bcr:02X}, "
-        f"got 0x{bcr_data_a[0]:02X}"
-    )
-    dut._log.info(
-        f"Phase A OK: PID=0x{sim_pid:012X}, BCR=0x{sim_bcr:02X}"
-    )
-
-    # --- Phase B: GETPID to DUT, then GETBCR to sim ---
-    dut._log.info(
-        f"=== Phase B: GETPID to DUT (0x{dut_addr:02X}), "
-        f"GETBCR to sim (0x{sim_target_addr:02X}) ==="
-    )
-    responses_b = await i3c_controller.i3c_ccc_read_chained([
-        (CCC.DIRECT.GETPID, dut_addr, 6),
-        (CCC.DIRECT.GETBCR, sim_target_addr, 1),
-    ])
-
-    (ack3, dut_pid_data) = responses_b[0]
-    assert ack3, "DUT should ACK GETPID"
-    verify_dut_pid(dut, dut_pid_data, dut_pid_hi, dut_pid_lo)
-
-    (ack4, bcr_data_b) = responses_b[1]
-    assert ack4, "Sim target should ACK GETBCR"
-    assert bcr_data_b[0] == sim_bcr, (
-        f"Phase B GETBCR mismatch: exp 0x{sim_bcr:02X}, "
-        f"got 0x{bcr_data_b[0]:02X}"
-    )
-    dut._log.info(
-        f"Phase B OK: DUT PID verified, Sim BCR=0x{sim_bcr:02X}"
-    )
+    _, data = await do_ccc_read(i3c_controller, desc, sim_addr, i3c_target)
+    assert (data[1] >> 5) & 0x1 == 0, "protocol_error should self-clear"
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 6: Premature STOP at spec-legal positions during GETPID (DUT)
+# Bus-level frame-structure tests
+# =========================================================================
+
+# Number of abort-recovery iterations.
+NUM_STOP_ITERATIONS = 5
+
+
+# =========================================================================
+# 10. Premature STOP at spec-legal positions during read CCC (sim target)
 # =========================================================================
 @cocotb.test()
-async def test_getpid_mid_byte_abort_dut_recovery(dut):
-    """STOP at spec-legal positions within a GETPID directed read to the DUT.
+async def test_ccc_premature_stop(dut):
+    """STOP at spec-legal positions during a random directed read to sim target.
 
-    Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
-    Controller controls SDA or SDA is Open-Drain.
-
-    This test exercises DUT-safe abort positions:
-      - setup_broadcast: STOP after broadcast 7E/W + ACK (ctrl OD)
-      - setup_ccc:       STOP after CCC byte + T-bit (ctrl PP)
-      - data_sr N:       Sr + STOP after N complete byte+T-bit groups
-
-    Data-phase T-bit boundaries use Repeated START (Sr) followed by STOP,
-    per the spec-defined read early termination mechanism (Section
-    5.1.2.3.4).  Sr avoids PP contention because the controller drives
-    SDA HIGH first (safe in wired-AND), unlike a raw STOP which drives
-    SDA LOW first and contends when the DUT drives HIGH.
-
-    Each position is tested once, then the remaining iterations (up to
-    NUM_STOP_ITERATIONS) pick random legal positions for extra coverage.
-    Recovery is verified with GETPID to both sim target and DUT.
+    Sim target uses OD drivers, so raw STOP at any byte/T-bit boundary is
+    safe (Section 5.1.2). Recovery is verified by re-reading the same
+    CCC from both sim and DUT (DUT only when value-verifiable).
     """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(
+         dut, sda_read_timeout_us=5
+     )
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
+    desc = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Premature STOP (sim)", desc)
+    setup_descriptor_state(desc, i3c_target)
 
-    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
-    expected_sim_pid = sim_pid
-
-    # Build iteration schedule: cover all DUT-safe positions, then extras.
-    # Setup phases use raw STOP; data-phase T-bit boundaries use Sr+STOP
-    # per spec Section 5.1.2.3.4 (avoids PP contention).
-    positions = list(LEGAL_ABORT_POSITIONS_DUT)
+    positions = legal_abort_positions(desc, i3c_target, dut_safe=False)
     n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
     for _ in range(n_extra):
-        positions.append(random.choice(LEGAL_ABORT_POSITIONS_DUT))
+        positions.append(random.choice(positions))
 
-    for i, (abort_type, param, desc) in enumerate(positions):
-        cocotb.log.info(
-            f"--- Iteration {i}: DUT abort [{abort_type}] {desc} ---"
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+
+    # One baseline read before the loop; the per-iteration recovery
+    # reads already prove both targets are healthy for the next iteration.
+    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+    for i, (abort_type, param, descn) in enumerate(positions):
+        cocotb.log.info(f"--- Iter {i}: sim abort [{abort_type}] {descn} ---")
+
+        result = await abort_ccc_at_legal_position(
+            i3c_controller, desc, sim_addr, abort_type, param
         )
-
-        # Baseline GETPID to DUT before each abort
-        data = await do_getpid(i3c_controller, dut_addr)
-        pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
-        assert pid_48 == expected_dut_pid, (
-            f"Iteration {i} baseline GETPID failed: "
-            f"got 0x{pid_48:012X}, expected 0x{expected_dut_pid:012X}"
-        )
-
-        # Execute the abort at the legal position
-        result = await abort_getpid_at_legal_position(
-            i3c_controller, dut_addr, abort_type, param
-        )
-
         if abort_type in ("data", "data_sr"):
-            assert result is True, (
-                f"Iteration {i}: DUT NACKed directed GETPID"
-            )
+            assert result is True, f"Iter {i}: sim NACKed directed {desc.name}"
 
-        # Recovery: wait, then verify both targets respond correctly
-        RECOVERY_SCL_PERIODS = 50
-        MIN_RECOVERY_NS = 10_000
-        scl_period_ns = int(1e9 / i3c_controller.speed)
-        recovery_ns = max(MIN_RECOVERY_NS,
-                          RECOVERY_SCL_PERIODS * scl_period_ns)
-        await Timer(recovery_ns, units='ns')
+        await recovery_wait(i3c_controller)
 
-        sim_data = await do_getpid(i3c_controller, sim_target_addr)
-        sim_pid_val = int.from_bytes(sim_data[0:6], byteorder="big",
-                                     signed=False)
-        assert sim_pid_val == expected_sim_pid, (
-            f"Iteration {i} sim target recovery GETPID mismatch: "
-            f"got 0x{sim_pid_val:012X}, expected 0x{expected_sim_pid:012X}"
+        # Recovery: sim target still responds correctly.
+        await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+        # DUT must still respond too (use GETPID for value verification).
+        dut_responses = await i3c_controller.i3c_ccc_read(
+            ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
         )
-
-        dut_data = await do_getpid(i3c_controller, dut_addr)
-        dut_pid_val = int.from_bytes(dut_data[0:6], byteorder="big",
-                                     signed=False)
-        assert dut_pid_val == expected_dut_pid, (
-            f"Iteration {i} DUT recovery GETPID mismatch: "
-            f"got 0x{dut_pid_val:012X}, expected 0x{expected_dut_pid:012X}"
+        ack, data = dut_responses[0]
+        assert ack, f"Iter {i}: DUT NACK on recovery GETPID"
+        pid_rx = int.from_bytes(data[0:6], byteorder="big")
+        assert pid_rx == expected_dut_pid, (
+            f"Iter {i}: DUT recovery GETPID: exp 0x{expected_dut_pid:012X} "
+            f"got 0x{pid_rx:012X}"
         )
-
-        cocotb.log.info(f"--- Iteration {i}: PASSED ---")
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 7: Unsupported ENTHDR entry from SDR mode
+# 11. Mid-byte abort recovery (DUT-safe positions)
 # =========================================================================
 @cocotb.test()
-async def test_sim_target_unsupported_enthdr_from_sdr(dut):
+async def test_ccc_mid_byte_abort_recovery(dut):
+    """STOP at DUT-safe spec-legal positions during a random directed read
+    to the DUT, with Sr+STOP at data-phase T-bit boundaries (Section
+    5.1.2.3.4).
+
+    The CCC is restricted to those that are `dut_supported`; for value
+    verification of the DUT response we use GETPID (the only DUT CSR
+    we configure).
     """
-    Verify sim target and DUT handle an unsupported ENTHDR variant from SDR
-    mode without hanging or corrupting state.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    A random unsupported ENTHDR (1/2/4/5/6/7) is selected each run; more
-    seeds cover all variants. The target must set hdr_mode=True, wait for
-    HDR exit, and cleanly return to SDR.
+    desc = pick_random_ccc(
+        kinds=["read"], predicate=lambda d: d.dut_supported
+    )
+    log_ccc_pick(dut, "Mid-byte abort (DUT)", desc)
+    setup_descriptor_state(desc, i3c_target)
 
-    Flow:
-      1. Send randomly chosen unsupported ENTHDRx broadcast from SDR mode
-      2. Send HDR exit pattern
-      3. Verify sim target still ACKs GETBCR
-      4. Verify DUT still ACKs GETPID
-    """
-    dut_pid_hi = random.getrandbits(15)
-    dut_pid_lo = random.getrandbits(32)
-    sim_pid = random.getrandbits(48)
-    sim_bcr = random.randint(0, 0xFF)
+    positions = legal_abort_positions(desc, i3c_target, dut_safe=True)
+    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
+    for _ in range(n_extra):
+        positions.append(random.choice(positions))
 
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr,
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+
+    # One baseline GETPID before the loop; the per-iteration recovery
+    # check already proves the DUT is healthy for the next iteration.
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
+    )
+    _, data = responses[0]
+    pid_rx = int.from_bytes(data[0:6], byteorder="big")
+    assert pid_rx == expected_dut_pid, (
+        f"Baseline GETPID: exp 0x{expected_dut_pid:012X} "
+        f"got 0x{pid_rx:012X}"
     )
 
-    # Unsupported ENTHDR variants: everything except ENTHDR0 and ENTHDR3
-    # which have explicit DDR/BT handlers.
+    for i, (abort_type, param, descn) in enumerate(positions):
+        cocotb.log.info(f"--- Iter {i}: DUT abort [{abort_type}] {descn} ---")
+
+        result = await abort_ccc_at_legal_position(
+            i3c_controller, desc, dut_addr, abort_type, param
+        )
+        if abort_type in ("data", "data_sr"):
+            assert result is True, f"Iter {i}: DUT NACKed directed {desc.name}"
+
+        await recovery_wait(i3c_controller)
+
+        # Recovery: sim target reads correctly (value-verified per CCC).
+        await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+        # Recovery: DUT GETPID still correct.
+        responses = await i3c_controller.i3c_ccc_read(
+            ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
+        )
+        _, data = responses[0]
+        pid_rx = int.from_bytes(data[0:6], byteorder="big")
+        assert pid_rx == expected_dut_pid, (
+            f"Iter {i} recovery GETPID: exp 0x{expected_dut_pid:012X} "
+            f"got 0x{pid_rx:012X}"
+        )
+
+    await tb.teardown()
+
+
+# =========================================================================
+# 12. Duplicate target address in multi-target frame
+# =========================================================================
+@cocotb.test()
+async def test_ccc_duplicate_address_multi_target(dut):
+    """Send a random directed read CCC with the same target address twice.
+
+    Spec 5.1.9.3.12: directed CCC may address any combination of targets;
+    repeating the same address is permitted.
+    """
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
+
+    desc = pick_random_ccc(
+        kinds=["read"], predicate=lambda d: d.dut_supported
+    )
+    log_ccc_pick(dut, "Duplicate address", desc)
+    setup_descriptor_state(desc, i3c_target)
+    count = descriptor_count(desc, i3c_target)
+
+    # --- Phase A: DUT addr repeated (only verify ACK + length, plus
+    #              GETPID-specific value if applicable) ---
+    dut._log.info(f"=== Phase A: {desc.name} with DUT addr repeated ===")
+    responses = await do_ccc_read_multi(
+        i3c_controller, desc, [dut_addr, dut_addr], i3c_target, count=count
+    )
+    assert len(responses) == 2
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+    for idx, (ack, data) in enumerate(responses):
+        assert ack, f"Phase A: DUT NACK on occurrence {idx}"
+        assert len(data) >= count, (
+            f"Phase A occ {idx}: got {len(data)} bytes, expected {count}"
+        )
+        if desc.name == "GETPID":
+            pid_rx = int.from_bytes(data[0:6], byteorder="big")
+            assert pid_rx == expected_dut_pid, (
+                f"Phase A occ {idx}: DUT PID mismatch"
+            )
+
+    # --- Phase B: sim addr repeated -- value-verify both occurrences ---
+    dut._log.info(f"=== Phase B: {desc.name} with sim addr repeated ===")
+    responses = await do_ccc_read_multi(
+        i3c_controller, desc, [sim_addr, sim_addr], i3c_target, count=count
+    )
+    assert len(responses) == 2
+    for idx, (ack, data) in enumerate(responses):
+        assert ack, f"Phase B: sim NACK on occurrence {idx}"
+        # NOTE: post_read_check would be triggered on each read; for
+        # GETSTATUS protocol_error self-clear, occurrence 1 reads 0 even
+        # if occurrence 0 read 1.  Re-running verify with the (already
+        # mutated) target state is correct because the sim model also
+        # cleared its bit, and our verify excludes bit[5].
+        desc.verify(i3c_target, data)
+        if desc.has_post_read_check and desc.post_read_check is not None:
+            desc.post_read_check(i3c_target)
+
+    # Sanity: single-target reads still work after duplicate-addr frames.
+    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+
+    await tb.teardown()
+
+
+# =========================================================================
+# 13. Unsupported ENTHDR variant from SDR mode
+# =========================================================================
+@cocotb.test()
+async def test_ccc_unsupported_enthdr_from_sdr(dut):
+    """Send a randomly-chosen unsupported ENTHDR variant, exit HDR, verify
+    sim and DUT recover.
+
+    Recovery is verified using a randomly-picked read CCC for the sim
+    target (value-verified) and GETPID for the DUT.
+    """
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
+
+    # Unsupported ENTHDRs (excluding ENTHDR0/ENTHDR3 which have explicit
+    # DDR/BT handlers).
     unsupported_enthdr = [
         CCC.BCAST.ENTHDR1, CCC.BCAST.ENTHDR2,
         CCC.BCAST.ENTHDR4, CCC.BCAST.ENTHDR5,
         CCC.BCAST.ENTHDR6, CCC.BCAST.ENTHDR7,
     ]
-
     hdr_code = random.choice(unsupported_enthdr)
     dut._log.info(
-        f"=== Testing unsupported ENTHDR 0x{hdr_code:02X} from SDR mode ==="
+        f"=== Unsupported ENTHDR 0x{hdr_code:02X} from SDR ==="
     )
+
+    # Pick a random recovery CCC and configure sim target state for it.
+    recovery = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Recovery", recovery)
+    setup_descriptor_state(recovery, i3c_target)
 
     await i3c_controller.i3c_ccc_write(
         ccc=hdr_code, broadcast_data=[], stop=False, pull_scl_low=True,
     )
-
     await i3c_controller.send_hdr_exit()
 
-    # Verify sim target recovery
-    bcr_data = await do_getbcr(i3c_controller, sim_target_addr)
-    assert bcr_data[0] == sim_bcr, (
-        f"After ENTHDR 0x{hdr_code:02X}: sim target BCR mismatch: "
-        f"expected 0x{sim_bcr:02X}, got 0x{bcr_data[0]:02X}"
+    # Sim recovery -- value-verified.
+    await do_ccc_read_verify(i3c_controller, recovery, sim_addr, i3c_target)
+
+    # DUT recovery -- GETPID value-verified.
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
     )
-
-    # Verify DUT recovery
-    pid_data = await do_getpid(i3c_controller, dut_addr)
-    verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
-
-    dut._log.info(
-        f"Both targets recovered after unsupported ENTHDR 0x{hdr_code:02X}"
+    _, data = responses[0]
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
+    pid_rx = int.from_bytes(data[0:6], byteorder="big")
+    assert pid_rx == expected_dut_pid, (
+        f"DUT recovery GETPID: exp 0x{expected_dut_pid:012X} got 0x{pid_rx:012X}"
     )
 
     await tb.teardown()
 
 
 # =========================================================================
-# Test 8: ENTHDR0 re-entry after HDR exit
+# 14. ENTHDR0 re-entry after HDR exit
 # =========================================================================
 @cocotb.test()
-async def test_sim_target_enthdr0_then_reentry_after_exit(dut):
+async def test_ccc_enthdr0_then_reentry_after_exit(dut):
+    """Verify SDR re-entry after ENTHDR0 + HDR exit, then handle another
+    ENTHDR cycle without state corruption.
+
+    Recovery is verified via a randomly picked read CCC for the sim
+    target plus GETPID for the DUT.
     """
-    Verify sim target and DUT correctly re-enter SDR after ENTHDR0 + HDR
-    exit, then handle another ENTHDR cycle without state corruption.
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    Validates that hdr_mode is properly cleared on HDR exit and that the
-    prohibited-CCC check does not spuriously block a fresh ENTHDR entry
-    from SDR mode.
+    recovery = pick_random_ccc(kinds=["read"])
+    log_ccc_pick(dut, "Recovery", recovery)
+    setup_descriptor_state(recovery, i3c_target)
 
-    Flow:
-      1. ENTHDR0 (enter HDR-DDR) -> HDR exit -> verify both targets
-      2. ENTHDR0 again -> HDR exit -> verify both targets
-      3. Unsupported ENTHDR1 -> HDR exit -> verify both targets
-    """
-    dut_pid_hi = random.getrandbits(15)
-    dut_pid_lo = random.getrandbits(32)
-    sim_pid = random.getrandbits(48)
-    sim_bcr = random.randint(0, 0xFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid, sim_bcr=sim_bcr,
-    )
+    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
 
     phases = [
         ("ENTHDR0 first",       CCC.BCAST.ENTHDR0),
@@ -872,423 +815,97 @@ async def test_sim_target_enthdr0_then_reentry_after_exit(dut):
         await i3c_controller.i3c_ccc_write(
             ccc=hdr_code, broadcast_data=[], stop=False, pull_scl_low=True,
         )
-
         await i3c_controller.send_hdr_exit()
 
-        # Verify sim target is back in SDR and responsive
-        bcr_data = await do_getbcr(i3c_controller, sim_target_addr)
-        assert bcr_data[0] == sim_bcr, (
-            f"Phase '{phase_name}': sim target BCR mismatch: "
-            f"expected 0x{sim_bcr:02X}, got 0x{bcr_data[0]:02X}"
+        # Sim recovery.
+        await do_ccc_read_verify(
+            i3c_controller, recovery, sim_addr, i3c_target
         )
 
-        # Verify DUT is back in SDR and responsive
-        pid_data = await do_getpid(i3c_controller, dut_addr)
-        verify_dut_pid(dut, pid_data, dut_pid_hi, dut_pid_lo)
-
+        # DUT recovery via GETPID.
+        responses = await i3c_controller.i3c_ccc_read(
+            ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
+        )
+        _, data = responses[0]
+        pid_rx = int.from_bytes(data[0:6], byteorder="big")
+        assert pid_rx == expected_dut_pid, (
+            f"Phase '{phase_name}' DUT GETPID: "
+            f"exp 0x{expected_dut_pid:012X} got 0x{pid_rx:012X}"
+        )
         dut._log.info(f"Phase '{phase_name}': both targets recovered OK")
 
+        # Re-randomize sim target backing state for the next phase if
+        # the recovery CCC has self-clearing semantics, so the next read
+        # observes a fresh value.
+        if recovery.has_post_read_check:
+            setup_descriptor_state(recovery, i3c_target)
+
     await tb.teardown()
 
 
 # =========================================================================
-# Test 9: Premature STOP at spec-legal positions during GETPID (sim target)
+# 15. Directed Write CCC terminated without addressing any Target
 # =========================================================================
 @cocotb.test()
-async def test_getpid_premature_stop(dut):
-    """STOP at spec-legal positions within a GETPID directed read to sim target.
+async def test_ccc_directed_write_no_target(dut):
+    """Directed write CCC terminated without addressing any Target.
 
-    Per Section 5.1.2 (lines 3202-3210), STOP is "tolerated" when the
-    Controller controls SDA or SDA is Open-Drain.  Section 5.1.2.3.4
-    defines early read termination at T-bit boundaries.
+    Per I3C Basic v1.1.1 Section 5.1.9.2.1: 'Although not a normal use,
+    the Controller may terminate a Direct CCC Command without addressing
+    any Target.' This test issues a directed write CCC code (optionally
+    followed by its defining byte) and immediately STOPs, skipping the
+    directed phase entirely (driven by passing an empty `directed_data`
+    list to `i3c_ccc_write`). Recovery is verified by issuing normal
+    CCC reads to both sim target and DUT.
 
-    This test exercises all legal abort positions targeting the sim target:
-      - setup_broadcast: STOP after broadcast 7E/W + ACK (ctrl OD)
-      - setup_ccc:       STOP after CCC byte + T-bit (ctrl PP)
-      - data byte 0:     STOP right after directed ACK (OD boundary)
-      - data byte N:     STOP after N complete byte+T-bit groups
-
-    Each position is tested once, then the remaining iterations (up to
-    NUM_STOP_ITERATIONS) pick random legal positions for extra coverage.
-    Recovery is verified with GETPID to both sim target and DUT.
-
-    Without the send_bit/send_byte overrides in I3CTargetFixed, the sim
-    target hangs because the base class awaits FallingEdge(scl_i) which
-    never arrives after STOP.
+    Note: STOP mid-data on a CCC Write is *not* exercised here -- the
+    spec classifies that as 'invalid premature termination' (5.1.9.2.1)
+    with implementation-defined Target behavior, and the Write T-bit is
+    parity only (5.1.2.3.3), so there is no spec-defined data-phase
+    abort handshake analogous to the Read case (5.1.2.3.4).
     """
-    dut_pid_hi = random.getrandbits(15)
-    dut_pid_lo = random.getrandbits(32)
-    sim_pid = random.getrandbits(48)
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    # Use a shorter SDA read timer (5us) so abort recovery stays brief.
-    # This test exercises abort/recovery behavior, not timer duration.
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid,
-        sda_read_timeout_us=5,
-    )
+    desc = pick_random_ccc(kinds=["write"])
+    log_ccc_pick(dut, "Directed write no-target", desc)
+    defining_byte, _ = desc.gen_data(i3c_target)
+
+    # Abort points: STOP after CCC+T (always); STOP after DB+T (only if
+    # the CCC has a defining byte).
+    abort_points = [(None, "after CCC + T")]
+    if defining_byte is not None:
+        abort_points.append((defining_byte, "after defining byte + T"))
 
     expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
-    expected_sim_pid = sim_pid
 
-    # Build iteration schedule: cover all positions, then random extras.
-    # Sim target uses OD, so all positions including data-phase are safe.
-    positions = list(LEGAL_ABORT_POSITIONS_ALL)
-    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
-    for _ in range(n_extra):
-        positions.append(random.choice(LEGAL_ABORT_POSITIONS_ALL))
+    for db, descn in abort_points:
+        cocotb.log.info(f"--- No-target abort: {descn} ---")
 
-    for i, (abort_type, param, desc) in enumerate(positions):
-        cocotb.log.info(
-            f"--- Iteration {i}: sim abort [{abort_type}] {desc} ---"
+        kwargs = {"directed_data": []}
+        if db is not None:
+            kwargs["defining_byte"] = db
+        await i3c_controller.i3c_ccc_write(ccc=desc.code, **kwargs)
+
+        await recovery_wait(i3c_controller)
+
+        # Recovery: sim target read works.
+        sim_responses = await i3c_controller.i3c_ccc_read(
+            ccc=CCC.DIRECT.GETPID, addr=sim_addr, count=6
         )
+        ack, _ = sim_responses[0]
+        assert ack, f"Sim NACK after no-target abort {descn}"
 
-        # Baseline GETPID to sim target before each abort
-        data = await do_getpid(i3c_controller, sim_target_addr)
-        pid_48 = int.from_bytes(data[0:6], byteorder="big", signed=False)
-        assert pid_48 == expected_sim_pid, (
-            f"Iteration {i} baseline GETPID failed: "
-            f"got 0x{pid_48:012X}, expected 0x{expected_sim_pid:012X}"
-        )
-
-        # Execute the abort at the legal position
-        result = await abort_getpid_at_legal_position(
-            i3c_controller, sim_target_addr, abort_type, param
-        )
-
-        if abort_type in ("data", "data_sr"):
-            assert result is True, (
-                f"Iteration {i}: sim target NACKed directed GETPID"
-            )
-
-        # Recovery: wait, then verify both targets respond correctly
-        RECOVERY_SCL_PERIODS = 50
-        MIN_RECOVERY_NS = 10_000
-        scl_period_ns = int(1e9 / i3c_controller.speed)
-        recovery_ns = max(MIN_RECOVERY_NS,
-                          RECOVERY_SCL_PERIODS * scl_period_ns)
-        await Timer(recovery_ns, units='ns')
-
-        sim_data = await do_getpid(i3c_controller, sim_target_addr)
-        sim_pid_val = int.from_bytes(sim_data[0:6], byteorder="big",
-                                     signed=False)
-        assert sim_pid_val == expected_sim_pid, (
-            f"Iteration {i} sim target recovery GETPID mismatch: "
-            f"got 0x{sim_pid_val:012X}, expected 0x{expected_sim_pid:012X}"
-        )
-
-        dut_data = await do_getpid(i3c_controller, dut_addr)
-        dut_pid_val = int.from_bytes(dut_data[0:6], byteorder="big",
-                                     signed=False)
-        assert dut_pid_val == expected_dut_pid, (
-            f"Iteration {i} DUT recovery GETPID mismatch: "
-            f"got 0x{dut_pid_val:012X}, expected 0x{expected_dut_pid:012X}"
-        )
-
-        cocotb.log.info(f"--- Iteration {i}: PASSED ---")
-
-    await tb.teardown()
-
-# =========================================================================
-# Test 10: Duplicate address in multi-target directed CCC frame
-# =========================================================================
-@cocotb.test()
-async def test_getpid_duplicate_address_multi_target(dut):
-    """
-    Issue directed GETPID with the same target address appearing twice
-    in a single multi-target CCC frame. The target must respond correctly
-    both times, returning identical PID data.
-
-    Two sub-tests:
-      A) DUT address repeated:   addr=[dut, dut]
-      B) Sim target address repeated: addr=[sim, sim]
-
-    This exercises the target's ability to re-enter the directed CCC
-    read phase for the same address after responding once and seeing
-    a Repeated START instead of a STOP.
-
-    Spec: Section 5.1.9.3.12 -- directed CCC may address any combination
-    of targets; the spec does not prohibit addressing the same target
-    multiple times.
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    dut_pid_hi = random.randint(0, 0x7FFF)
-    dut_pid_lo = random.randint(0, 0xFFFFFFFF)
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, dut_pid_hi, dut_pid_lo, sim_pid=sim_pid
-    )
-
-    # --- Phase A: DUT address repeated twice in one frame ---
-    dut._log.info("=== Phase A: GETPID with DUT addr repeated ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[dut_addr, dut_addr],
-        count=6,
-    )
-
-    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-    for idx, (ack, data) in enumerate(responses):
-        assert ack, f"Phase A: DUT NACK on occurrence {idx}"
-        verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
-        dut._log.info(f"Phase A occurrence {idx}: DUT PID OK")
-
-    # --- Phase B: Sim target address repeated twice in one frame ---
-    dut._log.info("=== Phase B: GETPID with sim target addr repeated ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETPID,
-        addr=[sim_target_addr, sim_target_addr],
-        count=6,
-    )
-
-    assert len(responses) == 2, f"Expected 2 responses, got {len(responses)}"
-    for idx, (ack, data) in enumerate(responses):
-        assert ack, f"Phase B: sim target NACK on occurrence {idx}"
-        verify_sim_pid(dut, data, sim_pid)
-        dut._log.info(f"Phase B occurrence {idx}: sim PID OK")
-
-    # Sanity: single-target reads still work after duplicate-addr frames
-    dut._log.info("=== Sanity: single-target reads after duplicate frames ===")
-    data = await do_getpid(i3c_controller, dut_addr)
-    verify_dut_pid(dut, data, dut_pid_hi, dut_pid_lo)
-
-    data = await do_getpid(i3c_controller, sim_target_addr)
-    verify_sim_pid(dut, data, sim_pid)
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 11: GETBCR + GETDCR -- identity CCCs with runtime update
-# =========================================================================
-@cocotb.test()
-async def test_sim_target_get_identity(dut):
-    """
-    Verify GETBCR and GETDCR return configured values for the sim target,
-    including runtime updates and multi-target directed frames.
-
-    Spec: Sections 5.1.9.3.13 (GETBCR), 5.1.9.3.14 (GETDCR)
-    """
-    sim_bcr = random.randint(0, 0xFF)
-    sim_dcr = random.randint(0, 0xFF)
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut, sim_bcr=sim_bcr, sim_dcr=sim_dcr
-    )
-
-    # --- GETBCR: single-target ---
-    data = await do_getbcr(i3c_controller, SIM_TARGET_ADDR)
-    dut._log.info(f"GETBCR: 0x{data[0]:02X} (exp 0x{sim_bcr:02X})")
-    assert data[0] == sim_bcr, (
-        f"BCR mismatch: exp=0x{sim_bcr:02X} got=0x{data[0]:02X}"
-    )
-
-    # --- GETDCR: single-target ---
-    data = await do_getdcr(i3c_controller, SIM_TARGET_ADDR)
-    dut._log.info(f"GETDCR: 0x{data[0]:02X} (exp 0x{sim_dcr:02X})")
-    assert data[0] == sim_dcr, (
-        f"DCR mismatch: exp=0x{sim_dcr:02X} got=0x{data[0]:02X}"
-    )
-
-    # --- GETBCR: multi-target (DUT + sim) ---
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETBCR, addr=[dut_addr, SIM_TARGET_ADDR], count=1,
-    )
-    assert len(responses) == 2
-    assert responses[1][1][0] == sim_bcr, "Multi-target BCR mismatch"
-
-    # --- Runtime update: change BCR and DCR, re-read ---
-    new_bcr = sim_bcr ^ 0xFF  # flip all bits
-    new_dcr = sim_dcr ^ 0xFF
-    i3c_target.bcr = new_bcr
-    i3c_target.dcr = new_dcr
-
-    data = await do_getbcr(i3c_controller, SIM_TARGET_ADDR)
-    assert data[0] == new_bcr, (
-        f"Updated BCR: exp=0x{new_bcr:02X} got=0x{data[0]:02X}"
-    )
-
-    data = await do_getdcr(i3c_controller, SIM_TARGET_ADDR)
-    assert data[0] == new_dcr, (
-        f"Updated DCR: exp=0x{new_dcr:02X} got=0x{data[0]:02X}"
-    )
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 12: GETSTATUS -- status format and protocol error self-clear
-# =========================================================================
-@cocotb.test()
-async def test_getstatus_sim_target(dut):
-    """
-    Verify GETSTATUS returns correct 2-byte status for the sim target.
-    Tests activity mode, pending interrupt, protocol error self-clear,
-    and vendor status byte.
-
-    Spec: Section 5.1.9.3.15, Table 27
-      MSB [15:8] = Vendor Reserved
-      LSB [7:6]  = Activity Mode
-          [5]    = Protocol Error (self-clears on read)
-          [4]    = Reserved
-          [3:0]  = Pending Interrupt
-    """
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(dut)
-
-    # (a) Default: all zeros
-    data = await do_getstatus(i3c_controller, SIM_TARGET_ADDR)
-    status = int.from_bytes(data[0:2], byteorder="big")
-    dut._log.info(f"GETSTATUS default: 0x{status:04X}")
-    assert status == 0x0000, f"Default should be 0x0000, got 0x{status:04X}"
-
-    # (b) Set activity_mode=3, pending_interrupt=5, vendor_status=0xAB
-    i3c_target.activity_mode = 3
-    i3c_target.pending_interrupt = 5
-    i3c_target.vendor_status = 0xAB
-    data = await do_getstatus(i3c_controller, SIM_TARGET_ADDR)
-    msb = data[0]
-    lsb = data[1]
-    assert msb == 0xAB, f"Vendor status exp=0xAB got=0x{msb:02X}"
-    assert (lsb >> 6) & 0x3 == 3, f"Activity mode exp=3 got={(lsb >> 6) & 0x3}"
-    assert lsb & 0xF == 5, f"Pending int exp=5 got={lsb & 0xF}"
-
-    # (c) Protocol error: set, read (should be 1), read again (should self-clear)
-    i3c_target.protocol_error = True
-    data = await do_getstatus(i3c_controller, SIM_TARGET_ADDR)
-    assert (data[1] >> 5) & 0x1 == 1, "Protocol error should be set"
-
-    # Second read: should be cleared
-    data = await do_getstatus(i3c_controller, SIM_TARGET_ADDR)
-    assert (data[1] >> 5) & 0x1 == 0, "Protocol error should self-clear"
-
-    await tb.teardown()
-
-
-# =========================================================================
-# Test 13: All remaining GET CCCs -- MWL, MRL, CAPS, MXDS + sequence
-# =========================================================================
-@cocotb.test()
-async def test_sim_target_get_all_cccs(dut):
-    """
-    Consolidates GETMWL, GETMRL (with/without IBI payload byte), GETCAPS,
-    GETMXDS, and a full back-to-back sequence of all directed GET CCCs.
-
-    Spec: Sections 5.1.9.3.5, 5.1.9.3.6, 5.1.9.3.19, 5.1.9.3.18
-    """
-    sim_pid = random.randint(0, 0xFFFFFFFFFFFF)
-    sim_bcr = random.randint(0, 0xFB) & ~0x04  # clear bit[2] initially
-    sim_dcr = random.randint(0, 0xFF)
-    sim_mwl = random.randint(16, 0xFFFF)
-    sim_mrl = random.randint(16, 0xFFFF)
-    sim_caps = [0x01, 0x01]       # HDR-DDR, I3C Basic v1.1
-    sim_mxds = [0x01, 0x02]       # maxWr=8MHz, maxRd=6MHz
-
-    i3c_controller, i3c_target, tb, dut_addr, sim_target_addr, _ = await setup_env(
-        dut,
-        sim_pid=sim_pid, sim_bcr=sim_bcr, sim_dcr=sim_dcr,
-        sim_mwl=sim_mwl, sim_mrl=sim_mrl,
-        sim_getcaps=sim_caps, sim_getmxds=sim_mxds,
-    )
-
-    # --- (a) GETMWL ---
-    dut._log.info("=== GETMWL ===")
-    data = await do_getmwl(i3c_controller, SIM_TARGET_ADDR)
-    mwl_rx = int.from_bytes(data[0:2], byteorder="big")
-    assert mwl_rx == sim_mwl, (
-        f"MWL exp=0x{sim_mwl:04X} got=0x{mwl_rx:04X}"
-    )
-
-    # Runtime update
-    new_mwl = random.randint(16, 0xFFFF)
-    i3c_target.max_write_length = new_mwl
-    data = await do_getmwl(i3c_controller, SIM_TARGET_ADDR)
-    mwl_rx = int.from_bytes(data[0:2], byteorder="big")
-    assert mwl_rx == new_mwl, f"Updated MWL mismatch"
-
-    # --- (b) GETMRL without IBI payload (BCR bit[2]=0) ---
-    dut._log.info("=== GETMRL (no IBI) ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETMRL, addr=SIM_TARGET_ADDR, count=2
-    )
-    ack, data = responses[0]
-    assert ack, "Should ACK GETMRL"
-    mrl_rx = int.from_bytes(data[0:2], byteorder="big")
-    assert mrl_rx == sim_mrl, (
-        f"MRL exp=0x{sim_mrl:04X} got=0x{mrl_rx:04X}"
-    )
-
-    # --- (c) GETMRL with IBI payload (BCR bit[2]=1) ---
-    dut._log.info("=== GETMRL (with IBI payload) ===")
-    ibi_payload = random.randint(1, 0xFF)
-    i3c_target.bcr = sim_bcr | 0x04
-    i3c_target.max_ibi_payload = ibi_payload
-    data = await do_getmrl(i3c_controller, SIM_TARGET_ADDR)
-    mrl_rx = int.from_bytes(data[0:2], byteorder="big")
-    assert mrl_rx == sim_mrl, f"MRL mismatch with IBI"
-    assert data[2] == ibi_payload, (
-        f"IBI payload exp=0x{ibi_payload:02X} got=0x{data[2]:02X}"
-    )
-    # Restore BCR
-    i3c_target.bcr = sim_bcr
-
-    # --- (d) GETCAPS (2-byte, then update to 4-byte) ---
-    dut._log.info("=== GETCAPS ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETCAPS, addr=SIM_TARGET_ADDR, count=2
-    )
-    ack, data = responses[0]
-    assert ack, "Should ACK GETCAPS"
-    for i, exp in enumerate(sim_caps):
-        assert data[i] == exp, (
-            f"GETCAPS[{i}] exp=0x{exp:02X} got=0x{data[i]:02X}"
-        )
-
-    caps4 = [0x09, 0x41, 0x18, 0x00]
-    i3c_target.getcaps_bytes = caps4
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETCAPS, addr=SIM_TARGET_ADDR, count=4
-    )
-    for i, exp in enumerate(caps4):
-        assert responses[0][1][i] == exp, f"GETCAPS4[{i}] mismatch"
-
-    # --- (e) GETMXDS (2-byte Format 1, then 5-byte Format 2) ---
-    dut._log.info("=== GETMXDS ===")
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETMXDS, addr=SIM_TARGET_ADDR, count=2
-    )
-    ack, data = responses[0]
-    assert ack, "Should ACK GETMXDS"
-    assert data[0] == sim_mxds[0] and data[1] == sim_mxds[1], "GETMXDS F1 mismatch"
-
-    mxds5 = [0x03, 0x04, 0x00, 0x10, 0x00]
-    i3c_target.getmxds_bytes = mxds5
-    responses = await i3c_controller.i3c_ccc_read(
-        ccc=CCC.DIRECT.GETMXDS, addr=SIM_TARGET_ADDR, count=5
-    )
-    for i, exp in enumerate(mxds5):
-        assert responses[0][1][i] == exp, f"GETMXDS5[{i}] mismatch"
-
-    # --- (f) Back-to-back sequence: all CCCs in rapid succession ---
-    dut._log.info("=== Back-to-back CCC sequence ===")
-    # Restore original values for clean sequence
-    i3c_target.getcaps_bytes = sim_caps
-    i3c_target.getmxds_bytes = sim_mxds
-
-    ccc_checks = [
-        (CCC.DIRECT.GETPID, 6),
-        (CCC.DIRECT.GETBCR, 1),
-        (CCC.DIRECT.GETDCR, 1),
-        (CCC.DIRECT.GETSTATUS, 2),
-        (CCC.DIRECT.GETMWL, 2),
-        (CCC.DIRECT.GETMRL, 2),
-        (CCC.DIRECT.GETCAPS, 2),
-        (CCC.DIRECT.GETMXDS, 2),
-    ]
-    for ccc_code, count in ccc_checks:
+        # Recovery: DUT GETPID is value-correct.
         responses = await i3c_controller.i3c_ccc_read(
-            ccc=ccc_code, addr=SIM_TARGET_ADDR, count=count
+            ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
         )
-        assert responses[0][0], f"CCC 0x{ccc_code:02X} should ACK"
-        assert len(responses[0][1]) >= count, (
-            f"CCC 0x{ccc_code:02X}: expected >= {count} bytes"
+        ack, data = responses[0]
+        assert ack, f"DUT NACK after no-target abort {descn}"
+        pid_rx = int.from_bytes(data[0:6], byteorder="big")
+        assert pid_rx == expected_dut_pid, (
+            f"DUT recovery GETPID after no-target {descn}: "
+            f"exp 0x{expected_dut_pid:012X} got 0x{pid_rx:012X}"
         )
 
     await tb.teardown()
