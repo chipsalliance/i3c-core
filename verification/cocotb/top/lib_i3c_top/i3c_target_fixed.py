@@ -475,10 +475,14 @@ class I3CTargetFixed(I3CTarget):
             # Wait for Sr or P if this was the last byte
             next_state = None
             if terminate:
-                if await self.check_stop():
-                    next_state = I3cState.STOP
-                elif await self.check_start(repeated=True):
-                    next_state = I3cState.RS
+                # Block on a real SDA edge to detect Sr (SDA fell during
+                # SCL high) or STOP (SDA rose during SCL high). Using the
+                # edge-driven detector avoids the single-shot
+                # check_stop/check_start race that would silently return
+                # None and let the FSM idle ahead of the bus -- which
+                # aliases onto the next CCC's address phase under tight
+                # tCAS recovery timing.
+                next_state = await self.detect_start_or_stop()
 
             return next_state
 
@@ -694,10 +698,12 @@ class I3CTargetFixed(I3CTarget):
                 if next_state is not None:
                     return next_state
 
-            self.log.error(
-                "TARGET_FIXED:::CCC response: unexpected end of send loop"
+            self.log.warning(
+                "TARGET_FIXED:::CCC response loop ended without Sr/STOP -- "
+                "resyncing to bus"
             )
-            return I3cState.STOP
+            self.sda = 1
+            return await self.detect_start_or_stop()
         finally:
             self._in_read_transfer = False
 

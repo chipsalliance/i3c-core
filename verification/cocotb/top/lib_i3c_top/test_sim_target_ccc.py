@@ -19,11 +19,14 @@ Scenarios (generalized -- pick a random CCC per seed):
   9. test_ccc_post_read_self_clear    -- GETSTATUS protocol-error self-clear
 
 Bus-level frame-structure tests (CCC randomized where natural):
- 10. test_ccc_premature_stop                -- spec-legal STOP positions (sim)
- 11. test_ccc_mid_byte_abort_recovery       -- DUT-safe abort positions
- 12. test_ccc_duplicate_address_multi_target -- same addr twice in frame
- 13. test_ccc_unsupported_enthdr_from_sdr   -- HDR mode recovery
- 14. test_ccc_enthdr0_then_reentry_after_exit
+ 10. test_ccc_abort_recovery_random         -- random scenario (single /
+                                               multi-target / chained) ×
+                                               target (sim / DUT) × abort
+                                               position; DUT-safe positions
+                                               only (Section 5.1.2.3.4)
+ 11. test_ccc_duplicate_address_multi_target -- same addr twice in frame
+ 12. test_ccc_unsupported_enthdr_from_sdr   -- HDR mode recovery
+ 13. test_ccc_enthdr0_then_reentry_after_exit
 
 Spec references:
   - Section 5.1.9.2.1: Direct CCC framing (Sr+7E/W ends a Direct CCC)
@@ -60,6 +63,8 @@ from ccc_descriptors import (
     pick_random_ccc,
     legal_abort_positions,
     abort_ccc_at_legal_position,
+    abort_multi_target_at_position,
+    abort_chained_at_position,
     recovery_wait,
     verify_set_via_get,
 )
@@ -540,128 +545,116 @@ NUM_STOP_ITERATIONS = 5
 
 
 # =========================================================================
-# 10. Premature STOP at spec-legal positions during read CCC (sim target)
+# 10. Random abort-recovery: scenario × target × position
 # =========================================================================
 @cocotb.test()
-async def test_ccc_premature_stop(dut):
-    """STOP at spec-legal positions during a random directed read to sim target.
+async def test_ccc_abort_recovery_random(dut):
+    """Random abort-and-recover stress over scenario shape, target, position.
 
-    Sim target uses OD drivers, so raw STOP at any byte/T-bit boundary is
-    safe (Section 5.1.2). Recovery is verified by re-reading the same
-    CCC from both sim and DUT (DUT only when value-verifiable).
-    """
-    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
-     _, dut_pid_hi, dut_pid_lo) = await setup_env(
-         dut, sda_read_timeout_us=5
-     )
+    Each iteration randomizes:
+      - scenario shape  in {single, multi_target, chained}
+      - abort target    in {sim_target, dut} (DUT only for `dut_supported`)
+      - abort position  drawn from `legal_abort_positions(desc, target)`,
+                        which only emits DUT-safe positions:
+                        setup_broadcast / setup_ccc (raw STOP) and
+                        data_sr (Sr+STOP at T-bit boundary, Section 5.1.2.3.4).
 
-    desc = pick_random_ccc(kinds=["read"])
-    log_ccc_pick(dut, "Premature STOP (sim)", desc)
-    setup_descriptor_state(desc, i3c_target)
+    For `multi_target` and `chained`, prior CCC entries in the frame run
+    cleanly; the abort is injected on the *last* entry within the same
+    bus-control window.
 
-    positions = legal_abort_positions(desc, i3c_target, dut_safe=False)
-    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
-    for _ in range(n_extra):
-        positions.append(random.choice(positions))
-
-    expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
-
-    # One baseline read before the loop; the per-iteration recovery
-    # reads already prove both targets are healthy for the next iteration.
-    await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
-
-    for i, (abort_type, param, descn) in enumerate(positions):
-        cocotb.log.info(f"--- Iter {i}: sim abort [{abort_type}] {descn} ---")
-
-        result = await abort_ccc_at_legal_position(
-            i3c_controller, desc, sim_addr, abort_type, param
-        )
-        if abort_type in ("data", "data_sr"):
-            assert result is True, f"Iter {i}: sim NACKed directed {desc.name}"
-
-        await recovery_wait(i3c_controller)
-
-        # Recovery: sim target still responds correctly.
-        await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
-
-        # DUT must still respond too (use GETPID for value verification).
-        dut_responses = await i3c_controller.i3c_ccc_read(
-            ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
-        )
-        ack, data = dut_responses[0]
-        assert ack, f"Iter {i}: DUT NACK on recovery GETPID"
-        pid_rx = int.from_bytes(data[0:6], byteorder="big")
-        assert pid_rx == expected_dut_pid, (
-            f"Iter {i}: DUT recovery GETPID: exp 0x{expected_dut_pid:012X} "
-            f"got 0x{pid_rx:012X}"
-        )
-
-    await tb.teardown()
-
-
-# =========================================================================
-# 11. Mid-byte abort recovery (DUT-safe positions)
-# =========================================================================
-@cocotb.test()
-async def test_ccc_mid_byte_abort_recovery(dut):
-    """STOP at DUT-safe spec-legal positions during a random directed read
-    to the DUT, with Sr+STOP at data-phase T-bit boundaries (Section
-    5.1.2.3.4).
-
-    The CCC is restricted to those that are `dut_supported`; for value
-    verification of the DUT response we use GETPID (the only DUT CSR
-    we configure).
+    Recovery is verified after every iteration by:
+      - a value-checked read CCC to the sim target, and
+      - a value-checked GETPID to the DUT.
     """
     (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
      _, dut_pid_hi, dut_pid_lo) = await setup_env(dut)
 
-    desc = pick_random_ccc(
-        kinds=["read"], predicate=lambda d: d.dut_supported
-    )
-    log_ccc_pick(dut, "Mid-byte abort (DUT)", desc)
-    setup_descriptor_state(desc, i3c_target)
-
-    positions = legal_abort_positions(desc, i3c_target, dut_safe=True)
-    n_extra = max(0, NUM_STOP_ITERATIONS - len(positions))
-    for _ in range(n_extra):
-        positions.append(random.choice(positions))
-
     expected_dut_pid = (dut_pid_hi << 33) | dut_pid_lo
 
-    # One baseline GETPID before the loop; the per-iteration recovery
-    # check already proves the DUT is healthy for the next iteration.
+    # Baseline GETPID to establish a clean DUT start state.
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
     )
     _, data = responses[0]
     pid_rx = int.from_bytes(data[0:6], byteorder="big")
     assert pid_rx == expected_dut_pid, (
-        f"Baseline GETPID: exp 0x{expected_dut_pid:012X} "
-        f"got 0x{pid_rx:012X}"
+        f"Baseline GETPID: exp 0x{expected_dut_pid:012X} got 0x{pid_rx:012X}"
     )
 
-    for i, (abort_type, param, descn) in enumerate(positions):
-        cocotb.log.info(f"--- Iter {i}: DUT abort [{abort_type}] {descn} ---")
+    scenario_shapes = ["single", "multi_target", "chained"]
 
-        result = await abort_ccc_at_legal_position(
-            i3c_controller, desc, dut_addr, abort_type, param
+    for i in range(NUM_STOP_ITERATIONS):
+        shape = random.choice(scenario_shapes)
+        target_kind = random.choice(["sim", "dut"])
+
+        if target_kind == "dut":
+            desc = pick_random_ccc(
+                kinds=["read"], predicate=lambda d: d.dut_supported
+            )
+            abort_addr = dut_addr
+        else:
+            desc = pick_random_ccc(kinds=["read"])
+            abort_addr = sim_addr
+
+        setup_descriptor_state(desc, i3c_target)
+        positions = legal_abort_positions(desc, i3c_target)
+        abort_type, param, descn = random.choice(positions)
+
+        cocotb.log.info(
+            f"--- Iter {i}: shape={shape} target={target_kind} "
+            f"ccc={desc.name} abort=[{abort_type}] {descn} ---"
         )
-        if abort_type in ("data", "data_sr"):
-            assert result is True, f"Iter {i}: DUT NACKed directed {desc.name}"
+
+        if shape == "single":
+            await abort_ccc_at_legal_position(
+                i3c_controller, desc, abort_addr, abort_type, param
+            )
+
+        elif shape == "multi_target":
+            other = sim_addr if abort_addr == dut_addr else dut_addr
+            await abort_multi_target_at_position(
+                i3c_controller, desc, [other],
+                abort_addr, abort_type, param,
+                target=i3c_target,
+            )
+
+        else:  # "chained"
+            chain_len = random.randint(2, 3)
+            prefix = []
+            for _j in range(chain_len - 1):
+                pdesc = pick_random_ccc(kinds=["read"])
+                setup_descriptor_state(pdesc, i3c_target)
+                if pdesc.dut_supported and random.random() < 1 / 3:
+                    paddr = dut_addr
+                else:
+                    paddr = sim_addr
+                prefix.append(
+                    (pdesc, paddr, descriptor_count(pdesc, i3c_target))
+                )
+            await abort_chained_at_position(
+                i3c_controller, prefix,
+                desc, abort_addr, abort_type, param,
+            )
 
         await recovery_wait(i3c_controller)
 
-        # Recovery: sim target reads correctly (value-verified per CCC).
-        await do_ccc_read_verify(i3c_controller, desc, sim_addr, i3c_target)
+        # Recovery 1: sim target answers a value-verified read CCC.
+        rec_desc = pick_random_ccc(kinds=["read"])
+        setup_descriptor_state(rec_desc, i3c_target)
+        await do_ccc_read_verify(
+            i3c_controller, rec_desc, sim_addr, i3c_target
+        )
 
-        # Recovery: DUT GETPID still correct.
+        # Recovery 2: DUT GETPID is value-correct.
         responses = await i3c_controller.i3c_ccc_read(
             ccc=CCC.DIRECT.GETPID, addr=dut_addr, count=6
         )
-        _, data = responses[0]
+        ack, data = responses[0]
+        assert ack, f"Iter {i}: DUT NACK on recovery GETPID"
         pid_rx = int.from_bytes(data[0:6], byteorder="big")
         assert pid_rx == expected_dut_pid, (
-            f"Iter {i} recovery GETPID: exp 0x{expected_dut_pid:012X} "
+            f"Iter {i}: recovery GETPID: exp 0x{expected_dut_pid:012X} "
             f"got 0x{pid_rx:012X}"
         )
 

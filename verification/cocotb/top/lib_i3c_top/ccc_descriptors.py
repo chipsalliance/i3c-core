@@ -40,6 +40,7 @@ from typing import Callable, List, Optional
 
 import cocotb
 from cocotb.triggers import Timer
+from cocotbext_i3c.common import I3C_RSVD_BYTE
 
 from ccc import CCC
 from common import ENEC_DISEC_PATTERNS
@@ -73,8 +74,8 @@ def _setup_pid(target):
 
 
 def _setup_bcr(target):
-    # Randomize all 8 bits.  BCR[2] (Max Data Speed Limitation /
-    # IBI Payload bit) is allowed to be 0 or 1 -- consumers (GETMRL count)
+    # Randomize all 8 bits.  BCR[2] (IBI Payload bit, per MIPI I3C Basic
+    # v1.1.1 Table 5) is allowed to be 0 or 1 -- consumers (GETMRL count)
     # adapt to target.bcr & 0x04.
     target.bcr = random.randint(0, 0xFF)
 
@@ -599,17 +600,18 @@ async def verify_set_via_get(dut, ctrl, target, write_desc, addr):
 # Bus-level abort helpers (spec 5.1.2.3.4 read-frame early termination)
 # ---------------------------------------------------------------------------
 
-def legal_abort_positions(desc, target, dut_safe):
+def legal_abort_positions(desc, target):
     """Build legal STOP abort positions for a directed read of `desc`.
 
-    For sim target (OD): raw STOP at any byte/T-bit boundary is legal.
-    For DUT (PP):        data-phase positions must use Sr+STOP per spec
-                          5.1.2.3.4 to avoid PP contention.
+    Only DUT-safe positions are emitted: setup-phase aborts use raw STOP
+    (controller still owns SDA), and data-phase aborts use Sr+STOP at a
+    T-bit boundary per Section 5.1.2.3.4 (early read termination). This
+    avoids PP contention and is legal against both OD and PP targets.
 
     Position types:
       - "setup_broadcast": STOP after broadcast 7E/W ACK (ctrl OD)
       - "setup_ccc":       STOP after CCC byte + T-bit (ctrl PP)
-      - "data" / "data_sr": after N complete data byte+T-bit groups
+      - "data_sr":         Sr+STOP after N complete data byte+T-bit groups
 
     Returns list of (abort_type, param, description) tuples.
     """
@@ -618,20 +620,10 @@ def legal_abort_positions(desc, target, dut_safe):
         ("setup_broadcast", None, "after broadcast 7E/W ACK"),
         ("setup_ccc",       None, f"after CCC {desc.name} byte + T-bit"),
     ]
-    if dut_safe:
-        # DUT: setup phases use raw STOP; data phase uses Sr+STOP.
-        for n in range(1, count):
-            positions.append(
-                ("data_sr", n, f"Sr after data byte {n - 1} T-bit")
-            )
-    else:
-        # Sim target (OD): raw STOP everywhere is safe.
-        for n in range(0, count):
-            desc_str = (
-                "after directed ACK (OD/PP boundary)" if n == 0
-                else f"after data byte {n - 1} T-bit boundary"
-            )
-            positions.append(("data", n, desc_str))
+    for n in range(1, count):
+        positions.append(
+            ("data_sr", n, f"Sr after data byte {n - 1} T-bit")
+        )
     return positions
 
 
@@ -659,7 +651,7 @@ async def abort_ccc_at_legal_position(ctrl, desc, addr, abort_type, param):
         ctrl.give_bus_control()
         return None
 
-    # "data" or "data_sr": directed address phase, then read N bytes.
+    # "data_sr": directed address phase, then read N bytes with Sr+STOP.
     await ctrl.send_start()
     ack = await ctrl.write_addr_header(addr, read=True)
     if not ack:
@@ -667,28 +659,138 @@ async def abort_ccc_at_legal_position(ctrl, desc, addr, abort_type, param):
         ctrl.give_bus_control()
         return False
 
-    if abort_type == "data_sr":
-        # Spec 5.1.2.3.4: early read termination via Sr at T-bit boundary.
-        for _ in range(param - 1):
-            await ctrl.recv_byte_t_bit(stop=False)
-        await ctrl.recv_byte_t_bit(stop=True)
-        await ctrl.send_stop()
-    else:
-        for _ in range(param):
-            await ctrl.recv_byte_t_bit(stop=False)
-        await ctrl.send_stop()
+    assert abort_type == "data_sr", f"unknown abort_type: {abort_type}"
+    # Spec 5.1.2.3.4: early read termination via Sr at T-bit boundary.
+    for _ in range(param - 1):
+        await ctrl.recv_byte_t_bit(stop=False)
+    await ctrl.recv_byte_t_bit(stop=True)
+    await ctrl.send_stop()
 
     ctrl.give_bus_control()
     return True
 
 
-async def recovery_wait(ctrl):
-    """Wait long enough for the bus to settle after an abort/STOP.
+# Note: the high-level helpers `i3c_ccc_read` / `i3c_ccc_read_chained` in
+# i3c_controller_fixed.py manage their own take/give bus-control window and
+# always emit a clean STOP. They cannot be stitched together with a custom
+# abort tail, so the helpers below build the frames directly from the
+# low-level primitives (send_start / write_addr_header / send_byte_tbit /
+# recv_byte_t_bit / recv_until_eod_tbit / send_stop).
 
-    Spec floor is tCAS = 38.4 ns (I3C Basic v1.1.1, Table 86 / §5.1.3.2.1
-    Pure-Bus Bus Free Condition). The literal floor is too tight for
-    target FSM cleanup in this testbench, so we use 1 us as a small
-    safety margin above the spec minimum.
+
+async def abort_multi_target_at_position(
+    ctrl, desc, prefix_addrs, abort_addr, abort_type, param, target,
+):
+    """Run a multi-address directed read of `desc`, aborting the LAST addr.
+
+    A single CCC opcode is broadcast, then each address in `prefix_addrs`
+    is read cleanly (Sr+addr/R, N data bytes), and finally `abort_addr`
+    is aborted at (abort_type, param) within the same bus-control window.
+
+    Setup-phase aborts (`setup_broadcast`, `setup_ccc`) terminate before
+    any directed phase, so the multi-address structure is irrelevant --
+    in that case this collapses to `abort_ccc_at_legal_position`.
+    """
+    if abort_type in ("setup_broadcast", "setup_ccc"):
+        await abort_ccc_at_legal_position(
+            ctrl, desc, abort_addr, abort_type, param
+        )
+        return
+
+    assert abort_type == "data_sr", f"unknown abort_type: {abort_type}"
+    count = descriptor_count(desc, target)
+
+    await ctrl.take_bus_control()
+    await ctrl.send_start()
+    await ctrl.write_addr_header(I3C_RSVD_BYTE)
+    await ctrl.send_byte_tbit(desc.code)
+
+    for paddr in prefix_addrs:
+        await ctrl.send_start()
+        ack = await ctrl.write_addr_header(paddr, read=True)
+        if ack:
+            rd = bytearray()
+            await ctrl.recv_until_eod_tbit(rd, count, stop=False)
+
+    # Aborted final sub-address: Sr + addr/R, then early termination.
+    await ctrl.send_start()
+    ack = await ctrl.write_addr_header(abort_addr, read=True)
+    if not ack:
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return
+    for _ in range(param - 1):
+        await ctrl.recv_byte_t_bit(stop=False)
+    await ctrl.recv_byte_t_bit(stop=True)
+    await ctrl.send_stop()
+    ctrl.give_bus_control()
+
+
+async def abort_chained_at_position(
+    ctrl, prefix_chain, desc, abort_addr, abort_type, param,
+):
+    """Run a chained CCC read frame, aborting the LAST chain entry.
+
+    `prefix_chain` is a list of (desc, addr, count) tuples that are run
+    cleanly (Sr+7E/W between entries). The final entry uses `desc` and
+    `abort_addr` and is aborted at (abort_type, param) inside the SAME
+    bus-control window (i.e. the abort really is part of the chain).
+
+    Bus pattern (data_sr abort, two prefix entries)::
+
+        S  + 7E/W + ccc1 + Sr + addr1/R + [count1 bytes]
+        Sr + 7E/W + ccc2 + Sr + addr2/R + [count2 bytes]
+        Sr + 7E/W + dccc + Sr + abort_addr/R + [param bytes w/ Sr-term] + P
+    """
+    await ctrl.take_bus_control()
+
+    # Clean prefix entries.
+    for pdesc, paddr, pcount in prefix_chain:
+        await ctrl.send_start()
+        await ctrl.write_addr_header(I3C_RSVD_BYTE)
+        await ctrl.send_byte_tbit(pdesc.code)
+        await ctrl.send_start()
+        ack = await ctrl.write_addr_header(paddr, read=True)
+        if ack:
+            rd = bytearray()
+            await ctrl.recv_until_eod_tbit(rd, pcount, stop=False)
+
+    # Aborted final entry: opcode broadcast, then position-dependent abort.
+    await ctrl.send_start()
+    await ctrl.write_addr_header(I3C_RSVD_BYTE)
+
+    if abort_type == "setup_broadcast":
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return
+
+    await ctrl.send_byte_tbit(desc.code)
+
+    if abort_type == "setup_ccc":
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return
+
+    assert abort_type == "data_sr", f"unknown abort_type: {abort_type}"
+    await ctrl.send_start()
+    ack = await ctrl.write_addr_header(abort_addr, read=True)
+    if not ack:
+        await ctrl.send_stop()
+        ctrl.give_bus_control()
+        return
+    for _ in range(param - 1):
+        await ctrl.recv_byte_t_bit(stop=False)
+    await ctrl.recv_byte_t_bit(stop=True)
+    await ctrl.send_stop()
+    ctrl.give_bus_control()
+
+
+async def recovery_wait(ctrl):
+    """Wait the spec-floor bus-free time after an abort/STOP.
+
+    Uses tCAS = 38.4 ns (I3C Basic v1.1.1, Table 86 / §5.1.3.2.1 Pure-Bus
+    Bus Free Condition). This is the minimum time a controller must idle
+    the bus before a new START.
     """
     TCAS_NS = 38.4  # Spec floor (Table 86).
     await Timer(int(TCAS_NS), units='ns')
