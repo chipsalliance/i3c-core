@@ -42,10 +42,7 @@ import cocotb
 from cocotb.triggers import Timer
 
 from ccc import CCC
-
-
-# Valid event-enable bit patterns for ENEC / DISEC (mirror of common.py).
-ENEC_DISEC_PATTERNS = [0x01, 0x02, 0x08, 0x03, 0x09, 0x0A, 0x0B]
+from common import ENEC_DISEC_PATTERNS
 
 
 # ---------------------------------------------------------------------------
@@ -694,5 +691,4 @@ async def recovery_wait(ctrl):
     safety margin above the spec minimum.
     """
     TCAS_NS = 38.4  # Spec floor (Table 86).
-    MIN_RECOVERY_NS = 5_000
-    await Timer(max(MIN_RECOVERY_NS, int(TCAS_NS)), units='ns')
+    await Timer(int(TCAS_NS), units='ns')
