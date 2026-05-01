@@ -22,7 +22,6 @@ The following Broadcast CCCs are recognized but not actively handled (the core A
 
 * ENTAS0-ENTAS3 - Enter Activity State (acknowledged, no behavioral change)
 * ENTHDR0-ENTHDR7 - Enter HDR Mode (triggers HDR mode entry; HDR data transfer is not supported)
-* ENDXFER - Data Transfer Ending Procedure Control
 * SETBUSCON - Set Bus Context
 * DEFGRPA / RSTGRPA - Group Address (not supported, NACKed)
 * MLANE - Multi-Lane (not supported, NACKed)
@@ -51,7 +50,6 @@ The following Direct CCCs are currently supported by the core (all required Dire
 * RSTACT (R) - Target Reset Action
   * Direct Write (Format 2) supports defining bytes 0x0, 0x1 and 0x2
   * Direct Read (Format 3) supports defining bytes 0x81, 0x82, and 0x84 and returns 0xFF as recovery timing
-* ENDXFER - Data Transfer Ending Procedure Control
 
 ## CCCs That Update Registers Without Firmware Notification
 
