@@ -4,6 +4,7 @@ import logging
 import cocotb
 from cocotb.regression import TestFactory
 from cocotb.triggers import ClockCycles, RisingEdge
+from cocotb.triggers import ClockCycles, RisingEdge, Timer
 from boot import boot_init
 from bus2csr import dword2int, int2dword
 from i3c_controller_fixed import I3cControllerFixed as I3cController
