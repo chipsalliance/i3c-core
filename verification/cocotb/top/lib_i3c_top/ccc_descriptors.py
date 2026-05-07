@@ -102,6 +102,10 @@ def _setup_mrl(target):
     # sim+DUT multi-target frames pick a count derived from the sim model
     # that does not match the DUT, leading the controller to force-NACK
     # while the DUT is still PP-driving -> bus contention.
+    #
+    # NOTE: The 2-byte (BCR[2]=0) spec path is exercised inline in the
+    # sim-only test test_ccc_mrl_bcr2_zero_sim_only (not via a descriptor)
+    # because the DUT cannot share a frame with that path today.
     target.bcr |= 0x04
     target.max_ibi_payload = random.randint(1, 0xFF)
     target.max_rd_length = random.randint(16, 0xFFFF)
@@ -286,7 +290,22 @@ def _apply_noop(target, data_bytes):
 
 
 def _gen_rstact(target):
-    db = random.choice([0x00, 0x01, 0x02, 0x04, 0x81, 0x82, 0x84])
+    # Write-direction RSTACT only. Per I3C Basic v1.1.1 §5.1.9.3.21
+    # (Table 19), defining bytes 0x80-0xFE are read-direction (return
+    # reset-recovery time). Issuing a write with a read-only DB violates
+    # the spec.
+    # TODO: add read-direction RSTACT support. Two pieces missing:
+    #   1. CCCDescriptor lacks a defining-byte hook for read CCCs --
+    #      do_ccc_read / do_ccc_read_multi need a gen_defining_byte
+    #      callback so they can forward DB to i3c_ccc_read(...,
+    #      defining_byte=...).
+    #   2. The sim target (i3c_target_fixed.py) ignores defining bytes
+    #      (line ~633: "defining bytes ... passively ignored") and has no
+    #      RSTACT branch in _handle_directed_read_ccc. It needs to clock
+    #      in the DB after the CCC byte and reply with recovery-time data
+    #      for DB=0x81/0x82/0x84.
+    # Until those land, RSTACT is exercised in the write direction only.
+    db = random.choice([0x00, 0x01, 0x02, 0x04])
     return db, []
 
 

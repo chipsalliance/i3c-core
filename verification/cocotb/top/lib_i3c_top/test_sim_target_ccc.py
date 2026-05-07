@@ -902,3 +902,77 @@ async def test_ccc_directed_write_no_target(dut):
         )
 
     await tb.teardown()
+
+
+# =========================================================================
+# 14. SETMRL / GETMRL with sim BCR[2]=0 -- spec 2-byte frame (sim-only)
+# =========================================================================
+# Exercises the MIPI I3C Basic v1.1.1 §5.1.9.3.6 (Fig.39 / Fig.40) 2-byte
+# SET/GET MRL frame against a sim target whose BCR[2]=0 (no IBI payload
+# byte appended).  Sim-target only -- the DUT today hardwires 3 bytes for
+# both directions regardless of BCR[2] (see bug-{set,get}mrl-length-
+# ignores-bcr2.md), so addressing the DUT in the same frame would cause
+# bus contention.  This test is the standing companion to the BCR[2]=1
+# coverage that runs under random pickers via _setup_mrl in this file,
+# and to the DUT-only 3-byte coverage in test_ccc.py::test_ccc_{getmrl,
+# setmrl_*}.  Once the RTL is fixed, this test should remain (the spec
+# 2-byte path is legitimate coverage on its own).
+@cocotb.test()
+async def test_ccc_mrl_bcr2_zero_sim_only(dut):
+    """Spec 2-byte SETMRL/GETMRL frame against a BCR[2]=0 sim target."""
+    (i3c_controller, i3c_target, tb, dut_addr, sim_addr,
+     _, _, _) = await setup_env(dut)
+
+    i3c_target.bcr &= ~0x04
+    assert (i3c_target.bcr & 0x04) == 0, (
+        f"sim BCR[2] must be 0 for this test, got bcr=0x{i3c_target.bcr:02X}"
+    )
+    i3c_target.max_rd_length = random.randint(16, 0xFFFF)
+
+    dut._log.info(
+        f"sim BCR=0x{i3c_target.bcr:02X} max_rd_length=0x{i3c_target.max_rd_length:04X}"
+    )
+
+    dut._log.info("--- GETMRL (initial, expect 2-byte response) ---")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMRL, addr=sim_addr, count=2,
+    )
+    ack, data = responses[0]
+    assert ack, f"sim NACKed initial GETMRL @0x{sim_addr:02X}"
+    assert len(data) == 2, (
+        f"GETMRL returned {len(data)} bytes, expected 2 (BCR[2]=0)"
+    )
+    rx = (data[0] << 8) | data[1]
+    assert rx == i3c_target.max_rd_length, (
+        f"GETMRL value mismatch: got 0x{rx:04X} "
+        f"expected 0x{i3c_target.max_rd_length:04X}"
+    )
+
+    dut._log.info("--- SETMRL (2-byte directed frame) ---")
+    new_mrl = random.randint(16, 0xFFFF)
+    while new_mrl == i3c_target.max_rd_length:
+        new_mrl = random.randint(16, 0xFFFF)
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETMRL,
+        directed_data=[(sim_addr, [(new_mrl >> 8) & 0xFF, new_mrl & 0xFF])],
+    )
+
+    dut._log.info("--- GETMRL (post-SET, verify round-trip) ---")
+    responses = await i3c_controller.i3c_ccc_read(
+        ccc=CCC.DIRECT.GETMRL, addr=sim_addr, count=2,
+    )
+    ack, data = responses[0]
+    assert ack, f"sim NACKed post-SET GETMRL @0x{sim_addr:02X}"
+    assert len(data) == 2, (
+        f"post-SET GETMRL returned {len(data)} bytes, expected 2"
+    )
+    rx = (data[0] << 8) | data[1]
+    assert rx == new_mrl, (
+        f"SETMRL did not take effect: got 0x{rx:04X} expected 0x{new_mrl:04X}"
+    )
+    assert i3c_target.max_rd_length == new_mrl, (
+        f"sim target.max_rd_length not updated by SETMRL: "
+        f"target=0x{i3c_target.max_rd_length:04X} expected 0x{new_mrl:04X}"
+    )
+
+    await tb.teardown()
