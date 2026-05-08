@@ -13,7 +13,7 @@ EXTRA_RUN_ARGS   ?=
 
 VERILATOR = verilator
 
-BUILD_ARGS = --cc --main --timing --timescale 1ns/1ps --trace --fourstate -Wno-FUTURE
+BUILD_ARGS = --cc --main --timing --timescale 1ns/1ps --trace
 RUN_ARGS =
 
 ifdef DEBUG

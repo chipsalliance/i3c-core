@@ -11,8 +11,8 @@ ahb:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AHB"
   FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
@@ -27,8 +27,8 @@ axi:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 10
   FrontendBusDataWidth: 32
@@ -48,8 +48,9 @@ axi_hc:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
+  IbiBufferDepth: 8
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 32
@@ -70,8 +71,9 @@ axi_ctrl_and_target:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
+  IbiBufferDepth: 8
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 32
@@ -91,8 +93,8 @@ axi_bypass:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
-  DatDepth: 128
-  DctDepth: 128
+  DatDepth: 32
+  DctDepth: 32
   FrontendBusInterface: "AXI"
   FrontendBusAddrWidth: 12
   FrontendBusDataWidth: 32

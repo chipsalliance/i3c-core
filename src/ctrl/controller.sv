@@ -126,6 +126,20 @@ module controller
     output logic hci_ibi_queue_wvalid_o,
     input logic hci_ibi_queue_wready_i,
     output logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_o,
+
+    // DAT <-> Controller interface
+    input  dat_mem_sink_t             dat_mem_sink_i,
+    output logic                      dat_read_valid_hw_o,
+    output logic          [DatAw-1:0] dat_index_hw_o,
+    input  logic          [     63:0] dat_rdata_hw_i,
+
+    // DCT <-> Controller interface
+    output logic             dct_write_valid_hw_o,
+    output logic             dct_read_valid_hw_o,
+    output logic [DctAw-1:0] dct_index_hw_o,
+    output logic [    127:0] dct_wdata_hw_o,
+    input  logic [    127:0] dct_rdata_hw_i,
+
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
     // Target Transaction Interface
@@ -546,6 +560,7 @@ module controller
       .ibi_queue_wvalid_o          (hci_ibi_queue_wvalid_o),
       .ibi_queue_wready_i          (hci_ibi_queue_wready_i),
       .ibi_queue_wdata_o           (hci_ibi_queue_wdata_o),
+      .dat_mem_sink_i              (dat_mem_sink_i),
       .dat_read_valid_hw_o         (dat_read_valid_hw_o),
       .dat_index_hw_o              (dat_index_hw_o),
       .dat_rdata_hw_i              (dat_rdata_hw_i),

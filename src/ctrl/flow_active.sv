@@ -72,9 +72,10 @@ module flow_active
     output logic [HciIbiDataWidth-1:0] ibi_queue_wdata_o,
 
     // DAT <-> Controller interface
-    output logic                          dat_read_valid_hw_o,
-    output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
-    input  logic [                  63:0] dat_rdata_hw_i,
+    input  dat_mem_sink_t                          dat_mem_sink_i,
+    output logic                                   dat_read_valid_hw_o,
+    output logic          [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
+    input  logic          [                  63:0] dat_rdata_hw_i,
 
     // DCT <-> Controller interface
     output logic                          dct_write_valid_hw_o,
@@ -125,7 +126,7 @@ module flow_active
 
     output i3c_irq_t irq_o
 );
-  localparam int IBIBufferDepthDwords = 3; // TODO:#95744 add a define in defines.svh to control this parameter
+  localparam int IBIBufferDepthDwords = `IBI_BUFFER_DEPTH;
 
   // Helper function to check if current CCC has payload or not
   function automatic logic has_payload(logic [7:0] ccc);
@@ -282,13 +283,18 @@ module flow_active
   logic err_handled_q, err_handled_d;
 
   // IBI signals
-  logic mdb_present, ibi_done;
+  logic ibi_abort, ibi_done;
   i3c_ibi_status_desc_t ibi_status_d, ibi_status_q;
   logic [  $clog2(IBIBufferDepthDwords)-1:0] ibi_dword_select;
   logic [$clog2((HciIbiDataWidth >> 3))-1:0] ibi_byte_select;
   logic [IBIBufferDepthDwords-1:0][(HciIbiDataWidth >> 3)-1:0][7:0] ibi_data_d, ibi_data_q;
   logic ibi_wb_d, ibi_wb_q;
   logic [5:0] ibi_wb_cnt_q, ibi_wb_cnt_d;  // max of 64 DWORDs can be sent per IBI
+
+  // RLT signals
+  logic [6:0] rlt_dynamic_address;
+  logic rlt_req, rlt_wreq, rlt_valid;
+  logic [$clog2(`DAT_DEPTH)-1:0] rlt_dat_index;
 
   assign ibi_dword_select = (transfer_cnt_q - 1) >> 2;
   assign ibi_byte_select  = (transfer_cnt_q - 1) & 2'b11;
@@ -383,9 +389,47 @@ module flow_active
     end
   end
 
-  assign dct_index_hw_o   = dct_index_q;
+  assign dct_index_hw_o = dct_index_q;
   assign dat_read_valid_d = dat_read_valid_hw_o;
   assign dct_read_valid_d = dct_read_valid_hw_o;
+
+  // dynamic address -> DAT index reverse lookup table
+  assign rlt_wreq = dat_mem_sink_i.req && dat_mem_sink_i.write && (&dat_mem_sink_i.wmask[22:16]);
+  // read request is valid 1 cycle after the request has been issued
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (~rst_ni) begin
+      rlt_valid <= 1'b0;
+    end else begin
+      rlt_valid <= rlt_req;
+    end
+  end
+  prim_ram_2p #(
+      .Width($clog2(`DAT_DEPTH)),
+      // The RLT has to have an entry for each 7-bit I3C address.
+      .Depth(128)
+  ) i_reverse_lookup_table (
+      .clk_a_i(clk_i),
+      .clk_b_i(clk_i),
+
+      // Write Port
+      .a_req_i(rlt_wreq),
+      .a_write_i(1'b1),
+      .a_addr_i(dat_mem_sink_i.wdata[22:16]), // dynamic address field of DAT entry without parity bit
+      .a_wdata_i(dat_mem_sink_i.addr),  // DAT index
+      .a_wmask_i('1),
+      .a_rdata_o(unused_a_rdata_o),
+
+      // Read Port
+      .b_req_i  (rlt_req),
+      .b_write_i(1'b0),
+      .b_addr_i (rlt_dynamic_address),
+      .b_wdata_i('0),
+      .b_wmask_i('0),
+      .b_rdata_o(rlt_dat_index),
+
+      .cfg_i('0),
+      .cfg_rsp_o(unused_cfg_rsp_o)
+  );
 
   // Capture command FIFO control signals
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -618,11 +662,13 @@ module flow_active
     icc_done = 1'b0;
     prev_cmd_toc_d = prev_cmd_toc_q;
     ibi_done = 1'b0;
-    mdb_present = 1'b1;
+    ibi_abort = 1'b0;
     ibi_status_d = ibi_status_q;
     ibi_data_d = ibi_data_q;
     ibi_wb_d = ibi_wb_q;
     ibi_wb_cnt_d = ibi_wb_cnt_q;
+    rlt_dynamic_address = '0;
+    rlt_req = 1'b0;
     ccc_last_trans = 1'b0;
     pio_transfer_err_stat = 1'b0;
     err_handled_d = 1'b0;
@@ -1420,21 +1466,32 @@ module flow_active
         fmt_flag_stop_after_o = 1'b0;
         fmt_flag_restart_after_o = 1'b0;
         ibi_data_d = ibi_data_q;
+        ibi_abort = dat_rdata.ibi_reject | ~dat_rdata.ibi_payload;
+        rlt_req = 1'b0;
         if (~ibi_wb_q) begin
           if (transfer_cnt_q == '0) begin
+            ibi_wb_cnt_d = '0;
             fmt_flag_read_bytes_o = 1'b1;  // read dynamic address
             fmt_bit_o = 1'b0;
-            if (~mdb_present) begin
-              fmt_flag_stop_after_o = 1'b1;
-              fmt_flag_read_bytes_o = 1'b0;
-              ibi_wb_d = 1'b1;
-            end
-            ibi_status_d.ibi_sts = 1'b0;  // TODO: #95757 change to 1'b1 if we NACK the IBI
-            ibi_status_d.error = 1'b0;  // TODO: #95757 change if HC terminates the IBI for any reason
+            ibi_status_d.ibi_sts = 1'b0;
+            ibi_status_d.error = 1'b0;
             ibi_status_d.status_type = RegularIBI;
             ibi_status_d.ts = 1'b0;
             ibi_status_d.last_status = 1'b1; // TODO: #95758 some IBIs require multiple IBI status desc according to HCI Spec
+            if (ibi_abort) begin
+              fmt_flag_stop_after_o = 1'b1;
+              fmt_flag_read_bytes_o = 1'b0;
+              fmt_bit_o = 1'b1;  // NACK the dynamic address
+              ibi_status_d.ibi_sts = 1'b1;
+              ibi_wb_d = fmt_fifo_rdone_i;
+            end
             ibi_status_d.ibi_id = fmt_flag_read_valid_i ? fmt_byte_i : ibi_status_q.ibi_id;
+            rlt_req = fmt_flag_read_valid_i;
+            rlt_dynamic_address = fmt_flag_read_valid_i ? 7'(fmt_byte_i >> 1) : 7'h0;
+            // Fetch DAT for next cycle
+            dat_index_hw_o = rlt_dat_index;
+            dat_read_valid_hw_o = rlt_valid;
+            transfer_cnt_en = fmt_fifo_rdone_i;
           end else begin
             if (transfer_cnt_q == (IBIBufferDepthDwords << 2)) begin
               fmt_flag_stop_after_o = 1'b1;
@@ -1500,7 +1557,6 @@ module flow_active
             end
           end
           Nack: begin
-            // TODO: implement
             if (use_ce2_error_handling_on_nack_q) begin
               fmt_flag_hdr_exit_o = 1'b1;
               if (fmt_fifo_rdone_i) begin

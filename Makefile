@@ -114,10 +114,10 @@ lint-tests: ## Run lint on tests source code
 	$(NOX) -f $(COCOTB_NOXFILE) -s lint
 
 lint-verilator:
-	verilator --timing -Wall --fourstate -Wno-FUTURE --lint-only -f $(I3C_ROOT_DIR)/src/i3c.f
+	verilator --timing -Wall --lint-only -f $(I3C_ROOT_DIR)/src/i3c.f
 
 build-verilator:
-	verilator --timing -Wall --fourstate -Wno-FUTURE --binary -f $(I3C_ROOT_DIR)/src/i3c.f
+	verilator --timing -Wall --binary -f $(I3C_ROOT_DIR)/src/i3c.f
 
 ################################################################################
 #

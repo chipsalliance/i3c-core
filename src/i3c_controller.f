@@ -20,9 +20,11 @@ ${CALIPTRA_ROOT}/src/axi/rtl/axi_if.sv
 ${CALIPTRA_ROOT}/src/axi/rtl/axi_addr.v
 ${CALIPTRA_ROOT}/src/libs/rtl/skidbuffer.v
 ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_1p_pkg.sv
+${I3C_ROOT_DIR}/src/libs/mem/prim_ram_2p_pkg.sv
 ${I3C_ROOT_DIR}/src/libs/mem/prim_generic_ram_1p.sv
 ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_1p_adv.sv
 ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_1p.sv
+${I3C_ROOT_DIR}/src/libs/mem/prim_ram_2p.sv
 ${I3C_ROOT_DIR}/src/csr/I3CCSR_pkg.sv
 ${I3C_ROOT_DIR}/src/ctrl/controller_pkg.sv
 ${I3C_ROOT_DIR}/src/i3c_pkg.sv

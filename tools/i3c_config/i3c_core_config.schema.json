@@ -87,6 +87,12 @@
             "description": "Extend the size of IBI Queue.\nIf set will assign the `IbiFifoDepth` * 8 size to the IBI Queue.",
             "type": "boolean"
         },
+        "IbiBufferDepth": {
+            "description": "Size of the IBI Buffer in flow_active.\nIf `IbiBufferDepth` is is defined as `IbiBufferDepth` DWORDs.\nOtherwise `IbiBufferDepth = 8`.",
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 256
+        },
         "DatDepth": {
             "description": "Maximum number of DAT entries.",
             "type": "integer",

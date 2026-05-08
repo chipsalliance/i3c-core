@@ -419,6 +419,7 @@ module i3c_controller_fsm
         if (fmt_flag_stop_after_i & bus_tx_done) begin  // Controller NACKed the IBI
           ibi_done = 1'b1;
         end
+        fmt_fifo_rdone_o = bus_tx_done;
       end
       Stop: begin
         received_nack_d = 1'b0;

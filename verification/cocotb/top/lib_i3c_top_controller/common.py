@@ -291,19 +291,7 @@ async def read_i3c(tb, addr_helper, target_len, device_address=0x50, toc=True, d
             tb.dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
     assert expected_val == actual_val
 
-async def check_ibi(tb, exp_payload, expect_err=False):
-    ibi_status_desc, ibi_payload = await tb.read_ibi(bus_idx=ACT_CONTROLLER_IDX)
-
-    # Checks
-    assert ibi_status_desc.error == 0, "IBI Error encountered"
-
-    for i, (expected, actual) in enumerate(zip(exp_payload, ibi_payload)):
-        if expected != actual:
-            tb.dut._log.error(f"Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
-    assert exp_payload == ibi_payload
-
-
-async def check_ibi(tb, exp_payload, target_dyn_address, expect_err=False):
+async def check_ibi(tb, exp_payload, target_dyn_address, expect_err=False, expect_reject=False):
     ibi_status_desc, ibi_payload = await tb.read_ibi(bus_idx=ACT_CONTROLLER_IDX)
 
     act_dyn_addr = (ibi_status_desc.ibi_id & 0xFE) >> 1
@@ -320,6 +308,9 @@ async def check_ibi(tb, exp_payload, target_dyn_address, expect_err=False):
             if expected != actual:
                 tb.dut._log.error(f"[Overflow Check] Mismatch at word {i}: Expected {expected:x} vs Received {actual:x}")
         assert truncated_expected == ibi_payload, "Truncated payload mismatch during overflow"
+
+    elif expect_reject:
+        assert ibi_status_desc.ibi_sts == 1, "Expected IBI Status to indicate NACK (1'b1)"
 
     else:
         # Standard success checks

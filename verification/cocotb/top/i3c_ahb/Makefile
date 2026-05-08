@@ -16,6 +16,6 @@ CFG_NAME     = ahb
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AHB $(PLUSARGS))
 
-EXTRA_ARGS += -f $(I3C_ROOT_DIR)/src/i3c.f $(I3C_ROOT_DIR)/verification/cocotb/top/lib_i3c_top/i3c_bus_harness.sv $(I3C_ROOT_DIR)/verification/cocotb/top/lib_i3c_top/i3c_test_wrapper.sv
+EXTRA_ARGS += -f $(FILELIST) $(I3C_ROOT_DIR)/verification/cocotb/top/lib_i3c_top/i3c_bus_harness.sv $(I3C_ROOT_DIR)/verification/cocotb/top/lib_i3c_top/i3c_test_wrapper.sv
 
 include $(TEST_DIR)/../top_common.mk

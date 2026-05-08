@@ -44,10 +44,9 @@ High-Level Block Diagram
     * **Read Frame:** Support for SDR Read transactions with and without `7'h7E` I3C address.
     * **Write Frame:** Support for SDR Write transactions with and without `7'h7E` I3C address.
 * **IBI Handling:** Detection and processing of In-Band Interrupts from Targets.
-* **(WIP) HDR Pattern Generation:**
+* **HDR Pattern Generation:**
     * **HDR Exit Pattern:** Logic to generate the specific sequence to exit High Data Rate modes (ensuring bus reset/compatibility).
-    * **HDR Restart Pattern:** Logic to generate the HDR Restart sequence.
-* **(WIP) Error Handling:** Target Error Detection and Escalation mechanisms.
+* **Error Handling:** Target Error Detection and Escalation mechanisms.
 
 ### Common Command Codes (CCC)
 
@@ -86,7 +85,18 @@ When configuring the DAA procedure, software developers must adhere to the follo
 The I3C Controller supports the detection and servicing of In-Band Interrupts (IBIs) initiated by target devices.
 The controller can recognize and process these interrupts whether they are raised during a Bus Available condition or during arbitrable address headers.
 
-When an IBI is processed, the controller writes the resulting data into the `PIOCONTROL.IBI_PORT` CSR.
+#### IBI Rejection and DAT Lookup
+Before accepting an IBI, the controller validates the request against the target's Device Address Table (DAT) entry.
+When a target drives its dynamic address onto the bus during an IBI request, the controller utilizes a **reverse lookup table** to quickly resolve this dynamic address back to the target's specific DAT index. 
+
+Once the corresponding DAT entry is retrieved, the controller checks its configuration fields to decide whether to acknowledge (ACK) or reject (NACK) the interrupt.
+The IBI is automatically rejected if the bitwise condition `IBI_REJECT | ~IBI_PAYLOAD` is met.
+Specifically:
+* **`IBI_REJECT`:** If this field is set (`1`), the controller explicitly rejects all IBI requests from this target.
+* **`~IBI_PAYLOAD`:** If the `IBI_PAYLOAD` field is clear (`0`), the controller will also reject the IBI, ensuring that targets not explicitly authorized to send payload data are denied.
+
+#### IBI Data Packing
+When an accepted IBI is processed, the controller writes the resulting data into the `PIOCONTROL.IBI_PORT` CSR.
 To ensure efficient reading by the host software, the IBI data is packed into the 32-bit port in the following sequence:
 
 1. **IBI Status Descriptor:** The first 32-bit word (DWORD) written to the port is always the IBI Status Descriptor. This descriptor contains vital metadata about the interrupt, including the `data_length` (in bytes) of the incoming payload as well as the dynamic address of the target issuing the IBI.
@@ -371,6 +381,10 @@ Flow Active FSM
   - output
   - `HciIbiDataWidth`
   - IBI FIFO write data
+* - `dat_mem_sink_i`
+  - input
+  - `dat_mem_sink_t`
+  - DAT memory interface
 * - `dat_read_valid_hw_o`
   - output
   - 1
@@ -459,7 +473,7 @@ Flow Active FSM
   - output
   - 1
   - Format flag: stop after
-* - `fmt_flag_read_continue_o`
+* - `fmt_flag_read_continuous_o`
   - output
   - 1
   - Format flag: read continue
@@ -491,6 +505,10 @@ Flow Active FSM
   - output
   - 1
   - Format flag: NAK OK
+* - `fmt_flag_hdr_exit_o`
+  - output
+  - 1
+  - Format flag: HDR exit
 * - `unhandled_unexp_nak_o`
   - output
   - 1
@@ -515,11 +533,27 @@ Flow Active FSM
   - output
   - 1
   - I3C FSM idle status
+* - `pio_rs_i`
+  - input
+  - 1
+  - PIO RS input
+* - `halt_on_cmd_seq_timeout_i`
+  - input
+  - 1
+  - Halt on command sequence timeout
+* - `resume_i`
+  - input
+  - 1
+  - HC_CONTROL.RESUME CSR field
+* - `abort_i`
+  - input
+  - 1
+  - HC_CONTROL.ABORT | PIO_CONTROL.ABORT CSR fields
 * - `err`
   - output
   - `i3c_err_t`
   - I3C Error structure
-* - `irq`
+* - `irq_o`
   - output
   - `i3c_irq_t`
   - I3C Interrupt structure
@@ -658,10 +692,6 @@ This module acts as the main controller of the I3C bus, handling the serializati
   - input
   - 1
   - Format FIFO read valid
-* - `fmt_fifo_depth_i`
-  - input
-  - `I2CFifoDepthWidth`
-  - Format FIFO depth
 * - `fmt_fifo_rready_o`
   - output
   - 1
@@ -710,7 +740,7 @@ This module acts as the main controller of the I3C bus, handling the serializati
   - input
   - 1
   - Format flag: read bytes
-* - `fmt_flag_read_continue_i`
+* - `fmt_flag_read_continuous_i`
   - input
   - 1
   - Format flag: read continue
@@ -718,6 +748,10 @@ This module acts as the main controller of the I3C bus, handling the serializati
   - output
   - 1
   - Format flag: read valid
+* - `fmt_flag_hdr_exit_i`
+  - input
+  - 1
+  - Format flag: HDR exit
 
 :::
 
@@ -936,12 +970,12 @@ This parameterized module provides standard wrapper for synchronous single-port 
 
 * - **DAT** (Device Address Table)
   - 64
-  - 128
-  - 1 KB
+  - 32
+  - 2 kbit
 
 * - **DCT** (Device Characteristic Table)
   - 128
-  - 128
-  - 2 KB
+  - 32
+  - 4 kbit
 
 :::

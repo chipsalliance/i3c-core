@@ -1,4 +1,3 @@
-// FIXME: add detailed description of tests using testbench/stimulus/check template
 {
   name: Controller IBI Handling
   testpoints:
@@ -32,7 +31,7 @@
       tags: ["top"]
     },
     {
-      name: controller_ibi_rejected
+      name: controller_ibi_buffer_overflow
       desc:
         '''
         Testbench:
@@ -54,6 +53,33 @@
           - Read the PIOCONTROL.IBI_PORT CSR to retreive the IBI Status Descriptor as well as the IBI Payload.
           - IBI Status Descriptor Error should be 1'b1 (aborted by controller).
           - The first IBIDataBuffer bytes of IBI Payload should match the MDB sent to the target as well as the optional IBI data bytes sent by the target.
+
+        '''
+      tests: ["controller_ibi_buffer_overflow"]
+      tags: ["top"]
+    },
+    {
+      name: controller_ibi_rejected
+      desc:
+        '''
+        Testbench:
+        I3C Controller (RTL) <-> I3C Target (RTL)
+
+        Intent:
+        Verify rejecting IBI as per 5.1.6.2 I3C Target Interrupt Request from I3C Basic Spec.
+
+        Stimulus:
+          - write a DAT entry for the target, setting the IBI_REJECT and IBI_PAYLOAD fields to 1'b1.
+          - write a Target IBI Descriptor to the Targets TTI.IBI_PORT register containing the MDB and optional IBI payloads.
+          - Enable generation of the I3C Broadcast Header before private reads and writes using the internal control command descriptor with the following fields set:
+            - mipi_cmd=0x2 // Broadcast Address Enable/Disable
+            - mipi_rsvd=0x1 // Broadcast Address Enable
+
+        Check:
+          - Read the PIOCONTROL.IBI_PORT CSR to retreive the IBI Status Descriptor as well as the IBI Payload.
+          - IBI Status Descriptor ID should contain the targets dynamic address.
+          - IBI Status Descriptor Error should be 1'b0.
+          - IBI Status Descriptor Status should be 1'b1 (NACK by Controller).
 
         '''
       tests: ["controller_ibi_rejected"]

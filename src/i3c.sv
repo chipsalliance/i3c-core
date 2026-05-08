@@ -751,6 +751,7 @@ module i3c
       .bus_addr_valid_o(rx_bus_addr_valid),
 `ifdef CONTROLLER_SUPPORT
       // DAT <-> Controller interface
+      .dat_mem_sink_i(dat_mem_sink_o),  // used for the dynamic address -> DAT index reverse lookup table
       .dat_read_valid_hw_o(dat_read_valid_hw),
       .dat_index_hw_o(dat_index_hw),
       .dat_rdata_hw_i(dat_rdata_hw),
