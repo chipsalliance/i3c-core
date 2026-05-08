@@ -290,7 +290,6 @@ def flow_standby_i2c_verify(session, test_group, test_name, coverage, simulator)
 def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
     verify_block(session, test_group, test_name, coverage, simulator)
 
-
 @nox.session(tags=["tests", "ahb"])
 @nox.parametrize("test_group", ["i3c_ahb"])
 @nox.parametrize(
@@ -310,13 +309,13 @@ def i2c_target_fsm_verify(session, test_group, test_name, coverage, simulator):
         "test_ibi_multi_queue",
         "test_te_errors",
         "test_tsco_violation",
+        "test_interrupt_toggles",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
 @nox.parametrize("simulator", simulators)
 def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
     verify_top(session, test_group, test_name, coverage, simulator)
-
 
 @nox.session(tags=["tests", "axi"])
 @nox.parametrize("test_group", ["i3c_axi"])
@@ -337,6 +336,7 @@ def i3c_ahb_verify(session, test_group, test_name, coverage, simulator):
         "test_ibi_multi_queue",
         "test_te_errors",
         "test_tsco_violation",
+        "test_interrupt_toggles",
     ],
 )
 @nox.parametrize("coverage", coverage_types)
