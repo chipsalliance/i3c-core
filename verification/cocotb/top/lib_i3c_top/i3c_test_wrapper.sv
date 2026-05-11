@@ -115,7 +115,7 @@ logic clk_i;
 logic rst_ni;
 
 `ifdef I3C_USE_AHB
-assign clk_i = hclk;
+assign clk_i = ~hclk;
 assign rst_ni = hreset_n;
 `elsif I3C_USE_AXI
 assign clk_i = aclk;

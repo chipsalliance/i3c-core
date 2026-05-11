@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // This wrapper module provides compliance to cocotb-AHB
 // AHB signal naming convention
+
+`include "ahb_slv_sif.sv"
+
 module ahb_if_wrapper
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
@@ -47,7 +50,7 @@ module ahb_if_wrapper
       .AhbDataWidth(AhbDataWidth),
       .AhbAddrWidth(AhbAddrWidth)
   ) i3c_ahb_if (
-      .hclk_i(hclk),
+      .hclk_i(~hclk),
       .hreset_n_i(hreset_n),
       .haddr_i(haddr),
       .hburst_i(hburst),
@@ -83,7 +86,7 @@ module ahb_if_wrapper
 
   // Connect to I3C CSRs to test SW access
   I3CCSR i3c_csr (
-      .clk(hclk),
+      .clk(~hclk),
       .rst(~hreset_n),
 
       .s_cpuif_req(s_cpuif_req),
