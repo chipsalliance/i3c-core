@@ -124,6 +124,7 @@ module i3c_wrapper #(
     output irq_o
 );
 
+`ifdef CONTROLLER_SUPPORT
   // DAT memory export interface
   i3c_pkg::dat_mem_src_t dat_mem_src;
   i3c_pkg::dat_mem_sink_t dat_mem_sink;
@@ -131,6 +132,7 @@ module i3c_wrapper #(
   // DCT memory export interface
   i3c_pkg::dct_mem_src_t dct_mem_src;
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
+`endif // CONTROLLER_SUPPORT
 
   i3c #(
 `ifdef I3C_USE_AHB
@@ -224,11 +226,13 @@ module i3c_wrapper #(
       .i3c_sda_oe_o(sda_oe),
       .sel_od_pp_o (sel_od_pp_o),
 
+`ifdef CONTROLLER_SUPPORT
       .dat_mem_src_i (dat_mem_src),
       .dat_mem_sink_o(dat_mem_sink),
 
       .dct_mem_src_i (dct_mem_src),
       .dct_mem_sink_o(dct_mem_sink),
+`endif // CONTROLLER_SUPPORT
 
       .recovery_payload_available_o(recovery_payload_available_o),
       .recovery_image_activated_o  (recovery_image_activated_o),
@@ -239,6 +243,7 @@ module i3c_wrapper #(
       .irq_o
   );
 
+`ifdef CONTROLLER_SUPPORT
   prim_ram_1p_adv #(
       .Depth(`DAT_DEPTH),
       .Width(64),
@@ -274,6 +279,7 @@ module i3c_wrapper #(
       .rerror_o(dct_mem_src.rerror),  // Unused
       .cfg_i('0)  // Unused
   );
+`endif // CONTROLLER_SUPPORT
 
 
   assign scl_oe = 1'b0;

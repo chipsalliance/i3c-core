@@ -18,6 +18,23 @@ export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/common
 COMMON_SOURCES += $(TEST_DIR)/sim_build/i3c_config.vh
 
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
+# Add target & controller specific sources
+TGT_FLAG = +TargetSupport
+CTRL_FLAG = +ControllerSupport
+ifeq ($(findstring $(TGT_FLAG),$(PLUSARGS)),$(TGT_FLAG))
+    VERILOG_SOURCES := $(VERILOG_SOURCES) $(VERILOG_TARGET_SOURCES)
+endif
+ifeq ($(findstring $(CTRL_FLAG),$(PLUSARGS)),$(CTRL_FLAG))
+    VERILOG_SOURCES := $(VERILOG_SOURCES) $(VERILOG_CONTROLLER_SOURCES)
+endif
+
+# None of the plusargs has been specified, add all sources to ensure proper execution
+ifneq ($(findstring $(TGT_FLAG),$(PLUSARGS)),$(TGT_FLAG))
+    ifneq ($(findstring $(CTRL_FLAG),$(PLUSARGS)),$(CTRL_FLAG))
+        VERILOG_SOURCES := $(VERILOG_SOURCES) $(VERILOG_TARGET_SOURCES) $(VERILOG_CONTROLLER_SOURCES)
+    endif
+endif
+
 VERILOG_SOURCES := $(COMMON_SOURCES) $(VERILOG_SOURCES)
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
 

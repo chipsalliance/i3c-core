@@ -17,6 +17,8 @@ ahb:
   FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
   DisableInputFF: False
+  ControllerSupport: False
+  TargetSupport: True
 
 axi:
   CmdFifoDepth: 64
@@ -36,6 +38,29 @@ axi:
   NumPrivIds: 4
   DisableInputFF: False
   DisableLoopback: True
+  ControllerSupport: False
+  TargetSupport: True
+
+axi_hci:
+  CmdFifoDepth: 64
+  RxFifoDepth: 64
+  TxFifoDepth: 64
+  RespFifoDepth: 64
+  IbiFifoDepth: 64
+  IbiFifoExtSize: False
+  DatDepth: 128
+  DctDepth: 128
+  FrontendBusInterface: "AXI"
+  FrontendBusAddrWidth: 12
+  FrontendBusDataWidth: 32
+  FrontendBusUserWidth: 32
+  FrontendBusIdWidth: 8
+  FrontendBusIdFiltering: True
+  NumPrivIds: 4
+  DisableInputFF: False
+  DisableLoopback: True
+  ControllerSupport: True
+  TargetSupport: True
 
 axi_bypass:
   CmdFifoDepth: 64
@@ -54,4 +79,6 @@ axi_bypass:
   FrontendBusIdFiltering: True
   NumPrivIds: 4
   DisableInputFF: False
+  ControllerSupport: False
+  TargetSupport: True
 

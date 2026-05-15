@@ -333,15 +333,14 @@ async def test_basic_burst_write(dut):
     await tb.teardown()
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_dat_csr_access(dut):
     tb = await initialize(dut)
     await run_basic_csr_access(tb, tb.reg_map.DAT)
 
     await tb.teardown()
 
-
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_dct_csr_access(dut):
     exceptions = [
         "DCT_MEMORY",  # Out-of-use
@@ -351,8 +350,7 @@ async def test_dct_csr_access(dut):
 
     await tb.teardown()
 
-
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_base_csr_access(dut):
     exceptions = [
         "RESET_CONTROL",
@@ -374,8 +372,7 @@ async def test_base_csr_access(dut):
 
     await tb.teardown()
 
-
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_pio_csr_access(dut):
     exceptions = [
         "RESPONSE_PORT",

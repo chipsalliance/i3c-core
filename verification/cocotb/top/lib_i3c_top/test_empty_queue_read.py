@@ -206,9 +206,8 @@ async def test_normal_read_empty_all_queues(dut):
     dut._log.info("INDIRECT_FIFO_DATA read OK")
 
     # Verify a normal CSR read still works after all the external reads
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X}"
     dut._log.info("Post-read HCI_VERSION check OK -- AXI bus is not deadlocked")
 
 
@@ -299,9 +298,8 @@ async def test_recovery_read_empty_all_queues(dut):
     dut._log.info("INDIRECT_FIFO_DATA read OK")
 
     # Verify a normal CSR read still works -- proves AXI bus is alive
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X}"
     dut._log.info("Post-read HCI_VERSION check OK -- AXI bus is not deadlocked")
 
 
@@ -351,9 +349,8 @@ async def test_concurrent_recovery_xfer_and_rx_desc_read(dut):
     await Combine(i3c_task, axi_task)
 
     # Verify AXI bus is still alive
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X}"
     dut._log.info("AXI bus alive after concurrent recovery + RX_DESC read")
 
     await tb.teardown()
@@ -391,9 +388,8 @@ async def test_concurrent_recovery_xfer_and_tx_desc_write(dut):
     await Combine(i3c_task, axi_task)
 
     # Verify AXI bus is still alive
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X}"
     dut._log.info("AXI bus alive after concurrent recovery + TX_DESC write")
 
     await tb.teardown()
@@ -446,9 +442,8 @@ async def test_concurrent_recovery_xfer_and_all_queue_access(dut):
     await Combine(i3c_task, axi_task)
 
     # Verify AXI bus is still alive
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X}"
     dut._log.info("AXI bus alive after concurrent recovery + all queue access")
 
 
@@ -555,9 +550,8 @@ async def test_recovery_write_rx_data_observation(dut):
     # (8-bit to 32-bit width conversion buffer). No assertion on rx_data_seen count.
 
     # Verify AXI bus is still alive
-    hci_version = dword2int(await tb.read_csr(
-        tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert hci_version == 0x120, f"HCI_VERSION: expected 0x120, got 0x{hci_version:X}"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X} after"
     dut._log.info("AXI bus alive after recovery write + RX observation")
 
     await tb.teardown()

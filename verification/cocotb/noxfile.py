@@ -61,11 +61,16 @@ if os.getenv("TEST_COVERAGE_ENABLE", "0") == "1":
 else:
     coverage_types = None
 
+i3c_root = os.getenv("I3C_ROOT_DIR")
+
 
 def _verify(session, test_group, test_type, test_name, coverage=None, simulator=None):
     # session.install("-r", pip_requirements_path)
-
     test_iterations = int(os.getenv("TEST_ITERATIONS", 1))
+    target_support = (os.getenv("TARGET_SUPPORT", "1") == "1")
+    controller_support = (os.getenv("CONTROLLER_SUPPORT", "0") == "1")
+
+
     for i in range(test_iterations):
         pfx = "" if test_iterations == 1 else f"_{i}"
         test = VerificationTest(test_group, test_type, test_name, coverage, pfx)
@@ -83,6 +88,19 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
             if simulator == "vcs" and i > 0:
                 shutil.rmtree(os.path.join(test.testPath, test.sim_build))
 
+            filelist = None
+
+            if target_support:
+                plusargs.extend(["+TargetSupport"])
+                filelist = f"{i3c_root}/src/i3c_target.f"
+
+            if controller_support:
+                plusargs.extend(["+ControllerSupport"])
+                filelist = f"{i3c_root}/src/i3c_controller.f"
+
+            if controller_support and target_support:
+                filelist = f"{i3c_root}/src/i3c.f"
+
             args = [
                 sim_repeater_path(),
                 "make",
@@ -91,6 +109,7 @@ def _verify(session, test_group, test_type, test_name, coverage=None, simulator=
                 "all",
                 "MODULE=" + test_name,
                 "COCOTB_RESULTS_FILE=" + test.filenames["xml"],
+                "FILELIST=" + filelist,
             ]
 
             if simulator == "verilator":

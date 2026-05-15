@@ -104,6 +104,7 @@ module ahb_if_wrapper
   );
 
   always_comb begin : missing_csr_we_inits
+`ifdef CONTROLLER_SUPPORT
     hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
     hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
     hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
@@ -118,11 +119,13 @@ module ahb_if_wrapper
     hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = 0;
     hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = 0;
+`endif // CONTROLLER_SUPPORT
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
+`ifdef TARGET_SUPPORT
     hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
     hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we = 0;
     hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we = 0;
@@ -132,6 +135,7 @@ module ahb_if_wrapper
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.we = 0;
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.we = 0;
     hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
+`endif // TARGET_SUPPORT
     hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
   end : missing_csr_we_inits
 
@@ -139,22 +143,28 @@ module ahb_if_wrapper
     hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.hwclr = 0;
 
     // Unhandled wr/rd_ack (drivers are not included in this wrapper)
+`ifdef CONTROLLER_SUPPORT
     hwif_in.PIOControl.COMMAND_PORT.wr_ack = 0;
     hwif_in.PIOControl.RESPONSE_PORT.rd_ack = 0;
     hwif_in.PIOControl.TX_DATA_PORT.wr_ack = 0;
     hwif_in.PIOControl.RX_DATA_PORT.rd_ack = 0;
     hwif_in.PIOControl.IBI_PORT.rd_ack = 0;
+`endif // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
     hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack = 0;
     hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack = 0;
     hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = 0;
     hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = 0;
     hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = '0;
+`endif // TARGET_SUPPORT
 
     // Unhandled wr/rd_ack (drivers are mising)
+`ifdef CONTROLLER_SUPPORT
     hwif_in.DAT.rd_ack = 0;
     hwif_in.DAT.wr_ack = 0;
     hwif_in.DCT.rd_ack = 0;
     hwif_in.DCT.wr_ack = 0;
+`endif // CONTROLLER_SUPPORT
   end : other_uninit_signals
 endmodule

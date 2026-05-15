@@ -77,8 +77,8 @@ async def test_full_tx_desc_write(dut):
             assert i + 1 == depth, "Transaction did not increase queue depth"
 
     # Bus must not stall — verify it's still responsive
-    data = dword2int(await tb.read_csr(tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert data == 0x120, f"Bus stalled: HCI_VERSION read returned 0x{data:X} after {TRANSACTION_COUNT} TX_DESC writes"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X} after {TRANSACTION_COUNT} TX_DESC writes"
 
     assert await tb.read_csr_field(QSTAT.base_addr, QSTAT.TX_DESC_QUEUE_FULL) == 1, "Queue is not full"
 
@@ -100,8 +100,8 @@ async def test_full_tx_data_write(dut):
             assert i == depth + 1, "Transaction did not increase queue depth"
 
     # Bus must not stall — verify it's still responsive
-    data = dword2int(await tb.read_csr(tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert data == 0x120, f"Bus stalled: HCI_VERSION read returned 0x{data:X} after {TRANSACTION_COUNT} TX_DATA writes"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X} after {TRANSACTION_COUNT} TX_DESC writes"
 
     assert await tb.read_csr_field(QSTAT.base_addr, QSTAT.TX_DATA_QUEUE_FULL) == 1, "Queue is not full"
 
@@ -123,8 +123,8 @@ async def test_full_ibi_write(dut):
             assert i + 1 == depth, "Transaction did not increase queue depth"
 
     # Bus must not stall — verify it's still responsive
-    data = dword2int(await tb.read_csr(tb.reg_map.I3CBASE.HCI_VERSION.base_addr, 4))
-    assert data == 0x120, f"Bus stalled: HCI_VERSION read returned 0x{data:X} after {TRANSACTION_COUNT} IBI writes"
+    data = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr, 4))
+    assert data == 0x40C4, f"Bus stalled: TTI EXTCAP_HEADER read returned 0x{data:X} after {TRANSACTION_COUNT} TX_DESC writes"
 
     assert await tb.read_csr_field(QSTAT.base_addr, QSTAT.IBI_QUEUE_FULL) == 1, "Queue is not full"
 

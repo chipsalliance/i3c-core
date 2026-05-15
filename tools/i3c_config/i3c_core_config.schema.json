@@ -3,6 +3,8 @@
     "description": "Specifies the configuration for the I3C core",
     "type": "object",
     "required": [
+        "ControllerSupport",
+        "TargetSupport",
         "CmdFifoDepth",
         "RespFifoDepth",
         "RxFifoDepth",
@@ -15,6 +17,14 @@
     ],
     "additionalProperties": false,
     "properties": {
+        "ControllerSupport": {
+            "description": "Includes controller functionality of the I3C core.",
+            "type": "boolean"
+        },
+        "TargetSupport": {
+            "description": "Includes target device functionality of the I3C core.",
+            "type": "boolean"
+        },
         "CmdFifoDepth": {
             "description": "Size of the HCI Command Queue in entries.\nEach command descriptor is a size of 2 DWORDs.",
             "type": "integer",

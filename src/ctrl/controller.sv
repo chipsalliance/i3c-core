@@ -12,6 +12,7 @@ module controller
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
 
+`ifdef CONTROLLER_SUPPORT,
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
     parameter int unsigned HciRxFifoDepth   = 64,
@@ -35,7 +36,8 @@ module controller
     parameter int unsigned HciRxThldWidth   = 3,
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
-
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
     parameter int unsigned TtiRxDescFifoDepth = 64,
     parameter int unsigned TtiTxDescFifoDepth = 64,
     parameter int unsigned TtiRxFifoDepth = 64,
@@ -59,6 +61,7 @@ module controller
     parameter int unsigned TtiRxThldWidth = 3,
     parameter int unsigned TtiTxThldWidth = 3,
     parameter int unsigned TtiIbiThldWidth = 8
+`endif  // TARGET_SUPPORT
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -71,6 +74,7 @@ module controller
     output logic sel_od_pp_o,
     input logic arbitration_lost_i,
 
+`ifdef CONTROLLER_SUPPORT
     // HCI queues
     // Command FIFO
     input logic hci_cmd_queue_full_i,
@@ -122,7 +126,8 @@ module controller
     output logic hci_ibi_queue_wvalid_o,
     input logic hci_ibi_queue_wready_i,
     output logic [HciIbiDataWidth-1:0] hci_ibi_queue_wdata_o,
-
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
     // Target Transaction Interface
 
     // TTI: RX Descriptor
@@ -185,7 +190,8 @@ module controller
     input logic tti_ibi_queue_rvalid_i,
     output logic tti_ibi_queue_rready_o,
     input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_i,
-
+`endif  // TARGET_SUPPORT
+`ifdef CONTROLLER_SUPPORT
     // DAT <-> Controller interface
     output logic             dat_read_valid_hw_o,
     output logic [DatAw-1:0] dat_index_hw_o,
@@ -197,6 +203,7 @@ module controller
     output logic [DctAw-1:0] dct_index_hw_o,
     output logic [    127:0] dct_wdata_hw_o,
     input  logic [    127:0] dct_rdata_hw_i,
+`endif // CONTROLLER_SUPPORT
 
     // I2C/I3C Bus condition detection
     output logic bus_start_o,
@@ -460,6 +467,7 @@ module controller
 
   assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
 
+`ifdef CONTROLLER_SUPPORT
   // Active controller
   controller_active xcontroller_active (
     .clk_i(clk_i),
@@ -537,7 +545,20 @@ module controller
     .t_bus_idle_i(t_bus_idle),
     .t_bus_available_i(t_bus_available)
   );
-
+`else
+always_comb begin
+  err = '0;
+  irq = '0;
+  ctrl_scl_o[0] = 1'b1;
+  ctrl_scl_o[1] = 1'b1;
+  ctrl_sda_o[0] = 1'b1;
+  ctrl_sda_o[1] = 1'b1;
+  ctrl_sel_od_pp_i[0] = 1'b0;
+  ctrl_sel_od_pp_i[1] = 1'b0;
+  i3c_fsm_idle_o = 1'b1;
+end
+`endif  // CONTROLLER_SUPPORT
+`ifdef TARGET_SUPPORT
   // Standby (Secondary) Controller
   controller_standby xcontroller_standby (
     .clk_i,
@@ -690,5 +711,15 @@ module controller
     .xfer_in_progress_o,
     .in_hdr_mode_o
   );
+`else
+always_comb begin
+  ctrl_scl_o[2] = 1'b1;
+  ctrl_scl_o[3] = 1'b1;
+  ctrl_sda_o[2] = 1'b1;
+  ctrl_sda_o[3] = 1'b1;
+  ctrl_sel_od_pp_i[2] = 1'b0;
+  ctrl_sel_od_pp_i[3] = 1'b0;
+end
+`endif  // TARGET_SUPPORT
 
 endmodule

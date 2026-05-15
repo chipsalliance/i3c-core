@@ -41,42 +41,6 @@ module axi_csr_tracker (
   function automatic string addr_to_name(input logic [11:0] addr, input logic is_wr);
     string csr_name;
     case (addr)
-      // I3CBASE
-      12'h000: csr_name = "I3CBASE.HCI_VERSION";
-      12'h004: csr_name = "I3CBASE.HC_CONTROL";
-      12'h008: csr_name = "I3CBASE.CONTROLLER_DEVICE_ADDR";
-      12'h00C: csr_name = "I3CBASE.HC_CAPABILITIES";
-      12'h010: csr_name = "I3CBASE.RESET_CONTROL";
-      12'h014: csr_name = "I3CBASE.PRESENT_STATE";
-      12'h020: csr_name = "I3CBASE.INTR_STATUS";
-      12'h024: csr_name = "I3CBASE.INTR_STATUS_ENABLE";
-      12'h028: csr_name = "I3CBASE.INTR_SIGNAL_ENABLE";
-      12'h02C: csr_name = "I3CBASE.INTR_FORCE";
-      12'h030: csr_name = "I3CBASE.DAT_SECTION_OFFSET";
-      12'h034: csr_name = "I3CBASE.DCT_SECTION_OFFSET";
-      12'h038: csr_name = "I3CBASE.RING_HEADERS_SECTION_OFFSET";
-      12'h03C: csr_name = "I3CBASE.PIO_SECTION_OFFSET";
-      12'h040: csr_name = "I3CBASE.EXT_CAPS_SECTION_OFFSET";
-      12'h04C: csr_name = "I3CBASE.INT_CTRL_CMDS_EN";
-      12'h058: csr_name = "I3CBASE.IBI_NOTIFY_CTRL";
-      12'h05C: csr_name = "I3CBASE.IBI_DATA_ABORT_CTRL";
-      12'h060: csr_name = "I3CBASE.DEV_CTX_BASE_LO";
-      12'h064: csr_name = "I3CBASE.DEV_CTX_BASE_HI";
-      12'h068: csr_name = "I3CBASE.DEV_CTX_SG";
-      // PIOCONTROL
-      12'h100: csr_name = "PIOCONTROL.COMMAND_PORT";
-      12'h104: csr_name = "PIOCONTROL.RESPONSE_PORT";
-      12'h108: csr_name = is_wr ? "PIOCONTROL.TX_DATA_PORT" : "PIOCONTROL.RX_DATA_PORT";
-      12'h10C: csr_name = "PIOCONTROL.IBI_PORT";
-      12'h110: csr_name = "PIOCONTROL.QUEUE_THLD_CTRL";
-      12'h114: csr_name = "PIOCONTROL.DATA_BUFFER_THLD_CTRL";
-      12'h118: csr_name = "PIOCONTROL.QUEUE_SIZE";
-      12'h11C: csr_name = "PIOCONTROL.ALT_QUEUE_SIZE";
-      12'h120: csr_name = "PIOCONTROL.PIO_INTR_STATUS";
-      12'h124: csr_name = "PIOCONTROL.PIO_INTR_STATUS_ENABLE";
-      12'h128: csr_name = "PIOCONTROL.PIO_INTR_SIGNAL_ENABLE";
-      12'h12C: csr_name = "PIOCONTROL.PIO_INTR_FORCE";
-      12'h130: csr_name = "PIOCONTROL.PIO_CONTROL";
       // I3C_EC
       12'h200: csr_name = "I3C_EC.SECFWRECOVERYIF.EXTCAP_HEADER";
       12'h204: csr_name = "I3C_EC.SECFWRECOVERYIF.PROT_CAP_0";
@@ -186,8 +150,6 @@ module axi_csr_tracker (
       12'h660: csr_name = "I3C_EC.SOCMGMTIF.T_HDR_TIMEOUT_REG";
       12'h6D0: csr_name = "I3C_EC.CTRLCFG.EXTCAP_HEADER";
       12'h6D4: csr_name = "I3C_EC.CTRLCFG.CONTROLLER_CONFIG";
-      // DAT
-      12'h800: csr_name = "DAT.DAT_MEMORY";
 
       default: begin
         // DAT memory range (0x800–0xBFF)

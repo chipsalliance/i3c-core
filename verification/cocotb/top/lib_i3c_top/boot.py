@@ -70,7 +70,7 @@ async def boot_init(
 
     Standby Controller Mode by default, TODO: add Active Controller Mode procedure
     """
-    core_config = await common_procedure(tb)  # noqa
+    #core_config = await common_procedure(tb)  # noqa # FUTUREFIX: add active controller mode
 
     # Write configuration to the device
 
@@ -318,11 +318,12 @@ async def umbrella_stby_init(
     )
 
     # Enable bus
-    await tb.write_csr_field(
-        tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
-        tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
-        1,
-    )
+    # FUTUREFIX: implement active controller
+    #await tb.write_csr_field(
+    #    tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
+    #    tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
+    #    1,
+    #)
 
     # Check if CSRs have been set properly
     if verify:
