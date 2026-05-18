@@ -2,7 +2,7 @@
   SPDX-License-Identifier: Apache-2.0
 
   This module controls the low-level aspects of the SDA transmit data flow on the I3C bus. It drives
-  the both the data value and the drive mode (OpenDrain or PushPull) of the SDA pad.
+  both the data value and the drive mode (OpenDrain or PushPull) of the SDA pad.
   Note: No logic apart from static and guaranteed glitch-free muxing must be inserted between this
         module and the physical SDA pad!
 
