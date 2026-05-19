@@ -110,7 +110,7 @@ module csri
 
   // Update Standby Controller mode based on the controller configuration status
   always_comb begin : wire_hwif_rstact
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_valid_i ? rst_action_i : '0;
+    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next = rst_action_valid_i ? rst_action_i : 9'h1;
   end
 
   // Update Standby Controller mode based on the controller configuration status
