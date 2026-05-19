@@ -106,7 +106,7 @@ module configuration (
   assign resume = hwif_out_i.I3CBase.HC_CONTROL.RESUME.value;
   assign abort = hwif_out_i.I3CBase.HC_CONTROL.ABORT.value;
 `else
-  assign bus_enable = 1'b1;
+  assign bus_enable = hwif_out_i.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
   assign resume = '0;
   assign abort = '0;
 `endif // CONTROLLER_SUPPORT
