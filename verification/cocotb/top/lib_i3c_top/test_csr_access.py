@@ -589,7 +589,7 @@ async def test_write_stall(dut):
     ITERS = 10
     for i in range(ITERS):
         stall_cycles = random.randint(1, 20)
-        test_data = csr_access_test_data(tb.reg_map.I3CBASE, skip_regs=["RESET_CONTROL"])
+        test_data = csr_access_test_data(tb.reg_map.I3C_EC.SOCMGMTIF, skip_regs=["REC_INTF_REG_W1C_ACCESS"])
         reg_name, addr, wdata, exp_rd = random.choice(test_data)
 
         b_channel.pause = True
@@ -627,9 +627,10 @@ async def test_read_stall(dut):
 
     r_channel = tb.busIf.axi_m.read_if.r_channel
 
-    # HCI_VERSION is read-only with a fixed reset value — safe to read repeatedly
-    addr = tb.reg_map.I3CBASE.HCI_VERSION.base_addr
-    expected = 0x120
+    # TTI EXTCAP_HEADER is read-only with a fixed reset value — safe to read repeatedly
+    addr = tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr
+    expected = 0x40C4
+
 
     ITERS = 10
     for i in range(ITERS):
@@ -646,7 +647,7 @@ async def test_read_stall(dut):
         rd_data = bytes2int(await read_task)
 
         assert rd_data == expected, (
-            f"iter {i}: HCI_VERSION expected 0x{expected:X}, got 0x{rd_data:X}")
+            f"iter {i}: TTI EXTCAP_HEADER expected 0x{expected:X}, got 0x{rd_data:X}")
 
     await tb.teardown()
 
@@ -669,8 +670,8 @@ async def test_write_b_channel_skid_full(dut):
 
     b_channel = tb.busIf.axi_m.write_if.b_channel
 
-    test_data = csr_access_test_data(tb.reg_map.I3CBASE, skip_regs=["RESET_CONTROL"])
-    assert len(test_data) >= 4, "Need at least 4 writable registers in I3CBASE"
+    test_data = csr_access_test_data(tb.reg_map.I3C_EC.SOCMGMTIF)
+    assert len(test_data) >= 4, "Need at least 4 writable registers in SOCMGMTIF"
     (reg1_name, addr1, wdata1, exp_rd1) = test_data[0]
     (reg2_name, addr2, wdata2, exp_rd2) = test_data[1]
     (reg3_name, addr3, wdata3, exp_rd3) = test_data[2]
@@ -741,9 +742,9 @@ async def test_read_r_channel_skid_full(dut):
 
     r_channel = tb.busIf.axi_m.read_if.r_channel
 
-    # HCI_VERSION is read-only with a fixed reset value — safe to read repeatedly
-    addr = tb.reg_map.I3CBASE.HCI_VERSION.base_addr
-    expected = 0x120
+    # TTI EXTCAP_HEADER is read-only with a fixed reset value — safe to read repeatedly
+    addr = tb.reg_map.I3C_EC.TTI.EXTCAP_HEADER.base_addr
+    expected = 0x40C4
 
     r_channel.pause = True
     read_task_0 = cocotb.start_soon(tb.read_csr(addr, 4))
