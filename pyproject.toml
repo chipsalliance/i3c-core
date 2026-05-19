@@ -122,7 +122,7 @@ members = [
 cocotb-ahb = { git = "https://github.com/antmicro/cocotb-ahb", rev = "964eca08f2b524e68af9e002e48812649bc9308c" }
 peakrdl-cocotb = { workspace = true }
 cocotbext-i2c = { git = "https://github.com/alexforencich/cocotbext-i2c", rev = "e5f4aa040e3c3ce2d7deced7caabfa91321d036a" }
-testplanner = { git = "https://github.com/antmicro/testplanner", rev = "54b6870a1b9c1518269beafe5dfd1465a9eddae6" }
+testplanner = { git = "https://github.com/antmicro/testplanner", rev = "b07af31b272d8df8304b8c27dc7e6efbcee66fc6" }
 cocotbext-i3c = { workspace = true }
 nox-utils = { workspace = true }
 cocotb-helpers = { workspace = true }

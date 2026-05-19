@@ -614,7 +614,7 @@ requires-dist = [
     { name = "smmap", specifier = "==5.0.1" },
     { name = "stack-data", specifier = "==0.6.3" },
     { name = "systemrdl-compiler", specifier = "==1.27.3" },
-    { name = "testplanner", git = "https://github.com/antmicro/testplanner?rev=54b6870a1b9c1518269beafe5dfd1465a9eddae6" },
+    { name = "testplanner", git = "https://github.com/antmicro/testplanner?rev=b07af31b272d8df8304b8c27dc7e6efbcee66fc6" },
     { name = "tornado", specifier = "==6.4.1" },
     { name = "traitlets", specifier = "==5.14.3" },
     { name = "typing-extensions", specifier = "==4.12.2" },
@@ -1457,7 +1457,7 @@ wheels = [
 [[package]]
 name = "testplanner"
 version = "0.0.1"
-source = { git = "https://github.com/antmicro/testplanner?rev=54b6870a1b9c1518269beafe5dfd1465a9eddae6#54b6870a1b9c1518269beafe5dfd1465a9eddae6" }
+source = { git = "https://github.com/antmicro/testplanner?rev=b07af31b272d8df8304b8c27dc7e6efbcee66fc6#b07af31b272d8df8304b8c27dc7e6efbcee66fc6" }
 dependencies = [
     { name = "bs4" },
     { name = "gitpython" },
