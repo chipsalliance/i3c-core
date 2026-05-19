@@ -1657,11 +1657,11 @@ async def test_bypass_to_normal_mode_switch(dut):
 
     # Disable PHY
     base = dword2int(
-        await tb.read_csr(tb.reg_map.I3CBASE.HC_CONTROL.base_addr, 4)
+        await tb.read_csr(tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.base_addr, 4)
     )
-    base = base & (~tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE.mask)
+    base = base & (~tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.INPUT_ENABLE.mask)
     await tb.write_csr(
-        tb.reg_map.I3CBASE.HC_CONTROL.base_addr, int2dword(base), 4
+        tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.base_addr, int2dword(base), 4
     )
 
     fifo_size = dword2int(
@@ -1723,11 +1723,11 @@ async def test_bypass_to_normal_mode_switch(dut):
 
     # Enable PHY
     base = dword2int(
-        await tb.read_csr(tb.reg_map.I3CBASE.HC_CONTROL.base_addr, 4)
+        await tb.read_csr(tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.base_addr, 4)
     )
-    base = base | tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE.mask
+    base = base | tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.INPUT_ENABLE.mask
     await tb.write_csr(
-        tb.reg_map.I3CBASE.HC_CONTROL.base_addr, int2dword(base), 4
+        tb.reg_map.I3C_EC.SOCMGMTIF.SOC_PAD_CONF.base_addr, int2dword(base), 4
     )
 
     # Do some traffic

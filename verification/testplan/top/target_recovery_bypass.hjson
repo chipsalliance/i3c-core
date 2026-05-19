@@ -101,7 +101,7 @@
       name: bypass_to_i3c_switch
       desc: '''
             Boot the core in bypass mode and perform AXI recovery flow. During AXI recovery
-            send random I3C traffic and assert all I3C packets are ACKed.
+            send random I3C traffic and assert all I3C packets are NACKed. 
             Switch to I3C mode and send regular I3C traffic, make sure it is handled correctly.
             The test should cover corner cases where the switch happens in the middle of an I3C transaction.
             '''
