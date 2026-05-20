@@ -212,7 +212,7 @@ module axi_adapter
 
       // Component interface
       .dv(i3c_req_dv),
-      .addr(i3c_req_addr),
+      .addr(i3c_req_addr[CsrAddrWidth-1:0]),
       .write(i3c_req_write),
       .user(i3c_req_user),
       .id(i3c_req_id),
