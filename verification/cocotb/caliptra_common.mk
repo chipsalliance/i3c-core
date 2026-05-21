@@ -1,4 +1,4 @@
-CALIPTRA_SOURCES = \
+CALIPTRA_SOURCES := \
 	$(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_pkg.sv \
 	$(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_util_pkg.sv \
 	$(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert.sv \
