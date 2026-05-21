@@ -17,7 +17,7 @@ TOPLEVEL     = axi_adapter_wrapper
 
 include $(TEST_DIR)/../../caliptra_common.mk
 
-VERILOG_SOURCES += \
+VERILOG_SOURCES  = \
     $(SRC_DIR)/i3c_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
