@@ -28,7 +28,7 @@ VERILOG_SOURCES += \
     $(SRC_DIR)/hci/queues/read_queue.sv \
     $(SRC_DIR)/hci/queues.sv \
     $(SRC_DIR)/hci/csri.sv \
-    $(TEST_DIR)/hci_queues_wrapper.sv
+    $(TEST_DIR)/../lib_hci_queues/hci_queues_wrapper.sv
 
 # Add target / controller specific sources
 VERILOG_TARGET_SOURCES += \
