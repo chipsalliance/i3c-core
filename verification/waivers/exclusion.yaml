@@ -638,36 +638,508 @@ exclusions:
         - tx_reg_rst_data_o
 
 
+  csri:
+    source_path: src/hci/csri.sv
+    source_sha: 56ca419fbb0dcbba7efcb29f537a7dc2b990efac
+    all:
+      Parts of the unused host interface:
+        toggle:
+          - hwif_out_o.DCT.wr_biten
+          - hwif_out_o.DCT.addr: [0-1]
+          - hwif_out_o.DCT.req
+          - hwif_out_o.DAT.wr_biten
+          - hwif_out_o.DAT.addr: [0-1]
+          - hwif_out_o.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.value
+          - hwif_out_o.I3C_EC.CtrlCfg.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.CtrlCfg.EXTCAP_HEADER.CAP_ID.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value
+          - hwif_out_o.PIOControl.PIO_INTR_STATUS.intr
+          - hwif_out_o.PIOControl.QUEUE_THLD_CTRL.IBI_DATA_SEGMENT_SIZE.value
+          - hwif_out_o.PIOControl.TX_DATA_PORT.wr_biten.TX_DATA
+          - hwif_out_o.PIOControl.COMMAND_PORT.wr_biten.COMMAND_DATA
+          - hwif_out_o.I3CBase.INTR_STATUS.intr
+          - hwif_out_o.I3CBase.HC_CONTROL.RESUME.value
+          - hwif_in.DCT.rd_ack
+          - hwif_in.DCT.wr_ack
+          - hwif_in.DCT.rd_data
+          - hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we
+          - hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP2_DEV_INTERACT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_GETCAPS.F2_CRCAP1_BUS_CONFIG.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_FATAL_RSTDAA_ERR_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_UNHANDLED_NACK_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CCC_PARAM_MODIFIED_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_OP_RSTACT_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_ERR_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_OK_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_ACCEPT_NACKED_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.STBY_CR_DYN_ADDR_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_FORCE.CRR_RESPONSE_FORCE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_FATAL_RSTDAA_ERR_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_UNHANDLED_NACK_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CCC_PARAM_MODIFIED_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_OP_RSTACT_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_ERR_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_OK_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_ACCEPT_NACKED_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.STBY_CR_DYN_ADDR_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.CRR_RESPONSE_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_M3_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_ERR_FAIL_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_PRIMED_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_SIGNAL_ENABLE.ACR_HANDOFF_OK_REMAIN_SIGNAL_EN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_FATAL_RSTDAA_ERR_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_UNHANDLED_NACK_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CCC_PARAM_MODIFIED_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_OP_RSTACT_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_ERR_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_OK_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_ACCEPT_NACKED_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.STBY_CR_DYN_ADDR_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.CRR_RESPONSE_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_M3_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_ERR_FAIL_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_PRIMED_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_INTR_STATUS.ACR_HANDOFF_OK_REMAIN_STAT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.HJ_REQ_STATUS.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.SIMPLE_CRR_STATUS.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_STATUS.AC_CURRENT_OWN.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.hwclr
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ERR_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.TRANSFER_ABORT_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.RESP_READY_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.CMD_QUEUE_READY_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.IBI_STATUS_THLD_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.RX_THLD_STAT.next
+          - hwif_in.PIOControl.PIO_INTR_STATUS.TX_THLD_STAT.next
+          - hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we
+          - hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.next
+          - hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we
+          - hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.next
+          - hwif_in.I3CBase.INTR_STATUS.SCHED_CMD_MISSED_TICK_STAT.next
+          - hwif_in.I3CBase.INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT.next
+          - hwif_in.I3CBase.INTR_STATUS.HC_WARN_CMD_SEQ_STALL_STAT.next
+          - hwif_in.I3CBase.INTR_STATUS.HC_SEQ_CANCEL_STAT.next
+          - hwif_in.I3CBase.INTR_STATUS.HC_INTERNAL_ERR_STAT.next
+          - hwif_in.I3CBase.PRESENT_STATE.AC_CURRENT_OWN.next
+          - hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we
+          - hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.next
+          - hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we
+          - hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.next
+          - hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we
+          - hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.next
+          - hwif_in.I3CBase.HC_CONTROL.RESUME.we
+          - hwif_in.I3CBase.HC_CONTROL.RESUME.next
+        cond:
+          - 2  # xfer_req_is_wr = hwif_out_o.PIOControl.RX_DATA_PORT.req_is_wr | hwif_out_o.PIOControl.TX_DATA_PORT.req_is_wr;
+          - 3  # cmd_req = hwif_out_o.PIOControl.COMMAND_PORT.req & hwif_out_o.PIOControl.COMMAND_PORT.req_is_wr;
+
+      RDL code doesn't generate access errors:
+        toggle:
+          - s_cpuif_rd_err
+          - s_cpuif_wr_err
+
+      Constant:
+        toggle:
+          - hwif_socmgmt_o.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_socmgmt_o.EXTCAP_HEADER.CAP_ID.value
+          - hwif_rec_o.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value
+          - hwif_rec_o.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value
+          - hwif_rec_o.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value
+          - hwif_rec_o.PROT_CAP_1.REC_MAGIC_STRING_1.value
+          - hwif_rec_o.PROT_CAP_0.REC_MAGIC_STRING_0.value
+          - hwif_rec_o.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_rec_o.EXTCAP_HEADER.CAP_ID.value
+          - hwif_rec_i.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next
+          - hwif_out_o.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.SoCMgmtIf.EXTCAP_HEADER.CAP_ID.value
+          - hwif_out_o.I3C_EC.TTI.IBI_QUEUE_SIZE.IBI_QUEUE_SIZE.value
+          - hwif_out_o.I3C_EC.TTI.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value
+          - hwif_out_o.I3C_EC.TTI.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value
+          - hwif_out_o.I3C_EC.TTI.QUEUE_SIZE.TX_DESC_BUFFER_SIZE.value
+          - hwif_out_o.I3C_EC.TTI.QUEUE_SIZE.RX_DESC_BUFFER_SIZE.value
+          - hwif_out_o.I3C_EC.TTI.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.TTI.EXTCAP_HEADER.CAP_ID.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.EXTCAP_HEADER.CAP_ID.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_CHAR.BCR_FIXED.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_VIRTUAL_DEVICE_CHAR.BCR_FIXED.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_ENTDAA_SUPPORT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETDASA_SUPPORT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.DAA_SETAASA_SUPPORT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.TARGET_XACT_SUPPORT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CAPABILITIES.SIMPLE_CRR_SUPPORT.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_4.MAX_TRANSFER_SIZE.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.PROT_CAP_1.REC_MAGIC_STRING_1.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.PROT_CAP_0.REC_MAGIC_STRING_0.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.EXTCAP_HEADER.CAP_ID.value
+          - hwif_tti_o.IBI_QUEUE_SIZE.IBI_QUEUE_SIZE.value
+          - hwif_tti_o.QUEUE_SIZE.TX_DATA_BUFFER_SIZE.value
+          - hwif_tti_o.QUEUE_SIZE.RX_DATA_BUFFER_SIZE.value
+          - hwif_tti_o.EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_tti_o.EXTCAP_HEADER.CAP_ID.value
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_3.FIFO_SIZE.next
+          - hwif_tti_o.QUEUE_SIZE.TX_DESC_BUFFER_SIZE.value
+          - hwif_tti_o.QUEUE_SIZE.RX_DESC_BUFFER_SIZE.value
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR_VALID.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_STATIC_ADDR.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR_VALID.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.STATIC_ADDR.next
+
+      Reserved:
+        toggle:
+          - hwif_socmgmt_o.SOC_MGMT_RSVD_2.PLACEHOLDER.value: [8]
+          - hwif_socmgmt_o.SOC_MGMT_FEATURE_3.PLACEHOLDER.value: [22, 27]
+          - hwif_rec_o.INDIRECT_FIFO_RESERVED.DATA.value
+          - hwif_rec_o.DEVICE_ID_RESERVED.DATA.value
+          - hwif_rec_i.INDIRECT_FIFO_RESERVED.DATA.we
+          - hwif_rec_i.INDIRECT_FIFO_RESERVED.DATA.next
+          - hwif_rec_i.HW_STATUS.RESERVED_7_3.we
+          - hwif_rec_i.HW_STATUS.RESERVED_7_3.next
+          - hwif_rec_i.DEVICE_STATUS_0.PROT_ERROR.next: [3-7]
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.DEVICE_ID_RESERVED.DATA.value
+          - hwif_out_o.I3C_EC.SoCMgmtIf.SOC_MGMT_RSVD_2.PLACEHOLDER.value: [8]
+          - hwif_out_o.I3C_EC.SoCMgmtIf.SOC_MGMT_FEATURE_3.PLACEHOLDER.value: [5, 20, 22, 27]
+          - hwif_out_o.I3C_EC.SoCMgmtIf.SOC_MGMT_STATUS.PLACEHOLDER.value: [24]
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.value: [2-7]
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_RESERVED.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.RESERVED_7_3.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.PROT_ERROR.next: [3-7]
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RST_ACTION.next: [2-7]
+          - rst_action_i: [2-7]
+
+      Tied to 0:
+        toggle:
+          - hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next
+          - hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next
+          - hwif_socmgmt_i.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next
+          - hwif_socmgmt_i.REC_INTF_CFG.REC_PAYLOAD_DONE.next
+          - hwif_rec_i.DEVICE_STATUS_0.REC_REASON_CODE.we
+          - hwif_rec_i.DEVICE_STATUS_0.REC_REASON_CODE.next
+          - hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.we
+          - hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.next
+          - hwif_out_o.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_LENGTH.value
+          - hwif_out_o.I3C_EC.TERMINATION_EXTCAP_HEADER.CAP_ID.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value
+          - hwif_out_o.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value
+          - hwif_tti_i.INTERRUPT_STATUS.PENDING_INTERRUPT.next: [1-3]
+          - hwif_tti_i.RESET_CONTROL.SOFT_RST.we
+          - hwif_tti_i.RESET_CONTROL.SOFT_RST.next
+          - hwif_tti_i.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we
+          - hwif_tti_i.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next
+          - hwif_tti_i.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.we
+          - hwif_tti_i.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next
+          - hwif_tti_i.INTERRUPT_STATUS.IBI_THLD_STAT.we
+          - hwif_tti_i.INTERRUPT_STATUS.IBI_THLD_STAT.next
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DESC_THLD_STAT.we
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DATA_THLD_STAT.we
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DESC_TIMEOUT.we
+          - hwif_tti_i.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next
+          - hwif_tti_i.INTERRUPT_STATUS.RX_DESC_TIMEOUT.we
+          - hwif_tti_i.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next
+          - hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ERR_STAT.value
+          - hwif_tti_o.INTERRUPT_STATUS.IBI_THLD_STAT.value
+          - hwif_tti_o.INTERRUPT_STATUS.TX_DESC_THLD_STAT.value
+          - hwif_tti_o.INTERRUPT_STATUS.TX_DATA_THLD_STAT.value
+          - hwif_tti_o.INTERRUPT_STATUS.TX_DESC_TIMEOUT.value
+          - hwif_tti_o.INTERRUPT_STATUS.RX_DESC_TIMEOUT.value
+          - hwif_tti_o.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.value
+          - hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.INDIRECT_FIFO_CTRL_RESET.next
+          - hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.RECOVERY_CTRL_ACTIVATE_REC_IMG.next
+          - hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_REG_W1C_ACCESS.DEVICE_RESET_CTRL.next
+          - hwif_in.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_PAYLOAD_DONE.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.REC_REASON_CODE.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_0.DEV_STATUS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.we
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_DYNAMIC_ADDR.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_TARGET.next
+          - hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CCC_CONFIG_RSTACT_PARAMS.RESET_TIME_PERIPHERAL.next
+          - hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.we
+          - hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ERR_STAT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TRANSFER_ABORT_STAT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.IBI_THLD_STAT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_THLD_STAT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DATA_THLD_STAT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.TX_DESC_TIMEOUT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.we
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.RX_DESC_TIMEOUT.next
+          - hwif_in.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.next: [1-3]
+          - hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we
+          - hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.next
+
+      Unused:
+        toggle:
+          - hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS_LEN.we
+          - hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS_LEN.next
+          - hwif_rec_i.HW_STATUS.CTEMP.we
+          - hwif_rec_i.HW_STATUS.CTEMP.next
+          - hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS.we
+          - hwif_rec_i.HW_STATUS.VENDOR_HW_STATUS.next
+          - hwif_rec_i.HW_STATUS.FATAL_ERR.we
+          - hwif_rec_i.HW_STATUS.FATAL_ERR.next
+          - hwif_rec_i.HW_STATUS.SOFT_ERR.we
+          - hwif_rec_i.HW_STATUS.SOFT_ERR.next
+          - hwif_rec_i.HW_STATUS.TEMP_CRITICAL.we
+          - hwif_rec_i.HW_STATUS.TEMP_CRITICAL.next
+          - hwif_rec_i.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.we
+          - hwif_rec_i.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.next
+          - hwif_rec_i.RECOVERY_STATUS.REC_IMG_INDEX.we
+          - hwif_rec_i.RECOVERY_STATUS.REC_IMG_INDEX.next
+          - hwif_rec_i.RECOVERY_STATUS.DEV_REC_STATUS.we
+          - hwif_rec_i.RECOVERY_STATUS.DEV_REC_STATUS.next
+          - hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS.we
+          - hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS.next
+          - hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.we
+          - hwif_rec_i.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.next
+          - hwif_rec_i.DEVICE_STATUS_1.HEARTBEAT.we
+          - hwif_rec_i.DEVICE_STATUS_1.HEARTBEAT.next
+          - hwif_rec_i.DEVICE_ID_5.DATA.we
+          - hwif_rec_i.DEVICE_ID_5.DATA.next
+          - hwif_rec_i.DEVICE_ID_4.DATA.we
+          - hwif_rec_i.DEVICE_ID_4.DATA.next
+          - hwif_rec_i.DEVICE_ID_3.DATA.we
+          - hwif_rec_i.DEVICE_ID_3.DATA.next
+          - hwif_rec_i.DEVICE_ID_2.DATA.we
+          - hwif_rec_i.DEVICE_ID_2.DATA.next
+          - hwif_rec_i.DEVICE_ID_1.DATA.we
+          - hwif_rec_i.DEVICE_ID_1.DATA.next
+          - hwif_rec_i.DEVICE_ID_0.DATA.we
+          - hwif_rec_i.DEVICE_ID_0.DATA.next
+          - hwif_rec_i.DEVICE_ID_0.DESC_TYPE.we
+          - hwif_rec_i.DEVICE_ID_0.DESC_TYPE.next
+          - hwif_rec_i.PROT_CAP_3.HEARTBEAT_PERIOD.we
+          - hwif_rec_i.PROT_CAP_3.HEARTBEAT_PERIOD.next
+          - hwif_rec_i.PROT_CAP_3.MAX_RESP_TIME.we
+          - hwif_rec_i.PROT_CAP_3.MAX_RESP_TIME.next
+          - hwif_rec_i.PROT_CAP_3.NUM_OF_CMS_REGIONS.we
+          - hwif_rec_i.PROT_CAP_3.NUM_OF_CMS_REGIONS.next
+          - hwif_rec_i.PROT_CAP_2.AGENT_CAPS.we
+          - hwif_rec_i.PROT_CAP_2.AGENT_CAPS.next
+          - hwif_rec_i.PROT_CAP_2.REC_PROT_VERSION.we
+          - hwif_rec_i.PROT_CAP_2.REC_PROT_VERSION.next
+          - hwif_rec_i.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.we
+          - hwif_rec_i.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next
+          - hwif_rec_i.INDIRECT_FIFO_STATUS_0.REGION_TYPE.we
+          - hwif_rec_i.INDIRECT_FIFO_STATUS_0.REGION_TYPE.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS_LEN.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.CTEMP.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.VENDOR_HW_STATUS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.FATAL_ERR.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.SOFT_ERR.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.HW_STATUS.TEMP_CRITICAL.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.VENDOR_SPECIFIC_STATUS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.REC_IMG_INDEX.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.RECOVERY_STATUS.DEV_REC_STATUS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.VENDOR_STATUS_LENGTH.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_STATUS_1.HEARTBEAT.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_5.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_4.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_3.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_2.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_1.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DATA.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.VENDOR_SPECIFIC_STR_LENGTH.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.DEVICE_ID_0.DESC_TYPE.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.HEARTBEAT_PERIOD.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.MAX_RESP_TIME.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_3.NUM_OF_CMS_REGIONS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.next
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.we
+          - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.next
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.RSTACT_DEFBYTE_02.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.BAST_CCC_IBI_RING.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.CR_REQUEST_SEND.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PRIME_ACCEPT_GETACCCR.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.ACR_FSM_OP_SELECT.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value
+          - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value
+          - s_cpuif_addr: [11]
+          - unused_rx_desc_start_thld_trig
+          - unused_tx_desc_start_thld_trig
+          - unused_ibi_queue_start_thld_trig
+
+      32 bit accesses keep this value constant:
+        toggle:
+          - hwif_out_o.I3C_EC.TTI.IBI_PORT.wr_biten.IBI_DATA
+          - hwif_out_o.I3C_EC.TTI.TX_DATA_PORT.wr_biten.TX_DATA
+          - hwif_out_o.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_biten.TX_DESC
+          - hwif_tti_o.IBI_PORT.wr_biten.IBI_DATA
+          - hwif_tti_o.TX_DATA_PORT.wr_biten.TX_DATA
+          - hwif_tti_o.TX_DESC_QUEUE_PORT.wr_biten.TX_DESC
+          - s_cpuif_addr: [0-1]
+
+      woclr CSR:
+        toggle:
+          - hwif_tti_i.RESET_CONTROL.IBI_QUEUE_RST.next
+          - hwif_tti_i.RESET_CONTROL.RX_DATA_RST.next
+          - hwif_tti_i.RESET_CONTROL.TX_DATA_RST.next
+          - hwif_tti_i.RESET_CONTROL.RX_DESC_RST.next
+          - hwif_tti_i.RESET_CONTROL.TX_DESC_RST.next
+          - hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.next
+          - hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.next
+          - hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.next
+          - hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.next
+          - hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.next
+          - hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.next
+
+      Not driven by HW:
+        toggle:
+          - hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.we
+          - hwif_tti_i.QUEUE_THLD_CTRL.IBI_THLD.next
+
+      FIFO depth limited to 64 entries:
+        toggle:
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.value: [6-31]
+          - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value: [6-31]
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_2.READ_INDEX.next: [6-31]
+          - hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next: [6-31]
+          - hwif_rec_o.INDIRECT_FIFO_STATUS_2.READ_INDEX.value: [6-31]
+          - hwif_rec_o.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.value: [6-31]
+          - hwif_rec_i.INDIRECT_FIFO_STATUS_2.READ_INDEX.next: [6-31]
+          - hwif_rec_i.INDIRECT_FIFO_STATUS_1.WRITE_INDEX.next: [6-31]
+
+      Unused on 64 FIFO depth:
+        toggle:
+          - hwif_tti_i.QUEUE_THLD_CTRL.RX_DESC_THLD.next: [6-7]
+          - hwif_tti_i.QUEUE_THLD_CTRL.TX_DESC_THLD.next: [6-7]
+          - hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.next: [6-7]
+          - hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.next: [6-7]
+          - hwif_tti_i.IBI_QUEUE_DEPTH.IBI_QUEUE_DEPTH.next: [7]
+          - hwif_tti_i.DATA_QUEUE_DEPTH.TX_DATA_QUEUE_DEPTH.next: [7]
+          - hwif_tti_i.DESC_QUEUE_DEPTH.TX_DESC_QUEUE_DEPTH.next: [7]
+          - hwif_tti_i.DATA_QUEUE_DEPTH.RX_DATA_QUEUE_DEPTH.next: [7]
+          - hwif_tti_i.DESC_QUEUE_DEPTH.RX_DESC_QUEUE_DEPTH.next: [7]
+          - hwif_in.I3C_EC.TTI.IBI_QUEUE_DEPTH.IBI_QUEUE_DEPTH.next: [7]
+          - hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.TX_DATA_QUEUE_DEPTH.next: [7]
+          - hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.TX_DESC_QUEUE_DEPTH.next: [7]
+          - hwif_in.I3C_EC.TTI.DATA_QUEUE_DEPTH.RX_DATA_QUEUE_DEPTH.next: [7]
+          - hwif_in.I3C_EC.TTI.DESC_QUEUE_DEPTH.RX_DESC_QUEUE_DEPTH.next: [7]
+          - hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.next: [6-7]
+          - hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.next: [6-7]
+
+      Unreachable condition that can be optimized:
+        cond:
+          - 9: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = rstdaa_i ? '1 : set_dasa_valid_i && ~set_dasa_virtual_device_i;
+          - 13: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = rstdaa_i ? '1 : set_dasa_valid_i && ~set_dasa_virtual_device_i;
+          - 17: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID.we = rstdaa_i ? '1 : set_dasa_valid_i && set_dasa_virtual_device_i;
+          - 21: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR.we = rstdaa_i ? '1 : set_dasa_valid_i && set_dasa_virtual_device_i;
+          - 25: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = set_newda_i && ~(set_newda_virtual_device_i);
+          - 26: [1 "01"]  # hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR.we = set_newda_i && ~(set_newda_virtual_device_i);
+
   hci:
     source_path: src/hci/hci.sv
     source_sha: ec5c6f19bb281396eeef653c46bdf016c856043cecb298899aaef4428a6be853
     all:
       Parts of the unused host interface:
         toggle:
-          - dat_read_valid_hw_i
-          - dat_index_hw_i
-          - dat_rdata_hw_o
-          - dct_write_valid_hw_i
-          - dct_read_valid_hw_i
-          - dct_index_hw_i
-          - dct_wdata_hw_i
-          - dct_rdata_hw_o
-          - dat_mem_src_i.rerror
-          - dat_mem_src_i.rvalid
-          - dat_mem_src_i.rdata
-          - dat_mem_sink_o.wmask
-          - dat_mem_sink_o.wdata
-          - dat_mem_sink_o.addr
-          - dat_mem_sink_o.write
-          - dat_mem_sink_o.req
-          - dct_mem_src_i.rerror
-          - dct_mem_src_i.rvalid
-          - dct_mem_src_i.rdata
-          - dct_mem_sink_o.wmask
-          - dct_mem_sink_o.wdata
-          - dct_mem_sink_o.addr
-          - dct_mem_sink_o.write
-          - dct_mem_sink_o.req
           - hci_resp_ready_thld_o: [6-7]
           - hci_cmd_ready_thld_o: [6-7]
           - hci_ibi_full_o
