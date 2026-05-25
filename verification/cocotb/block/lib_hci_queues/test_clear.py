@@ -10,7 +10,7 @@ import cocotb
 from cocotb.handle import SimHandleBase
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_clear_on_nonempty_resp_queue(dut: SimHandleBase):
     """
     Issue Response queue clear through RESET_CONTROL and verify the newly enqueued
@@ -38,7 +38,7 @@ async def test_clear_on_nonempty_resp_queue(dut: SimHandleBase):
     ), f"Expected: {hex(resp)} response descriptor, got: {hex(received_resp)}"
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
     """
     Issue Command queue clear through RESET_CONTROL and verify the newly enqueued
@@ -65,7 +65,7 @@ async def test_clear_on_nonempty_cmd_queue(dut: SimHandleBase):
     assert received_cmd == cmd, f"Expected: {hex(cmd)} command descriptor, got: {hex(received_cmd)}"
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_clear_on_nonempty_rx_queue(dut: SimHandleBase):
     """
     Issue RX queue clear through RESET_CONTROL and verify the newly enqueued
@@ -90,7 +90,7 @@ async def test_clear_on_nonempty_rx_queue(dut: SimHandleBase):
     assert received_rx == rx, f"Expected: {hex(rx)} data from RX fifo, got: {hex(received_rx)}"
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_clear_on_nonempty_tx_queue(dut: SimHandleBase):
     """
     Issue TX queue clear through RESET_CONTROL and verify the newly enqueued
@@ -115,7 +115,7 @@ async def test_clear_on_nonempty_tx_queue(dut: SimHandleBase):
     assert received_tx == tx, f"Expected: {hex(tx)} data from TX fifo, got: {hex(received_tx)}"
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_clear_on_nonempty_ibi_queue(dut: SimHandleBase):
     """
     Issue IBI queue clear through RESET_CONTROL and verify the newly enqueued

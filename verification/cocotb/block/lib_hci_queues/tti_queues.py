@@ -6,6 +6,7 @@ from bus2csr import bytes2int, dword2int, get_frontend_bus_if, int2dword
 from hci import HCIBaseTestInterface
 from utils import expect_with_timeout
 
+import cocotb
 from cocotb.handle import SimHandleBase
 from cocotb.triggers import RisingEdge
 
@@ -17,13 +18,15 @@ class TTIQueuesTestInterface(HCIBaseTestInterface):
 
     async def setup(self):
         # Set queue's ready to 0 (hold accepting the data)
-        self.dut.hci_cmd_rready_i.value = 0
-        self.dut.hci_tx_rready_i.value = 0
+        if("ControllerSupport" in cocotb.plusargs):
+            self.dut.hci_cmd_rready_i.value = 0
+            self.dut.hci_tx_rready_i.value = 0
+            self.dut.hci_rx_wvalid_i.value = 0
+            self.dut.hci_ibi_wvalid_i.value = 0
+            self.dut.hci_resp_wvalid_i.value = 0
+
         self.dut.tti_tx_rready_i.value = 0
         self.dut.tti_tx_desc_rready_i.value = 0
-        self.dut.hci_rx_wvalid_i.value = 0
-        self.dut.hci_ibi_wvalid_i.value = 0
-        self.dut.hci_resp_wvalid_i.value = 0
         self.dut.tti_rx_wvalid_i.value = 0
         self.dut.tti_rx_desc_wvalid_i.value = 0
         self.dut.tti_ibi_rready_i.value = 0

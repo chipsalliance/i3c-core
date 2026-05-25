@@ -19,27 +19,27 @@ async def should_be_empty_after_rst(dut: SimHandleBase, if_name: str, queue: str
     assert interface.get_empty(queue) == 1, "Command queue should be empty after reset"
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_cmd_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "cmd")
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_rx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "rx")
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_resp_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "resp")
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_tx_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "tx")
 
 
-@cocotb.test()
+@cocotb.test(skip=("ControllerSupport" not in cocotb.plusargs))
 async def test_ibi_capacity_status(dut: SimHandleBase):
     await should_be_empty_after_rst(dut, "hci", "ibi")
 
