@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
-
-`ifdef I3C_USE_AHB
 module ahb_if
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
   import I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH;
@@ -129,4 +127,3 @@ module ahb_if
     end
   end
 endmodule
-`endif
