@@ -331,7 +331,7 @@ async def test_i3c_target_read_long(dut):
         dut._log.info(f"Enqueueing transfer of length {length}")
 
         for dword in (data[i:min(i+4, length)] for i in range(0, length, 4)):
-            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, bytes(dword), 4)
+            await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr, dword, 4)
 
         # Write the TX descriptor
         await tb.write_csr(tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr, int2dword(length), 4)
