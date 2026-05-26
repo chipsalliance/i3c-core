@@ -534,6 +534,8 @@ async def test_ec_tti_csr_access(dut):
                 q_rd = await adjust_queue_thld_to_boundary(tb, tb.reg_map.I3C_EC.TTI, qname, new_thld)
                 exp_rd &= reg_mask - field.mask  # clear
                 exp_rd |= q_rd << field.low
+            # Once cycle of wait is needed for AHB Frontend for the CSRs to be updated in time
+            wait = RisingEdge(tb.clk)
         else:
             val, _ = rand_reg_val(reg, is_unhandled=True)
 
