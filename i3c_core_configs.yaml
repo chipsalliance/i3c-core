@@ -30,7 +30,7 @@ axi:
   DatDepth: 128
   DctDepth: 128
   FrontendBusInterface: "AXI"
-  FrontendBusAddrWidth: 12
+  FrontendBusAddrWidth: 10
   FrontendBusDataWidth: 32
   FrontendBusUserWidth: 32
   FrontendBusIdWidth: 8
