@@ -117,6 +117,226 @@ async def run_basic_csr_access(tb, reg_if, exceptions=[]):
             # TODO: Take into account read values from the CSRs and drop this reset
             await reset_n(tb.clk, tb.rst_n, cycles=2)
 
+@cocotb.test(
+    skip=(
+        "FrontendBusInterface" not in cocotb.plusargs
+        or cocotb.plusargs["FrontendBusInterface"] != "AXI"
+    )
+)
+async def test_basic_burst_read(dut):
+    UPPER_START_ADDR_BOUNDARY = 0x200
+    MAX_BURST_SIZE = (1 << 7) * 4  # Max INCR len multiplied by max ARSIZE
+
+    tb = await initialize(dut, timeout=500)
+
+    # Registers that hang the bus due to additional requirements when accessing them
+    exceptions = [
+    ]
+
+    # Dump the entire register space
+    mem_dump = {}
+    legal_addr = list(range(0, UPPER_START_ADDR_BOUNDARY, 4))
+    for addr in exceptions:
+        legal_addr.remove(addr)
+
+    for addr in range(0, MAX_BURST_SIZE + UPPER_START_ADDR_BOUNDARY, 4):
+        if addr in exceptions:
+            continue
+        data = await tb.read_csr(addr, 4)
+        mem_dump[addr] = list(data)
+
+    burst_lens = {
+        AxiBurstType.FIXED: range(15),
+        AxiBurstType.INCR: (1 << i for i in range(8)), # toggles each bit
+    }
+
+    # Check if variously parametrized AXI burst reads yield the same values
+    # This depends on all reads having no side-effect that would
+    # result in a different value
+    for arburst, arlens in burst_lens.items():
+        for arlen, arsize, arlock, aruser in product(
+            arlens, (0, 1, 2), AxiLockType, (0, 0xAAAAAAAA, 0x55555555)
+        ):
+            start = None
+            # Try to randomize start address 100 times, if didn't succeed then
+            # it's probably impossible to randomize such burst on a given reg
+            # map with given exceptions
+            for _ in range(0, 100):
+                start_addr = random.choice(legal_addr)
+                end_addr = start_addr + ((arlen + 1) * (2 ** arsize))
+                fail = False
+                for addr in exceptions:
+                    if addr >= start_addr and addr <= end_addr:
+                        fail = True
+                if not fail:
+                    start = start_addr
+                    break
+
+            assert start is not None, "Failed to randomize start address for ARBURST: {}, ARLEN: {}, ARSIZE: {}, ARUSER: {}".format(arburst, arlen, arsize, aruser)
+
+            bursted = await tb.busIf.axi_m.read(
+                start,
+                size=arsize,
+                length=arlen+1,
+                lock=arlock,
+                user=aruser,
+                burst=arburst
+            )
+            bursted = list(bursted.data)
+            for i, byte in enumerate(bursted):
+                if arburst == AxiBurstType.FIXED:
+                    mem_idx = 0
+                else:
+                    mem_idx = (i // 4) * 4
+                byte_idx = i % 4
+                assert byte == mem_dump[start + mem_idx][byte_idx]
+
+    await tb.teardown()
+
+
+@cocotb.test(
+    skip=(
+        "FrontendBusInterface" not in cocotb.plusargs
+        or cocotb.plusargs["FrontendBusInterface"] != "AXI"
+    )
+)
+async def test_basic_burst_write(dut):
+    MAX_END_ADDR = 1024
+
+    # inner registers that are problematic to validate
+    # e.g. have hwclr fields that don't yield 0
+    validation_exceptions = [
+        "RECOVERY_STATUS",
+        "DEVICE_STATUS_0",
+        "STBY_CR_CONTROL",
+        "STBY_CR_STATUS",
+        "STBY_CR_INTR_STATUS",
+        "STBY_CR_INTR_SIGNAL_ENABLE",
+        "STBY_CR_INTR_FORCE",
+        "STBY_CR_CCC_CONFIG_GETCAPS",
+        "STBY_CR_CCC_CONFIG_RSTACT_PARAMS",
+        "__RSVD_3",
+        "QUEUE_THLD_CTRL",
+        "RESET_CONTROL",
+        "INTERRUPT_STATUS",
+        "REC_INTF_REG_W1C_ACCESS",
+        "INDIRECT_FIFO_CTRL_0",
+        "TARGET_ERR_INTR_STATUS",
+        "DESC_QUEUE_DEPTH",
+        "DATA_QUEUE_DEPTH",
+        "IBI_QUEUE_DEPTH",
+        "QUEUE_STATUS",
+    ]
+
+    tb = await initialize(dut, timeout=500)
+
+    def generate_random_csr_data() -> tuple[list[int], list[Optional[int]]]:
+        i3ec = tb.reg_map.I3C_EC
+        filtered_regs = (
+            r for r in i3ec if r != "start_addr" and "base_addr" not in getattr(i3ec, r)
+        )
+        # an iterator over test data for all registers in all I3C_EC.* groups
+        test_data = chain(*(csr_access_test_data(getattr(i3ec, r), validation_exceptions) for r in filtered_regs))
+
+        write_map = [0] * MAX_END_ADDR
+        expect_map: list[Optional[int]] = [None] * MAX_END_ADDR # None values will not be verified
+
+        for reg_name, addr, wdata, exp_rd in test_data:
+            for i, (wb, eb) in enumerate(zip(int2dword(wdata), int2dword(exp_rd))):
+                write_map[addr+i] = wb
+                if reg_name not in validation_exceptions:
+                    expect_map[addr+i] = eb
+
+        return write_map, expect_map
+
+    # FIFOs/Ports that hang the bus or trigger side-effects 
+    access_exceptions = sorted([
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.INDIRECT_FIFO_DATA.base_addr,
+        tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr,
+        tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr,
+        tb.reg_map.I3C_EC.TTI.TX_DESC_QUEUE_PORT.base_addr,
+        tb.reg_map.I3C_EC.TTI.TX_DATA_PORT.base_addr,
+        tb.reg_map.I3C_EC.TTI.IBI_PORT.base_addr,
+    ])
+    max_access_size = max(a - b for a, b in zip(access_exceptions, [0, *access_exceptions]))
+
+    assert max_access_size >= 256, (
+        "Max. access size is smaller than expected. The CSR map either got reordered"
+        " or new access exceptions that partitioned the existing gaps even more were"
+        " introduced. Make sure that this test still makes sense with the smaller"
+        " maximum gap and adjust this assertion accordingly if so."
+    )
+
+    burst_lens = {
+        AxiBurstType.FIXED: range(15),
+        AxiBurstType.INCR: [
+            *(1 << i for i in range(8)), # make sure to toggle each bit
+            *random.randbytes(10) # but also run through some random lengths
+        ]
+    }
+
+    for awburst, awlens in burst_lens.items():
+        for awlen, awsize, awlock, awuser in product(
+            awlens, (0, 1, 2), AxiLockType, (0, 0xAAAAAAAA, 0x55555555)
+        ):
+            write_map, expect_map = generate_random_csr_data()
+            size = 2 ** awsize
+
+            # The burst must fit between gaps in access_exceptions
+            if ((awlen + 1) * size) > max_access_size:
+                continue
+
+            # Try to randomize start address 1000 times, if didn't succeed then
+            # it's probably impossible to randomize such burst on a given reg
+            # map with given exceptions
+            for _ in range(0, 1000):
+                start_addr = random.choice(range(0, MAX_END_ADDR, 4))
+                end_addr = start_addr + ((awlen + 1) * size)
+                if end_addr < MAX_END_ADDR and all(a < start_addr or a >= end_addr for a in access_exceptions):
+                    break
+            else:
+                assert False, "Failed to randomize start address for AWBURST: {}, AWLEN: {}, AWSIZE: {}, AWUSER: {}".format(awburst, awlen, awsize, awuser)
+
+            if awburst is AxiBurstType.FIXED:
+                wdata = write_map[start_addr:start_addr+size] * (awlen + 1)
+            else:
+                wdata = write_map[start_addr:end_addr]
+
+            resp = await tb.busIf.axi_m.write(
+                start_addr,
+                bytes(wdata),
+                user=awuser,
+                wuser=awuser,
+                lock=awlock,
+                size=awsize,
+                burst=awburst
+            )
+            assert resp.resp == AxiResp.OKAY
+
+            rd_dat = []
+            if awburst is AxiBurstType.FIXED:
+                if expect_map[start_addr] is None:
+                    continue
+                data = (await tb.read_csr(start_addr, 4))[0:size]
+                rd_dat = list(data * (awlen + 1))
+                assert (e := expect_map[start_addr:start_addr+size] * (awlen + 1)) == rd_dat, (
+                    f"Sequence at {start_addr:#x} differs. Written: {wdata}. Expected: {e}. Got: {rd_dat}"
+                )
+            else:
+                for addr in range(start_addr, end_addr, 4):
+                    data = await tb.read_csr(addr, 4)
+                    rd_dat.extend(list(data))
+
+                for i in range(end_addr-start_addr):
+                    if expect_map[start_addr+i] is None:
+                        continue
+
+                    assert (e := expect_map[start_addr+i]) == (a := rd_dat[i]), (
+                        f"Byte at {start_addr+i:#x} differs. Written: {write_map[start_addr+i]:#x}. "
+                        f"Expected: {e:#x}. Actual: {a:#x}"
+                    )
+
+    await tb.teardown()
 
 @cocotb.test()
 async def test_basic_burst_read(dut):
