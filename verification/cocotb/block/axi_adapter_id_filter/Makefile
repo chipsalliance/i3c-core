@@ -15,7 +15,6 @@ override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 MODULE  ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL = axi_adapter_wrapper
 CFG_NAME = axi
-CFG_FILE = $(TEST_DIR)/i3c_cfg.yaml
 
 include $(TEST_DIR)/../../caliptra_common.mk
 

@@ -34,7 +34,7 @@ async def test_priv_id_variation(dut):
     await ClockCycles(tb.clk, 5)
     
     # Base address for AXI transactions (Using a R/W register to verify data integrity)
-    test_addr = tb.reg_map.PIOCONTROL.QUEUE_THLD_CTRL.base_addr
+    test_addr = tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.base_addr
     
     # 3. Issue AXI transactions with the matching user IDs
     for priv_id in test_priv_ids:
