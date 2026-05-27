@@ -312,12 +312,6 @@ exclusions:
         - awaddr_i: [0-1]
         - s_cpuif_addr: [0-1]
 
-      High address bits not used in target only configs:
-        toggle:
-        - araddr_i: [11]
-        - awaddr_i: [11]
-        - s_cpuif_addr: [11]
-
       BUSER is unimplemented (tied to 0):
         toggle:
         - buser_o
@@ -1057,7 +1051,6 @@ exclusions:
           - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value
           - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value
           - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value
-          - s_cpuif_addr: [11]
           - unused_rx_desc_start_thld_trig
           - unused_tx_desc_start_thld_trig
           - unused_ibi_queue_start_thld_trig
@@ -1575,7 +1568,6 @@ exclusions:
           - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DELAY_NACK.value
           - hwif_out_o.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.PENDING_RX_NACK.value
           - hwif_out_o.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_STATUS_0.REGION_TYPE.value
-          - s_cpuif_addr: [11]
           - unused_rx_desc_start_thld_trig
           - unused_tx_desc_start_thld_trig
           - unused_ibi_queue_start_thld_trig
@@ -1664,13 +1656,6 @@ exclusions:
         - s_cpuif_addr: [0-1]
         - i3c_req_addr: [0-1]
         - i3c_req_size: [2]
-
-      High address bits not used in target only configs:
-        toggle:
-        - araddr_i: [11]
-        - awaddr_i: [11]
-        - i3c_req_addr: [11]
-        - s_cpuif_addr: [11]
 
       BUSER is unimplemented (tied to 0):
         toggle:
@@ -2626,12 +2611,6 @@ exclusions:
         - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.AGENT_CAPS.next
         - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.we
         - hwif_in.I3C_EC.SecFwRecoveryIf.PROT_CAP_2.REC_PROT_VERSION.next
-
-      unused yet, for controller support:
-        toggle:
-        - s_cpuif_addr: [11]
-        - cpuif_addr: [11]
-        - decoded_addr: [11]
 
       Cond waivers for already toggle-waived CSRs:
         cond:
@@ -5346,15 +5325,6 @@ exclusions:
           - s_axi_if_ctx.burst: [1]
           - req_ctx.burst: [1]
           - txn_ctx.burst: [1]
-
-      High address bits not used in target only configs:
-        toggle:
-          - addr: [11]
-          - s_axi_if_ctx.addr: [11]
-          - req_ctx.addr: [11]
-          - txn_ctx.addr: [11]
-          - s_cpuif_addr: [11]
-          - txn_addr_nxt: [11]
 
       Neither EXOKAY nor DECERR are issued:
         toggle:
