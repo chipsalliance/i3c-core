@@ -11,6 +11,7 @@ ahb:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  IbiBufferDepth: 8
   DatDepth: 32
   DctDepth: 32
   FrontendBusInterface: "AHB"
@@ -27,6 +28,7 @@ axi:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  IbiBufferDepth: 8
   DatDepth: 32
   DctDepth: 32
   FrontendBusInterface: "AXI"
@@ -63,7 +65,7 @@ axi_hc:
   ControllerSupport: True
   TargetSupport: False
   
-axi_ctrl_and_target:
+axi-controller:
   CmdFifoDepth: 64
   RxFifoDepth: 64
   TxFifoDepth: 64
@@ -93,6 +95,7 @@ axi_bypass:
   RespFifoDepth: 64
   IbiFifoDepth: 64
   IbiFifoExtSize: False
+  IbiBufferDepth: 8
   DatDepth: 32
   DctDepth: 32
   FrontendBusInterface: "AXI"

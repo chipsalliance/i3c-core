@@ -143,18 +143,18 @@ wheels = [
 
 [[package]]
 name = "cocotb"
-version = "1.9.0"
+version = "1.9.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "find-libpython" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/ed/3b2448071aee63c5265e203bdae3ff262400e4db306edb5b871038a20e07/cocotb-1.9.0.tar.gz", hash = "sha256:19b4e27b53a16e0b9c4cc5227c7f9d4dccac06e431a4f937e9f5513350196333", size = 300523, upload-time = "2024-07-15T07:48:21.481Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/dc/4bd01e86f7ad85dfc6eec681a94db1a856aa35c58777a297e271100ac24c/cocotb-1.9.2.tar.gz", hash = "sha256:e4cdeaf51ec1b14e5430083ac56edc0b48ad05184f0307d90de44ff7bfdb1652", size = 300696, upload-time = "2024-10-26T19:11:30.247Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/06/aa26a73d0d456d500c418543fd531154ec6f9e01da69c1c3d0bf9722297c/cocotb-1.9.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:17556e3a23562f64d577d0eb117fe02e384aedee997b29497b5c395f5010ff82", size = 629042, upload-time = "2024-07-15T07:47:25.46Z" },
-    { url = "https://files.pythonhosted.org/packages/d6/ab/515082de87e63b47896a0d6c4e85e4b40dc9ec9ba5686f5e30e5b4ef3938/cocotb-1.9.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1a0381ced5590a726032ba2265c6b70ac12cfb49edb152be86a081bb7d104751", size = 4210868, upload-time = "2024-07-15T07:47:27.53Z" },
-    { url = "https://files.pythonhosted.org/packages/e6/2d/06c664162dcba1bb79e875afc43c6147ee2a00a4a57ad84f2f0a94e91ff7/cocotb-1.9.0-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:997dbca2a2cd933fd0a44d9fadeebc1e8a40701db15ea06f207811933dceb350", size = 4094101, upload-time = "2024-07-15T07:47:29.484Z" },
-    { url = "https://files.pythonhosted.org/packages/1d/b5/dfd390d0f816d4ce2b6da9aba1404d035fca52cdec1204ff3636c9628b5d/cocotb-1.9.0-cp311-cp311-win32.whl", hash = "sha256:a7cea13cb2fe4f5ca735490846342885117778a73008a67ed9cac667aaaf3f0d", size = 491689, upload-time = "2024-07-15T07:47:31.276Z" },
-    { url = "https://files.pythonhosted.org/packages/b1/22/31416700f55e0755918104d2b1a656f9abd1731666adb5f79dbe87f109e8/cocotb-1.9.0-cp311-cp311-win_amd64.whl", hash = "sha256:87a19d3012f505ba7fda37483b851ef0ca40290ad8a9b28a820b84f8574287bb", size = 523117, upload-time = "2024-07-15T07:47:33.089Z" },
+    { url = "https://files.pythonhosted.org/packages/04/4f/64e2e6338a4c0666d2a53fdc160832bf1dd29d758fd8d6e7c72c98d22f26/cocotb-1.9.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ac8cef8162a01369cbb6428b5d252274fe8a6bcae360fb68ba12dcda344b468a", size = 620030, upload-time = "2024-10-26T19:10:24.346Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/49/591bbe8961cfb540b3b17fda8e07b19d7e0203a2e272706c71aba37426c0/cocotb-1.9.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:57fb05bc1bf79f92964d3a633153056bd885538dac9c2f5d3a724e83cdc65d51", size = 4211516, upload-time = "2024-10-26T19:10:26.556Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/d6/560c22b3b8cad20f159ba93b076483dd9db101e3823f795f07b26cfa3f30/cocotb-1.9.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:08c6dc004324b36015975b14aa24dca3cf1ac771d0ddd9ccacdcf4af7c77c3e1", size = 4094459, upload-time = "2024-10-26T19:10:28.775Z" },
+    { url = "https://files.pythonhosted.org/packages/07/e7/24ef11f4854ae82758a73a4ce0cfd3a6c5ed459c923891d10d44adb6c586/cocotb-1.9.2-cp311-cp311-win32.whl", hash = "sha256:d2b28fb592586cf210243bacf3c53be5c5ca383555aafc8619605f34529bfae0", size = 491943, upload-time = "2024-10-26T19:10:30.833Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/f9/55036ca2bab83c27519b6497dce6f78d8ef74ff1a166ad17d59bba4ad48b/cocotb-1.9.2-cp311-cp311-win_amd64.whl", hash = "sha256:7f171a4eb095b45556275fba414785eaf7b41937690a93dc0dfa8f568e699687", size = 523342, upload-time = "2024-10-26T19:10:32.628Z" },
 ]
 
 [[package]]
@@ -214,15 +214,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/56/27/5d18c8cc309561592
 
 [[package]]
 name = "cocotbext-axi"
-version = "0.1.24"
+version = "0.1.26"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cocotb" },
     { name = "cocotb-bus" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d3/1a/9404e927ae29608dee29717074a58ddb4999679e310de9a5ff661fd75d61/cocotbext-axi-0.1.24.tar.gz", hash = "sha256:3ed62dcaf9448833176826507c5bc5c346431c4846a731e409d87c862d960593", size = 49247, upload-time = "2023-03-24T18:05:59.784Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/85/85fbd2f224100381447806166caaf0ba2c606e125c0073fcadf38ae191b5/cocotbext_axi-0.1.26.tar.gz", hash = "sha256:7c0c34e2c0163f1df6e314506a49e0d742b23e43eb0ec1b79c89827fb7c2e6b9", size = 58195, upload-time = "2025-09-07T22:35:55.304Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/31/7bc5f68f634d5e4e0f302ac073d38ae795242b9c27dd7104593a75d260de/cocotbext_axi-0.1.24-py3-none-any.whl", hash = "sha256:533ba6c7503c6302bdb9ef86e43a549ad5da876eafb1adce23d39751c54cced4", size = 51491, upload-time = "2023-03-24T18:05:57.109Z" },
+    { url = "https://files.pythonhosted.org/packages/27/c7/47220e92da93c59a6db5b5e8962a032ac7b9e3fda159b7b5f5b4936e5701/cocotbext_axi-0.1.26-py3-none-any.whl", hash = "sha256:1560be1da5c4d2a59ae34513184c3b2c72ba5b3147a4f28b4aef1644db10afd4", size = 56664, upload-time = "2025-09-07T22:35:53.293Z" },
 ]
 
 [[package]]
@@ -532,13 +532,13 @@ requires-dist = [
     { name = "attrs", specifier = "==23.2.0" },
     { name = "black", specifier = "==24.4.2" },
     { name = "click", specifier = "==8.1.7" },
-    { name = "cocotb", specifier = "==1.9.0" },
+    { name = "cocotb", specifier = "==1.9.2" },
     { name = "cocotb-ahb", git = "https://github.com/antmicro/cocotb-ahb?rev=964eca08f2b524e68af9e002e48812649bc9308c" },
     { name = "cocotb-bus", specifier = "==0.2.1" },
     { name = "cocotb-coverage", specifier = "==1.2.0" },
     { name = "cocotb-helpers", editable = "tools/cocotb_helpers" },
     { name = "cocotb-test", specifier = "==0.2.5" },
-    { name = "cocotbext-axi", specifier = "==0.1.24" },
+    { name = "cocotbext-axi", specifier = "==0.1.26" },
     { name = "cocotbext-i2c", git = "https://github.com/alexforencich/cocotbext-i2c?rev=e5f4aa040e3c3ce2d7deced7caabfa91321d036a" },
     { name = "cocotbext-i3c", editable = "third_party/cocotbext-i3c" },
     { name = "colorama", specifier = "==0.4.6" },

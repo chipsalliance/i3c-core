@@ -8,6 +8,7 @@
 module flow_active
   import controller_pkg::*;
   import i3c_pkg::*;
+  import prim_ram_2p_pkg::*;
 #(
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
@@ -129,8 +130,8 @@ module flow_active
   localparam int IBIBufferDepthDwords = `IBI_BUFFER_DEPTH;
 
   // Helper function to check if current CCC has payload or not
-  function automatic logic has_payload(logic [7:0] ccc);
-    if((ccc == `I3C_DIRECT_ENEC) || (ccc == `I3C_DIRECT_DISEC) || (ccc == `I3C_BCAST_ENEC) || (ccc == `I3C_BCAST_DISEC)) begin
+  function automatic logic has_payload(ccc_cmd_e ccc);
+    if((ccc == CCC_DIRECT_ENEC) || (ccc == CCC_DIRECT_DISEC) || (ccc == CCC_BCAST_ENEC) || (ccc == CCC_BCAST_DISEC)) begin
       // TODO: #95745 add more CCCs with payload
       return 1'b1;
     end else begin
@@ -139,8 +140,8 @@ module flow_active
   endfunction
 
   // Helper function to check if current CCC has only one byte of payload or not
-  function automatic logic ccc_has_one_byte_of_payload(logic [7:0] ccc);
-    if(((ccc == `I3C_DIRECT_ENEC) | (ccc == `I3C_DIRECT_DISEC) | (ccc == `I3C_DIRECT_SETDASA) | (ccc == `I3C_DIRECT_SETNEWDA) | (ccc == `I3C_DIRECT_GETBCR) | (ccc == `I3C_DIRECT_GETDCR))) begin
+  function automatic logic ccc_has_one_byte_of_payload(ccc_cmd_e ccc);
+    if(((ccc == CCC_DIRECT_ENEC) | (ccc == CCC_DIRECT_DISEC) | (ccc == CCC_DIRECT_SETDASA) | (ccc == CCC_DIRECT_SETNEWDA) | (ccc == CCC_DIRECT_GETBCR) | (ccc == CCC_DIRECT_GETDCR))) begin
       // TODO: #95745 add more CCCs with payload
       return 1'b1;
     end else begin
@@ -260,8 +261,8 @@ module flow_active
   logic ccc_last_trans;
   logic ccc_has_payload;
   logic ccc_ce0_first_retry_d, ccc_ce0_first_retry_q;
-  logic [7:0] cmd_ccc, prev_ccc_d, prev_ccc_q;
-  assign cmd_ccc = cmd_desc[14:7];
+  ccc_cmd_e cmd_ccc, prev_ccc_d, prev_ccc_q;
+  assign cmd_ccc = ccc_cmd_e'(cmd_desc[14:7]);
   assign ccc_has_payload = has_payload(cmd_ccc);
 
   // Dynamic Address Assignment signals
@@ -396,6 +397,8 @@ module flow_active
   // dynamic address -> DAT index reverse lookup table
   assign rlt_wreq = dat_mem_sink_i.req && dat_mem_sink_i.write && (&dat_mem_sink_i.wmask[22:16]);
   // read request is valid 1 cycle after the request has been issued
+  logic [$clog2(`DAT_DEPTH)-1:0] unused_a_rdata;
+  ram_2p_cfg_rsp_t unused_cfg_rsp;
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       rlt_valid <= 1'b0;
@@ -417,7 +420,7 @@ module flow_active
       .a_addr_i(dat_mem_sink_i.wdata[22:16]), // dynamic address field of DAT entry without parity bit
       .a_wdata_i(dat_mem_sink_i.addr),  // DAT index
       .a_wmask_i('1),
-      .a_rdata_o(unused_a_rdata_o),
+      .a_rdata_o(unused_a_rdata),
 
       // Read Port
       .b_req_i  (rlt_req),
@@ -428,7 +431,7 @@ module flow_active
       .b_rdata_o(rlt_dat_index),
 
       .cfg_i('0),
-      .cfg_rsp_o(unused_cfg_rsp_o)
+      .cfg_rsp_o(unused_cfg_rsp)
   );
 
   // Capture command FIFO control signals
@@ -586,7 +589,7 @@ module flow_active
   // Store previous CCC for direct CCC frame (Table 31 I3C Basic Spec)
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      prev_ccc_q <= 8'hFF;  // 0xFF is not used as a CCC, that's why it's a reset state
+      prev_ccc_q <= ccc_cmd_e'(8'hFF);  // 0xFF is not used as a CCC, that's why it's a reset state
     end else begin
       prev_ccc_q <= prev_ccc_d;
     end
@@ -1078,7 +1081,7 @@ module flow_active
           32'd2: begin  // Transmit Target Addr
             fmt_byte_o = is_direct_transfer ? (is_regular_transfer ? {regular_direct_cmd_desc.dev_address, cmd_dir == Read} 
                                              : {immediate_direct_cmd_desc.dev_address, cmd_dir == Read}) 
-                                             : ((cmd_ccc == `I3C_DIRECT_SETDASA) ? {dat_rdata.static_address, cmd_dir == Read} : {dat_rdata.dynamic_address, cmd_dir == Read});
+                                             : ((cmd_ccc == CCC_DIRECT_SETDASA) ? {dat_rdata.static_address, cmd_dir == Read} : {dat_rdata.dynamic_address, cmd_dir == Read});
             // SETDASA is the only CCC using the static address instead of the dynamic address
             tx_queue_rready_o = is_regular_transfer & fmt_fifo_rdone_i & (prev_ccc_q == cmd_ccc); // Pop payload byte for next cycle if we skipped sending 7'h7E and CCC bytes
             fmt_flag_read_bytes_o = fmt_fifo_rdone_i & (cmd_dir == Read);
@@ -1126,14 +1129,14 @@ module flow_active
                   hc_seq_cancel_stat = 1'b1;
                   hc_err_cmd_seq_timeout_stat = 1'b1;
                 end
-                resp_err_status_d = (cmd_ccc == `I3C_DIRECT_SETDASA) ? NotSupported : Success;  // SETDASA is only supported with address assignment cmd desc
+                resp_err_status_d = (cmd_ccc == CCC_DIRECT_SETDASA) ? NotSupported : Success;  // SETDASA is only supported with address assignment cmd desc
               end
             end else begin
-              fmt_byte_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? {dat_rdata.dynamic_address, 1'b0} : (is_direct_transfer ? immediate_direct_cmd_desc.def_or_data_byte1 : immediate_dat_cmd_desc.def_or_data_byte1);
+              fmt_byte_o = (cmd_ccc == CCC_DIRECT_SETDASA) ? {dat_rdata.dynamic_address, 1'b0} : (is_direct_transfer ? immediate_direct_cmd_desc.def_or_data_byte1 : immediate_dat_cmd_desc.def_or_data_byte1);
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
               if (ccc_last_trans) begin
-                fmt_flag_stop_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? addr_cmd_desc.toc : (is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc);
-                fmt_flag_restart_after_o = (cmd_ccc == `I3C_DIRECT_SETDASA) ? ~addr_cmd_desc.toc : (is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc);
+                fmt_flag_stop_after_o = (cmd_ccc == CCC_DIRECT_SETDASA) ? addr_cmd_desc.toc : (is_direct_transfer ? immediate_direct_cmd_desc.toc : immediate_dat_cmd_desc.toc);
+                fmt_flag_restart_after_o = (cmd_ccc == CCC_DIRECT_SETDASA) ? ~addr_cmd_desc.toc : (is_direct_transfer ? ~immediate_direct_cmd_desc.toc : ~immediate_dat_cmd_desc.toc);
                 prev_cmd_toc_d = ~fmt_flag_restart_after_o;
                 if (fmt_fifo_rdone_i & fmt_flag_restart_after_o & ~cmd_queue_rvalid_i) begin
                   fmt_flag_stop_after_o = 1'b1;
@@ -1245,7 +1248,7 @@ module flow_active
             ccc_done = ~ccc_has_payload & fmt_fifo_rdone_i;
           end
           32'd2: begin  // Transmit the first Payload byte
-            ccc_done = ((cmd_ccc == `I3C_BCAST_ENEC) | (cmd_ccc == `I3C_BCAST_DISEC)) & fmt_fifo_rdone_i;
+            ccc_done = ((cmd_ccc == CCC_BCAST_ENEC) | (cmd_ccc == CCC_BCAST_DISEC)) & fmt_fifo_rdone_i;
             if (is_regular_transfer) begin
               fmt_byte_o = tx_dword_array[0];
               fmt_bit_o = ^{fmt_byte_o, 1'b1};
@@ -1662,7 +1665,7 @@ module flow_active
                 // TODO: #95759 implement combo transfer command descriptor
               end
               AddressAssignment: begin
-                state_next = fmt_fifo_rready_i ? (cmd_ccc == `I3C_DIRECT_SETDASA ? DirectCCC : DynamicAddrAssignment) : state;
+                state_next = fmt_fifo_rready_i ? (cmd_ccc == CCC_DIRECT_SETDASA ? DirectCCC : DynamicAddrAssignment) : state;
               end
               default: state_next = state;  // Stall
             endcase

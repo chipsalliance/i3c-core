@@ -137,7 +137,9 @@ module i2c_controller_test_wrapper #(
       .NumDevices(NumDevices)
   ) xi3_bus_harness (
       .sda_i(sda),
+      .sda_oe_i(2'b11),
       .scl_i(scl),
+      .scl_oe_i(2'b10),  // only ctrl drives scl
       .sda_o(sda_o),
       .scl_o(scl_o)
   );

@@ -123,6 +123,7 @@ module axi_csr_tracker (
       12'h488: csr_name = "I3C_EC.TTI.IBI_QUEUE_SIZE";
       12'h48C: csr_name = "I3C_EC.TTI.QUEUE_THLD_CTRL";
       12'h490: csr_name = "I3C_EC.TTI.DATA_BUFFER_THLD_CTRL";
+      12'h4A0: csr_name = "I3C_EC.TERMINATION_EXTCAP_HEADER";
       12'h600: csr_name = "I3C_EC.SOCMGMTIF.EXTCAP_HEADER";
       12'h604: csr_name = "I3C_EC.SOCMGMTIF.SOC_MGMT_CONTROL";
       12'h608: csr_name = "I3C_EC.SOCMGMTIF.SOC_MGMT_STATUS";
@@ -137,19 +138,31 @@ module axi_csr_tracker (
       12'h62C: csr_name = "I3C_EC.SOCMGMTIF.T_R_REG";
       12'h630: csr_name = "I3C_EC.SOCMGMTIF.T_F_REG";
       12'h634: csr_name = "I3C_EC.SOCMGMTIF.T_SU_DAT_REG";
-      12'h638: csr_name = "I3C_EC.SOCMGMTIF.T_HD_DAT_REG";
-      12'h63C: csr_name = "I3C_EC.SOCMGMTIF.T_HIGH_REG";
-      12'h640: csr_name = "I3C_EC.SOCMGMTIF.T_LOW_REG";
-      12'h644: csr_name = "I3C_EC.SOCMGMTIF.T_HD_STA_REG";
-      12'h648: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STA_REG";
-      12'h64C: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STO_REG";
-      12'h650: csr_name = "I3C_EC.SOCMGMTIF.T_FREE_REG";
-      12'h654: csr_name = "I3C_EC.SOCMGMTIF.T_AVAL_REG";
-      12'h658: csr_name = "I3C_EC.SOCMGMTIF.T_IDLE_REG";
-      12'h65C: csr_name = "I3C_EC.SOCMGMTIF.HDR_TIMEOUT_EN_REG";
-      12'h660: csr_name = "I3C_EC.SOCMGMTIF.T_HDR_TIMEOUT_REG";
-      12'h6D0: csr_name = "I3C_EC.CTRLCFG.EXTCAP_HEADER";
-      12'h6D4: csr_name = "I3C_EC.CTRLCFG.CONTROLLER_CONFIG";
+      12'h638: csr_name = "I3C_EC.SOCMGMTIF.T_SU_DAT_I2C_REG";
+      12'h63C: csr_name = "I3C_EC.SOCMGMTIF.T_HD_DAT_REG";
+      12'h640: csr_name = "I3C_EC.SOCMGMTIF.T_HIGH_REG";
+      12'h644: csr_name = "I3C_EC.SOCMGMTIF.T_HIGH_OD_REG";
+      12'h648: csr_name = "I3C_EC.SOCMGMTIF.T_HIGH_INIT_OD_REG";
+      12'h64C: csr_name = "I3C_EC.SOCMGMTIF.T_HIGH_I2C_REG";
+      12'h650: csr_name = "I3C_EC.SOCMGMTIF.T_LOW_REG";
+      12'h654: csr_name = "I3C_EC.SOCMGMTIF.T_LOW_OD_REG";
+      12'h658: csr_name = "I3C_EC.SOCMGMTIF.T_LOW_I2C_REG";
+      12'h65C: csr_name = "I3C_EC.SOCMGMTIF.T_HD_STA_REG";
+      12'h660: csr_name = "I3C_EC.SOCMGMTIF.T_HD_STA_I2C_REG";
+      12'h664: csr_name = "I3C_EC.SOCMGMTIF.T_HD_RSTA_REG";
+      12'h668: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STA_REG";
+      12'h66C: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STA_I2C_REG";
+      12'h670: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STO_REG";
+      12'h674: csr_name = "I3C_EC.SOCMGMTIF.T_SU_STO_I2C_REG";
+      12'h678: csr_name = "I3C_EC.SOCMGMTIF.T_DS_OD_REG";
+      12'h67C: csr_name = "I3C_EC.SOCMGMTIF.T_FREE_REG";
+      12'h680: csr_name = "I3C_EC.SOCMGMTIF.T_FREE_I2C_REG";
+      12'h684: csr_name = "I3C_EC.SOCMGMTIF.T_AVAL_REG";
+      12'h688: csr_name = "I3C_EC.SOCMGMTIF.T_IDLE_REG";
+      12'h68C: csr_name = "I3C_EC.SOCMGMTIF.HDR_TIMEOUT_EN_REG";
+      12'h690: csr_name = "I3C_EC.SOCMGMTIF.T_HDR_TIMEOUT_REG";
+      12'h730: csr_name = "I3C_EC.CTRLCFG.EXTCAP_HEADER";
+      12'h734: csr_name = "I3C_EC.CTRLCFG.CONTROLLER_CONFIG";
 
       default: begin
         // DAT memory range (0x800–0xBFF)

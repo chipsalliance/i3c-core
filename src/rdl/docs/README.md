@@ -8,7 +8,7 @@ Don't override. Generated from: I3CCSR
 
 - Absolute Address: 0x0
 - Base Offset: 0x0
-- Size: 0x29C
+- Size: 0x3A4
 
 |Offset|Identifier|         Name        |
 |------|----------|---------------------|
@@ -18,16 +18,16 @@ Don't override. Generated from: I3CCSR
 
 - Absolute Address: 0x100
 - Base Offset: 0x100
-- Size: 0x19C
+- Size: 0x2A4
 
 |Offset|        Identifier       |               Name               |
 |------|-------------------------|----------------------------------|
 | 0x000|     SecFwRecoveryIf     |Secure Firmware Recovery Interface|
 | 0x080|      StdbyCtrlMode      |      Standby Controller Mode     |
-| 0x0C0|           TTI           |   Target Transaction Interface   |
-| 0x100|        SoCMgmtIf        |     SoC Management Interface     |
-| 0x190|         CtrlCfg         |         Controller Config        |
-| 0x198|TERMINATION_EXTCAP_HEADER|                 —                |
+| 0x100|           TTI           |   Target Transaction Interface   |
+| 0x200|        SoCMgmtIf        |     SoC Management Interface     |
+| 0x298|         CtrlCfg         |         Controller Config        |
+| 0x2A0|TERMINATION_EXTCAP_HEADER|                 —                |
 
 ## SecFwRecoveryIf register file
 
@@ -2856,9 +2856,9 @@ permitted by the retry counter.</p>
 
 ## SoCMgmtIf register file
 
-- Absolute Address: 0x200
-- Base Offset: 0x100
-- Size: 0x8C
+- Absolute Address: 0x300
+- Base Offset: 0x200
+- Size: 0x94
 
 |Offset|       Identifier      |                  Name                  |
 |------|-----------------------|----------------------------------------|
@@ -2897,6 +2897,8 @@ permitted by the retry counter.</p>
 | 0x80 |     T_FREE_I2C_REG    |                                        |
 | 0x84 |       T_AVAL_REG      |                                        |
 | 0x88 |       T_IDLE_REG      |                                        |
+| 0x8C |   HDR_TIMEOUT_EN_REG  |                                        |
+| 0x90 |   T_HDR_TIMEOUT_REG   |                                        |
 
 ### EXTCAP_HEADER register
 
@@ -3207,7 +3209,7 @@ permitted by the retry counter.</p>
 
 ### T_HD_DAT_REG register
 
-- Absolute Address: 0x23C
+- Absolute Address: 0x33C
 - Base Offset: 0x3C
 - Size: 0x4
 
@@ -3221,7 +3223,7 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_REG register
 
-- Absolute Address: 0x240
+- Absolute Address: 0x340
 - Base Offset: 0x40
 - Size: 0x4
 
@@ -3235,7 +3237,7 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_OD_REG register
 
-- Absolute Address: 0x244
+- Absolute Address: 0x344
 - Base Offset: 0x44
 - Size: 0x4
 
@@ -3249,7 +3251,7 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_INIT_OD_REG register
 
-- Absolute Address: 0x248
+- Absolute Address: 0x348
 - Base Offset: 0x48
 - Size: 0x4
 
@@ -3263,7 +3265,7 @@ permitted by the retry counter.</p>
 
 ### T_HIGH_I2C_REG register
 
-- Absolute Address: 0x24C
+- Absolute Address: 0x34C
 - Base Offset: 0x4C
 - Size: 0x4
 
@@ -3277,7 +3279,7 @@ permitted by the retry counter.</p>
 
 ### T_LOW_REG register
 
-- Absolute Address: 0x250
+- Absolute Address: 0x350
 - Base Offset: 0x50
 - Size: 0x4
 
@@ -3291,7 +3293,7 @@ permitted by the retry counter.</p>
 
 ### T_LOW_OD_REG register
 
-- Absolute Address: 0x254
+- Absolute Address: 0x354
 - Base Offset: 0x54
 - Size: 0x4
 
@@ -3305,7 +3307,7 @@ permitted by the retry counter.</p>
 
 ### T_LOW_I2C_REG register
 
-- Absolute Address: 0x258
+- Absolute Address: 0x358
 - Base Offset: 0x58
 - Size: 0x4
 
@@ -3319,7 +3321,7 @@ permitted by the retry counter.</p>
 
 ### T_HD_STA_REG register
 
-- Absolute Address: 0x25C
+- Absolute Address: 0x35C
 - Base Offset: 0x5C
 - Size: 0x4
 
@@ -3333,7 +3335,7 @@ permitted by the retry counter.</p>
 
 ### T_HD_STA_I2C_REG register
 
-- Absolute Address: 0x260
+- Absolute Address: 0x360
 - Base Offset: 0x60
 - Size: 0x4
 
@@ -3347,7 +3349,7 @@ permitted by the retry counter.</p>
 
 ### T_HD_RSTA_REG register
 
-- Absolute Address: 0x264
+- Absolute Address: 0x364
 - Base Offset: 0x64
 - Size: 0x4
 
@@ -3361,7 +3363,7 @@ permitted by the retry counter.</p>
 
 ### T_SU_STA_REG register
 
-- Absolute Address: 0x268
+- Absolute Address: 0x368
 - Base Offset: 0x68
 - Size: 0x4
 
@@ -3375,7 +3377,7 @@ permitted by the retry counter.</p>
 
 ### T_SU_STA_I2C_REG register
 
-- Absolute Address: 0x26C
+- Absolute Address: 0x36C
 - Base Offset: 0x6C
 - Size: 0x4
 
@@ -3389,7 +3391,7 @@ permitted by the retry counter.</p>
 
 ### T_SU_STO_REG register
 
-- Absolute Address: 0x270
+- Absolute Address: 0x370
 - Base Offset: 0x70
 - Size: 0x4
 
@@ -3403,7 +3405,7 @@ permitted by the retry counter.</p>
 
 ### T_SU_STO_I2C_REG register
 
-- Absolute Address: 0x274
+- Absolute Address: 0x374
 - Base Offset: 0x74
 - Size: 0x4
 
@@ -3417,7 +3419,7 @@ permitted by the retry counter.</p>
 
 ### T_DS_OD_REG register
 
-- Absolute Address: 0x278
+- Absolute Address: 0x378
 - Base Offset: 0x78
 - Size: 0x4
 
@@ -3431,7 +3433,7 @@ permitted by the retry counter.</p>
 
 ### T_FREE_REG register
 
-- Absolute Address: 0x27C
+- Absolute Address: 0x37C
 - Base Offset: 0x7C
 - Size: 0x4
 
@@ -3445,7 +3447,7 @@ permitted by the retry counter.</p>
 
 ### T_FREE_I2C_REG register
 
-- Absolute Address: 0x280
+- Absolute Address: 0x380
 - Base Offset: 0x80
 - Size: 0x4
 
@@ -3459,7 +3461,7 @@ permitted by the retry counter.</p>
 
 ### T_AVAL_REG register
 
-- Absolute Address: 0x284
+- Absolute Address: 0x384
 - Base Offset: 0x84
 - Size: 0x4
 
@@ -3469,11 +3471,11 @@ permitted by the retry counter.</p>
 
 #### T_AVAL field
 
-<p>Time in clock cycles from STOP detection until Bus Available Condition (tAVAL). Configure based on System Clock. NOTE: I3C spec v1.1.1 Figure 24 shows the time from STOP, and 5.1.3.2.2 describes it as 'a period during which the Bus Free Condition is sustained continuously for a duration of at least tAVAL.' The timer starts at a bus STOP condition and FW can take into account the tBUF if needed.</p>
+
 
 ### T_IDLE_REG register
 
-- Absolute Address: 0x288
+- Absolute Address: 0x388
 - Base Offset: 0x88
 - Size: 0x4
 
@@ -3487,8 +3489,8 @@ permitted by the retry counter.</p>
 
 ### HDR_TIMEOUT_EN_REG register
 
-- Absolute Address: 0x35C
-- Base Offset: 0x5C
+- Absolute Address: 0x38C
+- Base Offset: 0x8C
 - Size: 0x4
 
 |Bits|  Identifier  |Access|Reset|Name|
@@ -3501,8 +3503,8 @@ permitted by the retry counter.</p>
 
 ### T_HDR_TIMEOUT_REG register
 
-- Absolute Address: 0x360
-- Base Offset: 0x60
+- Absolute Address: 0x390
+- Base Offset: 0x90
 - Size: 0x4
 
 |Bits|  Identifier |Access| Reset|Name|
@@ -3515,8 +3517,8 @@ permitted by the retry counter.</p>
 
 ## CtrlCfg register file
 
-- Absolute Address: 0x290
-- Base Offset: 0x190
+- Absolute Address: 0x398
+- Base Offset: 0x298
 - Size: 0x8
 
 |Offset|    Identifier   |       Name      |
@@ -3526,7 +3528,7 @@ permitted by the retry counter.</p>
 
 ### EXTCAP_HEADER register
 
-- Absolute Address: 0x290
+- Absolute Address: 0x398
 - Base Offset: 0x0
 - Size: 0x4
 
@@ -3545,7 +3547,7 @@ permitted by the retry counter.</p>
 
 ### CONTROLLER_CONFIG register
 
-- Absolute Address: 0x294
+- Absolute Address: 0x39C
 - Base Offset: 0x4
 - Size: 0x4
 
@@ -3559,8 +3561,8 @@ permitted by the retry counter.</p>
 
 ### TERMINATION_EXTCAP_HEADER register
 
-- Absolute Address: 0x298
-- Base Offset: 0x198
+- Absolute Address: 0x3A0
+- Base Offset: 0x2A0
 - Size: 0x4
 
 <p>Register after the last EC must advertise ID == 0.

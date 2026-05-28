@@ -182,9 +182,9 @@ module controller_standby_i2c
       .acq_fifo_rdata_i('1),  // This is only used for assertions by OpenTitan
       // Timing setup
       // FUTUREFIX: Use calculated timing values
-      .t_r_i(16'd1),
-      .tsu_dat_i(16'd1),
-      .thd_dat_i(16'd1),
+      .t_r_i(20'd1),
+      .tsu_dat_i(20'd1),
+      .thd_dat_i(20'd1),
       .host_timeout_i('0),
       .nack_timeout_i('0),
       .nack_timeout_en_i('0),

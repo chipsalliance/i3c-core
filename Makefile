@@ -169,15 +169,10 @@ tests-axi-hc: ## Run all verification/cocotb/* RTL tests for AXI bus HC configur
 	export TARGET_SUPPORT=0 && \
 	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_hc $(PYTHON) -m nox -R -t "axi_hc" --no-venv --forcecolor
 
-tests-axi-controller-short: ## Run all verification/cocotb/* RTL tests for the controller without coverage
-	export CONTROLLER_SUPPORT=1 && \
-	export TARGET_SUPPORT=1 && \
-	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ctrl_and_target_short $(PYTHON) -m nox -R -t "controller-axi" --no-venv --forcecolor
-	
 tests-axi-controller: ## Run all verification/cocotb/* RTL tests for the controller without coverage
 	export CONTROLLER_SUPPORT=1 && \
 	export TARGET_SUPPORT=1 && \
-	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi_ctrl_and_target $(PYTHON) -m nox -R -t "controller-axi" --no-venv --forcecolor
+	cd $(COCOTB_VERIF_DIR) && CFG_NAME=axi-controller $(PYTHON) -m nox -R -t "axi-controller" --no-venv --forcecolor
 
 tests: tests-axi tests-ahb ## Run all verification/cocotb/* RTL tests fro AHB and AXI bus configurations without coverage
 

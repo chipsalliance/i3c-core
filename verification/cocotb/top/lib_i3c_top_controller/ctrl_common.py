@@ -197,6 +197,7 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
         await data_write
 
     # Wait for response Descriptor when it's the last cmd descriptor
+    tb.dut._log.info("Waiting for resp desc")
     resp_desc = await tb.read_resp_desc(bus_idx=bus_idx)
     if expect_success:
         assert resp_desc.err_status == ErrorStatus.SUCCESS
@@ -206,6 +207,7 @@ async def write_i3c(tb, addr_helper, payload, target_len, immediate=None, device
     await ClockCycles(tb.clk, 100)
     num_words = (target_len + 3) // 4
     # Read RX descriptor
+    tb.dut._log.info("Waiting for rx queue desc")
     recv_data = await tb.read_rx_queue(num_words, bus_idx=ACT_TARGET_IDX)
 
     actual_val = recv_data

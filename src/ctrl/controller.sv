@@ -12,7 +12,7 @@ module controller
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
 
-`ifdef CONTROLLER_SUPPORT,
+`ifdef CONTROLLER_SUPPORT
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
     parameter int unsigned HciRxFifoDepth   = 64,
@@ -32,10 +32,10 @@ module controller
     parameter int unsigned HciIbiDataWidth  = 32,
 
     parameter int unsigned HciRespThldWidth = 8,
-    parameter int unsigned HciCmdThldWidth  = 8,
-    parameter int unsigned HciRxThldWidth   = 3,
-    parameter int unsigned HciTxThldWidth   = 3,
-    parameter int unsigned HciIbiThldWidth  = 8,
+    parameter int unsigned HciCmdThldWidth = 8,
+    parameter int unsigned HciRxThldWidth = 3,
+    parameter int unsigned HciTxThldWidth = 3,
+    parameter int unsigned HciIbiThldWidth = 8,
 `endif  // CONTROLLER_SUPPORT
 `ifdef TARGET_SUPPORT
     parameter int unsigned TtiRxDescFifoDepth = 64,
@@ -195,29 +195,16 @@ module controller
     output logic tti_tx_pr_start_o,
 
     // TTI: In-band Interrupt queue
-    input logic tti_ibi_queue_full_i,
-    input logic [TtiIbiFifoDepthWidth-1:0] tti_ibi_queue_depth_i,
-    input logic [TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld_i,
-    input logic tti_ibi_queue_ready_thld_trig_i,
-    input logic tti_ibi_queue_empty_i,
-    input logic tti_ibi_queue_clear_i,
-    input logic tti_ibi_queue_rvalid_i,
-    output logic tti_ibi_queue_rready_o,
-    input logic [TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_i,
+    input  logic                            tti_ibi_queue_full_i,
+    input  logic [TtiIbiFifoDepthWidth-1:0] tti_ibi_queue_depth_i,
+    input  logic [     TtiIbiThldWidth-1:0] tti_ibi_queue_ready_thld_i,
+    input  logic                            tti_ibi_queue_ready_thld_trig_i,
+    input  logic                            tti_ibi_queue_empty_i,
+    input  logic                            tti_ibi_queue_clear_i,
+    input  logic                            tti_ibi_queue_rvalid_i,
+    output logic                            tti_ibi_queue_rready_o,
+    input  logic [     TtiIbiDataWidth-1:0] tti_ibi_queue_rdata_i,
 `endif  // TARGET_SUPPORT
-`ifdef CONTROLLER_SUPPORT
-    // DAT <-> Controller interface
-    output logic             dat_read_valid_hw_o,
-    output logic [DatAw-1:0] dat_index_hw_o,
-    input  logic [     63:0] dat_rdata_hw_i,
-
-    // DCT <-> Controller interface
-    output logic             dct_write_valid_hw_o,
-    output logic             dct_read_valid_hw_o,
-    output logic [DctAw-1:0] dct_index_hw_o,
-    output logic [    127:0] dct_wdata_hw_o,
-    input  logic [    127:0] dct_rdata_hw_i,
-`endif // CONTROLLER_SUPPORT
 
     // I2C/I3C Bus condition detection
     output logic bus_start_o,
@@ -261,7 +248,7 @@ module controller
     output logic        set_mwl_o,
     output logic [15:0] mrl_o,
     output logic        set_mrl_o,
-    output logic  [7:0] ibil_o,
+    output logic [ 7:0] ibil_o,
     output logic        set_ibil_o,
 
     output logic enec_ibi_o,
@@ -287,13 +274,13 @@ module controller
     output logic framing_err_o,
 
     // Target Error Detection Enables (from TTI CSR)
-    input  logic te0_err_det_en_i,
-    input  logic te1_err_det_en_i,
-    input  logic te2_err_det_en_i,
-    input  logic te3_err_det_en_i,
-    input  logic te4_err_det_en_i,
-    input  logic te5_err_det_en_i,
-    input  logic framing_err_det_en_i,
+    input logic te0_err_det_en_i,
+    input logic te1_err_det_en_i,
+    input logic te2_err_det_en_i,
+    input logic te3_err_det_en_i,
+    input logic te4_err_det_en_i,
+    input logic te5_err_det_en_i,
+    input logic framing_err_det_en_i,
 
     output logic virtual_device_sel_o,
     output logic xfer_in_progress_o,
@@ -303,73 +290,93 @@ module controller
   localparam int unsigned RecoveryMode = 'h3;
 
   // General control signals
-  logic       phy_en;
-  logic [1:0] phy_mux_select;
-  logic       i2c_active_en;
-  logic       i2c_standby_en;
-  logic       i3c_active_en;
-  logic       i3c_standby_en;
+  logic                  phy_en;
+  logic           [ 1:0] phy_mux_select;
+  logic                  i2c_active_en;
+  logic                  i2c_standby_en;
+  logic                  i3c_active_en;
+  logic                  i3c_standby_en;
 
   // Timing Parameters
-  i3c_timeparam_t t_su_dat;
-  i3c_timeparam_t t_hd_dat;
-  i3c_timeparam_t t_r;
-  i3c_timeparam_t t_f;
-  i3c_timeparam_t t_bus_free;
-  i3c_timeparam_t t_bus_idle;
-  i3c_timeparam_t t_bus_available;
-  i3c_timeparam_t t_hdr_timeout;
-  logic           hdr_timeout_en;
+  i3c_timeparam_t        t_hdr_timeout;
+  logic                  hdr_timeout_en;
+
+  i3c_timeparam_t        t_su_dat;
+  i3c_timeparam_t        t_hd_dat;
+  i3c_timeparam_t        t_r;
+  i3c_timeparam_t        t_f;
+  // I2C signals
+  i3c_timeparam_t        t_low_i2c;
+  i3c_timeparam_t        t_high_i2c;
+  i3c_timeparam_t        t_su_sta_i2c;
+  i3c_timeparam_t        t_hd_sta_i2c;
+  i3c_timeparam_t        t_su_dat_i2c;
+  i3c_timeparam_t        t_su_sto_i2c;
+  i3c_timeparam_t        t_high;
+  i3c_timeparam_t        t_high_od;
+  i3c_timeparam_t        t_high_init_od;
+  i3c_timeparam_t        t_low;
+  i3c_timeparam_t        t_low_od;
+  i3c_timeparam_t        t_hd_sta;
+  i3c_timeparam_t        t_hd_rsta;
+  i3c_timeparam_t        t_su_sta;
+  i3c_timeparam_t        t_su_sto;
+  i3c_timeparam_t        t_ds_od;
+  i3c_timeparam_t        t_bus_free;
+  i3c_timeparam_t        t_bus_free_i2c;
+  i3c_timeparam_t        t_bus_idle;
+  i3c_timeparam_t        t_bus_available;
+
 
   // CCC-related signals
-  logic        set_mwl;
-  logic [15:0] get_mwl;
-  logic [15:0] mwl;
+  logic                  set_mwl;
+  logic           [15:0] get_mwl;
+  logic           [15:0] mwl;
 
-  logic        set_mrl;
-  logic [15:0] get_mrl;
-  logic [15:0] mrl;
+  logic                  set_mrl;
+  logic           [15:0] get_mrl;
+  logic           [15:0] mrl;
 
-  logic        set_ibil;
-  logic  [7:0] get_ibil;
-  logic  [7:0] ibil;
+  logic                  set_ibil;
+  logic           [ 7:0] get_ibil;
+  logic           [ 7:0] ibil;
 
-  logic [15:0] get_status_fmt1;
+  logic           [15:0] get_status_fmt1;
 
-  logic [47:0] pid;
-  logic [47:0] virtual_pid;
+  logic           [47:0] pid;
+  logic           [47:0] virtual_pid;
 
-  logic  [7:0] bcr;
-  logic  [7:0] virtual_bcr;
+  logic           [ 7:0] bcr;
+  logic           [ 7:0] virtual_bcr;
 
-  logic  [7:0] dcr;
-  logic  [7:0] virtual_dcr;
+  logic           [ 7:0] dcr;
+  logic           [ 7:0] virtual_dcr;
 
   // Addresses
-  logic       target_sta_addr_valid;
-  logic [6:0] target_sta_addr;
-  logic       target_dyn_addr_valid;
-  logic [6:0] target_dyn_addr;
-  logic       virtual_target_sta_addr_valid;
-  logic [6:0] virtual_target_sta_addr;
-  logic       virtual_target_dyn_addr_valid;
-  logic [6:0] virtual_target_dyn_addr;
-  logic       target_ibi_addr_valid;
-  logic [6:0] target_ibi_addr;
+  logic                  target_sta_addr_valid;
+  logic           [ 6:0] target_sta_addr;
+  logic                  target_dyn_addr_valid;
+  logic           [ 6:0] target_dyn_addr;
+  logic                  virtual_target_sta_addr_valid;
+  logic           [ 6:0] virtual_target_sta_addr;
+  logic                  virtual_target_dyn_addr_valid;
+  logic           [ 6:0] virtual_target_dyn_addr;
+  logic                  target_ibi_addr_valid;
+  logic           [ 6:0] target_ibi_addr;
 
   // IBI Control signals
-  logic       ibi_enable;
-  logic [2:0] ibi_retry_num;
-  logic       ibi_retry_ctr_rst;
+  logic                  ibi_enable;
+  logic           [ 2:0] ibi_retry_num;
+  logic                  ibi_retry_ctr_rst;
 
-  logic recovery_mode;
+  logic                  recovery_mode;
 
   // Max lengths
-  assign mwl_o  = mwl;
-  assign mrl_o  = mrl;
+  assign mwl_o = mwl;
+  assign mrl_o = mrl;
   assign ibil_o = ibil;
-  assign set_mwl_o  = set_mwl;
-  assign set_mrl_o  = set_mrl;
+  assign set_mwl_o = set_mwl;
+  assign set_mrl_o = set_mrl;
   assign set_ibil_o = set_ibil;
   logic resume, abort, pio_rs, halt_on_cmd_seq_timeout;
 
@@ -379,21 +386,21 @@ module controller
   bus_state_t bus;
   bus_state_t hdr_exit_bus;
   bus_monitor xbus_monitor (
-    .clk_i,
-    .rst_ni,
+      .clk_i,
+      .rst_ni,
 
-    .sda_i,
-    .scl_i,
+      .sda_i,
+      .scl_i,
 
-    .enable_i   (phy_en),
-    .t_hd_dat_i (t_hd_dat),
-    .t_r_i      (t_r),
-    .t_f_i      (t_f),
+      .enable_i  (phy_en),
+      .t_hd_dat_i(t_hd_dat),
+      .t_r_i     (t_r),
+      .t_f_i     (t_f),
 
-    .in_hdr_mode_i   (in_hdr_mode_o),
+      .in_hdr_mode_i(in_hdr_mode_o),
 
-    .state_o         (bus),
-    .hdr_exit_state_o(hdr_exit_bus)
+      .state_o         (bus),
+      .hdr_exit_state_o(hdr_exit_bus)
   );
 
   assign bus_scl_posedge_o = bus.scl.pos_edge;
@@ -409,26 +416,25 @@ module controller
   assign ctrl_sda_oe_o[0] = 1'b0;
   assign ctrl_sda_oe_o[1] = 1'b0;
 
-  // NOTE: For now, the I3C standby (target) device is hard-wired onto the bus for risk mitigation
-  assign scl_o = ctrl_scl_o[3];
-  assign sda_o = ctrl_sda_o[3];
-  assign sda_oe_o    = ctrl_sda_oe_o[3];
-  assign sel_od_pp_o = ctrl_sel_od_pp_i[3];
+  always_comb begin : mux_4_to_1
+    scl_o = ctrl_scl_o[phy_mux_select];
+    sda_o = ctrl_sda_o[phy_mux_select];
+    sel_od_pp_o = ctrl_sel_od_pp_i[phy_mux_select];
+    sda_oe_o = ctrl_sda_oe_o[phy_mux_select];  // NOTE: this is only used for target mode
 
-
-  // Tieoff of all other devices
-  always_comb begin : mux_tieoff
     // Default
-    for (int i=0; i<3; i++) begin
+    for (int i = 0; i < 4; i++) begin
       ctrl_bus_i[i] = '0;
-      ctrl_bus_i[i].sda.value = 1'b1;
-      ctrl_bus_i[i].scl.value = 1'b1;
-      ctrl_bus_i[i].sda.stable_high = 1'b1;
-      ctrl_bus_i[i].scl.stable_high = 1'b1;
+      ctrl_bus_i[i].sda.value = '1;
+      ctrl_bus_i[i].scl.value = '1;
+      ctrl_bus_i[i].sda.stable_high = '1;
+      ctrl_bus_i[i].scl.stable_high = '1;
     end
-    
-    ctrl_bus_i[3] = bus;
+
+    // Muxed
+    ctrl_bus_i[phy_mux_select] = bus;
   end
+
 
   logic is_i2c_transfer;
 
@@ -467,6 +473,8 @@ module controller
       .t_bus_free_i2c_o               (t_bus_free_i2c),
       .t_bus_idle_o                   (t_bus_idle),
       .t_bus_available_o              (t_bus_available),
+      .hdr_timeout_en_o               (hdr_timeout_en),
+      .t_hdr_timeout_o                (t_hdr_timeout),
       .get_mwl_o                      (get_mwl),
       .get_mrl_o                      (get_mrl),
       .get_ibil_o                     (get_ibil),
@@ -487,10 +495,9 @@ module controller
       .virtual_target_dyn_addr_valid_o(virtual_target_dyn_addr_valid),
       .target_ibi_addr_o              (target_ibi_addr),
       .target_ibi_addr_valid_o        (target_ibi_addr_valid),
-      .target_hot_join_addr_o         (target_hot_join_addr),
-      .daa_unique_response_o          (daa_unique_response),
       .ibi_enable_o                   (ibi_enable),
       .ibi_retry_num_o                (ibi_retry_num),
+      .ibi_retry_ctr_rst_o            (ibi_retry_ctr_rst),
       .set_mwl_i                      (set_mwl),
       .set_mrl_i                      (set_mrl),
       .set_ibil_i                     (set_ibil),
@@ -622,155 +629,155 @@ module controller
 `ifdef TARGET_SUPPORT
   // Standby (Secondary) Controller
   controller_standby xcontroller_standby (
-    .clk_i,
-    .rst_ni,
-    .ctrl_bus_i                     (ctrl_bus_i[2:3]),
-    .hdr_exit_bus_i                 (hdr_exit_bus),
-    .ctrl_scl_o                     (ctrl_scl_o[2:3]),
-    .ctrl_sda_o                     (ctrl_sda_o[2:3]),
-    .ctrl_sda_oe_o                  (ctrl_sda_oe_o[2:3]),
-    .phy_sel_od_pp_o                (ctrl_sel_od_pp_i[2:3]),
-    .bus_start_o,
-    .bus_rstart_o,
-    .bus_stop_o,
-    .arbitration_lost_i,
-    .rx_desc_queue_full_i           (tti_rx_desc_queue_full_i),
-    .rx_desc_queue_depth_i          (tti_rx_desc_queue_depth_i),
-    .rx_desc_queue_ready_thld_i     (tti_rx_desc_queue_ready_thld_i),
-    .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_queue_ready_thld_trig_i),
-    .rx_desc_queue_empty_i          (tti_rx_desc_queue_empty_i),
-    .rx_desc_queue_wvalid_o         (tti_rx_desc_queue_wvalid_o),
-    .rx_desc_queue_wready_i         (tti_rx_desc_queue_wready_i),
-    .rx_desc_queue_wdata_o          (tti_rx_desc_queue_wdata_o),
-    .tx_desc_queue_full_i           (tti_tx_desc_queue_full_i),
-    .tx_desc_queue_depth_i          (tti_tx_desc_queue_depth_i),
-    .tx_desc_queue_ready_thld_i     (tti_tx_desc_queue_ready_thld_i),
-    .tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig_i),
-    .tx_desc_queue_empty_i          (tti_tx_desc_queue_empty_i),
-    .tx_desc_queue_rvalid_i         (tti_tx_desc_queue_rvalid_i),
-    .tx_desc_queue_rready_o         (tti_tx_desc_queue_rready_o),
-    .tx_desc_queue_rdata_i          (tti_tx_desc_queue_rdata_i),
-    .rx_queue_depth_i               (tti_rx_queue_depth_i),
-    .rx_queue_start_thld_i          (tti_rx_queue_start_thld_i),
-    .rx_queue_start_thld_trig_i     (tti_rx_queue_start_thld_trig_i),
-    .rx_queue_ready_thld_i          (tti_rx_queue_ready_thld_i),
-    .rx_queue_ready_thld_trig_i     (tti_rx_queue_ready_thld_trig_i),
-    .rx_queue_empty_i               (tti_rx_queue_empty_i),
-    .rx_queue_wvalid_o              (tti_rx_queue_wvalid_o),
-    .rx_queue_wready_i              (tti_rx_queue_wready_i),
-    .rx_queue_wdata_o               (tti_rx_queue_wdata_o),
-    .rx_queue_flush_o               (tti_rx_queue_flush_o),
-    .rx_queue_wlast_o               (tti_rx_queue_wlast_o),
-    .tx_queue_full_i                (tti_tx_queue_full_i),
-    .tx_queue_depth_i               (tti_tx_queue_depth_i),
-    .tx_queue_start_thld_i          (tti_tx_queue_start_thld_i),
-    .tx_queue_start_thld_trig_i     (tti_tx_queue_start_thld_trig_i),
-    .tx_queue_ready_thld_i          (tti_tx_queue_ready_thld_i),
-    .tx_queue_ready_thld_trig_i     (tti_tx_queue_ready_thld_trig_i),
-    .tx_queue_empty_i               (tti_tx_queue_empty_i),
-    .tx_queue_rvalid_i              (tti_tx_queue_rvalid_i),
-    .tx_queue_rready_o              (tti_tx_queue_rready_o),
-    .tx_queue_rdata_i               (tti_tx_queue_rdata_i),
-    .tx_queue_flush_o               (tti_tx_queue_flush_o),
-    .ibi_queue_full_i               (tti_ibi_queue_full_i),
-    .ibi_queue_depth_i              (tti_ibi_queue_depth_i),
-    .ibi_queue_ready_thld_i         (tti_ibi_queue_ready_thld_i),
-    .ibi_queue_ready_thld_trig_i    (tti_ibi_queue_ready_thld_trig_i),
-    .ibi_queue_empty_i              (tti_ibi_queue_empty_i),
-    .ibi_queue_clear_i              (tti_ibi_queue_clear_i),
-    .ibi_queue_rvalid_i             (tti_ibi_queue_rvalid_i),
-    .ibi_queue_rready_o             (tti_ibi_queue_rready_o),
-    .ibi_queue_rdata_i              (tti_ibi_queue_rdata_i),
-    .phy_en_i                       (phy_en),
-    .phy_mux_select_i               (phy_mux_select),
-    .i2c_active_en_i                (i2c_active_en),
-    .i2c_standby_en_i               (i2c_standby_en),
-    .i3c_active_en_i                (i3c_active_en),
-    .i3c_standby_en_i               (i3c_standby_en),
-    .t_su_dat_i                     (t_su_dat),
-    .t_hd_dat_i                     (t_hd_dat),
-    .t_r_i                          (t_r),
-    .t_f_i                          (t_f),
-    .t_bus_free_i                   (t_bus_free),
-    .t_bus_idle_i                   (t_bus_idle),
-    .t_bus_available_i              (t_bus_available),
-    .hdr_timeout_en_i               (hdr_timeout_en),
-    .t_hdr_timeout_i                (t_hdr_timeout),
-    .get_mwl_i                      (get_mwl),
-    .get_mrl_i                      (get_mrl),
-    .get_ibil_i                     (get_ibil),
-    .get_status_fmt1_i              (get_status_fmt1),
-    .pid_i                          (pid),
-    .bcr_i                          (bcr),
-    .dcr_i                          (dcr),
-    .virtual_pid_i                  (virtual_pid),
-    .virtual_bcr_i                  (virtual_bcr),
-    .virtual_dcr_i                  (virtual_dcr),
-    .target_sta_addr_i              (target_sta_addr),
-    .target_sta_addr_valid_i        (target_sta_addr_valid),
-    .target_dyn_addr_i              (target_dyn_addr),
-    .target_dyn_addr_valid_i        (target_dyn_addr_valid),
-    .virtual_target_sta_addr_i      (virtual_target_sta_addr),
-    .virtual_target_sta_addr_valid_i(virtual_target_sta_addr_valid),
-    .virtual_target_dyn_addr_i      (virtual_target_dyn_addr),
-    .virtual_target_dyn_addr_valid_i(virtual_target_dyn_addr_valid),
-    .target_ibi_addr_i              (target_ibi_addr),
-    .target_ibi_addr_valid_i        (target_ibi_addr_valid),
-    .ibi_enable_i                   (ibi_enable),
-    .ibi_retry_num_i                (ibi_retry_num),
-    .ibi_retry_ctr_rst_i            (ibi_retry_ctr_rst),
-    .tx_host_nack_o                 (tti_tx_host_nack_o),
-    .tx_pr_end_o                    (tti_tx_pr_end_o),
-    .tx_pr_start_o                  (tti_tx_pr_start_o),
-    .bus_addr_o,
-    .bus_addr_valid_o,
-    .set_dasa_o,
-    .set_dasa_valid_o,
-    .set_dasa_virtual_device_o,
-    .set_aasa_o,
-    .set_aasa_virt_o,
-    .rstdaa_o,
-    .set_newda_o,
-    .set_newda_virtual_device_o,
-    .newda_o,
-    .rst_action_o,
-    .rst_action_valid_o,
-    .enec_ibi_o,
-    .enec_crr_o,
-    .enec_hj_o,
-    .disec_ibi_o,
-    .disec_crr_o,
-    .disec_hj_o,
-    .ibi_status_o,
-    .ibi_status_we_o,
-    .ibi_pending_o,
-    .err_o,
-    .set_mwl_o                      (set_mwl),
-    .set_mrl_o                      (set_mrl),
-    .set_ibil_o                     (set_ibil),
-    .mwl_o                          (mwl),
-    .mrl_o                          (mrl),
-    .ibil_o                         (ibil),
-    .peripheral_reset_o,
-    .peripheral_reset_done_i,
-    .escalated_reset_o,
-    .te0_err_o,
-    .te1_err_o,
-    .te2_err_o,
-    .te3_err_o,
-    .te4_err_o,
-    .te5_err_o,
-    .framing_err_o,
-    .te0_err_det_en_i,
-    .te1_err_det_en_i,
-    .te2_err_det_en_i,
-    .te3_err_det_en_i,
-    .te4_err_det_en_i,
-    .te5_err_det_en_i,
-    .framing_err_det_en_i,
-    .virtual_device_sel_o,
-    .xfer_in_progress_o,
-    .in_hdr_mode_o
+      .clk_i,
+      .rst_ni,
+      .ctrl_bus_i                     (ctrl_bus_i[2:3]),
+      .hdr_exit_bus_i                 (hdr_exit_bus),
+      .ctrl_scl_o                     (ctrl_scl_o[2:3]),
+      .ctrl_sda_o                     (ctrl_sda_o[2:3]),
+      .ctrl_sda_oe_o                  (ctrl_sda_oe_o[2:3]),
+      .phy_sel_od_pp_o                (ctrl_sel_od_pp_i[2:3]),
+      .bus_start_o,
+      .bus_rstart_o,
+      .bus_stop_o,
+      .arbitration_lost_i,
+      .rx_desc_queue_full_i           (tti_rx_desc_queue_full_i),
+      .rx_desc_queue_depth_i          (tti_rx_desc_queue_depth_i),
+      .rx_desc_queue_ready_thld_i     (tti_rx_desc_queue_ready_thld_i),
+      .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_queue_ready_thld_trig_i),
+      .rx_desc_queue_empty_i          (tti_rx_desc_queue_empty_i),
+      .rx_desc_queue_wvalid_o         (tti_rx_desc_queue_wvalid_o),
+      .rx_desc_queue_wready_i         (tti_rx_desc_queue_wready_i),
+      .rx_desc_queue_wdata_o          (tti_rx_desc_queue_wdata_o),
+      .tx_desc_queue_full_i           (tti_tx_desc_queue_full_i),
+      .tx_desc_queue_depth_i          (tti_tx_desc_queue_depth_i),
+      .tx_desc_queue_ready_thld_i     (tti_tx_desc_queue_ready_thld_i),
+      .tx_desc_queue_ready_thld_trig_i(tti_tx_desc_queue_ready_thld_trig_i),
+      .tx_desc_queue_empty_i          (tti_tx_desc_queue_empty_i),
+      .tx_desc_queue_rvalid_i         (tti_tx_desc_queue_rvalid_i),
+      .tx_desc_queue_rready_o         (tti_tx_desc_queue_rready_o),
+      .tx_desc_queue_rdata_i          (tti_tx_desc_queue_rdata_i),
+      .rx_queue_depth_i               (tti_rx_queue_depth_i),
+      .rx_queue_start_thld_i          (tti_rx_queue_start_thld_i),
+      .rx_queue_start_thld_trig_i     (tti_rx_queue_start_thld_trig_i),
+      .rx_queue_ready_thld_i          (tti_rx_queue_ready_thld_i),
+      .rx_queue_ready_thld_trig_i     (tti_rx_queue_ready_thld_trig_i),
+      .rx_queue_empty_i               (tti_rx_queue_empty_i),
+      .rx_queue_wvalid_o              (tti_rx_queue_wvalid_o),
+      .rx_queue_wready_i              (tti_rx_queue_wready_i),
+      .rx_queue_wdata_o               (tti_rx_queue_wdata_o),
+      .rx_queue_flush_o               (tti_rx_queue_flush_o),
+      .rx_queue_wlast_o               (tti_rx_queue_wlast_o),
+      .tx_queue_full_i                (tti_tx_queue_full_i),
+      .tx_queue_depth_i               (tti_tx_queue_depth_i),
+      .tx_queue_start_thld_i          (tti_tx_queue_start_thld_i),
+      .tx_queue_start_thld_trig_i     (tti_tx_queue_start_thld_trig_i),
+      .tx_queue_ready_thld_i          (tti_tx_queue_ready_thld_i),
+      .tx_queue_ready_thld_trig_i     (tti_tx_queue_ready_thld_trig_i),
+      .tx_queue_empty_i               (tti_tx_queue_empty_i),
+      .tx_queue_rvalid_i              (tti_tx_queue_rvalid_i),
+      .tx_queue_rready_o              (tti_tx_queue_rready_o),
+      .tx_queue_rdata_i               (tti_tx_queue_rdata_i),
+      .tx_queue_flush_o               (tti_tx_queue_flush_o),
+      .ibi_queue_full_i               (tti_ibi_queue_full_i),
+      .ibi_queue_depth_i              (tti_ibi_queue_depth_i),
+      .ibi_queue_ready_thld_i         (tti_ibi_queue_ready_thld_i),
+      .ibi_queue_ready_thld_trig_i    (tti_ibi_queue_ready_thld_trig_i),
+      .ibi_queue_empty_i              (tti_ibi_queue_empty_i),
+      .ibi_queue_clear_i              (tti_ibi_queue_clear_i),
+      .ibi_queue_rvalid_i             (tti_ibi_queue_rvalid_i),
+      .ibi_queue_rready_o             (tti_ibi_queue_rready_o),
+      .ibi_queue_rdata_i              (tti_ibi_queue_rdata_i),
+      .phy_en_i                       (phy_en),
+      .phy_mux_select_i               (phy_mux_select),
+      .i2c_active_en_i                (i2c_active_en),
+      .i2c_standby_en_i               (i2c_standby_en),
+      .i3c_active_en_i                (i3c_active_en),
+      .i3c_standby_en_i               (i3c_standby_en),
+      .t_su_dat_i                     (t_su_dat),
+      .t_hd_dat_i                     (t_hd_dat),
+      .t_r_i                          (t_r),
+      .t_f_i                          (t_f),
+      .t_bus_free_i                   (t_bus_free),
+      .t_bus_idle_i                   (t_bus_idle),
+      .t_bus_available_i              (t_bus_available),
+      .hdr_timeout_en_i               (hdr_timeout_en),
+      .t_hdr_timeout_i                (t_hdr_timeout),
+      .get_mwl_i                      (get_mwl),
+      .get_mrl_i                      (get_mrl),
+      .get_ibil_i                     (get_ibil),
+      .get_status_fmt1_i              (get_status_fmt1),
+      .pid_i                          (pid),
+      .bcr_i                          (bcr),
+      .dcr_i                          (dcr),
+      .virtual_pid_i                  (virtual_pid),
+      .virtual_bcr_i                  (virtual_bcr),
+      .virtual_dcr_i                  (virtual_dcr),
+      .target_sta_addr_i              (target_sta_addr),
+      .target_sta_addr_valid_i        (target_sta_addr_valid),
+      .target_dyn_addr_i              (target_dyn_addr),
+      .target_dyn_addr_valid_i        (target_dyn_addr_valid),
+      .virtual_target_sta_addr_i      (virtual_target_sta_addr),
+      .virtual_target_sta_addr_valid_i(virtual_target_sta_addr_valid),
+      .virtual_target_dyn_addr_i      (virtual_target_dyn_addr),
+      .virtual_target_dyn_addr_valid_i(virtual_target_dyn_addr_valid),
+      .target_ibi_addr_i              (target_ibi_addr),
+      .target_ibi_addr_valid_i        (target_ibi_addr_valid),
+      .ibi_enable_i                   (ibi_enable),
+      .ibi_retry_num_i                (ibi_retry_num),
+      .ibi_retry_ctr_rst_i            (ibi_retry_ctr_rst),
+      .tx_host_nack_o                 (tti_tx_host_nack_o),
+      .tx_pr_end_o                    (tti_tx_pr_end_o),
+      .tx_pr_start_o                  (tti_tx_pr_start_o),
+      .bus_addr_o,
+      .bus_addr_valid_o,
+      .set_dasa_o,
+      .set_dasa_valid_o,
+      .set_dasa_virtual_device_o,
+      .set_aasa_o,
+      .set_aasa_virt_o,
+      .rstdaa_o,
+      .set_newda_o,
+      .set_newda_virtual_device_o,
+      .newda_o,
+      .rst_action_o,
+      .rst_action_valid_o,
+      .enec_ibi_o,
+      .enec_crr_o,
+      .enec_hj_o,
+      .disec_ibi_o,
+      .disec_crr_o,
+      .disec_hj_o,
+      .ibi_status_o,
+      .ibi_status_we_o,
+      .ibi_pending_o,
+      .err_o,
+      .set_mwl_o                      (set_mwl),
+      .set_mrl_o                      (set_mrl),
+      .set_ibil_o                     (set_ibil),
+      .mwl_o                          (mwl),
+      .mrl_o                          (mrl),
+      .ibil_o                         (ibil),
+      .peripheral_reset_o,
+      .peripheral_reset_done_i,
+      .escalated_reset_o,
+      .te0_err_o,
+      .te1_err_o,
+      .te2_err_o,
+      .te3_err_o,
+      .te4_err_o,
+      .te5_err_o,
+      .framing_err_o,
+      .te0_err_det_en_i,
+      .te1_err_det_en_i,
+      .te2_err_det_en_i,
+      .te3_err_det_en_i,
+      .te4_err_det_en_i,
+      .te5_err_det_en_i,
+      .framing_err_det_en_i,
+      .virtual_device_sel_o,
+      .xfer_in_progress_o,
+      .in_hdr_mode_o
   );
 `else
   always_comb begin

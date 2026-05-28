@@ -22,9 +22,6 @@ from tools.timing.timings import validate_timings, log_timing_configuration
 # Device Bus Indices
 ACT_CONTROLLER_IDX = 1
 
-# Device Bus Indices
-ACT_CONTROLLER_IDX = 1
-
 # Helper to define the Initialization Modes (Table 5 I3C Basic Spec)
 MODE_TARGET = 2     # Standby Controller / Target
 MODE_CONTROLLER = 3 # Active Controller
@@ -218,6 +215,14 @@ async def umbrella_stby_init(
         1,
         bus_idx=bus_idx
     )
+
+    # We can enable it with this reg because we're always in controller config for the controller tests
+    await tb.write_csr_field(
+        tb.reg_map.I3CBASE.HC_CONTROL.base_addr,
+        tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE,
+        1, bus_idx=bus_idx
+    )
+
     # 7. Verify Configuration
     if verify:
         await ClockCycles(tb.clk, 100)

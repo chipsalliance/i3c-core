@@ -12,7 +12,7 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = i3c_controller_error_test_wrapper
-CFG_NAME ?= axi_ctrl_and_target
+CFG_NAME ?= axi-controller
 
 # Set appropriate bus interface via Cocotb's PLUSARGS:
 override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))

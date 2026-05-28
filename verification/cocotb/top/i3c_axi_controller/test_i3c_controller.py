@@ -18,7 +18,7 @@ from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
 from controller_interface import get_interrupt_status
 
 import cocotb
-from common import *
+from ctrl_common import *
 from cocotb.triggers import ClockCycles, RisingEdge, Timer, Combine, Event
 
 ACT_TARGET_IDX = 2 # Port idx of actual target

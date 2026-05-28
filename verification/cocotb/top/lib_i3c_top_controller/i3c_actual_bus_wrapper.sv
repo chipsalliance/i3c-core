@@ -137,7 +137,9 @@ module i3c_actual_bus_wrapper #(
       .NumDevices(NumDevices)
   ) xi3_bus_harness (
       .sda_i(sda),
+      .sda_oe_i(2'b11),
       .scl_i(scl),
+      .scl_oe_i(2'b01),  // only ctrl drives scl
       .sda_o(bus_sda_o),
       .scl_o(bus_scl_o)
   );

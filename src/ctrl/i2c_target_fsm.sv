@@ -69,7 +69,7 @@ module i2c_target_fsm
   logic clear_nack_next_byte;  // Clear the nack next byte flag.
 
   // Stop / Start detection counter
-  logic [15:0] ctrl_det_count;
+  logic [i3c_pkg::TimingWidth-1:0] ctrl_det_count;
 
   // Other internal variables
   logic scl_d;  // scl internal
@@ -203,7 +203,7 @@ module i2c_target_fsm
     if (!rst_ni) begin
       ctrl_det_count <= '0;
     end else if (start_det_trigger || stop_det_trigger) begin
-      ctrl_det_count <= 16'd1;
+      ctrl_det_count <= 20'd1;
     end else if (start_det_pending || stop_det_pending) begin
       ctrl_det_count <= ctrl_det_count + 1'b1;
     end

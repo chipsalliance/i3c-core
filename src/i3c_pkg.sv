@@ -14,14 +14,14 @@ package i3c_pkg;
   //   7'h7A / W, 7'h7C / W, 7'h7F / W, 7'h7E / R
   //
   // Reserved addresses that are invalid with Write (RnW=0)
-  localparam logic [6:0] TE0_RSVD_ADDR_W [7] = '{
-    7'h3E,  // Reserved for Device Type Group Address
-    7'h5E,  // Reserved for Device Type Group Address
-    7'h6E,  // Reserved for Device Type Group Address
-    7'h76,  // Reserved for Device Type Group Address
-    7'h7A,  // Reserved for Device Type Group Address
-    7'h7C,  // Reserved for Device Type Group Address
-    7'h7F   // Reserved for Device Type Group Address
+  localparam logic [6:0] TE0_RSVD_ADDR_W[7] = '{
+      7'h3E,  // Reserved for Device Type Group Address
+      7'h5E,  // Reserved for Device Type Group Address
+      7'h6E,  // Reserved for Device Type Group Address
+      7'h76,  // Reserved for Device Type Group Address
+      7'h7A,  // Reserved for Device Type Group Address
+      7'h7C,  // Reserved for Device Type Group Address
+      7'h7F  // Reserved for Device Type Group Address
   };
 
   // Reserved address that is invalid with Read (RnW=1)
@@ -29,10 +29,7 @@ package i3c_pkg;
 
   // Function to check if an address+RnW combination is a TE0 error
   // Returns 1 if the combination is invalid per I3C spec
-  function automatic logic is_te0_rsvd_addr_err(
-    input logic [6:0] addr,
-    input logic       rnw
-  );
+  function automatic logic is_te0_rsvd_addr_err(input logic [6:0] addr, input logic rnw);
     // Check for 7'h7E with Read
     if (addr == TE0_RSVD_ADDR_R && rnw) begin
       return 1'b1;
@@ -57,10 +54,8 @@ package i3c_pkg;
   //   7'h00-7'h07: Reserved for I3C broadcast and special purposes
   //   7'h3E, 7'h5E, 7'h6E, 7'h76: Reserved for Device Type Group Address
   //   7'h78-7'h7F: Reserved for I3C special addresses
-  function automatic logic is_i3c_rsvd_addr(
-    input logic [6:0] addr
-  );
-    return addr inside {[7'h00:7'h07], 7'h3E, 7'h5E, 7'h6E, 7'h76, [7'h78:7'h7F]};
+  function automatic logic is_i3c_rsvd_addr(input logic [6:0] addr);
+    return addr inside {[7'h00 : 7'h07], 7'h3E, 7'h5E, 7'h6E, 7'h76, [7'h78 : 7'h7F]};
   endfunction : is_i3c_rsvd_addr
 
   localparam int unsigned RespErrIdWidth = 4;
@@ -72,72 +67,72 @@ package i3c_pkg;
   localparam int unsigned I3cAddrWidth = 7;
   localparam int unsigned I3cTimeParamWidth = 20;
 
-  typedef logic      [I3cDataWidth-1:0] i3c_byte_t;
-  typedef logic      [I3cAddrWidth-1:0] i3c_addr_t;
+  typedef logic [I3cDataWidth-1:0] i3c_byte_t;
+  typedef logic [I3cAddrWidth-1:0] i3c_addr_t;
   typedef logic [I3cTimeParamWidth-1:0] i3c_timeparam_t;
 
   // CCC Command Code enum for better waveform visibility
   typedef enum logic [7:0] {
     // Broadcast Commands
-    CCC_BCAST_ENEC      = 8'h00,  // Enable Events Command
-    CCC_BCAST_DISEC     = 8'h01,  // Disable Events Command
-    CCC_BCAST_ENTAS0    = 8'h02,  // Enter Activity State 0
-    CCC_BCAST_ENTAS1    = 8'h03,  // Enter Activity State 1
-    CCC_BCAST_ENTAS2    = 8'h04,  // Enter Activity State 2
-    CCC_BCAST_ENTAS3    = 8'h05,  // Enter Activity State 3
-    CCC_BCAST_RSTDAA    = 8'h06,  // Reset Dynamic Address Assignment
-    CCC_BCAST_ENTDAA    = 8'h07,  // Enter Dynamic Address Assignment
-    CCC_BCAST_DEFTGTS   = 8'h08,  // Define List of Targets
-    CCC_BCAST_SETMWL    = 8'h09,  // Set Max Write Length
-    CCC_BCAST_SETMRL    = 8'h0A,  // Set Max Read Length
-    CCC_BCAST_ENTTM     = 8'h0B,  // Enter Test Mode
-    CCC_BCAST_SETBUSCON = 8'h0C,  // Set Bus Context
-    CCC_BCAST_ENDXFER   = 8'h12,  // Data Transfer Ending Procedure Control
-    CCC_BCAST_ENTHDR0   = 8'h20,  // Enter HDR Mode 0
-    CCC_BCAST_ENTHDR1   = 8'h21,  // Enter HDR Mode 1
-    CCC_BCAST_ENTHDR2   = 8'h22,  // Enter HDR Mode 2
-    CCC_BCAST_ENTHDR3   = 8'h23,  // Enter HDR Mode 3
-    CCC_BCAST_ENTHDR4   = 8'h24,  // Enter HDR Mode 4
-    CCC_BCAST_ENTHDR5   = 8'h25,  // Enter HDR Mode 5
-    CCC_BCAST_ENTHDR6   = 8'h26,  // Enter HDR Mode 6
-    CCC_BCAST_ENTHDR7   = 8'h27,  // Enter HDR Mode 7
-    CCC_BCAST_SETXTIME  = 8'h28,  // Exchange Timing Information
-    CCC_BCAST_SETAASA   = 8'h29,  // Set All Addresses to Static Addresses
-    CCC_BCAST_RSTACT    = 8'h2A,  // Target Reset Action
-    CCC_BCAST_DEFGRPA   = 8'h2B,  // Define List of Group Address
-    CCC_BCAST_RSTGRPA   = 8'h2C,  // Reset Group Address
-    CCC_BCAST_MLANE     = 8'h2D,  // Multi-Lane Data Transfer Control
+    CCC_BCAST_ENEC       = 8'h00,  // Enable Events Command
+    CCC_BCAST_DISEC      = 8'h01,  // Disable Events Command
+    CCC_BCAST_ENTAS0     = 8'h02,  // Enter Activity State 0
+    CCC_BCAST_ENTAS1     = 8'h03,  // Enter Activity State 1
+    CCC_BCAST_ENTAS2     = 8'h04,  // Enter Activity State 2
+    CCC_BCAST_ENTAS3     = 8'h05,  // Enter Activity State 3
+    CCC_BCAST_RSTDAA     = 8'h06,  // Reset Dynamic Address Assignment
+    CCC_BCAST_ENTDAA     = 8'h07,  // Enter Dynamic Address Assignment
+    CCC_BCAST_DEFTGTS    = 8'h08,  // Define List of Targets
+    CCC_BCAST_SETMWL     = 8'h09,  // Set Max Write Length
+    CCC_BCAST_SETMRL     = 8'h0A,  // Set Max Read Length
+    CCC_BCAST_ENTTM      = 8'h0B,  // Enter Test Mode
+    CCC_BCAST_SETBUSCON  = 8'h0C,  // Set Bus Context
+    CCC_BCAST_ENDXFER    = 8'h12,  // Data Transfer Ending Procedure Control
+    CCC_BCAST_ENTHDR0    = 8'h20,  // Enter HDR Mode 0
+    CCC_BCAST_ENTHDR1    = 8'h21,  // Enter HDR Mode 1
+    CCC_BCAST_ENTHDR2    = 8'h22,  // Enter HDR Mode 2
+    CCC_BCAST_ENTHDR3    = 8'h23,  // Enter HDR Mode 3
+    CCC_BCAST_ENTHDR4    = 8'h24,  // Enter HDR Mode 4
+    CCC_BCAST_ENTHDR5    = 8'h25,  // Enter HDR Mode 5
+    CCC_BCAST_ENTHDR6    = 8'h26,  // Enter HDR Mode 6
+    CCC_BCAST_ENTHDR7    = 8'h27,  // Enter HDR Mode 7
+    CCC_BCAST_SETXTIME   = 8'h28,  // Exchange Timing Information
+    CCC_BCAST_SETAASA    = 8'h29,  // Set All Addresses to Static Addresses
+    CCC_BCAST_RSTACT     = 8'h2A,  // Target Reset Action
+    CCC_BCAST_DEFGRPA    = 8'h2B,  // Define List of Group Address
+    CCC_BCAST_RSTGRPA    = 8'h2C,  // Reset Group Address
+    CCC_BCAST_MLANE      = 8'h2D,  // Multi-Lane Data Transfer Control
     // Direct Commands
-    CCC_DIRECT_ENEC     = 8'h80,  // Enable Events Command
-    CCC_DIRECT_DISEC    = 8'h81,  // Disable Events Command
-    CCC_DIRECT_ENTAS0   = 8'h82,  // Enter Activity State 0
-    CCC_DIRECT_ENTAS1   = 8'h83,  // Enter Activity State 1
-    CCC_DIRECT_ENTAS2   = 8'h84,  // Enter Activity State 2
-    CCC_DIRECT_ENTAS3   = 8'h85,  // Enter Activity State 3
-    CCC_DIRECT_RSTDAA   = 8'h86,  // Direct Reset Dynamic Address Assignment
-    CCC_DIRECT_SETDASA  = 8'h87,  // Set Dynamic Address from Static Address
-    CCC_DIRECT_SETNEWDA = 8'h88,  // Set New Dynamic Address
-    CCC_DIRECT_SETMWL   = 8'h89,  // Set Max Write Length
-    CCC_DIRECT_SETMRL   = 8'h8A,  // Set Max Read Length
-    CCC_DIRECT_GETMWL   = 8'h8B,  // Get Max Write Length
-    CCC_DIRECT_GETMRL   = 8'h8C,  // Get Max Read Length
-    CCC_DIRECT_GETPID   = 8'h8D,  // Get Provisioned ID
-    CCC_DIRECT_GETBCR   = 8'h8E,  // Get Bus Characteristics Register
-    CCC_DIRECT_GETDCR   = 8'h8F,  // Get Device Characteristics Register
-    CCC_DIRECT_GETSTATUS = 8'h90, // Get Device Status
-    CCC_DIRECT_GETACCCR = 8'h91,  // Get Accept Controller Role
-    CCC_DIRECT_ENDXFER  = 8'h92,  // Data Transfer Ending Procedure Control
-    CCC_DIRECT_SETBRGTGT = 8'h93, // Set Bridge Targets
-    CCC_DIRECT_GETMXDS  = 8'h94,  // Get Max Data Speed
-    CCC_DIRECT_GETCAPS  = 8'h95,  // Get Optional Feature Capabilities
-    CCC_DIRECT_SETROUTE = 8'h96,  // Set Route
-    CCC_DIRECT_D2DXFER  = 8'h97,  // Device to Device Tunneling Control
-    CCC_DIRECT_SETXTIME = 8'h98,  // Set Exchange Timing Information
-    CCC_DIRECT_GETXTIME = 8'h99,  // Get Exchange Timing Information
-    CCC_DIRECT_RSTACT   = 8'h9A,  // Target Reset Action
-    CCC_DIRECT_SETGRPA  = 8'h9B,  // Set Group Address
-    CCC_DIRECT_RSTGRPA  = 8'h9C,  // Reset Group Address
-    CCC_DIRECT_MLANE    = 8'h9D   // Multi-Lane Data Transfer Control
+    CCC_DIRECT_ENEC      = 8'h80,  // Enable Events Command
+    CCC_DIRECT_DISEC     = 8'h81,  // Disable Events Command
+    CCC_DIRECT_ENTAS0    = 8'h82,  // Enter Activity State 0
+    CCC_DIRECT_ENTAS1    = 8'h83,  // Enter Activity State 1
+    CCC_DIRECT_ENTAS2    = 8'h84,  // Enter Activity State 2
+    CCC_DIRECT_ENTAS3    = 8'h85,  // Enter Activity State 3
+    CCC_DIRECT_RSTDAA    = 8'h86,  // Direct Reset Dynamic Address Assignment
+    CCC_DIRECT_SETDASA   = 8'h87,  // Set Dynamic Address from Static Address
+    CCC_DIRECT_SETNEWDA  = 8'h88,  // Set New Dynamic Address
+    CCC_DIRECT_SETMWL    = 8'h89,  // Set Max Write Length
+    CCC_DIRECT_SETMRL    = 8'h8A,  // Set Max Read Length
+    CCC_DIRECT_GETMWL    = 8'h8B,  // Get Max Write Length
+    CCC_DIRECT_GETMRL    = 8'h8C,  // Get Max Read Length
+    CCC_DIRECT_GETPID    = 8'h8D,  // Get Provisioned ID
+    CCC_DIRECT_GETBCR    = 8'h8E,  // Get Bus Characteristics Register
+    CCC_DIRECT_GETDCR    = 8'h8F,  // Get Device Characteristics Register
+    CCC_DIRECT_GETSTATUS = 8'h90,  // Get Device Status
+    CCC_DIRECT_GETACCCR  = 8'h91,  // Get Accept Controller Role
+    CCC_DIRECT_ENDXFER   = 8'h92,  // Data Transfer Ending Procedure Control
+    CCC_DIRECT_SETBRGTGT = 8'h93,  // Set Bridge Targets
+    CCC_DIRECT_GETMXDS   = 8'h94,  // Get Max Data Speed
+    CCC_DIRECT_GETCAPS   = 8'h95,  // Get Optional Feature Capabilities
+    CCC_DIRECT_SETROUTE  = 8'h96,  // Set Route
+    CCC_DIRECT_D2DXFER   = 8'h97,  // Device to Device Tunneling Control
+    CCC_DIRECT_SETXTIME  = 8'h98,  // Set Exchange Timing Information
+    CCC_DIRECT_GETXTIME  = 8'h99,  // Get Exchange Timing Information
+    CCC_DIRECT_RSTACT    = 8'h9A,  // Target Reset Action
+    CCC_DIRECT_SETGRPA   = 8'h9B,  // Set Group Address
+    CCC_DIRECT_RSTGRPA   = 8'h9C,  // Reset Group Address
+    CCC_DIRECT_MLANE     = 8'h9D   // Multi-Lane Data Transfer Control
   } ccc_cmd_e;
 
   typedef enum logic {
@@ -290,13 +285,13 @@ package i3c_pkg;
     ScheduledCMD = 3'b010,
     AutocmdRead = 3'b100,
     StbyCRBcastCCC = 3'b111
-  } ibi_status_e;
+  } ibi_stat_e;
 
   // IBI Status Descriptor (See Table 147 I3C HCI Spec)
   typedef struct packed {
     logic ibi_sts;
     logic error;
-    ibi_status_e status_type;
+    ibi_stat_e status_type;
     logic __rsvd26;
     logic ts;
     logic last_status;

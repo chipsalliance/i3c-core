@@ -6,6 +6,7 @@ from math import ceil, log2
 from random import choice, randint
 from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar, Union
 import re
+import os
 
 import colorama
 
@@ -14,6 +15,24 @@ from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, with_timeout
 
 _T = TypeVar("_T")
 
+def get_sv_define(define_name):
+    root_dir = os.getenv("I3C_ROOT_DIR")
+    if not root_dir:
+        raise EnvironmentError("The 'I3C_ROOT_DIR' environment variable is not set!")
+    path = os.path.join(root_dir, "src/i3c_defines.svh")
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Could not find header file at {path}")
+        
+    with open(path, 'r') as f:
+        for line in f:
+            # Matches lines like: `define TX_FIFO_DEPTH 8
+            # Ignores leading spaces and grabs the numeric value
+            match = re.search(fr'^\s*`define\s+{define_name}\s+(\d+)', line)
+            if match:
+                return int(match.group(1))
+                
+    raise ValueError(f"Define '{define_name}' not found in {path}")
 
 def get_current_time_ns():
     return cocotb.utils.get_sim_time("ns")

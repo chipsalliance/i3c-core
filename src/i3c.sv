@@ -494,10 +494,10 @@ module i3c
   logic               ctrl_sda_oe;
 
   // Interrupts
-  i3c_irq_t ctrl_int_stat;
-  logic ctrl_irq;
-  logic tti_irq;
-  logic recovery_irq;
+  i3c_irq_t           ctrl_int_stat;
+  logic               ctrl_irq;
+  logic               tti_irq;
+  logic               recovery_irq;
 
   logic               bus_start;
   logic               bus_rstart;
@@ -543,22 +543,22 @@ module i3c
   logic               ri_unsupported_err;
   logic               ri_rx_fifo_overflow_err;
   logic               ri_indirect_fifo_overflow_err;
-  i3c_err_t controller_error;
+  logic               target_error;
   logic transfer_abort, hc_err_cmd_seq_timeout_stat, hc_seq_cancel_stat;
 
 
   // Individual TE error signals for interrupt reporting
-  logic               te0_err;
-  logic               te1_err;
-  logic               te2_err;
-  logic               te3_err;
-  logic               te4_err;
-  logic               te5_err;
-  logic               framing_err;
+  logic te0_err;
+  logic te1_err;
+  logic te2_err;
+  logic te3_err;
+  logic te4_err;
+  logic te5_err;
+  logic framing_err;
 
-  logic               virtual_device_sel;
-  logic               xfer_in_progress;
-  logic               in_hdr_mode;
+  logic virtual_device_sel;
+  logic xfer_in_progress;
+  logic in_hdr_mode;
 
   logic arbitration_lost, arbitration_lost_q;
   logic bus_scl_posedge;
@@ -805,6 +805,8 @@ module i3c
       .peripheral_reset_o,
       .peripheral_reset_done_i,
       .escalated_reset_o,
+
+      .err_o(target_error),
 
       .te0_err_o(te0_err),
       .te1_err_o(te1_err),

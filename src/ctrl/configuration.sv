@@ -141,7 +141,7 @@ module configuration (
   assign hc_intr = hwif_out_i.I3CBase.INTR_STATUS.intr;
 `else
   assign bus_enable = hwif_out_i.I3C_EC.SoCMgmtIf.SOC_PAD_CONF.INPUT_ENABLE.value;
-  assign resume = '0;
+  assign resume_o = '0;
   assign abort = '0;
   assign hc_intr = 1'b0;
 `endif  // CONTROLLER_SUPPORT
@@ -257,7 +257,7 @@ module configuration (
     hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_IBI.value,
     2'b11,  // Unable to do Handoff
     hwif_out_i.I3C_EC.TTI.STATUS.PROTOCOL_ERROR.value,
-    1'b0,   // Reserved
+    1'b0,  // Reserved
     hwif_out_i.I3C_EC.TTI.INTERRUPT_STATUS.PENDING_INTERRUPT.value
   };
 
@@ -290,8 +290,8 @@ module configuration (
   assign target_ibi_addr_valid_o = target_sta_addr_valid_o || target_dyn_addr_valid_o;
 
   // Configuration: Target IBI
-  assign ibi_enable_o        = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
-  assign ibi_retry_num_o     = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
+  assign ibi_enable_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_EN.value;
+  assign ibi_retry_num_o = hwif_out_i.I3C_EC.TTI.CONTROL.IBI_RETRY_NUM.value;
   assign ibi_retry_ctr_rst_o = hwif_out_i.I3C_EC.TTI.RESET_CONTROL.IBI_RETRY_CTR_RST.value;
 
 endmodule

@@ -26,9 +26,9 @@ module i2c_target_fsm_harness
 
     output logic target_idle_o,  // indicates the target is idle
 
-    input [15:0] t_r_i,             // rise time of both SDA and SCL in clock units
-    input [15:0] tsu_dat_i,         // data setup time in clock units
-    input [15:0] thd_dat_i,         // data hold time in clock units
+    input [19:0] t_r_i,             // rise time of both SDA and SCL in clock units
+    input [19:0] tsu_dat_i,         // data setup time in clock units
+    input [19:0] thd_dat_i,         // data hold time in clock units
     input [31:0] host_timeout_i,    // max time target waits for host to pull clock down
     input [30:0] nack_timeout_i,    // max time target may stretch until it should NACK
     input        nack_timeout_en_i, // enable nack timeout
@@ -38,11 +38,11 @@ module i2c_target_fsm_harness
     input logic [6:0] target_address1_i,
     input logic [6:0] target_mask1_i,
 
-    output logic target_sr_p_cond_o,    // Saw RSTART/STOP in Target-Mode.
-    output logic event_target_nack_o,   // this target sent a NACK (this is used to keep count)
+    output logic target_sr_p_cond_o,  // Saw RSTART/STOP in Target-Mode.
+    output logic event_target_nack_o,  // this target sent a NACK (this is used to keep count)
     output logic event_cmd_complete_o,  // Command is complete
-    output logic event_tx_stretch_o,    // tx transaction is being stretched
-    output logic event_unexp_stop_o,    // target received an unexpected stop
+    output logic event_tx_stretch_o,  // tx transaction is being stretched
+    output logic event_unexp_stop_o,  // target received an unexpected stop
     output logic event_host_timeout_o,  // host ceased sending SCL pulses during ongoing transaction
     output logic target_rnw_o
 );
@@ -53,8 +53,7 @@ module i2c_target_fsm_harness
     if (~rst_ni) begin
       scl_i_q <= 0;
       sda_i_q <= 0;
-    end
-    else begin
+    end else begin
       scl_i_q <= scl_i;
       sda_i_q <= sda_i;
     end

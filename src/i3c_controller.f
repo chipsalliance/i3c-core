@@ -46,13 +46,15 @@ ${I3C_ROOT_DIR}/src/hci/queues.sv
 ${I3C_ROOT_DIR}/src/hci/hci.sv
 ${I3C_ROOT_DIR}/src/hci/csri.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_monitor.sv
-${I3C_ROOT_DIR}/src/ctrl/bus_tx.sv
+${I3C_ROOT_DIR}/src/ctrl/ctrl_bus_tx.sv
+${I3C_ROOT_DIR}/src/ctrl/ctrl_bus_tx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_tx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_rx_flow.sv
+${I3C_ROOT_DIR}/src/ctrl/ctrl_bus_rx_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_scl_flow.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_start_stop_gen.sv
 ${I3C_ROOT_DIR}/src/ctrl/bus_timers.sv
-${I3C_ROOT_DIR}/src/ctrl/ibi.sv
+${I3C_ROOT_DIR}/src/ctrl/ctrl_bus_timers.sv
 ${I3C_ROOT_DIR}/src/ctrl/configuration.sv
 ${I3C_ROOT_DIR}/src/ctrl/edge_detector.sv
 ${I3C_ROOT_DIR}/src/ctrl/i2c_controller_fsm.sv

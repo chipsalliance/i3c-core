@@ -77,7 +77,13 @@ module i3c_controller_fsm
   // Declare internal signals
   state_e state_d, state_q;
 
-  logic tx_bit_q, tx_bit_d, rx_done_bit_q, rx_done_bit_d;
+  logic
+      tx_bit_q,
+      tx_bit_d,
+      rx_done_bit_q,
+      rx_done_bit_d,
+      wait_for_scl_negedge_d,
+      wait_for_scl_negedge_q;
 
   // Bus SCL flow internal signals
   logic scl_negedge, scl_posedge, scl_stable_low, scl_stable_high;
@@ -199,7 +205,7 @@ module i3c_controller_fsm
         end
       end
       Address: begin
-        if (bus_rx_done & tx_bit_q) begin
+        if ((wait_for_scl_negedge_q & scl_negedge) | fmt_receive_nack_o) begin
           if (fmt_receive_nack_o) begin  // wait for SCL to finish cycle before switching state
             state_d = fmt_flag_hdr_exit_i ? HDRExit : (fmt_flag_restart_after_i ? ReStart : Stop);
           end else begin
@@ -286,6 +292,7 @@ module i3c_controller_fsm
     timer_d = timer_q;
     stop_next_d = fmt_flag_stop_after_i;
     t_bit_done = 1'b0;
+    wait_for_scl_negedge_d = wait_for_scl_negedge_q;
     unique case (state_q)
       Idle: begin
         fmt_fifo_rready_o = 1'b1;
@@ -314,13 +321,25 @@ module i3c_controller_fsm
 
           if (bus_rx_done) begin
             tx_bit_d = 1'b0;
-            fmt_fifo_rdone_o = 1'b1;
+            wait_for_scl_negedge_d = received_nack_d ? 1'b0 : 1'b1;
+            ctrl_sda_o = 1'b0;
+            if (received_nack_d) begin
+              fmt_fifo_rdone_o = 1'b1;
+              ctrl_sda_o = 1'b1;
+            end
           end
-        end else begin
+        end else if (~wait_for_scl_negedge_q) begin
           bus_tx_req_byte  = 1'b1;
           bus_tx_req_value = fmt_byte_i;
           if (bus_tx_done) begin
             tx_bit_d = 1'b1;
+          end
+        end
+        if (wait_for_scl_negedge_q) begin
+          ctrl_sda_o = 1'b0;  // Handoff as per Section 5.1.2.3.1
+          if (scl_negedge) begin
+            fmt_fifo_rdone_o = 1'b1;
+            wait_for_scl_negedge_d = 1'b0;
           end
         end
         bus_rx_req_byte = ~phy_sel_od_pp_o & ~bus_rx_req_bit;  // In OD mode read the addr just in case an IBI happens
@@ -471,6 +490,7 @@ module i3c_controller_fsm
     if (~rst_ni) begin
       state_q <= Idle;
       tx_bit_q <= 1'b0;
+      wait_for_scl_negedge_q <= 1'b0;
       rx_done_bit_q <= 1'b0;
       received_nack_q <= 1'b0;
       bus_rx_req_bit_q <= 1'b0;
@@ -481,6 +501,7 @@ module i3c_controller_fsm
     end else begin
       state_q <= state_d;
       tx_bit_q <= tx_bit_d;
+      wait_for_scl_negedge_q <= wait_for_scl_negedge_d;
       rx_done_bit_q <= rx_done_bit_d;
       received_nack_q <= received_nack_d;
       bus_rx_req_bit_q <= bus_rx_req_bit_d;
@@ -519,7 +540,7 @@ module i3c_controller_fsm
 
   // Read Bus
 
-  bus_rx_flow i_bus_rx_flow (
+  ctrl_bus_rx_flow i_bus_rx_flow (
       .clk_i,
       .rst_ni,
 
@@ -537,7 +558,7 @@ module i3c_controller_fsm
   // SDA driver
   logic unassigned_bus_sel_od_pp;
   assign bus_tx_sel_od_pp = 1'b0;  // UNUSED
-  bus_tx_flow i_bus_tx_flow (
+  ctrl_bus_tx_flow i_bus_tx_flow (
       .clk_i,
       .rst_ni,
       .t_r_i,
@@ -606,7 +627,7 @@ module i3c_controller_fsm
       .active_o(start_stop_active)
   );
 
-  bus_timers xbus_timers (
+  ctrl_bus_timers xbus_timers (
       .clk_i,
       .rst_ni,
       .enable_i         (1'b1),

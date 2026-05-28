@@ -5397,6 +5397,16 @@ package I3CCSR_uvm;
 
             this.T_IDLE_REG.build();
             this.default_map.add_reg(this.T_IDLE_REG, 'h88);
+            this.HDR_TIMEOUT_EN_REG = new("HDR_TIMEOUT_EN_REG");
+            this.HDR_TIMEOUT_EN_REG.configure(this);
+
+            this.HDR_TIMEOUT_EN_REG.build();
+            this.default_map.add_reg(this.HDR_TIMEOUT_EN_REG, 'h8c);
+            this.T_HDR_TIMEOUT_REG = new("T_HDR_TIMEOUT_REG");
+            this.T_HDR_TIMEOUT_REG.configure(this);
+
+            this.T_HDR_TIMEOUT_REG.build();
+            this.default_map.add_reg(this.T_HDR_TIMEOUT_REG, 'h90);
         endfunction : build
     endclass : I3CCSR__I3C_EC__SoCMgmtIf
 
@@ -5558,12 +5568,12 @@ package I3CCSR_uvm;
             this.CtrlCfg = new("CtrlCfg");
             this.CtrlCfg.configure(this);
             this.CtrlCfg.build();
-            this.default_map.add_submap(this.CtrlCfg.default_map, 'h190);
+            this.default_map.add_submap(this.CtrlCfg.default_map, 'h298);
             this.TERMINATION_EXTCAP_HEADER = new("TERMINATION_EXTCAP_HEADER");
             this.TERMINATION_EXTCAP_HEADER.configure(this);
 
             this.TERMINATION_EXTCAP_HEADER.build();
-            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h198);
+            this.default_map.add_reg(this.TERMINATION_EXTCAP_HEADER, 'h2a0);
         endfunction : build
     endclass : I3CCSR__I3C_EC
 

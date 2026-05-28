@@ -29,16 +29,12 @@ async def setup_dut(clk, rst_n, clk_period: Tuple[int, str]) -> None:
     """
     Setup clock & reset the unit
     """
-    clk.value = 0
-    rst_n.value = 0
-    await Timer(1, units="ps")
     await cocotb.start(Clock(clk, *clk_period).start())
-    await ClockCycles(clk, 10)
+    rst_n.value = 0
+    await ClockCycles(clk, 2)
     await RisingEdge(clk)
-    await Timer(1, units="ns")
     rst_n.value = 1
     await ClockCycles(clk, 1)
-
 
 def int2bytes(value: int, byte_width=4) -> List[int]:
     assert value == 0 or (

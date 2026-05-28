@@ -26,9 +26,11 @@ VERILOG_SOURCES  += \
     $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_rd.sv \
     $(SRC_DIR)/libs/axi_sub/i3c_axi_sub.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p_pkg.sv \
+    $(SRC_DIR)/libs/mem/prim_ram_2p_pkg.sv \
     $(SRC_DIR)/libs/mem/prim_generic_ram_1p.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p_adv.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p.sv \
+    $(SRC_DIR)/libs/mem/prim_ram_2p.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/ctrl/controller_pkg.sv \
     $(SRC_DIR)/i3c_pkg.sv \

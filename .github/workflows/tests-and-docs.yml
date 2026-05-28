@@ -2,20 +2,21 @@
 #
 # I3C Core - Parallel Test and Documentation Workflow
 #
-# This workflow runs cocotb verification tests in parallel for both AHB and AXI
-# bus configurations, then builds and deploys documentation.
+# This workflow runs cocotb verification tests in parallel for AHB, AXI,
+# and AXI-Controller bus configurations, then builds and deploys documentation.
 #
 # Architecture:
 #   1. generate-matrix: Uses nox's JSON output to discover test sessions
 #   2. tests-ahb: Runs all AHB-tagged tests in parallel (one job per test)
 #   3. tests-axi: Runs all AXI-tagged tests in parallel (one job per test)
-#   4. test-results: Aggregates results from all test jobs
-#   5. docs-build: Builds and deploys documentation (only after tests pass)
+#   4. tests-axi-controller: Runs all AXI-Controller tests in parallel
+#   5. test-results: Aggregates results from all test jobs
+#   6. docs-build: Builds and deploys documentation (only after tests pass)
 #
 # Optional: Long-running tests (i3c_ahb_verify, i3c_axi_verify) can be split
 # into individual parametrized runs by enabling SPLIT_TESTS in generate-matrix.
 #
-# The parallel execution reduces total CI time from ~80 minutes to ~25 minutes.
+# The parallel execution reduces total CI time significantly.
 
 name: Run Tests
 
@@ -28,16 +29,12 @@ permissions:
 
 env:
   DEBIAN_FRONTEND: "noninteractive"
-  VERILATOR_VERSION: "v5.024"
+  VERILATOR_VERSION: "v5.046"
   WAVES: "0"
 
 jobs:
   # ===========================================================================
   # Job: Generate Test Matrix
-  # ===========================================================================
-  # Dynamically discovers test sessions using nox's native JSON output.
-  # Tests are categorized by their tags (ahb, axi, or both).
-  # This allows adding new tests without modifying the workflow.
   # ===========================================================================
   generate-matrix:
     name: Generate test matrix
@@ -45,6 +42,7 @@ jobs:
     outputs:
       ahb-matrix: ${{ steps.gen.outputs.ahb_matrix }}
       axi-matrix: ${{ steps.gen.outputs.axi_matrix }}
+      axi-controller-matrix: ${{ steps.gen.outputs.axi_controller_matrix }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,18 +68,15 @@ jobs:
           import sys
 
           # Long-running tests that should be split into individual parametrized runs
-          # These tests have multiple test_name parameters and take the most time
           SPLIT_TESTS = {"i3c_ahb_verify", "i3c_axi_verify"}
 
           # Use nox's native JSON output to list all sessions
-          # Note: nox -l doesn't execute sessions, just lists them, so no --no-venv needed
           result = subprocess.run(
               ["nox", "-l", "--json", "-f", "noxfile.py"],
               capture_output=True, text=True,
               env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
           )
 
-          # Debug: show any errors from nox
           if result.returncode != 0:
               print(f"nox failed with return code {result.returncode}", file=sys.stderr)
               print(f"stderr: {result.stderr}", file=sys.stderr)
@@ -96,12 +91,11 @@ jobs:
               sessions = json.loads(result.stdout)
           except json.JSONDecodeError as e:
               print(f"Failed to parse JSON: {e}", file=sys.stderr)
-              print(f"stdout was: {result.stdout[:500]}", file=sys.stderr)
-              print(f"stderr was: {result.stderr[:500]}", file=sys.stderr)
               sys.exit(1)
 
           ahb_tests = set()
           axi_tests = set()
+          axi_controller_tests = set()
 
           for session in sessions:
               tags = session.get("tags", [])
@@ -113,14 +107,11 @@ jobs:
               name = session["name"]
               has_ahb = "ahb" in tags
               has_axi = "axi" in tags
+              has_axi_controller = "axi-controller" in tags  # Or "axi_controller" if your nox tags use underscores
 
-              # For long-running tests, use full session string to run each variant separately
-              # For others, use just the name to run all variants together
               if name in SPLIT_TESTS:
-                  # Use full parametrized session string (e.g., "i3c_ahb_verify(simulator='vcs', ...)")
                   session_id = session["session"]
               else:
-                  # Use just the name (e.g., "ccc_verify")
                   session_id = name
 
               # Categorize tests by bus configuration
@@ -128,39 +119,35 @@ jobs:
                   ahb_tests.add(session_id)
               if has_axi:
                   axi_tests.add(session_id)
+              if has_axi_controller:
+                  axi_controller_tests.add(session_id)
 
           # Sort for consistent ordering
           ahb_tests = sorted(ahb_tests)
           axi_tests = sorted(axi_tests)
+          axi_controller_tests = sorted(axi_controller_tests)
 
-          print(f"Discovered {len(ahb_tests)} AHB tests and {len(axi_tests)} AXI tests")
+          print(f"Discovered {len(ahb_tests)} AHB tests, {len(axi_tests)} AXI tests, and {len(axi_controller_tests)} AXI-Controller tests")
 
           # Output matrices for subsequent jobs
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"ahb_matrix={json.dumps(ahb_tests)}\n")
               f.write(f"axi_matrix={json.dumps(axi_tests)}\n")
+              f.write(f"axi_controller_matrix={json.dumps(axi_controller_tests)}\n")
           EOF
 
   # ===========================================================================
   # Job: Run AHB Tests (Parallel)
-  # ===========================================================================
-  # Runs each AHB test as a separate parallel job using GitHub Actions matrix.
-  # Each job:
-  #   1. Builds/caches Verilator
-  #   2. Sets up Python environment via install.sh and activate.sh
-  #   3. Configures RTL for AHB bus
-  #   4. Runs the specific test via nox
   # ===========================================================================
   tests-ahb:
     name: "AHB: ${{ matrix.test }}"
     needs: [generate-matrix]
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false  # Continue running other tests even if one fails
+      fail-fast: false
       matrix:
         test: ${{ fromJson(needs.generate-matrix.outputs.ahb-matrix) }}
     steps:
-      # --- System Dependencies ---
       - name: Install system dependencies
         run: |
           sudo apt -qqy update
@@ -168,14 +155,12 @@ jobs:
             help2man libfl-dev make g++ git bison flex gperf \
             libreadline-dev libbz2-dev autoconf
 
-      # --- Repository Setup ---
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Initialize submodules
         run: git submodule update --init --recursive
 
-      # --- Verilator (cached) ---
       - name: Cache Verilator installation
         id: cache-verilator
         uses: actions/cache@v4
@@ -198,13 +183,9 @@ jobs:
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
 
-      # --- Python Environment ---
       - name: Setup Python environment (pyenv + dependencies)
         run: ./install.sh
 
-      # --- Run Test ---
-      # Combined step ensures environment variables from activate.sh persist
-      # Note: Using env var to preserve quotes in parametrized session names
       - name: Configure RTL and run test
         id: run-test
         env:
@@ -214,7 +195,6 @@ jobs:
           make config CFG_NAME=ahb
           cd verification/cocotb && python -m nox -R -s "$TEST_SESSION" --no-venv --forcecolor
 
-      # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
         run: |
@@ -222,14 +202,11 @@ jobs:
           find verification/cocotb -name "*.log" -type f -exec sh -c \
             'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
 
-      # --- Upload Results ---
-      # Sanitize artifact name: replace special chars for parametrized test names
       - name: Sanitize artifact name
         if: always()
         id: sanitize
         run: |
           NAME='${{ matrix.test }}'
-          # Replace problematic characters with underscores/remove them
           SANITIZED=$(echo "$NAME" | sed "s/[()='\" ,]/_/g" | sed 's/__*/_/g' | sed 's/_$//')
           echo "name=$SANITIZED" >> $GITHUB_OUTPUT
 
@@ -245,8 +222,6 @@ jobs:
   # ===========================================================================
   # Job: Run AXI Tests (Parallel)
   # ===========================================================================
-  # Same structure as tests-ahb, but configured for AXI bus.
-  # ===========================================================================
   tests-axi:
     name: "AXI: ${{ matrix.test }}"
     needs: [generate-matrix]
@@ -256,7 +231,6 @@ jobs:
       matrix:
         test: ${{ fromJson(needs.generate-matrix.outputs.axi-matrix) }}
     steps:
-      # --- System Dependencies ---
       - name: Install system dependencies
         run: |
           sudo apt -qqy update
@@ -264,14 +238,12 @@ jobs:
             help2man libfl-dev make g++ git bison flex gperf \
             libreadline-dev libbz2-dev autoconf
 
-      # --- Repository Setup ---
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Initialize submodules
         run: git submodule update --init --recursive
 
-      # --- Verilator (cached) ---
       - name: Cache Verilator installation
         id: cache-verilator
         uses: actions/cache@v4
@@ -294,12 +266,9 @@ jobs:
           echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
           echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
 
-      # --- Python Environment ---
       - name: Setup Python environment (pyenv + dependencies)
         run: ./install.sh
 
-      # --- Run Test ---
-      # Note: Using env var to preserve quotes in parametrized session names
       - name: Configure RTL and run test
         id: run-test
         env:
@@ -309,7 +278,6 @@ jobs:
           make config CFG_NAME=axi
           cd verification/cocotb && python -m nox -R -s "$TEST_SESSION" --no-venv --forcecolor
 
-      # --- Debug: Show logs on failure ---
       - name: Display test logs on failure
         if: failure() && steps.run-test.outcome == 'failure'
         run: |
@@ -317,14 +285,11 @@ jobs:
           find verification/cocotb -name "*.log" -type f -exec sh -c \
             'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
 
-      # --- Upload Results ---
-      # Sanitize artifact name: replace special chars for parametrized test names
       - name: Sanitize artifact name
         if: always()
         id: sanitize
         run: |
           NAME='${{ matrix.test }}'
-          # Replace problematic characters with underscores/remove them
           SANITIZED=$(echo "$NAME" | sed "s/[()='\" ,]/_/g" | sed 's/__*/_/g' | sed 's/_$//')
           echo "name=$SANITIZED" >> $GITHUB_OUTPUT
 
@@ -338,14 +303,98 @@ jobs:
             verification/cocotb/**/*.log
 
   # ===========================================================================
-  # Job: Aggregate Test Results
+  # Job: Run AXI-Controller Tests (Parallel)
   # ===========================================================================
-  # Collects all test artifacts into a single combined artifact.
-  # Provides a single point to check overall test status.
+  tests-axi-controller:
+    name: "AXI-Ctrl: ${{ matrix.test }}"
+    needs: [generate-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.generate-matrix.outputs.axi-controller-matrix) }}
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt -qqy update
+          sudo apt -qqy --no-install-recommends install \
+            help2man libfl-dev make g++ git bison flex gperf \
+            libreadline-dev libbz2-dev autoconf
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      - name: Cache Verilator installation
+        id: cache-verilator
+        uses: actions/cache@v4
+        with:
+          path: ~/verilator-install
+          key: verilator-install-${{ env.VERILATOR_VERSION }}-${{ runner.os }}
+
+      - name: Build Verilator (if not cached)
+        if: steps.cache-verilator.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/verilator/verilator -b ${{ env.VERILATOR_VERSION }}
+          cd verilator
+          autoconf
+          ./configure --prefix=$HOME/verilator-install
+          make -j$(nproc)
+          make install
+
+      - name: Add Verilator to PATH
+        run: |
+          echo "$HOME/verilator-install/bin" >> $GITHUB_PATH
+          echo "VERILATOR_ROOT=$HOME/verilator-install/share/verilator" >> $GITHUB_ENV
+
+      - name: Setup Python environment (pyenv + dependencies)
+        run: ./install.sh
+
+      - name: Configure RTL and run test
+        id: run-test
+        env:
+          TEST_SESSION: ${{ matrix.test }}
+          CONTROLLER_SUPPORT: "1"
+          TARGET_SUPPORT: "1"
+          CFG_NAME: "axi-controller"
+          I3C_ROOT_DIR: ${{ github.workspace }}
+        run: |
+          source activate.sh
+          make config CFG_NAME=axi-controller
+          cd verification/cocotb && python -m nox -R -s "$TEST_SESSION" --no-venv --forcecolor
+
+      - name: Display test logs on failure
+        if: failure() && steps.run-test.outcome == 'failure'
+        run: |
+          echo "=== Test failed - displaying log files ==="
+          find verification/cocotb -name "*.log" -type f -exec sh -c \
+            'echo ""; echo "========================================"; echo "=== {} ==="; echo "========================================"; cat "{}"' \;
+
+      - name: Sanitize artifact name
+        if: always()
+        id: sanitize
+        run: |
+          NAME='${{ matrix.test }}'
+          SANITIZED=$(echo "$NAME" | sed "s/[()='\" ,]/_/g" | sed 's/__*/_/g' | sed 's/_$//')
+          echo "name=$SANITIZED" >> $GITHUB_OUTPUT
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-axi-controller-${{ steps.sanitize.outputs.name }}
+          path: |
+            verification/cocotb/**/results*.xml
+            verification/cocotb/**/*.log
+
+  # ===========================================================================
+  # Job: Aggregate Test Results
   # ===========================================================================
   test-results:
     name: Aggregate test results
-    needs: [tests-ahb, tests-axi]
+    needs: [tests-ahb, tests-axi, tests-axi-controller]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -373,20 +422,18 @@ jobs:
       - name: Verify all tests passed
         run: |
           if [ "${{ needs.tests-ahb.result }}" != "success" ] || \
-             [ "${{ needs.tests-axi.result }}" != "success" ]; then
+             [ "${{ needs.tests-axi.result }}" != "success" ] || \
+             [ "${{ needs.tests-axi-controller.result }}" != "success" ]; then
             echo "❌ Some tests failed!"
             echo "   AHB tests: ${{ needs.tests-ahb.result }}"
             echo "   AXI tests: ${{ needs.tests-axi.result }}"
+            echo "   AXI-Ctrl tests: ${{ needs.tests-axi-controller.result }}"
             exit 1
           fi
           echo "✅ All tests passed!"
 
   # ===========================================================================
   # Job: Build and Deploy Documentation
-  # ===========================================================================
-  # Builds Sphinx documentation including verification results.
-  # Only runs after all tests pass successfully.
-  # Deploys to GitHub Pages on main branch.
   # ===========================================================================
   docs-build:
     name: Build documentation
@@ -429,8 +476,6 @@ jobs:
       - name: Generate verification documentation
         run: |
           source .venv/bin/activate
-          # Copy XML files to the expected location, handling nested structure
-          # The artifact contains paths like verification/cocotb/block/*/results*.xml
           if [ -d "tests-results/verification/cocotb" ]; then
             echo "Found nested structure, copying from tests-results/verification/cocotb/"
             cp -r tests-results/verification/cocotb/* verification/cocotb/
@@ -442,7 +487,7 @@ jobs:
           fi
           echo "=== XML files in verification/cocotb ==="
           find verification/cocotb -name "*.xml" -type f | head -10
-          # Only run verification docs if XML files exist
+          
           XML_COUNT=$(find verification/cocotb -name "*.xml" -type f | wc -l)
           if [ "$XML_COUNT" -gt 0 ]; then
             echo "Found $XML_COUNT XML files, generating verification docs..."
@@ -461,7 +506,6 @@ jobs:
           pushd doc
             TZ=UTC make html
           popd
-          # Include coverage results if available
           git clone https://github.com/antmicro/i3c-core-coverage-results || true
           cp i3c-core-coverage-results/*html doc/build/html 2>/dev/null || true
 

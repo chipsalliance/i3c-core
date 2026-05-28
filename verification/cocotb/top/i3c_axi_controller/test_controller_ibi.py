@@ -18,7 +18,7 @@ from controller_interface import I3CTopControllerTestInterface, I3CAddressHelper
 from controller_interface import get_interrupt_status
 
 import cocotb
-from common import *
+from ctrl_common import *
 from cocotb.triggers import ClockCycles, RisingEdge, Timer, Combine, Event
 from utils import format_ibi_data
 
@@ -188,8 +188,22 @@ async def test_controller_ibi_accepted(dut):
 
 
     tb.dut._log.info("Starting I3C private write")
-    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, dat=False, toc=True, device_index=device_index, expect_success=False)
-
+    cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=0x0,
+                cp=False,
+                device_index=device_index,
+                byte_count=3,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=1,  
+                data=random.getrandbits(32)
+    )
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    #await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, dat=False, toc=True, device_index=device_index, expect_success=False)
+    tb.dut._log.info("Checking IBI")
+    await ClockCycles(tb.clk, 5000)
     await check_ibi(tb, exp_payload=pack_expected_ibi(mdb, ibi_payload), target_dyn_address=addr_helper.trgt_dyn_addr)
 
 @cocotb.test()
@@ -260,7 +274,22 @@ async def test_controller_ibi_buffer_overflow(dut):
 
 
     tb.dut._log.info("Starting I3C private write")
-    await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, toc=True, dat=False, device_index=device_index, expect_success=False)
+    cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=0x0,
+                cp=False,
+                device_index=device_index,
+                byte_count=3,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=1,  
+                data=random.getrandbits(32)
+    )
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    #await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, dat=False, toc=True, device_index=device_index, expect_success=False)
+    tb.dut._log.info("Checking IBI")
+    await ClockCycles(tb.clk, 5000)
 
     await check_ibi(tb, exp_payload=pack_expected_ibi(mdb, ibi_payload), target_dyn_address=addr_helper.trgt_dyn_addr, expect_err=True)
 
@@ -299,6 +328,28 @@ async def test_controller_ibi_rejected(dut):
         ibi_payload=True,
         bus_idx=ACT_CONTROLLER_IDX
     )
+
+# //////////////////////////////////////////////////////////////
+# //         I3C Private Write (will get interrupted)         //
+# //////////////////////////////////////////////////////////////
+
+    tb.dut._log.info("Starting I3C private write")
+    cmd_desc = immediate_transfer_descriptor(
+                tid=random.getrandbits(3),
+                cmd=0x0,
+                cp=False,
+                device_index=device_index,
+                byte_count=3,
+                mode=0,
+                rnw=False,
+                wroc=0x1,
+                toc=1,  
+                data=random.getrandbits(32)
+    )
+    await tb.put_command_desc(cmd_desc.to_int(), bus_idx=ACT_CONTROLLER_IDX)
+    #await write_i3c(tb, addr_helper=addr_helper, payload=data, target_len=i3c_target_len, device_address=addr_helper.trgt_dyn_addr, dat=False, toc=True, device_index=device_index, expect_success=False)
+    tb.dut._log.info("Checking IBI")
+    await ClockCycles(tb.clk, 5000)
 
 # //////////////////////////////////////////////////////////////
 # //                 Send IBI Desc to Target                  //
