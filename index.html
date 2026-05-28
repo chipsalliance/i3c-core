@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -241,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -320,7 +384,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -337,6 +401,22 @@
     <li class="md-nav__item">
       <a href="registers.html" class="md-nav__link">
         <span class="md-ellipsis">Register descriptions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
       </a>
     </li>
   
@@ -363,21 +443,61 @@
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#documentation-structure">Documentation structure</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">I3C core overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#configuration-script">Configuration script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#system-bus">System Bus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#virtual-target">Virtual target</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#register-descriptions">Register descriptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#target-interface-queues">Target Interface Queues</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#target-recovery-interface">Target recovery interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#private-reads-and-writes">Private reads and writes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#in-band-interrupts-ibi">In-Band Interrupts (IBI)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="overview.html#other-features">Other features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="target_overview.html">I3C target overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#configuration-script">Configuration script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#system-bus">System Bus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#virtual-target">Virtual target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#register-descriptions">Register descriptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#target-interface-queues">Target Interface Queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#target-recovery-interface">Target recovery interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#address-behavior">Address Behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#private-reads-and-writes">Private reads and writes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#in-band-interrupts-ibi">In-Band Interrupts (IBI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target_overview.html#other-features">Other features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="controller_overview.html">I3C Controller overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="controller_overview.html#architecture">Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller_overview.html#features-list">Features List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller_overview.html#microarchitecture">Microarchitecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller_overview.html#sram-macros">SRAM Macros</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="phy.html">Physical Layer</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="phy.html#common-phy-layer">Common PHY Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ccc.html">I3C Common Command Codes (CCC)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ccc.html#broadcast-cccs">Broadcast CCCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccc.html#direct-cccs">Direct CCCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccc.html#cccs-that-update-registers-without-firmware-notification">CCCs That Update Registers Without Firmware Notification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccc.html#multi-byte-ccc-register-atomicity">Multi-Byte CCC Register Atomicity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccc.html#ccc-error-handling">CCC Error Handling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error_handling.html">Error Detection and Recovery</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#error-signal-path">Error Signal Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#error-detection-sources">Error Detection Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#interrupt-registers">Interrupt Registers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#error-counters">Error Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#error-recovery-mechanisms">Error Recovery Mechanisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#protocol-error-reporting-getstatus">Protocol Error Reporting (GETSTATUS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error_handling.html#queue-status-registers">Queue Status Registers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="firmware_guide.html">Firmware Integration Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#i3c-core-bring-up-flow">I3C Core Bring-Up Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#piocontrol-registers-do-not-access">PIOControl Registers – Do Not Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#in-band-interrupt-ibi-configuration">In-Band Interrupt (IBI) Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#address-behavior-and-priority">Address Behavior and Priority</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#reset-control-register-limitations">RESET_CONTROL Register Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#max-read-write-length-mrl-mwl">Max Read/Write Length (MRL/MWL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#private-writes-during-recovery-flows">Private Writes During Recovery Flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#transmit-fifo-behavior-on-controller-early-termination">Transmit FIFO Behavior on Controller Early Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#unanticipated-private-reads">Unanticipated Private Reads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#registers-updated-by-ccc-without-firmware-notification">Registers Updated by CCC Without Firmware Notification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="firmware_guide.html#routing-requirements">Routing Requirements</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dv.html">Design verification</a><ul>
@@ -393,16 +513,21 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="recovery_flow.html">Recovery flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-flow-actors">Recovery Flow Actors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-flow-timeline">Recovery Flow Timeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler">Recovery handler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#csr-access-via-i3c">CSR access via I3C</a></li>
 <li class="toctree-l2"><a class="reference internal" href="recovery_flow.html#recovery-handler-operation">Recovery handler operation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="axi_id_filtering.html">AXI Transaction ID Filtering</a></li>
-<li class="toctree-l1"><a class="reference internal" href="axi_recovery_flow.html">AXI driven Caliptra recovery flow</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#axi-recovery-flow-implementation">AXI Recovery flow implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#recovery-handler-bypass">Recovery Handler bypass</a></li>
-<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#secure-firmware-recovery-csrs">Secure Firmware Recovery CSRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axi_recovery_flow.html">AXI Recovery Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#prerequisite">Prerequisite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#multi-stage-recovery-flow">Multi-Stage Recovery Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#register-reference">Register Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#data-transfer-constraints">Data Transfer Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="axi_recovery_flow.html#axi-bypass-architecture">AXI Bypass Architecture</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="registers.html">Register descriptions</a><ul>
@@ -415,6 +540,11 @@
 <li class="toctree-l2"><a class="reference internal" href="registers.html#ctrlcfg-register-file">CtrlCfg register file</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="timing_csr.html">I3C Timing Register Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="timing_csr.html#generating-custom-timings">Generating Custom Timings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timing_csr.html#example-timing-csrs">Example Timing CSRs</a></li>
+</ul>
+</li>
 </ul>
 </div>
 
@@ -424,7 +554,7 @@
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>

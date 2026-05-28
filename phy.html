@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -298,6 +314,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#sda-output-path-and-output-enable" class="md-nav__link">
+    <span class="md-ellipsis">SDA Output Path and Output Enable</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-o-signal-routing-constraints" class="md-nav__link">
+    <span class="md-ellipsis">I/O Signal Routing Constraints</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -307,6 +337,54 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
+      </a>
     </li>
   
 
@@ -385,7 +463,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -402,6 +480,22 @@
     <li class="md-nav__item">
       <a href="registers.html" class="md-nav__link">
         <span class="md-ellipsis">Register descriptions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
       </a>
     </li>
   
@@ -429,7 +523,7 @@ The <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/ind
 <figure class="align-default" id="i3c-phy">
 <img alt="" src="_images/i3c_phy.png" />
 <figcaption>
-<p><span class="caption-number">Figure 1 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 3 </span><span class="caption-text"><span class="caption-text">
 Block diagram of the I3C PHY Layer</span><a class="headerlink" href="#i3c-phy" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <h3 id="sda-and-scl-lines-5-1-3-1">SDA and SCL lines (5.1.3.1)<a class="headerlink" href="#sda-and-scl-lines-5-1-3-1" title="Link to this heading">¶</a></h3>
@@ -479,14 +573,84 @@ Additionally, there is an RTL testbench run in Verilator and Icarus simulators t
 T_SU_DAT_REG = reg_val &gt; 0 ? reg_val : 0
 </code></pre></div>
 </div>
-<p>The core supports system clock frequencies above 333MHz, and SCL frequencies up to 12.5MHz.
-Below 333MHz <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> I3C timing requirement of 12ns is not met. I3C specification defines <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> as “Clock to Data Turnaround Time: The time duration between reception of an SCL edge and the start of driving an SDA change”.
-With 333MHz clock the maximum response time from the core is 12ns. This timing is not affected by the chip pads delays as per MIPI CSI I3C 1.1.1 specification.</p>
-<p>The I3C core needs 3 system clock cycles between an event on a SCL line and driving the SDA.
-Since SCL and core clock are asynchronous, SCL can drop just after rising edge of the system clock.
-Such situation adds an additional clock cycle latency resulting in 4 cycles in total.</p>
-<p>Maximal I3C core <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> can be calculated with the <code class="docutils literal notranslate"><span class="pre">Tsco</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">Tsys_clk</span></code> formula , where <code class="docutils literal notranslate"><span class="pre">Tsys_clk</span></code> is a system clock period.</p>
-<p>Future core releases will enable the <code class="docutils literal notranslate"><span class="pre">GETMXDS</span></code> CCC support allowing the core to advertise longer <code class="docutils literal notranslate"><span class="pre">Tsco</span></code> times for lower system clock frequencies.</p>
+<p>The core supports system clock frequencies above 333MHz, and SCL frequencies up to 12.5MHz. Below 333MHz Tsco I3C timing requirement of 12ns is not met. I3C specification defines Tsco as “Clock to Data Turnaround Time: The time duration between reception of an SCL edge and the start of driving an SDA change”. With 333MHz clock the maximum response time from the core is 12ns. This timing is not affected by the chip pads delays as per MIPI CSI I3C 1.1.1 specification.</p>
+<p>The I3C core needs 3 system clock cycles between an event on a SCL line and driving the SDA. Since SCL and core clock are asynchronous, SCL can drop just after rising edge of the system clock. Such situation adds an additional clock cycle latency resulting in 4 cycles in total.</p>
+<p>Maximal I3C core Tsco can be calculated with the Tsco = 4 * Tsys_clk formula , where Tsys_clk is a system clock period.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The minimum frequency calculation (333MHz) accounts only for the
+I3C core internal logic delay. It does <strong>not</strong> include timing delays
+introduced to and from the PADs. Integrators must account for these additional
+delays when selecting the system clock frequency.</p>
+</div>
+<p>Future core releases will enable the GETMXDS CCC support allowing the core to advertise longer Tsco times for lower system clock frequencies.</p>
+<h3 id="sda-output-path-and-output-enable">SDA Output Path and Output Enable<a class="headerlink" href="#sda-output-path-and-output-enable" title="Link to this heading">¶</a></h3>
+<p>The SDA output path uses a dedicated output enable (<code class="docutils literal notranslate"><span class="pre">sda_oe</span></code>) signal in addition to the
+data value (<code class="docutils literal notranslate"><span class="pre">sda_o</span></code>). The <code class="docutils literal notranslate"><span class="pre">bus_tx_flow</span></code> module computes both based on the drive mode
+(Open Drain or Push-Pull) and the data value being transmitted:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">sda_oe</span> <span class="o">=</span> <span class="n">drive_mode_is_pushpull</span> <span class="n">OR</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">data_msb</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>The resulting truth table for the SDA pad:</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>sel_od_pp</p></th>
+<th class="head"><p>sda_o</p></th>
+<th class="head"><p>sda_oe</p></th>
+<th class="head"><p>IO State</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 (OD)</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>Drive Low</p></td>
+</tr>
+<tr class="row-odd"><td><p>0 (OD)</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>High-Z (released)</p></td>
+</tr>
+<tr class="row-even"><td><p>1 (PP)</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>Drive Low</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 (PP)</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>Drive High</p></td>
+</tr>
+</tbody>
+</table>
+<p>In Open Drain mode, the pad is released (High-Z) when driving a logical 1, allowing
+the external pull-up to assert the line. In Push-Pull mode, the pad actively drives
+both high and low.</p>
+<p>The PHY module (<code class="docutils literal notranslate"><span class="pre">i3c_phy.sv</span></code>) passes these signals through to the pad interface:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_sda_oe_i</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">ctrl_sda_oe_o</span></code> (output enable passthrough)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sel_od_pp_i</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">sel_od_pp_o</span></code> (drive mode passthrough)</p></li>
+</ul>
+<h3 id="i-o-signal-routing-constraints">I/O Signal Routing Constraints<a class="headerlink" href="#i-o-signal-routing-constraints" title="Link to this heading">¶</a></h3>
+<p>All six I3C bus I/O signals (<code class="docutils literal notranslate"><span class="pre">scl_i</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_i</span></code>, <code class="docutils literal notranslate"><span class="pre">scl_o</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_o</span></code>, <code class="docutils literal notranslate"><span class="pre">scl_oe</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_oe</span></code>)
+must be routed together in physical design. The two-flop synchronizers
+(<code class="docutils literal notranslate"><span class="pre">scl_synchronizer</span></code>, <code class="docutils literal notranslate"><span class="pre">sda_synchronizer</span></code>) and the output-path flops should be placed
+close to the I/O pads to minimize routing skew between input and output paths.</p>
+<p>Keeping the synchronizing flops and output flops near each other and near the pads
+ensures that:</p>
+<ol class="arabic simple">
+<li><p>Input sampling latency is minimized and consistent across SCL and SDA.</p></li>
+<li><p>Output drive timing (t<sub>SCO</sub>) is not degraded by long internal routing.</p></li>
+<li><p>Skew between <code class="docutils literal notranslate"><span class="pre">sda_o</span></code> / <code class="docutils literal notranslate"><span class="pre">sda_oe</span></code> and the corresponding <code class="docutils literal notranslate"><span class="pre">sda_i</span></code> sample point
+remains within the timing budget described in the
+<a class="reference internal" href="#i3c-timing-configuration">I3C timing configuration</a> section above.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sel_od_pp_o</span></code> (Open Drain / Push-Pull select) signal should also be routed
+alongside <code class="docutils literal notranslate"><span class="pre">sda_o</span></code> and <code class="docutils literal notranslate"><span class="pre">sda_oe</span></code> since it directly controls the pad driver mode
+and must be stable before the pad switches drive state.</p>
+</div>
 
 
   <hr>
@@ -494,7 +658,7 @@ Such situation adds an additional clock cycle latency resulting in 4 cycles in t
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>
@@ -518,7 +682,7 @@ Such situation adds an additional clock cycle latency resulting in 4 cycles in t
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="overview.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: I3C core overview" rel="prev">
+        <a href="controller_overview.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: I3C Controller overview" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -527,20 +691,20 @@ Such situation adds an additional clock cycle latency resulting in 4 cycles in t
               <span class="md-footer__direction">
                 Previous
               </span>
-              I3C core overview
+              I3C Controller overview
             </div>
           </div>
         </a>
       
       
         
-        <a href="dv.html" class="md-footer__link md-footer__link--next" aria-label="Next: Design verification" rel="next">
+        <a href="ccc.html" class="md-footer__link md-footer__link--next" aria-label="Next: I3C Common Command Codes (CCC)" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Design verification
+              I3C Common Command Codes (CCC)
             </div>
           </div>
           <div class="md-footer__button md-icon">

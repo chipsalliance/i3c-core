@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -241,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -320,7 +384,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -337,6 +401,22 @@
     <li class="md-nav__item">
       <a href="registers.html" class="md-nav__link">
         <span class="md-ellipsis">Register descriptions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
       </a>
     </li>
   
@@ -363,6 +443,13 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> sets only dynamic address for the main device (recovery device dynamic address is not set)</p></li>
 <li><p>Inferred latch on the <code class="docutils literal notranslate"><span class="pre">resp_desc</span></code> signal in <code class="docutils literal notranslate"><span class="pre">flow_active.sv</span></code>. This piece of code is not used in the Caliptra configuration</p></li>
 </ul>
+<h2 id="release-v1p5">Release v1p5<a class="headerlink" href="#release-v1p5" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Unanticipated Private Reads</strong>: When the Controller initiates a Private Read but no TX descriptor is available, the Target NACKs the transaction. There is currently no status flag or interrupt to notify firmware that this occurred. Firmware cannot distinguish between “no read was attempted” and “a read was attempted but NACKed due to empty TX queue.”</p></li>
+<li><p><strong>MRL/MWL not enforced in hardware</strong>: The <code class="docutils literal notranslate"><span class="pre">SETMRL</span></code> and <code class="docutils literal notranslate"><span class="pre">SETMWL</span></code> CCCs update the <code class="docutils literal notranslate"><span class="pre">STBY_CR_MRL</span></code> / <code class="docutils literal notranslate"><span class="pre">STBY_CR_MWL</span></code> registers, but these values are not enforced by the hardware. The design does not limit the number of bytes in a Private Read or Private Write transfer. Firmware is responsible for respecting these limits.</p></li>
+<li><p><strong>CCC register updates without firmware notification</strong>: <code class="docutils literal notranslate"><span class="pre">SETMRL</span></code>, <code class="docutils literal notranslate"><span class="pre">SETMWL</span></code>, <code class="docutils literal notranslate"><span class="pre">ENEC</span></code>, <code class="docutils literal notranslate"><span class="pre">DISEC</span></code>, <code class="docutils literal notranslate"><span class="pre">RSTACT</span></code>, <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code>, <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code>, <code class="docutils literal notranslate"><span class="pre">SETNEWDA</span></code>, and <code class="docutils literal notranslate"><span class="pre">RSTDAA</span></code> CCCs update internal registers without generating an interrupt. Firmware must poll the affected registers to detect changes.</p></li>
+<li><p><strong>PIOControl registers must not be accessed by firmware</strong>: The PIOControl register block is unverified. Accessing these registers may hang the AXI bus.</p></li>
+</ul>
 
 
   <hr>
@@ -370,7 +457,7 @@
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>

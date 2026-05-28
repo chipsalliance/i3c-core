@@ -13,7 +13,7 @@
     
     
       
-        <title>AXI driven Caliptra recovery flow - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>AXI Recovery Flow - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AXI driven Caliptra recovery flow
+              AXI Recovery Flow
             
           </span>
         </div>
@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -241,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -327,12 +391,12 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+          <span class="md-ellipsis">AXI Recovery Flow</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
       
         
@@ -350,16 +414,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#axi-recovery-flow-implementation" class="md-nav__link">
-    <span class="md-ellipsis">AXI Recovery flow implementation</span>
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">Overview</span>
   </a>
   
-    <nav class="md-nav" aria-label="AXI Recovery flow implementation">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">Prerequisite</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-stage-recovery-flow" class="md-nav__link">
+    <span class="md-ellipsis">Multi-<wbr>Stage Recovery Flow</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Stage Recovery Flow">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#axi-based-recovery-procedure" class="md-nav__link">
-    <span class="md-ellipsis">AXI-<wbr>based recovery procedure</span>
+  <a href="#per-stage-timeline" class="md-nav__link">
+    <span class="md-ellipsis">Per-<wbr>Stage Timeline</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage-specific-details" class="md-nav__link">
+    <span class="md-ellipsis">Stage-<wbr>Specific Details</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">Authentication Error Handling</span>
   </a>
   
 </li>
@@ -370,15 +462,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recovery-handler-bypass" class="md-nav__link">
-    <span class="md-ellipsis">Recovery Handler bypass</span>
+  <a href="#register-reference" class="md-nav__link">
+    <span class="md-ellipsis">Register Reference</span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#secure-firmware-recovery-csrs" class="md-nav__link">
-    <span class="md-ellipsis">Secure Firmware Recovery CSRs</span>
+  <a href="#data-transfer-constraints" class="md-nav__link">
+    <span class="md-ellipsis">Data Transfer Constraints</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axi-bypass-architecture" class="md-nav__link">
+    <span class="md-ellipsis">AXI Bypass Architecture</span>
   </a>
   
 </li>
@@ -407,6 +506,22 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -421,95 +536,314 @@
                   
 
 
-<h1 id="axi-driven-caliptra-recovery-flow">AXI driven Caliptra recovery flow<a class="headerlink" href="#axi-driven-caliptra-recovery-flow" title="Link to this heading">¶</a></h1>
-<p>This chapter discusses the implementation of AXI based recovery flow, which is an alternative to the standard I3C based flow (see <a class="reference internal" href="recovery_flow.html"><span class="doc">Recovery flow</span></a>).
-This feature allows driving the recovery data from within the SoC integrating the I3C core over the AXI bus, bypassing I3C communication.</p>
-<h2 id="axi-recovery-flow-implementation">AXI Recovery flow implementation<a class="headerlink" href="#axi-recovery-flow-implementation" title="Link to this heading">¶</a></h2>
-<p>The AXI recovery flow reuses the logic already present in the I3C core used in the Caliptra-SS design, with a runtime option essentially bypassing most of the I3C core communication logic (including the I3C recovery flow logic).</p>
-<p>The loopback functionality is configurable via a CSR, with the I3C mode set as the default.</p>
-<p>Recovery CSRs are accessible from the internal AXI bus.
-The transactions to the core may be filtered using the AXI ID field (see <a class="reference internal" href="axi_id_filtering.html"><span class="doc">AXI Transaction ID Filtering</span></a>)</p>
-<p>The logic is implemented so that the recovery firmware in the Caliptra RoT ROM can operate without any changes.</p>
-<p>In order to enable setting W1C fields in recovery registers over AXI, the AXI recovery mode introduces additional register - <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code>.</p>
-<h3 id="axi-based-recovery-procedure">AXI-based recovery procedure<a class="headerlink" href="#axi-based-recovery-procedure" title="Link to this heading">¶</a></h3>
-<p>The Caliptra MCU RISC-V core is responsible for driving the data copied from an external memory (e.g. QSPI interface) to the recovery FIFOs.
-The ROM running on the MCU core monitors the recovery block registers and performs the recovery flow.
-During the boot procedure the ROM will have to follow the following procedure:</p>
-<ol class="arabic simple">
-<li><p>Set the I3C block to the “direct AXI” mode</p>
-<ol class="arabic simple">
-<li><p>Set the <code class="docutils literal notranslate"><span class="pre">REC_INTF_BYPASS</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG</span></code> register</p></li>
-</ol>
-</li>
-<li><p>Poll the <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS_0</span></code> register and wait for the recovery to be enabled by the Caliptra core</p>
-<ol class="arabic simple">
-<li><p>Poll <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS_0.DEV_STATUS</span></code> until it becomes <code class="docutils literal notranslate"><span class="pre">0x03</span></code> (Recovery mode - ready to accept recovery image)</p></li>
-</ol>
-</li>
-<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register and check if the recovery flow started</p>
-<ol class="arabic simple">
-<li><p>Check whether <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS.DEV_REC_STATUS</span></code> is <code class="docutils literal notranslate"><span class="pre">0x1</span></code> (Awaiting recovery image)</p></li>
-</ol>
-</li>
-<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> register to set the recovery image configuration</p></li>
-<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_0</span></code> register to reset the FIFO</p></li>
-<li><p>Write to the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_1</span></code> register to set the recovery image size</p></li>
-<li><p>Push the recovery image to the recovery interface FIFOs:</p>
-<ol class="arabic simple">
-<li><p>Read the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register to determine remaining space in the indirect FIFO</p>
-<ol class="arabic simple">
-<li><p>If the indirect FIFO is not full, write a chunk of data to the <code class="docutils literal notranslate"><span class="pre">TX_DATA_PORT</span></code> register</p></li>
-<li><p>If the indirect FIFO is full, wait for the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS_0.FULL</span></code> bit to clear</p></li>
-</ol>
-</li>
-<li><p>The above steps should be repeated until the whole recovery image is written to the FIFO</p></li>
-</ol>
-</li>
-<li><p>Notify the recovery handler that the final chunk has been sent</p>
-<ol class="arabic simple">
-<li><p>Set the <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> bit in the <code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG</span></code> register to raise the <code class="docutils literal notranslate"><span class="pre">payload_available</span></code> signal for the final time</p></li>
-</ol>
-</li>
-<li><p>Activate the new image</p>
-<ol class="arabic simple">
-<li><p>Write <code class="docutils literal notranslate"><span class="pre">0xf00</span></code> to the <code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> register to update the <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code> field</p></li>
-</ol>
-</li>
-<li><p>Read the <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> register to ensure the image has been activated</p>
-<ol class="arabic simple">
-<li><p>Poll <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS.DEV_REC_STATUS</span></code> until it becomes <code class="docutils literal notranslate"><span class="pre">0x3</span></code> (Recovery successful); before the image is activated, this field will be <code class="docutils literal notranslate"><span class="pre">0x2</span></code> (Booting recovery image)</p></li>
-</ol>
-</li>
-</ol>
-<p>The recovery image will be written in chunks with length equal to or less than <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">transfer</span> <span class="pre">size</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS</span></code> register.
-Once the last data chunk is written to the FIFO, the Caliptra MCU ROM will write a CSR in the Secure Firmware Recovery register file indicating the transfer is complete.</p>
-<h2 id="recovery-handler-bypass">Recovery Handler bypass<a class="headerlink" href="#recovery-handler-bypass" title="Link to this heading">¶</a></h2>
-<p>In the regular (I3C) mode of the core, the Recovery Handler strongly relies on communication with the I3C Core internal logic by interfacing with TTI Queues.
-The bypass implementation modifies the I3C Core logic to allow direct access over the AXI bus to the structures specified by the OCP Secure Firmware Recovery for compliance with the <a class="reference external" href="https://github.com/chipsalliance/Caliptra/blob/main/doc/Caliptra.md#caliptra-subsystem-recovery-interface-hardware">Caliptra Subsystem Recovery Sequence</a>.</p>
-<p>The default design of the Recovery Handler includes many blocks specifically designed to translate I3C bus traffic into recovery messages.
-It also automatically responds to the I3C commands by writing transaction descriptors and data for the TTI Queues.
-Such a recovery flow is presented in the diagram below.</p>
+<h1 id="axi-recovery-flow">AXI Recovery Flow<a class="headerlink" href="#axi-recovery-flow" title="Link to this heading">¶</a></h1>
+<p>This chapter describes the AXI-based firmware recovery flow, which allows
+driving recovery data from within the SoC over the AXI bus, bypassing I3C
+communication. For the standard I3C-based recovery flow, see <a class="reference internal" href="recovery_flow.html"><span class="doc">Recovery flow</span></a>.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The recovery flow transfers firmware images from an external source through
+the I3C core’s Indirect FIFO to the Device Firmware. Three actors participate:</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Actor</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Image Provider</strong></p></td>
+<td><p>SoC-internal firmware that reads images from storage and writes them to <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_PORT</span></code> via AXI (the hardware routes these writes into the Indirect FIFO when bypass mode is enabled)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>I3C Core</strong></p></td>
+<td><p>Hosts the OCP recovery registers and Indirect FIFO</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Device Firmware</strong></p></td>
+<td><p>Reads images from the Indirect FIFO, validates, and boots them</p></td>
+</tr>
+</tbody>
+</table>
+<p>The Image Provider and Device Firmware operate <strong>concurrently</strong> and synchronize
+through shared OCP recovery registers in the I3C core.</p>
+<h2 id="prerequisite">Prerequisite<a class="headerlink" href="#prerequisite" title="Link to this heading">¶</a></h2>
+<p>Enable AXI bypass mode before starting recovery:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">REC_INTF_CFG</span><span class="o">.</span><span class="n">REC_INTF_BYPASS</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div>
+</div>
+<p>This routes data directly from the AXI bus to the Indirect FIFO, bypassing
+the I3C protocol logic. The Device Firmware operates identically in both I3C
+and AXI bypass modes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Once set, <code class="docutils literal notranslate"><span class="pre">REC_INTF_BYPASS</span></code> must not be cleared until the next system
+reset. This is a one-time configuration for the life of the reset domain.</p>
+</div>
+<h2 id="multi-stage-recovery-flow">Multi-Stage Recovery Flow<a class="headerlink" href="#multi-stage-recovery-flow" title="Link to this heading">¶</a></h2>
+<p>The recovery flow transfers one or more images in sequence. Each image is
+identified by a <code class="docutils literal notranslate"><span class="pre">REC_IMG_INDEX</span></code> value. The number of stages and their content
+are platform-defined. A typical three-stage example:</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p>REC_IMG_INDEX</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>0x0</p></td>
+<td><p>Primary firmware image</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>0x1</p></td>
+<td><p>Configuration / manifest</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>0x2</p></td>
+<td><p>Application firmware</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each stage follows the same handshake protocol. The timeline below shows the
+interleaved register operations between the Image Provider and Device Firmware
+for a single stage. Steps marked with the same number happen concurrently.</p>
+<h3 id="per-stage-timeline">Per-Stage Timeline<a class="headerlink" href="#per-stage-timeline" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>  Image Provider                             I3C Core Regs           Device Firmware
+  --------------                             -------------           ---------------
+          |                                      |                       |
+          |                                      |              1. Write PROT_CAP
+          |                                      |                 (recovery caps)
+          |                                      |                       |
+          |                                      |              2. Write DEVICE_STATUS_0
+          |                                      |                 .DEV_STATUS = 0x3
+          |                                      |                 (recovery mode)
+          |                                      |                       |
+          |                                      |              3. Write RECOVERY_STATUS
+          |                                      |                 .DEV_REC_STATUS = 0x1
+          |                                      |                 .REC_IMG_INDEX = &lt;stage&gt;
+          |                                      |                 (awaiting image)
+          |                                      |                       |
+          |                                      |              3a. Wait for payload_available_o
+          |                                      |                  to deassert (no-op on first
+          |                                      |                  stage; on subsequent stages
+          |                                      |                  waits for Image Provider to
+          |                                      |                  clear REC_PAYLOAD_DONE at
+          |                                      |                  step 17)
+          |                                      |                       |
+  4. Read PROT_CAP_2                             |                       |
+     verify recovery capability                  |                       |
+          |                                      |                       |
+  5. Poll DEVICE_STATUS_0                        |                       |
+     until DEV_STATUS == 0x3                     |                       |
+          |                                      |                       |
+  6. Poll RECOVERY_STATUS                        |                       |
+     until DEV_REC_STATUS == 0x1                 |                       |
+     Read REC_IMG_INDEX to determine             |                       |
+     which image Device Firmware expects         |                       |
+          |                                      |                       |
+  7. Write INDIRECT_FIFO_CTRL_1                  |                       |
+     .IMAGE_SIZE = image size in 4B              |                       |
+     units (i.e. byte count / 4)                 |                       |
+          |                                      |                       |
+          v                                      |                       |
+  ,-------------------------------.              |                       |
+  | 8. DATA TRANSFER LOOP         |              |                       |
+  |   (Provider writes,           |              |                       |
+  |    Device FW reads)           |              |                       |
+  `-------------------------------&#39;              |                       |
+          |                                      |                       |
+          |  Poll FIFO_STATUS_0.EMPTY            |  DMA triggered by     |
+          |  Write chunk to TTI_TX_DATA_PORT     |  payload_available_o  |
+          |  (max transfer size per chunk)       |  (reads FIFO_SIZE or  |
+          |                                      |  remaining bytes)     |
+          |      ... repeat until all data transferred ...               |
+          |                                      |                       |
+  9. Write REC_INTF_CFG                          |                       |
+     .REC_PAYLOAD_DONE = 1                       |                       |
+     (signal last chunk sent)                    |                       |
+          |                                      |                       |
+          |                                      |          10. Write DEVICE_STATUS_0
+          |                                      |              .DEV_STATUS = 0x4
+          |                                      |              (recovery pending)
+          |                                      |                       |
+          |                                      |          11. Poll RECOVERY_CTRL
+          |                                      |              .ACTIVATE_REC_IMG
+          |                                      |              until == 0xF
+          |                                      |                       |
+ 12. Poll DEVICE_STATUS_0                        |                       |
+     until DEV_STATUS == 0x4                     |                       |
+     (Device FW finished reading,                |                       |
+     waiting for activation)                     |                       |
+          |                                      |                       |
+ 13. Write REC_INTF_REG_W1C_ACCESS               |                       |
+     .RECOVERY_CTRL_ACTIVATE_REC_IMG             |                       |
+     = 0xF (triggers image_activated_o)          |                       |
+          |                                      |                       |
+          |                                      |          14. Write DEV_REC_STATUS = 0x2
+          |                                      |              (processing image)
+          |                                      |                       |
+ 15. Poll DEVICE_STATUS_0.DEV_STATUS             |                       |
+     Wait while DEV_STATUS == 0x4                |                       |
+     (Device FW is validating the image)         |                       |
+          |                                      |                       |
+          |                                      |          16. Validate image
+          |                                      |              (crypto verification)
+          |                                      |                       |
+          |                                      |              [Intermediate, on success]
+          |                                      |              Clear ACTIVATE_REC_IMG
+          |                                      |              Reset INDIRECT_FIFO_CTRL_0
+          |                                      |              -&gt; loop back to step 2
+          |                                      |              (with next REC_IMG_INDEX)
+          |                                      |                       |
+          |                                      |              [On error (any stage)]
+          |                                      |              Write DEV_REC_STATUS &gt;= 0xc
+          |                                      |              Write DEV_STATUS = 0xF
+          |                                      |                       |
+          |                                      |              [Final stage, on success]
+          |                                      |              Write DEV_REC_STATUS = 0x3
+          |                                      |              Write DEV_STATUS = 0x1
+          |                                      |              (recovery successful,
+          |                                      |              device healthy)
+          |                                      |                       |
+ 17. DEV_STATUS changed from 0x4:                |                       |
+       0x3 = next stage ready                    |                       |
+             Clear REC_INTF_CFG                  |                       |
+             .REC_PAYLOAD_DONE = 0               |                       |
+             -&gt; go back to step 5                |                       |
+       0x1 = recovery complete                   |                       |
+             -&gt; exit                             |                       |
+       0xF = error                               |                       |
+             -&gt; abort recovery                   |                       |
+          |                                      |                       |
+</code></pre></div>
+</div>
+<h3 id="stage-specific-details">Stage-Specific Details<a class="headerlink" href="#stage-specific-details" title="Link to this heading">¶</a></h3>
+<p><strong>Intermediate stages:</strong></p>
+<ul class="simple">
+<li><p>Device Firmware validates the received image (e.g. crypto verification)</p></li>
+<li><p>On success, Device Firmware clears <code class="docutils literal notranslate"><span class="pre">ACTIVATE_REC_IMG</span></code>, resets the
+Indirect FIFO via <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_0.RESET</span></code>, and loops back to
+step 2 (writing the next <code class="docutils literal notranslate"><span class="pre">REC_IMG_INDEX</span></code>)</p></li>
+<li><p>After writing <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> at step 3, Device Firmware must wait
+for <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> to deassert before polling for new payload.
+This avoids a race where stale <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> from the prior
+stage keeps <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> asserted, causing Device Firmware
+to read the old <code class="docutils literal notranslate"><span class="pre">IMAGE_SIZE</span></code>.  The Image Provider clears
+<code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> at step 17, which deasserts
+<code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code>.</p></li>
+<li><p>Image Provider detects <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span> <span class="pre">==</span> <span class="pre">0x1</span></code> at step 17 and loops
+back to step 5</p></li>
+</ul>
+<p><strong>Final stage:</strong></p>
+<ul class="simple">
+<li><p>Same data transfer handshake as intermediate stages</p></li>
+<li><p>On success, Device Firmware writes <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span> <span class="pre">=</span> <span class="pre">0x3</span></code> (recovery
+successful) and <code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span> <span class="pre">=</span> <span class="pre">0x1</span></code> (device healthy)</p></li>
+<li><p>On error, Device Firmware writes <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span> <span class="pre">&gt;=</span> <span class="pre">0xc</span></code> and
+<code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span> <span class="pre">=</span> <span class="pre">0xF</span></code></p></li>
+<li><p>Image Provider detects <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span> <span class="pre">==</span> <span class="pre">0x3</span></code> at step 17 and exits</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Intermediate stage completion</strong>: For all stages except the final one,
+Device Firmware clears <code class="docutils literal notranslate"><span class="pre">ACTIVATE_REC_IMG</span></code>, resets the Indirect FIFO via
+<code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL_0.RESET</span></code>, and loops back to step 2 to signal
+readiness for the next image. The FIFO reset is performed by Device
+Firmware, not the Image Provider. Device Firmware writes <code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span> <span class="pre">=</span> <span class="pre">0x3</span></code>
+last (at step 2), after all cleanup is complete.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> ownership</strong>: The Image Provider owns the
+<code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG.REC_PAYLOAD_DONE</span></code> bit. It sets the bit after the last
+chunk of each image (step 9) and clears it at step 17 when
+<code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span></code> transitions away from 0x4 (before looping back to step 5).
+Between stages, <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> may remain asserted because
+<code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> is still set from the prior stage.
+Device Firmware must wait for <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> to deassert after
+writing <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS</span></code> (step 3) and before polling for new payload.
+This wait ensures the Image Provider has cleared <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code>
+and the new <code class="docutils literal notranslate"><span class="pre">IMAGE_SIZE</span></code> is valid. Failure to perform this wait can
+cause Device Firmware to read a stale image size and set up DMA
+transfers with the wrong byte count.</p>
+<p><strong>Final stage completion</strong>: After the final stage, Device Firmware
+writes <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span> <span class="pre">=</span> <span class="pre">0x3</span></code> (recovery successful) and
+<code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span> <span class="pre">=</span> <span class="pre">0x1</span></code> (device healthy). The Image Provider polls for
+this transition at step 15/17 to confirm recovery is complete.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once <code class="docutils literal notranslate"><span class="pre">REC_INTF_BYPASS</span></code> is set to 1, it must not be cleared until the
+next system reset. The bypass setting is effectively a one-time
+configuration for the life of the reset domain. FW must not write
+<code class="docutils literal notranslate"><span class="pre">REC_INTF_BYPASS</span> <span class="pre">=</span> <span class="pre">0</span></code> after recovery completes.</p>
+</div>
+<h3 id="authentication-error-handling">Authentication Error Handling<a class="headerlink" href="#authentication-error-handling" title="Link to this heading">¶</a></h3>
+<p>If Device Firmware fails to authenticate a pushed image at any stage, it
+writes an error status to <code class="docutils literal notranslate"><span class="pre">RECOVERY_STATUS.DEV_REC_STATUS</span></code> (&gt;= 0xc) and
+sets <code class="docutils literal notranslate"><span class="pre">DEVICE_STATUS_0.DEV_STATUS</span> <span class="pre">=</span> <span class="pre">0xF</span></code>. The recovery flow terminates
+immediately – no further stages are executed. See OCP Recovery v1.1
+Section 7.6 for the full list of <code class="docutils literal notranslate"><span class="pre">DEV_REC_STATUS</span></code> error codes.</p>
+<p>The Image Provider should check for error status (<code class="docutils literal notranslate"><span class="pre">DEV_STATUS</span> <span class="pre">==</span> <span class="pre">0xF</span></code>)
+at step 15 of each stage. If an error is detected, the Image Provider
+should terminate the recovery flow. No retry is attempted.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Image Provider should not poll indefinitely for a success status
+without also checking for error conditions. Device Firmware may report
+an authentication or activation error at any stage. An Image Provider
+that only polls for DEV_STATUS == 0x3 (next stage) or == 0x1 (success)
+will hang if Device Firmware writes DEV_STATUS = 0xF instead.</p>
+</div>
+<h2 id="register-reference">Register Reference<a class="headerlink" href="#register-reference" title="Link to this heading">¶</a></h2>
+<p>Recovery registers are part of the Secure Firmware Recovery Interface
+extended capability. See <a class="reference internal" href="ext_cap.html#tab-secure-firmware-recovery-interface"><span class="std std-ref">Secure Firmware Recovery Interface</span></a> in
+<a class="reference internal" href="ext_cap.html"><span class="doc">Specification for I3C Vendor-Specific Extended Capabilities</span></a> for the full register list and field descriptions.</p>
+<p>The AXI bypass flow also uses two registers from the SoC Management Interface:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG.REC_INTF_BYPASS</span></code> – enables AXI bypass mode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REC_INTF_CFG.REC_PAYLOAD_DONE</span></code> – signals last chunk written</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REC_INTF_REG_W1C_ACCESS</span></code> – sideband write path for <code class="docutils literal notranslate"><span class="pre">RECOVERY_CTRL</span></code>
+and <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> (needed because AXI bypass skips the I3C
+Recovery Handler that normally writes these registers)</p></li>
+</ul>
+<h2 id="data-transfer-constraints">Data Transfer Constraints<a class="headerlink" href="#data-transfer-constraints" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Maximum chunk size per FIFO write is defined by <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS_4</span></code></p></li>
+<li><p>Image Provider must poll <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_STATUS_0.EMPTY</span></code> after each chunk to
+ensure Device Firmware has drained the FIFO before writing the next chunk</p></li>
+<li><p>Device Firmware uses <code class="docutils literal notranslate"><span class="pre">recovery_payload_available_o</span></code> as a DMA trigger.
+Each assertion of <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> signals that the Indirect FIFO
+contains a complete chunk (or the final partial chunk) ready for reading.
+The DMA reads either the full FIFO contents or, for the last chunk of an
+image, only the remaining bytes. Once the DMA drains the FIFO,
+<code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> deasserts and the DMA waits for the next assertion.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> asserts in bypass mode when the Indirect FIFO is
+full, <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> is set, or the image has been activated. It
+deasserts when the FIFO is empty.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code> must be set after the last chunk (step 9) and
+cleared by the Image Provider at step 17 when transitioning to the
+next stage. Device Firmware must not poll <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> for
+a new image until it observes <code class="docutils literal notranslate"><span class="pre">payload_available_o</span></code> deassert,
+confirming the Image Provider has cleared <code class="docutils literal notranslate"><span class="pre">REC_PAYLOAD_DONE</span></code>.</p></li>
+</ul>
+<h2 id="axi-bypass-architecture">AXI Bypass Architecture<a class="headerlink" href="#axi-bypass-architecture" title="Link to this heading">¶</a></h2>
+<p>In the default I3C mode, the Recovery Handler translates I3C bus traffic into
+recovery register accesses. The bypass feature routes AXI writes directly to
+the Indirect FIFO, disabling the I3C communication logic.</p>
 <figure class="align-default" id="recovery-handler">
 <img alt="" src="_images/recovery_handler_flow.png" />
 <figcaption>
-<p><span class="caption-number">Figure 10 </span><span class="caption-text"><span class="caption-text">
-Recovery Handler in the I3C Core</span><a class="headerlink" href="#recovery-handler" title="Permalink to this image">¶</a></figcaption>
+<p><span class="caption-number">Figure 12 </span><span class="caption-text"><span class="caption-text">
+Recovery Handler in the I3C Core (standard I3C mode)</span><a class="headerlink" href="#recovery-handler" title="Permalink to this image">¶</a></figcaption>
 </figure>
-<p>In order enable an alternative recovery mechanism while reusing the existing logic and keeping compliance with Caliptra, the I3C core provides a custom bypass feature allowing direct communication with the Recovery Handler via the AXI bus.
-The bypass disables the I3C communication logic.
-Data is routed from the TTI TX Queue to the Recovery Executor block, and written directly to the Indirect Data FIFO.
-The Caliptra ROM can access the data from the Indirect FIFO over the AXI bus (the same way it does in the regular I3C recovery flow).
-Data flow in bypass mode, marked with green arrows, is depicted in the diagram below.</p>
+<p>With bypass enabled, Image Provider writes to <code class="docutils literal notranslate"><span class="pre">TTI_TX_DATA_PORT</span></code> over AXI.
+The hardware forwards those writes through the TTI TX Queue into the Indirect
+Data FIFO. Device Firmware reads from the Indirect FIFO over AXI identically
+to the I3C flow.</p>
 <figure class="align-default" id="recovery-handler-with-bypass">
 <img alt="" src="_images/recovery_handler_with_bypass.png" />
 <figcaption>
-<p><span class="caption-number">Figure 11 </span><span class="caption-text"><span class="caption-text">
-Recovery Handler with the I3C Core logic bypass</span><a class="headerlink" href="#recovery-handler-with-bypass" title="Permalink to this image">¶</a></figcaption>
+<p><span class="caption-number">Figure 13 </span><span class="caption-text"><span class="caption-text">
+Recovery Handler with AXI bypass (green arrows show bypass data path)</span><a class="headerlink" href="#recovery-handler-with-bypass" title="Permalink to this image">¶</a></figcaption>
 </figure>
-<h2 id="secure-firmware-recovery-csrs">Secure Firmware Recovery CSRs<a class="headerlink" href="#secure-firmware-recovery-csrs" title="Link to this heading">¶</a></h2>
-<p>With the bypass feature enabled, the FIFO status CSRs in the Secure Firmware Recovery CSR file will be updated by the Recovery Handler module.
-However, some registers like e.g. <code class="docutils literal notranslate"><span class="pre">INDIRECT_FIFO_CTRL</span></code> which are updated by I3C commands in a standard recovery flow, will have to be accessed and configured properly from the software running on the Caliptra MCU via the AXI bus.
-All configurable registers are writable from software, read only registers provide status information about Recovery Handler internals, e.g. details about size and fill level of the Indirect FIFO.</p>
+<p>AXI transactions may be filtered using the AXI ID field
+(see <a class="reference internal" href="axi_id_filtering.html"><span class="doc">AXI Transaction ID Filtering</span></a>).</p>
 
 
   <hr>
@@ -517,7 +851,7 @@ All configurable registers are writable from software, read only registers provi
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>

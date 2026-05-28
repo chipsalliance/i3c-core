@@ -13,7 +13,7 @@
     
     
       
-        <title>I3C core overview - CHIPS Alliance Caliptra Open Source I3C core</title>
+        <title>I3C Timing Register Configurations - CHIPS Alliance Caliptra Open Source I3C core</title>
       
     
     
@@ -87,7 +87,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              I3C core overview
+              I3C Timing Register Configurations
             
           </span>
         </div>
@@ -220,133 +220,28 @@
 
   
   
-    
-  
-    
   
   
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span class="md-ellipsis">I3C core overview</span>
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="#" class="md-nav__link md-nav__link--active">
-        <span class="md-ellipsis">I3C core overview</span>
+    <li class="md-nav__item">
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
       </a>
-      
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary">
-  
-  
     
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
-        <li class="md-nav__item">
-  <a href="#configuration-script" class="md-nav__link">
-    <span class="md-ellipsis">Configuration script</span>
-  </a>
-  
-</li>
       
-        <li class="md-nav__item">
-  <a href="#system-bus" class="md-nav__link">
-    <span class="md-ellipsis">System Bus</span>
-  </a>
-  
-</li>
       
-        <li class="md-nav__item">
-  <a href="#virtual-target" class="md-nav__link">
-    <span class="md-ellipsis">Virtual target</span>
-  </a>
+
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#register-descriptions" class="md-nav__link">
-    <span class="md-ellipsis">Register descriptions</span>
-  </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#target-interface-queues" class="md-nav__link">
-    <span class="md-ellipsis">Target Interface Queues</span>
-  </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#target-recovery-interface" class="md-nav__link">
-    <span class="md-ellipsis">Target recovery interface</span>
-  </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-reads-and-writes" class="md-nav__link">
-    <span class="md-ellipsis">Private reads and writes</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#in-band-interrupts-ibi" class="md-nav__link">
-    <span class="md-ellipsis">In-<wbr>Band Interrupts <wbr>(IBI)</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#i3c-common-command-codes-ccc" class="md-nav__link">
-    <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
-  </a>
-  
-    <nav class="md-nav" aria-label="I3C Common Command Codes (CCC)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#broadcast-cccs" class="md-nav__link">
-    <span class="md-ellipsis">Broadcast CCCs</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#direct-cccs" class="md-nav__link">
-    <span class="md-ellipsis">Direct CCCs</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#other-features" class="md-nav__link">
-    <span class="md-ellipsis">Other features</span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
+      </a>
     </li>
   
 
@@ -362,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -441,7 +384,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -463,6 +406,67 @@
   
 
     
+      
+      
+      
+
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">I3C Timing Register Configurations</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-custom-timings" class="md-nav__link">
+    <span class="md-ellipsis">Generating Custom Timings</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-timing-csrs" class="md-nav__link">
+    <span class="md-ellipsis">Example Timing CSRs</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -477,122 +481,24 @@
                   
 
 
-<h1 id="i3c-core-overview">I3C core overview<a class="headerlink" href="#i3c-core-overview" title="Link to this heading">¶</a></h1>
-<p>This chapter provides a high level overview of the I3C target functionalities implemented in the core.</p>
-<h2 id="configuration-script">Configuration script<a class="headerlink" href="#configuration-script" title="Link to this heading">¶</a></h2>
-<p>The I3C Core is configured with the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/i3c_core_config.py">i3c_core_config</a> Python script, which reads configurations from the <code class="docutils literal notranslate"><span class="pre">i3c_core_configs.yaml</span></code> YAML file.</p>
-<p>The supported configurations can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml">i3c_core_configs.yaml</a> file.</p>
-<p>More details on the usage of the tool can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md">relevant README</a>.</p>
-<h2 id="system-bus">System Bus<a class="headerlink" href="#system-bus" title="Link to this heading">¶</a></h2>
-<p>The I3C core can connect to system buses via dedicated adapters:</p>
-<ul class="simple">
-<li><p>AXI4</p></li>
-<li><p>AHB - The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification (IHI0033A)</p></li>
-</ul>
-<h2 id="virtual-target">Virtual target<a class="headerlink" href="#virtual-target" title="Link to this heading">¶</a></h2>
-<p>The I3C core implements the Secure Firmware Recovery protocol according to the Open Compute “Secure Firmware Recovery” specification rev. 1.1-rc5.
-For this purpose, the I3C core exposes a “virtual” target with its own static and dynamic bus addresses.
-The virtual target implementation shares most of its logic with the “main” one while retaining a distinct data path.
-Certain CCC commands like <code class="docutils literal notranslate"><span class="pre">SETAASA</span></code> and <code class="docutils literal notranslate"><span class="pre">SETDASA</span></code> are implemented separately for the “main” and “virtual” targets.</p>
-<h2 id="register-descriptions">Register descriptions<a class="headerlink" href="#register-descriptions" title="Link to this heading">¶</a></h2>
-<p>Register descriptions are specified in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/rdl">RDL format</a> for I3C core CSRs:</p>
-<ul class="simple">
-<li><p>I3C Capability and Operational Registers (I3CBase)</p></li>
-<li><p>Programmable I/O (PIOControl)</p></li>
-<li><p>Extended Capabilities (I3C_EC)</p></li>
-<li><p>Device Address Table (DAT)</p></li>
-<li><p>Device Characteristic Table (DCT)</p></li>
-</ul>
-<p>The RDL files generate the relevant SystemVerilog which can be found in the <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main/src/csr">src/csr/</a> directory.
-The auto-generated descriptions are included in the <a class="reference internal" href="registers.html"><span class="std std-doc">Register descriptions</span></a> chapter.</p>
-<h2 id="target-interface-queues">Target Interface Queues<a class="headerlink" href="#target-interface-queues" title="Link to this heading">¶</a></h2>
-<p>There are also target interface queues via Target Transaction Interface (TTI):</p>
-<ul class="simple">
-<li><p>RX - read descriptor &amp; data queues</p></li>
-<li><p>TX - write descriptor &amp; data queues</p></li>
-<li><p>IBI - IBI combined descriptor + data queue</p></li>
-</ul>
-<h2 id="target-recovery-interface">Target recovery interface<a class="headerlink" href="#target-recovery-interface" title="Link to this heading">¶</a></h2>
-<p>Several functionalities related to the recovery interface have been implemented for Caliptra:</p>
-<ul class="simple">
-<li><p>Recovery mode enable control via a CSR field</p></li>
-<li><p>Hardware recovery packet handling (private read/write)</p></li>
-<li><p>Hardware PEC checksum calculation and checking</p></li>
-<li><p>Access to Recovery CSRs from the I3C side</p></li>
-<li><p>Status signaling via output pins:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">recovery_payload_available_o</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">recovery_image_activated_o</span></code></p></li>
-</ul>
-</li>
-</ul>
-<h2 id="private-reads-and-writes">Private reads and writes<a class="headerlink" href="#private-reads-and-writes" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>The core handles I3C private reads and writes</p>
-<ul>
-<li><p>This functionality passes Avery test suite tests</p></li>
-<li><p>Private writes push data to the TTI RX Queue, accessible from the AXI bus, allowing the CPU to read the data</p>
-<ul>
-<li><p>The number of received bytes is written into the TTI RX descriptor Queue</p></li>
-<li><p>The software is supposed to first read the descriptor data, and then the number of bytes defined by the descriptor for the TTI RX Queue</p></li>
-</ul>
-</li>
-<li><p>Private reads send data on I3C lines from TTI TX Queue</p>
-<ul>
-<li><p>The software has to write the TTI TX Queue prior to a I3C private read transaction</p></li>
-<li><p>The TTI TX descriptor is used similarly to set the max number of bytes to be sent in the next private read transaction</p></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="in-band-interrupts-ibi">In-Band Interrupts (IBI)<a class="headerlink" href="#in-band-interrupts-ibi" title="Link to this heading">¶</a></h2>
-<p>The core is capable of raising In-Band Interrupts.
-IBIs are controlled using descriptors written to a dedicated IBI queue by software.
-Optional IBI data immediately follows the descriptor in the same queue.</p>
-<p>The core watches the IBI queue for a descriptor write.
-Once a descriptor is written, the core peeks it and waits until the defined count of data words is written to the queue.
-Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit words.</p>
-<h2 id="i3c-common-command-codes-ccc">I3C Common Command Codes (CCC)<a class="headerlink" href="#i3c-common-command-codes-ccc" title="Link to this heading">¶</a></h2>
-<p>The I3C core supports all CCCs required by the I3C Basic spec, please see “Table 16 I3C Common Command Codes” for a full reference.</p>
-<p>All CCCs are exercised with Cocotb tests.</p>
-<h3 id="broadcast-cccs">Broadcast CCCs<a class="headerlink" href="#broadcast-cccs" title="Link to this heading">¶</a></h3>
-<p>The following Broadcast CCCs are currently supported by the core (all required Broadcast CCCs as per the errata, and one optional Broadcast CCC):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>SETAASA (O) - Set All Addresses to Static Adresses</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
-</ul>
-<h3 id="direct-cccs">Direct CCCs<a class="headerlink" href="#direct-cccs" title="Link to this heading">¶</a></h3>
-<p>The following Direct CCCs are currently supported by the core (all required Direct CCCs, plus several optional/conditional ones):</p>
-<ul class="simple">
-<li><p>ENEC (R) - Enable Events Command</p></li>
-<li><p>DISEC (R) - Disable Events Command</p></li>
-<li><p>RSTDAA (R) - Direct Reset Dynamic Address Assignment - this direct CCC is deprecated, the core NACKs this command as per the spec</p></li>
-<li><p>SETDASA (O) - Set Dynamic Address from Static Address</p></li>
-<li><p>SETMWL (R) - Set Max Write Length</p></li>
-<li><p>SETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETMWL (R) - Get Max Write Length</p></li>
-<li><p>GETMRL (R) - Set Max Read Length</p></li>
-<li><p>GETPID (C) - Get Provisioned ID</p></li>
-<li><p>GETBCR (C) - Get Bus Characteristics Register</p></li>
-<li><p>GETDCR (C) - Get Device Characteristics Register</p></li>
-<li><p>GETSTATUS (R) - Get Device Status</p></li>
-<li><p>RSTACT (R) - Target Reset Action</p></li>
-</ul>
-<h2 id="other-features">Other features<a class="headerlink" href="#other-features" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Target Reset Pattern is detected and causes assertion of output pins, based on the action selected with RSTACT:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">peripheral_reset_o</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">escalated_reset_o</span></code></p></li>
-</ul>
-</li>
-<li><p>The core correctly detects HDR-Exit Pattern</p></li>
-</ul>
+<h1 id="i3c-timing-register-configurations">I3C Timing Register Configurations<a class="headerlink" href="#i3c-timing-register-configurations" title="Link to this heading">¶</a></h1>
+<p>The tables below provide example Control and Status Register (CSR) timing values for the I3C controller.
+These cycle counts are automatically calculated to comply with the absolute physical nanosecond constraints defined in the MIPI I3C Basic and I2C Fast Mode specifications.
+The configurations shown represent valid, ready-to-use timings for a selection of common system clock frequencies.</p>
+<h2 id="generating-custom-timings">Generating Custom Timings<a class="headerlink" href="#generating-custom-timings" title="Link to this heading">¶</a></h2>
+<p>If your specific FPGA or ASIC target uses a different underlying system clock (<code class="docutils literal notranslate"><span class="pre">f_sys</span></code>), or if you need to operate at a slower I3C bus frequency (<code class="docutils literal notranslate"><span class="pre">f_scl</span></code>), you should generate a custom set of timings.</p>
+<p>You can calculate and validate new configurations using the <code class="docutils literal notranslate"><span class="pre">timings.py</span></code> utility via the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Calculate timings for a 200 MHz system clock and the default 12.5 MHz I3C bus</span>
+python<span class="w"> </span>tools/timing/timings.py<span class="w"> </span>--freq<span class="o">=</span>200e6
+
+<span class="c1"># Calculate timings for a specific 10 MHz I3C bus on a 500 MHz system clock</span>
+python<span class="w"> </span>tools/timing/timings.py<span class="w"> </span>--freq<span class="o">=</span>500e6<span class="w"> </span>--bus_freq<span class="o">=</span>10e6
+
+<span class="c1"># Output the results directly as a MyST Markdown table for documentation</span>
+python<span class="w"> </span>tools/timing/timings.py<span class="w"> </span>--freq<span class="o">=</span><span class="m">333</span>.333e6<span class="w"> </span>--target_name<span class="o">=</span><span class="s2">&quot;FPGA 333MHz&quot;</span><span class="w"> </span>--md
+</code></pre></div>
+</div>
+<h2 id="example-timing-csrs">Example Timing CSRs<a class="headerlink" href="#example-timing-csrs" title="Link to this heading">¶</a></h2>
 
 
   <hr>
@@ -600,7 +506,7 @@ Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit wo
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>
@@ -624,7 +530,7 @@ Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit wo
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="introduction.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction" rel="prev">
+        <a href="registers.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Register descriptions" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -633,26 +539,11 @@ Finally, the core outputs the Mandatory Data Byte (MDB) and the data as 8-bit wo
               <span class="md-footer__direction">
                 Previous
               </span>
-              Introduction
+              Register descriptions
             </div>
           </div>
         </a>
       
-      
-        
-        <a href="phy.html" class="md-footer__link md-footer__link--next" aria-label="Next: Physical Layer" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Physical Layer
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
       
     </nav>
   

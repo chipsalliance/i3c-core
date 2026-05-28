@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -241,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -480,7 +544,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -497,6 +561,22 @@
     <li class="md-nav__item">
       <a href="registers.html" class="md-nav__link">
         <span class="md-ellipsis">Register descriptions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
       </a>
     </li>
   
@@ -551,7 +631,7 @@ Implementation based on this specification should provide a list of known memory
 <li><p>SoC Management Interface</p></li>
 </ul>
 <table class="docutils data align-default" id="tab-capabilities-registers">
-<caption><span class="caption-number">Table 1 </span><span class="caption-text">Extended capabilities registers</span><a class="headerlink" href="#tab-capabilities-registers" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">Extended capabilities registers</span><a class="headerlink" href="#tab-capabilities-registers" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 60.0%" />
 <col style="width: 20.0%" />
@@ -591,7 +671,7 @@ Implementation based on this specification should provide a list of known memory
 <p>The <code class="docutils literal notranslate"><span class="pre">EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">SEC_FW_RECOVERY_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
 <table class="docutils data align-default" id="tab-secure-firmware-recovery-interface">
-<caption><span class="caption-number">Table 2 </span><span class="caption-text">Secure Firmware Recovery Interface</span><a class="headerlink" href="#tab-secure-firmware-recovery-interface" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">Secure Firmware Recovery Interface</span><a class="headerlink" href="#tab-secure-firmware-recovery-interface" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 40.0%" />
 <col style="width: 60.0%" />
@@ -688,7 +768,7 @@ The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</
 <p>The <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_EXTCAP_HEADER</span></code> is located at the <code class="docutils literal notranslate"><span class="pre">SOC_MGMT_SECTION_OFFSET</span></code> memory offset.
 The registers are aligned to DWORD size (4 bytes), unless specified otherwise.</p>
 <table class="docutils data align-default" id="tab-soc-management-interface">
-<caption><span class="caption-number">Table 3 </span><span class="caption-text">SoC Management Interface</span><a class="headerlink" href="#tab-soc-management-interface" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 8 </span><span class="caption-text">SoC Management Interface</span><a class="headerlink" href="#tab-soc-management-interface" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 50.0%" />
 <col style="width: 50.0%" />
@@ -773,7 +853,7 @@ Then, interrupt <code class="docutils literal notranslate"><span class="pre">RX_
 <figure class="align-default" id="fig-ext-cap-pwrite-timing">
 <img alt="IBI Queue" src="_images/ext_cap_pwrite_timing.png" />
 <figcaption>
-<p><span class="caption-number">Figure 2 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 4 </span><span class="caption-text"><span class="caption-text">
 Private Write timing diagram</span><a class="headerlink" href="#fig-ext-cap-pwrite-timing" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>During the Private Write transaction, an error can be caused by:</p>
@@ -784,17 +864,17 @@ Private Write timing diagram</span><a class="headerlink" href="#fig-ext-cap-pwri
 <figure class="align-default" id="fig-ext-cap-pwrite-overrun">
 <img alt="IBI Queue" src="_images/ext_cap_pwrite_overrun.png" />
 <figcaption>
-<p><span class="caption-number">Figure 3 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 5 </span><span class="caption-text"><span class="caption-text">
 Private Write timing diagram: Parity bit error or RX Queue overrun scenario</span><a class="headerlink" href="#fig-ext-cap-pwrite-overrun" title="Permalink to this image">¶</a></figcaption>
 </figure>
-<p>If an Active Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor will indicate an error status and the Target Device should not ACK data on the bus.
-The Active Controller can attempt mitigating such a situation by reading Target queue size from the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending a big chunk of data.</p>
+<p>If an Controller writes more data to the Target Device than it is capable to handle (even with triggering interrupts on threshold), the generated TTI RX Descriptor will indicate an error status and the Target Device should not ACK data on the bus.
+The Controller can attempt mitigating such a situation by reading Target queue size from the <code class="docutils literal notranslate"><span class="pre">TTI_QUEUE_SIZE</span></code> register before sending a big chunk of data.</p>
 <h5 id="in-band-interrupts">In-Band Interrupts<a class="headerlink" href="#in-band-interrupts" title="Link to this heading">¶</a></h5>
 <p>The Controller expects to receive an IBI Status Descriptor which is then followed by consecutive DWORDs of IBI Data.</p>
 <figure class="align-default" id="fig-ext-cap-ibi">
 <img alt="IBI Queue" src="_images/ext_cap_ibi.png" />
 <figcaption>
-<p><span class="caption-number">Figure 4 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 6 </span><span class="caption-text"><span class="caption-text">
 IBI Queue: partially filled with 3 interrupts.</span><a class="headerlink" href="#fig-ext-cap-ibi" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <p>In order to request an IBI, first the software should read the IBI queue size and set the queue threshold accordingly.
@@ -810,7 +890,7 @@ In case of failure, if the data integrity was not violated, the IBI will be retr
 <figure class="align-default" id="fig-ext-cap-ibi-timing">
 <img alt="IBI Queue" src="_images/ext_cap_ibi_timing.png" />
 <figcaption>
-<p><span class="caption-number">Figure 5 </span><span class="caption-text"><span class="caption-text">
+<p><span class="caption-number">Figure 7 </span><span class="caption-text"><span class="caption-text">
 IBI Timing Diagram: send an IBI.</span><a class="headerlink" href="#fig-ext-cap-ibi-timing" title="Permalink to this image">¶</a></figcaption>
 </figure>
 <h4 id="register-interface">Register Interface<a class="headerlink" href="#register-interface" title="Link to this heading">¶</a></h4>
@@ -818,7 +898,7 @@ IBI Timing Diagram: send an IBI.</span><a class="headerlink" href="#fig-ext-cap-
 <h4 id="data-structures-descriptors">Data Structures (descriptors)<a class="headerlink" href="#data-structures-descriptors" title="Link to this heading">¶</a></h4>
 <p>The TX Descriptor is 32-bit wide and has the following format:</p>
 <table class="docutils data align-default" id="tab-tti-target-transaction-interface-tx-descriptor">
-<caption><span class="caption-number">Table 4 </span><span class="caption-text"><em>Target Transaction Interface TX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-tx-descriptor" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 9 </span><span class="caption-text"><em>Target Transaction Interface TX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-tx-descriptor" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 30.0%" />
 <col style="width: 30.0%" />
@@ -837,7 +917,7 @@ IBI Timing Diagram: send an IBI.</span><a class="headerlink" href="#fig-ext-cap-
 </table>
 <p>The RX Descriptor is 32-bit wide and has the following format:</p>
 <table class="docutils data align-default" id="tab-tti-target-transaction-interface-rx-descriptor">
-<caption><span class="caption-number">Table 5 </span><span class="caption-text"><em>Target Transaction Interface RX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-rx-descriptor" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 10 </span><span class="caption-text"><em>Target Transaction Interface RX Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-rx-descriptor" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 30.0%" />
 <col style="width: 30.0%" />
@@ -866,7 +946,7 @@ and discard data from the RX Queue.</p>
 </table>
 <p>The IBI Descriptor is 32-bit wide and has the following format:</p>
 <table class="docutils data align-default" id="tab-tti-target-transaction-interface-ibi-descriptor">
-<caption><span class="caption-number">Table 6 </span><span class="caption-text"><em>Target Transaction Interface IBI Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-ibi-descriptor" title="Link to this table">¶</a></caption>
+<caption><span class="caption-number">Table 11 </span><span class="caption-text"><em>Target Transaction Interface IBI Descriptor Format</em></span><a class="headerlink" href="#tab-tti-target-transaction-interface-ibi-descriptor" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 30.0%" />
 <col style="width: 30.0%" />
@@ -899,7 +979,7 @@ Software-issued reset of the queues contents is also possible.</p>
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>

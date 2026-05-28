@@ -223,8 +223,24 @@
   
   
     <li class="md-nav__item">
-      <a href="overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C core overview</span>
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Controller overview</span>
       </a>
     </li>
   
@@ -241,6 +257,54 @@
     <li class="md-nav__item">
       <a href="phy.html" class="md-nav__link">
         <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
       </a>
     </li>
   
@@ -320,7 +384,7 @@
   
     <li class="md-nav__item">
       <a href="axi_recovery_flow.html" class="md-nav__link">
-        <span class="md-ellipsis">AXI driven Caliptra recovery flow</span>
+        <span class="md-ellipsis">AXI Recovery Flow</span>
       </a>
     </li>
   
@@ -1817,16 +1881,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#rsvd-3-register" class="md-nav__link">
-    <span class="md-ellipsis">__<wbr>rsvd_<wbr>3 register</span>
+  <a href="#stby-cr-mwl-register" class="md-nav__link">
+    <span class="md-ellipsis">STBY_<wbr>CR_<wbr>MWL register</span>
   </a>
   
-    <nav class="md-nav" aria-label="__rsvd_3 register">
+    <nav class="md-nav" aria-label="STBY_CR_MWL register">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rsvd-field" class="md-nav__link">
-    <span class="md-ellipsis">__<wbr>rsvd field</span>
+  <a href="#mwl-field" class="md-nav__link">
+    <span class="md-ellipsis">MWL field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stby-cr-mrl-register" class="md-nav__link">
+    <span class="md-ellipsis">STBY_<wbr>CR_<wbr>MRL register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STBY_CR_MRL register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mrl-field" class="md-nav__link">
+    <span class="md-ellipsis">MRL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibil-field" class="md-nav__link">
+    <span class="md-ellipsis">IBIL field</span>
   </a>
   
 </li>
@@ -1994,6 +2085,170 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ibi-retry-ctr-rst-field" class="md-nav__link">
+    <span class="md-ellipsis">IBI_<wbr>RETRY_<wbr>CTR_<wbr>RST field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-status-register" class="md-nav__link">
+    <span class="md-ellipsis">QUEUE_<wbr>STATUS register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QUEUE_STATUS register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rx-desc-queue-full-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DESC_<wbr>QUEUE_<wbr>FULL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rx-desc-queue-empty-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DESC_<wbr>QUEUE_<wbr>EMPTY field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-desc-queue-full-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>QUEUE_<wbr>FULL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-desc-queue-empty-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>QUEUE_<wbr>EMPTY field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rx-data-queue-full-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DATA_<wbr>QUEUE_<wbr>FULL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rx-data-queue-empty-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DATA_<wbr>QUEUE_<wbr>EMPTY field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-data-queue-full-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DATA_<wbr>QUEUE_<wbr>FULL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-data-queue-empty-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DATA_<wbr>QUEUE_<wbr>EMPTY field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibi-queue-full-field" class="md-nav__link">
+    <span class="md-ellipsis">IBI_<wbr>QUEUE_<wbr>FULL field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibi-queue-empty-field" class="md-nav__link">
+    <span class="md-ellipsis">IBI_<wbr>QUEUE_<wbr>EMPTY field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#desc-queue-depth-register" class="md-nav__link">
+    <span class="md-ellipsis">DESC_<wbr>QUEUE_<wbr>DEPTH register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DESC_QUEUE_DEPTH register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rx-desc-queue-depth-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DESC_<wbr>QUEUE_<wbr>DEPTH field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-desc-queue-depth-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DESC_<wbr>QUEUE_<wbr>DEPTH field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-queue-depth-register" class="md-nav__link">
+    <span class="md-ellipsis">DATA_<wbr>QUEUE_<wbr>DEPTH register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DATA_QUEUE_DEPTH register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rx-data-queue-depth-field" class="md-nav__link">
+    <span class="md-ellipsis">RX_<wbr>DATA_<wbr>QUEUE_<wbr>DEPTH field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx-data-queue-depth-field" class="md-nav__link">
+    <span class="md-ellipsis">TX_<wbr>DATA_<wbr>QUEUE_<wbr>DEPTH field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibi-queue-depth-register" class="md-nav__link">
+    <span class="md-ellipsis">IBI_<wbr>QUEUE_<wbr>DEPTH register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IBI_QUEUE_DEPTH register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ibi-queue-depth-field" class="md-nav__link">
+    <span class="md-ellipsis">IBI_<wbr>QUEUE_<wbr>DEPTH field</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2080,6 +2335,13 @@
           <li class="md-nav__item">
   <a href="#pending-interrupt-field" class="md-nav__link">
     <span class="md-ellipsis">PENDING_<wbr>INTERRUPT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pending-ibi-field" class="md-nav__link">
+    <span class="md-ellipsis">PENDING_<wbr>IBI field</span>
   </a>
   
 </li>
@@ -2309,6 +2571,682 @@
           <li class="md-nav__item">
   <a href="#transfer-err-stat-force-field" class="md-nav__link">
     <span class="md-ellipsis">TRANSFER_<wbr>ERR_<wbr>STAT_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-ctrl-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CTRL register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CTRL register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#te0-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE0_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te1-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE1_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te2-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE2_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te3-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE3_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te4-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE4_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te5-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE5_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#framing-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">FRAMING_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-pec-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>PEC_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-length-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>LENGTH_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-readonly-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>READONLY_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-unsupported-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>UNSUPPORTED_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-rx-fifo-overflow-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>RX_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-indirect-fifo-overflow-err-det-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>INDIRECT_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>DET_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-intr-status-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>INTR_<wbr>STATUS register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_INTR_STATUS register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#te0-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE0_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te1-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE1_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te2-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE2_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te3-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE3_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te4-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE4_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te5-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">TE5_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#framing-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">FRAMING_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-pec-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>PEC_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-length-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>LENGTH_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-readonly-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>READONLY_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-unsupported-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>UNSUPPORTED_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-rx-fifo-overflow-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>RX_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-indirect-fifo-overflow-err-stat-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>INDIRECT_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>STAT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-intr-enable-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>INTR_<wbr>ENABLE register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_INTR_ENABLE register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#te0-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE0_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te1-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE1_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te2-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE2_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te3-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE3_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te4-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE4_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te5-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">TE5_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#framing-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">FRAMING_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-pec-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>PEC_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-length-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>LENGTH_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-readonly-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>READONLY_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-unsupported-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>UNSUPPORTED_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-rx-fifo-overflow-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>RX_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-indirect-fifo-overflow-err-en-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>INDIRECT_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-intr-force-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>INTR_<wbr>FORCE register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_INTR_FORCE register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#te0-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE0_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te1-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE1_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te2-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE2_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te3-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE3_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te4-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE4_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#te5-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">TE5_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#framing-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">FRAMING_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-pec-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>PEC_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-length-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>LENGTH_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-readonly-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>READONLY_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-unsupported-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>UNSUPPORTED_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-rx-fifo-overflow-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>RX_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ri-indirect-fifo-overflow-err-force-field" class="md-nav__link">
+    <span class="md-ellipsis">RI_<wbr>INDIRECT_<wbr>FIFO_<wbr>OVERFLOW_<wbr>ERR_<wbr>FORCE field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te0-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE0 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE0 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cnt-field" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te1-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE1 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE1 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id19" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te2-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE2 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE2 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id20" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te3-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE3 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE3 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id21" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te4-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE4 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE4 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id22" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-te5-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>TE5 register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_TE5 register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id23" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-framing-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>FRAMING register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_FRAMING register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id24" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-pec-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>PEC register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_PEC register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id25" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-length-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>LENGTH register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_LENGTH register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id26" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-readonly-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>READONLY register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_READONLY register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id27" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-unsupported-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>UNSUPPORTED register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_UNSUPPORTED register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id28" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-rx-fifo-overflow-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>RX_<wbr>FIFO_<wbr>OVERFLOW register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id29" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-err-cnt-ri-indirect-fifo-overflow-register" class="md-nav__link">
+    <span class="md-ellipsis">TARGET_<wbr>ERR_<wbr>CNT_<wbr>RI_<wbr>INDIRECT_<wbr>FIFO_<wbr>OVERFLOW register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id30" class="md-nav__link">
+    <span class="md-ellipsis">CNT field</span>
   </a>
   
 </li>
@@ -2568,7 +3506,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id19" class="md-nav__link">
+  <a href="#id31" class="md-nav__link">
     <span class="md-ellipsis">EXTCAP_<wbr>HEADER register</span>
   </a>
   
@@ -2576,14 +3514,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id20" class="md-nav__link">
+  <a href="#id32" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>ID field</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#id21" class="md-nav__link">
+  <a href="#id33" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>LENGTH field</span>
   </a>
   
@@ -2623,7 +3561,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id22" class="md-nav__link">
+  <a href="#id34" class="md-nav__link">
     <span class="md-ellipsis">PLACEHOLDER field</span>
   </a>
   
@@ -2704,7 +3642,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id23" class="md-nav__link">
+  <a href="#id35" class="md-nav__link">
     <span class="md-ellipsis">PLACEHOLDER field</span>
   </a>
   
@@ -2724,7 +3662,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id24" class="md-nav__link">
+  <a href="#id36" class="md-nav__link">
     <span class="md-ellipsis">PLACEHOLDER field</span>
   </a>
   
@@ -2847,7 +3785,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id25" class="md-nav__link">
+  <a href="#id37" class="md-nav__link">
     <span class="md-ellipsis">PLACEHOLDER field</span>
   </a>
   
@@ -2867,7 +3805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id26" class="md-nav__link">
+  <a href="#id38" class="md-nav__link">
     <span class="md-ellipsis">PLACEHOLDER field</span>
   </a>
   
@@ -2939,6 +3877,26 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#t-su-dat-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>DAT_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_SU_DAT_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-su-dat-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>DAT_<wbr>I2C field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#t-hd-dat-reg-register" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>HD_<wbr>DAT_<wbr>REG register</span>
   </a>
@@ -2979,6 +3937,66 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#t-high-od-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>OD_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HIGH_OD_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-high-od-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>OD field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-high-init-od-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>INIT_<wbr>OD_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HIGH_INIT_OD_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-high-init-od-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>INIT_<wbr>OD field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-high-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HIGH_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-high-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HIGH_<wbr>I2C field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#t-low-reg-register" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>LOW_<wbr>REG register</span>
   </a>
@@ -2989,6 +4007,46 @@
           <li class="md-nav__item">
   <a href="#t-low-field" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>LOW field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-low-od-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>LOW_<wbr>OD_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_LOW_OD_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-low-od-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>LOW_<wbr>OD field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-low-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>LOW_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_LOW_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-low-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>LOW_<wbr>I2C field</span>
   </a>
   
 </li>
@@ -3019,6 +4077,46 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#t-hd-sta-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HD_<wbr>STA_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HD_STA_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-hd-sta-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HD_<wbr>STA_<wbr>I2C field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-hd-rsta-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HD_<wbr>RSTA_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HD_RSTA_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-hd-rsta-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HD_<wbr>RSTA field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#t-su-sta-reg-register" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>SU_<wbr>STA_<wbr>REG register</span>
   </a>
@@ -3029,6 +4127,26 @@
           <li class="md-nav__item">
   <a href="#t-su-sta-field" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>SU_<wbr>STA field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-su-sta-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>STA_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_SU_STA_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-su-sta-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>STA_<wbr>I2C field</span>
   </a>
   
 </li>
@@ -3059,6 +4177,46 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#t-su-sto-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>STO_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_SU_STO_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-su-sto-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>SU_<wbr>STO_<wbr>I2C field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-ds-od-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>DS_<wbr>OD_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_DS_OD_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-ds-od-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>DS_<wbr>OD field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#t-free-reg-register" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>FREE_<wbr>REG register</span>
   </a>
@@ -3069,6 +4227,26 @@
           <li class="md-nav__item">
   <a href="#t-free-field" class="md-nav__link">
     <span class="md-ellipsis">T_<wbr>FREE field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-free-i2c-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>FREE_<wbr>I2C_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_FREE_I2C_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-free-i2c-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>FREE_<wbr>I2C field</span>
   </a>
   
 </li>
@@ -3118,6 +4296,46 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#hdr-timeout-en-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">HDR_<wbr>TIMEOUT_<wbr>EN_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HDR_TIMEOUT_EN_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hdr-timeout-en-field" class="md-nav__link">
+    <span class="md-ellipsis">HDR_<wbr>TIMEOUT_<wbr>EN field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-hdr-timeout-reg-register" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HDR_<wbr>TIMEOUT_<wbr>REG register</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="T_HDR_TIMEOUT_REG register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-hdr-timeout-field" class="md-nav__link">
+    <span class="md-ellipsis">T_<wbr>HDR_<wbr>TIMEOUT field</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3132,7 +4350,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id27" class="md-nav__link">
+  <a href="#id39" class="md-nav__link">
     <span class="md-ellipsis">EXTCAP_<wbr>HEADER register</span>
   </a>
   
@@ -3140,14 +4358,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id28" class="md-nav__link">
+  <a href="#id40" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>ID field</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#id29" class="md-nav__link">
+  <a href="#id41" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>LENGTH field</span>
   </a>
   
@@ -3187,14 +4405,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#id30" class="md-nav__link">
+  <a href="#id42" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>ID field</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#id31" class="md-nav__link">
+  <a href="#id43" class="md-nav__link">
     <span class="md-ellipsis">CAP_<wbr>LENGTH field</span>
   </a>
   
@@ -3214,6 +4432,22 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
+      </a>
     </li>
   
 
@@ -3243,7 +4477,7 @@ Don't override. Generated from: I3CCSR
 <ul class="simple">
 <li><p>Absolute Address: 0x0</p></li>
 <li><p>Base Offset: 0x0</p></li>
-<li><p>Size: 0x26C</p></li>
+<li><p>Size: 0x3A4</p></li>
 </ul>
 <table class="docutils data align-default">
 <thead>
@@ -3263,7 +4497,7 @@ Don't override. Generated from: I3CCSR
 <ul class="simple">
 <li><p>Absolute Address: 0x100</p></li>
 <li><p>Base Offset: 0x100</p></li>
-<li><p>Size: 0x16C</p></li>
+<li><p>Size: 0x2A4</p></li>
 </ul>
 <table class="docutils data align-default">
 <thead>
@@ -3281,19 +4515,19 @@ Don't override. Generated from: I3CCSR
 <td><p>StdbyCtrlMode</p></td>
 <td><p>Standby Controller Mode</p></td>
 </tr>
-<tr class="row-even"><td><p>0x0C0</p></td>
+<tr class="row-even"><td><p>0x100</p></td>
 <td><p>TTI</p></td>
 <td><p>Target Transaction Interface</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x100</p></td>
+<tr class="row-odd"><td><p>0x200</p></td>
 <td><p>SoCMgmtIf</p></td>
 <td><p>SoC Management Interface</p></td>
 </tr>
-<tr class="row-even"><td><p>0x160</p></td>
+<tr class="row-even"><td><p>0x298</p></td>
 <td><p>CtrlCfg</p></td>
 <td><p>Controller Config</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x168</p></td>
+<tr class="row-odd"><td><p>0x2A0</p></td>
 <td><p>TERMINATION_EXTCAP_HEADER</p></td>
 <td><p>—</p></td>
 </tr>
@@ -4645,7 +5879,7 @@ Component Memory Space (CMS):</p>
 <ul class="simple">
 <li><p>Absolute Address: 0x180</p></li>
 <li><p>Base Offset: 0x80</p></li>
-<li><p>Size: 0x40</p></li>
+<li><p>Size: 0x44</p></li>
 </ul>
 <table class="docutils data align-default">
 <thead>
@@ -4716,8 +5950,12 @@ Component Memory Space (CMS):</p>
 <td><p>Standby Virtual Controller Device Address</p></td>
 </tr>
 <tr class="row-odd"><td><p>0x3C</p></td>
-<td><p>__rsvd_3</p></td>
-<td><p>Reserved 3</p></td>
+<td><p>STBY_CR_MWL</p></td>
+<td><p>Standby Controller Maximum Write Length (read-only)</p></td>
+</tr>
+<tr class="row-even"><td><p>0x40</p></td>
+<td><p>STBY_CR_MRL</p></td>
+<td><p>Standby Controller Maximum Read Length and IBI Payload Size (read-only)</p></td>
 </tr>
 </tbody>
 </table>
@@ -4746,7 +5984,7 @@ Component Memory Space (CMS):</p>
 <tr class="row-odd"><td><p>23:8</p></td>
 <td><p>CAP_LENGTH</p></td>
 <td><p>r</p></td>
-<td><p>0x10</p></td>
+<td><p>0x20</p></td>
 <td><p>CAP_LENGTH</p></td>
 </tr>
 </tbody>
@@ -4774,25 +6012,25 @@ Component Memory Space (CMS):</p>
 <tr class="row-even"><td><p>0</p></td>
 <td><p>PENDING_RX_NACK</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>Pending RX NACK</p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
 <td><p>HANDOFF_DELAY_NACK</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>Handoff Delay NACK</p></td>
 </tr>
 <tr class="row-even"><td><p>2</p></td>
 <td><p>ACR_FSM_OP_SELECT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>Active Controller Select</p></td>
 </tr>
 <tr class="row-odd"><td><p>3</p></td>
 <td><p>PRIME_ACCEPT_GETACCCR</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>Prime to Accept Controller Role</p></td>
 </tr>
 <tr class="row-even"><td><p>4</p></td>
@@ -5048,7 +6286,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <tr class="row-even"><td><p>28:24</p></td>
 <td><p>BCR_VAR</p></td>
 <td><p>rw</p></td>
-<td><p>0x16</p></td>
+<td><p>0x10</p></td>
 <td><p>BCR_VAR</p></td>
 </tr>
 <tr class="row-odd"><td><p>31:29</p></td>
@@ -5065,7 +6303,7 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
 <h4 id="bcr-var-field">BCR_VAR field<a class="headerlink" href="#bcr-var-field" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Variable Part.</p>
-<p>Reset value is set to 5'b10110, because this device:</p>
+<p>Reset value is set to 5'b10000, because this device:</p>
 <ul>
 <li>
 <p>[bit4] is a Virtual Target</p>
@@ -5074,10 +6312,10 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>[bit3] is not Offline Capable</p>
 </li>
 <li>
-<p>[bit2] uses the MDB in the IBI Payload</p>
+<p>[bit2] does not apply due to bit1</p>
 </li>
 <li>
-<p>[bit1] is capable of IBI requests</p>
+<p>[bit1] is not capable of IBI requests</p>
 </li>
 <li>
 <p>[bit0] has no speed limitation</p>
@@ -5106,19 +6344,19 @@ which supports extended capabilities</p>
 <tr class="row-even"><td><p>2</p></td>
 <td><p>AC_CURRENT_OWN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>AC_CURRENT_OWN</p></td>
 </tr>
 <tr class="row-odd"><td><p>7:5</p></td>
 <td><p>SIMPLE_CRR_STATUS</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>SIMPLE_CRR_STATUS</p></td>
 </tr>
 <tr class="row-even"><td><p>8</p></td>
 <td><p>HJ_REQ_STATUS</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p>HJ_REQ_STATUS</p></td>
 </tr>
 </tbody>
@@ -5157,7 +6395,7 @@ which supports extended capabilities</p>
 <tr class="row-even"><td><p>28:24</p></td>
 <td><p>BCR_VAR</p></td>
 <td><p>rw</p></td>
-<td><p>0x6</p></td>
+<td><p>0x16</p></td>
 <td><p>BCR_VAR</p></td>
 </tr>
 <tr class="row-odd"><td><p>31:29</p></td>
@@ -5174,16 +6412,16 @@ which supports extended capabilities</p>
 <p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
 <h4 id="id13">BCR_VAR field<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Variable Part.</p>
-<p>Reset value is set to 5'b00110, because this device:</p>
+<p>Reset value is set to 5'b10110, because this device:</p>
 <ul>
 <li>
-<p>[bit4] is not a Virtual  Target</p>
+<p>[bit4] exposes a Virtual Target</p>
 </li>
 <li>
 <p>[bit3] is not Offline Capable</p>
 </li>
 <li>
-<p>[bit2] uses the MDB in the IBI Payload</p>
+<p>[bit2] (always) uses the MDB in the IBI Payload</p>
 </li>
 <li>
 <p>[bit1] is capable of IBI requests</p>
@@ -5241,55 +6479,55 @@ which supports extended capabilities</p>
 <tr class="row-even"><td><p>0</p></td>
 <td><p>ACR_HANDOFF_OK_REMAIN_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
 <td><p>ACR_HANDOFF_OK_PRIMED_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>2</p></td>
 <td><p>ACR_HANDOFF_ERR_FAIL_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>3</p></td>
 <td><p>ACR_HANDOFF_ERR_M3_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>10</p></td>
 <td><p>CRR_RESPONSE_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>11</p></td>
 <td><p>STBY_CR_DYN_ADDR_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>12</p></td>
 <td><p>STBY_CR_ACCEPT_NACKED_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>13</p></td>
 <td><p>STBY_CR_ACCEPT_OK_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>14</p></td>
 <td><p>STBY_CR_ACCEPT_ERR_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>16</p></td>
@@ -5301,19 +6539,19 @@ which supports extended capabilities</p>
 <tr class="row-even"><td><p>17</p></td>
 <td><p>CCC_PARAM_MODIFIED_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>18</p></td>
 <td><p>CCC_UNHANDLED_NACK_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>19</p></td>
 <td><p>CCC_FATAL_RSTDAA_ERR_STAT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -5381,55 +6619,55 @@ STBY_CR_INTR_STATUS, the Host Controller shall assert an interrupt to the Host.<
 <tr class="row-even"><td><p>0</p></td>
 <td><p>ACR_HANDOFF_OK_REMAIN_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
 <td><p>ACR_HANDOFF_OK_PRIMED_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>2</p></td>
 <td><p>ACR_HANDOFF_ERR_FAIL_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>3</p></td>
 <td><p>ACR_HANDOFF_ERR_M3_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>10</p></td>
 <td><p>CRR_RESPONSE_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>11</p></td>
 <td><p>STBY_CR_DYN_ADDR_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>12</p></td>
 <td><p>STBY_CR_ACCEPT_NACKED_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>13</p></td>
 <td><p>STBY_CR_ACCEPT_OK_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>14</p></td>
 <td><p>STBY_CR_ACCEPT_ERR_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>16</p></td>
@@ -5441,19 +6679,19 @@ STBY_CR_INTR_STATUS, the Host Controller shall assert an interrupt to the Host.<
 <tr class="row-even"><td><p>17</p></td>
 <td><p>CCC_PARAM_MODIFIED_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>18</p></td>
 <td><p>CCC_UNHANDLED_NACK_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>19</p></td>
 <td><p>CCC_FATAL_RSTDAA_ERR_SIGNAL_EN</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -5493,55 +6731,55 @@ STBY_CR_INTR_SIGNAL_ENABLE</p>
 <tr class="row-even"><td><p>10</p></td>
 <td><p>CRR_RESPONSE_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>11</p></td>
 <td><p>STBY_CR_DYN_ADDR_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>12</p></td>
 <td><p>STBY_CR_ACCEPT_NACKED_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>13</p></td>
 <td><p>STBY_CR_ACCEPT_OK_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>14</p></td>
 <td><p>STBY_CR_ACCEPT_ERR_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>16</p></td>
 <td><p>STBY_CR_OP_RSTACT_FORCE</p></td>
 <td><p>w</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>17</p></td>
 <td><p>CCC_PARAM_MODIFIED_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>18</p></td>
 <td><p>CCC_UNHANDLED_NACK_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>19</p></td>
 <td><p>CCC_FATAL_RSTDAA_ERR_FORCE</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -5574,13 +6812,13 @@ STBY_CR_INTR_SIGNAL_ENABLE</p>
 <tr class="row-even"><td><p>2:0</p></td>
 <td><p>F2_CRCAP1_BUS_CONFIG</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>11:8</p></td>
 <td><p>F2_CRCAP2_DEV_INTERACT</p></td>
 <td><p>rw</p></td>
-<td><p>—</p></td>
+<td><p>0x0</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -5606,7 +6844,7 @@ STBY_CR_INTR_SIGNAL_ENABLE</p>
 <tr class="row-even"><td><p>7:0</p></td>
 <td><p>RST_ACTION</p></td>
 <td><p>r</p></td>
-<td><p>0x0</p></td>
+<td><p>0x1</p></td>
 <td><p>Defining Byte of the RSTACT CCC</p></td>
 </tr>
 <tr class="row-odd"><td><p>15:8</p></td>
@@ -5630,7 +6868,7 @@ STBY_CR_INTR_SIGNAL_ENABLE</p>
 </tbody>
 </table>
 <h4 id="rst-action-field">RST_ACTION field<a class="headerlink" href="#rst-action-field" title="Link to this heading">¶</a></h4>
-<p>Contains the Defining Byte received with the last Direct SET CCC sent by the Active Controller.</p>
+<p>Contains the Defining Byte received with the last Direct SET CCC sent by the Active Controller. If not armed (START or RSTACT with unsupported defining byte) set to spec default 0x1.</p>
 <h4 id="reset-time-peripheral-field">RESET_TIME_PERIPHERAL field<a class="headerlink" href="#reset-time-peripheral-field" title="Link to this heading">¶</a></h4>
 <p>For Direct GET CCC, this field is returned for Defining Byte 0x81.</p>
 <h4 id="reset-time-target-field">RESET_TIME_TARGET field<a class="headerlink" href="#reset-time-target-field" title="Link to this heading">¶</a></h4>
@@ -5700,7 +6938,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 <p>Indicates whether or not the value in the VIRT_DYNAMIC_ADDR field is valid.
 1'b0: VIRT_DYNAMIC_ADDR field is not valid
 1'b1: VIRT_DYNAMIC_ADDR field is valid</p>
-<h3 id="rsvd-3-register">__rsvd_3 register<a class="headerlink" href="#rsvd-3-register" title="Link to this heading">¶</a></h3>
+<h3 id="stby-cr-mwl-register">STBY_CR_MWL register<a class="headerlink" href="#stby-cr-mwl-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x1BC</p></li>
 <li><p>Base Offset: 0x3C</p></li>
@@ -5716,20 +6954,55 @@ shall be revoked) with this Target Reset Pattern.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>31:0</p></td>
-<td><p>__rsvd</p></td>
-<td><p>rw</p></td>
-<td><p>—</p></td>
-<td><p>Reserved</p></td>
+<tr class="row-even"><td><p>15:0</p></td>
+<td><p>MWL</p></td>
+<td><p>r</p></td>
+<td><p>0x100</p></td>
+<td><p>Maximum Write Length</p></td>
 </tr>
 </tbody>
 </table>
-<h4 id="rsvd-field">__rsvd field<a class="headerlink" href="#rsvd-field" title="Link to this heading">¶</a></h4>
-<h2 id="tti-register-file">TTI register file<a class="headerlink" href="#tti-register-file" title="Link to this heading">¶</a></h2>
+<h4 id="mwl-field">MWL field<a class="headerlink" href="#mwl-field" title="Link to this heading">¶</a></h4>
+<p>This field contains the maximum write length (MWL) (read-only)</p>
+<h3 id="stby-cr-mrl-register">STBY_CR_MRL register<a class="headerlink" href="#stby-cr-mrl-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x1C0</p></li>
-<li><p>Base Offset: 0xC0</p></li>
-<li><p>Size: 0x40</p></li>
+<li><p>Base Offset: 0x40</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>15:0</p></td>
+<td><p>MRL</p></td>
+<td><p>r</p></td>
+<td><p>0x100</p></td>
+<td><p>Maximum Read Length</p></td>
+</tr>
+<tr class="row-odd"><td><p>23:16</p></td>
+<td><p>IBIL</p></td>
+<td><p>r</p></td>
+<td><p>0x10</p></td>
+<td><p>IBI Payload Size</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="mrl-field">MRL field<a class="headerlink" href="#mrl-field" title="Link to this heading">¶</a></h4>
+<p>This field contains the maximum read length (MRL) (read-only)</p>
+<h4 id="ibil-field">IBIL field<a class="headerlink" href="#ibil-field" title="Link to this heading">¶</a></h4>
+<p>This field contains the IBI payload size (IBIL) (read-only)</p>
+<h2 id="tti-register-file">TTI register file<a class="headerlink" href="#tti-register-file" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Absolute Address: 0x200</p></li>
+<li><p>Base Offset: 0x100</p></li>
+<li><p>Size: 0x94</p></li>
 </ul>
 <table class="docutils data align-default">
 <thead>
@@ -5753,53 +7026,137 @@ shall be revoked) with this Target Reset Pattern.</p>
 </tr>
 <tr class="row-odd"><td><p>0x0C</p></td>
 <td><p>RESET_CONTROL</p></td>
-<td><p>TTI Queue Reset Control</p></td>
+<td><p>TTI Reset Control</p></td>
 </tr>
 <tr class="row-even"><td><p>0x10</p></td>
+<td><p>QUEUE_STATUS</p></td>
+<td><p>TTI Queue Status</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x14</p></td>
+<td><p>DESC_QUEUE_DEPTH</p></td>
+<td><p>TTI Descriptor Queue Depth</p></td>
+</tr>
+<tr class="row-even"><td><p>0x18</p></td>
+<td><p>DATA_QUEUE_DEPTH</p></td>
+<td><p>TTI Data Queue Depth</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x1C</p></td>
+<td><p>IBI_QUEUE_DEPTH</p></td>
+<td><p>TTI IBI Queue Depth</p></td>
+</tr>
+<tr class="row-even"><td><p>0x20</p></td>
 <td><p>INTERRUPT_STATUS</p></td>
 <td><p>TTI Interrupt Status</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x14</p></td>
+<tr class="row-odd"><td><p>0x24</p></td>
 <td><p>INTERRUPT_ENABLE</p></td>
 <td><p>TTI Interrupt Enable</p></td>
 </tr>
-<tr class="row-even"><td><p>0x18</p></td>
+<tr class="row-even"><td><p>0x28</p></td>
 <td><p>INTERRUPT_FORCE</p></td>
 <td><p>TTI Interrupt Force</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x1C</p></td>
+<tr class="row-odd"><td><p>0x2C</p></td>
+<td><p>TARGET_ERR_CTRL</p></td>
+<td><p>TTI Target Error Detection Control</p></td>
+</tr>
+<tr class="row-even"><td><p>0x30</p></td>
+<td><p>TARGET_ERR_INTR_STATUS</p></td>
+<td><p>TTI Target Error Interrupt Status</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x34</p></td>
+<td><p>TARGET_ERR_INTR_ENABLE</p></td>
+<td><p>TTI Target Error Interrupt Enable</p></td>
+</tr>
+<tr class="row-even"><td><p>0x38</p></td>
+<td><p>TARGET_ERR_INTR_FORCE</p></td>
+<td><p>TTI Target Error Interrupt Force</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x3C</p></td>
+<td><p>TARGET_ERR_CNT_TE0</p></td>
+<td><p>TE0 Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x40</p></td>
+<td><p>TARGET_ERR_CNT_TE1</p></td>
+<td><p>TE1 Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x44</p></td>
+<td><p>TARGET_ERR_CNT_TE2</p></td>
+<td><p>TE2 Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x48</p></td>
+<td><p>TARGET_ERR_CNT_TE3</p></td>
+<td><p>TE3 Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x4C</p></td>
+<td><p>TARGET_ERR_CNT_TE4</p></td>
+<td><p>TE4 Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x50</p></td>
+<td><p>TARGET_ERR_CNT_TE5</p></td>
+<td><p>TE5 Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x54</p></td>
+<td><p>TARGET_ERR_CNT_FRAMING</p></td>
+<td><p>Framing Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x58</p></td>
+<td><p>TARGET_ERR_CNT_RI_PEC</p></td>
+<td><p>Recovery Interface PEC Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x5C</p></td>
+<td><p>TARGET_ERR_CNT_RI_LENGTH</p></td>
+<td><p>Recovery Interface Length Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x60</p></td>
+<td><p>TARGET_ERR_CNT_RI_READONLY</p></td>
+<td><p>Recovery Interface Read-Only Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x64</p></td>
+<td><p>TARGET_ERR_CNT_RI_UNSUPPORTED</p></td>
+<td><p>Recovery Interface Unsupported Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x68</p></td>
+<td><p>TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW</p></td>
+<td><p>Recovery Interface RX FIFO Overflow Error Counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x6C</p></td>
+<td><p>TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW</p></td>
+<td><p>Recovery Interface INDIRECT FIFO Overflow Error Counter</p></td>
+</tr>
+<tr class="row-even"><td><p>0x70</p></td>
 <td><p>RX_DESC_QUEUE_PORT</p></td>
 <td><p>TTI RX Descriptor Queue Port</p></td>
 </tr>
-<tr class="row-even"><td><p>0x20</p></td>
+<tr class="row-odd"><td><p>0x74</p></td>
 <td><p>RX_DATA_PORT</p></td>
 <td><p>TTI RX Data Port</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x24</p></td>
+<tr class="row-even"><td><p>0x78</p></td>
 <td><p>TX_DESC_QUEUE_PORT</p></td>
 <td><p>TTI TX Descriptor Queue Port</p></td>
 </tr>
-<tr class="row-even"><td><p>0x28</p></td>
+<tr class="row-odd"><td><p>0x7C</p></td>
 <td><p>TX_DATA_PORT</p></td>
 <td><p>TTI TX Data Port</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x2C</p></td>
+<tr class="row-even"><td><p>0x80</p></td>
 <td><p>IBI_PORT</p></td>
 <td><p>TTI IBI Data Port</p></td>
 </tr>
-<tr class="row-even"><td><p>0x30</p></td>
+<tr class="row-odd"><td><p>0x84</p></td>
 <td><p>QUEUE_SIZE</p></td>
 <td><p>TTI Queue Size</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x34</p></td>
+<tr class="row-even"><td><p>0x88</p></td>
 <td><p>IBI_QUEUE_SIZE</p></td>
 <td><p>TTI IBI Queue Size</p></td>
 </tr>
-<tr class="row-even"><td><p>0x38</p></td>
+<tr class="row-odd"><td><p>0x8C</p></td>
 <td><p>QUEUE_THLD_CTRL</p></td>
 <td><p>TTI Queue Threshold Control</p></td>
 </tr>
-<tr class="row-odd"><td><p>0x3C</p></td>
+<tr class="row-even"><td><p>0x90</p></td>
 <td><p>DATA_BUFFER_THLD_CTRL</p></td>
 <td><p>TTI IBI Queue Threshold Control</p></td>
 </tr>
@@ -5807,7 +7164,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 </table>
 <h3 id="id16">EXTCAP_HEADER register<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1C0</p></li>
+<li><p>Absolute Address: 0x200</p></li>
 <li><p>Base Offset: 0x0</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -5830,7 +7187,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 <tr class="row-odd"><td><p>23:8</p></td>
 <td><p>CAP_LENGTH</p></td>
 <td><p>r</p></td>
-<td><p>0x10</p></td>
+<td><p>0x40</p></td>
 <td><p>CAP_LENGTH</p></td>
 </tr>
 </tbody>
@@ -5841,7 +7198,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 <p>Capability Structure Length in DWORDs</p>
 <h3 id="control-register">CONTROL register<a class="headerlink" href="#control-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1C4</p></li>
+<li><p>Absolute Address: 0x204</p></li>
 <li><p>Base Offset: 0x4</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -5906,7 +7263,7 @@ shall be revoked) with this Target Reset Pattern.</p>
 DISINT bit in the DISEC command.</p>
 <h3 id="status-register">STATUS register<a class="headerlink" href="#status-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1C8</p></li>
+<li><p>Absolute Address: 0x208</p></li>
 <li><p>Base Offset: 0x8</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -5921,13 +7278,13 @@ DISINT bit in the DISEC command.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>13</p></td>
+<tr class="row-even"><td><p>8</p></td>
 <td><p>PROTOCOL_ERROR</p></td>
 <td><p>r</p></td>
 <td><p>0x0</p></td>
 <td><p>PROTOCOL_ERROR</p></td>
 </tr>
-<tr class="row-odd"><td><p>15:14</p></td>
+<tr class="row-odd"><td><p>14:12</p></td>
 <td><p>LAST_IBI_STATUS</p></td>
 <td><p>r</p></td>
 <td><p>0x0</p></td>
@@ -5945,19 +7302,23 @@ of the next GETSTATUS command.</p>
 <h4 id="last-ibi-status-field">LAST_IBI_STATUS field<a class="headerlink" href="#last-ibi-status-field" title="Link to this heading">¶</a></h4>
 <p>Status of last IBI. Should be read after IBI_DONE interrupt.</p>
 <p>Values:</p>
-<p>00 - Success: IBI was transmitted and ACK'd by the Active Controller.
-01 - Failure: Active Controller NACK'd the IBI before any data was sent.
-The Target Device will retry sending the IBI once.
-10 - Failure: Active Controller NACK'd the IBI after partial data was sent.
-Part of data in the IBI queue is considered corrupted and will be discarded.
-11 - Failure: IBI was terminated after 1 retry.</p>
+<p>000 - Success: IBI was transmitted and ACK'd by the Active Controller.
+001 - FailureNack: Active Controller NACK'd the IBI before any data was sent.
+The device will retry sending the IBI as long as permitted by the retry counter.
+010 - FailurePartialData: Active Controller NACK'd the IBI after data was
+partially sent. The remaining part of data in the IBI queue is considered
+corrupted and will be discarded.
+011 - FailureRetry: IBI could not be serviced due to reached retry count.
+100 - FailureArbitration:: IBI could not be serviced as arbitration was lost
+during the address header. The device will retry sending the IBI as long as
+permitted by the retry counter.</p>
 <h3 id="reset-control-register">RESET_CONTROL register<a class="headerlink" href="#reset-control-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1CC</p></li>
+<li><p>Absolute Address: 0x20C</p></li>
 <li><p>Base Offset: 0xC</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
-<p>Queue Reset Control</p>
+<p>Reset Control for Queues and IBI Retry Counter</p>
 <table class="docutils data align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Bits</p></th>
@@ -6004,6 +7365,12 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p>0x0</p></td>
 <td><p>IBI_QUEUE_RST</p></td>
 </tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>IBI_RETRY_CTR_RST</p></td>
+<td><p>w</p></td>
+<td><p>0x0</p></td>
+<td><p>IBI_RETRY_CTR_RST</p></td>
+</tr>
 </tbody>
 </table>
 <h4 id="soft-rst-field">SOFT_RST field<a class="headerlink" href="#soft-rst-field" title="Link to this heading">¶</a></h4>
@@ -6013,15 +7380,213 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <h4 id="rx-desc-rst-field">RX_DESC_RST field<a class="headerlink" href="#rx-desc-rst-field" title="Link to this heading">¶</a></h4>
 <p>TTI RX Descriptor Queue Buffer Software Reset</p>
 <h4 id="tx-data-rst-field">TX_DATA_RST field<a class="headerlink" href="#tx-data-rst-field" title="Link to this heading">¶</a></h4>
-<p>TTI TX Data Queue Buffer Software Reset</p>
+<p>TTI TX Data Queue Buffer Software Reset. Also resets the tti_conv_Nto8 since first dword is immediately loaded into the converter and can't be cleared otherwise.</p>
 <h4 id="rx-data-rst-field">RX_DATA_RST field<a class="headerlink" href="#rx-data-rst-field" title="Link to this heading">¶</a></h4>
 <p>TTI RX Data Queue Buffer Software Reset</p>
 <h4 id="ibi-queue-rst-field">IBI_QUEUE_RST field<a class="headerlink" href="#ibi-queue-rst-field" title="Link to this heading">¶</a></h4>
 <p>TTI IBI Queue Buffer Software Reset</p>
+<h4 id="ibi-retry-ctr-rst-field">IBI_RETRY_CTR_RST field<a class="headerlink" href="#ibi-retry-ctr-rst-field" title="Link to this heading">¶</a></h4>
+<p>TTI IBI Retry Counter Software Reset</p>
+<h3 id="queue-status-register">QUEUE_STATUS register<a class="headerlink" href="#queue-status-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x210</p></li>
+<li><p>Base Offset: 0x10</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Dynamic queue full/empty status for debug and monitoring</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>RX_DESC_QUEUE_FULL</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>RX_DESC_QUEUE_FULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>RX_DESC_QUEUE_EMPTY</p></td>
+<td><p>r</p></td>
+<td><p>0x1</p></td>
+<td><p>RX_DESC_QUEUE_EMPTY</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>TX_DESC_QUEUE_FULL</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DESC_QUEUE_FULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>TX_DESC_QUEUE_EMPTY</p></td>
+<td><p>r</p></td>
+<td><p>0x1</p></td>
+<td><p>TX_DESC_QUEUE_EMPTY</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>RX_DATA_QUEUE_FULL</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>RX_DATA_QUEUE_FULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>RX_DATA_QUEUE_EMPTY</p></td>
+<td><p>r</p></td>
+<td><p>0x1</p></td>
+<td><p>RX_DATA_QUEUE_EMPTY</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>TX_DATA_QUEUE_FULL</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DATA_QUEUE_FULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>TX_DATA_QUEUE_EMPTY</p></td>
+<td><p>r</p></td>
+<td><p>0x1</p></td>
+<td><p>TX_DATA_QUEUE_EMPTY</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>IBI_QUEUE_FULL</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>IBI_QUEUE_FULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>IBI_QUEUE_EMPTY</p></td>
+<td><p>r</p></td>
+<td><p>0x1</p></td>
+<td><p>IBI_QUEUE_EMPTY</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="rx-desc-queue-full-field">RX_DESC_QUEUE_FULL field<a class="headerlink" href="#rx-desc-queue-full-field" title="Link to this heading">¶</a></h4>
+<p>RX Descriptor Queue is full</p>
+<h4 id="rx-desc-queue-empty-field">RX_DESC_QUEUE_EMPTY field<a class="headerlink" href="#rx-desc-queue-empty-field" title="Link to this heading">¶</a></h4>
+<p>RX Descriptor Queue is empty</p>
+<h4 id="tx-desc-queue-full-field">TX_DESC_QUEUE_FULL field<a class="headerlink" href="#tx-desc-queue-full-field" title="Link to this heading">¶</a></h4>
+<p>TX Descriptor Queue is full</p>
+<h4 id="tx-desc-queue-empty-field">TX_DESC_QUEUE_EMPTY field<a class="headerlink" href="#tx-desc-queue-empty-field" title="Link to this heading">¶</a></h4>
+<p>TX Descriptor Queue is empty</p>
+<h4 id="rx-data-queue-full-field">RX_DATA_QUEUE_FULL field<a class="headerlink" href="#rx-data-queue-full-field" title="Link to this heading">¶</a></h4>
+<p>RX Data Queue is full</p>
+<h4 id="rx-data-queue-empty-field">RX_DATA_QUEUE_EMPTY field<a class="headerlink" href="#rx-data-queue-empty-field" title="Link to this heading">¶</a></h4>
+<p>RX Data Queue is empty</p>
+<h4 id="tx-data-queue-full-field">TX_DATA_QUEUE_FULL field<a class="headerlink" href="#tx-data-queue-full-field" title="Link to this heading">¶</a></h4>
+<p>TX Data Queue is full</p>
+<h4 id="tx-data-queue-empty-field">TX_DATA_QUEUE_EMPTY field<a class="headerlink" href="#tx-data-queue-empty-field" title="Link to this heading">¶</a></h4>
+<p>TX Data Queue is empty</p>
+<h4 id="ibi-queue-full-field">IBI_QUEUE_FULL field<a class="headerlink" href="#ibi-queue-full-field" title="Link to this heading">¶</a></h4>
+<p>IBI Queue is full</p>
+<h4 id="ibi-queue-empty-field">IBI_QUEUE_EMPTY field<a class="headerlink" href="#ibi-queue-empty-field" title="Link to this heading">¶</a></h4>
+<p>IBI Queue is empty</p>
+<h3 id="desc-queue-depth-register">DESC_QUEUE_DEPTH register<a class="headerlink" href="#desc-queue-depth-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x214</p></li>
+<li><p>Base Offset: 0x14</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Current number of entries in descriptor queues</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>RX_DESC_QUEUE_DEPTH</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>RX_DESC_QUEUE_DEPTH</p></td>
+</tr>
+<tr class="row-odd"><td><p>15:8</p></td>
+<td><p>TX_DESC_QUEUE_DEPTH</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DESC_QUEUE_DEPTH</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="rx-desc-queue-depth-field">RX_DESC_QUEUE_DEPTH field<a class="headerlink" href="#rx-desc-queue-depth-field" title="Link to this heading">¶</a></h4>
+<p>Number of entries in RX Descriptor Queue</p>
+<h4 id="tx-desc-queue-depth-field">TX_DESC_QUEUE_DEPTH field<a class="headerlink" href="#tx-desc-queue-depth-field" title="Link to this heading">¶</a></h4>
+<p>Number of entries in TX Descriptor Queue</p>
+<h3 id="data-queue-depth-register">DATA_QUEUE_DEPTH register<a class="headerlink" href="#data-queue-depth-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x218</p></li>
+<li><p>Base Offset: 0x18</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Current number of DWORD entries in data queues</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>RX_DATA_QUEUE_DEPTH</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>RX_DATA_QUEUE_DEPTH</p></td>
+</tr>
+<tr class="row-odd"><td><p>15:8</p></td>
+<td><p>TX_DATA_QUEUE_DEPTH</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>TX_DATA_QUEUE_DEPTH</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="rx-data-queue-depth-field">RX_DATA_QUEUE_DEPTH field<a class="headerlink" href="#rx-data-queue-depth-field" title="Link to this heading">¶</a></h4>
+<p>Number of DWORD entries in RX Data Queue</p>
+<h4 id="tx-data-queue-depth-field">TX_DATA_QUEUE_DEPTH field<a class="headerlink" href="#tx-data-queue-depth-field" title="Link to this heading">¶</a></h4>
+<p>Number of DWORD entries in TX Data Queue</p>
+<h3 id="ibi-queue-depth-register">IBI_QUEUE_DEPTH register<a class="headerlink" href="#ibi-queue-depth-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x21C</p></li>
+<li><p>Base Offset: 0x1C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Current number of entries in IBI queue</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>IBI_QUEUE_DEPTH</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>IBI_QUEUE_DEPTH</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="ibi-queue-depth-field">IBI_QUEUE_DEPTH field<a class="headerlink" href="#ibi-queue-depth-field" title="Link to this heading">¶</a></h4>
+<p>Number of entries in IBI Queue</p>
 <h3 id="interrupt-status-register">INTERRUPT_STATUS register<a class="headerlink" href="#interrupt-status-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1D0</p></li>
-<li><p>Base Offset: 0x10</p></li>
+<li><p>Absolute Address: 0x220</p></li>
+<li><p>Base Offset: 0x20</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Interrupt Status</p>
@@ -6095,25 +7660,31 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p>0x0</p></td>
 <td><p>IBI_DONE</p></td>
 </tr>
-<tr class="row-even"><td><p>18:15</p></td>
+<tr class="row-even"><td><p>19:16</p></td>
 <td><p>PENDING_INTERRUPT</p></td>
 <td><p>rw</p></td>
 <td><p>0x0</p></td>
 <td><p>PENDING_INTERRUPT</p></td>
 </tr>
-<tr class="row-odd"><td><p>25</p></td>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>PENDING_IBI</p></td>
+<td><p>r</p></td>
+<td><p>0x0</p></td>
+<td><p>PENDING_IBI</p></td>
+</tr>
+<tr class="row-even"><td><p>25</p></td>
 <td><p>TRANSFER_ABORT_STAT</p></td>
 <td><p>rw, woclr</p></td>
 <td><p>0x0</p></td>
 <td><p>TRANSFER_ABORT_STAT</p></td>
 </tr>
-<tr class="row-even"><td><p>26</p></td>
+<tr class="row-odd"><td><p>26</p></td>
 <td><p>TX_DESC_COMPLETE</p></td>
 <td><p>rw, woclr</p></td>
 <td><p>0x0</p></td>
 <td><p>TX_DESC_COMPLETE</p></td>
 </tr>
-<tr class="row-odd"><td><p>31</p></td>
+<tr class="row-even"><td><p>31</p></td>
 <td><p>TRANSFER_ERR_STAT</p></td>
 <td><p>rw, woclr</p></td>
 <td><p>0x0</p></td>
@@ -6126,33 +7697,35 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <h4 id="tx-desc-stat-field">TX_DESC_STAT field<a class="headerlink" href="#tx-desc-stat-field" title="Link to this heading">¶</a></h4>
 <p>There is a pending Read Transaction on the I3C Bus. Software should write data to the TX Descriptor Queue and the TX Data Queue</p>
 <h4 id="rx-desc-timeout-field">RX_DESC_TIMEOUT field<a class="headerlink" href="#rx-desc-timeout-field" title="Link to this heading">¶</a></h4>
-<p>Pending Write was NACK’ed, because the <code>RX_DESC_STAT</code> event was not handled in time</p>
+<p>NOT IMPLEMENTED. Pending Write was NACK’ed, because the <code>RX_DESC_STAT</code> event was not handled in time</p>
 <h4 id="tx-desc-timeout-field">TX_DESC_TIMEOUT field<a class="headerlink" href="#tx-desc-timeout-field" title="Link to this heading">¶</a></h4>
-<p>Pending Read was NACK’ed, because the <code>TX_DESC_STAT</code> event was not handled in time</p>
+<p>NOT IMPLEMENTED. Pending Read was NACK’ed, because the <code>TX_DESC_STAT</code> event was not handled in time</p>
 <h4 id="tx-data-thld-stat-field">TX_DATA_THLD_STAT field<a class="headerlink" href="#tx-data-thld-stat-field" title="Link to this heading">¶</a></h4>
-<p>TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code>TTI_TX_DATA_THLD</code></p>
+<p>NOT IMPLEMENTED. TTI TX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Data Queue is &gt;= the value defined in <code>TTI_TX_DATA_THLD</code></p>
 <h4 id="rx-data-thld-stat-field">RX_DATA_THLD_STAT field<a class="headerlink" href="#rx-data-thld-stat-field" title="Link to this heading">¶</a></h4>
 <p>TTI RX Data Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of entries in the TTI RX Data Queue is &gt;= the value defined in <code>TTI_RX_DATA_THLD</code></p>
 <h4 id="tx-desc-thld-stat-field">TX_DESC_THLD_STAT field<a class="headerlink" href="#tx-desc-thld-stat-field" title="Link to this heading">¶</a></h4>
-<p>TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code>TTI_TX_DESC_THLD</code></p>
+<p>NOT IMPLEMENTED. TTI TX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI TX Descriptor Queue is &gt;= the value defined in <code>TTI_TX_DESC_THLD</code></p>
 <h4 id="rx-desc-thld-stat-field">RX_DESC_THLD_STAT field<a class="headerlink" href="#rx-desc-thld-stat-field" title="Link to this heading">¶</a></h4>
 <p>TTI RX Descriptor Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI RX Descriptor Queue is &gt;= the value defined in <code>TTI_RX_DESC_THLD</code></p>
 <h4 id="ibi-thld-stat-field">IBI_THLD_STAT field<a class="headerlink" href="#ibi-thld-stat-field" title="Link to this heading">¶</a></h4>
-<p>TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code>TTI_IBI_THLD</code></p>
+<p>NOT IMPLEMENTED. TTI IBI Buffer Threshold Status, the Target Controller shall set this bit to 1 when the number of available entries in the TTI IBI Queue is &gt;= the value defined in <code>TTI_IBI_THLD</code></p>
 <h4 id="ibi-done-field">IBI_DONE field<a class="headerlink" href="#ibi-done-field" title="Link to this heading">¶</a></h4>
 <p>IBI is done, check LAST_IBI_STATUS for result.</p>
 <h4 id="pending-interrupt-field">PENDING_INTERRUPT field<a class="headerlink" href="#pending-interrupt-field" title="Link to this heading">¶</a></h4>
 <p>Contains the interrupt number of any pending interrupt, or 0 if no interrupts are pending. This encoding allows for up to 15 numbered interrupts. If more than one interrupt is set, then the highest priority interrupt shall be returned.</p>
+<h4 id="pending-ibi-field">PENDING_IBI field<a class="headerlink" href="#pending-ibi-field" title="Link to this heading">¶</a></h4>
+<p>At least one IBI is pending</p>
 <h4 id="transfer-abort-stat-field">TRANSFER_ABORT_STAT field<a class="headerlink" href="#transfer-abort-stat-field" title="Link to this heading">¶</a></h4>
-<p>Bus aborted transaction</p>
+<p>NOT IMPLEMENTED. Bus aborted transaction</p>
 <h4 id="tx-desc-complete-field">TX_DESC_COMPLETE field<a class="headerlink" href="#tx-desc-complete-field" title="Link to this heading">¶</a></h4>
 <p>Read Transaction on the I3C Bus completede</p>
 <h4 id="transfer-err-stat-field">TRANSFER_ERR_STAT field<a class="headerlink" href="#transfer-err-stat-field" title="Link to this heading">¶</a></h4>
-<p>Bus error occurred</p>
+<p>NOT IMPLEMENTED. Bus error occurred</p>
 <h3 id="interrupt-enable-register">INTERRUPT_ENABLE register<a class="headerlink" href="#interrupt-enable-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1D4</p></li>
-<li><p>Base Offset: 0x14</p></li>
+<li><p>Absolute Address: 0x224</p></li>
+<li><p>Base Offset: 0x24</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Interrupt Enable</p>
@@ -6274,8 +7847,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT</code></p>
 <h3 id="interrupt-force-register">INTERRUPT_FORCE register<a class="headerlink" href="#interrupt-force-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1D8</p></li>
-<li><p>Base Offset: 0x18</p></li>
+<li><p>Absolute Address: 0x228</p></li>
+<li><p>Base Offset: 0x28</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Interrupt Force</p>
@@ -6395,10 +7968,853 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Enables the corresponding interrupt bit <code>TX_DESC_COMPLETE_FORCE</code></p>
 <h4 id="transfer-err-stat-force-field">TRANSFER_ERR_STAT_FORCE field<a class="headerlink" href="#transfer-err-stat-force-field" title="Link to this heading">¶</a></h4>
 <p>Enables the corresponding interrupt bit <code>TRANSFER_ERR_STAT_FORCE</code></p>
+<h3 id="target-err-ctrl-register">TARGET_ERR_CTRL register<a class="headerlink" href="#target-err-ctrl-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x22C</p></li>
+<li><p>Base Offset: 0x2C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Target Error Detection Control. Set bits to enable error detection. Clear to disable.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>TE0_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE0_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>TE1_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE1_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>TE2_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE2_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>TE3_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE3_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>TE4_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE4_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>TE5_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>TE5_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>FRAMING_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>FRAMING_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>RI_PEC_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_PEC_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>RI_LENGTH_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_LENGTH_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>RI_READONLY_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_READONLY_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>RI_UNSUPPORTED_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_UNSUPPORTED_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_DET_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x1</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="te0-err-det-en-field">TE0_ERR_DET_EN field<a class="headerlink" href="#te0-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE0 error detection. Set to 0 to disable.</p>
+<h4 id="te1-err-det-en-field">TE1_ERR_DET_EN field<a class="headerlink" href="#te1-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE1 error detection. Set to 0 to disable.</p>
+<h4 id="te2-err-det-en-field">TE2_ERR_DET_EN field<a class="headerlink" href="#te2-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE2 error detection. Set to 0 to disable.</p>
+<h4 id="te3-err-det-en-field">TE3_ERR_DET_EN field<a class="headerlink" href="#te3-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE3 error detection. Set to 0 to disable.</p>
+<h4 id="te4-err-det-en-field">TE4_ERR_DET_EN field<a class="headerlink" href="#te4-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE4 error detection. Set to 0 to disable.</p>
+<h4 id="te5-err-det-en-field">TE5_ERR_DET_EN field<a class="headerlink" href="#te5-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable TE5 error detection. Set to 0 to disable.</p>
+<h4 id="framing-err-det-en-field">FRAMING_ERR_DET_EN field<a class="headerlink" href="#framing-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable framing error detection. Set to 0 to disable.</p>
+<h4 id="ri-pec-err-det-en-field">RI_PEC_ERR_DET_EN field<a class="headerlink" href="#ri-pec-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface PEC/CRC error detection. Set to 0 to disable.</p>
+<h4 id="ri-length-err-det-en-field">RI_LENGTH_ERR_DET_EN field<a class="headerlink" href="#ri-length-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface length error detection. Set to 0 to disable.</p>
+<h4 id="ri-readonly-err-det-en-field">RI_READONLY_ERR_DET_EN field<a class="headerlink" href="#ri-readonly-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface write-to-read-only error detection. Set to 0 to disable.</p>
+<h4 id="ri-unsupported-err-det-en-field">RI_UNSUPPORTED_ERR_DET_EN field<a class="headerlink" href="#ri-unsupported-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface unsupported command error detection. Set to 0 to disable.</p>
+<h4 id="ri-rx-fifo-overflow-err-det-en-field">RI_RX_FIFO_OVERFLOW_ERR_DET_EN field<a class="headerlink" href="#ri-rx-fifo-overflow-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface RX FIFO overflow error detection and transition to Error state. Set to 0 to disable (overflow is still recorded in interrupt status).</p>
+<h4 id="ri-indirect-fifo-overflow-err-det-en-field">RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN field<a class="headerlink" href="#ri-indirect-fifo-overflow-err-det-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable Recovery Interface INDIRECT FIFO overflow error detection and transition to Error state. Set to 0 to disable (overflow is still recorded in interrupt status).</p>
+<h3 id="target-err-intr-status-register">TARGET_ERR_INTR_STATUS register<a class="headerlink" href="#target-err-intr-status-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x230</p></li>
+<li><p>Base Offset: 0x30</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Target Error Interrupt Status. Write 1 to clear individual bits.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>TE0_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE0_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>TE1_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE1_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>TE2_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE2_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>TE3_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE3_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>TE4_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE4_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>TE5_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>TE5_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>FRAMING_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>FRAMING_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>RI_PEC_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_PEC_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>RI_LENGTH_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_LENGTH_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>RI_READONLY_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_READONLY_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>RI_UNSUPPORTED_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_UNSUPPORTED_ERR_STAT</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_STAT</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT</p></td>
+<td><p>rw, woclr</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="te0-err-stat-field">TE0_ERR_STAT field<a class="headerlink" href="#te0-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE0: Invalid reserved address + RnW combination</p>
+<h4 id="te1-err-stat-field">TE1_ERR_STAT field<a class="headerlink" href="#te1-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE1: CCC command parity error</p>
+<h4 id="te2-err-stat-field">TE2_ERR_STAT field<a class="headerlink" href="#te2-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE2: CCC or Private Write data parity error</p>
+<h4 id="te3-err-stat-field">TE3_ERR_STAT field<a class="headerlink" href="#te3-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE3: ENTDAA PID mismatch</p>
+<h4 id="te4-err-stat-field">TE4_ERR_STAT field<a class="headerlink" href="#te4-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE4: ENTDAA BCR/DCR mismatch</p>
+<h4 id="te5-err-stat-field">TE5_ERR_STAT field<a class="headerlink" href="#te5-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>TE5: Broadcast/Direct CCC wrong R/W direction</p>
+<h4 id="framing-err-stat-field">FRAMING_ERR_STAT field<a class="headerlink" href="#framing-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>DA padding error (Bit[0] != 0 in SETDASA/SETNEWDA)</p>
+<h4 id="ri-pec-err-stat-field">RI_PEC_ERR_STAT field<a class="headerlink" href="#ri-pec-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface PEC/CRC error detected</p>
+<h4 id="ri-length-err-stat-field">RI_LENGTH_ERR_STAT field<a class="headerlink" href="#ri-length-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface length mismatch error detected</p>
+<h4 id="ri-readonly-err-stat-field">RI_READONLY_ERR_STAT field<a class="headerlink" href="#ri-readonly-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface write-to-read-only error detected</p>
+<h4 id="ri-unsupported-err-stat-field">RI_UNSUPPORTED_ERR_STAT field<a class="headerlink" href="#ri-unsupported-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface unsupported command error detected</p>
+<h4 id="ri-rx-fifo-overflow-err-stat-field">RI_RX_FIFO_OVERFLOW_ERR_STAT field<a class="headerlink" href="#ri-rx-fifo-overflow-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface RX FIFO overflow error detected</p>
+<h4 id="ri-indirect-fifo-overflow-err-stat-field">RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT field<a class="headerlink" href="#ri-indirect-fifo-overflow-err-stat-field" title="Link to this heading">¶</a></h4>
+<p>Recovery Interface INDIRECT FIFO overflow error detected</p>
+<h3 id="target-err-intr-enable-register">TARGET_ERR_INTR_ENABLE register<a class="headerlink" href="#target-err-intr-enable-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x234</p></li>
+<li><p>Base Offset: 0x34</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Target Error Interrupt Enable. Set bits to enable corresponding interrupts.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>TE0_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE0_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>TE1_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE1_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>TE2_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE2_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>TE3_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE3_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>TE4_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE4_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>TE5_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE5_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>FRAMING_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>FRAMING_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>RI_PEC_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_PEC_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>RI_LENGTH_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_LENGTH_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>RI_READONLY_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_READONLY_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>RI_UNSUPPORTED_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_UNSUPPORTED_ERR_EN</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_EN</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="te0-err-en-field">TE0_ERR_EN field<a class="headerlink" href="#te0-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE0_ERR_STAT</code></p>
+<h4 id="te1-err-en-field">TE1_ERR_EN field<a class="headerlink" href="#te1-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE1_ERR_STAT</code></p>
+<h4 id="te2-err-en-field">TE2_ERR_EN field<a class="headerlink" href="#te2-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE2_ERR_STAT</code></p>
+<h4 id="te3-err-en-field">TE3_ERR_EN field<a class="headerlink" href="#te3-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE3_ERR_STAT</code></p>
+<h4 id="te4-err-en-field">TE4_ERR_EN field<a class="headerlink" href="#te4-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE4_ERR_STAT</code></p>
+<h4 id="te5-err-en-field">TE5_ERR_EN field<a class="headerlink" href="#te5-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>TE5_ERR_STAT</code></p>
+<h4 id="framing-err-en-field">FRAMING_ERR_EN field<a class="headerlink" href="#framing-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>FRAMING_ERR_STAT</code></p>
+<h4 id="ri-pec-err-en-field">RI_PEC_ERR_EN field<a class="headerlink" href="#ri-pec-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_PEC_ERR_STAT</code></p>
+<h4 id="ri-length-err-en-field">RI_LENGTH_ERR_EN field<a class="headerlink" href="#ri-length-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_LENGTH_ERR_STAT</code></p>
+<h4 id="ri-readonly-err-en-field">RI_READONLY_ERR_EN field<a class="headerlink" href="#ri-readonly-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_READONLY_ERR_STAT</code></p>
+<h4 id="ri-unsupported-err-en-field">RI_UNSUPPORTED_ERR_EN field<a class="headerlink" href="#ri-unsupported-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_UNSUPPORTED_ERR_STAT</code></p>
+<h4 id="ri-rx-fifo-overflow-err-en-field">RI_RX_FIFO_OVERFLOW_ERR_EN field<a class="headerlink" href="#ri-rx-fifo-overflow-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_RX_FIFO_OVERFLOW_ERR_STAT</code></p>
+<h4 id="ri-indirect-fifo-overflow-err-en-field">RI_INDIRECT_FIFO_OVERFLOW_ERR_EN field<a class="headerlink" href="#ri-indirect-fifo-overflow-err-en-field" title="Link to this heading">¶</a></h4>
+<p>Enables the corresponding interrupt bit <code>RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT</code></p>
+<h3 id="target-err-intr-force-register">TARGET_ERR_INTR_FORCE register<a class="headerlink" href="#target-err-intr-force-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x238</p></li>
+<li><p>Base Offset: 0x38</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Target Error Interrupt Force. Set bits to force corresponding interrupts for testing.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>TE0_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE0_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>TE1_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE1_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>TE2_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE2_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>TE3_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE3_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>TE4_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE4_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>TE5_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>TE5_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>FRAMING_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>FRAMING_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>RI_PEC_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_PEC_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>RI_LENGTH_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_LENGTH_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>RI_READONLY_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_READONLY_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>RI_UNSUPPORTED_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_UNSUPPORTED_ERR_FORCE</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_RX_FIFO_OVERFLOW_ERR_FORCE</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="te0-err-force-field">TE0_ERR_FORCE field<a class="headerlink" href="#te0-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE0_ERR_STAT</code> to be set to 1</p>
+<h4 id="te1-err-force-field">TE1_ERR_FORCE field<a class="headerlink" href="#te1-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE1_ERR_STAT</code> to be set to 1</p>
+<h4 id="te2-err-force-field">TE2_ERR_FORCE field<a class="headerlink" href="#te2-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE2_ERR_STAT</code> to be set to 1</p>
+<h4 id="te3-err-force-field">TE3_ERR_FORCE field<a class="headerlink" href="#te3-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE3_ERR_STAT</code> to be set to 1</p>
+<h4 id="te4-err-force-field">TE4_ERR_FORCE field<a class="headerlink" href="#te4-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE4_ERR_STAT</code> to be set to 1</p>
+<h4 id="te5-err-force-field">TE5_ERR_FORCE field<a class="headerlink" href="#te5-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>TE5_ERR_STAT</code> to be set to 1</p>
+<h4 id="framing-err-force-field">FRAMING_ERR_FORCE field<a class="headerlink" href="#framing-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>FRAMING_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-pec-err-force-field">RI_PEC_ERR_FORCE field<a class="headerlink" href="#ri-pec-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_PEC_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-length-err-force-field">RI_LENGTH_ERR_FORCE field<a class="headerlink" href="#ri-length-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_LENGTH_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-readonly-err-force-field">RI_READONLY_ERR_FORCE field<a class="headerlink" href="#ri-readonly-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_READONLY_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-unsupported-err-force-field">RI_UNSUPPORTED_ERR_FORCE field<a class="headerlink" href="#ri-unsupported-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_UNSUPPORTED_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-rx-fifo-overflow-err-force-field">RI_RX_FIFO_OVERFLOW_ERR_FORCE field<a class="headerlink" href="#ri-rx-fifo-overflow-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_RX_FIFO_OVERFLOW_ERR_STAT</code> to be set to 1</p>
+<h4 id="ri-indirect-fifo-overflow-err-force-field">RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE field<a class="headerlink" href="#ri-indirect-fifo-overflow-err-force-field" title="Link to this heading">¶</a></h4>
+<p>Forces the corresponding interrupt bit <code>RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT</code> to be set to 1</p>
+<h3 id="target-err-cnt-te0-register">TARGET_ERR_CNT_TE0 register<a class="headerlink" href="#target-err-cnt-te0-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x23C</p></li>
+<li><p>Base Offset: 0x3C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE0 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="cnt-field">CNT field<a class="headerlink" href="#cnt-field" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-te1-register">TARGET_ERR_CNT_TE1 register<a class="headerlink" href="#target-err-cnt-te1-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x240</p></li>
+<li><p>Base Offset: 0x40</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE1 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id19">CNT field<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-te2-register">TARGET_ERR_CNT_TE2 register<a class="headerlink" href="#target-err-cnt-te2-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x244</p></li>
+<li><p>Base Offset: 0x44</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE2 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id20">CNT field<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-te3-register">TARGET_ERR_CNT_TE3 register<a class="headerlink" href="#target-err-cnt-te3-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x248</p></li>
+<li><p>Base Offset: 0x48</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE3 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id21">CNT field<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-te4-register">TARGET_ERR_CNT_TE4 register<a class="headerlink" href="#target-err-cnt-te4-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x24C</p></li>
+<li><p>Base Offset: 0x4C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE4 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id22">CNT field<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-te5-register">TARGET_ERR_CNT_TE5 register<a class="headerlink" href="#target-err-cnt-te5-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x250</p></li>
+<li><p>Base Offset: 0x50</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts TE5 errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id23">CNT field<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-framing-register">TARGET_ERR_CNT_FRAMING register<a class="headerlink" href="#target-err-cnt-framing-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x254</p></li>
+<li><p>Base Offset: 0x54</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts framing errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id24">CNT field<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-pec-register">TARGET_ERR_CNT_RI_PEC register<a class="headerlink" href="#target-err-cnt-ri-pec-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x258</p></li>
+<li><p>Base Offset: 0x58</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface PEC errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id25">CNT field<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-length-register">TARGET_ERR_CNT_RI_LENGTH register<a class="headerlink" href="#target-err-cnt-ri-length-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x25C</p></li>
+<li><p>Base Offset: 0x5C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface length mismatch errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id26">CNT field<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-readonly-register">TARGET_ERR_CNT_RI_READONLY register<a class="headerlink" href="#target-err-cnt-ri-readonly-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x260</p></li>
+<li><p>Base Offset: 0x60</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface write-to-read-only errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id27">CNT field<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-unsupported-register">TARGET_ERR_CNT_RI_UNSUPPORTED register<a class="headerlink" href="#target-err-cnt-ri-unsupported-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x264</p></li>
+<li><p>Base Offset: 0x64</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface unsupported command errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id28">CNT field<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-rx-fifo-overflow-register">TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW register<a class="headerlink" href="#target-err-cnt-ri-rx-fifo-overflow-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x268</p></li>
+<li><p>Base Offset: 0x68</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface RX FIFO overflow errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id29">CNT field<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
+<h3 id="target-err-cnt-ri-indirect-fifo-overflow-register">TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW register<a class="headerlink" href="#target-err-cnt-ri-indirect-fifo-overflow-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x26C</p></li>
+<li><p>Base Offset: 0x6C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<p>Counts Recovery Interface INDIRECT FIFO overflow errors. Saturates at 255. Write 0 to clear.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7:0</p></td>
+<td><p>CNT</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>CNT</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="id30">CNT field<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
+<p>Error count (saturates at 255). Write 0 to clear.</p>
 <h3 id="rx-desc-queue-port-register">RX_DESC_QUEUE_PORT register<a class="headerlink" href="#rx-desc-queue-port-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1DC</p></li>
-<li><p>Base Offset: 0x1C</p></li>
+<li><p>Absolute Address: 0x270</p></li>
+<li><p>Base Offset: 0x70</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>RX Descriptor Queue Port</p>
@@ -6424,8 +8840,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>RX Data</p>
 <h3 id="rx-data-port-register">RX_DATA_PORT register<a class="headerlink" href="#rx-data-port-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1E0</p></li>
-<li><p>Base Offset: 0x20</p></li>
+<li><p>Absolute Address: 0x274</p></li>
+<li><p>Base Offset: 0x74</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>RX Data Port</p>
@@ -6451,8 +8867,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>RX Data</p>
 <h3 id="tx-desc-queue-port-register">TX_DESC_QUEUE_PORT register<a class="headerlink" href="#tx-desc-queue-port-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1E4</p></li>
-<li><p>Base Offset: 0x24</p></li>
+<li><p>Absolute Address: 0x278</p></li>
+<li><p>Base Offset: 0x78</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>TX Descriptor Queue Port</p>
@@ -6478,8 +8894,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>TX Data</p>
 <h3 id="tx-data-port-register">TX_DATA_PORT register<a class="headerlink" href="#tx-data-port-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1E8</p></li>
-<li><p>Base Offset: 0x28</p></li>
+<li><p>Absolute Address: 0x27C</p></li>
+<li><p>Base Offset: 0x7C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>TX Data Port</p>
@@ -6505,8 +8921,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>TX Data</p>
 <h3 id="ibi-port-register">IBI_PORT register<a class="headerlink" href="#ibi-port-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1EC</p></li>
-<li><p>Base Offset: 0x2C</p></li>
+<li><p>Absolute Address: 0x280</p></li>
+<li><p>Base Offset: 0x80</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>IBI Data Port</p>
@@ -6532,8 +8948,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>IBI Data</p>
 <h3 id="queue-size-register">QUEUE_SIZE register<a class="headerlink" href="#queue-size-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1F0</p></li>
-<li><p>Base Offset: 0x30</p></li>
+<li><p>Absolute Address: 0x284</p></li>
+<li><p>Base Offset: 0x84</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Queue Size</p>
@@ -6583,8 +8999,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Transmit Data Buffer Size in DWORDs calculated as <code>2^(N+1)</code></p>
 <h3 id="ibi-queue-size-register">IBI_QUEUE_SIZE register<a class="headerlink" href="#ibi-queue-size-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1F4</p></li>
-<li><p>Base Offset: 0x34</p></li>
+<li><p>Absolute Address: 0x288</p></li>
+<li><p>Base Offset: 0x88</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>IBI Queue Size</p>
@@ -6610,8 +9026,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>IBI Queue Size in DWORDs calculated as <code>2^(N+1)</code></p>
 <h3 id="queue-thld-ctrl-register">QUEUE_THLD_CTRL register<a class="headerlink" href="#queue-thld-ctrl-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1F8</p></li>
-<li><p>Base Offset: 0x38</p></li>
+<li><p>Absolute Address: 0x28C</p></li>
+<li><p>Base Offset: 0x8C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Queue Threshold Control</p>
@@ -6653,8 +9069,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Controls the minimum number of IBI Queue entries needed to trigger the IBI threshold interrupt.</p>
 <h3 id="data-buffer-thld-ctrl-register">DATA_BUFFER_THLD_CTRL register<a class="headerlink" href="#data-buffer-thld-ctrl-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x1FC</p></li>
-<li><p>Base Offset: 0x3C</p></li>
+<li><p>Absolute Address: 0x290</p></li>
+<li><p>Base Offset: 0x90</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>IBI Queue Threshold Control</p>
@@ -6704,9 +9120,9 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Minimum number of TTI RX Data queue entries of data received, in DWORDs, that will trigger the TTI RX Data interrupt. Interrupt triggers when <code>2^(N+1)</code> RX Buffer DWORD entries are received during the Read transfer.</p>
 <h2 id="socmgmtif-register-file">SoCMgmtIf register file<a class="headerlink" href="#socmgmtif-register-file" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Absolute Address: 0x200</p></li>
-<li><p>Base Offset: 0x100</p></li>
-<li><p>Size: 0x5C</p></li>
+<li><p>Absolute Address: 0x300</p></li>
+<li><p>Base Offset: 0x200</p></li>
+<li><p>Size: 0x94</p></li>
 </ul>
 <table class="docutils data align-default">
 <thead>
@@ -6773,46 +9189,102 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>0x38</p></td>
-<td><p>T_HD_DAT_REG</p></td>
+<td><p>T_SU_DAT_I2C_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>0x3C</p></td>
-<td><p>T_HIGH_REG</p></td>
+<td><p>T_HD_DAT_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>0x40</p></td>
-<td><p>T_LOW_REG</p></td>
+<td><p>T_HIGH_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>0x44</p></td>
-<td><p>T_HD_STA_REG</p></td>
+<td><p>T_HIGH_OD_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>0x48</p></td>
-<td><p>T_SU_STA_REG</p></td>
+<td><p>T_HIGH_INIT_OD_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>0x4C</p></td>
-<td><p>T_SU_STO_REG</p></td>
+<td><p>T_HIGH_I2C_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>0x50</p></td>
-<td><p>T_FREE_REG</p></td>
+<td><p>T_LOW_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>0x54</p></td>
-<td><p>T_AVAL_REG</p></td>
+<td><p>T_LOW_OD_REG</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>0x58</p></td>
+<td><p>T_LOW_I2C_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x5C</p></td>
+<td><p>T_HD_STA_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x60</p></td>
+<td><p>T_HD_STA_I2C_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x64</p></td>
+<td><p>T_HD_RSTA_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x68</p></td>
+<td><p>T_SU_STA_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x6C</p></td>
+<td><p>T_SU_STA_I2C_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x70</p></td>
+<td><p>T_SU_STO_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x74</p></td>
+<td><p>T_SU_STO_I2C_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x78</p></td>
+<td><p>T_DS_OD_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x7C</p></td>
+<td><p>T_FREE_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x80</p></td>
+<td><p>T_FREE_I2C_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x84</p></td>
+<td><p>T_AVAL_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x88</p></td>
 <td><p>T_IDLE_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x8C</p></td>
+<td><p>HDR_TIMEOUT_EN_REG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>0x90</p></td>
+<td><p>T_HDR_TIMEOUT_REG</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-<h3 id="id19">EXTCAP_HEADER register<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<h3 id="id31">EXTCAP_HEADER register<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x200</p></li>
+<li><p>Absolute Address: 0x300</p></li>
 <li><p>Base Offset: 0x0</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -6835,18 +9307,18 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <tr class="row-odd"><td><p>23:8</p></td>
 <td><p>CAP_LENGTH</p></td>
 <td><p>r</p></td>
-<td><p>0x18</p></td>
+<td><p>0x1A</p></td>
 <td><p>CAP_LENGTH</p></td>
 </tr>
 </tbody>
 </table>
-<h4 id="id20">CAP_ID field<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
+<h4 id="id32">CAP_ID field<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h4>
 <p>Extended Capability ID</p>
-<h4 id="id21">CAP_LENGTH field<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
+<h4 id="id33">CAP_LENGTH field<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
 <p>Capability Structure Length in DWORDs</p>
 <h3 id="soc-mgmt-control-register">SOC_MGMT_CONTROL register<a class="headerlink" href="#soc-mgmt-control-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x204</p></li>
+<li><p>Absolute Address: 0x304</p></li>
 <li><p>Base Offset: 0x4</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -6871,7 +9343,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <h4 id="placeholder-field">PLACEHOLDER field<a class="headerlink" href="#placeholder-field" title="Link to this heading">¶</a></h4>
 <h3 id="soc-mgmt-status-register">SOC_MGMT_STATUS register<a class="headerlink" href="#soc-mgmt-status-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x208</p></li>
+<li><p>Absolute Address: 0x308</p></li>
 <li><p>Base Offset: 0x8</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -6893,10 +9365,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id22">PLACEHOLDER field<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
+<h4 id="id34">PLACEHOLDER field<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
 <h3 id="rec-intf-cfg-register">REC_INTF_CFG register<a class="headerlink" href="#rec-intf-cfg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x20C</p></li>
+<li><p>Absolute Address: 0x30C</p></li>
 <li><p>Base Offset: 0xC</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -6938,7 +9410,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Inform Recovery Handler that payload transfer is finished.</p>
 <h3 id="rec-intf-reg-w1c-access-register">REC_INTF_REG_W1C_ACCESS register<a class="headerlink" href="#rec-intf-reg-w1c-access-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x210</p></li>
+<li><p>Absolute Address: 0x310</p></li>
 <li><p>Base Offset: 0x10</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -6980,7 +9452,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Write to 'Indirect memory configuration - reset' register, mocking a hardware access (bypassing 'write 1 to clear' register property).</p>
 <h3 id="soc-mgmt-rsvd-2-register">SOC_MGMT_RSVD_2 register<a class="headerlink" href="#soc-mgmt-rsvd-2-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x214</p></li>
+<li><p>Absolute Address: 0x314</p></li>
 <li><p>Base Offset: 0x14</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7002,10 +9474,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id23">PLACEHOLDER field<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
+<h4 id="id35">PLACEHOLDER field<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
 <h3 id="soc-mgmt-rsvd-3-register">SOC_MGMT_RSVD_3 register<a class="headerlink" href="#soc-mgmt-rsvd-3-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x218</p></li>
+<li><p>Absolute Address: 0x318</p></li>
 <li><p>Base Offset: 0x18</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7027,10 +9499,10 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id24">PLACEHOLDER field<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
+<h4 id="id36">PLACEHOLDER field<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h4>
 <h3 id="soc-pad-conf-register">SOC_PAD_CONF register<a class="headerlink" href="#soc-pad-conf-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x21C</p></li>
+<li><p>Absolute Address: 0x31C</p></li>
 <li><p>Base Offset: 0x1C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7140,7 +9612,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>3 - Analog input</p>
 <h3 id="soc-pad-attr-register">SOC_PAD_ATTR register<a class="headerlink" href="#soc-pad-attr-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x220</p></li>
+<li><p>Absolute Address: 0x320</p></li>
 <li><p>Base Offset: 0x20</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7178,7 +9650,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>'1 - highest</p>
 <h3 id="soc-mgmt-feature-2-register">SOC_MGMT_FEATURE_2 register<a class="headerlink" href="#soc-mgmt-feature-2-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x224</p></li>
+<li><p>Absolute Address: 0x324</p></li>
 <li><p>Base Offset: 0x24</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7200,11 +9672,11 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id25">PLACEHOLDER field<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
+<h4 id="id37">PLACEHOLDER field<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
 <p>Reserved for: I/O ring and pad configuration</p>
 <h3 id="soc-mgmt-feature-3-register">SOC_MGMT_FEATURE_3 register<a class="headerlink" href="#soc-mgmt-feature-3-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x228</p></li>
+<li><p>Absolute Address: 0x328</p></li>
 <li><p>Base Offset: 0x28</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7226,11 +9698,11 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id26">PLACEHOLDER field<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
+<h4 id="id38">PLACEHOLDER field<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
 <p>Reserved for: I/O ring and pad configuration</p>
 <h3 id="t-r-reg-register">T_R_REG register<a class="headerlink" href="#t-r-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x22C</p></li>
+<li><p>Absolute Address: 0x32C</p></li>
 <li><p>Base Offset: 0x2C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7256,7 +9728,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Rise time of both SDA and SCL in clock units</p>
 <h3 id="t-f-reg-register">T_F_REG register<a class="headerlink" href="#t-f-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x230</p></li>
+<li><p>Absolute Address: 0x330</p></li>
 <li><p>Base Offset: 0x30</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7282,7 +9754,7 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Fall time of both SDA and SCL in clock units</p>
 <h3 id="t-su-dat-reg-register">T_SU_DAT_REG register<a class="headerlink" href="#t-su-dat-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x234</p></li>
+<li><p>Absolute Address: 0x334</p></li>
 <li><p>Base Offset: 0x34</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7306,10 +9778,36 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </table>
 <h4 id="t-su-dat-field">T_SU_DAT field<a class="headerlink" href="#t-su-dat-field" title="Link to this heading">¶</a></h4>
 <p>Data setup time in clock units</p>
+<h3 id="t-su-dat-i2c-reg-register">T_SU_DAT_I2C_REG register<a class="headerlink" href="#t-su-dat-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x338</p></li>
+<li><p>Base Offset: 0x38</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_SU_DAT_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-su-dat-i2c-field">T_SU_DAT_I2C field<a class="headerlink" href="#t-su-dat-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Data setup time in I2C mode in clock units</p>
 <h3 id="t-hd-dat-reg-register">T_HD_DAT_REG register<a class="headerlink" href="#t-hd-dat-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x238</p></li>
-<li><p>Base Offset: 0x38</p></li>
+<li><p>Absolute Address: 0x33C</p></li>
+<li><p>Base Offset: 0x3C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7334,8 +9832,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <p>Data hold time in clock units</p>
 <h3 id="t-high-reg-register">T_HIGH_REG register<a class="headerlink" href="#t-high-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x23C</p></li>
-<li><p>Base Offset: 0x3C</p></li>
+<li><p>Absolute Address: 0x340</p></li>
+<li><p>Base Offset: 0x40</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7357,10 +9855,85 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tbody>
 </table>
 <h4 id="t-high-field">T_HIGH field<a class="headerlink" href="#t-high-field" title="Link to this heading">¶</a></h4>
+<h3 id="t-high-od-reg-register">T_HIGH_OD_REG register<a class="headerlink" href="#t-high-od-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x344</p></li>
+<li><p>Base Offset: 0x44</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HIGH_OD</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>High period of the SCL in Open-Drain mode in clock units</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-high-od-field">T_HIGH_OD field<a class="headerlink" href="#t-high-od-field" title="Link to this heading">¶</a></h4>
+<h3 id="t-high-init-od-reg-register">T_HIGH_INIT_OD_REG register<a class="headerlink" href="#t-high-init-od-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x348</p></li>
+<li><p>Base Offset: 0x48</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HIGH_INIT_OD</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>High period of the SCL in Open-Drain mode during bus initialization in clock units</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-high-init-od-field">T_HIGH_INIT_OD field<a class="headerlink" href="#t-high-init-od-field" title="Link to this heading">¶</a></h4>
+<h3 id="t-high-i2c-reg-register">T_HIGH_I2C_REG register<a class="headerlink" href="#t-high-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x34C</p></li>
+<li><p>Base Offset: 0x4C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HIGH_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p>High period of the SCL in I2C mode in clock units</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-high-i2c-field">T_HIGH_I2C field<a class="headerlink" href="#t-high-i2c-field" title="Link to this heading">¶</a></h4>
 <h3 id="t-low-reg-register">T_LOW_REG register<a class="headerlink" href="#t-low-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x240</p></li>
-<li><p>Base Offset: 0x40</p></li>
+<li><p>Absolute Address: 0x350</p></li>
+<li><p>Base Offset: 0x50</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7383,10 +9956,62 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </table>
 <h4 id="t-low-field">T_LOW field<a class="headerlink" href="#t-low-field" title="Link to this heading">¶</a></h4>
 <p>Low period of the SCL in clock units</p>
+<h3 id="t-low-od-reg-register">T_LOW_OD_REG register<a class="headerlink" href="#t-low-od-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x354</p></li>
+<li><p>Base Offset: 0x54</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_LOW_OD</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-low-od-field">T_LOW_OD field<a class="headerlink" href="#t-low-od-field" title="Link to this heading">¶</a></h4>
+<p>Low period of the SCL in Open-Drain mode in clock units</p>
+<h3 id="t-low-i2c-reg-register">T_LOW_I2C_REG register<a class="headerlink" href="#t-low-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x358</p></li>
+<li><p>Base Offset: 0x58</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_LOW_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-low-i2c-field">T_LOW_I2C field<a class="headerlink" href="#t-low-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Low period of the SCL in I2C mode in clock units</p>
 <h3 id="t-hd-sta-reg-register">T_HD_STA_REG register<a class="headerlink" href="#t-hd-sta-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x244</p></li>
-<li><p>Base Offset: 0x44</p></li>
+<li><p>Absolute Address: 0x35C</p></li>
+<li><p>Base Offset: 0x5C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7408,11 +10033,63 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tbody>
 </table>
 <h4 id="t-hd-sta-field">T_HD_STA field<a class="headerlink" href="#t-hd-sta-field" title="Link to this heading">¶</a></h4>
-<p>Hold time for (repeated) START in clock units</p>
+<p>Hold time for START in clock units</p>
+<h3 id="t-hd-sta-i2c-reg-register">T_HD_STA_I2C_REG register<a class="headerlink" href="#t-hd-sta-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x360</p></li>
+<li><p>Base Offset: 0x60</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HD_STA_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-hd-sta-i2c-field">T_HD_STA_I2C field<a class="headerlink" href="#t-hd-sta-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Hold time for START in I2C mode in clock units</p>
+<h3 id="t-hd-rsta-reg-register">T_HD_RSTA_REG register<a class="headerlink" href="#t-hd-rsta-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x364</p></li>
+<li><p>Base Offset: 0x64</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HD_RSTA</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-hd-rsta-field">T_HD_RSTA field<a class="headerlink" href="#t-hd-rsta-field" title="Link to this heading">¶</a></h4>
+<p>Hold time for repeated START in clock units</p>
 <h3 id="t-su-sta-reg-register">T_SU_STA_REG register<a class="headerlink" href="#t-su-sta-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x248</p></li>
-<li><p>Base Offset: 0x48</p></li>
+<li><p>Absolute Address: 0x368</p></li>
+<li><p>Base Offset: 0x68</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7435,10 +10112,36 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </table>
 <h4 id="t-su-sta-field">T_SU_STA field<a class="headerlink" href="#t-su-sta-field" title="Link to this heading">¶</a></h4>
 <p>Setup time for repeated START in clock units</p>
+<h3 id="t-su-sta-i2c-reg-register">T_SU_STA_I2C_REG register<a class="headerlink" href="#t-su-sta-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x36C</p></li>
+<li><p>Base Offset: 0x6C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_SU_STA_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-su-sta-i2c-field">T_SU_STA_I2C field<a class="headerlink" href="#t-su-sta-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Setup time for repeated START in I2C mode in clock units</p>
 <h3 id="t-su-sto-reg-register">T_SU_STO_REG register<a class="headerlink" href="#t-su-sto-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x24C</p></li>
-<li><p>Base Offset: 0x4C</p></li>
+<li><p>Absolute Address: 0x370</p></li>
+<li><p>Base Offset: 0x70</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7461,10 +10164,62 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </table>
 <h4 id="t-su-sto-field">T_SU_STO field<a class="headerlink" href="#t-su-sto-field" title="Link to this heading">¶</a></h4>
 <p>Setup time for STOP in clock units</p>
+<h3 id="t-su-sto-i2c-reg-register">T_SU_STO_I2C_REG register<a class="headerlink" href="#t-su-sto-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x374</p></li>
+<li><p>Base Offset: 0x74</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_SU_STO_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-su-sto-i2c-field">T_SU_STO_I2C field<a class="headerlink" href="#t-su-sto-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Setup time for STOP in in I2C mode clock units</p>
+<h3 id="t-ds-od-reg-register">T_DS_OD_REG register<a class="headerlink" href="#t-ds-od-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x378</p></li>
+<li><p>Base Offset: 0x78</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_DS_OD</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-ds-od-field">T_DS_OD field<a class="headerlink" href="#t-ds-od-field" title="Link to this heading">¶</a></h4>
+<p>Setup time for SDA during START in clock units</p>
 <h3 id="t-free-reg-register">T_FREE_REG register<a class="headerlink" href="#t-free-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x250</p></li>
-<li><p>Base Offset: 0x50</p></li>
+<li><p>Absolute Address: 0x37C</p></li>
+<li><p>Base Offset: 0x7C</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7486,10 +10241,37 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tbody>
 </table>
 <h4 id="t-free-field">T_FREE field<a class="headerlink" href="#t-free-field" title="Link to this heading">¶</a></h4>
+<p>Bus Free Time Between a STOP and a START</p>
+<h3 id="t-free-i2c-reg-register">T_FREE_I2C_REG register<a class="headerlink" href="#t-free-i2c-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x380</p></li>
+<li><p>Base Offset: 0x80</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>31:0</p></td>
+<td><p>T_FREE_I2C</p></td>
+<td><p>rw</p></td>
+<td><p>0xC</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-free-i2c-field">T_FREE_I2C field<a class="headerlink" href="#t-free-i2c-field" title="Link to this heading">¶</a></h4>
+<p>Bus Free Time Between a STOP and a START in I2C mode</p>
 <h3 id="t-aval-reg-register">T_AVAL_REG register<a class="headerlink" href="#t-aval-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x254</p></li>
-<li><p>Base Offset: 0x54</p></li>
+<li><p>Absolute Address: 0x384</p></li>
+<li><p>Base Offset: 0x84</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7513,8 +10295,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <h4 id="t-aval-field">T_AVAL field<a class="headerlink" href="#t-aval-field" title="Link to this heading">¶</a></h4>
 <h3 id="t-idle-reg-register">T_IDLE_REG register<a class="headerlink" href="#t-idle-reg-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x258</p></li>
-<li><p>Base Offset: 0x58</p></li>
+<li><p>Absolute Address: 0x388</p></li>
+<li><p>Base Offset: 0x88</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7536,10 +10318,63 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tbody>
 </table>
 <h4 id="t-idle-field">T_IDLE field<a class="headerlink" href="#t-idle-field" title="Link to this heading">¶</a></h4>
+<p>Time in clock cycles from STOP detection until Bus Idle Condition (tIDLE). Configure based on System Clock</p>
+<h3 id="hdr-timeout-en-reg-register">HDR_TIMEOUT_EN_REG register<a class="headerlink" href="#hdr-timeout-en-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x38C</p></li>
+<li><p>Base Offset: 0x8C</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>HDR_TIMEOUT_EN</p></td>
+<td><p>rw</p></td>
+<td><p>0x0</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="hdr-timeout-en-field">HDR_TIMEOUT_EN field<a class="headerlink" href="#hdr-timeout-en-field" title="Link to this heading">¶</a></h4>
+<p>Enable bit for the optional 60us HDR error recovery timer (I3C spec 5.1.10.1.9). When enabled, the Target can recover from TE0/TE1 errors if both SCL and SDA stay High for a period exceeding the configured threshold. Disabled on reset.</p>
+<h3 id="t-hdr-timeout-reg-register">T_HDR_TIMEOUT_REG register<a class="headerlink" href="#t-hdr-timeout-reg-register" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Absolute Address: 0x390</p></li>
+<li><p>Base Offset: 0x90</p></li>
+<li><p>Size: 0x4</p></li>
+</ul>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Identifier</p></th>
+<th class="head"><p>Access</p></th>
+<th class="head"><p>Reset</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>19:0</p></td>
+<td><p>T_HDR_TIMEOUT</p></td>
+<td><p>rw</p></td>
+<td><p>0xEA60</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="t-hdr-timeout-field">T_HDR_TIMEOUT field<a class="headerlink" href="#t-hdr-timeout-field" title="Link to this heading">¶</a></h4>
+<p>Timer threshold in clock cycles for the optional HDR error recovery (I3C spec 5.1.10.1.9). If both SCL and SDA stay High for this many clock cycles during a TE0/TE1 error-induced HDR mode, the Target exits HDR mode and returns to Idle. Configure based on System Clock to achieve 60us.</p>
 <h2 id="ctrlcfg-register-file">CtrlCfg register file<a class="headerlink" href="#ctrlcfg-register-file" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Absolute Address: 0x260</p></li>
-<li><p>Base Offset: 0x160</p></li>
+<li><p>Absolute Address: 0x398</p></li>
+<li><p>Base Offset: 0x298</p></li>
 <li><p>Size: 0x8</p></li>
 </ul>
 <table class="docutils data align-default">
@@ -7560,9 +10395,9 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h3 id="id27">EXTCAP_HEADER register<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h3>
+<h3 id="id39">EXTCAP_HEADER register<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x260</p></li>
+<li><p>Absolute Address: 0x398</p></li>
 <li><p>Base Offset: 0x0</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7590,13 +10425,13 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 </tr>
 </tbody>
 </table>
-<h4 id="id28">CAP_ID field<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
+<h4 id="id40">CAP_ID field<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
 <p>Extended Capability ID</p>
-<h4 id="id29">CAP_LENGTH field<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
+<h4 id="id41">CAP_LENGTH field<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
 <p>Capability Structure Length in DWORDs</p>
 <h3 id="controller-config-register">CONTROLLER_CONFIG register<a class="headerlink" href="#controller-config-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x264</p></li>
+<li><p>Absolute Address: 0x39C</p></li>
 <li><p>Base Offset: 0x4</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
@@ -7621,8 +10456,8 @@ Part of data in the IBI queue is considered corrupted and will be discarded.
 <h4 id="operation-mode-field">OPERATION_MODE field<a class="headerlink" href="#operation-mode-field" title="Link to this heading">¶</a></h4>
 <h3 id="termination-extcap-header-register">TERMINATION_EXTCAP_HEADER register<a class="headerlink" href="#termination-extcap-header-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Absolute Address: 0x268</p></li>
-<li><p>Base Offset: 0x168</p></li>
+<li><p>Absolute Address: 0x3A0</p></li>
+<li><p>Base Offset: 0x2A0</p></li>
 <li><p>Size: 0x4</p></li>
 </ul>
 <p>Register after the last EC must advertise ID == 0.
@@ -7652,9 +10487,9 @@ reaches termination value.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="id30">CAP_ID field<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
+<h4 id="id42">CAP_ID field<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
 <p>Extended Capability ID</p>
-<h4 id="id31">CAP_LENGTH field<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
+<h4 id="id43">CAP_LENGTH field<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
 <p>Capability Structure Length in DWORDs</p>
 
 
@@ -7663,7 +10498,7 @@ reaches termination value.</p>
   <small>
     
       Last update:
-      2026-04-29
+      2026-05-28
     
   </small>
 </div>
@@ -7687,7 +10522,7 @@ reaches termination value.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="axi_recovery_flow.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: AXI driven Caliptra recovery flow" rel="prev">
+        <a href="axi_recovery_flow.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: AXI Recovery Flow" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -7696,11 +10531,26 @@ reaches termination value.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              AXI driven Caliptra recovery flow
+              AXI Recovery Flow
             </div>
           </div>
         </a>
       
+      
+        
+        <a href="timing_csr.html" class="md-footer__link md-footer__link--next" aria-label="Next: I3C Timing Register Configurations" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              I3C Timing Register Configurations
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
       
     </nav>
   

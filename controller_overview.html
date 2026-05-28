@@ -1,0 +1,2019 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>I3C Controller overview - CHIPS Alliance Caliptra Open Source I3C core</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.c5589c0bd87d933a4.min.css?v=eeeb54bc" />
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="CHIPS Alliance Caliptra Open Source I3C core" class="md-header__button md-logo" aria-label="CHIPS Alliance Caliptra Open Source I3C core" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CHIPS Alliance Caliptra Open Source I3C core
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              I3C Controller overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <div class="md-header__button">
+        <a href="i3c-core-docs.pdf" title="PDF - i3c-core-docs.pdf">
+          <div class="md-icon">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zm192 0v128h128L256 0zM64 224h24c30.9 0 56 25.1 56 56s-25.1 56-56 56h-8v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24h-8v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48h-24c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16v-64c0-8.8-7.2-16-16-16h-8v96zm96-128h48c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16h-32v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16z"/></svg>
+          </div>
+        </a>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="CHIPS Alliance Caliptra Open Source I3C core" class="md-nav__button md-logo" aria-label="CHIPS Alliance Caliptra Open Source I3C core" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    CHIPS Alliance Caliptra Open Source I3C core
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="target_overview.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C target overview</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">I3C Controller overview</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">I3C Controller overview</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">Architecture</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-level-block-diagram" class="md-nav__link">
+    <span class="md-ellipsis">High-<wbr>Level Block Diagram</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsystems" class="md-nav__link">
+    <span class="md-ellipsis">Subsystems</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow" class="md-nav__link">
+    <span class="md-ellipsis">Data Flow</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#features-list" class="md-nav__link">
+    <span class="md-ellipsis">Features List</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Features List">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#host-controller-interface-hci" class="md-nav__link">
+    <span class="md-ellipsis">Host Controller Interface <wbr>(HCI)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller-core-logic" class="md-nav__link">
+    <span class="md-ellipsis">Controller Core Logic</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-command-codes-ccc" class="md-nav__link">
+    <span class="md-ellipsis">Common Command Codes <wbr>(CCC)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Command Codes (CCC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#broadcast-support" class="md-nav__link">
+    <span class="md-ellipsis">Broadcast Support</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#direct-support" class="md-nav__link">
+    <span class="md-ellipsis">Direct Support</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-address-assignment-daa" class="md-nav__link">
+    <span class="md-ellipsis">Dynamic Address Assignment <wbr>(DAA)</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-band-interrupts-ibi" class="md-nav__link">
+    <span class="md-ellipsis">In-<wbr>Band Interrupts <wbr>(IBI)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="In-Band Interrupts (IBI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ibi-rejection-and-dat-lookup" class="md-nav__link">
+    <span class="md-ellipsis">IBI Rejection and DAT Lookup</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibi-data-packing" class="md-nav__link">
+    <span class="md-ellipsis">IBI Data Packing</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-buffer-overflow-handling" class="md-nav__link">
+    <span class="md-ellipsis">Internal Buffer &amp; Overflow Handling</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-conditions" class="md-nav__link">
+    <span class="md-ellipsis">Error Conditions</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#microarchitecture" class="md-nav__link">
+    <span class="md-ellipsis">Microarchitecture</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microarchitecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flow-active-decode-fsm" class="md-nav__link">
+    <span class="md-ellipsis">flow_<wbr>active <wbr>(Decode FSM)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="flow_active (Decode FSM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operating-principle" class="md-nav__link">
+    <span class="md-ellipsis">Operating Principle</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-list" class="md-nav__link">
+    <span class="md-ellipsis">Signal List</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i3c-controller-fsm-execute-timing-fsm-for-i3c" class="md-nav__link">
+    <span class="md-ellipsis">i3c_<wbr>controller_<wbr>fsm <wbr>(Execute / Timing FSM for I3C)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i3c_controller_fsm (Execute / Timing FSM for I3C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    <span class="md-ellipsis">Operating Principle</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id2" class="md-nav__link">
+    <span class="md-ellipsis">Signal List</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i2c-controller-fsm-execute-timing-fsm-for-i2c" class="md-nav__link">
+    <span class="md-ellipsis">i2c_<wbr>controller_<wbr>fsm <wbr>(Execute / Timing FSM for I2C)</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i2c_controller_fsm (Execute / Timing FSM for I2C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id3" class="md-nav__link">
+    <span class="md-ellipsis">Operating Principle</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id4" class="md-nav__link">
+    <span class="md-ellipsis">Signal List</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sram-macros" class="md-nav__link">
+    <span class="md-ellipsis">SRAM Macros</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="phy.html" class="md-nav__link">
+        <span class="md-ellipsis">Physical Layer</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ccc.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Common Command Codes <wbr>(CCC)</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="error_handling.html" class="md-nav__link">
+        <span class="md-ellipsis">Error Detection and Recovery</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="firmware_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Firmware Integration Guide</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dv.html" class="md-nav__link">
+        <span class="md-ellipsis">Design verification</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ext_cap.html" class="md-nav__link">
+        <span class="md-ellipsis">Specification for I3C Vendor-<wbr>Specific Extended Capabilities</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="recovery_flow.html" class="md-nav__link">
+        <span class="md-ellipsis">Recovery flow</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="axi_id_filtering.html" class="md-nav__link">
+        <span class="md-ellipsis">AXI Transaction ID Filtering</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="axi_recovery_flow.html" class="md-nav__link">
+        <span class="md-ellipsis">AXI Recovery Flow</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="registers.html" class="md-nav__link">
+        <span class="md-ellipsis">Register descriptions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timing_csr.html" class="md-nav__link">
+        <span class="md-ellipsis">I3C Timing Register Configurations</span>
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="i3c-controller-overview">I3C Controller overview<a class="headerlink" href="#i3c-controller-overview" title="Link to this heading">¶</a></h1>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h2>
+<p>The design is partitioned into two primary subsystems: the <strong>Host Controller Interface (HCI)</strong> and the <strong>Host Controller (HC)</strong>. These subsystems communicate via command/response queues and shared lookup tables (DAT/DCT).</p>
+<h3 id="high-level-block-diagram">High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="fig-hc-top">
+<img alt="" src="_images/hc_top_level_arch.png" />
+<figcaption>
+<p><span class="caption-number">Figure 1 </span><span class="caption-text"><span class="caption-text">
+High-Level Block Diagram</span><a class="headerlink" href="#fig-hc-top" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="subsystems">Subsystems<a class="headerlink" href="#subsystems" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>HCI (Host Controller Interface):</strong></p>
+<ul>
+<li><p><strong>Interface:</strong> AXI/AHB (Slave interface).</p></li>
+<li><p><strong>Function:</strong> Handles communication with the Host CPU. It populates Control and Status Registers (CSRs) and transfers relevant information between the CSRs and the internal hardware queues (Command, Response, TX, RX, IBI).</p></li>
+</ul>
+</li>
+<li><p><strong>HC (Host Controller):</strong></p>
+<ul>
+<li><p><strong>Function:</strong> Reads operational data from the queues and translates them into physical I3C transactions (driving SDA/SCL output signals).</p></li>
+<li><p><strong>Components:</strong> Consists of the <code class="docutils literal notranslate"><span class="pre">flow_active</span></code> module (protocol logic) and the low-level PHY FSMs (<code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code> / <code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code>).</p></li>
+</ul>
+</li>
+</ul>
+<h3 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Command Generation:</strong> Software writes commands to HCI CSRs.</p></li>
+<li><p><strong>Queue Population:</strong> HCI logic pushes these commands into the Command Queue.</p></li>
+<li><p><strong>Execution:</strong> HC fetches commands, consults the Device Address Table (DAT) or Device Characteristics Table (DCT), and executes the transaction on the bus.</p></li>
+<li><p><strong>Response:</strong> Results are written back to the Response Queue for software to read.</p></li>
+</ol>
+<hr class="docutils" />
+<h2 id="features-list">Features List<a class="headerlink" href="#features-list" title="Link to this heading">¶</a></h2>
+<h3 id="host-controller-interface-hci">Host Controller Interface (HCI)<a class="headerlink" href="#host-controller-interface-hci" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Registers (RDL):</strong> Full implementation of the Register Description List for configuration and status monitoring.</p></li>
+<li><p><strong>Queues:</strong> Support for Command, Response, TX, RX, and IBI queues.</p></li>
+<li><p><strong>Tables:</strong></p>
+<ul>
+<li><p><strong>DAT (Device Address Table):</strong> Storage for Dynamic Addresses and device types.</p></li>
+<li><p><strong>DCT (Device Characteristics Table):</strong> Storage for device-specific parameters (PID, BCR, DCR).</p></li>
+</ul>
+</li>
+</ul>
+<h3 id="controller-core-logic">Controller Core Logic<a class="headerlink" href="#controller-core-logic" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>SDA Arbitration Management:</strong> Handling of bus arbitration during Start/Restart phases.</p></li>
+<li><p><strong>Frame Generation:</strong></p>
+<ul>
+<li><p><strong>Read Frame:</strong> Support for SDR Read transactions with and without <code class="docutils literal notranslate"><span class="pre">7'h7E</span></code> I3C address.</p></li>
+<li><p><strong>Write Frame:</strong> Support for SDR Write transactions with and without <code class="docutils literal notranslate"><span class="pre">7'h7E</span></code> I3C address.</p></li>
+</ul>
+</li>
+<li><p><strong>IBI Handling:</strong> Detection and processing of In-Band Interrupts from Targets.</p></li>
+<li><p><strong>HDR Pattern Generation:</strong></p>
+<ul>
+<li><p><strong>HDR Exit Pattern:</strong> Logic to generate the specific sequence to exit High Data Rate modes (ensuring bus reset/compatibility).</p></li>
+</ul>
+</li>
+<li><p><strong>Error Handling:</strong> Target Error Detection and Escalation mechanisms.</p></li>
+</ul>
+<h3 id="common-command-codes-ccc">Common Command Codes (CCC)<a class="headerlink" href="#common-command-codes-ccc" title="Link to this heading">¶</a></h3>
+<p>The I3C Controller includes support for the following subset of CCCs required for basic bus management and initialization.</p>
+<h4 id="broadcast-support">Broadcast Support<a class="headerlink" href="#broadcast-support" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>ENEC:</strong> Enable Events Command (Broadcast).</p></li>
+<li><p><strong>DISEC:</strong> Disable Events Command (Broadcast).</p></li>
+<li><p><strong>RSTDAA:</strong> Reset Dynamic Address Assignment (Broadcast).</p></li>
+<li><p><strong>ENTDAA:</strong> Enter Dynamic Address Assignment (Broadcast).</p></li>
+<li><p><strong>SETAASA:</strong> Set All Addresses to Static Address (Broadcast).</p></li>
+</ul>
+<h4 id="direct-support">Direct Support<a class="headerlink" href="#direct-support" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>ENEC:</strong> Enable Events Command (Direct).</p></li>
+<li><p><strong>DISEC:</strong> Disable Events Command (Direct).</p></li>
+<li><p><strong>SETDASA:</strong> Set Dynamic Address from Static Address (Direct).</p></li>
+<li><p><strong>SETNEWDA:</strong> Set New Dynamic Address (Direct).</p></li>
+<li><p><strong>GETPID:</strong> Get Provisional ID (Direct).</p></li>
+<li><p><strong>GETBCR:</strong> Get Bus Characteristics Register (Direct).</p></li>
+<li><p><strong>GETDCR:</strong> Get Device Characteristics Register (Direct).</p></li>
+<li><p><strong>GETSTATUS:</strong> Get Device Status (Direct).</p></li>
+</ul>
+<h4 id="dynamic-address-assignment-daa">Dynamic Address Assignment (DAA)<a class="headerlink" href="#dynamic-address-assignment-daa" title="Link to this heading">¶</a></h4>
+<p>The controller implements Dynamic Address Assignment (DAA) in accordance with the bus initialization sequence defined in the <strong>I3C Basic Specification (Section 5.1.4.2)</strong> and the usage guidelines for the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC in the <strong>I3C HCI Specification (Section 8.4.1.1)</strong>.</p>
+<p>When configuring the DAA procedure, software developers must adhere to the following guidelines:</p>
+<ol class="arabic simple">
+<li><p><strong>Pre-populate the DAT:</strong> All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated <strong>before</strong> initiating the DAA procedure with the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC.</p></li>
+<li><p><strong>Handling Unassigned Targets:</strong> If the specified <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> number of dynamic addresses has been successfully assigned, but unaddressed devices still remain on the bus, the controller will return a value of <code class="docutils literal notranslate"><span class="pre">0x1</span></code> in the <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> field of the Response Descriptor. This signals to the host that at least one target device still requires an address.</p></li>
+<li><p><strong>DCT Initialization:</strong> The Device Characteristics Table (DCT) Index always starts at <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+</ol>
+<h3 id="in-band-interrupts-ibi">In-Band Interrupts (IBI)<a class="headerlink" href="#in-band-interrupts-ibi" title="Link to this heading">¶</a></h3>
+<p>The I3C Controller supports the detection and servicing of In-Band Interrupts (IBIs) initiated by target devices.
+The controller can recognize and process these interrupts whether they are raised during a Bus Available condition or during arbitrable address headers.</p>
+<h4 id="ibi-rejection-and-dat-lookup">IBI Rejection and DAT Lookup<a class="headerlink" href="#ibi-rejection-and-dat-lookup" title="Link to this heading">¶</a></h4>
+<p>Before accepting an IBI, the controller validates the request against the target’s Device Address Table (DAT) entry.
+When a target drives its dynamic address onto the bus during an IBI request, the controller utilizes a <strong>reverse lookup table</strong> to quickly resolve this dynamic address back to the target’s specific DAT index.</p>
+<p>Once the corresponding DAT entry is retrieved, the controller checks its configuration fields to decide whether to acknowledge (ACK) or reject (NACK) the interrupt.
+The IBI is automatically rejected if the bitwise condition <code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span> <span class="pre">|</span> <span class="pre">~IBI_PAYLOAD</span></code> is met.
+Specifically:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span></code>:</strong> If this field is set (<code class="docutils literal notranslate"><span class="pre">1</span></code>), the controller explicitly rejects all IBI requests from this target.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">~IBI_PAYLOAD</span></code>:</strong> If the <code class="docutils literal notranslate"><span class="pre">IBI_PAYLOAD</span></code> field is clear (<code class="docutils literal notranslate"><span class="pre">0</span></code>), the controller will also reject the IBI, ensuring that targets not explicitly authorized to send payload data are denied.</p></li>
+</ul>
+<h4 id="ibi-data-packing">IBI Data Packing<a class="headerlink" href="#ibi-data-packing" title="Link to this heading">¶</a></h4>
+<p>When an accepted IBI is processed, the controller writes the resulting data into the <code class="docutils literal notranslate"><span class="pre">PIOCONTROL.IBI_PORT</span></code> CSR.
+To ensure efficient reading by the host software, the IBI data is packed into the 32-bit port in the following sequence:</p>
+<ol class="arabic simple">
+<li><p><strong>IBI Status Descriptor:</strong> The first 32-bit word (DWORD) written to the port is always the IBI Status Descriptor. This descriptor contains vital metadata about the interrupt, including the <code class="docutils literal notranslate"><span class="pre">data_length</span></code> (in bytes) of the incoming payload as well as the dynamic address of the target issuing the IBI.</p></li>
+<li><p><strong>Payload Data:</strong> The Status Descriptor is immediately followed by the actual IBI data payload. The data is chunked and written as <code class="docutils literal notranslate"><span class="pre">(data_length</span> <span class="pre">+</span> <span class="pre">3)</span> <span class="pre">/</span> <span class="pre">4</span></code> DWORDs.</p></li>
+<li><p><strong>Mandatory Data Byte (MDB) Placement:</strong> If the target sends a Mandatory Data Byte (MDB), it is always packed into the Least Significant Byte (LSB) of the very first data DWORD immediately following the Status Descriptor.</p></li>
+</ol>
+<h4 id="internal-buffer-overflow-handling">Internal Buffer &amp; Overflow Handling<a class="headerlink" href="#internal-buffer-overflow-handling" title="Link to this heading">¶</a></h4>
+<p>In accordance with the I3C HCI Specification (Section 6.9.1, <em>IBI Handling in PIO Mode</em>), the controller utilizes an internal hardware buffer to temporarily hold the target’s optional IBI data bytes during the read transaction.</p>
+<ul class="simple">
+<li><p><strong>Overflow Condition:</strong> If a target attempts to send a number of optional bytes that is <strong>greater than or equal to</strong> the internal buffer size, the controller will flag an error and immediately abort the IBI transaction.</p></li>
+<li><p><strong>Data Retention:</strong> In the event of a buffer overflow and subsequent abort, the controller recovers by writing the first <em>buffer size</em> bytes (the maximum data it successfully captured before the abort) into the <code class="docutils literal notranslate"><span class="pre">IBI_PORT</span></code>.</p></li>
+</ul>
+<h3 id="error-conditions">Error Conditions<a class="headerlink" href="#error-conditions" title="Link to this heading">¶</a></h3>
+<p>The MVP supports the following ERROR_STATUS conditions from Table 1 Error Status Codes in Response Descriptor I3C TCRI Spec.</p>
+<table class="docutils data align-default" id="error-status-codes">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Error Status Codes</span><a class="headerlink" href="#error-status-codes" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 27.3%" />
+<col style="width: 18.2%" />
+<col style="width: 18.2%" />
+<col style="width: 36.4%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Error Code</strong></p></th>
+<th class="head"><p><strong>ERR_STATUS Value</strong></p></th>
+<th class="head"><p><strong>I3C TCRI Spec Section</strong></p></th>
+<th class="head"><p><strong>Notes</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CRC</p></td>
+<td><p>0x1</p></td>
+<td><p>6.4.1.1</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>PARITY</p></td>
+<td><p>0x2</p></td>
+<td><p>6.4.1.2</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>FRAME</p></td>
+<td><p>0x3</p></td>
+<td><p>6.4.1.3</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ADDR_HEADER</p></td>
+<td><p>0x4</p></td>
+<td><p>6.4.1.4</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>NACK</p></td>
+<td><p>0x5</p></td>
+<td><p>6.4.1.5</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>OVL</p></td>
+<td><p>0x6</p></td>
+<td><p>6.4.1.6</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>I3C_SHORT_READ_ERR</p></td>
+<td><p>0x7</p></td>
+<td><p>6.4.1.7</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>HC_ABORTED</p></td>
+<td><p>0x8</p></td>
+<td><p>6.4.1.8</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>I2C_WR_DATA_NACK or BUS_ABORTED</p></td>
+<td><p>0x9</p></td>
+<td><p>6.4.1.9</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>NOT_SUPPORTED</p></td>
+<td><p>0xA</p></td>
+<td><p>6.4.1.10</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ABORTED_WITH_CRC</p></td>
+<td><p>0xB</p></td>
+<td><p>6.4.1.11</p></td>
+<td><p>This is used as an internal default state for errors. This means that internal hardware bugs can mistakenly produce the AbortedWithCRC error status.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Transfer Type Specific</p></td>
+<td><p>0xC – 0xF</p></td>
+<td><p>6.4.1.12</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<h2 id="microarchitecture">Microarchitecture<a class="headerlink" href="#microarchitecture" title="Link to this heading">¶</a></h2>
+<p>The Host Controller (HC) logic is split into a “decode” stage (Flow Active FSM) and “execute” stage (i3c/i2c controller FSM).</p>
+<h3 id="flow-active-decode-fsm"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code> (Decode FSM)<a class="headerlink" href="#flow-active-decode-fsm" title="Link to this heading">¶</a></h3>
+<p>This module acts as a decoder. It consumes raw data from queues and converts it into control signals (<code class="docutils literal notranslate"><span class="pre">fmt_*</span></code> signals) for the downstream controller FSMs.
+Control and data are handled strictly in 9-bit blocks (1 byte + T-bit/ACK). Once the sending or receiving of a 9-bit block begins, the process cannot be aborted halfway through.</p>
+<h4 id="operating-principle">Operating Principle<a class="headerlink" href="#operating-principle" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Interfaces:</strong></p>
+<ul>
+<li><p><strong>Upstream:</strong> Read/Write access to HCI Queues (Cmd, Resp, Tx, Rx, IBI).</p></li>
+<li><p><strong>Downstream:</strong> <code class="docutils literal notranslate"><span class="pre">fmt</span></code> interface (<code class="docutils literal notranslate"><span class="pre">fmt_byte_o</span></code> + flags) to <code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code> / <code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Operating Principle:</strong></p>
+<ul>
+<li><p>Operates in <strong>PIO Mode</strong> (Programmed I/O) using <strong>SDR</strong> (Standard Data Rate).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_o</span></code> is the data, that will be sent on the I3C bus.</p></li>
+</ul>
+</li>
+<li><p><strong>FSM States &amp; Transitions:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Idle:</strong> Waits for <code class="docutils literal notranslate"><span class="pre">i3c_fsm_en_i</span></code> signal indicating a new command is present in the Command Queue or IBI to wake up FSM.</p></li>
+<li><p><strong>WaitForCmd:</strong> Fetches the 64-bit Command Descriptor from the Command Queue.</p></li>
+<li><p><strong>FetchDAT:</strong> Retrieves the Device Address Table (DAT) entry corresponding to the command’s Device Index. Transitions to the execution stage based on <code class="docutils literal notranslate"><span class="pre">cmd_attr</span></code> (Command Attribute).</p></li>
+<li><p><strong>Execution:</strong></p>
+<ul>
+<li><p><em>I2C Write Immediate / I3C Write Immediate</em>: uses immediate command descriptor format and reads data directly  from the command descriptor.</p></li>
+<li><p><em>I2C Write Regular / I3C Write Regular</em>: uses regular command descriptor format and reads data from TX Queue</p></li>
+<li><p><em>I2C Read / I3C Read</em>: uses regular command descriptor format and writes data into RX Queue</p></li>
+</ul>
+</li>
+<li><p><strong>WriteResp:</strong> Generates a Response Descriptor, loads it into the Response Queue, and returns to <strong>Idle</strong>.</p></li>
+</ol>
+</li>
+</ul>
+<figure class="align-default" id="fig-flow-active-fsm">
+<img alt="" src="_images/flow_active_fsm.png" />
+<figcaption>
+<p><span class="caption-number">Figure 2 </span><span class="caption-text"><span class="caption-text">
+Flow Active FSM</span><a class="headerlink" href="#fig-flow-active-fsm" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h4 id="signal-list">Signal List<a class="headerlink" href="#signal-list" title="Link to this heading">¶</a></h4>
+<table class="docutils data align-default" id="flow-active-io" style="width: 100%">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code> IO</span><a class="headerlink" href="#flow-active-io" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 5.0%" />
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Signal</strong></p></td>
+<td><p><strong>Direction</strong></p></td>
+<td><p><strong>Width</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rst_ni</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Active low reset</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_full_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO queue full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_ready_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciCmdThldWidth</span></code></p></td>
+<td><p>Command FIFO ready threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_ready_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO ready threshold trigger</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_empty_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_rvalid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO read valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_rready_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO read ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cmd_queue_rdata_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciCmdDataWidth</span></code></p></td>
+<td><p>Command FIFO read data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_full_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO queue full flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_start_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciRxThldWidth</span></code></p></td>
+<td><p>RX FIFO start threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_start_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO start threshold trigger</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_ready_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciRxThldWidth</span></code></p></td>
+<td><p>RX FIFO ready threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_ready_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO ready threshold trigger</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_empty_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_wvalid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO write valid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_wready_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO write ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_queue_wdata_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciRxDataWidth</span></code></p></td>
+<td><p>RX FIFO write data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_full_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO queue full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_start_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciTxThldWidth</span></code></p></td>
+<td><p>TX FIFO start threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_start_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO start threshold trigger</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_ready_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciTxThldWidth</span></code></p></td>
+<td><p>TX FIFO ready threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_ready_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO ready threshold trigger</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_empty_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_rvalid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO read valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_rready_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO read ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_queue_rdata_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciTxDataWidth</span></code></p></td>
+<td><p>TX FIFO read data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_full_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO queue full flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_ready_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciRespThldWidth</span></code></p></td>
+<td><p>Response FIFO ready threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_ready_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO ready threshold trigger</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_empty_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_wvalid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO write valid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_wready_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO write ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resp_queue_wdata_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciRespDataWidth</span></code></p></td>
+<td><p>Response FIFO write data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_full_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>IBI FIFO queue full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_ready_thld_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciIbiThldWidth</span></code></p></td>
+<td><p>IBI FIFO ready threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_ready_thld_trig_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>IBI FIFO ready threshold trigger</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_empty_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>IBI FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_wvalid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>IBI FIFO write valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_wready_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>IBI FIFO write ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ibi_queue_wdata_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HciIbiDataWidth</span></code></p></td>
+<td><p>IBI FIFO write data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dat_mem_sink_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dat_mem_sink_t</span></code></p></td>
+<td><p>DAT memory interface</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dat_read_valid_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>DAT read valid HW</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dat_index_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$clog2(\</span></code>DAT_DEPTH)`</p></td>
+<td><p>DAT index HW</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dat_rdata_hw_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>64</p></td>
+<td><p>DAT read data HW</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dct_write_valid_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>DCT write valid HW</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dct_read_valid_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>DCT read valid HW</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dct_index_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$clog2(\</span></code>DCT_DEPTH)`</p></td>
+<td><p>DCT index HW</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dct_wdata_hw_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>128</p></td>
+<td><p>DCT write data HW</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dct_rdata_hw_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>128</p></td>
+<td><p>DCT read data HW</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">host_enable_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Enable host functionality</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_i2c_transfer_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Is an I2C transfer flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2c_cmd_complete_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>I2C command complete flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phy_sel_od_pp_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>PHY select OD/PP input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phy_sel_od_pp_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>PHY select OD/PP output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rvalid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read valid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_depth_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">I2CFifoDepthWidth</span></code></p></td>
+<td><p>Format FIFO depth</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rready_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rdone_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read done</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>8</p></td>
+<td><p>Format TX byte output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_bit_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format TX bit output (T bit)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_start_before_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: start before</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_restart_after_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: restart after</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_stop_after_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: stop after</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_continuous_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read continue</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_receive_nack_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format receive NACK</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_sda_arbitration_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>SDA line arbitration is detected</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>8</p></td>
+<td><p>Format RX byte input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_bit_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format RX bit input</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_bytes_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read bytes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_valid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_nak_ok_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: NAK OK</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_hdr_exit_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: HDR exit</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unhandled_unexp_nak_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Unhandled unexpected NAK</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unhandled_nak_timeout_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Unhandled NAK timeout</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_fifo_wvalid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>I2C Controller RX FIFO write valid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_fifo_wdata_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RxFifoWidth</span></code></p></td>
+<td><p>I2C Controller RX FIFO write data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i3c_fsm_en_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>I3C FSM enable</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i3c_fsm_idle_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>I3C FSM idle status</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pio_rs_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>PIO RS input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">halt_on_cmd_seq_timeout_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Halt on command sequence timeout</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resume_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>HC_CONTROL.RESUME CSR field</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abort_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>HC_CONTROL.ABORT | PIO_CONTROL.ABORT CSR fields</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">err</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_err_t</span></code></p></td>
+<td><p>I3C Error structure</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">irq_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_irq_t</span></code></p></td>
+<td><p>I3C Interrupt structure</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="i3c-controller-fsm-execute-timing-fsm-for-i3c"><code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code> (Execute / Timing FSM for I3C)<a class="headerlink" href="#i3c-controller-fsm-execute-timing-fsm-for-i3c" title="Link to this heading">¶</a></h3>
+<p>This module acts as the main controller of the I3C bus, handling the serialization of data and generation of the Start (S), Stop (P) and repeated Start (Sr) conditions. It also handles switching between Open Drain mode and Push Pull mode, also respecting the different timing requirements (See 6.2 Timing Specification I3C Basic Spec).</p>
+<h4 id="id1">Operating Principle<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Function:</strong></p>
+<ul>
+<li><p>Consumes <code class="docutils literal notranslate"><span class="pre">fmt</span></code> signals (byte data + control flags like Start/Stop/Nak) from the <a class="reference internal" href="#flow-active-decode-fsm"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code></span></a> module.</p></li>
+<li><p>Drives physical <strong>SDA</strong> and <strong>SCL</strong> lines.</p></li>
+<li><p><strong>Timing FSM:</strong> Generates the SCL clock based on I3C SDR timing requirements (in Open Drain and Push Pull mode).</p></li>
+<li><p><strong>Serialization:</strong> Serializes the <code class="docutils literal notranslate"><span class="pre">fmt_byte</span></code> onto the SDA line for write transactions.</p></li>
+<li><p><strong>Parallelization:</strong> Parallelizes received data into a <code class="docutils literal notranslate"><span class="pre">fmt_byte</span></code> for the <a class="reference internal" href="#flow-active-decode-fsm"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code></span></a> module for read transactions.</p></li>
+<li><p><strong>Protocol Framing:</strong> Reacts to <code class="docutils literal notranslate"><span class="pre">fmt_flag_start</span></code> and <code class="docutils literal notranslate"><span class="pre">fmt_flag_stop</span></code> to generate Start/Stop conditions, as well as <code class="docutils literal notranslate"><span class="pre">fmt_flag_restart</span></code> to generate a repeated Start condition.</p></li>
+</ul>
+</li>
+</ul>
+<h4 id="id2">Signal List<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<table class="docutils data align-default" id="i3c-controller-fsm-io" style="width: 100%">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code> IO</span><a class="headerlink" href="#i3c-controller-fsm-io" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 5.0%" />
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Signal</strong></p></td>
+<td><p><strong>Direction</strong></p></td>
+<td><p><strong>Width</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rst_ni</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Active low reset</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_scl_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SCL input</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_sda_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SDA input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_scl_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SCL output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_sda_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SDA output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_bus_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bus_state_t</span></code></p></td>
+<td><p>Bus state</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phy_sel_od_pp_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>PHY select Open-Drain/Push-Pull output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_i2c_transfer_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Is I2C transfer flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thigh_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>High period of the SCL in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tlow_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Low period of the SCL in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thigh_od_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>High period of the SCL in clock units (Open-Drain Mode)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">thigh_od_init_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>High period of the SCL in clock units (Open-Drain Mode during init procedure)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tlow_od_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Low period of the SCL in clock units (Open-Drain Mode)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_r_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Rise time of both SDA and SCL in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_f_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Fall time of both SDA and SCL in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">thd_sta_od_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Hold time for START in clock units (Open-Drain Mode)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thd_rsta_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Hold time for repeated START in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_rsta_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Setup time for repeated START in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_sto_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Setup time for STOP in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_ds_od_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Setup time for SDA during START in clock units (Open-Drain Mode)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_dat_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Data setup time in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">thd_dat_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Data hold time in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_buf_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Bus free time between STOP and START in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_bus_idle_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Bus IDLE condition time in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_bus_available_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Bus AVAILABLE condition time in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rvalid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rready_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rdone_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format FIFO read done</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>8</p></td>
+<td><p>Format TX byte input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_bit_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format TX bit input (T bit)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_start_before_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: start before</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_stop_after_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: stop after</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_restart_after_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: restart after</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_receive_nack_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format receive NACK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_sda_arbitration_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>SDA line arbitration is detected</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>8</p></td>
+<td><p>Format RX byte output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_bit_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format RX bit output (T bit)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_bytes_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read bytes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_continuous_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read continue</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_valid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: read valid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_hdr_exit_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Format flag: HDR exit</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="i2c-controller-fsm-execute-timing-fsm-for-i2c"><code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code> (Execute / Timing FSM for I2C)<a class="headerlink" href="#i2c-controller-fsm-execute-timing-fsm-for-i2c" title="Link to this heading">¶</a></h3>
+<p>This module acts as the main controller of the I2C bus, handling the serialization of data and generation of the Start (S), Stop (P) and repeated Start (Sr) conditions. It handles the I2C timing requirements (See 6.2 Timing Specification I3C Basic Spec). Note that all transactions in I2C are in Open Drain mode. This module is taken from the <a class="reference external" href="https://opentitan.org/book/hw/ip/i2c/index.html">Open Titan I2C Core</a>.</p>
+<h4 id="id3">Operating Principle<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Function:</strong></p>
+<ul>
+<li><p>Consumes <code class="docutils literal notranslate"><span class="pre">fmt</span></code> signals (byte data + control flags like Start/Stop/Nak) from the <a class="reference internal" href="#flow-active-decode-fsm"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code></span></a> module.</p></li>
+<li><p>Drives physical <strong>SDA</strong> and <strong>SCL</strong> lines.</p></li>
+<li><p><strong>Timing FSM:</strong> Generates the SCL clock based on I3C SDR timing requirements (in Open Drain and Push Pull mode).</p></li>
+<li><p><strong>Serialization:</strong> Serializes the <code class="docutils literal notranslate"><span class="pre">fmt_byte</span></code> onto the SDA line for write transactions.</p></li>
+<li><p><strong>Parallelization:</strong> Parallelizes received data into a <code class="docutils literal notranslate"><span class="pre">fmt_byte</span></code> for the <a class="reference internal" href="#flow-active-decode-fsm"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">flow_active</span></code></span></a> module for read transactions.</p></li>
+<li><p><strong>Protocol Framing:</strong> Reacts to <code class="docutils literal notranslate"><span class="pre">fmt_flag_start</span></code> and <code class="docutils literal notranslate"><span class="pre">fmt_flag_stop</span></code> to generate Start/Stop conditions. (Differently to the <a class="reference internal" href="#i3c-controller-fsm-execute-timing-fsm-for-i3c"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code></span></a> this module does not have a <code class="docutils literal notranslate"><span class="pre">fmt_repeated_start</span></code> flag. It generates a repeated start by setting the <code class="docutils literal notranslate"><span class="pre">fmt_flag_start</span></code>.)</p></li>
+</ul>
+</li>
+</ul>
+<h4 id="id4">Signal List<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<table class="docutils data align-default" id="i2c-controller-fsm-io" style="width: 100%">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code> IO</span><a class="headerlink" href="#i2c-controller-fsm-io" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 5.0%" />
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Signal</strong></p></td>
+<td><p><strong>Direction</strong></p></td>
+<td><p><strong>Width</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rst_ni</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Active low reset</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scl_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SCL input</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">scl_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SCL output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sda_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SDA input</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sda_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Interface to SDA output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">host_enable_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Enable host functionality</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rvalid_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Indicates there is valid data in format FIFO</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_depth_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FifoDepthWidth</span></code></p></td>
+<td><p>Format FIFO depth</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_fifo_rready_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Populates format FIFO</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_byte_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>8</p></td>
+<td><p>Byte in format FIFO to be sent to target</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_start_before_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Issue START before sending byte</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_stop_after_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Issue STOP after sending byte</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_bytes_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Indicates byte is a number of reads</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_read_continue_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Host to send ACK to final byte read</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fmt_flag_nak_ok_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>No ACK is expected</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unhandled_unexp_nak_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Unhandled unexpected NAK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unhandled_nak_timeout_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>NACK handler timeout event not cleared</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_fifo_wvalid_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>High if there is valid data in RX FIFO</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_fifo_wdata_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RxFifoWidth</span></code></p></td>
+<td><p>Byte in RX FIFO read from target</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">host_idle_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Indicates the host is idle</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thigh_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>High period of the SCL in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tlow_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Low period of the SCL in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_r_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Rise time of both SDA and SCL in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_f_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Fall time of both SDA and SCL in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thd_sta_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Hold time for (repeated) START in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_sta_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Setup time for repeated START in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_sto_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Setup time for STOP in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tsu_dat_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Data setup time in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thd_dat_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Data hold time in clock units</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_buf_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i3c_pkg::TimingWidth</span></code></p></td>
+<td><p>Bus free time between STOP and START in clock units</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stretch_timeout_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>31</p></td>
+<td><p>Max time target connected to this host may stretch the clock (UNUSED)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timeout_enable_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Assert if target stretches clock past max (UNUSED)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">host_nack_handler_timeout_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>31</p></td>
+<td><p>Timeout threshold for unhandled Host-Mode ‘nak’ IRQ (UNUSED)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">host_nack_handler_timeout_en_i</span></code></p></td>
+<td><p>input</p></td>
+<td><p>1</p></td>
+<td><p>Enable for host NACK handler timeout</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event_nak_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Target didn’t ACK when expected (UNUSED)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">event_unhandled_nak_timeout_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>SW didn’t handle the NACK in time (UNUSED)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event_scl_interference_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Other device forcing SCL low (UNUSED)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">event_sda_interference_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Other device forcing SDA low (UNUSED)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event_stretch_timeout_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Target stretches clock past max time (UNUSED)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">event_sda_unstable_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>SDA is not constant during SCL pulse (UNUSED)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event_cmd_complete_o</span></code></p></td>
+<td><p>output</p></td>
+<td><p>1</p></td>
+<td><p>Command is complete</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<h2 id="sram-macros">SRAM Macros<a class="headerlink" href="#sram-macros" title="Link to this heading">¶</a></h2>
+<p>The internal memory structures for the Device Address Table (DAT) and Device Characteristic Table (DCT) are implemented using the OpenTitan generic single-port RAM macro (<code class="docutils literal notranslate"><span class="pre">prim_generic_ram_1p</span></code>).</p>
+<p>This parameterized module provides standard wrapper for synchronous single-port SRAM instantiation. The source code for this macro can be referenced in the <code class="docutils literal notranslate"><span class="pre">i3c-core</span></code> repository: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/blob/main/src/libs/mem/prim_generic_ram_1p.sv"><code class="docutils literal notranslate"><span class="pre">prim_generic_ram_1p.sv</span></code></a>.</p>
+<table class="docutils data align-default" id="sram-macros-table" style="width: 75%">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Used SRAM Macros</span><a class="headerlink" href="#sram-macros-table" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Memory Block</strong></p></td>
+<td><p><strong>Width (Bits)</strong></p></td>
+<td><p><strong>Depth (Words)</strong></p></td>
+<td><p><strong>Size</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>DAT</strong> (Device Address Table)</p></td>
+<td><p>64</p></td>
+<td><p>32</p></td>
+<td><p>2 kbit</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>DCT</strong> (Device Characteristic Table)</p></td>
+<td><p>128</p></td>
+<td><p>32</p></td>
+<td><p>4 kbit</p></td>
+</tr>
+</tbody>
+</table>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      2026-05-28
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="target_overview.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: I3C target overview" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              I3C target overview
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="phy.html" class="md-footer__link md-footer__link--next" aria-label="Next: Physical Layer" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Physical Layer
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        Copyright &#169; Antmicro, 2026.
+        
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/antmicro" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/antmicro" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+    
+  </body>
+</html>
