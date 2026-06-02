@@ -193,9 +193,8 @@ module axi_adapter #(
   logic i3c_rd_err, i3c_wr_err;
 
   // Instantiate AXI subordinate to component interface module
-  i3c_axi_sub #(
+  axi_sub #(
       .AW(CsrAddrWidth),
-      .AG($clog2(CsrDataWidth/8)),
       .DW(AxiDataWidth),
       .UW(AxiUserWidth),
       .IW(AxiIdWidth)

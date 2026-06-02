@@ -22,10 +22,10 @@ VERILOG_SOURCES  += \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
-    $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_wr.sv \
-    $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_arb.sv \
-    $(SRC_DIR)/libs/axi_sub/i3c_axi_sub_rd.sv \
-    $(SRC_DIR)/libs/axi_sub/i3c_axi_sub.sv \
+    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_wr.sv \
+    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_arb.sv \
+    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub_rd.sv \
+    $(CALIPTRA_ROOT)/src/axi/rtl/axi_sub.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p_pkg.sv \
     $(SRC_DIR)/libs/mem/prim_generic_ram_1p.sv \
     $(SRC_DIR)/libs/mem/prim_ram_1p_adv.sv \
