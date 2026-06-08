@@ -309,7 +309,7 @@ def hci_queues_ahb_verify(session, test_group, test_name, coverage, simulator):
 
 @test(
     TestParams(
-        ["tests", "controller-hci", "target", "controller"],
+        ["tests", "axi-controller", "target", "controller"],
         ["flow_active"],
         ["test_flow_active_immediate_write"],
     )
@@ -319,13 +319,13 @@ def flow_active_immediate_write_verify(session, test_group, test_name, coverage,
 
 @test(
     TestParams(
-        ["tests", "controller-hci", "target", "controller"],
+        ["tests", "axi-controller", "target", "controller"],
         ["hci_queues_axi"],
         [
-            "test_clear_hci",
-            "test_empty_hci",
-            "test_read_write_ports_hci",
-            "test_threshold_hci",
+            "test_clear",
+            "test_empty",
+            "test_read_write_ports",
+            "test_threshold",
         ],
     )
 )

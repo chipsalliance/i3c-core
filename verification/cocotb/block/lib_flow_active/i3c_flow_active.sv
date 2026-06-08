@@ -417,7 +417,7 @@ module i3c_flow_active
   logic [31:0] stby_cr_device_pid_lo_reg;
 
   // Interrupts
-  logic ctl_irq;
+  i3c_irq_t ctl_irq;
   logic tti_irq;
   logic recovery_irq;
 

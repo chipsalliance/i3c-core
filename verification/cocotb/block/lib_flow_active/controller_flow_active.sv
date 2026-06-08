@@ -250,8 +250,6 @@ module controller_flow_active
       .virtual_target_dyn_addr_valid_o(virtual_target_dyn_addr_valid),
       .target_ibi_addr_o              (target_ibi_addr),
       .target_ibi_addr_valid_o        (target_ibi_addr_valid),
-      .target_hot_join_addr_o         (target_hot_join_addr),
-      .daa_unique_response_o          (daa_unique_response),
       .ibi_enable_o                   (ibi_enable),
       .ibi_retry_num_o                (ibi_retry_num),
       .set_mwl_i                      (set_mwl),

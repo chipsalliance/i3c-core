@@ -14,7 +14,7 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = test_wrapper
 
-override CFG_NAME = axi_hc
+override CFG_NAME = axi-controller
 
 override PLUSARGS := $(strip +FrontendBusInterface=AXI $(PLUSARGS))
 COMPILE_ARGS += +define+I3C_USE_AXI

@@ -148,8 +148,6 @@ module controller_active_flow_active
   logic unused_fmt_flag_restart_after, unused_i3c_fsm_idle;
   logic fmt_bit;
 
-  // TODO: Connect I2C Controller SDA/SCL to I3C Flow FSM
-
   flow_active flow_fsm (
       .clk_i,
       .rst_ni,
