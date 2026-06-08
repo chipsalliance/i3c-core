@@ -49,17 +49,24 @@ testplans:
     - name: "^(.*)$"
       source: ".*verification/cocotb/top/lib_i3c_top/test_enter_exit_hdr_mode.py"
       cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_enter_exit_hdr_mode(_[0-9]+)?.xml"
+  - name: 'Target interrupts'
+    testpoints:
+    - name: "^(.*)$"
+      source: ".*verification/cocotb/top/lib_i3c_top/test_interrupts.py"
+      cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_(interrupts|i3c_target)(_[0-9]+)?.xml"
+    - name: "^(.*)$"
+      source: ".*verification/cocotb/top/lib_i3c_top/test_interrupt_toggles.py"
+      cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_interrupt_togggles(_[0-9]+)?.xml"
+  - name: 'Target error detection'
+    testpoints:
+    - name: "^(.*)$"
+      source: ".*verification/cocotb/top/lib_i3c_top/test_te_errors.py"
+      cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_(te_errors|recovery|i3c_target)(_[0-9]+)?.xml"
   - name: 'Target'
     testpoints:
     - name: "^(.*)$"
       source: ".*verification/cocotb/top/lib_i3c_top/test_i3c_target.py"
       cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_i3c_target(_[0-9]+)?.xml"
-  - name: 'Target interrupts'
-    source: ".*verification/cocotb/top/lib_i3c_top/test_interrupts.py"
-    cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_(interrupts|i3c_target)(_[0-9]+)?.xml"
-  - name: 'Target error detection'
-    source: ".*verification/cocotb/top/lib_i3c_top/test_te_errors.py"
-    cocotb_xml: ".*verification/cocotb/top/i3c_axi/test_(te_errors|recovery|i3c_target)(_[0-9]+)?.xml"
   - name: 'Recovery mode tests'
     testpoints:
     - name: "^(.*)$"
@@ -148,20 +155,28 @@ testplans:
     testpoints:
     - name: "^(.*)$"
       tests:
-      - name: "^tti_.*_capacity_status$"
-        source: ".*verification/cocotb/block/.*/test_empty_tti.py"
-      - name: "^tti_.*_(setup_threshold|should_raise_thld_trig)$"
-        source: ".*verification/cocotb/block/.*/test_threshold_tti.py"
+      - name: "^.*_capacity_status$"
+        source: ".*verification/cocotb/block/lib_hci_queues/test_empty.py"
+        cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_empty(_[0-9]+)?.xml"
+      - name: "^.*_(setup_threshold|should_raise_thld_trig)$"
+        source: ".*verification/cocotb/block/lib_hci_queues/test_threshold.py"
+        cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_threshold(_[0-9]+)?.xml"
   - name: 'hci_queues'
     testpoints:
     - name: "^(.*)$"
       tests:
       - name: "^clear_on_nonempty_.*_queue$"
-        source: ".*verification/cocotb/block/.*/test_clear_hci.py"
+        source: ".*verification/cocotb/block/lib_hci_queues/test_clear.py"
+        cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_clear(_[0-9]+)?.xml"
       - name: "^.*_capacity_status$"
-        source: ".*verification/cocotb/block/.*/test_empty_hci.py"
+        source: ".*verification/cocotb/block/lib_hci_queues/test_empty.py"
+        cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_empty(_[0-9]+)?.xml"
       - name: "^.*_(setup_threshold|should_raise_thld_trig)$"
-        source: ".*verification/cocotb/block/.*/test_threshold_hci.py"
+        source: ".*verification/cocotb/block/lib_hci_queues/test_threshold.py"
+        cocotb_xml: ".*verification/cocotb/block/hci_queues_axi/test_threshold(_[0-9]+)?.xml"
+  - name: "flow_active"
+    source: ".*verification/cocotb/block/flow_active/test_flow_active_immediate_write.py"
+    cocotb_xml: ".*verification/cocotb/block/flow_active/test_flow_active_immediate_write(_[0-9]+)?.xml"
   - name: "^(bus_monitor)$"
     source: ".*verification/cocotb/block/ctrl_bus_monitor/test_bus_monitor.py"
     cocotb_xml: ".*verification/cocotb/block/ctrl_bus_monitor/test_bus_monitor(_[0-9]+)?.xml"
