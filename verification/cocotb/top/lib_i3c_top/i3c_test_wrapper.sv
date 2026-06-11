@@ -49,6 +49,10 @@ module i3c_test_wrapper #(
     input  logic [AxiUserWidth-1:0] aruser,
     input  logic [  AxiIdWidth-1:0] arid,
     input  logic                    arlock,
+    input  logic [             3:0] arcache,
+    input  logic [             2:0] arprot,
+    input  logic [             3:0] arqos,
+    input  logic [             3:0] arregion,
     input  logic                    arvalid,
     output logic                    arready,
 
@@ -67,6 +71,10 @@ module i3c_test_wrapper #(
     input  logic [AxiUserWidth-1:0] awuser,
     input  logic [  AxiIdWidth-1:0] awid,
     input  logic                    awlock,
+    input  logic [             3:0] awcache,
+    input  logic [             2:0] awprot,
+    input  logic [             3:0] awqos,
+    input  logic [             3:0] awregion,
     input  logic                    awvalid,
     output logic                    awready,
 
@@ -196,6 +204,10 @@ assign s_axi_if.arlen   = arlen;
 assign s_axi_if.aruser  = aruser;
 assign s_axi_if.arid    = arid;
 assign s_axi_if.arlock  = arlock;
+assign s_axi_if.arcache = arcache;
+assign s_axi_if.arprot  = arprot;
+assign s_axi_if.arqos   = arqos;
+assign s_axi_if.arregion = arregion;
 assign s_axi_if.arvalid = arvalid;
 assign arready          = s_axi_if.arready;
 
@@ -214,6 +226,10 @@ assign s_axi_if.awlen   = awlen;
 assign s_axi_if.awuser  = awuser;
 assign s_axi_if.awid    = awid;
 assign s_axi_if.awlock  = awlock;
+assign s_axi_if.awcache = awcache;
+assign s_axi_if.awprot  = awprot;
+assign s_axi_if.awqos   = awqos;
+assign s_axi_if.awregion = awregion;
 assign s_axi_if.awvalid = awvalid;
 assign awready          = s_axi_if.awready;
 

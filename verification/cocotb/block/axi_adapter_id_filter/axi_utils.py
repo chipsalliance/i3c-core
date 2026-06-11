@@ -56,6 +56,10 @@ async def initialize_dut(dut, disable_id_filtering=False, priv_ids=None, timeout
     dut.aruser.value = 0
     dut.arid.value = 0
     dut.arlock.value = 0
+    dut.arcache.value = 0
+    dut.arprot.value = 0
+    dut.arqos.value = 0
+    dut.arregion.value = 0
     dut.arvalid.value = 0
     dut.rready.value = 0
     dut.awaddr.value = 0
@@ -65,6 +69,10 @@ async def initialize_dut(dut, disable_id_filtering=False, priv_ids=None, timeout
     dut.awuser.value = 0
     dut.awid.value = 0
     dut.awlock.value = 0
+    dut.awcache.value = 0
+    dut.awprot.value = 0
+    dut.awqos.value = 0
+    dut.awregion.value = 0
     dut.awvalid.value = 0
     dut.wdata.value = 0
     dut.wstrb.value = 0
