@@ -53,49 +53,10 @@ module i3c_wrapper #(
     input  logic                      hready_i,
 
 `elsif I3C_USE_AXI
-    // AXI4 Interface
-    // AXI Read Channels
-    input  logic [AxiAddrWidth-1:0] araddr_i,
-    input  logic [             1:0] arburst_i,
-    input  logic [             2:0] arsize_i,
-    input  logic [             7:0] arlen_i,
-    input  logic [AxiUserWidth-1:0] aruser_i,
-    input  logic [  AxiIdWidth-1:0] arid_i,
-    input  logic                    arlock_i,
-    input  logic                    arvalid_i,
-    output logic                    arready_o,
-
-    output logic [AxiDataWidth-1:0] rdata_o,
-    output logic [             1:0] rresp_o,
-    output logic [  AxiIdWidth-1:0] rid_o,
-    output logic [AxiUserWidth-1:0] ruser_o,
-    output logic                    rlast_o,
-    output logic                    rvalid_o,
-    input  logic                    rready_i,
-
-    // AXI Write Channels
-    input  logic [AxiAddrWidth-1:0] awaddr_i,
-    input  logic [             1:0] awburst_i,
-    input  logic [             2:0] awsize_i,
-    input  logic [             7:0] awlen_i,
-    input  logic [AxiUserWidth-1:0] awuser_i,
-    input  logic [  AxiIdWidth-1:0] awid_i,
-    input  logic                    awlock_i,
-    input  logic                    awvalid_i,
-    output logic                    awready_o,
-
-    input  logic [  AxiDataWidth-1:0] wdata_i,
-    input  logic [AxiDataWidth/8-1:0] wstrb_i,
-    input  logic [  AxiUserWidth-1:0] wuser_i,
-    input  logic                      wlast_i,
-    input  logic                      wvalid_i,
-    output logic                      wready_o,
-
-    output logic [           1:0]   bresp_o,
-    output logic [AxiIdWidth-1:0]   bid_o,
-    output logic [AxiUserWidth-1:0] buser_o,
-    output logic                    bvalid_o,
-    input  logic                    bready_i,
+    // AXI4 subordinate interface
+    // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
+    // UW=AxiUserWidth and IW=AxiIdWidth
+    axi_if s_axi_if,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
@@ -168,49 +129,8 @@ module i3c_wrapper #(
       .hsel_i,
       .hready_i,
 `elsif I3C_USE_AXI
-      // AXI Read Channels
-      .araddr_i(araddr_i),
-      .arburst_i(arburst_i),
-      .arsize_i(arsize_i),
-      .arlen_i(arlen_i),
-      .aruser_i(aruser_i),
-      .arid_i(arid_i),
-      .arlock_i(arlock_i),
-      .arvalid_i(arvalid_i),
-      .arready_o(arready_o),
-
-      .rdata_o(rdata_o),
-      .rresp_o(rresp_o),
-      .rid_o(rid_o),
-      .rlast_o(rlast_o),
-      .rvalid_o(rvalid_o),
-      .rready_i(rready_i),
-      .ruser_o(ruser_o),
-
-      // AXI Write Channels
-      .awaddr_i(awaddr_i),
-      .awburst_i(awburst_i),
-      .awsize_i(awsize_i),
-      .awlen_i(awlen_i),
-      .awuser_i(awuser_i),
-      .awid_i(awid_i),
-      .awlock_i(awlock_i),
-      .awvalid_i(awvalid_i),
-      .awready_o(awready_o),
-
-      .wdata_i (wdata_i),
-      .wstrb_i (wstrb_i),
-      .wuser_i (wuser_i),
-      .wlast_i (wlast_i),
-      .wvalid_i(wvalid_i),
-      .wready_o(wready_o),
-
-      .bresp_o(bresp_o),
-      .bid_o(bid_o),
-      .bvalid_o(bvalid_o),
-      .bready_i(bready_i),
-      .buser_o(buser_o),
-
+      // AXI4 subordinate interface
+      .s_axi_if(s_axi_if),
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),

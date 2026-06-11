@@ -45,46 +45,16 @@ logic rst_n;
     logic                      hsel;
     logic                      hready;
 `elsif I3C_USE_AXI
-    // AXI4 Interface
-    // AXI Read Channels
-    logic [AxiAddrWidth-1:0] araddr;
-    logic [             1:0] arburst;
-    logic [             2:0] arsize;
-    logic [             7:0] arlen;
-    logic [AxiUserWidth-1:0] aruser;
-    logic [  AxiIdWidth-1:0] arid;
-    logic                    arlock;
-    logic                    arvalid;
-    logic                    arready;
-
-    logic [AxiDataWidth-1:0] rdata;
-    logic [             1:0] rresp;
-    logic [  AxiIdWidth-1:0] rid;
-    logic                    rlast;
-    logic                    rvalid;
-    logic                    rready;
-
-    // AXI Write Channels
-    logic [AxiAddrWidth-1:0] awaddr;
-    logic [             1:0] awburst;
-    logic [             2:0] awsize;
-    logic [             7:0] awlen;
-    logic [AxiUserWidth-1:0] awuser;
-    logic [  AxiIdWidth-1:0] awid;
-    logic                    awlock;
-    logic                    awvalid;
-    logic                    awready;
-
-    logic [AxiDataWidth-1:0] wdata;
-    logic [AxiDataWidth/8-1:0] wstrb;
-    logic                    wlast;
-    logic                    wvalid;
-    logic                    wready;
-
-    logic [           1:0] bresp;
-    logic [AxiIdWidth-1:0] bid;
-    logic                  bvalid;
-    logic                  bready;
+    // AXI4 subordinate interface
+    axi_if #(
+        .AW(AxiAddrWidth),
+        .DW(AxiDataWidth),
+        .UW(AxiUserWidth),
+        .IW(AxiIdWidth)
+    ) s_axi_if (
+        .clk  (clk),
+        .rst_n(rst_n)
+    );
 
 `ifdef AXI_ID_FILTERING
     logic disable_id_filtering_i;
@@ -134,43 +104,7 @@ i3c_wrapper #(
     .hsel_i(hsel),
     .hready_i(hready),
 `elsif I3C_USE_AXI
-    .araddr_i(araddr),
-    .arburst_i(arburst),
-    .arsize_i(arsize),
-    .arlen_i(arlen),
-    .aruser_i(aruser),
-    .arid_i(arid),
-    .arlock_i(arlock),
-    .arvalid_i(arvalid),
-    .arready_o(arready),
-
-    .rdata_o(rdata),
-    .rresp_o(rresp),
-    .rid_o(rid),
-    .rlast_o(rlast),
-    .rvalid_o(rvalid),
-    .rready_i(rready),
-
-    .awaddr_i(awaddr),
-    .awburst_i(awburst),
-    .awsize_i(awsize),
-    .awlen_i(awlen),
-    .awuser_i(awuser),
-    .awid_i(awid),
-    .awlock_i(awlock),
-    .awvalid_i(awvalid),
-    .awready_o(awready),
-
-    .wdata_i(wdata),
-    .wstrb_i(wstrb),
-    .wlast_i(wlast),
-    .wvalid_i(wvalid),
-    .wready_o(wready),
-
-    .bresp_o(bresp),
-    .bid_o(bid),
-    .bvalid_o(bvalid),
-    .bready_i(bready),
+    .s_axi_if(s_axi_if),
 
 `ifdef AXI_ID_FILTERING
     .disable_id_filtering_i(disable_id_filtering_i),

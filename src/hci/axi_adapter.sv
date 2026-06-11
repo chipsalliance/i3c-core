@@ -16,48 +16,10 @@ module axi_adapter #(
     input logic clk_i,
     input logic rst_ni,
 
-    // AXI Read Channels
-    input  logic [AxiAddrWidth-1:0] araddr_i,
-    input  logic [             1:0] arburst_i,
-    input  logic [             2:0] arsize_i,
-    input  logic [             7:0] arlen_i,
-    input  logic [AxiUserWidth-1:0] aruser_i,
-    input  logic [  AxiIdWidth-1:0] arid_i,
-    input  logic                    arlock_i,
-    input  logic                    arvalid_i,
-    output logic                    arready_o,
-
-    output logic [AxiDataWidth-1:0] rdata_o,
-    output logic [             1:0] rresp_o,
-    output logic [  AxiIdWidth-1:0] rid_o,
-    output logic [AxiUserWidth-1:0] ruser_o,
-    output logic                    rlast_o,
-    output logic                    rvalid_o,
-    input  logic                    rready_i,
-
-    // AXI Write Channels
-    input  logic [AxiAddrWidth-1:0] awaddr_i,
-    input  logic [             1:0] awburst_i,
-    input  logic [             2:0] awsize_i,
-    input  logic [             7:0] awlen_i,
-    input  logic [AxiUserWidth-1:0] awuser_i,
-    input  logic [  AxiIdWidth-1:0] awid_i,
-    input  logic                    awlock_i,
-    input  logic                    awvalid_i,
-    output logic                    awready_o,
-
-    input  logic [  AxiDataWidth-1:0] wdata_i,
-    input  logic [AxiDataWidth/8-1:0] wstrb_i,
-    input  logic [  AxiUserWidth-1:0] wuser_i,
-    input  logic                      wlast_i,
-    input  logic                      wvalid_i,
-    output logic                      wready_o,
-
-    output logic [             1:0] bresp_o,
-    output logic [  AxiIdWidth-1:0] bid_o,
-    output logic [AxiUserWidth-1:0] buser_o,
-    output logic                    bvalid_o,
-    input  logic                    bready_i,
+    // AXI4 subordinate interface
+    // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
+    // UW=AxiUserWidth and IW=AxiIdWidth
+    axi_if s_axi_if,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
@@ -87,16 +49,6 @@ module axi_adapter #(
   logic rlegal;
   logic wlegal;
 
-  axi_if #(
-      .AW(CsrAddrWidth),
-      .DW(AxiDataWidth),
-      .UW(AxiDataWidth),
-      .IW(AxiIdWidth)
-  ) axi (
-      .clk  (clk_i),
-      .rst_n(rst_ni)
-  );
-
 `ifdef AXI_ID_FILTERING
   logic [NumPrivIds-1:0] rsel;
   logic [NumPrivIds-1:0] wsel;
@@ -106,11 +58,11 @@ module axi_adapter #(
       rlegal <= '0;
       wlegal <= '0;
     end else begin
-      if (arready_o && arvalid_i) begin
+      if (s_axi_if.arready && s_axi_if.arvalid) begin
         rlegal <= disable_id_filtering_i | (|rsel);
       end
 
-      if (awready_o && awvalid_i) begin
+      if (s_axi_if.awready && s_axi_if.awvalid) begin
         wlegal <= disable_id_filtering_i | (|wsel);
       end
     end
@@ -119,8 +71,8 @@ module axi_adapter #(
   genvar j;
   for (j = 0; j < NumPrivIds; j = j + 1) begin : g_match_id
     always_comb begin
-      rsel[j] = aruser_i == priv_ids_i[j];
-      wsel[j] = awuser_i == priv_ids_i[j];
+      rsel[j] = s_axi_if.aruser == priv_ids_i[j];
+      wsel[j] = s_axi_if.awuser == priv_ids_i[j];
     end
   end
 
@@ -130,53 +82,6 @@ module axi_adapter #(
     wlegal = 1'b1;
   end
 `endif
-
-  // AXI Read Channels
-  always_comb begin : axi_r
-    axi.arvalid = arvalid_i;
-    arready_o = axi.arready;
-    axi.arid = arid_i;
-    axi.araddr = araddr_i;
-    axi.arsize = arsize_i;
-    axi.arlen = arlen_i;
-    axi.arburst = arburst_i;
-    axi.aruser = aruser_i;
-    axi.arlock = arlock_i;
-
-    rvalid_o = axi.rvalid;
-    axi.rready = rready_i;
-    rid_o = axi.rid;
-    ruser_o = axi.ruser;
-    rdata_o = axi.rdata;
-    rresp_o = axi.rresp;
-    rlast_o = axi.rlast;
-  end
-
-  // AXI Write Channels
-  always_comb begin : axi_w
-    axi.awvalid = awvalid_i;
-    awready_o   = axi.awready;
-    axi.awid    = awid_i;
-    axi.awaddr  = awaddr_i;
-    axi.awsize  = awsize_i;
-    axi.awlen   = awlen_i;
-    axi.awburst = awburst_i;
-    axi.awuser  = awuser_i;
-    axi.awlock  = awlock_i;
-
-    axi.wvalid  = wvalid_i;
-    wready_o    = axi.wready;
-    axi.wdata   = wdata_i;
-    axi.wstrb   = wstrb_i;
-    axi.wuser   = wuser_i;
-    axi.wlast   = wlast_i;
-
-    bvalid_o    = axi.bvalid;
-    axi.bready  = bready_i;
-    bresp_o     = axi.bresp;
-    bid_o       = axi.bid;
-    buser_o     = axi.buser;
-  end
 
   logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
   logic cpuif_req_stall;
@@ -189,12 +94,12 @@ module axi_adapter #(
   logic [AxiAddrWidth-1:0] i3c_req_addr;
   logic [AxiDataWidth-1:0] i3c_req_rdata;
   logic [AxiIdWidth-1:0] i3c_req_id;
-  logic [AxiDataWidth-1:0] i3c_req_user;
+  logic [AxiUserWidth-1:0] i3c_req_user;
   logic i3c_rd_err, i3c_wr_err;
 
   // Instantiate AXI subordinate to component interface module
   axi_sub #(
-      .AW(CsrAddrWidth),
+      .AW(AxiAddrWidth),
       .DW(AxiDataWidth),
       .UW(AxiUserWidth),
       .IW(AxiIdWidth)
@@ -203,8 +108,8 @@ module axi_adapter #(
       .rst_n(rst_ni),
 
       // AXI interface
-      .s_axi_r_if(axi.r_sub),
-      .s_axi_w_if(axi.w_sub),
+      .s_axi_r_if(s_axi_if.r_sub),
+      .s_axi_w_if(s_axi_if.w_sub),
 
       // Component interface
       .dv(i3c_req_dv),
@@ -222,8 +127,7 @@ module axi_adapter #(
       .wr_err(i3c_wr_err)
   );
 
-  genvar i;
-  for (i = 0; i < AxiDataWidth / 8; i = i + 1) begin : g_replicate_strb_bits
+  for (genvar i = 0; i < AxiDataWidth / 8; i = i + 1) begin : g_replicate_strb_bits
     always_comb begin
       i3c_req_wbiten[i*8+:8] = i3c_req_wstrb[i] ? 8'hFF : 8'h00;
     end
@@ -253,21 +157,20 @@ module axi_adapter #(
     s_cpuif_req_is_wr = i3c_req_write;
     s_cpuif_addr = i3c_req_addr[CsrAddrWidth-1:0];
   end
-  generate
-    if (AxiDataWidth == CsrDataWidth) begin
-      assign s_cpuif_wr_biten = i3c_req_wbiten;
-      assign s_cpuif_wr_data = i3c_req_wdata;
-      assign i3c_req_rdata = s_cpuif_rd_data;
-    end else if (AxiDataWidth >= CsrDataWidth) begin
-      assign s_cpuif_wr_biten = i3c_req_wbiten >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
-      assign s_cpuif_wr_data = i3c_req_wdata >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
-      assign i3c_req_rdata = s_cpuif_rd_data << {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+
+  if (AxiDataWidth == CsrDataWidth) begin : g_data_width_equal
+    assign s_cpuif_wr_biten = i3c_req_wbiten;
+    assign s_cpuif_wr_data = i3c_req_wdata;
+    assign i3c_req_rdata = s_cpuif_rd_data;
+  end else if (AxiDataWidth >= CsrDataWidth) begin : g_axi_data_width_geq
+    assign s_cpuif_wr_biten = i3c_req_wbiten >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+    assign s_cpuif_wr_data = i3c_req_wdata >> {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
+    assign i3c_req_rdata = s_cpuif_rd_data << {i3c_req_addr[UpperAddrBits-1:LowerAddrBits],{ShiftWidth{1'b0}}};
 `ifndef SYNTHESIS
-    end else begin
-      $error("No implementation for CSR width > interface width");
+  end else begin
+    $error("No implementation for CSR width > interface width");
 `endif
-    end
-  endgenerate
+  end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
@@ -278,4 +181,5 @@ module axi_adapter #(
       rd_hld_ext <= cpuif_no_ack ? rd_req_legal : 1'b0;
     end
   end
+
 endmodule
