@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+                    <div class="nav-urls">
+                        <a href="./index-top.html" class="button tooltip">
+                            <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
+                        </a>
+                    </div>
+                    
+
+                    <span class="container-title">
+                        Controller CCC generation
+                    </span>
+
+                    
+
+                    
+                    <div class="nav-urls">
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/controller_ccc.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
+                        </a>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        11/06/2026 09:05
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/f8ea634f">f8ea634f</a>
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    
+<h3> Test Results
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                                               </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Broadcast mode.
+The test first disables events from the target with the DISEC CCC and then enables them again with ENEC.
+
+Stimulus:
+- randomly create a regular or immediate 64b CMD descriptor. With:
+    - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+    - CMD: 0x1 / 0x0 // DISEC / ENEC BCAST
+    - CP = 0x1 // CMD field is valid
+    - DEV_ADDRESS: random allowed I3C address 
+    - DTT/DATA_LENGTH = 1 // One byte of Payload
+    - RNW = 0x0 // Write transfer
+    - WROC = random // randomly generate response descriptor
+    - TOC = 0x1 // want to generate a stop signal after first transfer 
+    - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+- send CMD descriptor
+- generate a second CMD descriptor with CMD = 0x0 (ENEC).
+
+Check:
+  - Initially the I3C_EC.TTI.CONTROL.IBI_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should be set to 1 and I3C_EC.TTI.CONTROL.CRR_EN should be set to 0.
+  - After sending the first CCC (DISEC) all CSRs should be set to 0.
+  - After sending the second CCC (ENEC) all CSRs should be set to 1.
+'>controller_ccc_enec_disec_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_enec_disec_bcast</a>                  </td><td style="text-align: center;">      3.453      </td><td style="text-align: center;">   14846.832    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Direct mode.
+The test first disables events from the target with the DISEC CCC and then enables them again with ENEC.
+
+Stimulus:
+- randomly create a regular or immediate 64b CMD descriptor. With:
+    - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+    - CMD: 0x81 / 0x80 // DISEC / ENEC DIRECT
+    - CP = 0x1 // CMD field is valid
+    - DEV_ADDRESS = Target Address
+    - DTT/DATA_LENGTH = 1 // One byte of Payload
+    - RNW = 0x0 // Write transfer
+    - WROC = random // randomly generate response descriptor
+    - TOC = 0x1 // want to generate a stop signal after first transfer 
+    - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+- send CMD descriptor
+- generate a second CMD descriptor with CMD = 0x80 (ENEC).
+
+Check:
+  - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
+  - After sending the first CCC (DISEC) the CSRs should be set to 0.
+  - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
+'>controller_ccc_enec_disec_direct_one_target<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_one_target</a>      </td><td style="text-align: center;">      3.758      </td><td style="text-align: center;">   17306.289    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.1 Enable/Disable Target Events Command (ENEC/DISEC) from I3C Basic Spec. Using Direct mode.
+The test first disables events from the targets with the DISEC CCC and then enables them again with ENEC.
+The goal is to see if the Direct Frame is correctly generated for multiple cmd descriptors where the CCC stays the same. (Figure 31 I3C Basic Spec)
+
+Stimulus:
+- randomly create num_targets regular or immediate 64b CMD descriptor. With:
+    - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+    - CMD: 0x81 / 0x80 // DISEC / ENEC DIRECT
+    - CP = 0x1 // CMD field is valid
+    - DEV_ADDRESS = Target Address (For now the target address is kept constant since we only have one target to test on the I3C Bus)
+    - DTT/DATA_LENGTH = 1 // One byte of Payload
+    - RNW = 0x0 // Write transfer
+    - WROC = random // randomly generate response descriptor
+    - TOC = 0x1 // want to generate a stop signal after first transfer 
+    - DATA_BYTE1 = 0x0b // Enable/Disable all Target Events (See Table 18 & Table 19 I3C Basic Spec)
+- send CMD descriptor
+- generate a second CMD descriptor with CMD = 0x80 (ENEC).
+
+Check:
+  - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
+  - After sending the first CCC (DISEC) the CSRs should be set to 0.
+  - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
+'>controller_ccc_enec_disec_direct_multiple_targets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_multiple_targets</a></td><td style="text-align: center;">      3.794      </td><td style="text-align: center;">   17288.271    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.3 Reset Dynamic Address Assignment (RSTDAA) from I3C Basic Spec. Using Broadcast mode.
+The test resets the dynamic addresses of the target and virtual target device.
+
+Stimulus:
+- assign DYNAMIC_ADDR and VIRT_DYNAMIC_ADDR during boot by writing to the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR and I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR CSRs
+- randomly create a regular or immediate 64b CMD descriptor. With:
+    - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+    - CMD: 0x06 // RSTDAA BCAST
+    - CP = 0x1 // CMD field is valid
+    - DTT/DATA_LENGTH = 0 // No Payload
+- send CMD descriptor
+
+Check:
+- Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
+- Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
+'>controller_ccc_rstdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_rstdaa</a>                            </td><td style="text-align: center;">      2.002      </td><td style="text-align: center;">    7993.986    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.4.2 Bus Initialization Sequence with Dynamic Address Assignment from I3C Basic Spec. Using ENTDAA CCC in Broadcast mode.
+The test sets the dynamic address of the i3c target as well as the dynamic address of the virtual target to predefined values in the DAT.
+
+Stimulus:
+- Create a valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+- Write DAT entries including the (VIRTUAL) DYNAMIC_ADDR
+- Generate ENTDAA CCC to enter the dynamic address assignment mode and assign the DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR respectively (simulates ENTDAA for multiple targets).
+- create a address assignment 64b CMD descriptor. With:
+    - CMD_ATTR = 0x2 // Address Assignment Command
+    - CMD: 0x07 // ENTDAA BCAST
+    - DEV_INDEX: DAT Table Entry Containing the STATIC_ADDR and DYNAMIC_ADDR
+- send CMD descriptor
+
+Check:
+  - After sending the ENTDAA CCC the response descriptor returns SUCCESS
+  - After sending the ENTDAA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic addresses specified in the DAT.
+  - Verify that the DCT entries (starting at the index specified in the TABLE_INDEX field of the DCT_SECTION_OFFSET register) contain the PID, BCR, DCR and dynamic address of the (Virtual) target.'>controller_ccc_entdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_entdaa</a>                            </td><td style="text-align: center;">      9.408      </td><td style="text-align: center;">   53057.004    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.23 Set All Addresses to Static Address (SETAASA) from I3C Basic Spec. Using Broadcast mode.
+The test sets the dynamic address of the i3c target to the static target address.
+
+Stimulus:
+- randomly create a regular or immediate 64b CMD descriptor. With:
+    - CMD_ATTR = 0x4 or 0x5// RegularDataTransfer or ImmediateDataTransfer in Direct Format
+    - CMD: 0x29 // SETAASA BCAST
+    - CP = 0x1 // CMD field is valid
+    - DEV_ADDRESS: random allowed I3C address 
+    - DTT/DATA_LENGTH = 0 // No Payload
+    - RNW = 0x0 // Write transfer
+    - WROC = random // randomly generate response descriptor
+    - TOC = 0x1 // want to generate a stop signal after first transfer 
+    - DATA_BYTE1 = 0x0 // is ignored
+- send CMD descriptor
+
+Check:
+  - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
+  - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+  - After sending the SETAASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the target's static address.
+'>controller_ccc_setaasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_setaasa</a>                           </td><td style="text-align: center;">      2.013      </td><td style="text-align: center;">    7993.986    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.10 Set Dynamic Address from Static Address (SETDASA) from I3C Basic Spec. Using Direct mode.
+The test sets the dynamic address of the i3c target using the I2C static target address.
+
+Stimulus:
+- Randomly generate a STATIC_ADDR and VIRTUAL_STATIC_ADDR and write them to the i3c target CSR.
+- Create a valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+- Write DAT entries including the (VIRTUAL) STATIC_ADDR and (VIRTUAL) DYNAMIC_ADDR
+- Generate 2 SETDASA CCCs to assign the DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR using STATIC_ADDR and VIRTUAL_STATIC_ADDR respectively (simulates SETDASA for multiple targets).
+- create a address assignment 64b CMD descriptor. With:
+    - CMD_ATTR = 0x2 // Address Assignment Command
+    - CMD: 0x87 // SETDASA Direct
+    - DEV_INDEX: DAT Table Entry Containing the STATIC_ADDR and DYNAMIC_ADDR
+- send CMD descriptor
+
+Check:
+  - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
+  - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+  - After sending the SETDASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic address that was sent.
+'>controller_ccc_setdasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_setdasa_direct</a>                    </td><td style="text-align: center;">      3.838      </td><td style="text-align: center;">   17345.328    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.11 Set New Dynamic Address (SETNEWDA) from I3C Basic Spec. Using Direct mode.
+The test sets a new dynamic address, using the old target dynamic address of the I3C target.
+
+Stimulus:
+- Initialize the target and virtual target with valid dynamic addressses.
+- Create new valid DYNAMIC_ADDR and VIRTUAL_DYNAMIC_ADDR to be assigned to the target by the controller.
+- Generate 2 SETNEWDA CCCs using the old DYNAMIC_ADDR and old VIRTUAL_DYNAMIC_ADDR and the new DYNAMIC_ADDR and VIRT_DYNAMIC_ADDR as payload.
+
+Check:
+  - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
+  - After sending the SETNEWDA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the new dynamic address that was sent.
+'>controller_ccc_setnewda<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_setnewda</a>                          </td><td style="text-align: center;">      2.692      </td><td style="text-align: center;">   12174.162    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.12 Get Provisioned ID (GETPID) from I3C Basic Spec. Using Direct mode.
+The test reads the targets PID.
+
+Stimulus:
+- Issue a GETPID CCC to the targets dynamic address.
+
+Check:
+  - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO CSRs to get the full PID
+  - Read the RX_PORT and verify that the data received by the controller matches the PID from the targets PID CSRs.
+'>controller_ccc_getpid<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_getpid</a>                            </td><td style="text-align: center;">      2.992      </td><td style="text-align: center;">   14369.355    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.13 Get Bus Characteristics Register (GETBCR) from I3C Basic Spec. Using Direct mode.
+The test reads the targets BCR.
+
+Stimulus:
+- Issue a GETBCR CCC to the targets dynamic address.
+
+Check:
+  - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_FIXED CSRs to get the full BCR
+  - Read the RX_PORT and verify that the data received by the controller matches the BCR from the targets BCR CSRs.
+'>controller_ccc_getbcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_getbcr</a>                            </td><td style="text-align: center;">      2.313      </td><td style="text-align: center;">   10030.020    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I3C Target (RTL)
+
+Intent:
+Verify 5.1.9.3.14 Get Device Characteristics Register (GETDCR) from I3C Basic Spec. Using Direct mode.
+The test reads the targets DCR.
+
+Stimulus:
+- Issue a GETDCR CCC to the targets dynamic address.
+
+Check:
+  - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR CSR to get the DCR
+  - Read the RX_PORT and verify that the data received by the controller matches the DCR from the targets DCR CSR.
+'>controller_ccc_getdcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py>controller_ccc_getdcr</a>                            </td><td style="text-align: center;">      2.290      </td><td style="text-align: center;">   10021.011    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                                        </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   11    </td><td style="text-align: center;">  11   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+<h3> Testplan Progress
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">        11         </td><td style="text-align: center;">      11       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      11      </td><td style="text-align: center;">     11     </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
+</html>

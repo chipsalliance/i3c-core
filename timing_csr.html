@@ -224,7 +224,7 @@
   
     <li class="md-nav__item">
       <a href="target_overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C target overview</span>
+        <span class="md-ellipsis">I3C Target overview</span>
       </a>
     </li>
   
@@ -457,6 +457,26 @@
     <span class="md-ellipsis">Example Timing CSRs</span>
   </a>
   
+    <nav class="md-nav" aria-label="Example Timing CSRs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fpga-configuration" class="md-nav__link">
+    <span class="md-ellipsis">FPGA Configuration</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-configuration" class="md-nav__link">
+    <span class="md-ellipsis">ASIC Configuration</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -499,6 +519,234 @@ python<span class="w"> </span>tools/timing/timings.py<span class="w"> </span>--f
 </code></pre></div>
 </div>
 <h2 id="example-timing-csrs">Example Timing CSRs<a class="headerlink" href="#example-timing-csrs" title="Link to this heading">¶</a></h2>
+<h3 id="fpga-configuration">FPGA Configuration<a class="headerlink" href="#fpga-configuration" title="Link to this heading">¶</a></h3>
+<p><strong>System Clock:</strong> 200.00 MHz | <strong>Target SCL:</strong> 12.50 MHz</p>
+<table class="docutils data align-default" id="timing-csr-fpga">
+<caption><span class="caption-number">Table 12 </span><span class="caption-text">FPGA Timing Registers</span><a class="headerlink" href="#timing-csr-fpga" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Register</strong></p></th>
+<th class="head"><p><strong>Cycles</strong></p></th>
+<th class="head"><p><strong>Time (ns)</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>T_R</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_F</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_DAT</p></td>
+<td><p>1</p></td>
+<td><p>5.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_DAT_I2C</p></td>
+<td><p>20</p></td>
+<td><p>100.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_DAT</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HIGH</p></td>
+<td><p>8</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HIGH_OD</p></td>
+<td><p>5</p></td>
+<td><p>25.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HIGH_INIT_OD</p></td>
+<td><p>40</p></td>
+<td><p>200.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HIGH_I2C</p></td>
+<td><p>120</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_LOW</p></td>
+<td><p>8</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_LOW_OD</p></td>
+<td><p>40</p></td>
+<td><p>200.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_LOW_I2C</p></td>
+<td><p>260</p></td>
+<td><p>1300.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_STA</p></td>
+<td><p>8</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HD_STA_I2C</p></td>
+<td><p>120</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_RSTA</p></td>
+<td><p>4</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_STA</p></td>
+<td><p>4</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_STA_I2C</p></td>
+<td><p>120</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_STO</p></td>
+<td><p>4</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_STO_I2C</p></td>
+<td><p>120</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_DS_OD</p></td>
+<td><p>4</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_FREE</p></td>
+<td><p>8</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_FREE_I2C</p></td>
+<td><p>260</p></td>
+<td><p>1300.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_AVAL</p></td>
+<td><p>200</p></td>
+<td><p>1000.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_IDLE</p></td>
+<td><p>40000</p></td>
+<td><p>200000.00</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="asic-configuration">ASIC Configuration<a class="headerlink" href="#asic-configuration" title="Link to this heading">¶</a></h3>
+<p><strong>System Clock:</strong> 500.00 MHz | <strong>Target SCL:</strong> 12.50 MHz</p>
+<table class="docutils data align-default" id="timing-csr-asic">
+<caption><span class="caption-number">Table 13 </span><span class="caption-text">ASIC Timing Registers</span><a class="headerlink" href="#timing-csr-asic" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Register</strong></p></th>
+<th class="head"><p><strong>Cycles</strong></p></th>
+<th class="head"><p><strong>Time (ns)</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>T_R</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_F</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_DAT</p></td>
+<td><p>2</p></td>
+<td><p>4.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_DAT_I2C</p></td>
+<td><p>50</p></td>
+<td><p>100.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_DAT</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HIGH</p></td>
+<td><p>20</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HIGH_OD</p></td>
+<td><p>12</p></td>
+<td><p>24.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HIGH_INIT_OD</p></td>
+<td><p>100</p></td>
+<td><p>200.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HIGH_I2C</p></td>
+<td><p>300</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_LOW</p></td>
+<td><p>20</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_LOW_OD</p></td>
+<td><p>100</p></td>
+<td><p>200.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_LOW_I2C</p></td>
+<td><p>650</p></td>
+<td><p>1300.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_STA</p></td>
+<td><p>20</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_HD_STA_I2C</p></td>
+<td><p>300</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_HD_RSTA</p></td>
+<td><p>10</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_STA</p></td>
+<td><p>10</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_STA_I2C</p></td>
+<td><p>300</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_SU_STO</p></td>
+<td><p>10</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_SU_STO_I2C</p></td>
+<td><p>300</p></td>
+<td><p>600.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_DS_OD</p></td>
+<td><p>10</p></td>
+<td><p>20.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_FREE</p></td>
+<td><p>20</p></td>
+<td><p>40.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_FREE_I2C</p></td>
+<td><p>650</p></td>
+<td><p>1300.00</p></td>
+</tr>
+<tr class="row-even"><td><p>T_AVAL</p></td>
+<td><p>500</p></td>
+<td><p>1000.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>T_IDLE</p></td>
+<td><p>100000</p></td>
+<td><p>200000.00</p></td>
+</tr>
+</tbody>
+</table>
 
 
   <hr>
@@ -506,7 +754,7 @@ python<span class="w"> </span>tools/timing/timings.py<span class="w"> </span>--f
   <small>
     
       Last update:
-      2026-06-10
+      2026-06-11
     
   </small>
 </div>

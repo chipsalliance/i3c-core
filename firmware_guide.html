@@ -224,7 +224,7 @@
   
     <li class="md-nav__item">
       <a href="target_overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C target overview</span>
+        <span class="md-ellipsis">I3C Target overview</span>
       </a>
     </li>
   
@@ -363,36 +363,36 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-4-configure-standby-controller-mode" class="md-nav__link">
-    <span class="md-ellipsis">Step 4:<wbr> Configure Standby Controller Mode</span>
+  <a href="#step-4-set-target-addresses" class="md-nav__link">
+    <span class="md-ellipsis">Step 4:<wbr> Set Target Addresses</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-5-set-target-addresses" class="md-nav__link">
-    <span class="md-ellipsis">Step 5:<wbr> Set Target Addresses</span>
+  <a href="#step-5-configure-bcr-and-dcr" class="md-nav__link">
+    <span class="md-ellipsis">Step 5:<wbr> Configure BCR and DCR</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-6-configure-bcr-and-dcr" class="md-nav__link">
-    <span class="md-ellipsis">Step 6:<wbr> Configure BCR and DCR</span>
+  <a href="#step-6-configure-pid-registers" class="md-nav__link">
+    <span class="md-ellipsis">Step 6:<wbr> Configure PID Registers</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-7-configure-pid-registers" class="md-nav__link">
-    <span class="md-ellipsis">Step 7:<wbr> Configure PID Registers</span>
+  <a href="#step-7-configure-tti-thresholds-and-interrupts" class="md-nav__link">
+    <span class="md-ellipsis">Step 7:<wbr> Configure TTI Thresholds and Interrupts</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-8-configure-tti-thresholds-and-interrupts" class="md-nav__link">
-    <span class="md-ellipsis">Step 8:<wbr> Configure TTI Thresholds and Interrupts</span>
+  <a href="#step-8-configure-standby-controller-mode" class="md-nav__link">
+    <span class="md-ellipsis">Step 8:<wbr> Configure Standby Controller Mode</span>
   </a>
   
 </li>
@@ -803,9 +803,7 @@ configurable period.</p>
 <p>When enabled and a TE0 or TE1 error has placed the Target into HDR mode, the timer
 counts cycles where both SCL and SDA are stable high. Once the threshold is reached,
 the Target exits HDR mode and returns to Idle.</p>
-<h3 id="step-4-configure-standby-controller-mode">Step 4: Configure Standby Controller Mode<a class="headerlink" href="#step-4-configure-standby-controller-mode" title="Link to this heading">¶</a></h3>
-<p>Write <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL.STBY_CR_ENABLE_INIT</span> <span class="pre">=</span> <span class="pre">2</span></code> to boot in Standby Controller mode.</p>
-<h3 id="step-5-set-target-addresses">Step 5: Set Target Addresses<a class="headerlink" href="#step-5-set-target-addresses" title="Link to this heading">¶</a></h3>
+<h3 id="step-4-set-target-addresses">Step 4: Set Target Addresses<a class="headerlink" href="#step-4-set-target-addresses" title="Link to this heading">¶</a></h3>
 <p>Configure static for both the main and virtual (recovery) targets:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">STBY_CR_DEVICE_ADDR</span><span class="o">.</span><span class="n">STATIC_ADDR</span>       <span class="o">=</span> <span class="o">&lt;</span><span class="n">main_static_addr</span><span class="o">&gt;</span>
 <span class="n">STBY_CR_DEVICE_ADDR</span><span class="o">.</span><span class="n">STATIC_ADDR_VALID</span> <span class="o">=</span> <span class="mi">1</span>
@@ -826,10 +824,10 @@ useful during board bring-up and lab debug.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If ENTDAA is used for dynamic address assignment, the Provisioned ID (PID)
-registers must be configured first (see <a class="reference internal" href="#step-7-configure-pid-registers">Step 7</a>).
+registers must be configured first (see <a class="reference internal" href="#step-7-configure-pid-registers"><span class="xref myst">Step 7</span></a>).
 The Controller reads the PID during the ENTDAA procedure to identify each Target.</p>
 </div>
-<h3 id="step-6-configure-bcr-and-dcr">Step 6: Configure BCR and DCR<a class="headerlink" href="#step-6-configure-bcr-and-dcr" title="Link to this heading">¶</a></h3>
+<h3 id="step-5-configure-bcr-and-dcr">Step 5: Configure BCR and DCR<a class="headerlink" href="#step-5-configure-bcr-and-dcr" title="Link to this heading">¶</a></h3>
 <p>Write the Bus Characteristics Register (BCR) variable bits and Device Characteristics
 Register (DCR) in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_CHAR</span></code> and <code class="docutils literal notranslate"><span class="pre">STBY_CR_VIRTUAL_DEVICE_CHAR</span></code> registers.</p>
 <p><strong>Main Target BCR Requirements:</strong></p>
@@ -904,14 +902,14 @@ these requirements.</p>
 set bit [1] (IBI capable). The virtual target does not support IBI and
 programming it as IBI-capable will indicate to the Controller invalid target capabilities.</p>
 </div>
-<h3 id="step-7-configure-pid-registers">Step 7: Configure PID Registers<a class="headerlink" href="#step-7-configure-pid-registers" title="Link to this heading">¶</a></h3>
+<h3 id="step-6-configure-pid-registers">Step 6: Configure PID Registers<a class="headerlink" href="#step-6-configure-pid-registers" title="Link to this heading">¶</a></h3>
 <p>Write the Provisioned ID for main and virtual targets in the <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_PID_HI</span></code>
 / <code class="docutils literal notranslate"><span class="pre">STBY_CR_DEVICE_PID_LO</span></code> and <code class="docutils literal notranslate"><span class="pre">STBY_CR_VIRTUAL_DEVICE_PID_HI</span></code> /
 <code class="docutils literal notranslate"><span class="pre">STBY_CR_VIRTUAL_DEVICE_PID_LO</span></code> registers.</p>
 <p>The PID is a 48-bit identifier composed of a MIPI manufacturer ID and a vendor-specific
 part number. See the I3C specification (Section 5.1.4.1.1) for the PID format and
 assignment rules.</p>
-<h3 id="step-8-configure-tti-thresholds-and-interrupts">Step 8: Configure TTI Thresholds and Interrupts<a class="headerlink" href="#step-8-configure-tti-thresholds-and-interrupts" title="Link to this heading">¶</a></h3>
+<h3 id="step-7-configure-tti-thresholds-and-interrupts">Step 7: Configure TTI Thresholds and Interrupts<a class="headerlink" href="#step-7-configure-tti-thresholds-and-interrupts" title="Link to this heading">¶</a></h3>
 <p>Configure queue thresholds and enable desired interrupts in the TTI registers
 <strong>before</strong> enabling the bus:</p>
 <ul class="simple">
@@ -919,15 +917,17 @@ assignment rules.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">TTI.INTERRUPT_ENABLE</span></code> – Enable desired TTI interrupts</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">TTI.TARGET_ERR_INTR_ENABLE</span></code> – Enable desired error interrupts (TE0-TE5, Framing, RI errors)</p></li>
 </ul>
+<h3 id="step-8-configure-standby-controller-mode">Step 8: Configure Standby Controller Mode<a class="headerlink" href="#step-8-configure-standby-controller-mode" title="Link to this heading">¶</a></h3>
+<p>Write <code class="docutils literal notranslate"><span class="pre">STBY_CR_CONTROL.STBY_CR_ENABLE_INIT</span> <span class="pre">=</span> <span class="pre">2</span></code> to boot in Standby Controller mode.</p>
 <h3 id="step-9-enable-the-bus">Step 9: Enable the Bus<a class="headerlink" href="#step-9-enable-the-bus" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">HC_CONTROL</span><span class="o">.</span><span class="n">BUS_ENABLE</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">I3C_EC</span><span class="o">.</span><span class="n">SOCMGMTIF</span><span class="o">.</span><span class="n">SOC_PAD_CONF</span><span class="o">.</span><span class="n">INPUT_ENABLE</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div>
 </div>
-<p>Setting <code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> enables the I3C bus monitor. When cleared, the PHY input pins are
-internally forced high, preventing START/STOP detection and any bus activity recognition.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">INPUT_ENABLE</span></code> enables the I3C bus monitor.
+When cleared, the PHY input pins are internally forced high, preventing START/STOP detection and any bus activity recognition.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">BUS_ENABLE</span></code> only gates the bus monitor. It does <strong>not</strong> prevent firmware from writing
+<p><code class="docutils literal notranslate"><span class="pre">INPUT_ENABLE</span></code> only gates the bus monitor. It does <strong>not</strong> prevent firmware from writing
 to the TX or IBI FIFOs. It is firmware’s responsibility to refrain from queuing I3C
 data (IBI or TX) until the bus is enabled and the Target has been addressed by the
 Controller.</p>
@@ -1180,7 +1180,7 @@ result in undefined behavior</p></li>
   <small>
     
       Last update:
-      2026-06-10
+      2026-06-11
     
   </small>
 </div>

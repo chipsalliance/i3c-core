@@ -23,3 +23,177 @@ python tools/timing/timings.py --freq=333.333e6 --target_name="FPGA 333MHz" --md
 ```
 
 ## Example Timing CSRs
+
+### FPGA Configuration
+
+**System Clock:** 200.00 MHz | **Target SCL:** 12.50 MHz
+
+:::{list-table} FPGA Timing Registers
+:name: timing-csr-fpga
+:widths: 40 30 30
+:header-rows: 1
+
+* - **Register**
+  - **Cycles**
+  - **Time (ns)**
+* - T_R
+  - 0
+  - 0.00
+* - T_F
+  - 0
+  - 0.00
+* - T_SU_DAT
+  - 1
+  - 5.00
+* - T_SU_DAT_I2C
+  - 20
+  - 100.00
+* - T_HD_DAT
+  - 0
+  - 0.00
+* - T_HIGH
+  - 8
+  - 40.00
+* - T_HIGH_OD
+  - 5
+  - 25.00
+* - T_HIGH_INIT_OD
+  - 40
+  - 200.00
+* - T_HIGH_I2C
+  - 120
+  - 600.00
+* - T_LOW
+  - 8
+  - 40.00
+* - T_LOW_OD
+  - 40
+  - 200.00
+* - T_LOW_I2C
+  - 260
+  - 1300.00
+* - T_HD_STA
+  - 8
+  - 40.00
+* - T_HD_STA_I2C
+  - 120
+  - 600.00
+* - T_HD_RSTA
+  - 4
+  - 20.00
+* - T_SU_STA
+  - 4
+  - 20.00
+* - T_SU_STA_I2C
+  - 120
+  - 600.00
+* - T_SU_STO
+  - 4
+  - 20.00
+* - T_SU_STO_I2C
+  - 120
+  - 600.00
+* - T_DS_OD
+  - 4
+  - 20.00
+* - T_FREE
+  - 8
+  - 40.00
+* - T_FREE_I2C
+  - 260
+  - 1300.00
+* - T_AVAL
+  - 200
+  - 1000.00
+* - T_IDLE
+  - 40000
+  - 200000.00
+:::
+
+
+### ASIC Configuration
+
+**System Clock:** 500.00 MHz | **Target SCL:** 12.50 MHz
+
+:::{list-table} ASIC Timing Registers
+:name: timing-csr-asic
+:widths: 40 30 30
+:header-rows: 1
+
+* - **Register**
+  - **Cycles**
+  - **Time (ns)**
+* - T_R
+  - 0
+  - 0.00
+* - T_F
+  - 0
+  - 0.00
+* - T_SU_DAT
+  - 2
+  - 4.00
+* - T_SU_DAT_I2C
+  - 50
+  - 100.00
+* - T_HD_DAT
+  - 0
+  - 0.00
+* - T_HIGH
+  - 20
+  - 40.00
+* - T_HIGH_OD
+  - 12
+  - 24.00
+* - T_HIGH_INIT_OD
+  - 100
+  - 200.00
+* - T_HIGH_I2C
+  - 300
+  - 600.00
+* - T_LOW
+  - 20
+  - 40.00
+* - T_LOW_OD
+  - 100
+  - 200.00
+* - T_LOW_I2C
+  - 650
+  - 1300.00
+* - T_HD_STA
+  - 20
+  - 40.00
+* - T_HD_STA_I2C
+  - 300
+  - 600.00
+* - T_HD_RSTA
+  - 10
+  - 20.00
+* - T_SU_STA
+  - 10
+  - 20.00
+* - T_SU_STA_I2C
+  - 300
+  - 600.00
+* - T_SU_STO
+  - 10
+  - 20.00
+* - T_SU_STO_I2C
+  - 300
+  - 600.00
+* - T_DS_OD
+  - 10
+  - 20.00
+* - T_FREE
+  - 20
+  - 40.00
+* - T_FREE_I2C
+  - 650
+  - 1300.00
+* - T_AVAL
+  - 500
+  - 1000.00
+* - T_IDLE
+  - 100000
+  - 200000.00
+:::
+

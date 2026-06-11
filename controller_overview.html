@@ -224,7 +224,7 @@
   
     <li class="md-nav__item">
       <a href="target_overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C target overview</span>
+        <span class="md-ellipsis">I3C Target overview</span>
       </a>
     </li>
   
@@ -270,40 +270,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">Architecture</span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Architecture">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#high-level-block-diagram" class="md-nav__link">
-    <span class="md-ellipsis">High-<wbr>Level Block Diagram</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subsystems" class="md-nav__link">
-    <span class="md-ellipsis">Subsystems</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#data-flow" class="md-nav__link">
-    <span class="md-ellipsis">Data Flow</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#features-list" class="md-nav__link">
     <span class="md-ellipsis">Features List</span>
   </a>
@@ -312,15 +278,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#host-controller-interface-hci" class="md-nav__link">
-    <span class="md-ellipsis">Host Controller Interface <wbr>(HCI)</span>
+  <a href="#controller-core-logic" class="md-nav__link">
+    <span class="md-ellipsis">Controller Core Logic</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#controller-core-logic" class="md-nav__link">
-    <span class="md-ellipsis">Controller Core Logic</span>
+  <a href="#dynamic-address-assignment-daa" class="md-nav__link">
+    <span class="md-ellipsis">Dynamic Address Assignment <wbr>(DAA)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-band-interrupts-ibi" class="md-nav__link">
+    <span class="md-ellipsis">In-<wbr>Band Interrupts <wbr>(IBI)</span>
   </a>
   
 </li>
@@ -347,55 +320,55 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#dynamic-address-assignment-daa" class="md-nav__link">
-    <span class="md-ellipsis">Dynamic Address Assignment <wbr>(DAA)</span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#in-band-interrupts-ibi" class="md-nav__link">
-    <span class="md-ellipsis">In-<wbr>Band Interrupts <wbr>(IBI)</span>
+  <a href="#host-controller-interface-hci" class="md-nav__link">
+    <span class="md-ellipsis">Host Controller Interface <wbr>(HCI)</span>
   </a>
-  
-    <nav class="md-nav" aria-label="In-Band Interrupts (IBI)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ibi-rejection-and-dat-lookup" class="md-nav__link">
-    <span class="md-ellipsis">IBI Rejection and DAT Lookup</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ibi-data-packing" class="md-nav__link">
-    <span class="md-ellipsis">IBI Data Packing</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#internal-buffer-overflow-handling" class="md-nav__link">
-    <span class="md-ellipsis">Internal Buffer &amp; Overflow Handling</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#error-conditions" class="md-nav__link">
     <span class="md-ellipsis">Error Conditions</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">Architecture</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-level-block-diagram" class="md-nav__link">
+    <span class="md-ellipsis">High-<wbr>Level Block Diagram</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsystems" class="md-nav__link">
+    <span class="md-ellipsis">Subsystems</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow" class="md-nav__link">
+    <span class="md-ellipsis">Data Flow</span>
   </a>
   
 </li>
@@ -705,69 +678,41 @@
 
 
 <h1 id="i3c-controller-overview">I3C Controller overview<a class="headerlink" href="#i3c-controller-overview" title="Link to this heading">¶</a></h1>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h2>
-<p>The design is partitioned into two primary subsystems: the <strong>Host Controller Interface (HCI)</strong> and the <strong>Host Controller (HC)</strong>. These subsystems communicate via command/response queues and shared lookup tables (DAT/DCT).</p>
-<h3 id="high-level-block-diagram">High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">¶</a></h3>
-<figure class="align-default" id="fig-hc-top">
-<img alt="" src="_images/hc_top_level_arch.png" />
-<figcaption>
-<p><span class="caption-number">Figure 1 </span><span class="caption-text"><span class="caption-text">
-High-Level Block Diagram</span><a class="headerlink" href="#fig-hc-top" title="Permalink to this image">¶</a></figcaption>
-</figure>
-<h3 id="subsystems">Subsystems<a class="headerlink" href="#subsystems" title="Link to this heading">¶</a></h3>
-<ul class="simple">
-<li><p><strong>HCI (Host Controller Interface):</strong></p>
-<ul>
-<li><p><strong>Interface:</strong> AXI/AHB (Slave interface).</p></li>
-<li><p><strong>Function:</strong> Handles communication with the Host CPU. It populates Control and Status Registers (CSRs) and transfers relevant information between the CSRs and the internal hardware queues (Command, Response, TX, RX, IBI).</p></li>
-</ul>
-</li>
-<li><p><strong>HC (Host Controller):</strong></p>
-<ul>
-<li><p><strong>Function:</strong> Reads operational data from the queues and translates them into physical I3C transactions (driving SDA/SCL output signals).</p></li>
-<li><p><strong>Components:</strong> Consists of the <code class="docutils literal notranslate"><span class="pre">flow_active</span></code> module (protocol logic) and the low-level PHY FSMs (<code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code> / <code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code>).</p></li>
-</ul>
-</li>
-</ul>
-<h3 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">¶</a></h3>
-<ol class="arabic simple">
-<li><p><strong>Command Generation:</strong> Software writes commands to HCI CSRs.</p></li>
-<li><p><strong>Queue Population:</strong> HCI logic pushes these commands into the Command Queue.</p></li>
-<li><p><strong>Execution:</strong> HC fetches commands, consults the Device Address Table (DAT) or Device Characteristics Table (DCT), and executes the transaction on the bus.</p></li>
-<li><p><strong>Response:</strong> Results are written back to the Response Queue for software to read.</p></li>
-</ol>
-<hr class="docutils" />
 <h2 id="features-list">Features List<a class="headerlink" href="#features-list" title="Link to this heading">¶</a></h2>
-<h3 id="host-controller-interface-hci">Host Controller Interface (HCI)<a class="headerlink" href="#host-controller-interface-hci" title="Link to this heading">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Registers (RDL):</strong> Full implementation of the Register Description List for configuration and status monitoring.</p></li>
-<li><p><strong>Queues:</strong> Support for Command, Response, TX, RX, and IBI queues.</p></li>
-<li><p><strong>Tables:</strong></p>
-<ul>
-<li><p><strong>DAT (Device Address Table):</strong> Storage for Dynamic Addresses and device types.</p></li>
-<li><p><strong>DCT (Device Characteristics Table):</strong> Storage for device-specific parameters (PID, BCR, DCR).</p></li>
-</ul>
-</li>
-</ul>
 <h3 id="controller-core-logic">Controller Core Logic<a class="headerlink" href="#controller-core-logic" title="Link to this heading">¶</a></h3>
+<p>The foundation of the I3C Host Controller, handling standard bus operations, arbitration, and framing.</p>
 <ul class="simple">
-<li><p><strong>SDA Arbitration Management:</strong> Handling of bus arbitration during Start/Restart phases.</p></li>
-<li><p><strong>Frame Generation:</strong></p>
-<ul>
-<li><p><strong>Read Frame:</strong> Support for SDR Read transactions with and without <code class="docutils literal notranslate"><span class="pre">7'h7E</span></code> I3C address.</p></li>
-<li><p><strong>Write Frame:</strong> Support for SDR Write transactions with and without <code class="docutils literal notranslate"><span class="pre">7'h7E</span></code> I3C address.</p></li>
+<li><p><strong>Frame Generation:</strong> Support for SDR Read and Write transactions, both with and without the <code class="docutils literal notranslate"><span class="pre">7'h7E</span></code> I3C broadcast address.</p></li>
+<li><p><strong>Bus Speed Configurability:</strong> Dynamic control over bus operating frequencies (for both Open-Drain and Push-Pull modes) via dedicated timing CSRs.</p></li>
+<li><p><strong>SDA Arbitration Management:</strong> Autonomous handling of bus arbitration during address phase.</p></li>
+<li><p><strong>In-Band Interrupt (IBI) Detection:</strong> Hardware-level detection and processing of target-initiated IBIs.</p></li>
+<li><p><strong>HDR Pattern Generation:</strong> Includes logic to generate the specific sequence required to exit High Data Rate (HDR) modes, ensuring proper bus reset and compatibility.</p></li>
+<li><p><strong>Error Handling:</strong> Built-in Target Error Detection and Escalation mechanisms.</p></li>
 </ul>
+<h3 id="dynamic-address-assignment-daa">Dynamic Address Assignment (DAA)<a class="headerlink" href="#dynamic-address-assignment-daa" title="Link to this heading">¶</a></h3>
+<p>The controller fully implements DAA according to the bus initialization sequence defined in the <strong>I3C Basic Specification (Section 5.1.4.2)</strong> and the <strong>I3C HCI Specification (Section 8.4.1.1)</strong> for the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> command.</p>
+<p><strong>Software Configuration Guidelines:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Pre-populate the DAT:</strong> All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated <strong>before</strong> sending the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> command.</p></li>
+<li><p><strong>Handling Unassigned Targets:</strong> If the <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> limit is reached but unaddressed devices remain on the bus, the controller signals this by returning <code class="docutils literal notranslate"><span class="pre">0x1</span></code> in the <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> field of the Response Descriptor.</p></li>
+<li><p><strong>DCT Initialization:</strong> The Device Characteristics Table (DCT) Index always starts at <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+</ol>
+<h3 id="in-band-interrupts-ibi">In-Band Interrupts (IBI)<a class="headerlink" href="#in-band-interrupts-ibi" title="Link to this heading">¶</a></h3>
+<p>The controller supports the detection, validation, and servicing of IBIs initiated by targets, whether raised during a Bus Available condition or during arbitrable address headers.</p>
+<ul class="simple">
+<li><p><strong>Reverse Lookup &amp; Validation:</strong> When a target drives its dynamic address during an IBI request, a hardware <strong>reverse lookup table</strong> quickly resolves it to a DAT index.</p></li>
+<li><p><strong>IBI Rejection:</strong> The controller automatically rejects the IBI (NACK) if the bitwise condition <code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span> <span class="pre">|</span> <span class="pre">~IBI_PAYLOAD</span></code> is met. This ensures interrupts are ignored if <code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span></code> is set (<code class="docutils literal notranslate"><span class="pre">1</span></code>), or if the target is not authorized to send payloads (<code class="docutils literal notranslate"><span class="pre">IBI_PAYLOAD</span></code> is <code class="docutils literal notranslate"><span class="pre">0</span></code>).</p></li>
+<li><p><strong>Data Packing:</strong> Accepted IBI data is efficiently packed into the 32-bit <code class="docutils literal notranslate"><span class="pre">PIOCONTROL.IBI_PORT</span></code> CSR for host software:</p>
+<ol class="arabic simple">
+<li><p><strong>Status Descriptor:</strong> The first DWORD contains metadata (payload <code class="docutils literal notranslate"><span class="pre">data_length</span></code> and target dynamic address).</p></li>
+<li><p><strong>Mandatory Data Byte (MDB):</strong> If present, the MDB is packed into the Least Significant Byte (LSB) of the very first data DWORD following the descriptor.</p></li>
+<li><p><strong>Payload Data:</strong> The remaining payload is chunked and written as <code class="docutils literal notranslate"><span class="pre">(data_length</span> <span class="pre">+</span> <span class="pre">3)</span> <span class="pre">/</span> <span class="pre">4</span></code> DWORDs.</p></li>
+</ol>
 </li>
-<li><p><strong>IBI Handling:</strong> Detection and processing of In-Band Interrupts from Targets.</p></li>
-<li><p><strong>HDR Pattern Generation:</strong></p>
-<ul>
-<li><p><strong>HDR Exit Pattern:</strong> Logic to generate the specific sequence to exit High Data Rate modes (ensuring bus reset/compatibility).</p></li>
-</ul>
-</li>
-<li><p><strong>Error Handling:</strong> Target Error Detection and Escalation mechanisms.</p></li>
+<li><p><strong>Overflow Handling:</strong> The controller uses an internal hardware buffer for optional IBI payload bytes. If a target sends data equal to or exceeding this buffer size, the controller aborts the transaction, flags an error, and writes only the successfully captured bytes (up to the buffer limit) into the <code class="docutils literal notranslate"><span class="pre">IBI_PORT</span></code>.</p></li>
 </ul>
 <h3 id="common-command-codes-ccc">Common Command Codes (CCC)<a class="headerlink" href="#common-command-codes-ccc" title="Link to this heading">¶</a></h3>
-<p>The I3C Controller includes support for the following subset of CCCs required for basic bus management and initialization.</p>
+<p>Support for the essential subset of CCCs required for basic bus management, initialization, and device configuration.</p>
 <h4 id="broadcast-support">Broadcast Support<a class="headerlink" href="#broadcast-support" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>ENEC:</strong> Enable Events Command (Broadcast).</p></li>
@@ -785,45 +730,21 @@ High-Level Block Diagram</span><a class="headerlink" href="#fig-hc-top" title="P
 <li><p><strong>GETPID:</strong> Get Provisional ID (Direct).</p></li>
 <li><p><strong>GETBCR:</strong> Get Bus Characteristics Register (Direct).</p></li>
 <li><p><strong>GETDCR:</strong> Get Device Characteristics Register (Direct).</p></li>
-<li><p><strong>GETSTATUS:</strong> Get Device Status (Direct).</p></li>
 </ul>
-<h4 id="dynamic-address-assignment-daa">Dynamic Address Assignment (DAA)<a class="headerlink" href="#dynamic-address-assignment-daa" title="Link to this heading">¶</a></h4>
-<p>The controller implements Dynamic Address Assignment (DAA) in accordance with the bus initialization sequence defined in the <strong>I3C Basic Specification (Section 5.1.4.2)</strong> and the usage guidelines for the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC in the <strong>I3C HCI Specification (Section 8.4.1.1)</strong>.</p>
-<p>When configuring the DAA procedure, software developers must adhere to the following guidelines:</p>
-<ol class="arabic simple">
-<li><p><strong>Pre-populate the DAT:</strong> All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated <strong>before</strong> initiating the DAA procedure with the <code class="docutils literal notranslate"><span class="pre">ENTDAA</span></code> CCC.</p></li>
-<li><p><strong>Handling Unassigned Targets:</strong> If the specified <code class="docutils literal notranslate"><span class="pre">DEV_COUNT</span></code> number of dynamic addresses has been successfully assigned, but unaddressed devices still remain on the bus, the controller will return a value of <code class="docutils literal notranslate"><span class="pre">0x1</span></code> in the <code class="docutils literal notranslate"><span class="pre">DATA_LENGTH</span></code> field of the Response Descriptor. This signals to the host that at least one target device still requires an address.</p></li>
-<li><p><strong>DCT Initialization:</strong> The Device Characteristics Table (DCT) Index always starts at <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
-</ol>
-<h3 id="in-band-interrupts-ibi">In-Band Interrupts (IBI)<a class="headerlink" href="#in-band-interrupts-ibi" title="Link to this heading">¶</a></h3>
-<p>The I3C Controller supports the detection and servicing of In-Band Interrupts (IBIs) initiated by target devices.
-The controller can recognize and process these interrupts whether they are raised during a Bus Available condition or during arbitrable address headers.</p>
-<h4 id="ibi-rejection-and-dat-lookup">IBI Rejection and DAT Lookup<a class="headerlink" href="#ibi-rejection-and-dat-lookup" title="Link to this heading">¶</a></h4>
-<p>Before accepting an IBI, the controller validates the request against the target’s Device Address Table (DAT) entry.
-When a target drives its dynamic address onto the bus during an IBI request, the controller utilizes a <strong>reverse lookup table</strong> to quickly resolve this dynamic address back to the target’s specific DAT index.</p>
-<p>Once the corresponding DAT entry is retrieved, the controller checks its configuration fields to decide whether to acknowledge (ACK) or reject (NACK) the interrupt.
-The IBI is automatically rejected if the bitwise condition <code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span> <span class="pre">|</span> <span class="pre">~IBI_PAYLOAD</span></code> is met.
-Specifically:</p>
+<h3 id="host-controller-interface-hci">Host Controller Interface (HCI)<a class="headerlink" href="#host-controller-interface-hci" title="Link to this heading">¶</a></h3>
+<p>The software-to-hardware interface bridging the driver to the I3C Core logic.</p>
 <ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">IBI_REJECT</span></code>:</strong> If this field is set (<code class="docutils literal notranslate"><span class="pre">1</span></code>), the controller explicitly rejects all IBI requests from this target.</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">~IBI_PAYLOAD</span></code>:</strong> If the <code class="docutils literal notranslate"><span class="pre">IBI_PAYLOAD</span></code> field is clear (<code class="docutils literal notranslate"><span class="pre">0</span></code>), the controller will also reject the IBI, ensuring that targets not explicitly authorized to send payload data are denied.</p></li>
+<li><p><strong>Registers (RDL):</strong> Full implementation of the Register Description List for configuration and status monitoring.</p></li>
+<li><p><strong>Queues:</strong> Dedicated memory-mapped queues for Command, Response, TX, RX, and IBI data.</p></li>
+<li><p><strong>Hardware Tables:</strong></p>
+<ul>
+<li><p><strong>DAT (Device Address Table):</strong> Storage for dynamic addresses, rejection logic, and device types.</p></li>
+<li><p><strong>DCT (Device Characteristics Table):</strong> Storage for target-specific physical parameters (PID, BCR, DCR).</p></li>
 </ul>
-<h4 id="ibi-data-packing">IBI Data Packing<a class="headerlink" href="#ibi-data-packing" title="Link to this heading">¶</a></h4>
-<p>When an accepted IBI is processed, the controller writes the resulting data into the <code class="docutils literal notranslate"><span class="pre">PIOCONTROL.IBI_PORT</span></code> CSR.
-To ensure efficient reading by the host software, the IBI data is packed into the 32-bit port in the following sequence:</p>
-<ol class="arabic simple">
-<li><p><strong>IBI Status Descriptor:</strong> The first 32-bit word (DWORD) written to the port is always the IBI Status Descriptor. This descriptor contains vital metadata about the interrupt, including the <code class="docutils literal notranslate"><span class="pre">data_length</span></code> (in bytes) of the incoming payload as well as the dynamic address of the target issuing the IBI.</p></li>
-<li><p><strong>Payload Data:</strong> The Status Descriptor is immediately followed by the actual IBI data payload. The data is chunked and written as <code class="docutils literal notranslate"><span class="pre">(data_length</span> <span class="pre">+</span> <span class="pre">3)</span> <span class="pre">/</span> <span class="pre">4</span></code> DWORDs.</p></li>
-<li><p><strong>Mandatory Data Byte (MDB) Placement:</strong> If the target sends a Mandatory Data Byte (MDB), it is always packed into the Least Significant Byte (LSB) of the very first data DWORD immediately following the Status Descriptor.</p></li>
-</ol>
-<h4 id="internal-buffer-overflow-handling">Internal Buffer &amp; Overflow Handling<a class="headerlink" href="#internal-buffer-overflow-handling" title="Link to this heading">¶</a></h4>
-<p>In accordance with the I3C HCI Specification (Section 6.9.1, <em>IBI Handling in PIO Mode</em>), the controller utilizes an internal hardware buffer to temporarily hold the target’s optional IBI data bytes during the read transaction.</p>
-<ul class="simple">
-<li><p><strong>Overflow Condition:</strong> If a target attempts to send a number of optional bytes that is <strong>greater than or equal to</strong> the internal buffer size, the controller will flag an error and immediately abort the IBI transaction.</p></li>
-<li><p><strong>Data Retention:</strong> In the event of a buffer overflow and subsequent abort, the controller recovers by writing the first <em>buffer size</em> bytes (the maximum data it successfully captured before the abort) into the <code class="docutils literal notranslate"><span class="pre">IBI_PORT</span></code>.</p></li>
+</li>
 </ul>
 <h3 id="error-conditions">Error Conditions<a class="headerlink" href="#error-conditions" title="Link to this heading">¶</a></h3>
-<p>The MVP supports the following ERROR_STATUS conditions from Table 1 Error Status Codes in Response Descriptor I3C TCRI Spec.</p>
+<p>The controller supports the following hardware ERROR_STATUS conditions, derived from Table 1 (Error Status Codes in Response Descriptor) of the I3C TCRI Spec.</p>
 <table class="docutils data align-default" id="error-status-codes">
 <caption><span class="caption-number">Table 1 </span><span class="caption-text">Error Status Codes</span><a class="headerlink" href="#error-status-codes" title="Link to this table">¶</a></caption>
 <colgroup>
@@ -893,7 +814,7 @@ To ensure efficient reading by the host software, the IBI data is packed into th
 <tr class="row-even"><td><p>ABORTED_WITH_CRC</p></td>
 <td><p>0xB</p></td>
 <td><p>6.4.1.11</p></td>
-<td><p>This is used as an internal default state for errors. This means that internal hardware bugs can mistakenly produce the AbortedWithCRC error status.</p></td>
+<td><p>Used as an internal default state for errors. Internal hardware bugs may mistakenly produce this status.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Transfer Type Specific</p></td>
 <td><p>0xC – 0xF</p></td>
@@ -902,6 +823,38 @@ To ensure efficient reading by the host software, the IBI data is packed into th
 </tr>
 </tbody>
 </table>
+<hr class="docutils" />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h2>
+<p>The design is partitioned into two primary subsystems: the <strong>Host Controller Interface (HCI)</strong> and the <strong>Host Controller (HC)</strong>. These subsystems communicate via command/response queues and shared lookup tables (DAT/DCT).</p>
+<h3 id="high-level-block-diagram">High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="fig-hc-top">
+<img alt="" src="_images/hc_top_level_arch.png" />
+<figcaption>
+<p><span class="caption-number">Figure 1 </span><span class="caption-text"><span class="caption-text">
+High-Level Block Diagram</span><a class="headerlink" href="#fig-hc-top" title="Permalink to this image">¶</a></figcaption>
+</figure>
+<h3 id="subsystems">Subsystems<a class="headerlink" href="#subsystems" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>HCI (Host Controller Interface):</strong></p>
+<ul>
+<li><p><strong>Interface:</strong> AXI/AHB (Slave interface).</p></li>
+<li><p><strong>Function:</strong> Handles communication with the Host CPU. It populates Control and Status Registers (CSRs) and transfers relevant information between the CSRs and the internal hardware queues (Command, Response, TX, RX, IBI).</p></li>
+</ul>
+</li>
+<li><p><strong>HC (Host Controller):</strong></p>
+<ul>
+<li><p><strong>Function:</strong> Reads operational data from the queues and translates them into physical I3C transactions (driving SDA/SCL output signals).</p></li>
+<li><p><strong>Components:</strong> Consists of the <code class="docutils literal notranslate"><span class="pre">flow_active</span></code> module (protocol logic) and the low-level PHY FSMs (<code class="docutils literal notranslate"><span class="pre">i3c_controller_fsm</span></code> / <code class="docutils literal notranslate"><span class="pre">i2c_controller_fsm</span></code>).</p></li>
+</ul>
+</li>
+</ul>
+<h3 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Command Generation:</strong> Software writes commands to HCI CSRs.</p></li>
+<li><p><strong>Queue Population:</strong> HCI logic pushes these commands into the Command Queue.</p></li>
+<li><p><strong>Execution:</strong> HC fetches commands, consults the Device Address Table (DAT) or Device Characteristics Table (DCT), and executes the transaction on the bus.</p></li>
+<li><p><strong>Response:</strong> Results are written back to the Response Queue for software to read.</p></li>
+</ol>
 <hr class="docutils" />
 <h2 id="microarchitecture">Microarchitecture<a class="headerlink" href="#microarchitecture" title="Link to this heading">¶</a></h2>
 <p>The Host Controller (HC) logic is split into a “decode” stage (Flow Active FSM) and “execute” stage (i3c/i2c controller FSM).</p>
@@ -1907,7 +1860,7 @@ Flow Active FSM</span><a class="headerlink" href="#fig-flow-active-fsm" title="P
   <small>
     
       Last update:
-      2026-06-10
+      2026-06-11
     
   </small>
 </div>
@@ -1931,7 +1884,7 @@ Flow Active FSM</span><a class="headerlink" href="#fig-flow-active-fsm" title="P
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="target_overview.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: I3C target overview" rel="prev">
+        <a href="target_overview.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: I3C Target overview" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1940,7 +1893,7 @@ Flow Active FSM</span><a class="headerlink" href="#fig-flow-active-fsm" title="P
               <span class="md-footer__direction">
                 Previous
               </span>
-              I3C target overview
+              I3C Target overview
             </div>
           </div>
         </a>

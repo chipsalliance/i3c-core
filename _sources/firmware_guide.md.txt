@@ -59,11 +59,7 @@ When enabled and a TE0 or TE1 error has placed the Target into HDR mode, the tim
 counts cycles where both SCL and SDA are stable high. Once the threshold is reached,
 the Target exits HDR mode and returns to Idle.
 
-### Step 4: Configure Standby Controller Mode
-
-Write `STBY_CR_CONTROL.STBY_CR_ENABLE_INIT = 2` to boot in Standby Controller mode.
-
-### Step 5: Set Target Addresses
+### Step 4: Set Target Addresses
 
 Configure static for both the main and virtual (recovery) targets:
 
@@ -93,7 +89,7 @@ registers must be configured first (see [Step 7](#step-7-configure-pid-registers
 The Controller reads the PID during the ENTDAA procedure to identify each Target.
 ```
 
-### Step 6: Configure BCR and DCR
+### Step 5: Configure BCR and DCR
 
 Write the Bus Characteristics Register (BCR) variable bits and Device Characteristics
 Register (DCR) in the `STBY_CR_DEVICE_CHAR` and `STBY_CR_VIRTUAL_DEVICE_CHAR` registers.
@@ -130,7 +126,7 @@ set bit [1] (IBI capable). The virtual target does not support IBI and
 programming it as IBI-capable will indicate to the Controller invalid target capabilities.
 ```
 
-### Step 7: Configure PID Registers
+### Step 6: Configure PID Registers
 
 Write the Provisioned ID for main and virtual targets in the `STBY_CR_DEVICE_PID_HI`
 / `STBY_CR_DEVICE_PID_LO` and `STBY_CR_VIRTUAL_DEVICE_PID_HI` /
@@ -140,7 +136,7 @@ The PID is a 48-bit identifier composed of a MIPI manufacturer ID and a vendor-s
 part number. See the I3C specification (Section 5.1.4.1.1) for the PID format and
 assignment rules.
 
-### Step 8: Configure TTI Thresholds and Interrupts
+### Step 7: Configure TTI Thresholds and Interrupts
 
 Configure queue thresholds and enable desired interrupts in the TTI registers
 **before** enabling the bus:
@@ -149,17 +145,21 @@ Configure queue thresholds and enable desired interrupts in the TTI registers
 - `TTI.INTERRUPT_ENABLE` -- Enable desired TTI interrupts
 - `TTI.TARGET_ERR_INTR_ENABLE` -- Enable desired error interrupts (TE0-TE5, Framing, RI errors)
 
+### Step 8: Configure Standby Controller Mode
+
+Write `STBY_CR_CONTROL.STBY_CR_ENABLE_INIT = 2` to boot in Standby Controller mode.
+
 ### Step 9: Enable the Bus
 
 ```
-HC_CONTROL.BUS_ENABLE = 1
+I3C_EC.SOCMGMTIF.SOC_PAD_CONF.INPUT_ENABLE = 1
 ```
 
-Setting `BUS_ENABLE` enables the I3C bus monitor. When cleared, the PHY input pins are
-internally forced high, preventing START/STOP detection and any bus activity recognition.
+Setting `INPUT_ENABLE` enables the I3C bus monitor.
+When cleared, the PHY input pins are internally forced high, preventing START/STOP detection and any bus activity recognition.
 
 ```{note}
-`BUS_ENABLE` only gates the bus monitor. It does **not** prevent firmware from writing
+`INPUT_ENABLE` only gates the bus monitor. It does **not** prevent firmware from writing
 to the TX or IBI FIFOs. It is firmware's responsibility to refrain from queuing I3C
 data (IBI or TX) until the bus is enabled and the Target has been addressed by the
 Controller.

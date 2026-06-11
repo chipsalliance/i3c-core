@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+                    <div class="nav-urls">
+                        <a href="./index-top.html" class="button tooltip">
+                            <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
+                        </a>
+                    </div>
+                    
+
+                    <span class="container-title">
+                        Recovery mode tests
+                    </span>
+
+                    
+
+                    
+                    <div class="nav-urls">
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/target_recovery.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
+                        </a>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        11/06/2026 09:06
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/f8ea634f">f8ea634f</a>
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    
+<h3> Test Results
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                      </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">   <span title='Tests CSR write(s) through recovery protocol using the virtual
+target address. In the beginning sets the TTI and recovery
+addresses via two SETDASA CCCs.
+
+Performs a write to DEVICE_RESET register via the recovery
+protocol targeting the virtual address. Reads the CSR content
+back through AHB/AXI, checks if the transfer was successful and
+the content read back matches. Then reads again the DEVICE_RESET
+register, this time via the recovery protocol. Check if the content
+matches.
+
+Reads PENDING_INTERRUPT field from INTERRUPT_STATUS CSR via the
+GET_STATUS CCC command issued to the TTI I3C address. Verifies
+that the content read back matches what is set in the CSR.
+
+Writes to the INDIRECT_FIFO_CTRL register using recovery protocol,
+reads content of the register via AHB/AXI and verifies that their
+content matches.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>virtual_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>virtual_write</a>                        </td><td style="text-align: center;">      2.404      </td><td style="text-align: center;">   33151.619    </td><td style="text-align: center;">    2    </td><td style="text-align: center;">   2   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests CSR write(s) with lengths over CSR size to the virtual
+address using recovery protocol.
+
+Performs a write to on of DEVICE_RESET/RECOVERY_CTRL/INDIRECT_FIFO_CTRL
+registers via the recovery protocol targeting the virtual address.
+Reads the CSR content back through AHB/AXI. Then reads again
+the selected register, this time via the recovery protocol.
+Check if the content matches value stored in the register.'>virtual_overwrite<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>virtual_overwrite</a>                    </td><td style="text-align: center;">     14.045      </td><td style="text-align: center;">   227795.568   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes to DEVICE_RESET via recovery protocol targeting the virtual
+device address. Reads the register content through AHB/AXI and
+check if it matches with what has been written.
+
+Sends a private write transfer to the TTI address. Reads the
+data back from TTI TX data queue and check that it matches.
+
+Disables the recovery mode by writing 0x2 to DEVICE_STATUS register
+and repeats the previous steps to test whether the I3C core
+responds both to TTI and virtual addresses.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>virtual_write_alternating<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>virtual_write_alternating</a>            </td><td style="text-align: center;">      2.328      </td><td style="text-align: center;">   28369.341    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes to DEVICE_RESET via recovery protocol targeting the virtual
+device address. Reads the register content through AHB/AXI and
+check if it matches with what has been written.
+
+Writes to INDIRECT_FIFO_CTRL via recovery protocol targeting the virtual
+device address. Reads the register content via recovery protocol targeting
+the virtual device address and check if it matches with what has been written.
+Reads the register content through AHB/AXI and check if it matches with
+what has been written.'>read_fifo_ctrl<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>read_fifo_ctrl</a>                       </td><td style="text-align: center;">      2.255      </td><td style="text-align: center;">   32840.808    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Performs a write to DEVICE_RESET register via the recovery
+protocol targeting the virtual address. Reads the CSR content
+back through AHB/AXI, checks if the transfer was successful and
+the content read back matches. Then reads again the DEVICE_RESET
+register, this time via the recovery protocol. Check if the content
+matches.
+
+Writes to the INDIRECT_FIFO_CTRL register using recovery protocol,
+reads content of the register via AHB/AXI and verifies that their
+content matches.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>write</a>                                </td><td style="text-align: center;">      1.689      </td><td style="text-align: center;">   22402.380    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Retrieves indirect FIFO status and pointers by reading
+INDIRECT_FIFO_STATUS CSR over AHB/AXI bus. Writes data to the
+indirect FIFO through the recovery interface and retrieves status
+and pointers again. Reads the data from the FIFO back through
+AHB/AXI bus, retrieves FIFO pointers. Lastly clears the indirect
+FIFO by writing to INDIRECT_FIFO_CTRL through the recovery
+interface and obtains the pointers again.
+
+After each FIFO status and pointer retrieval checks if both
+match the expected behavior.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>indirect_fifo_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_write</a>                  </td><td style="text-align: center;">      1.976      </td><td style="text-align: center;">   27537.510    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes some data to DEVICE_RESET register using the recovery
+interface. Then, repeats the write with different data but
+deliberately corrupts the recovery packet's checksum (PEC).
+Finally, reads the content of DEVICE_RESET CSR over AHB/AXI
+and ensures that it matches with what was written in the first
+transfer. The test shall use random data length and value.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>write_pec<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>write_pec</a>                            </td><td style="text-align: center;">      1.495      </td><td style="text-align: center;">   20201.181    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+Disables the recovery mode, writes some data to TTI TX queues
+via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+the recovery protocol. Checks if the content matches what was
+written in the beginning of the test.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>read</a>                                 </td><td style="text-align: center;">      1.785      </td><td style="text-align: center;">   23694.570    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+Disables the recovery mode, writes some data to TTI TX queues
+via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+the recovery protocol. The I3C read transfer is deliberately
+shorter - the recovery read is terminated by the I3C controller.
+Checks if the content read back matches what was written in the
+beginning of the test.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>read_short<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>read_short</a>                           </td><td style="text-align: center;">      1.954      </td><td style="text-align: center;">   28421.830    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes random data to the PROT_CAP recovery CSR via AHB/AXI.
+Disables the recovery mode, writes some data to TTI TX queues
+via AHB/AXI, enables the recovery mode and reads PROT_CAP using
+the recovery protocol. The I3C read transfer is deliberately
+longer - the recovery read is terminated by the I3C target.
+Checks if the content read back matches what was written in the
+beginning of the test.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>read_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>read_long</a>                            </td><td style="text-align: center;">      3.698      </td><td style="text-align: center;">   56691.900    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs. Disables
+the recovery mode.
+
+Issues a series of recovery read commands to all CSRs mentioned in the
+spec. The series is repeated twice - for recovery mode enabled and disabled.
+Each transfer is checked if the response is ACK or NACK and in case of
+ACK if PEC checksum is correct.
+
+Checks if CSRs that should be available anytime (i.e. when the recovery
+mode is off) are always accessible, checks if other CSRs are accessible
+only in the recovery mode.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>virtual_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>virtual_read</a>                         </td><td style="text-align: center;">     14.764      </td><td style="text-align: center;">   274831.557   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Alternates between recovery mode reads and TTI reads. Initially
+sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes random data to the PROT_CAP register over AHB/AXI, reads
+the register through the recovery protocol and check if the
+content matches.
+
+Writes data and its descriptor to TTI TX queues, issues a private
+I3C read, verifies that the data read back matches.
+
+Disables the recovery mode and repeats the recovery and TTI reads
+to ensure that both TTI and recovery transfers are possible
+regardless of the recovery mode setting.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>virtual_read_alternating<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>virtual_read_alternating</a>             </td><td style="text-align: center;">      3.262      </td><td style="text-align: center;">   48426.378    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Ensures that initially the recovery_payload_available_o signal
+is deasserted. Then writes data to the indirect FIFO via the
+recovery interface and checks if the signal gets asserted.
+
+Reads from INDIRECT_FIFO_DATA CSR over AHB/AXI and checks if the
+read causes the signal to be deasserted again.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>payload_available<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>payload_available</a>                    </td><td style="text-align: center;">     15.610      </td><td style="text-align: center;">   214630.416   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Ensures that initially the image_activated_o signal is deasserted.
+Writes 0xF to the 3rd byte of the RECOVERY_CTRL register using the
+recovery interface. Checks if the signal gets asserted. Then writes
+0xFF to the same byte of the register and checks if the signal
+gets deasserted.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>image_activated<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>image_activated</a>                      </td><td style="text-align: center;">      1.048      </td><td style="text-align: center;">   13447.434    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the recovery address via SETDASA CCC.
+
+Writes data to indirect FIFO and waits for the values to propagate
+through the core.
+
+Resets indirect FIFO and writes new data to the indirect FIFO.
+Reads indirect FIFO and compares received data with one written after reset.'>indirect_fifo_reset_access<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_reset_access</a>           </td><td style="text-align: center;">      3.512      </td><td style="text-align: center;">   48912.864    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='The test exercises firmware image transfer flow using the recovery
+protocol. It consists of two agents running concurrently.
+
+The AHB/AXI agent is responsible for recovery operation from the
+system bus side. It mimics operation of the recovery handling
+firmware.
+
+The BFM agent issues I3C transactions and is responsible for pushing
+a firmware image to the target.
+
+The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
+The I3C bus clock is set to 12.5 MHz.'>recovery_flow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_flow</a>                        </td><td style="text-align: center;">     57.837      </td><td style="text-align: center;">   728111.864   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Sets the TTI and recovery addresses via two SETDASA CCCs.
+
+Writes to DEVICE_RESET via recovery protocol targeting the virtual
+device address. Reads the register content through AHB/AXI and
+check if it matches with what has been written.
+
+Writes to all remaining recovery CSRs using AHB/AXI, reads back
+their values and compares them.'>ocp_csr_access<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ocp_csr_access</a>                       </td><td style="text-align: center;">      1.853      </td><td style="text-align: center;">   14048.034    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests Recovery Interface error detection, interrupt status, and counters.
+Validates RI_PEC_ERR (PEC/CRC error detection), RI_PROT_ERR (protocol
+error detection), and associated interrupt and counter behavior.'>ri_error_detection<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_error_detection</a>                   </td><td style="text-align: center;">      1.643      </td><td style="text-align: center;">   17300.283    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Comprehensive Recovery Interface stress test covering PEC errors,
+T-bit parity errors, and protocol edge cases in rapid succession.'>ri_comprehensive_stress<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_comprehensive_stress</a>              </td><td style="text-align: center;">     63.415      </td><td style="text-align: center;">  1024933.612   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests Recovery Interface resilience to various I3C framing errors and
+abnormal conditions including controller-side protocol violations and
+unexpected bus events.'>ri_error_injection_stress<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_error_injection_stress</a>            </td><td style="text-align: center;">     24.372      </td><td style="text-align: center;">   441608.433   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests that writing to INDIRECT_FIFO_DATA with RI length field 1 byte
+larger than actual data sent results in a length underrun error.'>ri_length_underrun<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_length_underrun</a>                   </td><td style="text-align: center;">      2.671      </td><td style="text-align: center;">   34240.600    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests that issuing STOP mid-byte during different phases of the RI
+protocol is handled correctly. The device should detect the error
+and recover gracefully.'>ri_mid_byte_stop<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_mid_byte_stop</a>                     </td><td style="text-align: center;">      6.895      </td><td style="text-align: center;">   111337.080   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests RI protocol error handling when the READ command's read phase is
+interrupted by various bus conditions instead of the expected
+Sr + Addr+R sequence.'>ri_read_interrupted_by_ccc<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>ri_read_interrupted_by_ccc</a>           </td><td style="text-align: center;">     15.778      </td><td style="text-align: center;">   115829.936   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests chaining of Recovery Interface commands, CCCs, and private writes
+within sequences using Sr. All RI/private transfers use Sr, only CCCs
+use broadcast address. Verifies correct interleaving.'>chained_ri_and_ccc_commands<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>chained_ri_and_ccc_commands</a>          </td><td style="text-align: center;">     19.406      </td><td style="text-align: center;">   312321.009   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests writing more than 256 bytes to the INDIRECT_FIFO via I3C
+interface. The INDIRECT_FIFO has a fixed size (typically 256 bytes).
+Verifies correct handling of writes that exceed capacity.'>indirect_fifo_large_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_large_write</a>            </td><td style="text-align: center;">     15.160      </td><td style="text-align: center;">   244327.600   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests two consecutive writes to the INDIRECT_FIFO that together exceed
+capacity. First write fits, second write overflows. Verifies correct
+handling of the overflow condition.'>indirect_fifo_two_writes_overflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_two_writes_overflow</a>    </td><td style="text-align: center;">     19.404      </td><td style="text-align: center;">   302130.060   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests that T-bit (parity) errors during INDIRECT_FIFO_DATA write are
+handled correctly. Verifies parity errors on specific bytes are
+detected and reported.'>indirect_fifo_parity_error<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_parity_error</a>           </td><td style="text-align: center;">      4.453      </td><td style="text-align: center;">   72788.150    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests that WRITE_INDEX does not increment when writing to a full
+INDIRECT_FIFO. Fills the hardware FIFO completely and verifies
+the pointer behavior on overflow.'>indirect_fifo_overflow_pointer<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>indirect_fifo_overflow_pointer</a>       </td><td style="text-align: center;">     18.456      </td><td style="text-align: center;">   293266.974   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Tests behavior when writing more data than the register size allows.
+Attempts to write excess bytes to a recovery CSR and verifies
+correct handling.'>write_exceeds_register_size<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>write_exceeds_register_size</a>          </td><td style="text-align: center;">      2.932      </td><td style="text-align: center;">   44658.660    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies that a recovery interface PROT_CAP read and a standard private
+read from the TTI TX FIFO work correctly and do not interfere with
+each other.'>private_read_and_ri_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>private_read_and_ri_read</a>             </td><td style="text-align: center;">      2.771      </td><td style="text-align: center;">   34245.560    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies that parity/PEC errors on RI writes do not leak into the TTI
+interrupt path, and that T-bit errors on normal target writes do
+produce the expected TTI interrupts.'>parity_error_isolation<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>parity_error_isolation</a>               </td><td style="text-align: center;">      3.388      </td><td style="text-align: center;">   42831.789    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: recovery_handler readonly_err=1, unsupported_err=0.
+Sends WRITE commands to read-only registers (PROT_CAP, DEVICE_ID,
+DEVICE_STATUS, HW_STATUS) and verifies PROT_ERROR=READONLY.
+Also tests readonly_err_det_en toggle for suppression.'>recovery_readonly_write_error<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_readonly_write_error</a>        </td><td style="text-align: center;">      5.534      </td><td style="text-align: center;">   82754.680    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: RxLenH parity error on write-phase PEC.
+Sends a recovery READ command with a T-bit parity error on the PEC byte
+of the write phase. Recovery receiver detects error in RxLenH and
+transitions to Error.'>recovery_read_write_phase_parity<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_read_write_phase_parity</a>     </td><td style="text-align: center;">      2.330      </td><td style="text-align: center;">   28616.830    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: RxPec parity error on descriptor.
+Sends a recovery WRITE command where the PEC byte has a T-bit parity
+error. Verifies the error is detected in RxPec state.'>recovery_write_pec_tbit_error<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_write_pec_tbit_error</a>        </td><td style="text-align: center;">      3.119      </td><td style="text-align: center;">   41000.620    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Send a recovery WRITE command with more than one PEC bytes with
+length_err_det_en_i enabled and disabled.'>recovery_write_pec_overflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_write_pec_overflow</a>          </td><td style="text-align: center;">      2.506      </td><td style="text-align: center;">   35619.590    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Toggle all *_det_en_i signals.
+For each error detection enable bit in TARGET_ERR_CTRL: disable det_en
+and trigger error (verify not flagged), enable det_en and trigger error
+(verify flagged).'>recovery_all_det_en_toggle<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_all_det_en_toggle</a>           </td><td style="text-align: center;">      5.439      </td><td style="text-align: center;">   72396.770    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: TxLenL/TxLenH bus_rstart_i -> Done.
+Aborts a recovery READ at different points in the response length
+transmission using command_read_abort.'>recovery_read_abort_at_len<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_read_abort_at_len</a>           </td><td style="text-align: center;">      4.721      </td><td style="text-align: center;">   71028.634    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Premature stop in RxCmd/RxLenL via bus_rstart_i.
+Sends partial recovery command headers with Sr at unexpected points
+during RxCmd and RxLenL states.'>recovery_premature_sr_in_header<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_premature_sr_in_header</a>      </td><td style="text-align: center;">      5.712      </td><td style="text-align: center;">   82513.750    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Toggle reg_rst_i, reg_rst_we_o, reg_rst_data_o on all queues.
+Exercises all RESET_CONTROL queue reset bits to toggle the reg_rst
+signals on every queue (IBI, RX desc, RX data, TX data).'>recovery_queue_resets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_queue_resets</a>                </td><td style="text-align: center;">      1.690      </td><td style="text-align: center;">   20727.530    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: in_hdr_mode_i override -> Error.
+Triggers TE0 error during an active recovery transaction to force
+in_hdr_mode_i=1 while the recovery FSM is in an active state.
+Recovers via HDR exit.'>recovery_hdr_mode_abort<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_hdr_mode_abort</a>              </td><td style="text-align: center;">      3.637      </td><td style="text-align: center;">   31947.050    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: length error detection enable combinations.
+Tests length_err_det_en=0 (error suppressed), length_err_det_en=1
+with underrun (error detected), and correct length (no error).'>recovery_length_det_en_toggle<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_length_det_en_toggle</a>        </td><td style="text-align: center;">      2.927      </td><td style="text-align: center;">   38132.620    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Toggle threshold input signals on all queues.
+Writes non-default values to QUEUE_THLD_CTRL and DATA_BUFFER_THLD_CTRL
+to toggle start_thrld_i and ready_thrld_i on all queues.'>recovery_queue_thresholds<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_queue_thresholds</a>            </td><td style="text-align: center;">      1.909      </td><td style="text-align: center;">   20709.530    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Premature stop in RxData and RxPec with length underrun.
+Sends a recovery WRITE with premature STOP during data or PEC phase,
+verifying correct error handling.'>recovery_write_premature_stop_in_data<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_write_premature_stop_in_data</a></td><td style="text-align: center;">      2.232      </td><td style="text-align: center;">   31312.590    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Premature Sr in TxPec.
+Sends a recovery read with premature Start during PEC phase.'>recovery_read_premature_start_in_pec<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_read_premature_start_in_pec</a> </td><td style="text-align: center;">      2.533      </td><td style="text-align: center;">   36678.940    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Toggle indirect_fifo_overflow_err_det_en_i and
+rx_fifo_overflow_err_det_en_i.
+Writes more data to INDIRECT_FIFO_DATA than the FIFO can hold to
+trigger overflow, with det_en toggled.'>recovery_indirect_fifo_overflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_indirect_fifo_overflow</a>      </td><td style="text-align: center;">     49.377      </td><td style="text-align: center;">   799480.650   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Toggle ibi_queue.full_o.
+Fills the IBI queue (depth=64) by writing MDB-only IBI descriptors
+without triggering IBI acceptance. Verifies queue fills and device
+remains functional after reset.'>recovery_ibi_queue_full<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_ibi_queue_full</a>              </td><td style="text-align: center;">      1.694      </td><td style="text-align: center;">   20754.530    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Bypass path to Done in ExecFifoWrite.
+Enables bypass mode, writes data to INDIRECT_FIFO via recovery
+interface, then asserts REC_PAYLOAD_DONE to trigger the bypass
+exit path from ExecFifoWrite.'>recovery_bypass_fifo_done<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_bypass_fifo_done</a>            </td><td style="text-align: center;">      2.623      </td><td style="text-align: center;">   31144.560    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: in_hdr_mode_i Error from ExecCsrWrite, TxData, TxLenH,
+TxLenL, TxPec.
+Uses TE0 injection to force the recovery FSM into Error from specific
+Tx states during READ responses.'>recovery_hdr_abort_per_state<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_hdr_abort_per_state</a>         </td><td style="text-align: center;">      4.479      </td><td style="text-align: center;">   46162.580    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: TxLenL bus_rstart_i -> Done.
+Sends Sr immediately after the read address ACK, before the target
+finishes transmitting the LEN_L byte.'>recovery_read_abort_txlenl<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_read_abort_txlenl</a>           </td><td style="text-align: center;">      8.487      </td><td style="text-align: center;">   129832.484   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Coverage: Bypass ExecFifoWrite -> Done.
+Enables bypass mode, sends a large INDIRECT_FIFO_DATA write via I3C,
+then races to set REC_PAYLOAD_DONE via CSR before the normal dcnt
+path completes.'>recovery_bypass_fifo_race<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_bypass_fifo_race</a>            </td><td style="text-align: center;">      3.438      </td><td style="text-align: center;">   48276.560    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies that writing to a read-only recovery register triggers the
+RI_READONLY_ERR interrupt output (irq_o toggle 0->1->0).'>recovery_readonly_write_irq<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_readonly_write_irq</a>          </td><td style="text-align: center;">      1.333      </td><td style="text-align: center;">    9753.744    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Verifies that sending an unsupported command code triggers the
+RI_UNSUPPORTED_ERR interrupt output (irq_o toggle 0->1->0).'>recovery_unsupported_cmd_irq<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_unsupported_cmd_irq</a>         </td><td style="text-align: center;">      0.939      </td><td style="text-align: center;">    8315.307    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='PEC coherency under concurrent FW CSR writes. FW toggles
+RECOVERY_STATUS every few clocks in the background while
+the controller performs reads of the same register via I3C.
+Verifies that PEC is always correct despite concurrent AXI
+writes, proving csr_data snapshot integrity.
+Spec ref: OCP Recovery v1.1 Section 8.4.'>recovery_tx_pec_csr_data_race<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_tx_pec_csr_data_race</a>        </td><td style="text-align: center;">     16.885      </td><td style="text-align: center;">   196029.834   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Stress test: concurrent random FW (AXI) and I3C accesses to
+recovery interface CSRs. FW randomly reads/writes RI CSRs via
+AXI in the background while I3C performs random read/write
+operations via the recovery protocol. Every I3C read checks
+PEC, data length, and NACK status. Exposes data races,
+coherency bugs, or FSM hangs under concurrent access.'>recovery_ri_csr_concurrent_stress<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_recovery.py>recovery_ri_csr_concurrent_stress</a>    </td><td style="text-align: center;">     53.298      </td><td style="text-align: center;">   633122.490   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                               </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   55    </td><td style="text-align: center;">  55   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+<h3> Testplan Progress
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">        54         </td><td style="text-align: center;">      54       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      55      </td><td style="text-align: center;">     55     </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
+</html>

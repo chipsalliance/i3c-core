@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+                    <div class="nav-urls">
+                        <a href="./index-blocks.html" class="button tooltip">
+                            <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
+                        </a>
+                    </div>
+                    
+
+                    <span class="container-title">
+                        flow_active
+                    </span>
+
+                    
+
+                    
+                    <div class="nav-urls">
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/block/controller_flow_active.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
+                        </a>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        11/06/2026 09:04
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/f8ea634f">f8ea634f</a>
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    
+<h3> Test Results
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                     </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">   <span title='Testbench:
+flow_active_wrapper (DUT) -> flow_active golden model
+
+Intent:
+Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) to an individual I3C Target Device with known static address
+
+Stimulus:
+ - create a 64b CMD descriptor as per Table 16 7.2.2.1 TCRI Spec. With:
+    - CMD_ATTR = 0x5 // ImmediateDataTransfer in Direct Format
+    - TID: random transaction ID
+    - I2C = 0x0 // I3C device
+    - CMD: random this field is disregarded
+    - CP = 0x0 // CMD field is not valid
+    - DEV_ADDRESS: random allowed I3C address 
+    - DTT: number of bytes to be transferred
+    - MODE = 0x0 // standard I3C SDR Speed
+    - RNW = 0x0 // Write transfer
+    - WROC: random 
+    - TOC: random
+    - DATA_BYTES: random data to be sent
+- split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
+
+Check:
+    - correct start/restart fmt_flag is generated 
+    - first fmt_byte is DEV_ADDRESS
+    - following DTT fmt_bytes are DATA_BYTES
+    - correct stop fmt_flag is generated'>immediate_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/flow_active/test_flow_active_immediate_write.py>immediate_write</a></td><td style="text-align: center;">      0.040      </td><td style="text-align: center;">    387.000     </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                              </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+<h3> Testplan Progress
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">        Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">         1         </td><td style="text-align: center;">       1       </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td><td style="text-align: center;">      1       </td><td style="text-align: center;">     1      </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
+</html>

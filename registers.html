@@ -224,7 +224,7 @@
   
     <li class="md-nav__item">
       <a href="target_overview.html" class="md-nav__link">
-        <span class="md-ellipsis">I3C target overview</span>
+        <span class="md-ellipsis">I3C Target overview</span>
       </a>
     </li>
   
@@ -6299,8 +6299,12 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 </table>
 <h4 id="pid-hi-field">PID_HI field<a class="headerlink" href="#pid-hi-field" title="Link to this heading">¶</a></h4>
 <p>High part of the 48-bit Target Device Provisioned ID.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="dcr-field">DCR field<a class="headerlink" href="#dcr-field" title="Link to this heading">¶</a></h4>
 <p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="bcr-var-field">BCR_VAR field<a class="headerlink" href="#bcr-var-field" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Variable Part.</p>
 <p>Reset value is set to 5'b10000, because this device:</p>
@@ -6321,10 +6325,14 @@ to receive its Dynamic Address before operating in Standby Controller mode.</p>
 <p>[bit0] has no speed limitation</p>
 </li>
 </ul>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="bcr-fixed-field">BCR_FIXED field<a class="headerlink" href="#bcr-fixed-field" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Fixed Part.</p>
 <p>Reset value is set to 3'b001, because this device is an I3C Target,
-which supports extended capabilities</p>
+which supports extended capabilities.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h3 id="stby-cr-status-register">STBY_CR_STATUS register<a class="headerlink" href="#stby-cr-status-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x194</p></li>
@@ -6407,9 +6415,13 @@ which supports extended capabilities</p>
 </tbody>
 </table>
 <h4 id="id11">PID_HI field<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
-<p>High part of the 48-bit Target Device Provisioned ID.</p>
+<p>High part of the 48-bit Target Device Provisioned ID. </p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="id12">DCR field<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
 <p>Device Characteristics Register. Value represents an OCP Recovery Device.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="id13">BCR_VAR field<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Variable Part.</p>
 <p>Reset value is set to 5'b10110, because this device:</p>
@@ -6430,10 +6442,14 @@ which supports extended capabilities</p>
 <p>[bit0] has no speed limitation</p>
 </li>
 </ul>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h4 id="id14">BCR_FIXED field<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h4>
 <p>Bus Characteristics, Fixed Part.</p>
 <p>Reset value is set to 3'b001, because this device is an I3C Target,
 which supports extended capabilities</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h3 id="stby-cr-device-pid-lo-register">STBY_CR_DEVICE_PID_LO register<a class="headerlink" href="#stby-cr-device-pid-lo-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x19C</p></li>
@@ -6460,6 +6476,8 @@ which supports extended capabilities</p>
 </table>
 <h4 id="pid-lo-field">PID_LO field<a class="headerlink" href="#pid-lo-field" title="Link to this heading">¶</a></h4>
 <p>Low part of the 48-bit Target Device Provisioned ID.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h3 id="stby-cr-intr-status-register">STBY_CR_INTR_STATUS register<a class="headerlink" href="#stby-cr-intr-status-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x1A0</p></li>
@@ -6598,6 +6616,8 @@ by the Target Reset Pattern.</p>
 </table>
 <h4 id="id15">PID_LO field<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h4>
 <p>Low part of the 48-bit Target Virtual Device Provisioned ID.</p>
+<p>This field is Read-Only while the STBY_CR_ENABLE_INIT field in register
+STBY_CR_CONTROL is not zero.</p>
 <h3 id="stby-cr-intr-signal-enable-register">STBY_CR_INTR_SIGNAL_ENABLE register<a class="headerlink" href="#stby-cr-intr-signal-enable-register" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Absolute Address: 0x1A8</p></li>
@@ -10498,7 +10518,7 @@ reaches termination value.</p>
   <small>
     
       Last update:
-      2026-06-10
+      2026-06-11
     
   </small>
 </div>

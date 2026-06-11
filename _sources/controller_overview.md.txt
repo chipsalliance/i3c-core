@@ -1,57 +1,37 @@
 # I3C Controller overview
 
-## Architecture
-
-The design is partitioned into two primary subsystems: the **Host Controller Interface (HCI)** and the **Host Controller (HC)**. These subsystems communicate via command/response queues and shared lookup tables (DAT/DCT).
-
-### High-Level Block Diagram
-
-:::{figure-md} fig-hc-top
-![](img/hc_top_level_arch.png)
-
-High-Level Block Diagram
-:::
-
-
-### Subsystems
-* **HCI (Host Controller Interface):**
-    * **Interface:** AXI/AHB (Slave interface).
-    * **Function:** Handles communication with the Host CPU. It populates Control and Status Registers (CSRs) and transfers relevant information between the CSRs and the internal hardware queues (Command, Response, TX, RX, IBI).
-* **HC (Host Controller):**
-    * **Function:** Reads operational data from the queues and translates them into physical I3C transactions (driving SDA/SCL output signals).
-    * **Components:** Consists of the `flow_active` module (protocol logic) and the low-level PHY FSMs (`i3c_controller_fsm` / `i2c_controller_fsm`).
-
-### Data Flow
-1.  **Command Generation:** Software writes commands to HCI CSRs.
-2.  **Queue Population:** HCI logic pushes these commands into the Command Queue.
-3.  **Execution:** HC fetches commands, consults the Device Address Table (DAT) or Device Characteristics Table (DCT), and executes the transaction on the bus.
-4.  **Response:** Results are written back to the Response Queue for software to read.
-
----
-
 ## Features List
 
-### Host Controller Interface (HCI)
-* **Registers (RDL):** Full implementation of the Register Description List for configuration and status monitoring.
-* **Queues:** Support for Command, Response, TX, RX, and IBI queues.
-* **Tables:**
-    * **DAT (Device Address Table):** Storage for Dynamic Addresses and device types.
-    * **DCT (Device Characteristics Table):** Storage for device-specific parameters (PID, BCR, DCR).
-
 ### Controller Core Logic
-* **SDA Arbitration Management:** Handling of bus arbitration during Start/Restart phases.
-* **Frame Generation:**
-    * **Read Frame:** Support for SDR Read transactions with and without `7'h7E` I3C address.
-    * **Write Frame:** Support for SDR Write transactions with and without `7'h7E` I3C address.
-* **IBI Handling:** Detection and processing of In-Band Interrupts from Targets.
-* **HDR Pattern Generation:**
-    * **HDR Exit Pattern:** Logic to generate the specific sequence to exit High Data Rate modes (ensuring bus reset/compatibility).
-* **Error Handling:** Target Error Detection and Escalation mechanisms.
+The foundation of the I3C Host Controller, handling standard bus operations, arbitration, and framing.
+* **Frame Generation:** Support for SDR Read and Write transactions, both with and without the `7'h7E` I3C broadcast address.
+* **Bus Speed Configurability:** Dynamic control over bus operating frequencies (for both Open-Drain and Push-Pull modes) via dedicated timing CSRs.
+* **SDA Arbitration Management:** Autonomous handling of bus arbitration during address phase.
+* **In-Band Interrupt (IBI) Detection:** Hardware-level detection and processing of target-initiated IBIs.
+* **HDR Pattern Generation:** Includes logic to generate the specific sequence required to exit High Data Rate (HDR) modes, ensuring proper bus reset and compatibility.
+* **Error Handling:** Built-in Target Error Detection and Escalation mechanisms.
+
+### Dynamic Address Assignment (DAA)
+The controller fully implements DAA according to the bus initialization sequence defined in the **I3C Basic Specification (Section 5.1.4.2)** and the **I3C HCI Specification (Section 8.4.1.1)** for the `ENTDAA` command.
+
+**Software Configuration Guidelines:**
+1. **Pre-populate the DAT:** All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated **before** sending the `ENTDAA` command. 
+2. **Handling Unassigned Targets:** If the `DEV_COUNT` limit is reached but unaddressed devices remain on the bus, the controller signals this by returning `0x1` in the `DATA_LENGTH` field of the Response Descriptor.
+3. **DCT Initialization:** The Device Characteristics Table (DCT) Index always starts at `0`.
+
+### In-Band Interrupts (IBI)
+The controller supports the detection, validation, and servicing of IBIs initiated by targets, whether raised during a Bus Available condition or during arbitrable address headers.
+
+* **Reverse Lookup & Validation:** When a target drives its dynamic address during an IBI request, a hardware **reverse lookup table** quickly resolves it to a DAT index. 
+* **IBI Rejection:** The controller automatically rejects the IBI (NACK) if the bitwise condition `IBI_REJECT | ~IBI_PAYLOAD` is met. This ensures interrupts are ignored if `IBI_REJECT` is set (`1`), or if the target is not authorized to send payloads (`IBI_PAYLOAD` is `0`).
+* **Data Packing:** Accepted IBI data is efficiently packed into the 32-bit `PIOCONTROL.IBI_PORT` CSR for host software:
+    1. **Status Descriptor:** The first DWORD contains metadata (payload `data_length` and target dynamic address).
+    2. **Mandatory Data Byte (MDB):** If present, the MDB is packed into the Least Significant Byte (LSB) of the very first data DWORD following the descriptor.
+    3. **Payload Data:** The remaining payload is chunked and written as `(data_length + 3) / 4` DWORDs.
+* **Overflow Handling:** The controller uses an internal hardware buffer for optional IBI payload bytes. If a target sends data equal to or exceeding this buffer size, the controller aborts the transaction, flags an error, and writes only the successfully captured bytes (up to the buffer limit) into the `IBI_PORT`.
 
 ### Common Command Codes (CCC)
-
-
-The I3C Controller includes support for the following subset of CCCs required for basic bus management and initialization.
+Support for the essential subset of CCCs required for basic bus management, initialization, and device configuration.
 
 #### Broadcast Support
 * **ENEC:** Enable Events Command (Broadcast).
@@ -68,50 +48,17 @@ The I3C Controller includes support for the following subset of CCCs required fo
 * **GETPID:** Get Provisional ID (Direct).
 * **GETBCR:** Get Bus Characteristics Register (Direct).
 * **GETDCR:** Get Device Characteristics Register (Direct).
-* **GETSTATUS:** Get Device Status (Direct).
 
-#### Dynamic Address Assignment (DAA)
-
-The controller implements Dynamic Address Assignment (DAA) in accordance with the bus initialization sequence defined in the **I3C Basic Specification (Section 5.1.4.2)** and the usage guidelines for the `ENTDAA` CCC in the **I3C HCI Specification (Section 8.4.1.1)**.
-
-When configuring the DAA procedure, software developers must adhere to the following guidelines:
-
-1. **Pre-populate the DAT:** All Device Address Table (DAT) entries for targets awaiting a dynamic address must be fully populated **before** initiating the DAA procedure with the `ENTDAA` CCC. 
-2. **Handling Unassigned Targets:** If the specified `DEV_COUNT` number of dynamic addresses has been successfully assigned, but unaddressed devices still remain on the bus, the controller will return a value of `0x1` in the `DATA_LENGTH` field of the Response Descriptor. This signals to the host that at least one target device still requires an address.
-3. **DCT Initialization:** The Device Characteristics Table (DCT) Index always starts at `0`.
-
-### In-Band Interrupts (IBI)
-
-The I3C Controller supports the detection and servicing of In-Band Interrupts (IBIs) initiated by target devices.
-The controller can recognize and process these interrupts whether they are raised during a Bus Available condition or during arbitrable address headers.
-
-#### IBI Rejection and DAT Lookup
-Before accepting an IBI, the controller validates the request against the target's Device Address Table (DAT) entry.
-When a target drives its dynamic address onto the bus during an IBI request, the controller utilizes a **reverse lookup table** to quickly resolve this dynamic address back to the target's specific DAT index. 
-
-Once the corresponding DAT entry is retrieved, the controller checks its configuration fields to decide whether to acknowledge (ACK) or reject (NACK) the interrupt.
-The IBI is automatically rejected if the bitwise condition `IBI_REJECT | ~IBI_PAYLOAD` is met.
-Specifically:
-* **`IBI_REJECT`:** If this field is set (`1`), the controller explicitly rejects all IBI requests from this target.
-* **`~IBI_PAYLOAD`:** If the `IBI_PAYLOAD` field is clear (`0`), the controller will also reject the IBI, ensuring that targets not explicitly authorized to send payload data are denied.
-
-#### IBI Data Packing
-When an accepted IBI is processed, the controller writes the resulting data into the `PIOCONTROL.IBI_PORT` CSR.
-To ensure efficient reading by the host software, the IBI data is packed into the 32-bit port in the following sequence:
-
-1. **IBI Status Descriptor:** The first 32-bit word (DWORD) written to the port is always the IBI Status Descriptor. This descriptor contains vital metadata about the interrupt, including the `data_length` (in bytes) of the incoming payload as well as the dynamic address of the target issuing the IBI.
-2. **Payload Data:** The Status Descriptor is immediately followed by the actual IBI data payload. The data is chunked and written as `(data_length + 3) / 4` DWORDs.
-3. **Mandatory Data Byte (MDB) Placement:** If the target sends a Mandatory Data Byte (MDB), it is always packed into the Least Significant Byte (LSB) of the very first data DWORD immediately following the Status Descriptor.
-
-#### Internal Buffer & Overflow Handling
-In accordance with the I3C HCI Specification (Section 6.9.1, *IBI Handling in PIO Mode*), the controller utilizes an internal hardware buffer to temporarily hold the target's optional IBI data bytes during the read transaction. 
-
-* **Overflow Condition:** If a target attempts to send a number of optional bytes that is **greater than or equal to** the internal buffer size, the controller will flag an error and immediately abort the IBI transaction.
-* **Data Retention:** In the event of a buffer overflow and subsequent abort, the controller recovers by writing the first *buffer size* bytes (the maximum data it successfully captured before the abort) into the `IBI_PORT`.
+### Host Controller Interface (HCI)
+The software-to-hardware interface bridging the driver to the I3C Core logic.
+* **Registers (RDL):** Full implementation of the Register Description List for configuration and status monitoring.
+* **Queues:** Dedicated memory-mapped queues for Command, Response, TX, RX, and IBI data.
+* **Hardware Tables:**
+    * **DAT (Device Address Table):** Storage for dynamic addresses, rejection logic, and device types.
+    * **DCT (Device Characteristics Table):** Storage for target-specific physical parameters (PID, BCR, DCR).
 
 ### Error Conditions
-
-The MVP supports the following ERROR_STATUS conditions from Table 1 Error Status Codes in Response Descriptor I3C TCRI Spec.
+The controller supports the following hardware ERROR_STATUS conditions, derived from Table 1 (Error Status Codes in Response Descriptor) of the I3C TCRI Spec.
 
 :::{list-table} Error Status Codes
 :name: error-status-codes
@@ -165,12 +112,41 @@ The MVP supports the following ERROR_STATUS conditions from Table 1 Error Status
 * - ABORTED_WITH_CRC
   - 0xB
   - 6.4.1.11
-  - This is used as an internal default state for errors. This means that internal hardware bugs can mistakenly produce the AbortedWithCRC error status.
+  - Used as an internal default state for errors. Internal hardware bugs may mistakenly produce this status.
 * - Transfer Type Specific
   - 0xC – 0xF
   - 6.4.1.12
   - 
 :::
+
+---
+
+## Architecture
+
+The design is partitioned into two primary subsystems: the **Host Controller Interface (HCI)** and the **Host Controller (HC)**. These subsystems communicate via command/response queues and shared lookup tables (DAT/DCT).
+
+### High-Level Block Diagram
+
+:::{figure-md} fig-hc-top
+![](img/hc_top_level_arch.png)
+
+High-Level Block Diagram
+:::
+
+
+### Subsystems
+* **HCI (Host Controller Interface):**
+    * **Interface:** AXI/AHB (Slave interface).
+    * **Function:** Handles communication with the Host CPU. It populates Control and Status Registers (CSRs) and transfers relevant information between the CSRs and the internal hardware queues (Command, Response, TX, RX, IBI).
+* **HC (Host Controller):**
+    * **Function:** Reads operational data from the queues and translates them into physical I3C transactions (driving SDA/SCL output signals).
+    * **Components:** Consists of the `flow_active` module (protocol logic) and the low-level PHY FSMs (`i3c_controller_fsm` / `i2c_controller_fsm`).
+
+### Data Flow
+1.  **Command Generation:** Software writes commands to HCI CSRs.
+2.  **Queue Population:** HCI logic pushes these commands into the Command Queue.
+3.  **Execution:** HC fetches commands, consults the Device Address Table (DAT) or Device Characteristics Table (DCT), and executes the transaction on the bus.
+4.  **Response:** Results are written back to the Response Queue for software to read.
 
 ---
 

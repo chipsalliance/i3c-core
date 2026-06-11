@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='cov.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testplan simulation results</title>
+</head>
+<body>
+    <div class="content">
+        <header>
+            <nav class="navbar">
+                <div class="nav-left">
+                    
+                    <div class="nav-urls">
+                        <a href="./index-top.html" class="button tooltip">
+                            <img src="assets/caret.svg" alt="Back" style="transform: scale(-2) translatey(-1px);" />
+                            <span class="tooltip-text tooltip-text-right">Go Back</span>
+                        </a>
+                    </div>
+                    
+
+                    <span class="container-title">
+                        Controller I2C Transaction
+                    </span>
+
+                    
+
+                    
+                    <div class="nav-urls">
+                        <a href="https://github.com/chipsalliance/i3c-core/tree/main//verification/testplan/top/controller_i2c.hjson" class="button tooltip">
+                            <img src="assets/code.svg" alt="Source" style="transform: scale(1.25) translatey(1px);"/>
+                            <span class="tooltip-text tooltip-text-right">Go to testplan source</span>
+                        </a>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="nav-right">
+                    
+                    <div class="nav-item">
+                        <img src="./assets/date.svg" alt="Run on"/>
+                        11/06/2026 09:05
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/repo.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core">i3c-core</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/branch.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/tree/main">main</a>
+                    </div>
+                    
+                    
+                    <div class="nav-item">
+                        <img src="./assets/commit.svg" alt="Run on"/>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/f8ea634f">f8ea634f</a>
+                    </div>
+                    
+                </div>
+                
+            </nav>
+        </header>
+        <center class='results'>
+        <div class="page-wrapper">
+            <div class="test-results">
+                <div class="table-wrapper">
+                    
+<h3> Test Results
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                               </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+Intent:
+Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) or Regular Data Transfer Command Descriptor (7.2.2.2 TCRI Spec) to an individual I2C Target Device with known address
+
+Stimulus:
+ - create a CMD descriptor setting the I2C field to 0x1. The first data byte is the internal memory address (from which the monitor will read the data received by the target) the remaining data bytes are randomized.
+Check:
+    - Read data from the I2C target memory by reading from the memory address specified in the first data byte. 
+    - Assert that the received data matches the sent data.
+    - Assert that the response descriptor returns the correct data length (including first memory address byte) and a SUCCESS status.'>i2c_private_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py>i2c_private_write</a></td><td style="text-align: center;">      3.930      </td><td style="text-align: center;">   121492.371   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+Intent:
+Verify Private Read with Immediate Data Transfer Command Descriptor (7.2.2.1 TCRI Spec) or Regular Data Transfer Command Descriptor (7.2.2.2 TCRI Spec) to an individual I2C Target Device with known address
+
+Stimulus:
+ - Write `target_len` random bytes to the cocotbext I2C memory.
+ - create a CMD descriptor setting the I2C field to 0x1. Write a data byte for the internal memory address (from which the target will send the data), set the TOC field to 0x0 to issue a repeated Start.
+ - create a second CMD descriptor setting the I2C field to 0x1. Set the data_length to `target_len` and the RnW field to 0x1 for a Read transaction.
+Check:
+    - Read received data from the Controller RX Queue and verify it matches the data written to the I2C target.
+    - Assert that the response descriptors return the correct data length (including first memory address byte) and a SUCCESS status.'>i2c_private_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py>i2c_private_read</a> </td><td style="text-align: center;">     28.657      </td><td style="text-align: center;">   908074.167   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">   <span title='Testbench:
+I3C Controller (RTL) <-> I2C Target (Cocotbext)
+
+Intent:
+Handle a NACK by the I2C target during a private write.
+
+Stimulus:
+ - set the I2C target memory length to be less than the data length to be written (such that we can generate a NACK condition)
+ - create a CMD descriptor setting the I2C field to 0x1. The first data byte is the internal memory address (from which the monitor will read the data received by the target) the remaining data bytes are randomized.
+Check:
+    - Assert that the response descriptor returns a NACK Error State.'>i2c_handle_nack<span>    </td><td>i2c_handle_nack                                                                                                                                     </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                        </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    2    </td><td style="text-align: center;">   2   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+            <div class="progress-table">
+                <div class="table-wrapper">
+                    
+<h3> Testplan Progress
+ </h3><table>
+<thead>
+<tr><th style="text-align: center;"> Implemented tests </th><th style="text-align: center;"> Planned tests </th><th style="text-align: center;">         Implementation progress         </th><th style="text-align: center;"> Passing runs </th><th style="text-align: center;"> Total runs </th><th style="text-align: center;">               Pass rate                </th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center;">         2         </td><td style="text-align: center;">       3       </td><td style="text-align: center;"><span style="color: #eab308">66.7%</span></td><td style="text-align: center;">      2       </td><td style="text-align: center;">     2      </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+</tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+        </center>
+    </div>
+    <footer>
+    </footer>
+</body>
+
+<script>
+const header = document.querySelector('header');
+const colHeaders = document.querySelectorAll("th");
+const tableWrapper = document.querySelector('.table-wrapper');
+
+function updateOffsets() {
+    const headerHeight = header.offsetHeight + "px";
+    tableWrapper.style.marginTop = headerHeight;
+    colHeaders.forEach((col) => {
+        col.style.top = headerHeight;
+    })
+}
+
+window.addEventListener('resize', updateOffsets, {passive: true});
+window.addEventListener('load', updateOffsets, {passive: true});
+</script>
+
+</html>
