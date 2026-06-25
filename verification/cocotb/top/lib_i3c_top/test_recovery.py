@@ -5294,6 +5294,11 @@ async def test_ri_read_interrupted_by_ccc(dut):
         4
     )
 
+    # Take bus control so the monitor does not insert a STOP between phases.
+    # Without this, the second send_start() emits a fresh START rather than
+    # a true Sr, which masks the bug described in issue #207.
+    await i3c_controller.take_bus_control()
+
     # Start RI write phase: S + Addr+W (to virtual target)
     await i3c_controller.send_start()
     await i3c_controller.write_addr_header(VIRT_DYNAMIC_ADDR, read=False)
@@ -5307,7 +5312,7 @@ async def test_ri_read_interrupted_by_ccc(dut):
     dut._log.info(f"Sent RI write phase to virtual target (0x{VIRT_DYNAMIC_ADDR:02X})")
 
     # Now send Sr + Private Write to MAIN target (not virtual)
-    await i3c_controller.send_start()  # Repeated Start
+    await i3c_controller.send_start()  # Repeated Start (true Sr now)
     await i3c_controller.write_addr_header(DYNAMIC_ADDR, read=False)  # Main target, Write
 
     # Send some data to main target

@@ -208,7 +208,12 @@ def _mutate_pid(target):
 
 
 def _mutate_bcr(target):
-    target.bcr = (target.bcr ^ 0xFB) & ~0x04  # preserve BCR[2]=0
+    # Flip all 8 bits (including BCR[2] / IBI Payload).  Safe because
+    # GETBCR is 1 byte regardless of BCR[2], and _mutate_bcr is only
+    # invoked by test_ccc_runtime_update, which is sim-only and runs
+    # exactly one descriptor (no chain), so no other CCC's count function
+    # ever observes the mutated BCR.
+    target.bcr ^= 0xFF
 
 
 def _mutate_dcr(target):

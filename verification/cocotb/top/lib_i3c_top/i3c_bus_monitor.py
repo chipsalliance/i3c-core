@@ -157,6 +157,11 @@ class I3cBusMonitor:
         self._ccc_direct_addr = None   # Target addr in direct CCC phase
         self._ccc_read_bytes = []      # Accumulated read bytes during direct GET
         self._in_ccc_read_phase = False # True when reading GET CCC response data
+        # Snapshot of expected GET CCC response bytes, captured at the moment
+        # the read data phase begins (after the directed-read header is ACKed).
+        # Required to avoid races vs. concurrent FW (AXI) writes to the same
+        # CSRs while the design is shifting the response onto the bus.
+        self._ccc_read_expected = None
 
         # --- M2: Address Tracking Monitor state ---
         self._ccc_write_bytes = []     # Data bytes captured during CCC write phase
@@ -600,6 +605,7 @@ class I3cBusMonitor:
             self._ccc_read_bytes = []
             self._ccc_write_bytes = []
             self._in_ccc_read_phase = False
+            self._ccc_read_expected = None
             self._in_ccc_write_phase = False
             return
 
@@ -627,6 +633,12 @@ class I3cBusMonitor:
                     self._in_ccc_read_phase = True
                     self._ccc_read_bytes = []
                     self._ccc_direct_addr = self._addr_accum
+                    # Snapshot expected response now (before the design starts
+                    # serializing data onto the bus), so the comparison at STOP
+                    # is immune to FW writes that race the CCC.
+                    self._ccc_read_expected = self._compute_expected_ccc_read(
+                        self._active_ccc_code
+                    )
                 # Private read from DUT -- target will transmit in PP
                 self._phase = BusPhase.READ_DATA
                 self._bit_count = 0
@@ -968,15 +980,19 @@ class I3cBusMonitor:
         if ccc in self._ADDR_CCC_CODES:
             self._check_addr_ccc_csr(ccc)
 
-    def _check_get_ccc_response(self, ccc):
-        """M1: Verify GET CCC response data matches DUT CSR values."""
+    def _compute_expected_ccc_read(self, ccc):
+        """Compute the expected GET CCC response bytes from current DUT CSRs.
+
+        Returns a list of expected bytes (possibly empty / containing None
+        if signals cannot be resolved), or None if the CCC has no checker.
+        Intended to be called at the moment the directed-read phase begins
+        so the result is immune to later concurrent FW CSR writes.
+        """
         ccc_mod = self._get_ccc_signal_path()
-        config = self._get_config_path()
         if ccc_mod is None:
-            return
+            return None
 
         is_virt = self._is_virt_target()
-        got = self._ccc_read_bytes
         expected = []
 
         try:
@@ -1033,10 +1049,26 @@ class I3cBusMonitor:
                     expected = [0x35]
 
         except Exception:
-            return  # Signal access failure — skip check
+            return None  # Signal access failure -- skip check
+
+        return expected
+
+    def _check_get_ccc_response(self, ccc):
+        """M1: Verify GET CCC response data matches DUT CSR values.
+
+        Uses the expected-bytes snapshot captured at the start of the read
+        phase to avoid false mismatches when FW concurrently writes the
+        backing CSR while the design is shifting bytes onto the bus.
+        """
+        got = self._ccc_read_bytes
+        expected = self._ccc_read_expected
+        # Fallback: if for any reason no snapshot was taken (e.g. read phase
+        # entry was missed), compute now -- this preserves prior behavior.
+        if expected is None:
+            expected = self._compute_expected_ccc_read(ccc)
 
         if not expected or None in expected:
-            return  # Can't determine expected — skip
+            return  # Can't determine expected -- skip
 
         # Compare only the bytes we received (may be truncated by abort)
         for i, (g, e) in enumerate(zip(got, expected)):
@@ -1044,7 +1076,7 @@ class I3cBusMonitor:
                 self._record_violation(
                     "CCC_RESPONSE_DATA",
                     f"CCC 0x{ccc:02X} byte[{i}]: got 0x{g:02X}, "
-                    f"expected 0x{e:02X} (virt={is_virt}, "
+                    f"expected 0x{e:02X} (virt={self._is_virt_target()}, "
                     f"db={self._ccc_defining_byte})"
                 )
 
@@ -1133,6 +1165,7 @@ class I3cBusMonitor:
                         f"after {len(self._ccc_read_bytes)}/{expected} bytes"
                     )
                 self._in_ccc_read_phase = False
+                self._ccc_read_expected = None
         else:
             self.log.debug(f"I3cBusMonitor: START detected")
             self.stats['starts_detected'] += 1
@@ -1140,6 +1173,7 @@ class I3cBusMonitor:
             self._active_ccc_code = None
             self._ccc_defining_byte = None
             self._in_ccc_read_phase = False
+            self._ccc_read_expected = None
             self._in_ccc_write_phase = False
 
         self._enter_addr_phase(is_repeated_start=is_sr)
@@ -1161,6 +1195,7 @@ class I3cBusMonitor:
         self._active_ccc_code = None
         self._ccc_defining_byte = None
         self._in_ccc_read_phase = False
+        self._ccc_read_expected = None
         self._in_ccc_write_phase = False
 
     # --------------------------------------------------------------
