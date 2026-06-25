@@ -139,10 +139,14 @@ def device_status_0_word(dev_status, prot_error, rec_reason_code):
 # I3C-side helpers
 # -----------------------------------------------------------------------------
 async def i3c_recovery_read_bytes(recovery, command, exp_len):
-    """Issue an I3C recovery read and return the data bytes (PEC checked)."""
+    """Issue an I3C recovery read and return the data bytes (PEC checked).
+    NOTE: command_read returns (None, None) on NACK/abort, so handle that
+    explicitly before referencing data/pec_ok in any assertion message."""
     res = await recovery.command_read(VIRT_DYNAMIC_ADDR, command)
     assert res is not None, f"command_read for cmd {command} returned None"
     data, pec_ok = res
+    assert data is not None and pec_ok is not None, \
+        f"I3C recovery read for cmd {command} failed (NACK/abort)"
     assert pec_ok, f"PEC check failed for cmd {command}, data={[hex(b) for b in data]}"
     assert len(data) == exp_len, \
         f"cmd {command} returned {len(data)} bytes, expected {exp_len}"
