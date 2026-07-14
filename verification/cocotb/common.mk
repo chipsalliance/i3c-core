@@ -1,5 +1,34 @@
 # SPDX-License-Identifier: Apache-2.0
 
+# ---------------------------------------------------------------------------
+# Optionally run the whole flow on the compute cluster.
+#
+# EDA licenses (e.g. Synopsys VCS) cannot be checked out on login nodes. Set
+# CLUSTER=1 to re-exec the requested make goals on a compute node via the
+# `submit` wrapper. This covers config build, RTL compile and simulation in a
+# single cluster job.
+#
+# By default the scheduler is auto-detected. To force a scheduler or use a
+# different wrapper entirely, override SUBMIT_CMD, e.g.
+#
+#   make MODULE=... TESTCASE=... SIM=vcs CLUSTER=1
+#   make MODULE=... TESTCASE=... SIM=vcs CLUSTER=1 SUBMIT_CMD='submit -i -s lsf --'
+#   make MODULE=... TESTCASE=... SIM=vcs CLUSTER=1 SUBMIT_CMD='bsub -Is'
+# ---------------------------------------------------------------------------
+CLUSTER    ?= 0
+SUBMIT_CMD ?= submit -i --
+
+ifeq ($(CLUSTER),1)
+
+# Re-run on a compute node and skip local (cocotb) rule processing entirely.
+.DEFAULT_GOAL := cluster-submit
+.PHONY: cluster-submit $(MAKECMDGOALS)
+$(MAKECMDGOALS): cluster-submit ;
+cluster-submit:
+	+$(SUBMIT_CMD) $(MAKE) $(MAKECMDGOALS) CLUSTER=0
+
+else
+
 TOPLEVEL_LANG    = verilog
 SIM             ?= verilator
 WAVES           ?= 0
@@ -131,3 +160,5 @@ $(TEST_DIR)/sim_build/i3c_config.vh:
 	pushd $(I3C_ROOT_DIR) && CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME) make config && popd
 	mkdir -p $(TEST_DIR)/sim_build
 	touch $(TEST_DIR)/sim_build/i3c_config.vh
+
+endif # CLUSTER
