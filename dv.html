@@ -4581,7 +4581,7 @@ from the SDA line.</p>
 <p><a class="external reference" href="./sim-results/bus_timers.html">Test results</a></p>
 <h4 id="id4">Testpoints<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <h5 id="get-status"><code class="docutils literal notranslate"><span class="pre">get_status</span></code><a class="headerlink" href="#get-status" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_ctrl_bus_timers.py">ctrl_bus_timers</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L27">bus_timers</a></p>
 <p>Tests the bus_timers module responsible for tracking bus free,
 idle and available states. Triggers the module and verifies if
 the signals corresponding to bus states get asserted after the
@@ -4680,7 +4680,7 @@ Verifies that the write did not succeed.</p>
 <p><a class="external reference" href="./sim-results/descriptor_rx.html">Test results</a></p>
 <h4 id="id10">Testpoints<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h4>
 <h5 id="id11"><code class="docutils literal notranslate"><span class="pre">descriptor_rx</span></code><a class="headerlink" href="#id11" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py">descriptor_rx</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py#L26">descriptor_rx</a></p>
 <p>Tests the descriptor_rx module responsible for generating TTI RX
 descriptors. The test sends N bytes to the module and verifies
 that it emits a valid descriptor with data length set to N.</p>
@@ -4688,7 +4688,7 @@ that it emits a valid descriptor with data length set to N.</p>
 <p><a class="external reference" href="./sim-results/descriptor_tx.html">Test results</a></p>
 <h4 id="id12">Testpoints<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
 <h5 id="id13"><code class="docutils literal notranslate"><span class="pre">descriptor_tx</span></code><a class="headerlink" href="#id13" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py">descriptor_tx</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py#L22">descriptor_tx</a></p>
 <p>Tests the descriptor_tx module responsible for processing TTI TX
 descriptors and controlling TTI data flow during I3C private
 reads. Sends a descriptor to the module followed with the right
@@ -4706,13 +4706,13 @@ bus state.</p>
 <p><a class="external reference" href="./sim-results/edge_detector.html">Test results</a></p>
 <h4 id="id15">Testpoints<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h4>
 <h5 id="pretrigger-with-delay"><code class="docutils literal notranslate"><span class="pre">pretrigger_with_delay</span></code><a class="headerlink" href="#pretrigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">pretrigger_with_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L51">pretrigger_with_delay</a></p>
 <p>Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 equal to the programmed delay.</p>
 <h5 id="posttrigger-with-delay"><code class="docutils literal notranslate"><span class="pre">posttrigger_with_delay</span></code><a class="headerlink" href="#posttrigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">posttrigger_with_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L74">posttrigger_with_delay</a></p>
 <p>Emits an edge on the bus, triggers the edge_detector module after
 the edge when the bus line is high. Counts clock cycles it takes
 the detector to report the edge event. The output detect signal
@@ -4721,31 +4721,31 @@ programmed delay time since the assertion of the trigger signal.
 Verifies that the number of counted cycles is equal the programmed
 delay.</p>
 <h5 id="trigger-with-delay"><code class="docutils literal notranslate"><span class="pre">trigger_with_delay</span></code><a class="headerlink" href="#trigger-with-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">trigger_with_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L99">trigger_with_delay</a></p>
 <p>Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 equal to the programmed delay.</p>
 <h5 id="pretrigger-no-delay"><code class="docutils literal notranslate"><span class="pre">pretrigger_no_delay</span></code><a class="headerlink" href="#pretrigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">pretrigger_no_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L123">pretrigger_no_delay</a></p>
 <p>Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.</p>
 <h5 id="posttrigger-no-delay"><code class="docutils literal notranslate"><span class="pre">posttrigger_no_delay</span></code><a class="headerlink" href="#posttrigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">posttrigger_no_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L146">posttrigger_no_delay</a></p>
 <p>Triggers the edge_detector module when a bus line is high which
 is after an edge. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.</p>
 <h5 id="trigger-no-delay"><code class="docutils literal notranslate"><span class="pre">trigger_no_delay</span></code><a class="headerlink" href="#trigger-no-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">trigger_no_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L172">trigger_no_delay</a></p>
 <p>Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
 to report the presence of the edge. Verifies that the count is
 zero as the configured delay is also set to 0.</p>
 <h5 id="falling-before-delay"><code class="docutils literal notranslate"><span class="pre">falling_before_delay</span></code><a class="headerlink" href="#falling-before-delay" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py">falling_before_delay</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L196">falling_before_delay</a></p>
 <p>Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. After half of the programmed delay passed the line
 falls back to low. Verifies that the edge was not reported in this
@@ -5012,13 +5012,13 @@ afterwards.</p>
 <p><a class="external reference" href="./sim-results/width_converter_8toN.html">Test results</a></p>
 <h4 id="id26">Testpoints<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
 <h5 id="converter"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#converter" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py">width_converter_8ton_converter</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py#L56">width_converter_8ton_converter</a></p>
 <p>Pushes random byte stream to the converter module. After each
 byte waits at random. Simultaneously receives N-bit data words
 and generates pushback (deasserts ready) at random. Verifies if
 the output data matches the input.</p>
 <h5 id="flush"><code class="docutils literal notranslate"><span class="pre">flush</span></code><a class="headerlink" href="#flush" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py">width_converter_8ton_flush</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L60">width_converter_8ton_flush</a></p>
 <p>Feeds M bytes to the module where M is in [1, 2, 3]. Asserts the
 sink_flush_i signal, receives the output word and checks if it
 matches the input data.</p>
@@ -5026,13 +5026,13 @@ matches the input data.</p>
 <p><a class="external reference" href="./sim-results/width_converter_Nto8.html">Test results</a></p>
 <h4 id="id27">Testpoints<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
 <h5 id="id28"><code class="docutils literal notranslate"><span class="pre">converter</span></code><a class="headerlink" href="#id28" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py">width_converter_nto8_converter</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py#L56">width_converter_nto8_converter</a></p>
 <p>Pushes random N-bit word stream to the converter module. After each
 word waits at random. Simultaneously receives bytes and generates
 pushback (deasserts ready) at random. Verifies if the output data
 matches the input.</p>
 <h5 id="id29"><code class="docutils literal notranslate"><span class="pre">flush</span></code><a class="headerlink" href="#id29" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py">width_converter_nto8_flush</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L54">width_converter_nto8_flush</a></p>
 <p>Feeds an N-bit word to the module. Receives M bytes where M is in
 [1, 2, 3] and asserts source_flush_i. Verifies that the module
 ceases to output data as expected.</p>
@@ -7777,7 +7777,7 @@ that specific transaction.</p>
   <small>
     
       Last update:
-      2026-06-11
+      2026-07-16
     
   </small>
 </div>

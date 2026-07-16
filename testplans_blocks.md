@@ -100,7 +100,7 @@ from the SDA line.
 
 ### `get_status`
 
-Test: [ctrl_bus_timers](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_ctrl_bus_timers.py)
+Test: [bus_timers](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_bus_timers/test_bus_timers.py#L27)
 
 Tests the bus_timers module responsible for tracking bus free,
 idle and available states. Triggers the module and verifies if
@@ -259,7 +259,7 @@ Performs a sequence of CSR writes. Verifies that each one succeeds.
 
 ### `descriptor_rx`
 
-Test: [descriptor_rx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py)
+Test: [descriptor_rx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_rx/test_descriptor_rx.py#L26)
 
 Tests the descriptor_rx module responsible for generating TTI RX
 descriptors. The test sends N bytes to the module and verifies
@@ -274,7 +274,7 @@ that it emits a valid descriptor with data length set to N.
 
 ### `descriptor_tx`
 
-Test: [descriptor_tx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py)
+Test: [descriptor_tx](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_descriptor_tx/test_descriptor_tx.py#L22)
 
 Tests the descriptor_tx module responsible for processing TTI TX
 descriptors and controlling TTI data flow during I3C private
@@ -306,7 +306,7 @@ bus state.
 
 ### `pretrigger_with_delay`
 
-Test: [pretrigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [pretrigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L51)
 
 Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
@@ -315,7 +315,7 @@ equal to the programmed delay.
 
 ### `posttrigger_with_delay`
 
-Test: [posttrigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [posttrigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L74)
 
 Emits an edge on the bus, triggers the edge_detector module after
 the edge when the bus line is high. Counts clock cycles it takes
@@ -327,7 +327,7 @@ delay.
 
 ### `trigger_with_delay`
 
-Test: [trigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [trigger_with_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L99)
 
 Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
@@ -336,7 +336,7 @@ equal to the programmed delay.
 
 ### `pretrigger_no_delay`
 
-Test: [pretrigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [pretrigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L123)
 
 Triggers the edge_detector module before an edge on a bus line,
 emits the edge and counts clock cycles it takes the detector
@@ -345,7 +345,7 @@ zero as the configured delay is also set to 0.
 
 ### `posttrigger_no_delay`
 
-Test: [posttrigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [posttrigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L146)
 
 Triggers the edge_detector module when a bus line is high which
 is after an edge. Counts clock cycles it takes the detector
@@ -354,7 +354,7 @@ zero as the configured delay is also set to 0.
 
 ### `trigger_no_delay`
 
-Test: [trigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [trigger_no_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L172)
 
 Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. Counts clock cycles it takes the detector
@@ -363,7 +363,7 @@ zero as the configured delay is also set to 0.
 
 ### `falling_before_delay`
 
-Test: [falling_before_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py)
+Test: [falling_before_delay](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/ctrl_edge_detector/test_edge_detector.py#L196)
 
 Triggers the edge detector and emits a rising edge on a bus line
 simultaneously. After half of the programmed delay passed the line
@@ -803,7 +803,7 @@ afterwards.
 
 ### `converter`
 
-Test: [width_converter_8ton_converter](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py)
+Test: [width_converter_8ton_converter](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_converter.py#L56)
 
 Pushes random byte stream to the converter module. After each
 byte waits at random. Simultaneously receives N-bit data words
@@ -812,7 +812,7 @@ the output data matches the input.
 
 ### `flush`
 
-Test: [width_converter_8ton_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py)
+Test: [width_converter_8ton_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_8toN/test_flush.py#L60)
 
 Feeds M bytes to the module where M is in [1, 2, 3]. Asserts the
 sink_flush_i signal, receives the output word and checks if it
@@ -827,7 +827,7 @@ matches the input data.
 
 ### `converter`
 
-Test: [width_converter_nto8_converter](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py)
+Test: [width_converter_nto8_converter](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_converter.py#L56)
 
 Pushes random N-bit word stream to the converter module. After each
 word waits at random. Simultaneously receives bytes and generates
@@ -836,7 +836,7 @@ matches the input.
 
 ### `flush`
 
-Test: [width_converter_nto8_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py)
+Test: [width_converter_nto8_flush](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/block/width_converter_Nto8/test_flush.py#L54)
 
 Feeds an N-bit word to the module. Receives M bytes where M is in
 [1, 2, 3] and asserts source_flush_i. Verifies that the module

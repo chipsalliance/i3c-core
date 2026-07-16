@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        11/06/2026 09:06
+                        16/07/2026 12:41
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/f8ea634f">f8ea634f</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/ab6daf3d">ab6daf3d</a>
                     </div>
                     
                 </div>
@@ -82,20 +82,20 @@
 deasserted, sends a private write over I3C to the target and
 waits for irq_o assertion. Once the interrupt is asserted reads
 a RX descriptor from the TTI RX descriptor queue, ensures that
-irq_o gets deasserted after the read.'>rx_desc_stat<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>rx_desc_stat</a>    </td><td style="text-align: center;">      0.716      </td><td style="text-align: center;">    4876.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+irq_o gets deasserted after the read.'>rx_desc_stat<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>rx_desc_stat</a>    </td><td style="text-align: center;">      0.924      </td><td style="text-align: center;">    4876.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">                              <span title='Enables TX_DESC_STAT TTI interrupt, checks if the irq_o signal is
 deasserted, writes data to TTI TX data queue followed by writing
 a descriptor to TTI TX descriptor queue, sends a private read
 over I3C and waits for irq_o assertion. Once the interrupt is
 asserted clears it by writing 1 to the TX_DESC_STAT fields of TTI
-INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.'>tx_desc_stat<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>tx_desc_stat</a>    </td><td style="text-align: center;">      0.927      </td><td style="text-align: center;">    6688.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+INTERRUPT_STATUS csr and ensures that irq_o signal gets deasserted.'>tx_desc_stat<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>tx_desc_stat</a>    </td><td style="text-align: center;">      1.238      </td><td style="text-align: center;">    6688.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">                              <span title='Enables IBI_DONE_EN TTI interrupt, checks if the irq_o signal is
 deasserted, and the status bit in TTI INTERRUPT_STATUS CSR cleared.
 Issues and IBI, waits for it to be serviced by the controller.
 Checks if the status bit is set in INTERRUPT_STATUS CSR and the
 irq_o signal asserted. Reads LAST_IBI_STATUS field from the TTI
 STATUS CSR, ensures that irq_o gets deasserted and status bit gets
-cleared afterwards.'>ibi_done<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>ibi_done</a>        </td><td style="text-align: center;">      1.279      </td><td style="text-align: center;">    4196.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+cleared afterwards.'>ibi_done<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>ibi_done</a>        </td><td style="text-align: center;">      1.674      </td><td style="text-align: center;">    4196.000    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">                              <span title='The test is run for each TTI interrupt:
  - TX_DESC_STAT_EN
  - RX_DESC_STAT_EN
@@ -114,10 +114,10 @@ TTI INTERRUPT_FORCE CSR, ensures that the irq_o does get asserted.
 
 Clears the interrupt by writing 1 to its corresponding field in
 TTI INTERRUPT_STATUS CSR, ensures that irq_o gets deasserted and
-the status bit cleared.'>interrupt_force<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>interrupt_force</a> </td><td style="text-align: center;">      0.463      </td><td style="text-align: center;">    422.000     </td><td style="text-align: center;">    5    </td><td style="text-align: center;">   5   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+the status bit cleared.'>interrupt_force<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>interrupt_force</a> </td><td style="text-align: center;">      0.590      </td><td style="text-align: center;">    422.000     </td><td style="text-align: center;">    5    </td><td style="text-align: center;">   5   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">                              <span title='Checks if the tti_rx_desc_full signal gets asserted when there
 are enough unhandled private writes issued to overfill the
-RX descriptor FIFO.'>rx_desc_overflow<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>rx_desc_overflow</a></td><td style="text-align: center;">     23.187      </td><td style="text-align: center;">   294626.000   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+RX descriptor FIFO.'>rx_desc_overflow<span>                              </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_interrupts.py>rx_desc_overflow</a></td><td style="text-align: center;">     32.785      </td><td style="text-align: center;">   294626.000   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;"><span title='TODO: add description'>interrupt_toggles<span></td><td>bulk_interrupt_toggle                                                                                                                   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
 <tr><td style="text-align: center;">                                                           </td><td>interrupt_traffic_scenarios                                                                                                             </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
 <tr><td style="text-align: center;">                                                           </td><td>specific_interrupt_force                                                                                                                </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
