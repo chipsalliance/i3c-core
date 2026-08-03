@@ -422,7 +422,7 @@ jobs:
 
       - name: Setup Python environment (uv)
         run: |
-          python3 -m pip install uv
+          python3 -m pip install "uv<0.12"
           uv sync
           uv pip install -r doc/requirements.txt
 
