@@ -19,7 +19,8 @@ module axi_adapter #(
     // AXI4 subordinate interface
     // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
     // UW=AxiUserWidth and IW=AxiIdWidth
-    axi_if s_axi_if,
+    axi_if.w_sub s_axi_w_if,
+    axi_if.r_sub s_axi_r_if,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
@@ -58,11 +59,11 @@ module axi_adapter #(
       rlegal <= '0;
       wlegal <= '0;
     end else begin
-      if (s_axi_if.arready && s_axi_if.arvalid) begin
+      if (s_axi_r_if.arready && s_axi_r_if.arvalid) begin
         rlegal <= disable_id_filtering_i | (|rsel);
       end
 
-      if (s_axi_if.awready && s_axi_if.awvalid) begin
+      if (s_axi_w_if.awready && s_axi_w_if.awvalid) begin
         wlegal <= disable_id_filtering_i | (|wsel);
       end
     end
@@ -71,8 +72,8 @@ module axi_adapter #(
   genvar j;
   for (j = 0; j < NumPrivIds; j = j + 1) begin : g_match_id
     always_comb begin
-      rsel[j] = s_axi_if.aruser == priv_ids_i[j];
-      wsel[j] = s_axi_if.awuser == priv_ids_i[j];
+      rsel[j] = s_axi_r_if.aruser == priv_ids_i[j];
+      wsel[j] = s_axi_w_if.awuser == priv_ids_i[j];
     end
   end
 
@@ -108,8 +109,8 @@ module axi_adapter #(
       .rst_n(rst_ni),
 
       // AXI interface
-      .s_axi_r_if(s_axi_if.r_sub),
-      .s_axi_w_if(s_axi_if.w_sub),
+      .s_axi_r_if(s_axi_r_if),
+      .s_axi_w_if(s_axi_w_if),
 
       // Component interface
       .dv(i3c_req_dv),
