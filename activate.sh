@@ -24,7 +24,7 @@ pyenv virtualenv ${PYTHON_VERSION} ${VENV_NAME} || true
 pyenv shell ${VENV_NAME}
 python --version
 pip install --upgrade pip
-python -m pip install uv
+python -m pip install "uv<0.12"
 pyenv rehash
 uv sync
 . .venv/bin/activate
