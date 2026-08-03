@@ -56,7 +56,8 @@ module i3c_wrapper #(
     // AXI4 subordinate interface
     // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
     // UW=AxiUserWidth and IW=AxiIdWidth
-    axi_if s_axi_if,
+    axi_if.w_sub s_axi_w_if,
+    axi_if.r_sub s_axi_r_if,
 
 `ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
@@ -130,7 +131,8 @@ module i3c_wrapper #(
       .hready_i,
 `elsif I3C_USE_AXI
       // AXI4 subordinate interface
-      .s_axi_if(s_axi_if),
+      .s_axi_w_if(s_axi_w_if),
+      .s_axi_r_if(s_axi_r_if),
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),

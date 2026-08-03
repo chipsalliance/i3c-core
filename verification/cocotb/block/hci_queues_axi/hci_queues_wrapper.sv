@@ -337,7 +337,8 @@ module hci_queues_wrapper
       .rst_ni(areset_n),
 
       // AXI4 subordinate interface
-      .s_axi_if(s_axi_if),
+      .s_axi_w_if(s_axi_if.w_sub),
+      .s_axi_r_if(s_axi_if.r_sub),
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),

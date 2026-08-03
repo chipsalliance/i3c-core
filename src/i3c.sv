@@ -133,7 +133,8 @@ module i3c
     // AXI4 subordinate interface
     // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
     // UW=AxiUserWidth and IW=AxiIdWidth
-    axi_if s_axi_if,
+    axi_if.w_sub s_axi_w_if,
+    axi_if.r_sub s_axi_r_if,
 `ifdef AXI_ID_FILTERING
     // ID Filtering
     input logic disable_id_filtering_i,
@@ -374,7 +375,8 @@ module i3c
       .rst_ni(rst_ni),
 
       // AXI4 subordinate interface
-      .s_axi_if(s_axi_if),
+      .s_axi_w_if(s_axi_w_if),
+      .s_axi_r_if(s_axi_r_if),
 
 `ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
