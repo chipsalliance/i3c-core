@@ -51,7 +51,6 @@ The following Direct CCCs are currently supported by the core (all required Dire
 * RSTACT (R) - Target Reset Action
   * Direct Write (Format 2) supports defining bytes 0x0, 0x1 and 0x2
   * Direct Read (Format 3) supports defining bytes 0x81, 0x82, and 0x84 and returns 0xFF as recovery timing
-* ENDXFER - Data Transfer Ending Procedure Control
 
 ## CCCs That Update Registers Without Firmware Notification
 
