@@ -5074,7 +5074,7 @@ Verify that:</p>
 <li><p>data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR.</p></li>
 </ul>
 <h5 id="controller-flow-simple"><code class="docutils literal notranslate"><span class="pre">controller_flow_simple</span></code><a class="headerlink" href="#controller-flow-simple" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller.py">controller_flow_simple</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller.py">controller_flow_simple</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5099,7 +5099,7 @@ Verify simple I3C operation including SETDASA CCC to assign dynamic address, I3C
 <p><a class="external reference" href="./sim-results/controller_ccc.html">Test results</a></p>
 <h4 id="id31">Testpoints<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
 <h5 id="controller-ccc-enec-disec-bcast"><code class="docutils literal notranslate"><span class="pre">controller_ccc_enec_disec_bcast</span></code><a class="headerlink" href="#controller-ccc-enec-disec-bcast" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_enec_disec_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_enec_disec_bcast</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5130,7 +5130,7 @@ The test first disables events from the target with the DISEC CCC and then enabl
 <li><p>After sending the second CCC (ENEC) all CSRs should be set to 1.</p></li>
 </ul>
 <h5 id="controller-ccc-enec-disec-direct-one-target"><code class="docutils literal notranslate"><span class="pre">controller_ccc_enec_disec_direct_one_target</span></code><a class="headerlink" href="#controller-ccc-enec-disec-direct-one-target" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_enec_disec_direct_one_target</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_enec_disec_direct_one_target</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5161,7 +5161,7 @@ The test first disables events from the target with the DISEC CCC and then enabl
 <li><p>After sending the second CCC (ENEC) the CSRs should again all be set to 1.</p></li>
 </ul>
 <h5 id="controller-ccc-enec-disec-direct-multiple-targets"><code class="docutils literal notranslate"><span class="pre">controller_ccc_enec_disec_direct_multiple_targets</span></code><a class="headerlink" href="#controller-ccc-enec-disec-direct-multiple-targets" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_enec_disec_direct_multiple_targets</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_enec_disec_direct_multiple_targets</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5193,7 +5193,7 @@ The goal is to see if the Direct Frame is correctly generated for multiple cmd d
 <li><p>After sending the second CCC (ENEC) the CSRs should again all be set to 1.</p></li>
 </ul>
 <h5 id="controller-ccc-rstdaa"><code class="docutils literal notranslate"><span class="pre">controller_ccc_rstdaa</span></code><a class="headerlink" href="#controller-ccc-rstdaa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_rstdaa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_rstdaa</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5218,7 +5218,7 @@ The test resets the dynamic addresses of the target and virtual target device.</
 <li><p>Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID is 0x0 after RSTDAA</p></li>
 </ul>
 <h5 id="controller-ccc-entdaa"><code class="docutils literal notranslate"><span class="pre">controller_ccc_entdaa</span></code><a class="headerlink" href="#controller-ccc-entdaa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_entdaa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_entdaa</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5245,7 +5245,7 @@ The test sets the dynamic address of the i3c target as well as the dynamic addre
 <li><p>Verify that the DCT entries (starting at the index specified in the TABLE_INDEX field of the DCT_SECTION_OFFSET register) contain the PID, BCR, DCR and dynamic address of the (Virtual) target.</p></li>
 </ul>
 <h5 id="controller-ccc-setaasa"><code class="docutils literal notranslate"><span class="pre">controller_ccc_setaasa</span></code><a class="headerlink" href="#controller-ccc-setaasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_setaasa</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_setaasa</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5275,7 +5275,7 @@ The test sets the dynamic address of the i3c target to the static target address
 <li><p>After sending the SETAASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the target’s static address.</p></li>
 </ul>
 <h5 id="controller-ccc-setdasa"><code class="docutils literal notranslate"><span class="pre">controller_ccc_setdasa</span></code><a class="headerlink" href="#controller-ccc-setdasa" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_setdasa_direct</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_setdasa_direct</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5303,7 +5303,7 @@ The test sets the dynamic address of the i3c target using the I2C static target 
 <li><p>After sending the SETDASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic address that was sent.</p></li>
 </ul>
 <h5 id="controller-ccc-setnewda"><code class="docutils literal notranslate"><span class="pre">controller_ccc_setnewda</span></code><a class="headerlink" href="#controller-ccc-setnewda" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_setnewda</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_setnewda</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5321,7 +5321,7 @@ The test sets a new dynamic address, using the old target dynamic address of the
 <li><p>After sending the SETNEWDA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the new dynamic address that was sent.</p></li>
 </ul>
 <h5 id="controller-ccc-getpid"><code class="docutils literal notranslate"><span class="pre">controller_ccc_getpid</span></code><a class="headerlink" href="#controller-ccc-getpid" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_getpid</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_getpid</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5337,7 +5337,7 @@ The test reads the targets PID.</p>
 <li><p>Read the RX_PORT and verify that the data received by the controller matches the PID from the targets PID CSRs.</p></li>
 </ul>
 <h5 id="controller-ccc-getbcr"><code class="docutils literal notranslate"><span class="pre">controller_ccc_getbcr</span></code><a class="headerlink" href="#controller-ccc-getbcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_getbcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_getbcr</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5353,7 +5353,7 @@ The test reads the targets BCR.</p>
 <li><p>Read the RX_PORT and verify that the data received by the controller matches the BCR from the targets BCR CSRs.</p></li>
 </ul>
 <h5 id="controller-ccc-getdcr"><code class="docutils literal notranslate"><span class="pre">controller_ccc_getdcr</span></code><a class="headerlink" href="#controller-ccc-getdcr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py">controller_ccc_getdcr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py">controller_ccc_getdcr</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5379,10 +5379,10 @@ The test reads the targets DCR.</p>
 <p>Walks over all CSRs, write random value using AHB/AXI, reads it back,
 and compares with expected output.</p>
 <h5 id="write-to-configuration-register"><code class="docutils literal notranslate"><span class="pre">Write</span> <span class="pre">to</span> <span class="pre">configuration</span> <span class="pre">register</span></code><a class="headerlink" href="#write-to-configuration-register" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_configure_i3c_cores.py">ec_stdby_cr_enable_init</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_configure_i3c_cores.py">ec_stdby_cr_enable_init</a></p>
 <p>Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches.</p>
 <h5 id="configure-target-and-controller"><code class="docutils literal notranslate"><span class="pre">Configure</span> <span class="pre">Target</span> <span class="pre">and</span> <span class="pre">Controller</span></code><a class="headerlink" href="#configure-target-and-controller" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_configure_i3c_cores.py">configure_target_and_controller</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_configure_i3c_cores.py">configure_target_and_controller</a></p>
 <p>Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches. Write 0’b10 to Port 0 and Port 2. Write 0’b11 to Port 1.</p>
 <h5 id="timing-csr-checks"><code class="docutils literal notranslate"><span class="pre">Timing</span> <span class="pre">CSR</span> <span class="pre">checks</span></code><a class="headerlink" href="#timing-csr-checks" title="Link to this heading">¶</a></h5>
 <p>No Tests Implemented</p>
@@ -5403,7 +5403,7 @@ Read the CSRs holding the timing values specified in 6.2 Timing Specification (I
 <p><a class="external reference" href="./sim-results/controller_error.html">Test results</a></p>
 <h4 id="id33">Testpoints<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
 <h5 id="controller-error-2-no-response-to-broadcast-address-7-h7e"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">Error</span> <span class="pre">2:</span> <span class="pre">No</span> <span class="pre">response</span> <span class="pre">to</span> <span class="pre">Broadcast</span> <span class="pre">Address</span> <span class="pre">(7'h7E)</span></code><a class="headerlink" href="#controller-error-2-no-response-to-broadcast-address-7-h7e" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">controller_error_nack_on_bcast</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">controller_error_nack_on_bcast</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5425,7 +5425,7 @@ Handle 5.1.10.2.3 Error Type CE2 I3C Basic Spec.</p>
 <li><p>Check if subsequent ENEC CCC finishes as expected.</p></li>
 </ul>
 <h5 id="controller-tx-queue-underflow"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">TX</span> <span class="pre">Queue</span> <span class="pre">Underflow</span></code><a class="headerlink" href="#controller-tx-queue-underflow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">controller_tx_queue_underflow</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">controller_tx_queue_underflow</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5444,7 +5444,7 @@ Handle 6.13.1.2 Underflow Error I3C HCI Spec.</p>
 <li><p>After the regular I3C Write the controller should return a response descriptor with Error Status: SUCCESS.</p></li>
 </ul>
 <h5 id="controller-rx-queue-overflow"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">RX</span> <span class="pre">Queue</span> <span class="pre">Overflow</span></code><a class="headerlink" href="#controller-rx-queue-overflow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">controller_rx_queue_overflow</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">controller_rx_queue_overflow</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5464,7 +5464,7 @@ Handle 6.13.1.2 Overflow Error I3C HCI Spec.</p>
 <li><p>After the regular I3C Read the controller should return a response descriptor with Error Status: SUCCESS.</p></li>
 </ul>
 <h5 id="controller-ce0-handling-illegally-formatted-ccc"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">CE0</span> <span class="pre">Handling</span> <span class="pre">(illegally</span> <span class="pre">formatted</span> <span class="pre">CCC)</span></code><a class="headerlink" href="#controller-ce0-handling-illegally-formatted-ccc" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">controller_error_short_ccc_ce0</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">controller_error_short_ccc_ce0</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5489,7 +5489,7 @@ Handle 5.1.10.2.1 Error Type CE0 I3C Basic Spec (illegally formatted CCC).</p>
 <li><p>after the private i3c write the response descriptor should report SUCCESS.</p></li>
 </ul>
 <h5 id="controller-abort-transaction"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">Abort</span> <span class="pre">Transaction</span></code><a class="headerlink" href="#controller-abort-transaction" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">hc_abort</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">hc_abort</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5511,7 +5511,7 @@ Handle 6.8.4 Host Controller Abort Operation I3C HCI Spec.</p>
 <li><p>the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.</p></li>
 </ul>
 <h5 id="command-sequence-timeout-no-halt"><code class="docutils literal notranslate"><span class="pre">Command</span> <span class="pre">Sequence</span> <span class="pre">Timeout</span> <span class="pre">(no</span> <span class="pre">halt)</span></code><a class="headerlink" href="#command-sequence-timeout-no-halt" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">cmd_seq_timeout_no_halt</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">cmd_seq_timeout_no_halt</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5532,7 +5532,7 @@ Handle 6.13.2 Errors Due to Command Sequence Stall or Timeout I3C HCI Spec witho
 <li><p>the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.</p></li>
 </ul>
 <h5 id="command-sequence-timeout-halt"><code class="docutils literal notranslate"><span class="pre">Command</span> <span class="pre">Sequence</span> <span class="pre">Timeout</span> <span class="pre">(halt)</span></code><a class="headerlink" href="#command-sequence-timeout-halt" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">cmd_seq_timeout_halt</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">cmd_seq_timeout_halt</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5554,7 +5554,7 @@ Handle 6.13.2 Errors Due to Command Sequence Stall or Timeout I3C HCI Spec with 
 <li><p>the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.</p></li>
 </ul>
 <h5 id="interrupt-routing-and-masking"><code class="docutils literal notranslate"><span class="pre">Interrupt</span> <span class="pre">Routing</span> <span class="pre">and</span> <span class="pre">Masking</span></code><a class="headerlink" href="#interrupt-routing-and-masking" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py">interrupt_routing_and_masking</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py">interrupt_routing_and_masking</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (Cocotbext)</p>
 <p>Intent:
@@ -5580,7 +5580,7 @@ For each interrupt field in the loop:</p>
 <p><a class="external reference" href="./sim-results/controller_hdr.html">Test results</a></p>
 <h4 id="id34">Testpoints<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
 <h5 id="id35"><code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">Generate</span> <span class="pre">HDR</span> <span class="pre">Exit</span> <span class="pre">Pattern</span></code><a class="headerlink" href="#id35" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_hdr_exit.py">controller_gen_hdr_exit_pattern</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_hdr_exit.py">controller_gen_hdr_exit_pattern</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5613,7 +5613,7 @@ Generate HDR exit pattern, as per 5.2.1.1.1 I3C Basic Spec.</p>
 <p><a class="external reference" href="./sim-results/controller_i2c.html">Test results</a></p>
 <h4 id="id37">Testpoints<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
 <h5 id="i2c-private-write"><code class="docutils literal notranslate"><span class="pre">i2c_private_write</span></code><a class="headerlink" href="#i2c-private-write" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py">i2c_private_write</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i2c_top_controller/test_i2c_controller.py">i2c_private_write</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I2C Target (Cocotbext)</p>
 <p>Intent:
@@ -5630,7 +5630,7 @@ Check:</p>
 </li>
 </ul>
 <h5 id="i2c-private-read"><code class="docutils literal notranslate"><span class="pre">i2c_private_read</span></code><a class="headerlink" href="#i2c-private-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py">i2c_private_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i2c_top_controller/test_i2c_controller.py">i2c_private_read</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I2C Target (Cocotbext)</p>
 <p>Intent:
@@ -5667,7 +5667,7 @@ Check:</p>
 <p><a class="external reference" href="./sim-results/controller_interrupt.html">Test results</a></p>
 <h4 id="id38">Testpoints<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
 <h5 id="controller-ibi-accepted"><code class="docutils literal notranslate"><span class="pre">controller_ibi_accepted</span></code><a class="headerlink" href="#controller-ibi-accepted" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py">controller_ibi_accepted</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py">controller_ibi_accepted</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5692,7 +5692,7 @@ The target sends an IBI request with a mandatory data byte as well as optional d
 <li><p>The IBI Payload should match the MDB sent to the target as well as the optional IBI data bytes sent by the target.</p></li>
 </ul>
 <h5 id="controller-ibi-buffer-overflow"><code class="docutils literal notranslate"><span class="pre">controller_ibi_buffer_overflow</span></code><a class="headerlink" href="#controller-ibi-buffer-overflow" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py">controller_ibi_buffer_overflow</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py">controller_ibi_buffer_overflow</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5717,7 +5717,7 @@ The target sends an IBI request with a mandatory data byte as well as optional d
 <li><p>The first IBIDataBuffer bytes of IBI Payload should match the MDB sent to the target as well as the optional IBI data bytes sent by the target.</p></li>
 </ul>
 <h5 id="controller-ibi-rejected"><code class="docutils literal notranslate"><span class="pre">controller_ibi_rejected</span></code><a class="headerlink" href="#controller-ibi-rejected" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py">controller_ibi_rejected</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py">controller_ibi_rejected</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5744,7 +5744,7 @@ Verify rejecting IBI as per 5.1.6.2 I3C Target Interrupt Request from I3C Basic 
 <p><a class="external reference" href="./sim-results/controller_read.html">Test results</a></p>
 <h4 id="id39">Testpoints<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <h5 id="i3c-private-read-no-edge-case"><code class="docutils literal notranslate"><span class="pre">i3c_private_read_no_edge_case</span></code><a class="headerlink" href="#i3c-private-read-no-edge-case" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py">i3c_private_read_no_edge_case</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_read_target_write.py">i3c_private_read_no_edge_case</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5778,7 +5778,7 @@ Data Length should be between RX_STAT_THLD<em>4 and RX_QUEUE_DEPTH</em>4 and tar
 <li><p>if WROC = 1: response descriptor data length matches data bytes specified in CMD desc, and resp desc TID matches TID form CMD desc.</p></li>
 </ul>
 <h5 id="i3c-private-read-short-read"><code class="docutils literal notranslate"><span class="pre">i3c_private_read_short_read</span></code><a class="headerlink" href="#i3c-private-read-short-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py">i3c_private_read_short_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_read_target_write.py">i3c_private_read_short_read</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5814,7 +5814,7 @@ Data Length should be between RX_STAT_THLD<em>4 and RX_QUEUE_DEPTH</em>4 and tar
 <li><p>response descriptor error should be I3C short read status.</p></li>
 </ul>
 <h5 id="i3c-private-read-repeated-start"><code class="docutils literal notranslate"><span class="pre">i3c_private_read_repeated_start</span></code><a class="headerlink" href="#i3c-private-read-repeated-start" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py">i3c_private_read_repeated_start</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_repeated_start.py">i3c_private_read_repeated_start</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5889,7 +5889,7 @@ Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TC
 - following DTT bytes is DATA_BYTES
 - correct stop condition is generated</p>
 <h5 id="i3c-private-write-target-read"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_target_read</span></code><a class="headerlink" href="#i3c-private-write-target-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_target_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_target_read</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5919,7 +5919,7 @@ Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TC
 <li><p>DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.</p></li>
 </ul>
 <h5 id="i3c-private-write-target-read-resp-desc"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_target_read_resp_desc</span></code><a class="headerlink" href="#i3c-private-write-target-read-resp-desc" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_target_read_resp_desc</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_target_read_resp_desc</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5950,7 +5950,7 @@ Verify Private Write with Immediate Data Transfer Command Descriptor (7.2.2.1 TC
 <li><p>Read Response Descriptor to verify TID and Data Length match the CMD Descriptor and Error Status is Success.</p></li>
 </ul>
 <h5 id="i3c-private-write-wrong-target-addr"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_wrong_target_addr</span></code><a class="headerlink" href="#i3c-private-write-wrong-target-addr" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_wrong_target_addr</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_wrong_target_addr</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -5981,7 +5981,7 @@ Verify that Private Write to a non existing target address generates a NACK Resp
 <li><p>Read Response Descriptor to verify TID matches the CMD Descriptor and Data Length is 0 and Error Status is NACK.</p></li>
 </ul>
 <h5 id="i3c-private-write-tx-queue-target-read"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_tx_queue_target_read</span></code><a class="headerlink" href="#i3c-private-write-tx-queue-target-read" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_tx_queue_target_read</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_tx_queue_target_read</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -6013,7 +6013,7 @@ Verify Private Write with Regular Data Transfer Command (7.2.2.2 TCRI Spec) to a
 <li><p>data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR.</p></li>
 </ul>
 <h5 id="i3c-private-write-tx-queue-target-read-fifo-full"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_tx_queue_target_read_fifo_full</span></code><a class="headerlink" href="#i3c-private-write-tx-queue-target-read-fifo-full" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_tx_queue_target_read_fifo_full</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_tx_queue_target_read_fifo_full</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -6045,7 +6045,7 @@ Verify Private Write with Regular Data Transfer Command (7.2.2.2 TCRI Spec) to a
 <li><p>data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR.</p></li>
 </ul>
 <h5 id="i3c-private-write-repeated-start"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_repeated_start</span></code><a class="headerlink" href="#i3c-private-write-repeated-start" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py">i3c_private_write_repeated_start</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_repeated_start.py">i3c_private_write_repeated_start</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -6077,7 +6077,7 @@ Verify Chaining Private Writes with Regular Data Transfer Command (7.2.2.2 TCRI 
 <li><p>data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR.</p></li>
 </ul>
 <h5 id="i3c-private-write-dat"><code class="docutils literal notranslate"><span class="pre">i3c_private_write_dat</span></code><a class="headerlink" href="#i3c-private-write-dat" title="Link to this heading">¶</a></h5>
-<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py">i3c_private_write_dat</a></p>
+<p>Test: <a class="reference external" href="https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py">i3c_private_write_dat</a></p>
 <p>Testbench:
 I3C Controller (RTL) &lt;-&gt; I3C Target (RTL)</p>
 <p>Intent:
@@ -7777,7 +7777,7 @@ that specific transaction.</p>
   <small>
     
       Last update:
-      2026-08-04
+      2026-08-11
     
   </small>
 </div>

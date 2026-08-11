@@ -39,7 +39,7 @@ Verify that:
 
 ### `controller_flow_simple`
 
-Test: [controller_flow_simple](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller.py)
+Test: [controller_flow_simple](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -70,7 +70,7 @@ Check:
 
 ### `controller_ccc_enec_disec_bcast`
 
-Test: [controller_ccc_enec_disec_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_enec_disec_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -100,7 +100,7 @@ Check:
 
 ### `controller_ccc_enec_disec_direct_one_target`
 
-Test: [controller_ccc_enec_disec_direct_one_target](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_enec_disec_direct_one_target](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -130,7 +130,7 @@ Check:
 
 ### `controller_ccc_enec_disec_direct_multiple_targets`
 
-Test: [controller_ccc_enec_disec_direct_multiple_targets](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_enec_disec_direct_multiple_targets](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -161,7 +161,7 @@ Check:
 
 ### `controller_ccc_rstdaa`
 
-Test: [controller_ccc_rstdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_rstdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -185,7 +185,7 @@ Check:
 
 ### `controller_ccc_entdaa`
 
-Test: [controller_ccc_entdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_entdaa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -211,7 +211,7 @@ Check:
 
 ### `controller_ccc_setaasa`
 
-Test: [controller_ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_setaasa](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -240,7 +240,7 @@ Check:
 
 ### `controller_ccc_setdasa`
 
-Test: [controller_ccc_setdasa_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_setdasa_direct](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -267,7 +267,7 @@ Check:
 
 ### `controller_ccc_setnewda`
 
-Test: [controller_ccc_setnewda](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_setnewda](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -287,7 +287,7 @@ Check:
 
 ### `controller_ccc_getpid`
 
-Test: [controller_ccc_getpid](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_getpid](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -305,7 +305,7 @@ Check:
 
 ### `controller_ccc_getbcr`
 
-Test: [controller_ccc_getbcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_getbcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -323,7 +323,7 @@ Check:
 
 ### `controller_ccc_getdcr`
 
-Test: [controller_ccc_getdcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ccc.py)
+Test: [controller_ccc_getdcr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -356,13 +356,13 @@ and compares with expected output.
 
 ### `Write to configuration register`
 
-Test: [ec_stdby_cr_enable_init](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_configure_i3c_cores.py)
+Test: [ec_stdby_cr_enable_init](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_configure_i3c_cores.py)
 
 Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches.
 
 ### `Configure Target and Controller`
 
-Test: [configure_target_and_controller](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_configure_i3c_cores.py)
+Test: [configure_target_and_controller](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_configure_i3c_cores.py)
 
 Writes to the I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT register to enable controller mode or target mode. The DUT has 3 AXI ports for its 3 instantiations of the i3c core. Port 0 is for the expected target. Port 1 is for the actual controller and Port 2 is for the actual target. This test writes only to the above mentioned CSR for each of the ports. This will be used to configure the i3c cores in their operation mode. To verify the test reads the ports back and checks if it matches. Write 0'b10 to Port 0 and Port 2. Write 0'b11 to Port 1.
 
@@ -392,7 +392,7 @@ Check:
 
 ### `Controller Error 2: No response to Broadcast Address (7'h7E)`
 
-Test: [controller_error_nack_on_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [controller_error_nack_on_bcast](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -416,7 +416,7 @@ Check:
 
 ### `Controller TX Queue Underflow`
 
-Test: [controller_tx_queue_underflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [controller_tx_queue_underflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -437,7 +437,7 @@ Check:
 
 ### `Controller RX Queue Overflow`
 
-Test: [controller_rx_queue_overflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [controller_rx_queue_overflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -459,7 +459,7 @@ Check:
 
 ### `Controller CE0 Handling (illegally formatted CCC)`
 
-Test: [controller_error_short_ccc_ce0](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [controller_error_short_ccc_ce0](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -486,7 +486,7 @@ Check:
 
 ### `Controller Abort Transaction`
 
-Test: [hc_abort](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [hc_abort](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -510,7 +510,7 @@ Check:
 
 ### `Command Sequence Timeout (no halt)`
 
-Test: [cmd_seq_timeout_no_halt](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [cmd_seq_timeout_no_halt](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -533,7 +533,7 @@ Check:
 
 ### `Command Sequence Timeout (halt)`
 
-Test: [cmd_seq_timeout_halt](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [cmd_seq_timeout_halt](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -557,7 +557,7 @@ Check:
 
 ### `Interrupt Routing and Masking`
 
-Test: [interrupt_routing_and_masking](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller_err/test_controller_error.py)
+Test: [interrupt_routing_and_masking](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
@@ -589,7 +589,7 @@ For each interrupt field in the loop:
 
 ### `Controller Generate HDR Exit Pattern`
 
-Test: [controller_gen_hdr_exit_pattern](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_hdr_exit.py)
+Test: [controller_gen_hdr_exit_pattern](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_hdr_exit.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -632,7 +632,7 @@ Recognize the Hot-Join pattern as specified in 5.1.5 I3C Basic Spec and eventual
 
 ### `i2c_private_write`
 
-Test: [i2c_private_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py)
+Test: [i2c_private_write](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i2c_top_controller/test_i2c_controller.py)
 
 Testbench:
 I3C Controller (RTL) <-> I2C Target (Cocotbext)
@@ -649,7 +649,7 @@ Check:
 
 ### `i2c_private_read`
 
-Test: [i2c_private_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i2c_axi_controller/test_i2c_controller.py)
+Test: [i2c_private_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i2c_top_controller/test_i2c_controller.py)
 
 Testbench:
 I3C Controller (RTL) <-> I2C Target (Cocotbext)
@@ -690,7 +690,7 @@ Check:
 
 ### `controller_ibi_accepted`
 
-Test: [controller_ibi_accepted](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py)
+Test: [controller_ibi_accepted](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -714,7 +714,7 @@ Check:
 
 ### `controller_ibi_buffer_overflow`
 
-Test: [controller_ibi_buffer_overflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py)
+Test: [controller_ibi_buffer_overflow](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -738,7 +738,7 @@ Check:
 
 ### `controller_ibi_rejected`
 
-Test: [controller_ibi_rejected](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_controller_ibi.py)
+Test: [controller_ibi_rejected](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ibi.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -768,7 +768,7 @@ Check:
 
 ### `i3c_private_read_no_edge_case`
 
-Test: [i3c_private_read_no_edge_case](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py)
+Test: [i3c_private_read_no_edge_case](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_read_target_write.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -802,7 +802,7 @@ Check:
 
 ### `i3c_private_read_short_read`
 
-Test: [i3c_private_read_short_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_read_target_write.py)
+Test: [i3c_private_read_short_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_read_target_write.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -838,7 +838,7 @@ Check:
 
 ### `i3c_private_read_repeated_start`
 
-Test: [i3c_private_read_repeated_start](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py)
+Test: [i3c_private_read_repeated_start](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_repeated_start.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -925,7 +925,7 @@ Check:
 
 ### `i3c_private_write_target_read`
 
-Test: [i3c_private_write_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -954,7 +954,7 @@ Check:
 
 ### `i3c_private_write_target_read_resp_desc`
 
-Test: [i3c_private_write_target_read_resp_desc](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_target_read_resp_desc](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -984,7 +984,7 @@ Check:
 
 ### `i3c_private_write_wrong_target_addr`
 
-Test: [i3c_private_write_wrong_target_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_wrong_target_addr](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -1014,7 +1014,7 @@ Check:
 
 ### `i3c_private_write_tx_queue_target_read`
 
-Test: [i3c_private_write_tx_queue_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_tx_queue_target_read](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -1045,7 +1045,7 @@ Check:
 
 ### `i3c_private_write_tx_queue_target_read_fifo_full`
 
-Test: [i3c_private_write_tx_queue_target_read_fifo_full](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_tx_queue_target_read_fifo_full](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -1076,7 +1076,7 @@ Check:
 
 ### `i3c_private_write_repeated_start`
 
-Test: [i3c_private_write_repeated_start](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py)
+Test: [i3c_private_write_repeated_start](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_repeated_start.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
@@ -1107,7 +1107,7 @@ Check:
 
 ### `i3c_private_write_dat`
 
-Test: [i3c_private_write_dat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py)
+Test: [i3c_private_write_dat](https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py)
 
 Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)

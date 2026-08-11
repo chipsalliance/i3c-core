@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        04/08/2026 14:45
+                        11/08/2026 11:36
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/174e3738">174e3738</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/339433ae">339433ae</a>
                     </div>
                     
                 </div>
@@ -86,13 +86,13 @@ over I3C. Data sent over I3C is compared with data received by
 the agent.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write</a>                       </td><td style="text-align: center;">      1.645      </td><td style="text-align: center;">   10492.482    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_write<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write</a>                       </td><td style="text-align: center;">      1.210      </td><td style="text-align: center;">   10492.482    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies the handling of long private writes (255 and 256 bytes)
 that are not issued in any other test, in order to cover upper
 bits of transaction length signals in the design.
 
-Uses the same flow as i3c_target_write.'>i3c_target_write_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write_255</a>                   </td><td style="text-align: center;">     18.654      </td><td style="text-align: center;">   187396.209   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
-<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write_256</a>                   </td><td style="text-align: center;">     18.504      </td><td style="text-align: center;">   188116.929   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Uses the same flow as i3c_target_write.'>i3c_target_write_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write_255</a>                   </td><td style="text-align: center;">     13.895      </td><td style="text-align: center;">   187396.209   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_write_256</a>                   </td><td style="text-align: center;">     13.942      </td><td style="text-align: center;">   188116.929   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes a data chunk and its descriptor to TTI TX queues, issues
 an I3C private read transfer. Verifies that the data matches.
 Repeats the two steps N times.
@@ -107,23 +107,23 @@ the chunk. Verifies that the received data matches with the chunk.
 Repeats the steps N times.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read</a>                        </td><td style="text-align: center;">     10.794      </td><td style="text-align: center;">   113289.720   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read</a>                        </td><td style="text-align: center;">      6.211      </td><td style="text-align: center;">   86520.760    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies the correct handling of long private reads (255 and 256 bytes)
 that are not issued in any other tests, in order to cover upper bits
-of transaction length signals in the design.'>i3c_target_read_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_long</a>                   </td><td style="text-align: center;">     35.280      </td><td style="text-align: center;">   374161.340   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+of transaction length signals in the design.'>i3c_target_read_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_long</a>                   </td><td style="text-align: center;">     25.955      </td><td style="text-align: center;">   374164.340   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Issues multiple read transactions to the target and randomly selects 
 whether each transaction has data.
 
 If transaction is selected to contain data, writes a data chunk and
 its descriptor to TTI TX queues, and verifies that the data matches.
 
-If transaction doesn't contain data, checks that request is NACKed.'>i3c_target_read_empty<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_empty</a>                  </td><td style="text-align: center;">      7.713      </td><td style="text-align: center;">   80576.410    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+If transaction doesn't contain data, checks that request is NACKed.'>i3c_target_read_empty<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_empty</a>                  </td><td style="text-align: center;">      5.470      </td><td style="text-align: center;">   76472.830    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Sends multiple I3C frame, each containing multiple read transactions
 with randomly selected addresses.
 If transaction addresses I3C target, randomly selects if transaction
 returns data or is NACked. Compares returned data if available.
 
-If transaction doesn't address I3C target, expects NACK to be returned.'>i3c_target_read_to_multiple_targets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_to_multiple_targets</a>    </td><td style="text-align: center;">     145.317     </td><td style="text-align: center;">  1013964.580   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+If transaction doesn't address I3C target, expects NACK to be returned.'>i3c_target_read_to_multiple_targets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_read_to_multiple_targets</a>    </td><td style="text-align: center;">     116.099     </td><td style="text-align: center;">  1086578.010   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes an IBI descriptor to the TTI IBI queue. Waits until the
 controller services the IBI. Checks if the mandatory byte (MDB)
 matches on both sides.
@@ -138,7 +138,7 @@ the mandatory byte (MDB) and data matches on both sides.
 Repeats the LAST_IBI_STATUS check.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi</a>                         </td><td style="text-align: center;">     12.365      </td><td style="text-align: center;">   42035.994    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi</a>                         </td><td style="text-align: center;">      9.043      </td><td style="text-align: center;">   42035.994    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Disables ACK-ing IBIs in the I3C controller model, issues an IBI
 from the target by writing to TTI IBI queue. Waits for a fixed
 time period - sufficiently long for the target to retry sending
@@ -151,7 +151,7 @@ with the one written to the TTI queue. Reads LAST_IBI_STATUS from
 the TTI STATUS CSR, check if it is set to 0 (no error).
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_retry<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_retry</a>                   </td><td style="text-align: center;">      9.736      </td><td style="text-align: center;">   15288.273    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_retry<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_retry</a>                   </td><td style="text-align: center;">      7.270      </td><td style="text-align: center;">   15288.273    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Sets a limit on how many IBI data bytes may be accepted in the
 controller model. Issues an IBI with more data bytes by writing
 to the TTI IBI queue, checks if the IBI gets serviced correctly,
@@ -161,10 +161,10 @@ Issues another IBI with data payload within the set limit, checks
 if it gets serviced correctly, compares data.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_data<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_data</a>                    </td><td style="text-align: center;">      4.449      </td><td style="text-align: center;">   13684.671    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_ibi_data<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_data</a>                    </td><td style="text-align: center;">      3.328      </td><td style="text-align: center;">   13684.671    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies issuing an IBI of a maximum length obtained via the
 GETMRL CCC. Also covers upper bits of the IBI descriptor data
-length.'>i3c_target_ibi_data_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_data_long</a>               </td><td style="text-align: center;">     18.494      </td><td style="text-align: center;">   193146.954   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+length.'>i3c_target_ibi_data_long<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_ibi_data_long</a>               </td><td style="text-align: center;">     13.193      </td><td style="text-align: center;">   193146.954   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Writes a randomized data chunk to the TTI TX data queue, writes
 a corresponding descriptor to the TTI TX descriptor queue.
 
@@ -177,58 +177,58 @@ Does a private read transfer, compares if the received data equals
 the data written to TTI TX queue in the beginning of the test.
 
 The test runs at core clock of 100 and 200 MHz. The slowest clock that does not result in a tSCO violation is 166 MHz.
-The I3C bus clock is set to 12.5 MHz.'>i3c_target_writes_and_reads<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_writes_and_reads</a>            </td><td style="text-align: center;">      3.030      </td><td style="text-align: center;">   23885.862    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+The I3C bus clock is set to 12.5 MHz.'>i3c_target_writes_and_reads<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_writes_and_reads</a>            </td><td style="text-align: center;">      2.166      </td><td style="text-align: center;">   23885.862    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
 Sends I3C private write with incorrect T-bit value.
 Checks that the CSR reports protocol error condition and checks
 that RX descriptor has error condition flag set.
-Sends GETSTATUS CCC and checks that it also reports protocol error.'>i3c_target_pwrite_err_detection<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_pwrite_err_detection</a>        </td><td style="text-align: center;">     52.504      </td><td style="text-align: center;">   564684.120   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Sends GETSTATUS CCC and checks that it also reports protocol error.'>i3c_target_pwrite_err_detection<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_pwrite_err_detection</a>        </td><td style="text-align: center;">     42.515      </td><td style="text-align: center;">   652524.873   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies target reports no error conditions using CSR and GETSTATUS CCC.
 Sends I3C private write with more data than target can receive.
 Checks that the CSR doesn't report protocol error condition and checks
 that RX descriptor has error condition flag set.
-Sends GETSTATUS CCC and checks that it also doesn't report protocol error.'>i3c_target_pwrite_overflow_detection<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_pwrite_overflow_detection</a>   </td><td style="text-align: center;">     165.542     </td><td style="text-align: center;">  1818610.794   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Sends GETSTATUS CCC and checks that it also doesn't report protocol error.'>i3c_target_pwrite_overflow_detection<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_pwrite_overflow_detection</a>   </td><td style="text-align: center;">     183.891     </td><td style="text-align: center;">  2841744.906   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Tests private read transfers with specific sizes and controller-initiated
 aborts.
 
 Performs private reads of exactly 256 bytes, 8 bytes, 11 bytes (non-word-
 aligned), and a controller-abort scenario where the read is terminated
-early. Verifies data matches and the target recovers cleanly after abort.'>i3c_target_private_read_sizes_and_abort<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_private_read_sizes_and_abort</a></td><td style="text-align: center;">     23.478      </td><td style="text-align: center;">   230957.727   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+early. Verifies data matches and the target recovers cleanly after abort.'>i3c_target_private_read_sizes_and_abort<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_private_read_sizes_and_abort</a></td><td style="text-align: center;">     17.131      </td><td style="text-align: center;">   230957.727   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies that TTI RESET_CONTROL.TX_DATA_RST flushes both the TX FIFO
 and the width_converter_Nto8 shift register.
 
 Writes data to the TX FIFO without a descriptor, asserts TX_DATA_RST,
 then writes new data with a descriptor and performs a private read.
-Verifies only the post-flush data is returned.'>i3c_target_tx_flush_clears_converter<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_tx_flush_clears_converter</a>   </td><td style="text-align: center;">      2.123      </td><td style="text-align: center;">    8501.493    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Verifies only the post-flush data is returned.'>i3c_target_tx_flush_clears_converter<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_tx_flush_clears_converter</a>   </td><td style="text-align: center;">      1.613      </td><td style="text-align: center;">    8501.493    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Verifies that TTI RESET_CONTROL.RX_DATA_RST flushes both the RX FIFO
 and the width_converter_8toN shift register.
 
 Writes data to the RX FIFO via Private Write to overflow the queue,
 asserts RX_DATA_RST, then writes new data via Private Write.
-Verifies that data from first transfer does not corrupt second transfer.'>i3c_target_rx_flush_clears_converter<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_rx_flush_clears_converter</a>   </td><td style="text-align: center;">     17.072      </td><td style="text-align: center;">   197023.827   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Verifies that data from first transfer does not corrupt second transfer.'>i3c_target_rx_flush_clears_converter<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>i3c_target_rx_flush_clears_converter</a>   </td><td style="text-align: center;">     12.123      </td><td style="text-align: center;">   197023.827   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Baseline: 8-byte private write completes normally with STOP.
-Verifies RX descriptor byte count equals 8 and data matches.'>priv_write_normal_stop_baseline<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_normal_stop_baseline</a>        </td><td style="text-align: center;">      1.945      </td><td style="text-align: center;">    8327.319    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+Verifies RX descriptor byte count equals 8 and data matches.'>priv_write_normal_stop_baseline<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_normal_stop_baseline</a>        </td><td style="text-align: center;">      1.446      </td><td style="text-align: center;">    8327.319    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='8-byte private write. After 5 complete bytes and T-bits, sends 4 bits
 of byte 6, then STOP. Verifies RX descriptor reports 5 bytes and data
-matches. Also verifies clean recovery with a subsequent normal write.'>priv_write_stop_mid_byte<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_stop_mid_byte</a>               </td><td style="text-align: center;">      2.421      </td><td style="text-align: center;">   11312.301    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+matches. Also verifies clean recovery with a subsequent normal write.'>priv_write_stop_mid_byte<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_stop_mid_byte</a>               </td><td style="text-align: center;">      1.788      </td><td style="text-align: center;">   11312.301    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='8-byte private write. After 5 complete bytes, sends 4 bits of byte 6,
 then Repeated Start followed by STOP. Verifies RX descriptor reports
-5 bytes. Also verifies clean recovery.'>priv_write_sr_mid_byte<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_sr_mid_byte</a>                 </td><td style="text-align: center;">      2.373      </td><td style="text-align: center;">   10690.680    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+5 bytes. Also verifies clean recovery.'>priv_write_sr_mid_byte<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_sr_mid_byte</a>                 </td><td style="text-align: center;">      2.018      </td><td style="text-align: center;">   10690.680    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='8-byte private write. After 5 complete bytes and T-bits, sends 8 data
 bits of byte 6 (no T-bit), then STOP fires while FSM is in
 RxPWriteTbit. Tests correct handling of STOP during T-bit phase.
 
 BLOCKED BY DESIGN BUG: rx_fifo_wvalid_raw fires but rx_last_byte_o
-does not, resulting in data pushed without a descriptor.'>priv_write_stop_during_tbit<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_stop_during_tbit</a>            </td><td style="text-align: center;">      2.795      </td><td style="text-align: center;">   11066.055    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+does not, resulting in data pushed without a descriptor.'>priv_write_stop_during_tbit<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_stop_during_tbit</a>            </td><td style="text-align: center;">      1.930      </td><td style="text-align: center;">   11066.055    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='8-byte private write. After 5 complete bytes and T-bits, sends 8 data
 bits of byte 6, then Sr fires while FSM is in RxPWriteTbit. Tests
 correct handling of Repeated Start during T-bit phase.
 
 BLOCKED BY DESIGN BUG: rx_fifo_wvalid_raw fires but rx_last_byte_o
-does not, resulting in data pushed without a descriptor.'>priv_write_sr_during_tbit<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_sr_during_tbit</a>              </td><td style="text-align: center;">      2.546      </td><td style="text-align: center;">   10564.554    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+does not, resulting in data pushed without a descriptor.'>priv_write_sr_during_tbit<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_sr_during_tbit</a>              </td><td style="text-align: center;">      1.886      </td><td style="text-align: center;">   10564.554    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='5-byte private write. All bytes and T-bits complete normally. Sr issued
 immediately after the last T-bit (tight timing). Verifies descriptor
-reports exactly 5 bytes (not 4 due to off-by-one).'>priv_write_tight_timing_sr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_tight_timing_sr</a>             </td><td style="text-align: center;">      1.716      </td><td style="text-align: center;">    6264.258    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+reports exactly 5 bytes (not 4 due to off-by-one).'>priv_write_tight_timing_sr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top/test_i3c_target.py>priv_write_tight_timing_sr</a>             </td><td style="text-align: center;">      1.285      </td><td style="text-align: center;">    6264.258    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                   </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   23    </td><td style="text-align: center;">  23   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>

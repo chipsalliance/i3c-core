@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        04/08/2026 14:45
+                        11/08/2026 11:36
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/174e3738">174e3738</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/339433ae">339433ae</a>
                     </div>
                     
                 </div>
@@ -75,7 +75,7 @@
 <h3> Test Results
  </h3><table>
 <thead>
-<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                                                                </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
+<tr><th style="text-align: center;"> Name </th><th>Tests                                                                                                                                                                                                    </th><th style="text-align: center;"> Max Job Runtime </th><th style="text-align: center;"> Simulated Time </th><th style="text-align: center;"> Passing </th><th style="text-align: center;"> Total </th><th style="text-align: center;">               Pass Rate                </th></tr>
 </thead>
 <tbody>
 <tr><td style="text-align: center;">   <span title='Testbench:
@@ -106,7 +106,7 @@ Check:
     - check that T bit is correctly generated
     - first byte is DEV_ADDRESS
     - following DTT bytes is DATA_BYTES
-    - correct stop condition is generated'>i3c_private_write_correct_bus_condition<span>    </td><td>i3c_private_write_correct_bus_condition                                                                                                                                                              </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
+    - correct stop condition is generated'>i3c_private_write_correct_bus_condition<span>    </td><td>i3c_private_write_correct_bus_condition                                                                                                                                                                  </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    0    </td><td style="text-align: center;">   0   </td><td style="text-align: center;"><span style="color: #737373">--%</span> </td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -130,7 +130,7 @@ Stimulus:
 - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
 Check:
-  - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.'>i3c_private_write_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_target_read</a>                   </td><td style="text-align: center;">      2.417      </td><td style="text-align: center;">   13552.539    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.'>i3c_private_write_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_target_read</a>                   </td><td style="text-align: center;">      2.377      </td><td style="text-align: center;">   13552.539    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -155,7 +155,7 @@ Stimulus:
 
 Check:
   - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
-  - Read Response Descriptor to verify TID and Data Length match the CMD Descriptor and Error Status is Success.'>i3c_private_write_target_read_resp_desc<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_target_read_resp_desc</a>         </td><td style="text-align: center;">      2.399      </td><td style="text-align: center;">   13576.563    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - Read Response Descriptor to verify TID and Data Length match the CMD Descriptor and Error Status is Success.'>i3c_private_write_target_read_resp_desc<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_target_read_resp_desc</a>         </td><td style="text-align: center;">      2.341      </td><td style="text-align: center;">   13576.563    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -180,7 +180,7 @@ Stimulus:
 
 Check:
   - DATA_BYTES are equal to recv data from the target I3C_EC.TTI.RX_DATA_PORT CSR.
-  - Read Response Descriptor to verify TID matches the CMD Descriptor and Data Length is 0 and Error Status is NACK.'>i3c_private_write_wrong_target_addr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_wrong_target_addr</a>             </td><td style="text-align: center;">      3.761      </td><td style="text-align: center;">   13561.548    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - Read Response Descriptor to verify TID matches the CMD Descriptor and Data Length is 0 and Error Status is NACK.'>i3c_private_write_wrong_target_addr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_wrong_target_addr</a>             </td><td style="text-align: center;">      3.645      </td><td style="text-align: center;">   13561.548    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -206,7 +206,7 @@ Stimulus:
 - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
 Check:
-  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_tx_queue_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_tx_queue_target_read</a>          </td><td style="text-align: center;">     60.409      </td><td style="text-align: center;">   416630.214   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_tx_queue_target_read<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_tx_queue_target_read</a>          </td><td style="text-align: center;">     35.326      </td><td style="text-align: center;">   248303.055   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -232,7 +232,7 @@ Stimulus:
 - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
 Check:
-  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_tx_queue_target_read_fifo_full<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_tx_queue_target_read_fifo_full</a></td><td style="text-align: center;">     103.105     </td><td style="text-align: center;">   534840.306   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_tx_queue_target_read_fifo_full<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_tx_queue_target_read_fifo_full</a></td><td style="text-align: center;">     68.865      </td><td style="text-align: center;">   388047.660   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -258,7 +258,7 @@ Stimulus:
 - split the 64b descriptor into 2 32b words (DWORD) and first write the lower DWORD into the COMMAND_PORT PIO reg followed by the upper DWORD.
 
 Check:
-  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_repeated_start<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_repeated_start.py>i3c_private_write_repeated_start</a>                   </td><td style="text-align: center;">     10.518      </td><td style="text-align: center;">   59096.037    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. '>i3c_private_write_repeated_start<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_repeated_start.py>i3c_private_write_repeated_start</a>                   </td><td style="text-align: center;">     13.709      </td><td style="text-align: center;">   77186.109    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -276,8 +276,8 @@ Stimulus:
 
 Check:
   - data being sent via TX_DATA_PORT is equal to data on the target I3C_EC.TTI.RX_DATA_PORT CSR. 
-  - response descriptor data length matches data bytes specified in CMD desc, resp desc TID matches TID form CMD desc and resp error status is SUCCESS.'>i3c_private_write_dat<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/i3c_axi_controller/test_i3c_controller_write_target_read.py>i3c_private_write_dat</a>                           </td><td style="text-align: center;">      2.136      </td><td style="text-align: center;">   12027.015    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
-<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                                                         </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    7    </td><td style="text-align: center;">   7   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - response descriptor data length matches data bytes specified in CMD desc, resp desc TID matches TID form CMD desc and resp error status is SUCCESS.'>i3c_private_write_dat<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_i3c_controller_write_target_read.py>i3c_private_write_dat</a>                           </td><td style="text-align: center;">      2.172      </td><td style="text-align: center;">   12027.015    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+<tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                                                             </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    7    </td><td style="text-align: center;">   7   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
 
