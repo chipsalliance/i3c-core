@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        11/08/2026 11:36
+                        27/08/2026 16:59
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/339433ae">339433ae</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/90014415">90014415</a>
                     </div>
                     
                 </div>
@@ -96,7 +96,7 @@ Check:
   - After NACK the Controller should generate a HDR Exit Pattern.
   - Check if the target recognizes the HDR Exit Pattern by monitoring the cocotbext targets `hdr_exit_detected` variable.
   - After the Broadcast Address NACK the controller should return a response descriptor with Error Status: ADDRESS_HEADER.
-  - Check if subsequent ENEC CCC finishes as expected.'>Controller Error 2: No response to Broadcast Address (7'h7E)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_error_nack_on_bcast</a></td><td style="text-align: center;">      3.661      </td><td style="text-align: center;">   35567.532    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - Check if subsequent ENEC CCC finishes as expected.'>Controller Error 2: No response to Broadcast Address (7'h7E)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_error_nack_on_bcast</a></td><td style="text-align: center;">      4.734      </td><td style="text-align: center;">   35567.532    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -112,7 +112,7 @@ Stimulus:
 
 Check:
   - After the TX Queue underflow the controller should return a response descriptor with Error Status: OVL.
-  - After the regular I3C Write the controller should return a response descriptor with Error Status: SUCCESS.'>Controller TX Queue Underflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_tx_queue_underflow</a> </td><td style="text-align: center;">     37.890      </td><td style="text-align: center;">   629900.271   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - After the regular I3C Write the controller should return a response descriptor with Error Status: SUCCESS.'>Controller TX Queue Underflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_tx_queue_underflow</a> </td><td style="text-align: center;">     14.443      </td><td style="text-align: center;">   274387.113   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -129,7 +129,7 @@ Stimulus:
 
 Check:
   - After the RX Queue overflow the controller should return a response descriptor with Error Status: OVL.
-  - After the regular I3C Read the controller should return a response descriptor with Error Status: SUCCESS.'>Controller RX Queue Overflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_rx_queue_overflow</a>  </td><td style="text-align: center;">     10.293      </td><td style="text-align: center;">   255996.741   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - After the regular I3C Read the controller should return a response descriptor with Error Status: SUCCESS.'>Controller RX Queue Overflow<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_rx_queue_overflow</a>  </td><td style="text-align: center;">     19.945      </td><td style="text-align: center;">   373221.849   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -151,7 +151,7 @@ Check:
 - after the first GETPID CCC the response descriptor should report SUCCESS (the controller should automatically recover the error by retrying, this is transparent to SW).
 - after the second GETPID CCC the response descriptor should report I3C_SHORT_READ.
 - after the third GETPID CCC the response descriptor should report SUCCESS.
-- after the private i3c write the response descriptor should report SUCCESS.'>Controller CE0 Handling (illegally formatted CCC)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_error_short_ccc_ce0</a></td><td style="text-align: center;">      6.279      </td><td style="text-align: center;">   128597.469   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+- after the private i3c write the response descriptor should report SUCCESS.'>Controller CE0 Handling (illegally formatted CCC)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>controller_error_short_ccc_ce0</a></td><td style="text-align: center;">      7.677      </td><td style="text-align: center;">   114729.615   </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -170,7 +170,7 @@ Stimulus:
 
 Check:
 - the response descriptor for the first private write cmd should report HC_ABORTED as an error status.
-- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Controller Abort Transaction<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>hc_abort</a>                      </td><td style="text-align: center;">      2.180      </td><td style="text-align: center;">   45606.561    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Controller Abort Transaction<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>hc_abort</a>                      </td><td style="text-align: center;">      2.954      </td><td style="text-align: center;">   45606.561    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -188,7 +188,7 @@ Stimulus:
 Check:
 - the response descriptor for the first private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
 - the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs should both be set to 1'b1.
-- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Command Sequence Timeout (no halt)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>cmd_seq_timeout_no_halt</a>       </td><td style="text-align: center;">      2.819      </td><td style="text-align: center;">   63093.030    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Command Sequence Timeout (no halt)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>cmd_seq_timeout_no_halt</a>       </td><td style="text-align: center;">      3.446      </td><td style="text-align: center;">   56960.904    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -207,7 +207,7 @@ Stimulus:
 Check:
 - the response descriptor for the first private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.
 - the INTR_STATUS.HC_ERR_CMD_SEQ_TIMEOUT_STAT & INTR_STATUS.HC_SEQ_CANCEL_STAT interrupt CSRs should both be set to 1'b1.
-- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Command Sequence Timeout (halt)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>cmd_seq_timeout_halt</a>          </td><td style="text-align: center;">      1.359      </td><td style="text-align: center;">   23723.700    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+- the response descriptor for the second private write cmd should report SUCCESS and the data received by the target should match the data sent by the controller.'>Command Sequence Timeout (halt)<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>cmd_seq_timeout_halt</a>          </td><td style="text-align: center;">      1.769      </td><td style="text-align: center;">   23705.682    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (Cocotbext)
 
@@ -227,7 +227,7 @@ For each interrupt field in the loop:
 - After the first force, the STATUS CSR field should remain 1'b0 (verifies STATUS_ENABLE masking).
 - After the second force, the STATUS CSR field should be 1'b1, but the physical `irq_o` pin should remain 1'b0 (verifies SIGNAL_ENABLE masking).
 - After setting SIGNAL_ENABLE, the physical `irq_o` pin should assert to 1'b1 (verifies hardware signal routing).
-- After writing to the STATUS CSR field, both the STATUS CSR field and the physical `irq_o` pin should de-assert to 1'b0 (verifies W1C clearing).'>Interrupt Routing and Masking<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>interrupt_routing_and_masking</a> </td><td style="text-align: center;">      0.876      </td><td style="text-align: center;">    4099.095    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+- After writing to the STATUS CSR field, both the STATUS CSR field and the physical `irq_o` pin should de-assert to 1'b0 (verifies W1C clearing).'>Interrupt Routing and Masking<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller_err/test_controller_error.py>interrupt_routing_and_masking</a> </td><td style="text-align: center;">      1.003      </td><td style="text-align: center;">    4099.095    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                               </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">    8    </td><td style="text-align: center;">   8   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>

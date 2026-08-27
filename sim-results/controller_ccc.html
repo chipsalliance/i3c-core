@@ -42,7 +42,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/date.svg" alt="Run on"/>
-                        11/08/2026 11:36
+                        27/08/2026 16:59
                     </div>
                     
                     
@@ -60,7 +60,7 @@
                     
                     <div class="nav-item">
                         <img src="./assets/commit.svg" alt="Run on"/>
-                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/339433ae">339433ae</a>
+                        <a target="_blank" href="https://github.com/chipsalliance/i3c-core/commit/90014415">90014415</a>
                     </div>
                     
                 </div>
@@ -103,7 +103,7 @@ Check:
   - Initially the I3C_EC.TTI.CONTROL.IBI_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should be set to 1 and I3C_EC.TTI.CONTROL.CRR_EN should be set to 0.
   - After sending the first CCC (DISEC) all CSRs should be set to 0.
   - After sending the second CCC (ENEC) all CSRs should be set to 1.
-'>controller_ccc_enec_disec_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_bcast</a>                  </td><td style="text-align: center;">      2.038      </td><td style="text-align: center;">   14828.814    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_enec_disec_bcast<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_bcast</a>                  </td><td style="text-align: center;">      3.020      </td><td style="text-align: center;">   14828.814    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -129,7 +129,7 @@ Check:
   - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
   - After sending the first CCC (DISEC) the CSRs should be set to 0.
   - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
-'>controller_ccc_enec_disec_direct_one_target<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_one_target</a>      </td><td style="text-align: center;">      2.172      </td><td style="text-align: center;">   17234.217    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_enec_disec_direct_one_target<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_one_target</a>      </td><td style="text-align: center;">      3.280      </td><td style="text-align: center;">   17270.253    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -156,7 +156,7 @@ Check:
   - Initially the I3C_EC.TTI.CONTROL.IBI_EN, I3C_EC.TTI.CONTROL.CRR_EN and I3C_EC.TTI.CONTROL.HJ_EN CSRs should all be set to one.
   - After sending the first CCC (DISEC) the CSRs should be set to 0.
   - After sending the second CCC (ENEC) the CSRs should again all be set to 1.
-'>controller_ccc_enec_disec_direct_multiple_targets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_multiple_targets</a></td><td style="text-align: center;">      3.005      </td><td style="text-align: center;">   25540.515    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_enec_disec_direct_multiple_targets<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_enec_disec_direct_multiple_targets</a></td><td style="text-align: center;">      4.562      </td><td style="text-align: center;">   25540.515    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -176,7 +176,7 @@ Stimulus:
 Check:
 - Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
 - Verify that I3C_EC.STDBYCTRLMODE.STBY_CR_VIRT_DEVICE_ADDR.VIRT_DYNAMIC_ADDR_VALID is 0x0 after RSTDAA
-'>controller_ccc_rstdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_rstdaa</a>                            </td><td style="text-align: center;">      1.206      </td><td style="text-align: center;">    7984.977    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_rstdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_rstdaa</a>                            </td><td style="text-align: center;">      1.764      </td><td style="text-align: center;">    7984.977    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -197,7 +197,7 @@ Stimulus:
 Check:
   - After sending the ENTDAA CCC the response descriptor returns SUCCESS
   - After sending the ENTDAA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic addresses specified in the DAT.
-  - Verify that the DCT entries (starting at the index specified in the TABLE_INDEX field of the DCT_SECTION_OFFSET register) contain the PID, BCR, DCR and dynamic address of the (Virtual) target.'>controller_ccc_entdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_entdaa</a>                            </td><td style="text-align: center;">      5.351      </td><td style="text-align: center;">   53047.995    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+  - Verify that the DCT entries (starting at the index specified in the TABLE_INDEX field of the DCT_SECTION_OFFSET register) contain the PID, BCR, DCR and dynamic address of the (Virtual) target.'>controller_ccc_entdaa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_entdaa</a>                            </td><td style="text-align: center;">      8.367      </td><td style="text-align: center;">   53047.995    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -222,7 +222,7 @@ Check:
   - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
   - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
   - After sending the SETAASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the target's static address.
-'>controller_ccc_setaasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setaasa</a>                           </td><td style="text-align: center;">      1.211      </td><td style="text-align: center;">    7984.977    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_setaasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setaasa</a>                           </td><td style="text-align: center;">      1.765      </td><td style="text-align: center;">    7984.977    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -245,7 +245,7 @@ Check:
   - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.STATIC_ADDR CSR to get the target's static address.
   - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
   - After sending the SETDASA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the dynamic address that was sent.
-'>controller_ccc_setdasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setdasa_direct</a>                    </td><td style="text-align: center;">      2.235      </td><td style="text-align: center;">   17309.292    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_setdasa<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setdasa_direct</a>                    </td><td style="text-align: center;">      3.376      </td><td style="text-align: center;">   17309.292    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -261,7 +261,7 @@ Stimulus:
 Check:
   - Read the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR CSR to get the target's dynamic address.
   - After sending the SETNEWDA CCC verify that the I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR holds the new dynamic address that was sent.
-'>controller_ccc_setnewda<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setnewda</a>                          </td><td style="text-align: center;">      1.554      </td><td style="text-align: center;">   12165.153    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_setnewda<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_setnewda</a>                          </td><td style="text-align: center;">      2.338      </td><td style="text-align: center;">   12165.153    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -275,7 +275,7 @@ Stimulus:
 Check:
   - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.PID_HI and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_PID_LO.PID_LO CSRs to get the full PID
   - Read the RX_PORT and verify that the data received by the controller matches the PID from the targets PID CSRs.
-'>controller_ccc_getpid<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getpid</a>                            </td><td style="text-align: center;">      1.754      </td><td style="text-align: center;">   14360.346    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_getpid<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getpid</a>                            </td><td style="text-align: center;">      2.651      </td><td style="text-align: center;">   14360.346    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -289,7 +289,7 @@ Stimulus:
 Check:
   - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_VAR and I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.BCR_FIXED CSRs to get the full BCR
   - Read the RX_PORT and verify that the data received by the controller matches the BCR from the targets BCR CSRs.
-'>controller_ccc_getbcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getbcr</a>                            </td><td style="text-align: center;">      1.379      </td><td style="text-align: center;">   10021.011    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_getbcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getbcr</a>                            </td><td style="text-align: center;">      2.033      </td><td style="text-align: center;">   10021.011    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">   <span title='Testbench:
 I3C Controller (RTL) <-> I3C Target (RTL)
 
@@ -303,7 +303,7 @@ Stimulus:
 Check:
   - Read the targets I3C_EC.STDBYCTRLMODE.STBY_CR_DEVICE_CHAR.DCR CSR to get the DCR
   - Read the RX_PORT and verify that the data received by the controller matches the DCR from the targets DCR CSR.
-'>controller_ccc_getdcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getdcr</a>                            </td><td style="text-align: center;">      1.380      </td><td style="text-align: center;">   10012.002    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
+'>controller_ccc_getdcr<span>    </td><td><a href=https://github.com/chipsalliance/i3c-core/tree/main//verification/cocotb/top/lib_i3c_top_controller/test_controller_ccc.py>controller_ccc_getdcr</a>                            </td><td style="text-align: center;">      2.022      </td><td style="text-align: center;">   10012.002    </td><td style="text-align: center;">    1    </td><td style="text-align: center;">   1   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 <tr><td style="text-align: center;">      </td><td><b>TOTAL</b>                                                                                                                                                                            </td><td style="text-align: center;">                 </td><td style="text-align: center;">                </td><td style="text-align: center;">   11    </td><td style="text-align: center;">  11   </td><td style="text-align: center;"><span style="color: #22c55e">100%</span></td></tr>
 </tbody>
 </table>
