@@ -3192,7 +3192,7 @@ Test: [recovery_read_abort_at_len](https://github.com/chipsalliance/i3c-core/tre
 
 Coverage: TxLenL/TxLenH bus_rstart_i -> Done.
 Aborts a recovery READ at different points in the response length
-transmission using command_read_abort.
+transmission.
 
 ### `recovery_premature_sr_in_header`
 
