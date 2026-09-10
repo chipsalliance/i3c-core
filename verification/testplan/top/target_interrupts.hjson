@@ -93,5 +93,18 @@
               "specific_interrupt_force"]
       tags: ["top"]
     }
+    {
+      name: tx_desc_stat_virtual_device_masked
+      desc:
+        '''
+	Ensures that irq_o is deasserted. Enables the TX_DESC_STAT_EN TTI
+	interrupt. Issues a private read to the main target and checks that
+	the TX_DESC_STAT interrupt was asserted. Clears the interrupt via the
+	INTERRUPT_STATUS CSR. Issues a private read to the virtual target and
+	ensures that no interrupt was asserted.
+        '''
+      tests: ["tx_desc_stat_virtual_device_masked"]
+      tags: ["top"]
+    }
   ]
 }

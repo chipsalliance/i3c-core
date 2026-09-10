@@ -14,14 +14,14 @@ from utils import format_ibi_data, get_interrupt_status
 import cocotb
 from cocotb.regression import TestFactory
 from cocotb.triggers import ClockCycles, Event, RisingEdge, Timer
-from common import timeout_task, log_seed
+from common import timeout_task, log_seed, VALID_I3C_ADDRESSES
 
 # =============================================================================
 
 TARGET_ADDRESS = 0x5A
 
 
-async def test_setup(dut, timeout_us=25):
+async def test_setup(dut, timeout_us=25, static_addr=0x5A, virtual_static_addr=0x5B):
     """
     Sets up controller, target models and top-level core interface
     """
@@ -52,7 +52,7 @@ async def test_setup(dut, timeout_us=25):
     await tb.setup()
 
     # Configure the top level
-    await boot_init(tb)
+    await boot_init(tb, static_addr=static_addr, virtual_static_addr=virtual_static_addr)
 
     return i3c_controller, i3c_target, tb
 
@@ -184,6 +184,87 @@ async def test_tx_desc_stat(dut):
 
     # Dummy wait
     await ClockCycles(tb.clk, 10)
+
+    await tb.teardown()
+
+@cocotb.test()
+async def test_tx_desc_stat_virtual_device_masked(dut):
+    """
+    Regression for spurious TX_DESC_STAT interrupt on a virtual-device read.
+    Bug: https://github.com/chipsalliance/i3c-core/issues/184
+
+    A Private Read to the virtual (recovery) device must not raise TX_DESC_STAT
+    (masked in tti.sv by `~virtual_device_sel_i & tx_pr_start_i`). On the buggy
+    RTL, virtual_device_sel_i lags the combinational tx_pr_start_i by one cycle,
+    so the mask fails and the interrupt fires for the virtual device too.
+
+    Checks (via the irq_o output line and the interrupt status register):
+      - Private Read to MAIN target    -> TX_DESC_STAT asserts    (control)
+      - Private Read to VIRTUAL device -> TX_DESC_STAT stays clear (fails on buggy RTL)
+    """
+
+    # Two distinct, randomly-picked valid I3C addresses for the main and virtual
+    # devices, threaded into the DUT configuration so stimulus and config match.
+    main_addr, virt_addr = random.sample(VALID_I3C_ADDRESSES, 2)
+    dut._log.info(f"main_addr=0x{main_addr:02X}, virt_addr=0x{virt_addr:02X}")
+
+    # Setup
+    i3c_controller, _, tb = await test_setup(
+        dut, static_addr=main_addr, virtual_static_addr=virt_addr
+    )
+    irq = dut.xi3c_wrapper.irq_o
+
+    # Enable only the TX descriptor status interrupt so irq_o reflects it alone.
+    csr = tb.reg_map.I3C_EC.TTI.INTERRUPT_ENABLE
+    await tb.write_csr_field(csr.base_addr, csr.TX_DESC_STAT_EN, 1)
+
+    int_status = tb.reg_map.I3C_EC.TTI.INTERRUPT_STATUS
+
+    async def private_read(addr):
+        # Precondition: clear TX_DESC_STAT (W1C) and confirm irq_o is low.
+        await tb.write_csr_field(int_status.base_addr, int_status.TX_DESC_STAT, 1)
+        await ClockCycles(tb.clk, 10)
+        assert irq.value == 0, f"IRQ expected 0 before stimulus, got {int(irq.value)}"
+
+        # Private Read (no TX data queued -> NACKed, but tx_pr_start still pulses
+        # on the address match, which is what exercises the mask).
+        await i3c_controller.i3c_read(addr, 4)
+        await ClockCycles(tb.clk, 20)
+
+    # Control: a Private Read to the MAIN target must set TX_DESC_STAT and drive irq_o.
+    await private_read(main_addr)
+    intrs = await get_interrupt_status(tb)
+    dut._log.info(f"Private Read @ main   (0x{main_addr:02X}) -> "
+                  f"TX_DESC_STAT={intrs['TX_DESC_STAT']}, irq_o={int(irq.value)}")
+    assert intrs["TX_DESC_STAT"] == 1, (
+        "Control failed: Private Read to the main target should set TX_DESC_STAT"
+    )
+    assert irq.value == 1, "Control failed: irq_o should assert for the main-target read"
+
+    # Verify W1C clear behavior explicitly: writing 1 clears the bit, irq_o drops
+    # and stays low (no spurious re-assertion after the transaction).
+    await tb.write_csr_field(int_status.base_addr, int_status.TX_DESC_STAT, 1)
+    await ClockCycles(tb.clk, 10)
+    assert (
+        await tb.read_csr_field(int_status.base_addr, int_status.TX_DESC_STAT)
+    ) == 0, "TX_DESC_STAT should be W1C-cleared after the main-target read"
+    assert irq.value == 0, "irq_o should deassert after clearing TX_DESC_STAT"
+
+    # Bug check: a Private Read to the VIRTUAL device must NOT set TX_DESC_STAT
+    # nor drive irq_o. On the buggy RTL virtual_device_sel_i lags tx_pr_start_i by
+    # one cycle, so the mask fails and these assertions fire.
+    await private_read(virt_addr)
+    intrs = await get_interrupt_status(tb)
+    dut._log.info(f"Private Read @ virtual(0x{virt_addr:02X}) -> "
+                  f"TX_DESC_STAT={intrs['TX_DESC_STAT']}, irq_o={int(irq.value)}")
+    assert intrs["TX_DESC_STAT"] == 0, (
+        "BUG: TX_DESC_STAT was set by a Private Read to the virtual (recovery) "
+        "device. The ~virtual_device_sel_i mask in tti.sv is applied one cycle "
+        "too late relative to the combinational tx_pr_start_i pulse."
+    )
+    assert irq.value == 0, (
+        "BUG: irq_o asserted for a Private Read to the virtual (recovery) device"
+    )
 
     await tb.teardown()
 

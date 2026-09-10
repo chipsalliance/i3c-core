@@ -152,6 +152,7 @@ module i3c_target_fsm import i3c_pkg::*; (
   logic      bus_addr_valid;
   logic      bus_rnw_d, bus_rnw_q;
   i3c_addr_t bus_addr_d, bus_addr_q;
+  logic      virtual_device_sel_d, virtual_device_sel_q;
 
   logic is_our_addr_match, is_virtual_addr_match, is_any_addr_match, is_rsvd_byte_match;
 
@@ -451,7 +452,25 @@ module i3c_target_fsm import i3c_pkg::*; (
     endcase
   end
 
+  // Latching of virtual device selection
+  always_comb begin
+    virtual_device_sel_d = virtual_device_sel_q;
+    virtual_device_sel_o = virtual_device_sel_q;
+
+    if (bus_any_start_det || bus_stop_det_i) begin
+      // Clear on Start/Repeated Start/Stop - transaction boundary
+      virtual_device_sel_d = 1'b0;
+    end else if (state_q inside {CheckFByte, CheckSByte}) begin
+      // Set on virtual address match with first or second byte address headers
+      virtual_device_sel_d = is_virtual_addr_match;
+      // Forward the next value of the flop to align with other bus framing control signals
+      virtual_device_sel_o = is_virtual_addr_match;
+    end
+  end
+
   // Main FSM
+  assign target_idle_o = (state_q == Idle);
+
   always_comb begin : fsm_target_main
     tx_pr_start_o = 1'b0;
     tx_pr_abort_o = 1'b0;
@@ -850,37 +869,19 @@ module i3c_target_fsm import i3c_pkg::*; (
     end
   end
 
-  // Synchronous state transition
+  // Flops for state and control signals driven by always_comb processes
   always_ff @(posedge clk_i or negedge rst_ni) begin : state_transition
     if (!rst_ni) begin
       state_q <= Idle;
-      ibi_retry_cnt_q <= 3'd0;
-      ibi_inhibit_q   <= InhibitNone;
+      ibi_retry_cnt_q      <= 3'd0;
+      ibi_inhibit_q        <= InhibitNone;
+      virtual_device_sel_q <= 1'b0;
     end else begin
       state_q <= state_d;
-      ibi_retry_cnt_q <= ibi_retry_cnt_d;
-      ibi_inhibit_q   <= ibi_inhibit_d;
+      ibi_retry_cnt_q      <= ibi_retry_cnt_d;
+      ibi_inhibit_q        <= ibi_inhibit_d;
+      virtual_device_sel_q <= virtual_device_sel_d;
     end
-  end
-
-  assign target_idle_o = (state_q == Idle);
-
-  always_ff @(posedge clk_i or negedge rst_ni) begin : virtual_device_sel_latch
-    if (!rst_ni) begin
-      virtual_device_sel_o <= '0;
-    end else if (bus_any_start_det || bus_stop_det_i) begin
-      // Clear on Start/Repeated Start/Stop - transaction boundary
-      virtual_device_sel_o <= '0;
-    end else unique case(state_q)
-      CheckFByte:
-        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
-            virtual_device_sel_o <= is_virtual_addr_match;
-      CheckSByte:
-        if (!is_rsvd_byte_match && virtual_device_sel_o != is_virtual_addr_match)
-            virtual_device_sel_o <= is_virtual_addr_match;
-      default:
-        virtual_device_sel_o <= virtual_device_sel_o;
-    endcase
   end
 
   always_ff @(posedge clk_i or negedge rst_ni) begin

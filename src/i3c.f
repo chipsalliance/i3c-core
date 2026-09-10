@@ -16,6 +16,10 @@ ${CALIPTRA_ROOT}/src/libs/rtl/ahb_slv_sif.sv
 ${CALIPTRA_ROOT}/src/axi/rtl/axi_pkg.sv
 ${CALIPTRA_ROOT}/src/axi/rtl/axi_if.sv
 ${CALIPTRA_ROOT}/src/axi/rtl/axi_addr.v
+${CALIPTRA_ROOT}/src/axi/rtl/axi_sub_arb.sv
+${CALIPTRA_ROOT}/src/axi/rtl/axi_sub_rd.sv
+${CALIPTRA_ROOT}/src/axi/rtl/axi_sub_wr.sv
+${CALIPTRA_ROOT}/src/axi/rtl/axi_sub.sv
 ${CALIPTRA_ROOT}/src/libs/rtl/skidbuffer.v
 ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_1p_pkg.sv
 ${I3C_ROOT_DIR}/src/libs/mem/prim_ram_2p_pkg.sv
@@ -35,10 +39,6 @@ ${I3C_ROOT_DIR}/src/csr/controller_I3CCSR.sv
 ${I3C_ROOT_DIR}/src/csr/target_I3CCSR.sv
 ${I3C_ROOT_DIR}/src/csr/controller_and_target_I3CCSR.sv
 ${I3C_ROOT_DIR}/src/interrupt.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_arb.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_rd.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub.sv
-${I3C_ROOT_DIR}/src/libs/axi_sub/i3c_axi_sub_wr.sv
 ${I3C_ROOT_DIR}/src/hci/queues/read_queue.sv
 ${I3C_ROOT_DIR}/src/hci/queues/write_queue.sv
 ${I3C_ROOT_DIR}/src/hci/ahb_if.sv
