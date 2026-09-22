@@ -572,6 +572,13 @@ module i3c_controller_fsm
   logic unused_bus_tx_abort, unused_bus_tx_sda_oe, unused_bus_tx_sel_od_pp;
   logic bus_tx_req_valid;
 
+  // Retime bus_tx_flow's done pulse onto the following SCL negedge.
+  // Both are pure functions of flops (scl_negedge, bus_tx_done_raw_q, bus_tx_rsp.done),
+  // so they are continuous assigns. This removes any dependence on statement order
+  // inside bus_tx_flow_assignment, which reads bus_tx_done_on_negedge.
+  assign bus_tx_done_on_negedge = scl_negedge & bus_tx_done_raw_q;
+  assign bus_tx_done_raw_d      = scl_negedge ? 1'b0 : (bus_tx_rsp.done | bus_tx_done_raw_q);
+
   always_comb begin : bus_tx_flow_assignment
     // Assign request type
     if (bus_tx_req_bit) begin
@@ -593,12 +600,6 @@ module i3c_controller_fsm
 
     // Assign response
     bus_tx_done = bus_tx_rsp.done;
-    bus_tx_done_raw_d = bus_tx_rsp.done ? 1'b1 : bus_tx_done_raw_q;
-    bus_tx_done_on_negedge = 1'b0;
-    if (scl_negedge) begin
-      bus_tx_done_on_negedge = bus_tx_done_raw_q;
-      bus_tx_done_raw_d = 1'b0;
-    end
     bus_tx_idle = bus_tx_rsp.idle;  // UNUSED
     bus_tx_req_err = bus_tx_rsp.error;  // UNUSED
     bus_error = bus_tx_rsp.abort;  // UNUSED
