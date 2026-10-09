@@ -43,6 +43,30 @@ On compute nodes, select the virtualenv after cluster setup while preserving
 the compiler/tool PATH. Let `cocotb-config --libpython` locate the matching
 Python library instead of hardcoding a host library path.
 
+### Integration-compatible elaboration
+
+Cocotb builds enable `CLP_ASSERT_ON` and default to the `axi_bypass` profile in
+`i3c_core_configs.yaml`, matching the Caliptra subsystem's AXI I3C instance.
+Verilator also uses `--assert`. All cocotb CSR instances keep `ERR_HWIF_IN`
+enabled: DAT/DCT CSR read data is zero outside an acknowledged response, while
+unknown data on a real read remains visible. Adapter-only benches tie unused
+hardware inputs to zero and preserve their reset and active FIFO connections.
+The AXI adapter's indirect FIFO read data is zero outside an acknowledged read;
+unknown data on an acknowledged read still reaches the assertion.
+AXI queue widths/depths and the descriptor-TX depth-port width derive from that
+generated configuration rather than separate testbench constants. The standalone
+edge-detector test retains `DETECT_NEGEDGE=0`; explicit AHB benches still use `ahb`.
+
+Before each build, the Makefiles compare the selected profile with the shared
+generated header and regenerate configuration/CSRs if needed. An unchanged
+configuration does not force a rebuild for Python-only test changes. Each
+`SIM_BUILD` retains `i3c_defines.svh` and `i3c_build_config.txt` identifying the
+selected profile, configuration file, and compile flags; both are also printed
+in the captured run log. Preserve these with
+coverage artifacts; do not infer a database's configuration from the final header
+left in `src/` after a regression. Run different configurations serially because
+the generated CSR sources are shared in-tree.
+
 Running `./install.sh` will install `pyenv` and use it to build a virtual environment, which can be activated with `. activate.sh`.
 Alternatively, `uv` can be used with `uv venv && uv sync` building a virtual environment and then activating it with `. .venv/bin/activate`.
 

@@ -9,19 +9,23 @@ module hci_queues_wrapper
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
-    parameter int unsigned AxiAddrWidth = 12,
-    parameter int unsigned AxiDataWidth = 32,
-    parameter int unsigned AxiUserWidth = 32,
-    parameter int unsigned AxiIdWidth   = 2,
+    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
+    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
+    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
+    parameter int unsigned AxiIdWidth   = `AXI_ID_WIDTH,
 `ifdef AXI_ID_FILTERING
-    parameter int unsigned NumPrivIds = 4,
+    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
 `endif
 
-    parameter int unsigned HciRespFifoDepth = 64,
-    parameter int unsigned HciCmdFifoDepth  = 64,
-    parameter int unsigned HciRxFifoDepth   = 64,
-    parameter int unsigned HciTxFifoDepth   = 64,
-    parameter int unsigned HciIbiFifoDepth  = 64,
+    parameter int unsigned HciRespFifoDepth = `RESP_FIFO_DEPTH,
+    parameter int unsigned HciCmdFifoDepth  = `CMD_FIFO_DEPTH,
+    parameter int unsigned HciRxFifoDepth   = `RX_FIFO_DEPTH,
+    parameter int unsigned HciTxFifoDepth   = `TX_FIFO_DEPTH,
+`ifdef IBI_FIFO_EXT_SIZE
+    parameter int unsigned HciIbiFifoDepth  = 8 * `IBI_FIFO_DEPTH,
+`else
+    parameter int unsigned HciIbiFifoDepth  = `IBI_FIFO_DEPTH,
+`endif
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
     localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
@@ -41,11 +45,15 @@ module hci_queues_wrapper
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRxDescFifoDepth = 64,
-    parameter int unsigned TtiTxDescFifoDepth  = 64,
-    parameter int unsigned TtiRxDataFifoDepth   = 64,
-    parameter int unsigned TtiTxDataFifoDepth   = 64,
-    parameter int unsigned TtiIbiFifoDepth  = 64,
+    parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
+    parameter int unsigned TtiTxDescFifoDepth  = `CMD_FIFO_DEPTH,
+    parameter int unsigned TtiRxDataFifoDepth   = `RX_FIFO_DEPTH,
+    parameter int unsigned TtiTxDataFifoDepth   = `TX_FIFO_DEPTH,
+`ifdef IBI_FIFO_EXT_SIZE
+    parameter int unsigned TtiIbiFifoDepth  = 8 * `IBI_FIFO_DEPTH,
+`else
+    parameter int unsigned TtiIbiFifoDepth  = `IBI_FIFO_DEPTH,
+`endif
 
     localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
     localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
@@ -507,7 +515,24 @@ module hci_queues_wrapper
       // Controller configuration
       .hwif_out_o(unused_hwif_out),
 
-      .rst_action_i
+      // CCC side effects are inactive in this queue-only bench.
+      .set_dasa_i('0),
+      .set_dasa_valid_i('0),
+      .set_dasa_virtual_device_i('0),
+      .set_aasa_i('0),
+      .set_aasa_virt_i('0),
+      .rstdaa_i('0),
+      .newda_i('0),
+      .set_newda_i('0),
+      .set_newda_virtual_device_i('0),
+      .rst_action_i,
+      .rst_action_valid_i('0),
+      .mwl_i('0),
+      .set_mwl_i('0),
+      .mrl_i('0),
+      .set_mrl_i('0),
+      .ibil_i('0),
+      .set_ibil_i('0)
   );
 
   // TTI
@@ -583,6 +608,9 @@ module hci_queues_wrapper
       .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_queue_reg_rst_we),
       .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_queue_reg_rst_data),
       .rx_desc_queue_empty_i       (tti_rx_desc_empty_o),
+      .rx_desc_queue_full_i        (tti_rx_desc_full_o),
+      .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_ready_thld_trig_o),
+      .rx_desc_queue_write_i       ('0),
 
       // TTI TX descriptors queue
       .tx_desc_queue_req_o         (csr_tti_tx_desc_queue_req),
@@ -606,6 +634,9 @@ module hci_queues_wrapper
       .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_queue_reg_rst_we),
       .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_queue_reg_rst_data),
       .rx_data_queue_empty_i       (tti_rx_empty_o),
+      .rx_data_queue_full_i        (tti_rx_full_o),
+      .rx_data_queue_ready_thld_trig_i(tti_rx_ready_thld_trig_o),
+      .rx_data_queue_write_i       ('0),
 
       // TTI TX queue
       .tx_data_queue_req_o         (csr_tti_tx_data_queue_req),
@@ -631,18 +662,19 @@ module hci_queues_wrapper
       .ibi_queue_empty_i       (tti_ibi_empty_o),
 
       // Queue depths
-      .rx_desc_queue_depth_i('0),
-      .tx_desc_queue_depth_i('0),
-      .rx_data_queue_depth_i('0),
-      .tx_data_queue_depth_i('0),
-      .ibi_queue_depth_i('0),
-      .tx_desc_queue_empty_i('0),
-      .tx_data_queue_empty_i('0),
+      .rx_desc_queue_depth_i(8'(tti_rx_desc_depth_o)),
+      .tx_desc_queue_depth_i(8'(tti_tx_desc_depth_o)),
+      .rx_data_queue_depth_i(8'(tti_rx_depth_o)),
+      .tx_data_queue_depth_i(8'(tti_tx_depth_o)),
+      .ibi_queue_depth_i(8'(tti_ibi_depth_o)),
+      .tx_desc_queue_empty_i(tti_tx_desc_empty_o),
+      .tx_data_queue_empty_i(tti_tx_empty_o),
 
       .bypass_i3c_core_i,
 
-      .ibi_status_i('0),
+      .ibi_status_i(IbiSuccess),
       .ibi_status_we_i('0),
+      .ibi_pending_i('0),
       .virtual_device_sel_i('0),
       .tx_pr_end_i('0),
       .tx_pr_start_i('0),
@@ -671,6 +703,8 @@ module hci_queues_wrapper
       .ri_length_err_i('0),
       .ri_readonly_err_i('0),
       .ri_unsupported_err_i('0),
+      .ri_rx_fifo_overflow_err_i('0),
+      .ri_indirect_fifo_overflow_err_i('0),
 
       // Interrupt
       .irq_o(unused_irq)
@@ -833,6 +867,8 @@ module hci_queues_wrapper
       .length_err_det_en_i('0),
       .readonly_err_det_en_i('0),
       .unsupported_err_det_en_i('0),
+      .rx_fifo_overflow_err_det_en_i('0),
+      .indirect_fifo_overflow_err_det_en_i('0),
 
       // Error outputs
       .pec_err_o(),

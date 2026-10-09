@@ -8,6 +8,8 @@
         '''
         Walks over all CSRs, write random value using AHB/AXI, reads it back,
         and compares with expected output.
+        DAT accesses also check both word lanes of two entries, with idle cycles
+        between reads checked by the enabled CSR hardware-input assertion.
         '''
       tests: [
         "dat_csr_access",

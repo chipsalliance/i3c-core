@@ -395,7 +395,24 @@ module hci_queues_wrapper
       // Controller configuration
       .hwif_out_o(unused_hwif_out),
 
-      .rst_action_i
+      // CCC side effects are inactive in this queue-only bench.
+      .set_dasa_i('0),
+      .set_dasa_valid_i('0),
+      .set_dasa_virtual_device_i('0),
+      .set_aasa_i('0),
+      .set_aasa_virt_i('0),
+      .rstdaa_i('0),
+      .newda_i('0),
+      .set_newda_i('0),
+      .set_newda_virtual_device_i('0),
+      .rst_action_i,
+      .rst_action_valid_i('0),
+      .mwl_i('0),
+      .set_mwl_i('0),
+      .mrl_i('0),
+      .set_mrl_i('0),
+      .ibil_i('0),
+      .set_ibil_i('0)
   );
 
   // TTI
@@ -471,6 +488,9 @@ module hci_queues_wrapper
       .rx_desc_queue_reg_rst_we_i  (csr_tti_rx_desc_queue_reg_rst_we),
       .rx_desc_queue_reg_rst_data_i(csr_tti_rx_desc_queue_reg_rst_data),
       .rx_desc_queue_empty_i       (tti_rx_desc_empty_o),
+      .rx_desc_queue_full_i        (tti_rx_desc_full_o),
+      .rx_desc_queue_ready_thld_trig_i(tti_rx_desc_ready_thld_trig_o),
+      .rx_desc_queue_write_i       ('0),
 
       // TTI TX descriptors queue
       .tx_desc_queue_req_o         (csr_tti_tx_desc_queue_req),
@@ -494,6 +514,9 @@ module hci_queues_wrapper
       .rx_data_queue_reg_rst_we_i  (csr_tti_rx_data_queue_reg_rst_we),
       .rx_data_queue_reg_rst_data_i(csr_tti_rx_data_queue_reg_rst_data),
       .rx_data_queue_empty_i       (tti_rx_empty_o),
+      .rx_data_queue_full_i        (tti_rx_full_o),
+      .rx_data_queue_ready_thld_trig_i(tti_rx_ready_thld_trig_o),
+      .rx_data_queue_write_i       ('0),
 
       // TTI TX queue
       .tx_data_queue_req_o         (csr_tti_tx_data_queue_req),
@@ -519,8 +542,17 @@ module hci_queues_wrapper
 
       .bypass_i3c_core_i,
 
-      .ibi_status_i('0),
+      .rx_desc_queue_depth_i(8'(tti_rx_desc_depth_o)),
+      .tx_desc_queue_depth_i(8'(tti_tx_desc_depth_o)),
+      .rx_data_queue_depth_i(8'(tti_rx_depth_o)),
+      .tx_data_queue_depth_i(8'(tti_tx_depth_o)),
+      .ibi_queue_depth_i(8'(tti_ibi_depth_o)),
+      .tx_desc_queue_empty_i(tti_tx_desc_empty_o),
+      .tx_data_queue_empty_i(tti_tx_empty_o),
+
+      .ibi_status_i(IbiSuccess),
       .ibi_status_we_i('0),
+      .ibi_pending_i('0),
       .virtual_device_sel_i('0),
       .tx_pr_end_i('0),
       .tx_pr_start_i('0),
@@ -546,6 +578,8 @@ module hci_queues_wrapper
       .ri_length_err_i('0),
       .ri_readonly_err_i('0),
       .ri_unsupported_err_i('0),
+      .ri_rx_fifo_overflow_err_i('0),
+      .ri_indirect_fifo_overflow_err_i('0),
 
       // Interrupt
       .irq_o(unused_irq)
@@ -630,7 +664,9 @@ module hci_queues_wrapper
     // S/Sr and P bus condition
       .ctl_bus_start_i(bus_start_i),
       .ctl_bus_rstart_i(1'b0),  // Repeated Start not used in this test wrapper
+      .ctl_bus_rstart_i(1'b0),
       .ctl_bus_stop_i(bus_stop_i),
+      .ctl_in_hdr_mode_i(1'b0),
       .ctl_in_hdr_mode_i(1'b0),  // HDR mode not used in this test wrapper
 
     // Received I2C/I3C address along with RnW# bit
@@ -667,9 +703,11 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_wready_o(tti_rx_wready_o),
       .ctl_tti_rx_data_queue_wdata_i(tti_rx_wdata_i),
       .ctl_tti_rx_data_queue_flush_i(tti_rx_flush_i),
+      .ctl_tti_rx_data_queue_wlast_i('0),
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
+      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_full_o),
@@ -694,6 +732,13 @@ module hci_queues_wrapper
       .ctl_tti_ibi_queue_rdata_o(tti_ibi_rdata_o),
       .ctl_tti_ibi_queue_ready_thld_o(tti_ibi_ready_thld_o),
       .ctl_tti_ibi_queue_ready_thld_trig_o(tti_ibi_ready_thld_trig_o),
+
+      .pec_err_det_en_i('0),
+      .length_err_det_en_i('0),
+      .readonly_err_det_en_i('0),
+      .unsupported_err_det_en_i('0),
+      .rx_fifo_overflow_err_det_en_i('0),
+      .indirect_fifo_overflow_err_det_en_i('0),
 
       .virtual_device_sel_i('0),
       .xfer_in_progress_i('0)
