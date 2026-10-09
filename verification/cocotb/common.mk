@@ -67,10 +67,8 @@ endif
 COMPILE_ARGS += +define+DIGITAL_IO_I3C
 
 ifeq ($(SIM), verilator)
-    # Caliptra's full assertion set includes SVA unsupported by Verilator 5.024.
-    COMPILE_ARGS += +define+I3C_ASSERT_ON
     # Enable processing of #delay statements
-    COMPILE_ARGS += --timing --assert
+    COMPILE_ARGS += --timing
     COMPILE_ARGS += -Wall -Wno-fatal
     COMPILE_ARGS += --x-assign unique --x-initial unique
 
@@ -80,6 +78,7 @@ ifeq ($(SIM), verilator)
     EXTRA_ARGS += $(VERILATOR_COVERAGE)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
 else
+    # Verilator 5.024 does not support all I3C/Caliptra assertion syntax.
     COMPILE_ARGS += +define+CLP_ASSERT_ON
 endif
 

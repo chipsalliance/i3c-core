@@ -15,13 +15,6 @@
 `ifndef I3C_SVA
 `define I3C_SVA
 
-// Preserve the assertion enable used by existing subsystem integrations.
-`ifdef CLP_ASSERT_ON
-`ifndef I3C_ASSERT_ON
-`define I3C_ASSERT_ON
-`endif
-`endif
-
 // Default clk and reset signals used by assertion macros below.
 `define I3C_ASSERT_DEFAULT_CLK clk_i
 `define I3C_ASSERT_DEFAULT_RST !rst_ni
@@ -40,7 +33,7 @@
 
 // Assert a concurrent property directly.
 `define I3C_ASSERT(assert_name, prop, clk = `I3C_ASSERT_DEFAULT_CLK, rst = `I3C_ASSERT_DEFAULT_RST)  \
-`ifdef I3C_ASSERT_ON                                                           \
+`ifdef CLP_ASSERT_ON                                                           \
   assert_name: assert property (@(posedge clk) disable iff (rst !== 0) (prop))    \
     else begin                                                                 \
         `I3C_ASSERT_RPT(`STRINGIFY(assert_name))                                   \
@@ -49,7 +42,7 @@
 
 // Assert a concurrent property NEVER happens
 `define I3C_ASSERT_NEVER(assert_name, prop, clk = `I3C_ASSERT_DEFAULT_CLK, rst = `I3C_ASSERT_DEFAULT_RST) \
-`ifdef I3C_ASSERT_ON                                                            \
+`ifdef CLP_ASSERT_ON                                                            \
   assert_name: assert property (@(posedge clk) disable iff (rst !== 0) not (prop)) \
     else begin                                                                  \
         `I3C_ASSERT_RPT(`STRINGIFY(assert_name))                                    \

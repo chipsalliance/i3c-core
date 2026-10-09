@@ -45,18 +45,16 @@ Python library instead of hardcoding a host library path.
 
 ### Integration-compatible elaboration
 
-Cocotb builds enable I3C assertions and default to the `axi_bypass` profile in
+Cocotb builds default to the `axi_bypass` profile in
 `i3c_core_configs.yaml`, matching the Caliptra subsystem's AXI I3C instance.
-Verilator uses `I3C_ASSERT_ON` and `--assert`, without enabling the Caliptra
-assertion set that contains SVA unsupported by Verilator 5.024. Other simulators,
-including VCS, retain `CLP_ASSERT_ON` to enable both assertion sets. The I3C
-assertion macros continue to accept `CLP_ASSERT_ON` for existing integrations.
-All cocotb CSR instances keep `ERR_HWIF_IN`
-enabled: DAT/DCT CSR read data is zero outside an acknowledged response, while
+Assertions are disabled in Verilator because version 5.024 does not support all
+I3C/Caliptra assertion syntax. Other simulators, including VCS, use
+`CLP_ASSERT_ON` to enable both assertion sets, including `ERR_HWIF_IN`.
+DAT/DCT CSR read data is zero outside an acknowledged response, while
 unknown data on a real read remains visible. Adapter-only benches tie unused
 hardware inputs to zero and preserve their reset and active FIFO connections.
 The AXI adapter's indirect FIFO read data is zero outside an acknowledged read;
-unknown data on an acknowledged read still reaches the assertion.
+unknown data on an acknowledged read still reaches the assertion when enabled.
 AXI queue widths/depths and the descriptor-TX depth-port width derive from that
 generated configuration rather than separate testbench constants. The standalone
 edge-detector test retains `DETECT_NEGEDGE=0`; explicit AHB benches still use `ahb`.
