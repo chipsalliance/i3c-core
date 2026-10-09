@@ -80,7 +80,7 @@ module i3c_target_fsm_test_wrapper
 
     // Interfacing with subFSMs
     input logic is_ibi_done_i,
-    input logic is_ccc_done_i,
+    input i3c_pkg::ccc_handoff_e ccc_handoff_i,
     input logic is_hotjoin_done_i,
 
     input logic scl_negedge_i,

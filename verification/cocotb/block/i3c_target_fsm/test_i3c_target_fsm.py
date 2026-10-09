@@ -80,7 +80,7 @@ async def setup_test(dut):
     dut.target_reset_detect_i.value = 0
     # SubFSMs
     dut.is_ibi_done_i.value = 0
-    dut.is_ccc_done_i.value = 0
+    dut.ccc_handoff_i.value = 0
     dut.is_hotjoin_done_i.value = 0
 
     await ClockCycles(dut.clk_i, 10)

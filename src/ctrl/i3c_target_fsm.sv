@@ -111,8 +111,7 @@ module i3c_target_fsm import i3c_pkg::*; (
   // Interfacing with CCC subFSMs
   output ccc_cmd_e  ccc_data_o,
   output logic      ccc_valid_o,
-  input  logic      is_ccc_done_i,
-  input  logic      is_next_ccc_i,
+  input  ccc_handoff_e ccc_handoff_i,
 
   // TE0 Error Interface (HDR Exit condition)
   input  logic      te0_enable_i,
@@ -820,9 +819,14 @@ module i3c_target_fsm import i3c_pkg::*; (
       DoCCC: begin
         ccc_valid_o = 1'b1;
 
-        if (is_ccc_done_i) begin
+        if (ccc_handoff_i == CccDone) begin
+          // CCC ended without address/command continuation (STOP, mode entry, or terminal error).
           state_d = DoneCCC;
-        end else if (is_next_ccc_i) begin
+        end else if (ccc_handoff_i == CccResumeAddr) begin
+          // A broadcast ended on Sr; receive the next address for a new CCC or private transfer.
+          state_d = RxFByte;
+        end else if (ccc_handoff_i == CccNextCmd) begin
+          // CCC already received and ACKed 0x7E/W; receive the next command byte.
           state_d = RxSByte;
         end
       end
@@ -941,6 +945,8 @@ module i3c_target_fsm import i3c_pkg::*; (
       bins valid_rstart_trans =
         (RxPWriteData, TxPReadData, TxPReadTbitCont, WaitRestart => RxFByte),
         (RxSByte => RxSByteRepeated);
+      bins valid_ccc_resume_addr_trans = (DoCCC => RxFByte);
+      bins valid_ccc_next_cmd_trans = (DoCCC => RxSByte);
       bins valid_stop_trans =
         (RxFByte, CheckFByte, TxAckFByte, RxSByte, RxSByteRepeated, CheckSByte, TxAckSByte,
          RxPWriteData, RxPWriteTbit, TxPReadData, WaitRestart, DoCCC,

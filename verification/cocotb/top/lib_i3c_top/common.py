@@ -91,11 +91,12 @@ async def do_getmwl(i3c_controller, addr):
 
 
 async def do_getmrl(i3c_controller, addr):
-    """Send directed GETMRL.  Returns 3-byte MRL (bytearray)."""
+    """Read up to three GETMRL bytes; BCR[2] determines whether IBIL is present."""
     responses = await i3c_controller.i3c_ccc_read(
         ccc=CCC.DIRECT.GETMRL, addr=addr, count=3)
     ack, data = responses[0]
     assert ack, f"GETMRL NACK addr=0x{addr:02X}"
+    assert len(data) in (2, 3), f"GETMRL invalid response length at 0x{addr:02X}: {len(data)}"
     cocotb.log.info(f"GETMRL addr=0x{addr:02X} -> {data.hex()}")
     return data
 
@@ -133,7 +134,7 @@ async def do_setmwl_direct(i3c_controller, addr, val=None):
 
 
 async def do_setmrl_direct(i3c_controller, addr, val=None, ibil=None):
-    """Send directed SETMRL.  Returns True if ACKed, False otherwise."""
+    """Send SETMRL including IBIL, ignored as an extension when BCR[2] is zero."""
     if val is None:
         val = random.randint(0, 0xFFFF)
     if ibil is None:

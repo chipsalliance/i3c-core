@@ -1,5 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
+from enum import IntEnum
+
 from munch import Munch
+
+
+class CccHandoff(IntEnum):
+    # Matches i3c_pkg::ccc_handoff_e.
+    NONE = 0
+    DONE = 1
+    RESUME_ADDR = 2
+    NEXT_CMD = 3
+
 
 # I3C Basic, Table 16 Common Command Codes
 # Broadcast Commands

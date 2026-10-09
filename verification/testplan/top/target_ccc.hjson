@@ -6,12 +6,28 @@
       name: ccc_getstatus
       desc:
         '''
-        The test reads PENDING_INTERRUPT field from the TTI INTERRUPT
-        status CSR. Next, it issues the GETSTATUS directed CCC to the
-        target. Finally it compares the interrupt status returned by the
-        CCC with the one read from the register.
+        Reads GETSTATUS on both targets with no pending interrupt, then
+        queues an IBI with handling disabled and checks the main target's
+        vendor pending-IBI bit. Requires exact bytes and continuation/final
+        target EOD on each response without controller-requested abort.
         '''
       tests: ["ccc_getstatus"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_getstatus_unsupported_defining_byte
+      desc:
+        '''
+        Sends GETSTATUS with defining bytes 0x00, 0x01, 0x90, 0x91, 0x92,
+        0xE0, 0xFE, and 0xFF to both main and virtual targets with TE5
+        detection disabled and enabled. Requires address NACKs, no new TE
+        events, and preservation of a Protocol Error set by a real CCC
+        parity error. Chains a Format 1 GETSTATUS without STOP, checks exact
+        response bytes and target EOD on both targets, and verifies that the
+        successful read clears Protocol Error without retaining the rejected
+        defining byte.
+        '''
+      tests: ["ccc_getstatus_unsupported_defining_byte"]
       tags: ["top"]
     }
     {
@@ -93,8 +109,10 @@
       name: ccc_getmrl
       desc:
         '''
-        Reads MRL register content by sending GETMWL CCC and examining
-        returned data.
+        Reads MRL using GETMRL. The main target advertises IBI payload and
+        returns three bytes; the virtual target advertises no IBI payload
+        and returns exactly two bytes. Every byte and continuation/final
+        target EOD is checked without controller-requested abort.
         '''
       tests: ["ccc_getmrl"]
       tags: ["top"]
@@ -147,6 +165,8 @@
         '''
         Sends broadcast DISEC CCC and verifies that events are disabled.
         Then, sends broadcast ENEC CCC and checks that events are enabled.
+        Checks zero, individual IBI/CRR/HJ bits, reserved-only bits, and
+        all-bits-set masks without changing unrelated event enables.
         '''
       tests: ["ccc_enec_disec_bcast"]
       tags: ["top"]
@@ -166,9 +186,11 @@
       name: ccc_setmrl_direct
       desc:
         '''
-        Sends directed SETMRL CCC to the target and verifies that the
-        register got correctly set. The check is performed by examining
-        relevant wires in the target DUT.
+        Randomly selects the main or virtual target for each directed SETMRL
+        write. Main-target writes carry MRL and IBIL; virtual-target writes
+        carry MRL only and preserve IBIL. Checks CSR values and capability-correct
+        GETMRL readback from both targets after each write. The random selection
+        does not guarantee both write formats are exercised in one invocation.
         '''
       tests: ["ccc_setmrl_direct"]
       tags: ["top"]
@@ -199,10 +221,34 @@
       name: ccc_rstact
       desc:
         '''
-        Sends directed/broadcast RSTACT CCC to the target followed by reset pattern
-        and checks if reset action was stored correctly. The check is
-        done by examining DUT wires. Then, triggers target reset and
-        verifies that the peripheral_reset_o signal gets asserted.
+        Crosses broadcast/direct RSTACT and all three supported reset actions
+        with an immediate reset pattern, STOP followed directly by a reset
+        pattern, repeated START followed directly by a reset pattern, STOP
+        followed by START, repeated START followed by another CCC, and repeated
+        START followed by a private write.
+        Direct RSTACT addresses both the main and virtual targets before ending.
+        Every detected pattern retires its arm/action while preserving the
+        configured request and existing default-reset escalation semantics.
+        Checks every continuation address ACK, chained SETMWL/GETMWL payload,
+        and private RX descriptor/data. Checks the arm and action after START
+        while SCL remains high, then verifies the first SCL falling edge clears
+        both. Samples the arm and action when the reset pattern is detected and
+        checks both reset outputs without resending RSTACT. Every scenario starts
+        with fresh reset-escalation state. A reset pattern after STOP must preserve
+        the action through its final START/STOP, which has no intervening SCL
+        falling edge. The explicit repeated START precedes the pattern body;
+        it is additional to the pattern's own final repeated START and STOP.
+        Holds the bus free during reset recovery and checks request persistence.
+        Verifies peripheral_reset_done_i clears the peripheral request without
+        clearing escalation, including held and deasserted acknowledgement.
+        Peripheral reset covers both permitted integration models: acknowledgement
+        with retained I3C state, and a second request followed by actual core reset
+        with cleared state. NO_RESET retains state; whole-target reset requires
+        actual core reset. Cleared-state recovery boots without dynamic addresses,
+        rejects stale addresses, and assigns both targets through ENTDAA. Retained
+        targets must not participate in ENTDAA. Every recovery path checks directed
+        SETMWL/GETMWL and GETSTATUS on both targets, plus main-target private write
+        descriptor/data and private read data. Checks no reset request is retriggered.
         '''
       tests: ["ccc_rstact"]
       tags: ["top"]
@@ -213,8 +259,9 @@
         '''
         Sends a sequence of multiple directed SETMWL CCCs. The first and
         the last have non-matching address. The two middle ones set MWL
-        to different values. Verify that the target responded to correct
-        addresses and executed both CCCs.
+        to different values. Checks the ACK/NACK sequence and the final MWL
+        value from the second matching write. The first matching write's
+        intermediate value is not observed.
         '''
       tests: ["ccc_direct_multiple_wr"]
       tags: ["top"]
@@ -235,8 +282,9 @@
       desc:
         '''
         Verifies ENTDAA procedure: controller issues ENTDAA CCC, target responds
-        with 64-bit device ID, controller assigns dynamic address. Checks address
-        is set correctly in STBY_CR_DEVICE_ADDR CSR.
+        with the exact configured PID/BCR/DCR for each target, and the controller
+        assigns dynamic addresses. Checks both address CSRs, subsequent CCCs,
+        and exact private write/read data after the terminating STOP.
         '''
       tests: ["ccc_entdaa"]
       tags: ["top"]
@@ -245,9 +293,10 @@
       name: ccc_entdaa_arb_lost
       desc:
         '''
-        Verifies ENTDAA arbitration-lost path: when arbitration_lost_i is asserted
-        during ID bit transmission, the DUT enters LostArbitration state and
-        retries on the next ENTDAA round.
+        Attempts to inject arbitration_lost_i during ENTDAA ID transmission,
+        then checks main-target address validity and GETBCR responsiveness.
+        Injection timeout is only logged; the test does not require observed
+        LostArbitration entry or first-round loss followed by a successful retry.
         '''
       tests: ["ccc_entdaa_arb_lost"]
       tags: ["top"]
@@ -266,11 +315,11 @@
       name: ccc_entdaa_te3_te4
       desc:
         '''
-        Verifies TE3 and TE4 error handling during ENTDAA.
-
-        TE3: Parity error on assigned address causes target to NACK, retries
-        on next ENTDAA round.
-        TE4: Controller assigns same address to two targets, causes error.
+        Injects TE3 assigned-address parity error and TE4 invalid reserved
+        byte (7E/W instead of 7E/R) in separate single-slot ENTDAA transfers.
+        Checks NACKs, error status, and exact error counts. Each transfer ends
+        with STOP; same-frame TE3 retry and rejection of TE4 continuation
+        before STOP are not exercised.
         '''
       tests: ["ccc_entdaa_te3_te4"]
       tags: ["top"]
@@ -280,7 +329,9 @@
       desc:
         '''
         Verifies all ENTHDR codes (0x20-0x27) cause the target to enter HDR mode.
-        After each ENTHDR, verifies clean recovery with HDR exit pattern.
+        Sr plus private R/W or 7E/W must not end that mode, and STOP alone must
+        not exit HDR. After the HDR exit pattern, checks CCC and exact private
+        write/read functionality. HDR payload transfer itself is unsupported.
         '''
       tests: ["ccc_enthdr_all_codes"]
       tags: ["top"]
@@ -289,9 +340,11 @@
       name: ccc_error_det_enable
       desc:
         '''
-        Verifies TE0-TE5 error detection enable CSR bits can be toggled.
-        When TE0 is disabled, unsupported CCC should not trigger error.
-        When TE0 is re-enabled, error detection resumes.
+        Reads and logs TE0-TE5 detection-enable defaults, then toggles TE0 and
+        TE5 enable bits with readback checks. Sends an unsupported CCC with
+        TE0 disabled and checks that its error status remains clear.
+        After re-enabling TE0, checks GETBCR responsiveness; no new error is
+        injected to prove resumed detection.
         '''
       tests: ["ccc_error_det_enable"]
       tags: ["top"]
@@ -322,17 +375,41 @@
         '''
         Verifies TE2 error detection: bad T-bit parity on CCC defining byte
         causes the target to abort the CCC and signal TE2.
+        Each injection requires exactly one passive event. Sr plus main,
+        reserved and virtual headers/data must produce no new field, CSR or
+        FIFO effects until STOP; valid traffic then recovers.
         '''
       tests: ["ccc_te2_parity"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_setdasa_direction_det_en
+      desc:
+        '''
+        Sends wrong-direction SETDASA to each unassigned main/virtual static
+        address with TE5 DET_EN=0 and 1. Requires NACK in both modes, exact
+        per-operation event/counter/status deltas, and unchanged DA value/valid.
+        Good write-direction assignments must subsequently ACK and commit.
+        '''
+      tests: ["ccc_setdasa_direction_det_en"]
       tags: ["top"]
     }
     {
       name: ccc_te5_wrong_direction
       desc:
         '''
-        TE5 error: wrong R/W direction for direct CCC.
-        GET CCC sent with W direction causes NACK.
-        SET CCC sent with R direction causes NACK.
+        Checks the wrong R/W direction for all seven supported GET CCCs and
+        all six write-only CCCs on both targets. SETDASA is exercised before
+        dynamic address assignment. Each rejected transaction ends in STOP,
+        then valid CCC traffic must work. RSTACT supports both directions
+        and is covered by its format-specific tests.
+        Assigns each target's dynamic address to its static address, then
+        repeats SETDASA with both R/W directions and TE5 detection disabled
+        and enabled. Correct-direction refusals must not report TE5;
+        wrong-direction requests report exactly one event and counter
+        increment with sticky status only when detection is enabled.
+        All rejected requests must preserve the assigned addresses and
+        their valid bits.
         '''
       tests: ["ccc_te5_wrong_direction"]
       tags: ["top"]
@@ -341,8 +418,9 @@
       name: ccc_unknown_broadcast
       desc:
         '''
-        Unknown broadcast CCCs should be silently ignored (target accepts data
-        but takes no action). Verifies no crash and clean recovery.
+        Unsupported broadcast CCCs must ACK 0x7E/W, ignore the command/payload,
+        and recover at STOP or repeated START. Covers unknown opcodes, ENDXFER,
+        and MLANE, including their defining bytes and optional payload.
         '''
       tests: ["ccc_unknown_broadcast"]
       tags: ["top"]
@@ -352,7 +430,9 @@
       desc:
         '''
         Verifies that unsupported direct CCCs are NACKed by the target.
-        Tests deprecated, unsupported, and vendor-specific CCC codes.
+        Covers ENDXFER and MLANE defining bytes for both writes and reads,
+        alongside the existing unsupported direct CCCs. Also checks unsupported
+        GETCAPS defining bytes 0x01, 0x92, 0x94, and 0xFF on both targets.
         '''
       tests: ["ccc_unsupported_direct_nack"]
       tags: ["top"]
@@ -361,9 +441,10 @@
       name: ccc_vendor_codes
       desc:
         '''
-        Verifies vendor-specific CCC codes:
-        Broadcast vendor CCCs (0x61-0x7F): target ignores data silently.
-        Direct vendor CCCs: target NACKs.
+        Samples broadcast vendor CCCs with payload, checks NACKs for selected
+        direct vendor CCCs, and checks subsequent GETBCR responsiveness.
+        Does not check architectural state or FIFO effects to establish that
+        broadcast vendor payloads were ignored without side effects.
         '''
       tests: ["ccc_vendor_codes"]
       tags: ["top"]
@@ -394,8 +475,10 @@
       name: ccc_addr_lifecycle
       desc:
         '''
-        Full address lifecycle: RSTDAA -> SETDASA -> verify -> SETNEWDA -> verify ->
-        RSTDAA -> verify cleared. Tests both main and virtual targets.
+        Boots without dynamic addresses, then checks SETDASA address/valid
+        values, SETNEWDA address values, and RSTDAA clearing both address-valid
+        bits. Tests main and virtual targets. There is no initial RSTDAA, and
+        the final check does not inspect the cleared address values.
         '''
       tests: ["ccc_addr_lifecycle"]
       tags: ["top"]
@@ -421,11 +504,146 @@
       tags: ["top"]
     }
     {
+      name: ccc_handoff_acquire_stop
+      desc:
+        '''
+        Uses real SCL/SDA traffic to send STOP after seven or eight ENEC
+        command bits, before the command T-bit. Crosses two system-clock
+        phases with 32 ns and 40 ns SCL-high intervals before STOP.
+        Requires exactly one detected STOP per case and acquisition only
+        after all eight command bits. Checks that unowned acquisition never
+        coincides with STOP: command reception requires SCL rising, which
+        excludes the trigger for the registered STOP event.
+        An incomplete opcode produces no CCC handoff; a complete opcode
+        produces CccDone from RxCmdTbit after ownership has transferred.
+        Checks STOP-side-effect suppression, same-edge ownership/context
+        retirement, and subsequent GETBCR recovery. Uses no internal overrides.
+        Synthetic simultaneous CCC-valid/STOP remains an interface-level
+        defensive check in the block ccc_complete_handoff test, not claimed
+        as a reachable top-level transaction.
+        '''
+      tests: ["ccc_handoff_acquire_stop"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_bcast_boundary
+      desc:
+        '''
+        Crosses ENEC, DISEC, SETMWL, SETMRL, RSTDAA, SETAASA, and RSTACT
+        with STOP, Sr plus another CCC, and immediate Sr plus private
+        write/read. No STOP or extra 7E/W appears at the immediate private
+        boundary. All seven supported ordinary broadcasts are covered.
+        SETMRL covers both two-byte and three-byte capability formats, giving
+        32 cases. The CCC-chain cases include ignored extension bytes.
+        Checks each command's register/action/address effects before the next
+        transaction, address ACK, exact private RX descriptor/data and queued
+        TX data. Uses the address appropriate after RSTDAA/SETAASA.
+        ENTDAA and ENTHDR use their separate mode-specific tests; they must not
+        acquire the ordinary broadcast-to-private ending rule.
+        Monitors same-edge ownership release, the address-resume qualifier,
+        request cancellation, and command/defining-byte retirement.
+        '''
+      tests: ["ccc_bcast_boundary", "ccc_bcast_boundary_no_ibi"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_rstact_terminator_address
+      desc:
+        '''
+        Sends directed RSTACT with no addressed target, an unknown target,
+        main-only/virtual-only writes, and reads. Crosses supported reset
+        actions, VT identification, and an unsupported defining byte.
+        Checks arm, action, and VT flag before and after the Sr+7E/W
+        terminator, which must not execute a target-address side effect.
+        '''
+      tests: ["ccc_rstact_terminator_address"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_rstact_pattern_consumption
+      desc:
+        '''
+        NO_RESET RSTACT, broadcast/direct crossed with in-frame and
+        STOP-before-first-pattern. C16-P1 observes armed action and no reset
+        at first detection. C16-S checks immediate arm/action retirement.
+        C16-P2 sends a second raw pattern with no intervening normal START,
+        CCC, private transfer, rearm or external reset and requires only the
+        default peripheral request. All three results are captured before
+        the final assertion, even when retirement fails; missing detections
+        fail explicitly. Raw START/Sr/STOP/SCL-fall/pending-clear events are
+        logged for attribution, not inferred from the whole-test result.
+        Separate controls exercise explicit DB0 rearm, completed START+address,
+        retention before SCL falling, and VT flag independence.
+        '''
+      tests: ["ccc_rstact_pattern_consumption"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_getstatus_complete_then_chain
+      desc:
+        '''
+        Injects a protocol error and completes GETSTATUS without STOP.
+        Checks immediate error clearing and a clear result from the next
+        addressed GETSTATUS, both within the same command and after a new
+        CCC header. Ends through 7E/W followed by private write/read.
+        The clean private-write descriptor must not inherit the earlier
+        CCC parity error; CCC errors remain visible through GETSTATUS.
+        Checks exact two-byte responses and every continuation/final target
+        EOD with no controller-requested abort. A later injected TE2 must
+        occur exactly once and relatch Protocol Error after the earlier clear.
+        Live-global-error descriptor isolation is a separate executable
+        test_ccc_error_private_descriptor in test_te_errors, mapped there.
+        The existing aborted-GETSTATUS chain test checks the opposite case:
+        an incomplete read must preserve the error.
+        '''
+      tests: ["ccc_getstatus_complete_then_chain"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_mrl_capability_boundaries
+      desc:
+        '''
+        Crosses both local BCR[2] values with broadcast and directed SETMRL.
+        Checks legal two-/three-byte endings followed by Sr plus another
+        CCC and exact GETMRL bytes plus every continuation/final target EOD.
+        Changes live BCR after
+        command/address acceptance to prove the current message keeps its
+        sampled capability. Two-byte writes preserve IBIL.
+        '''
+      tests: ["ccc_mrl_capability_boundaries"]
+      tags: ["top"]
+    }
+    {
+      name: ccc_incomplete_stop_recovery
+      desc:
+        '''
+        Truncates broadcast and directed command T-bit, required defining
+        byte/T-bit, and payload byte/T-bit, including SETMRL with a required
+        third byte missing. Sends STOP, then checks context retirement and a
+        working directed CCC. Does not require recovery at premature Sr.
+        Separately, detected TE2 parity errors must ignore further target and
+        reserved headers until STOP.
+        Passive effect monitoring requires stable committed fields and no new
+        field/CSR/FIFO writes in the STOP or TE2 quiescent windows. Earlier
+        valid bytes are not required to roll back. Checker tasks are awaited.
+        '''
+      tests: ["ccc_incomplete_stop_recovery"]
+      tags: ["top"]
+    }
+    {
       name: ccc_chain_direct
       desc:
         '''
-        Chain multiple direct CCCs within a single frame.
-        Verifies correct target address matching across chained CCCs.
+        Covers every supported directed opcode: ENEC, DISEC, SETDASA, SETNEWDA,
+        SETMWL, SETMRL, GETMWL, GETMRL, GETPID, GETBCR, GETDCR, GETSTATUS,
+        GETCAPS, and RSTACT. Crosses 26 supported read/write/defining-byte
+        formats with STOP and multi-CCC chaining (52 scenarios). Each command
+        visits an unknown address and both local targets without losing its
+        context. Checks every response byte/length and command side effect.
+        The chain variant ignores extension bytes after supported writes,
+        then uses Sr+7E/W to issue GETCAPS with and without its defining byte.
+        This verifies both command and defining-byte retirement; a new direct
+        opcode is never sent without the required reserved header.
         '''
       tests: ["ccc_chain_direct"]
       tags: ["top"]
@@ -444,8 +662,11 @@
       name: ccc_rstact_arm_clear_on_start
       desc:
         '''
-        Verifies RSTACT arm is cleared by START (not Sr). After arming with
-        whole-target reset, a private transfer (START) clears the arm state.
+        After arming whole-target reset, checks that completed private
+        write/read transfers leave the arm/action cleared. Cancellation occurs
+        on the first SCL falling edge following START, not START alone or Sr.
+        Sends a reset pattern without reissuing RSTACT, so the default
+        peripheral reset cannot be masked by another armed action.
         '''
       tests: ["ccc_rstact_arm_clear_on_start"]
       tags: ["top"]
@@ -454,8 +675,12 @@
       name: ccc_rstact_escalation_clear
       desc:
         '''
-        Verifies that RSTACT CCC and GETSTATUS CCC clear the escalation counter,
-        preventing escalated reset on the next target reset pattern.
+        First triggers an unarmed default peripheral reset and observes the
+        escalation arm. Checks clearing by broadcast RSTACT, addressed direct
+        RSTACT (including an unsupported defining byte), and GETSTATUS on
+        either target. Unaddressed RSTACT/GETSTATUS and GETBCR must not clear it.
+        A second reset pattern checks peripheral versus escalated request,
+        without arming an action that could mask the escalation result.
         '''
       tests: ["ccc_rstact_escalation_clear"]
       tags: ["top"]
@@ -464,9 +689,10 @@
       name: ccc_rstact_read_action
       desc:
         '''
-        Verifies RSTACT internal state after arming. Per spec, rstact_armed is
-        cleared by the next START (not Sr), so a subsequent read may return
-        the armed action.
+        Verifies RSTACT internal state after arming. The first SCL falling
+        edge following a new START clears the arm/action, so a subsequent
+        read in that frame returns 0x80 (not armed). START alone and Sr do
+        not clear the action. Recovery-time reads return 0xFF.
         '''
       tests: ["ccc_rstact_read_action"]
       tags: ["top"]
@@ -501,16 +727,16 @@
       tags: ["top"]
     }
     {
-      name: ccc_setmwl_sr_abort_during_data
+      name: ccc_setmwl_stop_during_data
       desc:
         '''
-        Sr abort during SETMWL data phase. Verifies that the target does not apply
-        the partial data.
-
-        BLOCKED BY DESIGN BUG: set_tx_data_complete fires unconditionally on Sr
-        abort.
+        STOP during the second SETMWL data byte must not publish a partial
+        configuration value. Checks a subsequent complete SETMWL, GETBCR,
+        and exact private write/read transfers. No invalid-Sr recovery is
+        required or inferred. A continuously sampled, awaited checker forbids
+        new field/CSR/FIFO effects and state changes across the STOP window.
         '''
-      tests: ["ccc_setmwl_sr_abort_during_data"]
+      tests: ["ccc_setmwl_stop_during_data"]
       tags: ["top"]
     }
     {
@@ -525,17 +751,14 @@
       tags: ["top"]
     }
     {
-      name: ccc_getstatus_sr_abort_clears_protocol_err
+      name: ccc_getstatus_sr_abort_preserves_protocol_err
       desc:
         '''
-        Verifies GETSTATUS Sr abort behavior with protocol error flag. Per spec,
-        a target shall only clear its pending status upon successfully completing
-        the GETSTATUS response.
-
-        BLOCKED BY DESIGN BUG: set_tx_data_complete fires unconditionally on Sr
-        abort, causing premature error clearing.
+        A valid controller read-abort after the first GETSTATUS byte preserves
+        Protocol Error. The next full GETSTATUS must return that error bit and
+        clear it only on successful response completion.
         '''
-      tests: ["ccc_getstatus_sr_abort_clears_protocol_err"]
+      tests: ["ccc_getstatus_sr_abort_preserves_protocol_err"]
       tags: ["top"]
     }
     {
@@ -568,6 +791,8 @@
         Coverage: RxCmdTbit -> WaitForENTDAAEnd.
         Boot with both targets already addressed. ENTDAA goes directly to
         WaitForENTDAAEnd since neither target needs an address.
+        Sr plus private R/W or 7E/W must not release ENTDAA mode. After STOP,
+        checks exact private write/read data and a working directed CCC.
         '''
       tests: ["ccc_entdaa_both_addressed"]
       tags: ["top"]
@@ -587,9 +812,9 @@
       name: ccc_direct_chain_7e_termination
       desc:
         '''
-        Coverage: ccc.sv target_addr_matches_rsvd -> NextCCC.
+        Coverage: ccc.sv target_addr_matches_rsvd -> WaitCCC (CccNextCmd).
         After a direct GET CCC response, send Sr+7E/W instead of STOP. Triggers
-        the reserved address path in TxTargetAddrAck, transitioning to NextCCC
+        the reserved address path in TxTargetAddrAck, transitioning directly to WaitCCC
         for CCC chaining.
         '''
       tests: ["ccc_direct_chain_7e_termination"]
@@ -611,10 +836,12 @@
       name: ccc_te2_direct_def_byte_tbit
       desc:
         '''
-        Coverage: ccc.sv RxDirectDefByteTbit -> DoneCCC,
+        Coverage: ccc.sv RxDirectDefByteTbit -> WaitForStop -> WaitCCC,
         WaitDirectRstart -> RxDirectDefByteTbit.
         Send a direct CCC with defining byte, then an extra data byte with bad
         T-bit parity before the repeated start for the target address.
+        Requires exactly one event and no new effects through subsequent
+        main/reserved/virtual headers and data until STOP.
         '''
       tests: ["ccc_te2_direct_def_byte_tbit"]
       tags: ["top"]
@@ -635,9 +862,12 @@
       name: ccc_te2_data_byte_direct_set
       desc:
         '''
-        Coverage: RxDataTbit -> DoneCCC (ccc.sv:1104-1108).
+        Coverage: RxDataTbit -> WaitForStop -> WaitCCC.
         Send a direct SET CCC (SETMWL) and inject T-bit parity error on the
         first data byte after the target ACKs the address.
+        Requires exactly one event and no new effects until STOP, including
+        Sr/main/reserved/virtual traffic. With DET_EN=0 the same bad parity
+        must allow a complete MWL update without event/counter/status changes.
         '''
       tests: ["ccc_te2_data_byte_direct_set"]
       tags: ["top"]
@@ -657,9 +887,13 @@
       name: ccc_stop_mid_transfer
       desc:
         '''
-        Coverage: Multiple FSM -> DoneCCC transitions via STOP override.
-        Tests STOP during RxDefByte, RxDefByteOrBusCond, WaitDirectRstart,
-        TxData, TxDataTbitCont, and TxDataTbitEnd states.
+        Requires detected STOP in WaitDirectRstart, RxDefByteOrBusCond and
+        RxDefByte, followed in each case by completed GETBCR recovery.
+        The passive handoff monitor requires all six ordered STOP observations,
+        no arbitration loss, STOP-side-effect suppression and ownership retirement.
+        D/E/F are not exercised. Legal read termination occurs at SDA handoff
+        boundaries; this selector leaves active TxData/TxDataTbitCont/
+        TxDataTbitEnd STOP arcs unproven. An RTL override is not coverage.
         '''
       tests: ["ccc_stop_mid_transfer"]
       tags: ["top"]
@@ -678,9 +912,14 @@
       name: ccc_entdaa_stop_in_sendidbit
       desc:
         '''
-        Coverage: ENTDAA FSM SendIDBit -> Done.
-        Start ENTDAA, let Sr+7E/R complete and begin ID bit transmission,
-        then issue STOP mid-ID-bit.
+        Retains the original malformed ID-abort stimulus after eight ID bits;
+        the reserved header must ACK, not silently skip the scenario.
+        Requires one observed arbitration loss before STOP in ENTDAA WaitStart,
+        then a two-address ENTDAA retry and GETBCR recovery.
+        The passive handoff monitor requires all three STOP states and retirement.
+        The legacy selector name does not imply SendIDBit-to-Done STOP coverage.
+        Released-SDA ID-boundary termination without arbitration loss remains
+        unproven; no additional experimental stimulus is added.
         '''
       tests: ["ccc_entdaa_stop_in_sendidbit"]
       tags: ["top"]
@@ -689,8 +928,11 @@
       name: ccc_entdaa_stop_in_receiveaddr
       desc:
         '''
-        Coverage: ENTDAA FSM ReceiveAddr -> Done.
-        Complete ID bit transmission (64 bits), then issue STOP mid-address-byte.
+        After an ACKed ENTDAA Sr+7E/R header and 64 ID bits, attempts STOP
+        during the assigned-address byte and checks subsequent recovery.
+        If the header NACKs, the test logs a warning and returns without
+        exercising the scenario; a passing result alone does not establish
+        ReceiveAddr STOP coverage.
         '''
       tests: ["ccc_entdaa_stop_in_receiveaddr"]
       tags: ["top"]
@@ -699,8 +941,12 @@
       name: ccc_entdaa_stop_in_ackrsvdbyte
       desc:
         '''
-        Coverage: ENTDAA FSM AckRsvdByte -> Done.
-        Issue STOP during the reserved byte ACK phase of ENTDAA.
+        Requires the reserved-header ACK, then retains the original malformed
+        post-ACK STOP request. The passive monitor requires one arbitration
+        loss followed by STOP in ENTDAA WaitStart, a two-address ENTDAA retry and
+        GETBCR recovery, including all three STOP states and ownership retirement.
+        Active ACK drives SDA low, so this is not legal active-AckRsvdByte STOP
+        coverage. Pending-ACK dispatch termination is also not exercised.
         '''
       tests: ["ccc_entdaa_stop_in_ackrsvdbyte"]
       tags: ["top"]
@@ -709,9 +955,13 @@
       name: ccc_entdaa_stop_in_sendnack
       desc:
         '''
-        Coverage: ENTDAA FSM SendNack -> Done.
-        Inject TE4 (7E/W instead of 7E/R) so target NACKs. ENTDAA FSM enters
-        SendNack, then issue STOP.
+        Injects TE4 using 7E/W instead of 7E/R, then issues STOP after the
+        NACK helper completes. Requires the NACK and exactly one TE4 event.
+        The passive monitor requires STOP in ENTDAA WaitStop with no arbitration
+        loss, then a two-address ENTDAA retry and GETBCR recovery with retirement
+        at all three STOPs. Pending NACK dispatch before the ninth clock and
+        active SendNack-to-Done STOP coverage remain unproven; no candidate
+        dispatch stimulus is added.
         '''
       tests: ["ccc_entdaa_stop_in_sendnack"]
       tags: ["top"]
@@ -720,9 +970,18 @@
       name: ccc_stop_during_target_read
       desc:
         '''
-        Coverage: TxData->DoneCCC, TxDataTbitCont->DoneCCC,
-        TxDataTbitEnd->DoneCCC, TxTargetAddrAck->DoneCCC.
-        Issues real bus-level STOP during target-driven read phases.
+        Retains malformed premature STOP requests A/B: A detects STOP after
+        GETBCR completion in WaitForBusCond; B detects STOP in TxData with
+        intentionally malformed/contention recovery, not a legal bus handoff.
+        C requires final T=0 before STOP in WaitForBusCond. D requires first-byte
+        T=1 before the helper's abort and STOP in RxTargetAddr.
+        The passive monitor requires all eight attempt/recovery STOP states,
+        STOP-side-effect suppression and ownership retirement. Arbitration
+        losses are reported for malformed A/B; all other intervals require zero.
+        Existing contention suppression is retained, not expanded or used as
+        evidence of protocol legality. Active address-ACK/final-T/continuation-T
+        STOP arcs remain unproven by this selector. Basic 1.1.1 section 5.1.2.3.4
+        and FAQ Q23.5 limit STOP to the appropriate SDA ownership boundary.
         '''
       tests: ["ccc_stop_during_target_read"]
       tags: ["top"]

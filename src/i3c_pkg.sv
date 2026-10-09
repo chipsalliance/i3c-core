@@ -162,6 +162,13 @@ package i3c_pkg;
     logic stop_det;
   } bus_state_t;
 
+  typedef enum logic [1:0] {
+    CccNone       = 2'd0, // No handoff.
+    CccDone       = 2'd1, // Complete CCC processing; main FSM enters DoneCCC.
+    CccResumeAddr = 2'd2, // Return to main FSM to receive the address following broadcast Sr.
+    CccNextCmd    = 2'd3  // Return to main FSM for the next CCC command byte; 0x7E/W is already ACKed.
+  } ccc_handoff_e;
+
   // Tx transfer types
   typedef enum logic [2:0] {
     RawByte,
