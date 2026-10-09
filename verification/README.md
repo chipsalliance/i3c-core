@@ -24,8 +24,24 @@ The following FOSS dependencies are required:
 - verilator 5.024
 - zlib
 
-The python module dependencies are specified in pyproject.toml.
-Lockfiles suitable for pip (requirements.txt) and uv (uv.lock) are provided.
+The Python dependencies are specified in `pyproject.toml` and locked in `uv.lock`.
+The generated `requirements.txt` provides a pip-only installation path without
+requiring uv on simulation or CI workers:
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --use-pep517 -r requirements.txt
+.venv/bin/python -m pip check
+export VIRTUAL_ENV="$PWD/.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
+```
+
+Regenerate `requirements.txt` after lockfile changes with the export command in
+the root README. The pinned cocotb 1.9.0 VCS Makefile avoids the obsolete
+`+acc+1` option emitted by cocotb 1.8.1 and rejected by VCS Y-2026.03-SP1.
+On compute nodes, select the virtualenv after cluster setup while preserving
+the compiler/tool PATH. Let `cocotb-config --libpython` locate the matching
+Python library instead of hardcoding a host library path.
 
 Running `./install.sh` will install `pyenv` and use it to build a virtual environment, which can be activated with `. activate.sh`.
 Alternatively, `uv` can be used with `uv venv && uv sync` building a virtual environment and then activating it with `. .venv/bin/activate`.
