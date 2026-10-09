@@ -664,9 +664,7 @@ module hci_queues_wrapper
     // S/Sr and P bus condition
       .ctl_bus_start_i(bus_start_i),
       .ctl_bus_rstart_i(1'b0),  // Repeated Start not used in this test wrapper
-      .ctl_bus_rstart_i(1'b0),
       .ctl_bus_stop_i(bus_stop_i),
-      .ctl_in_hdr_mode_i(1'b0),
       .ctl_in_hdr_mode_i(1'b0),  // HDR mode not used in this test wrapper
 
     // Received I2C/I3C address along with RnW# bit
