@@ -14,5 +14,143 @@
       tests: ["ccc"]
       tags: ["ccc"]
     }
+    {
+      name: ccc_ending_contract
+      desc:
+        '''
+        Checks legal broadcast Sr release and directed addressed continuation.
+        Holds command-valid through release, verifies context retirement, and
+        checks STOP priority at command, defining-byte, defining-byte T-bit,
+        payload-byte, payload T-bit, and completed-command checkpoints.
+        Retains bad-parity payload T-bit collisions and adds valid-parity final
+        payload T-bit collisions for both broadcast and directed SETMWL.
+        Primes MWL to 0x3400, then collides STOP with byte 0x12's correct T=1;
+        checks suppressed data-valid, unchanged MWL, and no immediate or delayed
+        MWL update strobe while retiring the command.
+        TE2 parity errors ignore subsequent traffic until STOP. Invalid
+        premature Sr recovery is not implemented or required by this test.
+        Requires the TE2 pulse, no further TE2 events or field effects while
+        quiescent, and MWL/MRL/IBIL/reset-related signals unchanged from their
+        post-error snapshot. Only MWL is explicitly programmed beforehand.
+        '''
+      tests: ["ccc_ending_contract"]
+      tags: ["ccc"]
+    }
+    {
+      name: next_ccc_command_retirement
+      desc:
+        '''
+        Dedicated test_ccc.py check compares STOP with Sr+7E/W
+        after GETBCR. Holds the parent's old command-valid through release.
+        Runs through the test_ccc module in the nox ccc_verify session.
+        Combinational handoff emits CccDone on STOP and CccNextCmd on the
+        terminating 7E/W ACK completion.
+        Both must clear command_code and command_code_valid on the release edge
+        and leave them cleared while the main FSM owns the interface.
+        '''
+      tests: ["next_ccc_command_retirement"]
+      tags: ["ccc"]
+    }
+    {
+      name: next_ccc_functional_chain
+      desc:
+        '''
+        Dedicated functional control in test_ccc.py sends GETBCR,
+        Sr+7E/W, then GETDCR without STOP. Checks exact, distinct response bytes
+        and commands with opposite parity. Separately checks quiet CCC requests
+        while the main FSM receives the new opcode. Does not assert internal
+        command retirement, so a cleanup-contract failure is not mistaken for
+        an externally observable command-chaining failure.
+        '''
+      tests: ["next_ccc_functional_chain"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_complete_handoff
+      desc:
+        '''
+        All ownership-return paths emit a combinational CccDone, CccResumeAddr,
+        or CccNextCmd action and return directly to WaitCCC. Covers STOP, broadcast Sr
+        after both payload-bearing SETMWL and defining-byte-only RSTACT,
+        direct-command chaining, command parity error, HDR entry, and TE0.
+        Checks action timing on the event edge, retirement with held command-valid,
+        and no release before the terminating ACK completes. Crosses every exit
+        cause with simultaneous STOP and verifies suppression of normal field
+        side effects. Idle bus events emit no handoff; STOP on initial command
+        handoff completes immediately. Reset leaves no stale action.
+        '''
+      tests: ["ccc_complete_handoff"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_mrl_capability_snapshot
+      desc:
+        '''
+        Crosses main/virtual BCR[2] with broadcast and directed SETMRL and
+        directed GETMRL. Changes live capability after sampling. Checks exact
+        two-/three-byte counts, MRL/IBIL effects, ignored extension bytes, and
+        fresh capability capture for each addressed GETMRL segment.
+        '''
+      tests: ["ccc_mrl_capability_snapshot"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_rstact_target_ack
+      desc:
+        '''
+        Crosses RSTACT defining bytes 0x01, 0x04, and unsupported 0x7F with no
+        target, unknown-target write, main/virtual writes, and main-target read.
+        Virtual-target reads are not exercised. The reserved 7E/W ACK
+        retires decoding context without changing reset arming or the VT flag.
+        '''
+      tests: ["ccc_rstact_target_ack"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_rstact_consumption
+      desc:
+        '''
+        Local interface-driven NO_RESET consumption contract, broadcast/direct
+        crossed with in-frame and STOP-before-first-detection sequences.
+        C16-P1 checks armed NO_RESET and no reset request at first detection.
+        C16-S checks arm/action retirement on the consuming edge.
+        C16-P2 requires default peripheral request without escalation at a
+        second detection, with no intervening normal START/SCL-fall or rearm.
+        All checkpoints are retained before final failure. Bus-pattern detection
+        and the rearm/START/VT controls are in ccc_rstact_pattern_consumption.
+        '''
+      tests: ["ccc_rstact_consumption"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_rstact_consumption_requests
+      desc:
+        '''
+        Crosses configured peripheral and whole-target resets with broadcast,
+        main and virtual addressing, and simultaneous peripheral acknowledgement.
+        Checks immediate arm/action/valid retirement while the selected request
+        remains asserted, with request-set priority over acknowledgement.
+        The independent VT flag survives consumption and acknowledgement.
+        Subsequent raw detections use default peripheral reset, then escalation,
+        without a normal START, rearm or external reset between patterns.
+        '''
+      tests: ["ccc_rstact_consumption_requests"]
+      tags: ["ccc"]
+    }
+    {
+      name: ccc_getstatus_segment_completion
+      desc:
+        '''
+        GETSTATUS success pulses exactly at each addressed read's final T-bit,
+        not again at STOP or a new CCC. A controller read-abort must not pulse
+        success. Checks both simultaneous and delayed bus-monitor Sr after the
+        TX abort indication, followed by a correctly received reserved header.
+        Includes an interface-injected simultaneous final-T-bit-done/STOP
+        collision: STOP suppresses success, unlike the non-STOP completion
+        control. This is not claimed as a reachable legal-bus collision.
+        '''
+      tests: ["ccc_getstatus_segment_completion"]
+      tags: ["ccc"]
+    }
   ]
 }

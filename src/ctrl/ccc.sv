@@ -15,9 +15,13 @@
   - Retrieve values from CSRs (GET commands)
   - Set values in CSRs (SET commands)
 
+  RSTACT's required defining byte is separate from the data counts below.
+
   CCCs without additional data:
     - I3C_BCAST_RSTDAA
     - I3C_BCAST_SETAASA
+    - I3C_BCAST_RSTACT
+    - I3C_DIRECT_RSTACT (write)
     - I3C_DIRECT_RSTGRPA
     - I3C_BCAST_ENTAS0-3
     - I3C_DIRECT_ENTAS0-3
@@ -27,9 +31,7 @@
     - I3C_BCAST_ENEC
     - I3C_BCAST_DISEC
     - I3C_BCAST_ENTTM
-    - I3C_BCAST_ENDXFER
     - I3C_BCAST_SETXTIME
-    - I3C_BCAST_RSTACT
     - I3C_BCAST_RSTGRPA
     - I3C_DIRECT_ENEC
     - I3C_DIRECT_DISEC
@@ -38,8 +40,7 @@
     - I3C_DIRECT_GETBCR
     - I3C_DIRECT_GETDCR
     - I3C_DIRECT_GETACCCR
-    - I3C_DIRECT_ENDXFER
-    - I3C_DIRECT_RSTACT
+    - I3C_DIRECT_RSTACT (read: one response byte)
     - I3C_DIRECT_SETGRPA
 
   CCCs with 2-6 number of bytes:
@@ -47,12 +48,16 @@
     - I3C_DIRECT_SETMWL    2
     - I3C_DIRECT_GETMWL    2
     - I3C_DIRECT_GETSTATUS 2
-    - I3C_BCAST_SETMRL     3
-    - I3C_DIRECT_SETMRL    3
-    - I3C_DIRECT_GETMRL    3
+    - I3C_BCAST_SETMRL     2-3
+    - I3C_DIRECT_SETMRL    2-3
+    - I3C_DIRECT_GETMRL    2-3
     - I3C_DIRECT_GETXTIME  4
     - I3C_DIRECT_GETMXDS   5
     - I3C_DIRECT_GETPID    6
+
+  SETMRL/GETMRL include a third IBI payload-size byte when the sampled BCR[2]
+  indicates IBI payload support. Direct commands use the addressed target's
+  BCR[2]; broadcast SETMRL uses the OR of the main and virtual targets' BCR[2].
 
   CCCs, which require variable N data bytes:
     - I3C_BCAST_DEFTGTS
@@ -64,6 +69,7 @@
     - I3C_BCAST_ENTDAA
 
   CCCs not supported:
+    - I3C_BCAST_ENDXFER, I3C_DIRECT_ENDXFER; HDR data transfer is not supported
     - I3C_BCAST_MLANE, I3C_DIRECT_MLANE; multi-lane configuration is not yet supported
     - I3C_DIRECT_SETBRGTGT; this is not a Bridging Device
     - I3C_DIRECT_SETROUTE; this is not a Routing Device
@@ -93,10 +99,8 @@ module ccc
     // =========================================================================
     // FSM Control Outputs
     // =========================================================================
-    // Asserted when CCC processing is complete (on STOP condition)
-    output logic done_fsm_o,
-    // Asserted when ready to process next CCC in a chained sequence
-    output logic next_ccc_o,
+    // Combinational completion event identifying the main FSM's next action.
+    output ccc_handoff_e handoff_o,
   
     // =========================================================================
     // Target Error Signals 
@@ -126,6 +130,7 @@ module ccc
     input  logic bus_start_det_i,
     input  logic bus_rstart_det_i,
     input  logic bus_stop_det_i,
+    input  logic scl_negedge_i,
     input  logic arbitration_lost_i,
 
     // =========================================================================
@@ -364,15 +369,14 @@ module ccc
   logic       clear_rx_byte_num;     // Reset rx_byte_num to 0 (set by FSM)
   logic       inc_rx_byte_num;       // Increment rx_byte_num (set by FSM)
   logic       rx_data_valid;         // RX data byte with T-bit complete (set by FSM)
+  logic       mrl_has_ibi_q;
 
   logic [7:0] tx_data;               // Data byte to transmit
   logic [2:0] tx_byte_num;           // Current TX byte number (0-indexed, counts up)
   logic [2:0] tx_byte_total;         // Total bytes to transmit for this command
   logic       tx_data_last_byte;     // This is the last byte to transmit
-  logic       tx_data_complete;      // All TX bytes sent successfully (for GET completion)
   logic       clear_tx_byte_num;     // Reset tx_byte_num to 0 (set by FSM)
   logic       inc_tx_byte_num;       // Increment tx_byte_num (set by FSM)
-  logic       set_tx_data_complete;  // Mark TX complete (set by FSM when last byte T-bit done)
 
   // ---------------------------------------------------------------------------
   // Command Type Classification
@@ -446,6 +450,7 @@ module ccc
   logic [7:0] rst_action_d;
   logic       rstact_armed_q;
   logic       rstact_armed_d;
+  logic       rstact_clear_pending_q;
   logic       escalate_rst_arm_q;
   logic       escalate_rst_arm_d;
   logic       set_peripheral_reset;
@@ -533,12 +538,13 @@ module ccc
       command_code <= ccc_cmd_e'('0);
       command_code_valid <= 1'b0;
     end else begin
-      if (ccc_valid_i) begin
-        command_code <= ccc_data_i;
-        command_code_valid <= 1'b1;
-      end else if (done_fsm_o) begin
+      // Completion can coincide with the target FSM's last cycle of ccc_valid_i.
+      if (handoff_o != CccNone) begin
         command_code <= ccc_cmd_e'('0);
         command_code_valid <= 1'b0;
+      end else if (ccc_valid_i) begin
+        command_code <= ccc_data_i;
+        command_code_valid <= 1'b1;
       end
     end
   end
@@ -564,10 +570,9 @@ module ccc
   // ===========================================================================
   // DEFINING BYTE DETERMINATION (used by FSM)
   // ===========================================================================
-  // Certain CCCs require a defining byte after the command code T-bit
+  // These CCCs have a required or optional defining byte after the command code T-bit.
   assign have_defining_byte = command_code inside {
-    CCC_BCAST_ENDXFER, CCC_BCAST_RSTACT, CCC_BCAST_MLANE,
-    CCC_DIRECT_GETCAPS, CCC_DIRECT_ENDXFER, CCC_DIRECT_RSTACT
+    CCC_BCAST_RSTACT, CCC_DIRECT_GETCAPS, CCC_DIRECT_GETSTATUS, CCC_DIRECT_RSTACT
   };
   // ===========================================================================
   // FSM STATE DEFINITIONS
@@ -605,15 +610,12 @@ module ccc
 
     // Bus condition handling
     WaitForBusCond,          // Wait for STOP or Repeated Start
-    WaitForENTDAAEnd,        // Wait for ENTDAA to end (STOP or new CCC via SR+7'h7E/W)
-
-    // CCC completion
-    NextCCC,                 // Signal ready for next CCC in chain
-    DoneCCC,                 // CCC processing complete
+    WaitForENTDAAEnd,        // Wait for ENTDAA to end with STOP
 
     // ENTDAA special handling
     HandleTargetENTDAA,      // Process ENTDAA for primary target
-    HandleVirtualTargetENTDAA // Process ENTDAA for virtual target
+    HandleVirtualTargetENTDAA, // Process ENTDAA for virtual target
+    WaitForStop              // Quiescent recovery after a detected data parity error
   } state_e;
 
   state_e state_q, state_d;
@@ -669,7 +671,7 @@ module ccc
     end else if (capture_defining_byte) begin
       defining_byte <= bus_rx_rsp_i.data;
       defining_byte_valid <= 1'b1;
-    end else if (clear_defining_byte || done_fsm_o) begin
+    end else if (clear_defining_byte || (handoff_o != CccNone)) begin
       defining_byte <= '0;
       defining_byte_valid <= 1'b0;
     end
@@ -707,7 +709,7 @@ module ccc
   // Only used when addr_ack is true, so direction is already validated.
   // - GET commands (ccc_requires_read): Target transmits data
   // - RSTACT with R/W=1: Target transmits timing data
-  // All other ACKed commands (SET, SETDASA, RSTACT with R/W=0) go to RxData.
+  // ACKed writes receive data only when rx_byte_total is nonzero.
   assign target_addr_matches_any_get_cmd = target_addr_matches_any && 
                                            (ccc_requires_read || (is_rstact && target_rnw));
 
@@ -745,7 +747,8 @@ module ccc
 
   assign unsupported_defining_byte = have_defining_byte & defining_byte_valid & (
         (command_code == CCC_DIRECT_RSTACT) & ~(defining_byte inside {8'h00, 8'h01, 8'h02, 8'h04, 8'h81, 8'h82, 8'h84})
-      | (command_code == CCC_DIRECT_GETCAPS) & ~(defining_byte inside {8'h00, 8'h93}));
+      | (command_code == CCC_DIRECT_GETCAPS) & ~(defining_byte inside {8'h00, 8'h93})
+      | (command_code == CCC_DIRECT_GETSTATUS));  // Only Format 1 (no defining byte) is supported.
 
   assign supported_direct_command = supported_direct_command_code & ~unsupported_defining_byte;
 
@@ -771,7 +774,7 @@ module ccc
 
   // TE5 helper: Check if direction is wrong for this command
   // - Gated with te5_err_det_en_i
-  assign is_te5_err_condition = te5_err_det_en_i && target_addr_matches_any && supported_direct_command;
+  assign is_te5_err_condition = te5_err_det_en_i && target_addr_matches_any && supported_direct_command && !ccc_direction_valid;
 
   // Combined TE0 error (CCC module + target FSM)
   // te0_err_i from target FSM is already gated with te0_enable_o (which includes detection enable)
@@ -811,7 +814,7 @@ module ccc
   // ADDRESS ACK DETERMINATION
   // ===========================================================================
   assign addr_ack_setdasa = (command_code == CCC_DIRECT_SETDASA) &
-                            (target_addr_matches_main_sta | target_addr_matches_virt_sta);
+                            (target_addr_matches_main_sta | target_addr_matches_virt_sta) & ccc_direction_valid;
   assign addr_ack_target  = (command_code != CCC_DIRECT_SETDASA) &
                             target_addr_matches_any & supported_direct_command & ccc_direction_valid;
   assign addr_ack_rsvd    = target_addr_matches_rsvd & ~target_rnw;  // Only ACK 7E/W
@@ -843,8 +846,8 @@ module ccc
   // MAIN FSM: CCC FRAME PROCESSING
   // ===========================================================================
   always_comb begin : fsm_ccc_main
-    done_fsm_o = 1'b0;
-    next_ccc_o = 1'b0;
+    handoff_o = CccNone;
+    get_status_done_o = 1'b0;
 
     // Default, safe tx request values
     tx_req_ccc = '{
@@ -879,7 +882,6 @@ module ccc
     // TX byte counter control
     clear_tx_byte_num = 1'b0;
     inc_tx_byte_num   = 1'b0;
-    set_tx_data_complete = 1'b0;
 
     // ENTDAA output control
     entdaa_set_newda = 1'b0;
@@ -898,7 +900,12 @@ module ccc
     da_padding_err = 1'b0;
 
     state_d = state_q;
-    unique case (state_q)
+    if (bus_stop_det_i) begin
+      if ((state_q != WaitCCC) || ccc_valid_i) begin
+        handoff_o = CccDone;
+        state_d = WaitCCC;
+      end
+    end else unique case (state_q)
       // ---------------------------------------------------------------------
       // Initial State
       // ---------------------------------------------------------------------
@@ -919,13 +926,14 @@ module ccc
           if (tbit_parity_err && te1_err_det_en_i) begin
             // TE1: CCC command parity error - signal done and enter HDR mode (deaf mode)
             te1_err = 1'b1;  // Assert TE1 error pulse
-            state_d = DoneCCC;
+            handoff_o = CccDone;
+            state_d = WaitCCC;
           end
           else begin
             cmd_tbit_valid = 1'b1;  // Command T-bit complete (only if no parity error)
             if (have_defining_byte) begin
-              // GETCAPS: defining byte is optional (may get repeated start instead)
-              state_d = (command_code == CCC_DIRECT_GETCAPS) ? RxDefByteOrBusCond : RxDefByte;
+              // GETCAPS/GETSTATUS: defining byte is optional (may get repeated start instead).
+              state_d = (command_code inside {CCC_DIRECT_GETCAPS, CCC_DIRECT_GETSTATUS}) ? RxDefByteOrBusCond : RxDefByte;
             end
             else if (command_code == CCC_BCAST_ENTDAA) begin
               if (entdaa_needs_main_addr)       state_d = HandleTargetENTDAA;
@@ -936,10 +944,17 @@ module ccc
               // ENTHDR0-7: Enter HDR mode (no defining byte, no data phase)
               // HDR mode state machine handles the rest
               enter_hdr_mode = 1'b1;
-              state_d = DoneCCC;  // Signal done so i3c_target_fsm exits DoCCC -> InHDRMode
+              handoff_o = CccDone;
+              state_d = WaitCCC;
             end
             else if (~is_direct_cmd) begin
-              state_d = RxData;  // Broadcast CCCs receive data
+              if (rx_byte_total == 0) begin
+                // Broadcast CCC with no payload (e.g. RSTDAA/SETAASA), or an unsupported command.
+                state_d = WaitForBusCond;
+              end else begin
+                // Broadcast CCC with payload: ENEC, DISEC, SETMWL, or SETMRL.
+                state_d = RxData;
+              end
             end
             else begin
               state_d = WaitDirectRstart;  // Direct CCCs wait for target address
@@ -1000,13 +1015,19 @@ module ccc
           if (tbit_parity_err && te2_err_det_en_i) begin
             // TE2: Defining byte parity error - abort this CCC
             te2_err = 1'b1;  // Assert TE2 error pulse
-            state_d = DoneCCC;
+            state_d = WaitForStop;
           end else begin
             def_byte_tbit_valid = 1'b1;  // Defining byte T-bit complete (only if no parity error)
-            // broadcast CCCs proceed to data
-            if (~is_direct_cmd) state_d = RxData;
-            // direct CCCs wait for repeated start
-            else state_d = WaitDirectRstart;
+            if (is_direct_cmd) begin
+              // Direct CCC: wait for Sr and the next target address.
+              state_d = WaitDirectRstart;
+            end else if (rx_byte_total == 0) begin
+              // Broadcast CCC with only a defining byte (RSTACT): wait for Sr or STOP.
+              state_d = WaitForBusCond;
+            end else begin
+              // Broadcast CCC with data after its defining byte: receive the payload.
+              state_d = RxData;
+            end
           end
         end
       end
@@ -1028,7 +1049,7 @@ module ccc
           if (tbit_parity_err && te2_err_det_en_i) begin
             // TE2: Parity error on additional data byte before target address
             te2_err = 1'b1;  // Assert TE2 error pulse
-            state_d = DoneCCC;
+            state_d = WaitForStop;
           end else begin
             state_d = WaitDirectRstart;
           end
@@ -1066,10 +1087,12 @@ module ccc
           if (is_te0_err_condition) begin
             // TE0: Invalid reserved address - enter HDR mode (deaf mode)
             te0_err_ccc = 1'b1;  // Assert TE0 error pulse
-            state_d = DoneCCC;
+            handoff_o = CccDone;
+            state_d = WaitCCC;
           end else if (target_addr_matches_rsvd) begin
             // Reserved address (7'h7E/W): End of Direct CCC frame
-            state_d = NextCCC;
+            handoff_o = CccNextCmd;
+            state_d = WaitCCC;
           end else if (~addr_ack) begin
             if (is_te5_err_condition) begin
               // TE5: Wrong R/W direction - already NACKed, wait for recovery
@@ -1080,11 +1103,11 @@ module ccc
           end else if (target_addr_matches_any_get_cmd) begin
             // ACKed GET command: Target transmits data
             state_d = TxData;
-          end else if (is_rstact) begin
-            // RSTACT write: no data phase (defining byte already captured)
+          end else if (rx_byte_total == 0) begin
+            // ACKed direct RSTACT write: no data follows the target address.
             state_d = WaitForBusCond;
           end else begin
-            // ACKed SET command (including SETDASA): Target receives data
+            // ACKed direct write with payload: ENEC, DISEC, SETDASA, SETNEWDA, SETMWL, or SETMRL.
             state_d = RxData;
           end
         end
@@ -1112,7 +1135,7 @@ module ccc
           if (tbit_parity_err && te2_err_det_en_i) begin
             // TE2: Data byte parity error - abort this CCC
             te2_err = 1'b1;  // Assert TE2 error pulse
-            state_d = DoneCCC;
+            state_d = WaitForStop;
           end else begin
             inc_rx_byte_num = 1'b1;   // Move to next byte
             // Check for DA padding bit error (Bit[0] must be 0 for DA assignment CCCs)
@@ -1156,7 +1179,7 @@ module ccc
 
         if (bus_tx_rsp_i.done) begin
           // Target complete: Target sent T=0, wait for Sr or STOP
-          set_tx_data_complete = 1'b1;
+          get_status_done_o = command_code_valid && (command_code == CCC_DIRECT_GETSTATUS);
           state_d = WaitForBusCond;
         end
       end
@@ -1167,10 +1190,6 @@ module ccc
         tx_req_ccc.data      = tx_data;
 
         if (bus_tx_rsp_i.abort) begin
-          // Controller abort: Sr during T-bit means the transfer is
-          // incomplete — do NOT mark tx_data_complete. This prevents
-          // get_status_done_o from falsely firing on an aborted GETSTATUS,
-          // which would prematurely clear the Protocol Error in err_o.
           state_d = RxTargetAddr;
         end else if (bus_tx_rsp_i.done) begin
           state_d = TxData;
@@ -1181,9 +1200,18 @@ module ccc
       // Bus Condition Handling
       // ---------------------------------------------------------------------
       WaitForBusCond: begin
-        // Wait repeat start. Stop condition is handled below
-        // for all of this logic and takes us to DoneCCC
-        if (bus_rstart_det_i) state_d = RxTargetAddr;
+        if (bus_rstart_det_i) begin
+          if (is_direct_cmd) begin
+            state_d = RxTargetAddr;
+          end else begin
+            handoff_o = CccResumeAddr;
+            state_d = WaitCCC;
+          end
+        end
+      end
+
+      WaitForStop: begin
+        // Keep ownership without interpreting any more fields until STOP.
       end
       
       WaitForENTDAAEnd: begin
@@ -1194,33 +1222,12 @@ module ccc
         // We must ignore these sequences and only exit on STOP.
         // ENTDAA always ends with STOP - a new CCC cannot start until after STOP.
         //
-        // The bus_stop_det_i override at the end of the FSM will handle 
-        // transitioning to DoneCCC when STOP is detected.
-      end
-      
-      // ---------------------------------------------------------------------
-      // CCC Completion
-      // ---------------------------------------------------------------------
-      NextCCC: begin
-        // Ready for next CCC in chain
-        next_ccc_o = 1'b1;
-        state_d    = WaitCCC;
-      end
-      
-      DoneCCC: begin
-        // CCC processing complete
-        done_fsm_o = 1'b1;
-        state_d    = WaitCCC;
+        // The common STOP branch returns ownership with CccDone.
       end
       
       default: begin
       end
     endcase
-
-    // Overwrite decision on bus STOP - terminates CCC processing
-    if (bus_stop_det_i) begin
-      state_d = DoneCCC;
-    end
   end
 
   // ===========================================================================
@@ -1250,17 +1257,6 @@ module ccc
   // Last byte when we've reached (tx_byte_total - 1)
   assign tx_data_last_byte = (tx_byte_num == tx_byte_total - 1);
 
-  // TX complete tracking: set by FSM when last T-bit completes normally
-  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_tx_data_complete
-    if (~rst_ni) begin
-      tx_data_complete <= 1'b0;
-    end else if (clear_tx_byte_num) begin
-      tx_data_complete <= 1'b0;
-    end else if (set_tx_data_complete) begin
-      tx_data_complete <= 1'b1;
-    end
-  end
-
   // ===========================================================================
   // RX BYTE COUNTER (for multi-byte SET commands)
   // ===========================================================================
@@ -1275,15 +1271,22 @@ module ccc
   end
 
   // Last RX byte when we've reached (rx_byte_total - 1)
-  assign rx_data_last_byte = (rx_byte_num == rx_byte_total - 1);
+  assign rx_data_last_byte = (rx_byte_total != 0) && (rx_byte_num == rx_byte_total - 1);
+
+  // Keep a message's length stable if firmware updates BCR while it is in flight.
+  always_ff @(posedge clk_i or negedge rst_ni) begin : proc_mrl_capability
+    if (~rst_ni) begin
+      mrl_has_ibi_q <= 1'b0;
+    end else if (cmd_tbit_valid && (command_code == CCC_BCAST_SETMRL)) begin
+      mrl_has_ibi_q <= get_bcr_i[2] || virtual_get_bcr_i[2];
+    end else if (target_addr_ack_done && addr_ack_target && (command_code inside {CCC_DIRECT_SETMRL, CCC_DIRECT_GETMRL})) begin
+      mrl_has_ibi_q <= target_addr_matches_virt ? virtual_get_bcr_i[2] : get_bcr_i[2];
+    end
+  end
 
   // ===========================================================================
   // CCC HANDLERS
   // ===========================================================================
-
-  // GETSTATUS completion: pulse when GETSTATUS completes with all bytes sent.
-  assign get_status_done_o = done_fsm_o && command_code_valid && 
-                             (command_code == CCC_DIRECT_GETSTATUS) && tx_data_complete;
 
   // ---------------------------------------------------------------------------
   // DIRECT GET CCC HANDLER
@@ -1352,7 +1355,7 @@ module ccc
       // 3 Byte Responses
       // ---------------------------------------------------------------------
       CCC_DIRECT_GETMRL: begin
-        tx_byte_total = 3'd3;
+        tx_byte_total = mrl_has_ibi_q ? 3'd3 : 3'd2;
         case (tx_byte_num)
           3'd0:    tx_data = get_mrl_i[15:8];
           3'd1:    tx_data = get_mrl_i[7:0];
@@ -1408,8 +1411,8 @@ module ccc
   // Determines expected RX byte count for SET CCCs.
   // rx_byte_num counts up from 0: byte 0 is first byte received.
   always_comb begin : proc_set_ccc_rx_byte_total
-    // Default value
-    rx_byte_total = 2'd1;
+    // Unsupported commands and commands without payload need no data reception.
+    rx_byte_total = 2'd0;
     case (command_code)
       // 1 Byte Commands
       CCC_BCAST_ENEC,
@@ -1421,9 +1424,9 @@ module ccc
       // 2 Byte Commands
       CCC_BCAST_SETMWL,
       CCC_DIRECT_SETMWL:     rx_byte_total = 2'd2;
-      // 3 Byte Commands
+      // MRL has a third byte only for an IBI-payload-capable target.
       CCC_BCAST_SETMRL,
-      CCC_DIRECT_SETMRL:     rx_byte_total = 2'd3;
+      CCC_DIRECT_SETMRL:     rx_byte_total = mrl_has_ibi_q ? 2'd3 : 2'd2;
       default: begin end
     endcase
   end
@@ -1687,13 +1690,15 @@ module ccc
     rst_action_d      = rst_action_q;
     vt_detect_flag_d  = vt_detect_flag_q;
 
-    // --- Arming: Clear on START (not Repeated START) ---
-    // Spec: "Any reset action configured via the RSTACT CCC shall be cleared
-    // by the next SCL falling edge following a START (but not by the next
-    // Repeated START)."
-    // Note: vt_detect_flag is NOT cleared on START — it persists until
-    // explicitly cleared via RSTACT with Defining Byte 0x00.
-    if (bus_start_det_i) begin
+    // I3C Basic v1.1.1, Section 5.1.11.1:
+    // "Any reset action (including inaction) configured via the RSTACT CCC shall
+    // be cleared by the next SCL falling edge following a START (but not by the
+    // next Repeated START)."
+    // I3C/I3C Basic FAQ v1.1, Q23.10 clarifies pattern consumption:
+    // "Detection of a Target Reset Pattern. This will enact the RSTACT action,
+    // and then clear the state."
+    // Reset requests use the old registered action; the VT flag is independent.
+    if (target_reset_detect_i || (rstact_clear_pending_q && scl_negedge_i)) begin
       rstact_armed_d = 1'b0;
       rst_action_d   = 8'h00;
     end else begin
@@ -1713,7 +1718,7 @@ module ccc
         end
 
         CCC_DIRECT_RSTACT: begin
-          if (target_addr_ack_done && addr_ack && ~target_rnw) begin
+          if (target_addr_ack_done && addr_ack_target && ~target_rnw) begin
             if(defining_byte inside {8'h00, 8'h01, 8'h02}) begin
               rstact_armed_d = 1'b1;
               rst_action_d   = defining_byte;
@@ -1776,6 +1781,7 @@ module ccc
   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_rstact_seq
     if (~rst_ni) begin
       rstact_armed_q     <= 1'b0;
+      rstact_clear_pending_q <= 1'b0;
       rst_action_q       <= 8'h00;
       escalate_rst_arm_q <= 1'b0;
       peripheral_reset_o <= 1'b0;
@@ -1786,6 +1792,10 @@ module ccc
       rst_action_q       <= rst_action_d;
       escalate_rst_arm_q <= escalate_rst_arm_d;
       vt_detect_flag_q   <= vt_detect_flag_d;
+
+      // The reset pattern's START/STOP has no intervening SCL falling edge.
+      if (bus_stop_det_i || bus_rstart_det_i || scl_negedge_i) rstact_clear_pending_q <= 1'b0;
+      else if (bus_start_det_i) rstact_clear_pending_q <= 1'b1;
 
       if (set_peripheral_reset) begin
         peripheral_reset_o <= 1'b1;

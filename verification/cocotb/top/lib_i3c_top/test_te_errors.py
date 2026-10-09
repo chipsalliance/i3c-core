@@ -20,6 +20,7 @@ import random
 
 from boot import boot_init
 from bus2csr import dword2int, int2dword
+from ccc import CCC
 from i3c_controller_fixed import I3cControllerFixed as I3cController
 from cocotbext_i3c.i3c_target import I3CTarget
 from interface import I3CTopTestInterface
@@ -487,6 +488,87 @@ async def test_te1_errors(dut):
 
     await tb.teardown()
 
+
+@cocotb.test(timeout_time=1000, timeout_unit="us")
+async def test_ccc_error_private_descriptor(dut):
+    """Keep a real CCC error live until the first good private descriptor is checked."""
+    controller, target, tb = await test_setup(dut, dynamic_addr=0x2D, virtual_dynamic_addr=0x35)
+    await pause_cocotb_target(target)
+    await enable_all_te_interrupts(tb)
+    assert tb.te_error_monitor is not None, "CCC isolation requires the passive error-event monitor"
+    tb.te_error_monitor.expect_error(1, 2, 6)
+    tti = tb.reg_map.I3C_EC.TTI
+    sm = tb.reg_map.I3C_EC.STDBYCTRLMODE
+    err = dut.xi3c_wrapper.i3c.xcontroller.xcontroller_standby.err_o
+
+    for source, error_type, enabled in (("clean", None, 1), ("te2", 2, 0), ("te2", 2, 1), ("te1", 1, 1), ("framing", 6, 1)):
+        dut._log.info(f"CCC_DESCRIPTOR: starting source={source}, DET_EN={enabled}; first private write is the discriminator")
+        await clear_all_te_status(tb)
+        await tb.write_csr_field(tti.TARGET_ERR_CTRL.base_addr, tti.TARGET_ERR_CTRL.TE2_ERR_DET_EN, enabled)
+        counts = dict(tb.te_error_monitor.error_counts)
+        counters = [await read_te_counter(tb, n) for n in range(7)]
+        assert int(err.value) == 0, "Previous scenario did not clear global Protocol Error"
+        if source == "te2":
+            await controller.send_te2_error(ccc=CCC.DIRECT.RSTACT, defining_byte=1, corrupt_defining_byte=True)
+            await controller.send_stop()
+            controller.give_bus_control()
+        elif source == "te1":
+            await controller.send_te1_error(ccc=CCC.BCAST.ENTHDR0)
+            await ClockCycles(tb.clk, 10)
+            assert_fsm_in_hdr_mode(dut)
+            await recover_from_hdr_error(controller, target, tb, "hdr_exit")
+            await ClockCycles(tb.clk, 10)
+            assert_fsm_idle(dut)
+        elif source == "framing":
+            # Valid address and T-bit, invalid SETNEWDA padding; old DA must survive.
+            assert await controller.i3c_ccc_write(
+                ccc=CCC.DIRECT.SETNEWDA, directed_data=[(0x2D, [(0x30 << 1) | 1])]) == [True]
+        await ClockCycles(tb.clk, 10)
+        expected_error = int(error_type is not None and enabled)
+        expected_counts = {n: counts[n] + int(n == error_type and enabled) for n in counts}
+        assert tb.te_error_monitor.error_counts == expected_counts, f"CCC source event mismatch: {source}"
+        assert int(err.value) == expected_error, f"{source}: global Protocol Error not live before private write"
+        dut._log.info(f"CCC_DESCRIPTOR: source observed, live_error={int(err.value)}; sending discriminating write without GETSTATUS/reset/FIFO access")
+
+        payload = bytearray([0xA5, 0x46, 0x7E, 0x3C, 0x91, 0x00, 0xFF, 0x62])
+        response = await controller.i3c_write(0x2D, payload)
+        assert not response.nack, f"{source}: good private write NACKed"
+        await ClockCycles(tb.clk, 10)
+        desc = dword2int(await tb.read_csr(tti.RX_DESC_QUEUE_PORT.base_addr, 4))
+        assert desc == len(payload), f"{source}: CCC error contaminated good private descriptor: 0x{desc:08X}"
+        data = bytearray()
+        for _ in range(0, len(payload), 4):
+            data.extend(await tb.read_csr(tti.RX_DATA_PORT.base_addr, 4))
+        assert data == payload, f"{source}: private data mismatch: {data.hex()}"
+        assert int(err.value) == expected_error, f"{source}: good private write unexpectedly cleared global error"
+        assert await tb.read_csr_field(tti.STATUS.base_addr, tti.STATUS.PROTOCOL_ERROR) == expected_error
+        for n in range(7):
+            delta = int(n == error_type and enabled)
+            assert await read_te_counter(tb, n) == counters[n] + delta, f"{source}: incorrect error counter {n}"
+            assert await read_te_status_bit(tb, n) == delta, f"{source}: incorrect error status {n}"
+        assert tb.te_error_monitor.error_counts == expected_counts, "Good private write generated an error event"
+        assert await tb.read_csr_field(sm.STBY_CR_DEVICE_ADDR.base_addr, sm.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR) == 0x2D
+        assert await tb.read_csr_field(sm.STBY_CR_DEVICE_ADDR.base_addr, sm.STBY_CR_DEVICE_ADDR.DYNAMIC_ADDR_VALID) == 1
+        dut._log.info(f"CCC_DESCRIPTOR: exact descriptor/data matched with live_error={expected_error}; now clearing via GETSTATUS")
+
+        # Only now may GETSTATUS clear the independently checked global latch.
+        await controller.take_bus_control()
+        await controller.send_start()
+        assert await controller.write_addr_header(0x7E)
+        await controller.send_byte_tbit(CCC.DIRECT.GETSTATUS)
+        await controller.send_start()
+        assert await controller.write_addr_header(0x2D, read=True)
+        for index, expected in enumerate((0, 0xC0 | (expected_error << 5))):
+            byte, eod = await controller.recv_byte_t_bit(stop=False)
+            assert byte == expected and bool(eod) == (index == 1), f"{source}: incorrect GETSTATUS byte/EOD at {index}"
+        await controller.send_stop()
+        controller.give_bus_control()
+        await ClockCycles(tb.clk, 10)
+        assert int(err.value) == 0, "Completed GETSTATUS did not clear Protocol Error"
+        dut._log.info(f"CCC_DESCRIPTOR: source={source}, DET_EN={enabled} completed")
+    await tb.teardown()
+
+
 @cocotb.test()
 async def test_te2_private_write_parity(dut):
     """TE2 error: bad T-bit parity on private write data -> data discarded.
@@ -509,7 +591,7 @@ async def test_te2_private_write_parity(dut):
     await ClockCycles(tb.clk, 50)
 
     # Drain any stale RX descriptors/data from boot or setup.
-    # A spurious TE2 may fire during register initialization — allow time for it.
+    # A spurious TE2 may fire during register initialization -- allow time for it.
     await tb.write_csr_field(
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.base_addr,
         tb.reg_map.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST, 1)
@@ -550,12 +632,13 @@ async def test_te2_private_write_parity(dut):
             tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR)
         assert err_status == 1, f"PROTOCOL_ERROR should be 1 after TE2, got {err_status}"
 
-        # Read RX descriptor -- log for observability
+        # Bad private data must still report an error in its own descriptor.
         desc_raw = dword2int(
             await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
         err_stat = desc_raw >> 28
         desc_len = desc_raw & 0xFFFF
         log.info(f"    RX descriptor: raw=0x{desc_raw:08X}, err_stat={err_stat}, desc_len={desc_len}")
+        assert err_stat == 1 and desc_len == 0, f"Incorrect private parity-error descriptor: 0x{desc_raw:08X}"
 
         # Verify TE2 status and counter
         stat = await read_te_status_bit(tb, 2)
@@ -594,6 +677,12 @@ async def test_te2_private_write_parity(dut):
         verify_data = [random.randint(0, 255) for _ in range(verify_len)]
         await i3c_controller.i3c_write(DYNAMIC_ADDR, verify_data)
         await ClockCycles(tb.clk, 20)
+        desc_raw = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+        assert desc_raw == verify_len, f"Recovery write inherited an old error: 0x{desc_raw:08X}"
+        received = bytearray()
+        for _ in range(0, verify_len, 4):
+            received.extend(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+        assert received[:verify_len] == bytearray(verify_data), "Recovery private data mismatch"
 
     # --- PHASE 2: DET_EN=0 bypass ---
     log.info("=== PHASE 2: TE2 DET_EN=0 ===")
@@ -615,6 +704,14 @@ async def test_te2_private_write_parity(dut):
     cnt_after = await read_te_counter(tb, 2)
     assert cnt_after == cnt_before, \
         f"TE2 counter should not increment with DET_EN=0: before={cnt_before}, after={cnt_after}"
+    desc_raw = dword2int(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DESC_QUEUE_PORT.base_addr, 4))
+    assert desc_raw == len(data), f"Disabled parity detection still marked the descriptor: 0x{desc_raw:08X}"
+    received = bytearray()
+    for _ in range(0, len(data), 4):
+        received.extend(await tb.read_csr(tb.reg_map.I3C_EC.TTI.RX_DATA_PORT.base_addr, 4))
+    assert received[:len(data)] == bytearray(data), "Disabled parity detection changed private payload"
+    assert await tb.read_csr_field(
+        tb.reg_map.I3C_EC.TTI.STATUS.base_addr, tb.reg_map.I3C_EC.TTI.STATUS.PROTOCOL_ERROR) == 0
 
     # Re-enable
     await tb.write_csr_field(ctrl_addr, det_en_field, 1)

@@ -244,8 +244,7 @@ module controller_standby_i3c
   // CCC sub-FSM data and status
   ccc_cmd_e  ccc_data;
   logic      ccc_valid;
-  logic      ccc_done;
-  logic      ccc_next;
+  ccc_handoff_e ccc_handoff;
 
   // Bus events detection
   logic bus_timeout;
@@ -301,10 +300,10 @@ module controller_standby_i3c
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       xfer_mux_sel <= Fsm;
+    end else if (ccc_handoff != CccNone) begin
+      xfer_mux_sel <= Fsm;
     end else if ((xfer_mux_sel == Fsm) && ccc_valid) begin
       xfer_mux_sel <= Ccc;
-    end else if ((xfer_mux_sel == Ccc) && (ccc_done || ccc_next)) begin
-      xfer_mux_sel <= Fsm;
     end
   end
 
@@ -419,8 +418,7 @@ module controller_standby_i3c
 
     .ccc_data_o                 (ccc_data),
     .ccc_valid_o                (ccc_valid),
-    .is_ccc_done_i              (ccc_done),
-    .is_next_ccc_i              (ccc_next),
+    .ccc_handoff_i             (ccc_handoff),
 
     .te0_enable_i               (te0_enable),
     .te0_err_o                  (te0_err),
@@ -446,8 +444,7 @@ module controller_standby_i3c
 
     .ccc_data_i (ccc_data),
     .ccc_valid_i(ccc_valid),
-    .done_fsm_o (ccc_done),
-    .next_ccc_o (ccc_next),
+    .handoff_o (ccc_handoff),
 
     .te0_enable_o(te0_enable),
     .te0_err_i   (te0_err),
@@ -470,6 +467,7 @@ module controller_standby_i3c
     .bus_start_det_i (ctrl_bus_i.start_det),
     .bus_rstart_det_i(ctrl_bus_i.rstart_det),
     .bus_stop_det_i  (ctrl_bus_i.stop_det),
+    .scl_negedge_i  (ctrl_bus_i.scl.neg_edge),
 
     .bus_tx_req_o(bus_tx_req_ccc),
     .bus_tx_rsp_i(bus_tx_rsp_ccc),
@@ -634,7 +632,7 @@ module controller_standby_i3c
 
   logic rx_error;
 
-  assign rx_error = protocol_err_o | rx_overflow_err;
+  assign rx_error = te2_err_priv_wr | rx_overflow_err;
 
   descriptor_rx #(
     .TtiRxDescDataWidth(TtiRxDescDataWidth),

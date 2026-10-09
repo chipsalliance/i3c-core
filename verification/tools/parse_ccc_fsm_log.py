@@ -10,7 +10,8 @@ Reads ccc_fsm_transitions.log produced by the bind-module tracker
   3. Time-in-state summary (min / max / total per state)
   4. Unexpected transition detection
 
-The log uses numeric state IDs; this script maps them to names.
+The tracker logs timestamp | old_state_name | new_state_name.
+Legacy whitespace-separated logs and numeric state IDs are also supported.
 
 Usage:
     python parse_ccc_fsm_log.py [ccc_fsm_transitions.log]
@@ -37,24 +38,24 @@ STATE_NAMES = {
     10: "RxData",
     11: "RxDataTbit",
     12: "TxData",
-    13: "TxDataTbit",
-    14: "WaitForBusCond",
-    15: "WaitForENTDAAEnd",
-    16: "NextCCC",
-    17: "DoneCCC",
-    18: "HandleTargetENTDAA",
-    19: "HandleVirtualTargetENTDAA",
+    13: "TxDataTbitCont",
+    14: "TxDataTbitEnd",
+    15: "WaitForBusCond",
+    16: "WaitForENTDAAEnd",
+    17: "HandleTargetENTDAA",
+    18: "HandleVirtualTargetENTDAA",
+    19: "WaitForStop",
 }
 
 VALID_STATES = set(STATE_NAMES.values())
 
 # Expected transitions from the FSM case statement + STOP override.
-# A missing edge here flags it for manual review — not necessarily a bug.
+# A missing edge here flags it for manual review, not necessarily a bug.
 EXPECTED_TRANSITIONS = {
     # WaitCCC
     ("WaitCCC", "RxCmdTbit"),
     # RxCmdTbit
-    ("RxCmdTbit", "DoneCCC"),
+    ("RxCmdTbit", "WaitCCC"),
     ("RxCmdTbit", "RxDefByte"),
     ("RxCmdTbit", "RxDefByteOrBusCond"),
     ("RxCmdTbit", "HandleTargetENTDAA"),
@@ -62,69 +63,58 @@ EXPECTED_TRANSITIONS = {
     ("RxCmdTbit", "WaitForENTDAAEnd"),
     ("RxCmdTbit", "RxData"),
     ("RxCmdTbit", "WaitDirectRstart"),
+    ("RxCmdTbit", "WaitForBusCond"),
     # HandleTargetENTDAA
     ("HandleTargetENTDAA", "HandleVirtualTargetENTDAA"),
     ("HandleTargetENTDAA", "WaitForENTDAAEnd"),
-    ("HandleTargetENTDAA", "DoneCCC"),
     # HandleVirtualTargetENTDAA
     ("HandleVirtualTargetENTDAA", "WaitForENTDAAEnd"),
-    ("HandleVirtualTargetENTDAA", "DoneCCC"),
     # RxDefByte
     ("RxDefByte", "RxDefByteTbit"),
-    ("RxDefByte", "DoneCCC"),
     # RxDefByteOrBusCond
     ("RxDefByteOrBusCond", "RxTargetAddr"),
     ("RxDefByteOrBusCond", "RxDefByteTbit"),
-    ("RxDefByteOrBusCond", "DoneCCC"),
     # RxDefByteTbit
-    ("RxDefByteTbit", "DoneCCC"),
+    ("RxDefByteTbit", "WaitForStop"),
     ("RxDefByteTbit", "RxData"),
     ("RxDefByteTbit", "WaitDirectRstart"),
+    ("RxDefByteTbit", "WaitForBusCond"),
     # WaitDirectRstart
     ("WaitDirectRstart", "RxTargetAddr"),
     ("WaitDirectRstart", "RxDirectDefByteTbit"),
-    ("WaitDirectRstart", "DoneCCC"),
     # RxDirectDefByteTbit
-    ("RxDirectDefByteTbit", "DoneCCC"),
+    ("RxDirectDefByteTbit", "WaitForStop"),
     ("RxDirectDefByteTbit", "WaitDirectRstart"),
     # RxTargetAddr
     ("RxTargetAddr", "TxTargetAddrAck"),
-    ("RxTargetAddr", "DoneCCC"),
     # TxTargetAddrAck
-    ("TxTargetAddrAck", "DoneCCC"),
-    ("TxTargetAddrAck", "NextCCC"),
+    ("TxTargetAddrAck", "WaitCCC"),
     ("TxTargetAddrAck", "WaitForBusCond"),
     ("TxTargetAddrAck", "TxData"),
     ("TxTargetAddrAck", "RxData"),
     # RxSubCmdByte
     ("RxSubCmdByte", "WaitCCC"),
-    ("RxSubCmdByte", "DoneCCC"),
     # RxData
     ("RxData", "RxDataTbit"),
-    ("RxData", "DoneCCC"),
     # RxDataTbit
-    ("RxDataTbit", "DoneCCC"),
+    ("RxDataTbit", "WaitForStop"),
     ("RxDataTbit", "WaitForBusCond"),
     ("RxDataTbit", "RxData"),
     # TxData
-    ("TxData", "TxDataTbit"),
-    ("TxData", "DoneCCC"),
-    # TxDataTbit
-    ("TxDataTbit", "RxTargetAddr"),
-    ("TxDataTbit", "WaitForBusCond"),
-    ("TxDataTbit", "TxData"),
-    ("TxDataTbit", "DoneCCC"),
+    ("TxData", "TxDataTbitCont"),
+    ("TxData", "TxDataTbitEnd"),
+    # TxDataTbitCont
+    ("TxDataTbitCont", "RxTargetAddr"),
+    ("TxDataTbitCont", "TxData"),
+    # TxDataTbitEnd
+    ("TxDataTbitEnd", "WaitForBusCond"),
     # WaitForBusCond
     ("WaitForBusCond", "RxTargetAddr"),
-    ("WaitForBusCond", "DoneCCC"),
-    # WaitForENTDAAEnd
-    ("WaitForENTDAAEnd", "DoneCCC"),
-    # NextCCC
-    ("NextCCC", "WaitCCC"),
-    ("NextCCC", "DoneCCC"),
-    # DoneCCC
-    ("DoneCCC", "WaitCCC"),
+    ("WaitForBusCond", "WaitCCC"),
 }
+
+# STOP returns every active state, including WaitForStop and WaitForENTDAAEnd, to WaitCCC.
+EXPECTED_TRANSITIONS.update((state, "WaitCCC") for state in VALID_STATES if state != "WaitCCC")
 
 
 def _resolve_state(raw):
@@ -144,8 +134,8 @@ def parse_log(path):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            parts = line.split()
-            if len(parts) < 3:
+            parts = [part.strip() for part in line.split("|")] if "|" in line else line.split()
+            if len(parts) != 3 or not all(parts):
                 print(f"WARNING: skipping malformed line {lineno}: {line!r}", file=sys.stderr)
                 continue
             ts_raw = parts[0]

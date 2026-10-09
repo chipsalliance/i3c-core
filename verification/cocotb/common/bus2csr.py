@@ -5,7 +5,7 @@ from functools import reduce
 from importlib import import_module
 from math import log2
 from random import choice, randint
-from typing import List, Tuple
+from typing import List, Sequence, Tuple
 
 # AHB
 from cocotb_AHB.AHB_common.InterconnectInterface import InterconnectWrapper
@@ -21,7 +21,7 @@ from reg_map import reg_map
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, Lock, RisingEdge, Timer, with_timeout
+from cocotb.triggers import ClockCycles, FallingEdge, Lock, ReadWrite, RisingEdge, Timer, with_timeout
 
 
 # Helpers
@@ -113,6 +113,17 @@ class FrontBusTestInterface:
         return value
 
 
+class FallingEdgeAHBWrapper(InterconnectWrapper):
+    """Sample settled responses and drive the next address before HCLK rises."""
+
+    async def start(self):
+        assert self.interconnect is not None, "Interconnect not defined"
+        while True:
+            await FallingEdge(self.clock)
+            await ReadWrite()
+            await self.interconnect.process()
+
+
 # Generic ahb2csr test interface
 class AHBTestInterface(FrontBusTestInterface):
     """
@@ -132,7 +143,7 @@ class AHBTestInterface(FrontBusTestInterface):
         self.interconnect = SimInterconnect()
 
         # Cocotb-ahb-specific construct for simulation purposes
-        self.wrapper = InterconnectWrapper()
+        self.wrapper = FallingEdgeAHBWrapper()
 
         # Serialize AHB bus access; SimSimpleManager is not reentrant
         self._bus_lock = Lock()
@@ -173,7 +184,7 @@ class AHBTestInterface(FrontBusTestInterface):
     async def write_csr(
         self,
         addr: int,
-        data: List[int],
+        data: Sequence[int],
         size: int = 4,
         awid=None,
         timeout: int = 1,
@@ -182,6 +193,7 @@ class AHBTestInterface(FrontBusTestInterface):
         """Send a write request & await transfer to finish for 'timeout' in 'units'."""
         if awid:
             self.dut._log.debug(f"AHB doesn't support user_id, ignoring aw_user={awid}")
+        data = list(data)
         data_len = len(data)
         # Extend bytes to size if there's less than that
         if data_len <= size:
