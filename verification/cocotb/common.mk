@@ -64,9 +64,11 @@ else
     VERILATOR_COVERAGE = ""
 endif
 
-COMPILE_ARGS += +define+DIGITAL_IO_I3C +define+CLP_ASSERT_ON
+COMPILE_ARGS += +define+DIGITAL_IO_I3C
 
 ifeq ($(SIM), verilator)
+    # Caliptra's full assertion set includes SVA unsupported by Verilator 5.024.
+    COMPILE_ARGS += +define+I3C_ASSERT_ON
     # Enable processing of #delay statements
     COMPILE_ARGS += --timing --assert
     COMPILE_ARGS += -Wall -Wno-fatal
@@ -77,6 +79,8 @@ ifeq ($(SIM), verilator)
     endif
     EXTRA_ARGS += $(VERILATOR_COVERAGE)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
+else
+    COMPILE_ARGS += +define+CLP_ASSERT_ON
 endif
 
 ifeq ($(SIM), vcs)
